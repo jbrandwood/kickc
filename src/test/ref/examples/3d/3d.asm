@@ -28,39 +28,12 @@
   .label psp2 = $f8
   .label SCREEN = $400
   .const sz = 0
-  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  // f(x) = >(( x * x ))
-  .label mulf_sqr1 = $2400
-  // g(x) =  >((( 1 - x ) * ( 1 - x )))
-  .label mulf_sqr2 = $2600
   // A single sprite
   .label SPRITE = $3000
-  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-  .label PERSP_Z = $2800
-  // Sine and Cosine Tables   
-  // Angles: $00=0, $80=PI,$100=2*PI
-  // Half Sine/Cosine: signed fixed [-$20;20]
-  .label SINH = $2000
-  // sin(x) = cos(x+PI/2)
-  // Quarter Sine/Cosine: signed fixed [-$10,$10]
-  .label SINQ = $2200
-  // 16 bit Sine and Cosine Tables   
-  // Angles: $00=0, $80=PI,$100=2*PI
-  // Half Sine/Cosine: signed fixed [-$1f,$1f]
-  .label SINH_LO = $4000
-  // sin(x) = cos(x+PI/2)
-  .label SINH_HI = $4200
-  // sin(x) = cos(x+PI/2)
-  // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-  .label SINQ_LO = $4400
-  // sin(x) = cos(x+PI/2)
-  .label SINQ_HI = $4600
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label sx = 2
   .label sy = 3
-// sin(x) = cos(x+PI/2)
-// sin(x) = cos(x+PI/2)
 main: {
     sei
     jsr sprites_init
@@ -1031,28 +1004,29 @@ sprites_init: {
   yps: .fill 8, 0
   // The rotation matrix
   rotation_matrix: .fill 9, 0
-.pc = mulf_sqr1 "mulf_sqr1"
-  .for(var i=0;i<$200;i++) {
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
+  .align $100
+mulf_sqr1:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "mulf_sqr2"
-  .for(var i=0;i<$200;i++) {
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
+  .align $100
+mulf_sqr2:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
     }
 
-.pc = SPRITE "SPRITE"
-  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
-    .for (var y=0; y<21; y++)
-        .for (var x=0;x<3; x++)
-            .byte pic.getSinglecolorByte(x,y)
-
-.pc = PERSP_Z "PERSP_Z"
-  {
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  .align $100
+PERSP_Z:
+{
     .var d = 256.0	
     .var z0 = 6.0	
     // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)
@@ -1065,8 +1039,12 @@ sprites_init: {
     }
 	}
 
-.pc = SINH "SINH"
-  {
+  // Sine and Cosine Tables   
+  // Angles: $00=0, $80=PI,$100=2*PI
+  // Half Sine/Cosine: signed fixed [-$20;20]
+  .align $40
+SINH:
+{
     .var min = -$2000
     .var max = $2000
     .var ampl = max-min;
@@ -1076,8 +1054,10 @@ sprites_init: {
     }
     }
 
-.pc = SINQ "SINQ"
-  {
+  // Quarter Sine/Cosine: signed fixed [-$10,$10]
+  .align $40
+SINQ:
+{
     .var min = -$1000
     .var max = $1000
     .var ampl = max-min;
@@ -1087,47 +1067,9 @@ sprites_init: {
     }
     }
 
-.pc = SINH_LO "SINH_LO"
-  {
-    .var min = -$2000
-    .var max = $2000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-
-.pc = SINH_HI "SINH_HI"
-  {
-    .var min = -$2000
-    .var max = $2000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-
-.pc = SINQ_LO "SINQ_LO"
-  {
-    .var min = -$1000
-    .var max = $1000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-
-.pc = SINQ_HI "SINQ_HI"
-  {
-    .var min = -$1000
-    .var max = $1000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
+.pc = SPRITE "SPRITE"
+  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
 

@@ -49,7 +49,6 @@
   .label PLAYFIELD_CHARSET = $2800
   // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
-  .label SIN = $1400
   .label SIN_SPRITE = $2800
   // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
@@ -312,6 +311,12 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b2
 }
+SIN:
+.var AMPL = 200-21
+    .for(var i=0; i<256; i++) {
+  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
+    }
+
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	// Put the sprites into memory 
@@ -327,12 +332,6 @@ sprites_irq: {
 	    	.byte 0
 	  	}
 	}
-
-.pc = SIN "SIN"
-  .var AMPL = 200-21
-    .for(var i=0; i<256; i++) {
-  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
-    }
 
 .pc = SIN_SPRITE "SIN_SPRITE"
   .fill $40, $ff

@@ -33,7 +33,6 @@
   .label SCREEN = $400
   .label BITMAP = $2000
   .const SIN_SIZE = $200
-  .label sin2 = $1400
   .label rem16u = $25
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
@@ -819,8 +818,8 @@ bitmap_init: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
-.pc = sin2 "sin2"
-  .for(var i=0; i<512; i++) {
+sin2:
+.for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
 

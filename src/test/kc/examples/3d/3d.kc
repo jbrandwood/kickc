@@ -389,25 +389,22 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-byte* mulf_sqr1 = $2400;
-// g(x) =  >((( 1 - x ) * ( 1 - x )))
-byte* mulf_sqr2 = $2600;
-
-kickasm(pc mulf_sqr1) {{	
+byte[0x200] align(0x100) mulf_sqr1 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
-}}
+}};
 
-kickasm(pc mulf_sqr2) {{	
+// g(x) =  >((( 1 - x ) * ( 1 - x )))
+byte[0x200] align(0x100) mulf_sqr2 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
     }
-}}
+}};
 
 /*
 // Multiplication tables for seriously fast multiplication. 
@@ -454,9 +451,7 @@ kickasm(pc SPRITE, resource "balloon.png") {{
 }}
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed byte* PERSP_Z = $2800;
-
-kickasm(pc PERSP_Z) {{
+signed byte[0x100] align(0x100) PERSP_Z = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 6.0	
@@ -469,17 +464,12 @@ kickasm(pc PERSP_Z) {{
     	}
     }
 	}
-}}
+}};
 
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$20;20]
-signed byte* SINH = $2000;
-signed byte* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
-// Quarter Sine/Cosine: signed fixed [-$10,$10]
-signed byte* SINQ = $2200;
-signed byte* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
-kickasm(pc SINH) {{
+signed byte[0x140] align(0x40) SINH = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -489,8 +479,11 @@ kickasm(pc SINH) {{
         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
     }
     }
-}}
-kickasm(pc SINQ) {{
+}};
+signed byte* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
+
+// Quarter Sine/Cosine: signed fixed [-$10,$10]
+signed byte[0x140] align(0x40) SINQ = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -500,62 +493,62 @@ kickasm(pc SINQ) {{
         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
     }
     }
-}}
+}};
+signed byte* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
 
 // 16 bit Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
-byte* SINH_LO = $4000;
+byte[0x140] align(0x40) SINH_LO = kickasm {{
+    {
+    .var min = -$2000
+    .var max = $2000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
+    }
+    }
+}};
 byte* COSH_LO = SINH_LO+$40; // sin(x) = cos(x+PI/2)
-byte* SINH_HI = $4200;
+
+byte[0x140] align(0x40) SINH_HI = kickasm {{
+    {
+    .var min = -$2000
+    .var max = $2000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
+    }
+    }
+}};
 byte* COSH_HI = SINH_HI+$40; // sin(x) = cos(x+PI/2)
+
 // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-byte* SINQ_LO = $4400;
+byte[0x140] align(0x40) SINQ_LO = kickasm {{
+    {
+    .var min = -$1000
+    .var max = $1000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
+    }
+    }
+}};
 byte* COSQ_LO = SINQ_LO+$40; // sin(x) = cos(x+PI/2)
-byte* SINQ_HI = $4600;
+
+byte[0x140] align(0x40) SINQ_HI = kickasm {{
+    {
+    .var min = -$1000
+    .var max = $1000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
+    }
+    }
+}};
 byte* COSQ_HI = SINQ_HI+$40; // sin(x) = cos(x+PI/2)
-kickasm(pc SINH_LO) {{
-    {
-    .var min = -$2000
-    .var max = $2000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-}}
-kickasm(pc SINH_HI) {{
-    {
-    .var min = -$2000
-    .var max = $2000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-}}
-kickasm(pc SINQ_LO) {{
-    {
-    .var min = -$1000
-    .var max = $1000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte <(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-}}
-kickasm(pc SINQ_HI) {{
-    {
-    .var min = -$1000
-    .var max = $1000
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >(min+(ampl/2)+(ampl/2)*sin(rad))
-    }
-    }
-}}
 

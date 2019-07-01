@@ -4,33 +4,55 @@
 (byte*) BORDERCOL
 (const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
 (signed byte*) COSH
-(const signed byte*) COSH#0 COSH = (const signed byte*) SINH#0+(byte) $40
+(const signed byte*) COSH#0 COSH = (const signed byte[$140]) SINH#0+(byte) $40
 (signed byte*) COSQ
-(const signed byte*) COSQ#0 COSQ = (const signed byte*) SINQ#0+(byte) $40
+(const signed byte*) COSQ#0 COSQ = (const signed byte[$140]) SINQ#0+(byte) $40
 (byte) GREEN
 (const byte) GREEN#0 GREEN = (byte) 5
 (byte) LIGHT_BLUE
 (const byte) LIGHT_BLUE#0 LIGHT_BLUE = (byte) $e
 (byte) LIGHT_GREY
 (const byte) LIGHT_GREY#0 LIGHT_GREY = (byte) $f
-(signed byte*) PERSP_Z
-(const signed byte*) PERSP_Z#0 PERSP_Z = (signed byte*) 10240
+(signed byte[$100]) PERSP_Z
+(const signed byte[$100]) PERSP_Z#0 PERSP_Z = kickasm {{ {
+    .var d = 256.0	
+    .var z0 = 6.0	
+    // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
+ }}
 (byte*) RASTER
 (const byte*) RASTER#0 RASTER = (byte*) 53266
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(signed byte*) SINH
-(const signed byte*) SINH#0 SINH = (signed byte*) 8192
-(byte*) SINH_HI
-(const byte*) SINH_HI#0 SINH_HI = (byte*) 16896
-(byte*) SINH_LO
-(const byte*) SINH_LO#0 SINH_LO = (byte*) 16384
-(signed byte*) SINQ
-(const signed byte*) SINQ#0 SINQ = (signed byte*) 8704
-(byte*) SINQ_HI
-(const byte*) SINQ_HI#0 SINQ_HI = (byte*) 17920
-(byte*) SINQ_LO
-(const byte*) SINQ_LO#0 SINQ_LO = (byte*) 17408
+(signed byte[$140]) SINH
+(const signed byte[$140]) SINH#0 SINH = kickasm {{ {
+    .var min = -$2000
+    .var max = $2000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
+    }
+    }
+ }}
+(signed byte[$140]) SINQ
+(const signed byte[$140]) SINQ#0 SINQ = kickasm {{ {
+    .var min = -$1000
+    .var max = $1000
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
+    }
+    }
+ }}
 (byte*) SPRITE
 (const byte*) SPRITE#0 SPRITE = (byte*) 12288
 (byte*) SPRITES_COLS
@@ -317,10 +339,20 @@
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) mulf_sqr1
-(const byte*) mulf_sqr1#0 mulf_sqr1 = (byte*) 9216
-(byte*) mulf_sqr2
-(const byte*) mulf_sqr2#0 mulf_sqr2 = (byte*) 9728
+(byte[$200]) mulf_sqr1
+(const byte[$200]) mulf_sqr1#0 mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((i*i)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
+    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
+    }
+ }}
+(byte[$200]) mulf_sqr2
+(const byte[$200]) mulf_sqr2#0 mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
+    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
+    }
+ }}
 (signed byte*) pp
 (const signed byte*) pp#0 pp = (signed byte*) 243
 (signed byte[8]) pps

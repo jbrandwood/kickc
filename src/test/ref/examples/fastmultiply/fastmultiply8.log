@@ -1,19 +1,15 @@
-Resolved forward reference mulf_sqr1 to (byte*) mulf_sqr1
-Resolved forward reference mulf_sqr2 to (byte*) mulf_sqr2
+Resolved forward reference mulf_sqr1 to (byte[$200]) mulf_sqr1
+Resolved forward reference mulf_sqr2 to (byte[$200]) mulf_sqr2
 Adding pointer type conversion cast (byte*) print_screen in (byte*) print_screen ← (number) $400
 Adding pointer type conversion cast (byte*) main::at_line in (byte*) main::at_line ← (number) $400
 Adding pointer type conversion cast (byte*) init_screen::COLS in (byte*) init_screen::COLS ← (number) $d800
 Adding pointer type conversion cast (signed byte*) ap in (signed byte*) ap ← (number) $fd
 Adding pointer type conversion cast (signed byte*) bp in (signed byte*) bp ← (number) $fe
 Adding pointer type conversion cast (signed byte*) cp in (signed byte*) cp ← (number) $ff
-Adding pointer type conversion cast (byte*) mulf_sqr1 in (byte*) mulf_sqr1 ← (number) $2000
-Adding pointer type conversion cast (byte*) mulf_sqr2 in (byte*) mulf_sqr2 ← (number) $2200
 Identified constant variable (byte) init_screen::WHITE
 Identified constant variable (signed byte*) ap
 Identified constant variable (signed byte*) bp
 Identified constant variable (signed byte*) cp
-Identified constant variable (byte*) mulf_sqr1
-Identified constant variable (byte*) mulf_sqr2
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -285,15 +281,13 @@ fmul8::@return: scope:[fmul8]  from fmul8
   to:@return
 @22: scope:[]  from @21
   (byte*) print_screen#5 ← phi( @21/(byte*) print_screen#6 )
-  (byte*) mulf_sqr1#0 ← ((byte*)) (number) $2000
-  (byte*) mulf_sqr2#0 ← ((byte*)) (number) $2200
-  kickasm(location (byte*) mulf_sqr1#0) {{ .for(var i=0;i<$200;i++) {
+  (byte[$200]) mulf_sqr1#0 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
  }}
-  kickasm(location (byte*) mulf_sqr2#0) {{ .for(var i=0;i<$200;i++) {
+  (byte[$200]) mulf_sqr2#0 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -420,10 +414,10 @@ SYMBOL TABLE SSA
 (byte) main::k#3
 (signed byte) main::r
 (signed byte) main::r#0
-(byte*) mulf_sqr1
-(byte*) mulf_sqr1#0
-(byte*) mulf_sqr2
-(byte*) mulf_sqr2#0
+(byte[$200]) mulf_sqr1
+(byte[$200]) mulf_sqr1#0
+(byte[$200]) mulf_sqr2
+(byte[$200]) mulf_sqr2#0
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0
 (number~) print_byte_at::$2
@@ -538,8 +532,6 @@ Inlining cast (byte) init_screen::WHITE#0 ← (unumber)(number) 1
 Inlining cast (signed byte*) ap#0 ← (signed byte*)(number) $fd
 Inlining cast (signed byte*) bp#0 ← (signed byte*)(number) $fe
 Inlining cast (signed byte*) cp#0 ← (signed byte*)(number) $ff
-Inlining cast (byte*) mulf_sqr1#0 ← (byte*)(number) $2000
-Inlining cast (byte*) mulf_sqr2#0 ← (byte*)(number) $2200
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -572,8 +564,6 @@ Simplifying constant integer cast $28
 Simplifying constant pointer cast (signed byte*) 253
 Simplifying constant pointer cast (signed byte*) 254
 Simplifying constant pointer cast (signed byte*) 255
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant pointer cast (byte*) 8704
 Successful SSA optimization PassNCastSimplification
 Finalized signed number type (signed byte) 0
 Finalized unsigned number type (byte) 1
@@ -664,8 +654,18 @@ Constant (const byte) init_screen::m#0 = 0
 Constant (const signed byte*) ap#0 = (signed byte*) 253
 Constant (const signed byte*) bp#0 = (signed byte*) 254
 Constant (const signed byte*) cp#0 = (signed byte*) 255
-Constant (const byte*) mulf_sqr1#0 = (byte*) 8192
-Constant (const byte*) mulf_sqr2#0 = (byte*) 8704
+Constant (const byte[$200]) mulf_sqr1#0 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((i*i)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
+    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
+    }
+ }}
+Constant (const byte[$200]) mulf_sqr2#0 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
+    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
+    }
+ }}
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = print_screen#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -740,6 +740,7 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @19
 Adding NOP phi() at start of @21
+Adding NOP phi() at start of @22
 Adding NOP phi() at start of @23
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
@@ -752,38 +753,38 @@ Adding NOP phi() at start of init_screen::@5
 Adding NOP phi() at start of init_screen::@2
 Adding NOP phi() at start of print_cls
 CALL GRAPH
-Calls in [] to main:6 
-Calls in [main] to init_screen:10 print_sbyte_at:17 print_sbyte_at:28 fmul8:34 print_sbyte_at:41 
-Calls in [print_sbyte_at] to print_char_at:57 print_byte_at:62 print_char_at:67 
-Calls in [print_byte_at] to print_char_at:78 print_char_at:84 
-Calls in [init_screen] to print_cls:93 
+Calls in [] to main:5 
+Calls in [main] to init_screen:9 print_sbyte_at:16 print_sbyte_at:27 fmul8:33 print_sbyte_at:40 
+Calls in [print_sbyte_at] to print_char_at:56 print_byte_at:61 print_char_at:66 
+Calls in [print_byte_at] to print_char_at:77 print_char_at:83 
+Calls in [init_screen] to print_cls:92 
 
 Created 15 initial phi equivalence classes
-Coalesced [15] print_sbyte_at::b#10 ← print_sbyte_at::b#1
-Coalesced [16] print_sbyte_at::at#9 ← print_sbyte_at::at#0
-Coalesced [26] print_sbyte_at::b#12 ← print_sbyte_at::b#2
-Coalesced [27] print_sbyte_at::at#11 ← print_sbyte_at::at#1
-Not coalescing [29] main::at#12 ← main::at#2
-Coalesced [39] print_sbyte_at::b#11 ← print_sbyte_at::b#3
-Coalesced [40] print_sbyte_at::at#10 ← print_sbyte_at::at#2
-Coalesced [47] main::at_line#11 ← main::at#2
-Coalesced [48] main::i#8 ← main::i#1
-Coalesced [49] main::at#11 ← main::at#3
-Coalesced [50] main::j#5 ← main::j#1
-Coalesced [51] main::k#4 ← main::k#1
-Coalesced [52] main::at#10 ← main::at#1
-Coalesced [56] print_char_at::at#8 ← print_char_at::at#1
-Coalesced [58] print_sbyte_at::b#14 ← print_sbyte_at::b#4
-Coalesced [66] print_char_at::at#7 ← print_char_at::at#0
-Coalesced [69] print_sbyte_at::b#13 ← print_sbyte_at::b#0
-Coalesced [76] print_char_at::ch#5 ← print_char_at::ch#2
-Coalesced [77] print_char_at::at#5 ← print_char_at::at#2
-Coalesced [82] print_char_at::ch#6 ← print_char_at::ch#3
-Coalesced [83] print_char_at::at#6 ← print_char_at::at#3
-Coalesced [109] init_screen::COLS#5 ← init_screen::COLS#1
-Coalesced [110] init_screen::m#3 ← init_screen::m#1
-Coalesced [111] init_screen::l#3 ← init_screen::l#1
-Coalesced [118] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [14] print_sbyte_at::b#10 ← print_sbyte_at::b#1
+Coalesced [15] print_sbyte_at::at#9 ← print_sbyte_at::at#0
+Coalesced [25] print_sbyte_at::b#12 ← print_sbyte_at::b#2
+Coalesced [26] print_sbyte_at::at#11 ← print_sbyte_at::at#1
+Not coalescing [28] main::at#12 ← main::at#2
+Coalesced [38] print_sbyte_at::b#11 ← print_sbyte_at::b#3
+Coalesced [39] print_sbyte_at::at#10 ← print_sbyte_at::at#2
+Coalesced [46] main::at_line#11 ← main::at#2
+Coalesced [47] main::i#8 ← main::i#1
+Coalesced [48] main::at#11 ← main::at#3
+Coalesced [49] main::j#5 ← main::j#1
+Coalesced [50] main::k#4 ← main::k#1
+Coalesced [51] main::at#10 ← main::at#1
+Coalesced [55] print_char_at::at#8 ← print_char_at::at#1
+Coalesced [57] print_sbyte_at::b#14 ← print_sbyte_at::b#4
+Coalesced [65] print_char_at::at#7 ← print_char_at::at#0
+Coalesced [68] print_sbyte_at::b#13 ← print_sbyte_at::b#0
+Coalesced [75] print_char_at::ch#5 ← print_char_at::ch#2
+Coalesced [76] print_char_at::at#5 ← print_char_at::at#2
+Coalesced [81] print_char_at::ch#6 ← print_char_at::ch#3
+Coalesced [82] print_char_at::at#6 ← print_char_at::at#3
+Coalesced [108] init_screen::COLS#5 ← init_screen::COLS#1
+Coalesced [109] init_screen::m#3 ← init_screen::m#1
+Coalesced [110] init_screen::l#3 ← init_screen::l#1
+Coalesced [117] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 14 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @19
@@ -813,6 +814,7 @@ Renumbering block main::@10 to main::@7
 Renumbering block main::@11 to main::@8
 Renumbering block init_screen::@3 to init_screen::@2
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of init_screen
@@ -823,167 +825,156 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  kickasm(location (const byte*) mulf_sqr1#0) {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((i*i)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
-    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
-    }
- }}
-  kickasm(location (const byte*) mulf_sqr2#0) {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
-    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
-    }
- }}
-  [3] call main 
+  [1] phi()
+  [2] call main 
   to:@end
 @end: scope:[]  from @1
-  [4] phi()
+  [3] phi()
 main: scope:[main]  from @1
-  [5] phi()
-  [6] call init_screen 
+  [4] phi()
+  [5] call init_screen 
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [7] (byte*) main::at#4 ← phi( main/(byte*) 1024+(byte) 4 main::@5/(byte*) main::at#1 )
-  [7] (byte) main::k#2 ← phi( main/(byte) 0 main::@5/(byte) main::k#1 )
-  [8] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2)
-  [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4
-  [10] call print_sbyte_at 
+  [6] (byte*) main::at#4 ← phi( main/(byte*) 1024+(byte) 4 main::@5/(byte*) main::at#1 )
+  [6] (byte) main::k#2 ← phi( main/(byte) 0 main::@5/(byte) main::k#1 )
+  [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2)
+  [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4
+  [9] call print_sbyte_at 
   to:main::@5
 main::@5: scope:[main]  from main::@1
-  [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4
-  [12] (byte) main::k#1 ← ++ (byte) main::k#2
-  [13] if((byte) main::k#1!=(byte) 9) goto main::@1
+  [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4
+  [11] (byte) main::k#1 ← ++ (byte) main::k#2
+  [12] if((byte) main::k#1!=(byte) 9) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@4 main::@5
-  [14] (byte) main::i#2 ← phi( main::@5/(byte) 0 main::@4/(byte) main::i#1 )
-  [14] (byte*) main::at_line#2 ← phi( main::@5/(byte*) 1024 main::@4/(byte*) main::at#2 )
-  [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28
-  [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2)
-  [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2
-  [18] call print_sbyte_at 
+  [13] (byte) main::i#2 ← phi( main::@5/(byte) 0 main::@4/(byte) main::i#1 )
+  [13] (byte*) main::at_line#2 ← phi( main::@5/(byte*) 1024 main::@4/(byte*) main::at#2 )
+  [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28
+  [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2)
+  [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2
+  [17] call print_sbyte_at 
   to:main::@6
 main::@6: scope:[main]  from main::@2
-  [19] (byte*~) main::at#12 ← (byte*) main::at#2
+  [18] (byte*~) main::at#12 ← (byte*) main::at#2
   to:main::@3
 main::@3: scope:[main]  from main::@6 main::@8
-  [20] (byte) main::j#2 ← phi( main::@8/(byte) main::j#1 main::@6/(byte) 0 )
-  [20] (byte*) main::at#6 ← phi( main::@8/(byte*) main::at#3 main::@6/(byte*~) main::at#12 )
-  [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4
-  [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2)
-  [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2)
-  [24] call fmul8 
-  [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
+  [19] (byte) main::j#2 ← phi( main::@8/(byte) main::j#1 main::@6/(byte) 0 )
+  [19] (byte*) main::at#6 ← phi( main::@8/(byte*) main::at#3 main::@6/(byte*~) main::at#12 )
+  [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4
+  [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2)
+  [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2)
+  [23] call fmul8 
+  [24] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
   to:main::@7
 main::@7: scope:[main]  from main::@3
-  [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
-  [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0
-  [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3
-  [29] call print_sbyte_at 
+  [25] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
+  [26] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0
+  [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3
+  [28] call print_sbyte_at 
   to:main::@8
 main::@8: scope:[main]  from main::@7
-  [30] (byte) main::j#1 ← ++ (byte) main::j#2
-  [31] if((byte) main::j#1!=(byte) 9) goto main::@3
+  [29] (byte) main::j#1 ← ++ (byte) main::j#2
+  [30] if((byte) main::j#1!=(byte) 9) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@8
-  [32] (byte) main::i#1 ← ++ (byte) main::i#2
-  [33] if((byte) main::i#1!=(byte) 9) goto main::@2
+  [31] (byte) main::i#1 ← ++ (byte) main::i#2
+  [32] if((byte) main::i#1!=(byte) 9) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@4
-  [34] return 
+  [33] return 
   to:@return
 print_sbyte_at: scope:[print_sbyte_at]  from main::@1 main::@2 main::@7
-  [35] (byte*) print_sbyte_at::at#3 ← phi( main::@1/(byte*) print_sbyte_at::at#0 main::@7/(byte*) print_sbyte_at::at#2 main::@2/(byte*) print_sbyte_at::at#1 )
-  [35] (signed byte) print_sbyte_at::b#4 ← phi( main::@1/(signed byte) print_sbyte_at::b#1 main::@7/(signed byte) print_sbyte_at::b#3 main::@2/(signed byte) print_sbyte_at::b#2 )
-  [36] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1
+  [34] (byte*) print_sbyte_at::at#3 ← phi( main::@1/(byte*) print_sbyte_at::at#0 main::@7/(byte*) print_sbyte_at::at#2 main::@2/(byte*) print_sbyte_at::at#1 )
+  [34] (signed byte) print_sbyte_at::b#4 ← phi( main::@1/(signed byte) print_sbyte_at::b#1 main::@7/(signed byte) print_sbyte_at::b#3 main::@2/(signed byte) print_sbyte_at::b#2 )
+  [35] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1
   to:print_sbyte_at::@3
 print_sbyte_at::@3: scope:[print_sbyte_at]  from print_sbyte_at
-  [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
-  [38] call print_char_at 
+  [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
+  [37] call print_char_at 
   to:print_sbyte_at::@2
 print_sbyte_at::@2: scope:[print_sbyte_at]  from print_sbyte_at::@3 print_sbyte_at::@4
-  [39] (signed byte) print_sbyte_at::b#6 ← phi( print_sbyte_at::@4/(signed byte) print_sbyte_at::b#0 print_sbyte_at::@3/(signed byte) print_sbyte_at::b#4 )
-  [40] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
-  [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1
-  [42] call print_byte_at 
+  [38] (signed byte) print_sbyte_at::b#6 ← phi( print_sbyte_at::@4/(signed byte) print_sbyte_at::b#0 print_sbyte_at::@3/(signed byte) print_sbyte_at::b#4 )
+  [39] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
+  [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1
+  [41] call print_byte_at 
   to:print_sbyte_at::@return
 print_sbyte_at::@return: scope:[print_sbyte_at]  from print_sbyte_at::@2
-  [43] return 
+  [42] return 
   to:@return
 print_sbyte_at::@1: scope:[print_sbyte_at]  from print_sbyte_at
-  [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
-  [45] call print_char_at 
+  [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
+  [44] call print_char_at 
   to:print_sbyte_at::@4
 print_sbyte_at::@4: scope:[print_sbyte_at]  from print_sbyte_at::@1
-  [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4
+  [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4
   to:print_sbyte_at::@2
 print_char_at: scope:[print_char_at]  from print_byte_at print_byte_at::@1 print_sbyte_at::@1 print_sbyte_at::@3
-  [47] (byte*) print_char_at::at#4 ← phi( print_byte_at/(byte*) print_char_at::at#2 print_byte_at::@1/(byte*) print_char_at::at#3 print_sbyte_at::@1/(byte*) print_char_at::at#0 print_sbyte_at::@3/(byte*) print_char_at::at#1 )
-  [47] (byte) print_char_at::ch#4 ← phi( print_byte_at/(byte) print_char_at::ch#2 print_byte_at::@1/(byte) print_char_at::ch#3 print_sbyte_at::@1/(byte) '-' print_sbyte_at::@3/(byte) ' ' )
-  [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4
+  [46] (byte*) print_char_at::at#4 ← phi( print_byte_at/(byte*) print_char_at::at#2 print_byte_at::@1/(byte*) print_char_at::at#3 print_sbyte_at::@1/(byte*) print_char_at::at#0 print_sbyte_at::@3/(byte*) print_char_at::at#1 )
+  [46] (byte) print_char_at::ch#4 ← phi( print_byte_at/(byte) print_char_at::ch#2 print_byte_at::@1/(byte) print_char_at::ch#3 print_sbyte_at::@1/(byte) '-' print_sbyte_at::@3/(byte) ' ' )
+  [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4
   to:print_char_at::@return
 print_char_at::@return: scope:[print_char_at]  from print_char_at
-  [49] return 
+  [48] return 
   to:@return
 print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
-  [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4
-  [51] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0)
-  [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-  [53] call print_char_at 
+  [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4
+  [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0)
+  [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
+  [52] call print_char_at 
   to:print_byte_at::@1
 print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
-  [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f
-  [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1
-  [56] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2)
-  [57] call print_char_at 
+  [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f
+  [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1
+  [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2)
+  [56] call print_char_at 
   to:print_byte_at::@return
 print_byte_at::@return: scope:[print_byte_at]  from print_byte_at::@1
-  [58] return 
+  [57] return 
   to:@return
 fmul8: scope:[fmul8]  from main::@3
-  [59] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0
-  [60] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0
+  [58] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0
+  [59] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0
   asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
-  [62] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0)
+  [61] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0)
   to:fmul8::@return
 fmul8::@return: scope:[fmul8]  from fmul8
-  [63] return 
+  [62] return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  [64] phi()
-  [65] call print_cls 
+  [63] phi()
+  [64] call print_cls 
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  [66] (byte) init_screen::l#2 ← phi( init_screen::@1/(byte) init_screen::l#1 init_screen/(byte) 0 )
-  [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0
-  [68] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2
-  [69] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1
+  [65] (byte) init_screen::l#2 ← phi( init_screen::@1/(byte) init_screen::l#1 init_screen/(byte) 0 )
+  [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0
+  [67] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2
+  [68] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@1 init_screen::@2
-  [70] (byte) init_screen::m#2 ← phi( init_screen::@1/(byte) 0 init_screen::@2/(byte) init_screen::m#1 )
-  [70] (byte*) init_screen::COLS#3 ← phi( init_screen::@1/(byte*) 55296 init_screen::@2/(byte*) init_screen::COLS#1 )
-  [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0
-  [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0
-  [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0
-  [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0
-  [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28
-  [76] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2
-  [77] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2
+  [69] (byte) init_screen::m#2 ← phi( init_screen::@1/(byte) 0 init_screen::@2/(byte) init_screen::m#1 )
+  [69] (byte*) init_screen::COLS#3 ← phi( init_screen::@1/(byte*) 55296 init_screen::@2/(byte*) init_screen::COLS#1 )
+  [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0
+  [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0
+  [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0
+  [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0
+  [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28
+  [75] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2
+  [76] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2
   to:init_screen::@return
 init_screen::@return: scope:[init_screen]  from init_screen::@2
-  [78] return 
+  [77] return 
   to:@return
 print_cls: scope:[print_cls]  from init_screen
-  [79] phi()
+  [78] phi()
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [80] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) print_screen#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  [81] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1
+  [79] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) print_screen#0 print_cls::@1/(byte*) print_cls::sc#1 )
+  [80] *((byte*) print_cls::sc#2) ← (byte) ' '
+  [81] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+  [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [84] return 
+  [83] return 
   to:@return
 
 
@@ -1031,8 +1022,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::k#2 6.6000000000000005
 (signed byte) main::r
 (signed byte) main::r#0 202.0
-(byte*) mulf_sqr1
-(byte*) mulf_sqr2
+(byte[$200]) mulf_sqr1
+(byte[$200]) mulf_sqr2
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0 4.0
 (byte~) print_byte_at::$2 2.0
@@ -1163,28 +1154,23 @@ INITIAL ASM
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
-  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  // f(x) = >(( x * x ))
-  .label mulf_sqr1 = $2000
-  // g(x) =  >((( 1 - x ) * ( 1 - x )))
-  .label mulf_sqr2 = $2200
 //SEG3 @begin
 bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 kickasm(location (const byte*) mulf_sqr1#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((i*i)/256) }     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }     }  }}
-//SEG6 kickasm(location (const byte*) mulf_sqr2#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }       }  }}
-//SEG7 [3] call main 
-//SEG8 [5] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [4] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+//SEG9 @end
 bend:
-//SEG11 main
+//SEG10 main
 main: {
     .label at = 3
     .label k = 2
@@ -1196,47 +1182,47 @@ main: {
     .label at_line = 5
     .label at_6 = 8
     .label at_12 = 8
-  //SEG12 [6] call init_screen 
-  //SEG13 [64] phi from main to init_screen [phi:main->init_screen]
+  //SEG11 [5] call init_screen 
+  //SEG12 [63] phi from main to init_screen [phi:main->init_screen]
   init_screen_from_main:
     jsr init_screen
-  //SEG14 [7] phi from main to main::@1 [phi:main->main::@1]
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG15 [7] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG14 [6] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400+4
     sta at
     lda #>$400+4
     sta at+1
-  //SEG16 [7] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+  //SEG15 [6] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta k
     jmp b1
-  //SEG17 [7] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG16 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  //SEG18 [7] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG19 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 [6] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG18 [6] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp b1
-  //SEG20 main::@1
+  //SEG19 main::@1
   b1:
-  //SEG21 [8] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG20 [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy k
     lda vals,y
     sta print_sbyte_at.b
-  //SEG22 [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
+  //SEG21 [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
     lda at
     sta print_sbyte_at.at
     lda at+1
     sta print_sbyte_at.at+1
-  //SEG23 [10] call print_sbyte_at 
-  //SEG24 [35] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
+  //SEG22 [9] call print_sbyte_at 
+  //SEG23 [34] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
   print_sbyte_at_from_b1:
-  //SEG25 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
-  //SEG26 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
+  //SEG24 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
+  //SEG25 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b5
-  //SEG27 main::@5
+  //SEG26 main::@5
   b5:
-  //SEG28 [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG27 [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at
@@ -1244,31 +1230,31 @@ main: {
     bcc !+
     inc at+1
   !:
-  //SEG29 [12] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuz1=_inc_vbuz1 
+  //SEG28 [11] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuz1=_inc_vbuz1 
     inc k
-  //SEG30 [13] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG29 [12] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp k
     bne b1_from_b5
-  //SEG31 [14] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
+  //SEG30 [13] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
   b2_from_b5:
-  //SEG32 [14] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
+  //SEG31 [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG33 [14] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
+  //SEG32 [13] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
     lda #<$400
     sta at_line
     lda #>$400
     sta at_line+1
     jmp b2
-  //SEG34 [14] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG33 [13] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
-  //SEG35 [14] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
-  //SEG36 [14] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
+  //SEG34 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
+  //SEG35 [13] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
     jmp b2
-  //SEG37 main::@2
+  //SEG36 main::@2
   b2:
-  //SEG38 [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG37 [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc at_2
@@ -1276,44 +1262,44 @@ main: {
     bcc !+
     inc at_2+1
   !:
-  //SEG39 [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG38 [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy i
     lda vals,y
     sta print_sbyte_at.b
-  //SEG40 [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG39 [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta print_sbyte_at.at
     lda at_2+1
     sta print_sbyte_at.at+1
-  //SEG41 [18] call print_sbyte_at 
-  //SEG42 [35] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
+  //SEG40 [17] call print_sbyte_at 
+  //SEG41 [34] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
   print_sbyte_at_from_b2:
-  //SEG43 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
-  //SEG44 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
+  //SEG42 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
+  //SEG43 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b6
-  //SEG45 main::@6
+  //SEG44 main::@6
   b6:
-  //SEG46 [19] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG45 [18] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta at_12
     lda at_2+1
     sta at_12+1
-  //SEG47 [20] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  //SEG46 [19] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   b3_from_b6:
-  //SEG48 [20] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
+  //SEG47 [19] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-  //SEG49 [20] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
+  //SEG48 [19] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
     jmp b3
-  //SEG50 [20] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG49 [19] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
   b3_from_b8:
-  //SEG51 [20] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
-  //SEG52 [20] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
+  //SEG50 [19] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+  //SEG51 [19] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
     jmp b3
-  //SEG53 main::@3
+  //SEG52 main::@3
   b3:
-  //SEG54 [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG53 [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at_3
@@ -1321,99 +1307,99 @@ main: {
     bcc !+
     inc at_3+1
   !:
-  //SEG55 [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG54 [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy i
     lda vals,y
     sta fmul8.a
-  //SEG56 [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG55 [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy j
     lda vals,y
     sta fmul8.b
-  //SEG57 [24] call fmul8 
+  //SEG56 [23] call fmul8 
     jsr fmul8
-  //SEG58 [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1 -- vbsz1=vbsz2 
+  //SEG57 [24] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1 -- vbsz1=vbsz2 
     lda fmul8.return_1
     sta fmul8.return
     jmp b7
-  //SEG59 main::@7
+  //SEG58 main::@7
   b7:
-  //SEG60 [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0 -- vbsz1=vbsz2 
+  //SEG59 [25] (signed byte) main::r#0 ← (signed byte) fmul8::return#0 -- vbsz1=vbsz2 
     lda fmul8.return
     sta r
-  //SEG61 [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsz2 
+  //SEG60 [26] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsz2 
     lda r
     sta print_sbyte_at.b
-  //SEG62 [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
+  //SEG61 [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
     lda at_3
     sta print_sbyte_at.at
     lda at_3+1
     sta print_sbyte_at.at+1
-  //SEG63 [29] call print_sbyte_at 
-  //SEG64 [35] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
+  //SEG62 [28] call print_sbyte_at 
+  //SEG63 [34] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
   print_sbyte_at_from_b7:
-  //SEG65 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
-  //SEG66 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
+  //SEG64 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
+  //SEG65 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b8
-  //SEG67 main::@8
+  //SEG66 main::@8
   b8:
-  //SEG68 [30] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
+  //SEG67 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG69 [31] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG68 [30] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp j
     bne b3_from_b8
     jmp b4
-  //SEG70 main::@4
+  //SEG69 main::@4
   b4:
-  //SEG71 [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG70 [31] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG72 [33] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG71 [32] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp i
     bne b2_from_b4
     jmp breturn
-  //SEG73 main::@return
+  //SEG72 main::@return
   breturn:
-  //SEG74 [34] return 
+  //SEG73 [33] return 
     rts
 }
-//SEG75 print_sbyte_at
+//SEG74 print_sbyte_at
 // Print a signed byte as hex at a specific screen position
 // print_sbyte_at(signed byte zeropage($d) b, byte* zeropage($b) at)
 print_sbyte_at: {
     .label b = $d
     .label at = $b
-  //SEG76 [36] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
+  //SEG75 [35] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
     lda b
     bmi b1
     jmp b3
-  //SEG77 print_sbyte_at::@3
+  //SEG76 print_sbyte_at::@3
   b3:
-  //SEG78 [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 -- pbuz1=pbuz2 
+  //SEG77 [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG79 [38] call print_char_at 
-  //SEG80 [47] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
+  //SEG78 [37] call print_char_at 
+  //SEG79 [46] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   print_char_at_from_b3:
-  //SEG81 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
-  //SEG82 [47] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG80 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
+  //SEG81 [46] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
     lda #' '
     sta print_char_at.ch
     jsr print_char_at
-  //SEG83 [39] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
+  //SEG82 [38] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
   b2_from_b3:
   b2_from_b4:
-  //SEG84 [39] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
+  //SEG83 [38] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
     jmp b2
-  //SEG85 print_sbyte_at::@2
+  //SEG84 print_sbyte_at::@2
   b2:
-  //SEG86 [40] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6 -- vbuz1=vbuz2 
+  //SEG85 [39] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6 -- vbuz1=vbuz2 
     lda b
     sta print_byte_at.b
-  //SEG87 [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+  //SEG86 [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda at
     clc
     adc #1
@@ -1421,32 +1407,32 @@ print_sbyte_at: {
     lda at+1
     adc #0
     sta print_byte_at.at+1
-  //SEG88 [42] call print_byte_at 
+  //SEG87 [41] call print_byte_at 
     jsr print_byte_at
     jmp breturn
-  //SEG89 print_sbyte_at::@return
+  //SEG88 print_sbyte_at::@return
   breturn:
-  //SEG90 [43] return 
+  //SEG89 [42] return 
     rts
-  //SEG91 print_sbyte_at::@1
+  //SEG90 print_sbyte_at::@1
   b1:
-  //SEG92 [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 -- pbuz1=pbuz2 
+  //SEG91 [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG93 [45] call print_char_at 
-  //SEG94 [47] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
+  //SEG92 [44] call print_char_at 
+  //SEG93 [46] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG95 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
-  //SEG96 [47] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG94 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
+  //SEG95 [46] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
     lda #'-'
     sta print_char_at.ch
     jsr print_char_at
     jmp b4
-  //SEG97 print_sbyte_at::@4
+  //SEG96 print_sbyte_at::@4
   b4:
-  //SEG98 [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
+  //SEG97 [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
     lda b
     eor #$ff
     clc
@@ -1454,23 +1440,23 @@ print_sbyte_at: {
     sta b
     jmp b2_from_b4
 }
-//SEG99 print_char_at
+//SEG98 print_char_at
 // Print a single char
 // print_char_at(byte zeropage($e) ch, byte* zeropage($f) at)
 print_char_at: {
     .label at = $f
     .label ch = $e
-  //SEG100 [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
+  //SEG99 [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
     lda ch
     ldy #0
     sta (at),y
     jmp breturn
-  //SEG101 print_char_at::@return
+  //SEG100 print_char_at::@return
   breturn:
-  //SEG102 [49] return 
+  //SEG101 [48] return 
     rts
 }
-//SEG103 print_byte_at
+//SEG102 print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage($1b) b, byte* zeropage($1c) at)
 print_byte_at: {
@@ -1478,36 +1464,36 @@ print_byte_at: {
     .label _2 = $1f
     .label b = $1b
     .label at = $1c
-  //SEG104 [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+  //SEG103 [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
     sta _0
-  //SEG105 [51] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG104 [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _0
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG106 [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 -- pbuz1=pbuz2 
+  //SEG105 [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG107 [53] call print_char_at 
-  //SEG108 [47] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  //SEG106 [52] call print_char_at 
+  //SEG107 [46] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
-  //SEG109 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG110 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  //SEG108 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  //SEG109 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp b1
-  //SEG111 print_byte_at::@1
+  //SEG110 print_byte_at::@1
   b1:
-  //SEG112 [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+  //SEG111 [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and b
     sta _2
-  //SEG113 [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+  //SEG112 [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda at
     clc
     adc #1
@@ -1515,36 +1501,36 @@ print_byte_at: {
     lda at+1
     adc #0
     sta print_char_at.at+1
-  //SEG114 [56] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG113 [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG115 [57] call print_char_at 
-  //SEG116 [47] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  //SEG114 [56] call print_char_at 
+  //SEG115 [46] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG117 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG118 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  //SEG116 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  //SEG117 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp breturn
-  //SEG119 print_byte_at::@return
+  //SEG118 print_byte_at::@return
   breturn:
-  //SEG120 [58] return 
+  //SEG119 [57] return 
     rts
 }
-//SEG121 fmul8
+//SEG120 fmul8
 // fmul8(signed byte zeropage($17) a, signed byte zeropage($18) b)
 fmul8: {
     .label a = $17
     .label b = $18
     .label return = $19
     .label return_1 = $20
-  //SEG122 [59] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsz1 
+  //SEG121 [58] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsz1 
     lda a
     sta ap
-  //SEG123 [60] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsz1 
+  //SEG122 [59] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsz1 
     lda b
     sta bp
-  //SEG124 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
+  //SEG123 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
     lda ap
     sta A1+1
     eor #$ff
@@ -1556,82 +1542,82 @@ fmul8: {
   A2:
     sbc mulf_sqr2,x
     sta cp
-  //SEG125 [62] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsz1=_deref_pbsc1 
+  //SEG124 [61] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsz1=_deref_pbsc1 
     lda cp
     sta return_1
     jmp breturn
-  //SEG126 fmul8::@return
+  //SEG125 fmul8::@return
   breturn:
-  //SEG127 [63] return 
+  //SEG126 [62] return 
     rts
 }
-//SEG128 init_screen
+//SEG127 init_screen
 init_screen: {
     .const WHITE = 1
     .label l = $11
     .label COLS = $12
     .label m = $14
-  //SEG129 [65] call print_cls 
-  //SEG130 [79] phi from init_screen to print_cls [phi:init_screen->print_cls]
+  //SEG128 [64] call print_cls 
+  //SEG129 [78] phi from init_screen to print_cls [phi:init_screen->print_cls]
   print_cls_from_init_screen:
     jsr print_cls
-  //SEG131 [66] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
+  //SEG130 [65] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   b1_from_init_screen:
-  //SEG132 [66] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuz1=vbuc1 
+  //SEG131 [65] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta l
     jmp b1
-  //SEG133 [66] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
+  //SEG132 [65] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
   b1_from_b1:
-  //SEG134 [66] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
+  //SEG133 [65] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
     jmp b1
-  //SEG135 init_screen::@1
+  //SEG134 init_screen::@1
   b1:
-  //SEG136 [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG135 [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #WHITE
     ldy l
     sta $d800,y
-  //SEG137 [68] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuz1=_inc_vbuz1 
+  //SEG136 [67] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuz1=_inc_vbuz1 
     inc l
-  //SEG138 [69] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG137 [68] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp l
     bne b1_from_b1
-  //SEG139 [70] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
+  //SEG138 [69] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
   b2_from_b1:
-  //SEG140 [70] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuz1=vbuc1 
+  //SEG139 [69] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta m
-  //SEG141 [70] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
+  //SEG140 [69] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
     lda #<$d800
     sta COLS
     lda #>$d800
     sta COLS+1
     jmp b2
-  //SEG142 [70] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
+  //SEG141 [69] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
   b2_from_b2:
-  //SEG143 [70] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
-  //SEG144 [70] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
+  //SEG142 [69] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
+  //SEG143 [69] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
     jmp b2
-  //SEG145 init_screen::@2
+  //SEG144 init_screen::@2
   b2:
-  //SEG146 [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG145 [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
     sta (COLS),y
-  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG146 [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #1
     sta (COLS),y
-  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #2
     sta (COLS),y
-  //SEG149 [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #3
     sta (COLS),y
-  //SEG150 [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG149 [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc COLS
@@ -1639,46 +1625,46 @@ init_screen: {
     bcc !+
     inc COLS+1
   !:
-  //SEG151 [76] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuz1=_inc_vbuz1 
+  //SEG150 [75] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuz1=_inc_vbuz1 
     inc m
-  //SEG152 [77] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG151 [76] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp m
     bne b2_from_b2
     jmp breturn
-  //SEG153 init_screen::@return
+  //SEG152 init_screen::@return
   breturn:
-  //SEG154 [78] return 
+  //SEG153 [77] return 
     rts
 }
-//SEG155 print_cls
+//SEG154 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $15
-  //SEG156 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG155 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG157 [80] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG156 [79] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_screen
     sta sc
     lda #>print_screen
     sta sc+1
     jmp b1
-  //SEG158 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG157 [79] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG159 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG158 [79] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG160 print_cls::@1
+  //SEG159 print_cls::@1
   b1:
-  //SEG161 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG160 [80] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG162 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG161 [81] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG163 [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG162 [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_screen+$3e8
     bne b1_from_b1
@@ -1686,23 +1672,28 @@ print_cls: {
     cmp #<print_screen+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG164 print_cls::@return
+  //SEG163 print_cls::@return
   breturn:
-  //SEG165 [84] return 
+  //SEG164 [83] return 
     rts
 }
-//SEG166 File Data
+//SEG165 File Data
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
-.pc = mulf_sqr1 "mulf_sqr1"
-  .for(var i=0;i<$200;i++) {
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
+  .align $100
+mulf_sqr1:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "mulf_sqr2"
-  .for(var i=0;i<$200;i++) {
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
+  .align $100
+mulf_sqr2:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -1710,109 +1701,109 @@ print_cls: {
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:3 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
+Statement [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:2 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::k#2 main::k#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ]
-Statement [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:3 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
-Statement [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:3 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:2 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
+Statement [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:2 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ main::i#2 main::i#1 ]
-Statement [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:3 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
-Statement [19] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:3 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
-Statement [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
+Statement [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
+Statement [18] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:2 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
+Statement [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ main::j#2 main::j#1 ]
-Statement [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
-Statement [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
-Statement [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
+Statement [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
+Statement [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
+Statement [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:27 [ print_byte_at::b#0 ]
-Statement [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
-Statement [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
-Statement [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:3::print_sbyte_at:10::print_char_at:38 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:38 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:38 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_char_at:45 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:45 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:45 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:53 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:57 [ main::k#2 main::at#4 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte y 
+Statement [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
+Statement [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
+Statement [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:2::print_sbyte_at:9::print_char_at:37 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:37 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:37 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_char_at:44 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:44 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:44 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:52 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:56 [ main::k#2 main::at#4 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::k#2 main::k#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:7 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:10 [ main::j#2 main::j#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:27 [ print_byte_at::b#0 ]
-Statement [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
-Statement [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
+Statement [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
+Statement [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ]
-Statement [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
-Statement [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:31 [ print_byte_at::$2 ]
 Statement asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  } always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:7 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:10 [ main::j#2 main::j#1 ]
-Statement [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:3::init_screen:6 [ init_screen::l#2 ] ) always clobbers reg byte a 
+Statement [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:2::init_screen:5 [ init_screen::l#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ init_screen::l#2 init_screen::l#1 ]
-Statement [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ init_screen::m#2 init_screen::m#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:20 [ init_screen::m#2 init_screen::m#1 ]
-Statement [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:3::init_screen:6 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
-Statement [81] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:3 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
-Statement [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:3 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
-Statement [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:3 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
-Statement [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:3 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
-Statement [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:3 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
-Statement [19] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:3 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
-Statement [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
-Statement [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
-Statement [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
+Statement [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:2::init_screen:5 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
+Statement [80] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:2 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:2 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
+Statement [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:2 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
+Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
+Statement [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
+Statement [18] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:2 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
+Statement [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
+Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
+Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:23 [ fmul8::a#0 ]
-Statement [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
-Statement [31] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
-Statement [33] if((byte) main::i#1!=(byte) 9) goto main::@2 [ main::at#2 main::i#1 ] ( main:3 [ main::at#2 main::i#1 ] ) always clobbers reg byte a 
-Statement [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
-Statement [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
-Statement [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
-Statement [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
-Statement [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:3::print_sbyte_at:10::print_char_at:38 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:38 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:38 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_char_at:45 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:45 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:45 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:53 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:57 [ main::k#2 main::at#4 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a reg byte y 
-Statement [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
-Statement [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
-Statement [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
-Statement [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
+Statement [30] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:2 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
+Statement [32] if((byte) main::i#1!=(byte) 9) goto main::@2 [ main::at#2 main::i#1 ] ( main:2 [ main::at#2 main::i#1 ] ) always clobbers reg byte a 
+Statement [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
+Statement [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
+Statement [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
+Statement [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
+Statement [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:2::print_sbyte_at:9::print_char_at:37 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:37 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:37 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_char_at:44 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:44 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:44 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:52 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:56 [ main::k#2 main::at#4 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a reg byte y 
+Statement [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
+Statement [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
+Statement [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
 Statement asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  } always clobbers reg byte a reg byte x 
-Statement [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:3::init_screen:6 [ init_screen::l#2 ] ) always clobbers reg byte a 
-Statement [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:3::init_screen:6 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
-Statement [81] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:3 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
-Statement [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:3 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
-Statement [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:3 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
-Statement [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:3 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
-Statement [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:3 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
-Statement [19] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:3 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
-Statement [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
-Statement [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
-Statement [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
-Statement [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
-Statement [31] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
-Statement [33] if((byte) main::i#1!=(byte) 9) goto main::@2 [ main::at#2 main::i#1 ] ( main:3 [ main::at#2 main::i#1 ] ) always clobbers reg byte a 
-Statement [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
-Statement [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
-Statement [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
-Statement [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:3::print_sbyte_at:10 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:18 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:3::print_sbyte_at:29 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
-Statement [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:3::print_sbyte_at:10::print_char_at:38 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:38 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:38 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_char_at:45 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:18::print_char_at:45 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:29::print_char_at:45 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:53 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:53 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:3::print_sbyte_at:10::print_byte_at:42::print_char_at:57 [ main::k#2 main::at#4 ] main:3::print_sbyte_at:18::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42::print_char_at:57 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a reg byte y 
-Statement [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
-Statement [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
-Statement [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
-Statement [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:3::print_sbyte_at:10::print_byte_at:42 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:18::print_byte_at:42 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:3::print_sbyte_at:29::print_byte_at:42 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:2::init_screen:5 [ init_screen::l#2 ] ) always clobbers reg byte a 
+Statement [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:2::init_screen:5 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
+Statement [80] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:2 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:2 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
+Statement [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:2 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
+Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
+Statement [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
+Statement [18] (byte*~) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:2 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
+Statement [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
+Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
+Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
+Statement [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
+Statement [30] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:2 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
+Statement [32] if((byte) main::i#1!=(byte) 9) goto main::@2 [ main::at#2 main::i#1 ] ( main:2 [ main::at#2 main::i#1 ] ) always clobbers reg byte a 
+Statement [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#1 ] ) always clobbers reg byte a 
+Statement [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 [ print_byte_at::b#0 print_byte_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] ) always clobbers reg byte a 
+Statement [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3 [ print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 print_char_at::at#0 ] ) always clobbers reg byte a 
+Statement [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 [ print_sbyte_at::at#3 print_sbyte_at::b#0 ] ( main:2::print_sbyte_at:9 [ main::k#2 main::at#4 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:17 [ main::i#2 main::at#2 print_sbyte_at::at#3 print_sbyte_at::b#0 ] main:2::print_sbyte_at:28 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::at#3 print_sbyte_at::b#0 ] ) always clobbers reg byte a 
+Statement [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 [ ] ( main:2::print_sbyte_at:9::print_char_at:37 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:37 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:37 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_char_at:44 [ main::k#2 main::at#4 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:17::print_char_at:44 [ main::i#2 main::at#2 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:28::print_char_at:44 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#4 print_sbyte_at::at#3 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:52 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:52 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 ] main:2::print_sbyte_at:9::print_byte_at:41::print_char_at:56 [ main::k#2 main::at#4 ] main:2::print_sbyte_at:17::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41::print_char_at:56 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a reg byte y 
+Statement [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 [ print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_byte_at::$0 ] ) always clobbers reg byte a 
+Statement [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 [ print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::b#0 print_byte_at::at#0 print_char_at::ch#2 print_char_at::at#2 ] ) always clobbers reg byte a 
+Statement [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f [ print_byte_at::at#0 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_byte_at::at#0 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_byte_at::at#0 print_byte_at::$2 ] ) always clobbers reg byte a 
+Statement [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 [ print_char_at::at#3 print_byte_at::$2 ] ( main:2::print_sbyte_at:9::print_byte_at:41 [ main::k#2 main::at#4 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:17::print_byte_at:41 [ main::i#2 main::at#2 print_char_at::at#3 print_byte_at::$2 ] main:2::print_sbyte_at:28::print_byte_at:41 [ main::i#2 main::at#2 main::j#2 main::at#3 print_char_at::at#3 print_byte_at::$2 ] ) always clobbers reg byte a 
 Statement asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  } always clobbers reg byte a reg byte x 
-Statement [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:3::init_screen:6 [ init_screen::l#2 ] ) always clobbers reg byte a 
-Statement [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:3::init_screen:6 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:3::init_screen:6 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
-Statement [81] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::init_screen:6::print_cls:65 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 [ init_screen::l#2 ] ( main:2::init_screen:5 [ init_screen::l#2 ] ) always clobbers reg byte a 
+Statement [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 [ init_screen::COLS#3 init_screen::m#2 ] ( main:2::init_screen:5 [ init_screen::COLS#3 init_screen::m#2 ] ) always clobbers reg byte a reg byte y 
+Statement [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 [ init_screen::m#2 init_screen::COLS#1 ] ( main:2::init_screen:5 [ init_screen::m#2 init_screen::COLS#1 ] ) always clobbers reg byte a 
+Statement [80] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::init_screen:5::print_cls:64 [ print_cls::sc#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::k#2 main::k#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ main::at#4 main::at#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_WORD:5 [ main::at_line#2 main::at#2 ] : zp ZP_WORD:5 , 
@@ -1847,25 +1838,25 @@ Uplift Scope [print_cls] 33: zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ]
 Uplift Scope [print_byte_at] 4: zp ZP_BYTE:30 [ print_byte_at::$0 ] 2: zp ZP_BYTE:31 [ print_byte_at::$2 ] 1: zp ZP_BYTE:27 [ print_byte_at::b#0 ] 1: zp ZP_WORD:28 [ print_byte_at::at#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 18649 combination zp ZP_WORD:8 [ main::at#6 main::at#3 main::at#12 ] reg byte a [ main::r#0 ] zp ZP_BYTE:10 [ main::j#2 main::j#1 ] zp ZP_WORD:5 [ main::at_line#2 main::at#2 ] zp ZP_BYTE:7 [ main::i#2 main::i#1 ] reg byte x [ main::k#2 main::k#1 ] zp ZP_WORD:3 [ main::at#4 main::at#1 ] 
-Uplifting [print_sbyte_at] best 18649 combination zp ZP_WORD:11 [ print_sbyte_at::at#3 print_sbyte_at::at#0 print_sbyte_at::at#2 print_sbyte_at::at#1 ] zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ] 
-Uplifting [fmul8] best 17142 combination reg byte a [ fmul8::return#0 ] reg byte a [ fmul8::a#0 ] reg byte x [ fmul8::b#0 ] reg byte a [ fmul8::return#1 ] 
+Uplifting [main] best 13502 combination zp ZP_WORD:8 [ main::at#6 main::at#3 main::at#12 ] reg byte a [ main::r#0 ] zp ZP_BYTE:10 [ main::j#2 main::j#1 ] zp ZP_WORD:5 [ main::at_line#2 main::at#2 ] zp ZP_BYTE:7 [ main::i#2 main::i#1 ] reg byte x [ main::k#2 main::k#1 ] zp ZP_WORD:3 [ main::at#4 main::at#1 ] 
+Uplifting [print_sbyte_at] best 13502 combination zp ZP_WORD:11 [ print_sbyte_at::at#3 print_sbyte_at::at#0 print_sbyte_at::at#2 print_sbyte_at::at#1 ] zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ] 
+Uplifting [fmul8] best 11995 combination reg byte a [ fmul8::return#0 ] reg byte a [ fmul8::a#0 ] reg byte x [ fmul8::b#0 ] reg byte a [ fmul8::return#1 ] 
 Limited combination testing to 100 combinations of 192 possible.
-Uplifting [init_screen] best 16932 combination reg byte x [ init_screen::l#2 init_screen::l#1 ] zp ZP_WORD:18 [ init_screen::COLS#3 init_screen::COLS#1 ] reg byte x [ init_screen::m#2 init_screen::m#1 ] 
-Uplifting [print_char_at] best 16932 combination zp ZP_WORD:15 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] zp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
-Uplifting [print_cls] best 16932 combination zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_byte_at] best 16924 combination reg byte a [ print_byte_at::$0 ] reg byte y [ print_byte_at::$2 ] zp ZP_BYTE:27 [ print_byte_at::b#0 ] zp ZP_WORD:28 [ print_byte_at::at#0 ] 
-Uplifting [] best 16924 combination 
+Uplifting [init_screen] best 11785 combination reg byte x [ init_screen::l#2 init_screen::l#1 ] zp ZP_WORD:18 [ init_screen::COLS#3 init_screen::COLS#1 ] reg byte x [ init_screen::m#2 init_screen::m#1 ] 
+Uplifting [print_char_at] best 11785 combination zp ZP_WORD:15 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] zp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
+Uplifting [print_cls] best 11785 combination zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_byte_at] best 11777 combination reg byte a [ print_byte_at::$0 ] reg byte y [ print_byte_at::$2 ] zp ZP_BYTE:27 [ print_byte_at::b#0 ] zp ZP_WORD:28 [ print_byte_at::at#0 ] 
+Uplifting [] best 11777 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:10 [ main::j#2 main::j#1 ]
-Uplifting [main] best 16924 combination zp ZP_BYTE:10 [ main::j#2 main::j#1 ] 
+Uplifting [main] best 11777 combination zp ZP_BYTE:10 [ main::j#2 main::j#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ]
-Uplifting [print_sbyte_at] best 16924 combination zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ] 
+Uplifting [print_sbyte_at] best 11777 combination zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::i#2 main::i#1 ]
-Uplifting [main] best 16924 combination zp ZP_BYTE:7 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 11777 combination zp ZP_BYTE:7 [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ]
-Uplifting [print_char_at] best 16924 combination zp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
+Uplifting [print_char_at] best 11777 combination zp ZP_BYTE:14 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ print_byte_at::b#0 ]
-Uplifting [print_byte_at] best 16924 combination zp ZP_BYTE:27 [ print_byte_at::b#0 ] 
+Uplifting [print_byte_at] best 11777 combination zp ZP_BYTE:27 [ print_byte_at::b#0 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:11 [ print_sbyte_at::at#3 print_sbyte_at::at#0 print_sbyte_at::at#2 print_sbyte_at::at#1 ] ] with [ zp ZP_WORD:15 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] ] - score: 2
 Coalescing zero page register with common assignment [ zp ZP_WORD:11 [ print_sbyte_at::at#3 print_sbyte_at::at#0 print_sbyte_at::at#2 print_sbyte_at::at#1 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] ] with [ zp ZP_WORD:28 [ print_byte_at::at#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_BYTE:13 [ print_sbyte_at::b#6 print_sbyte_at::b#0 print_sbyte_at::b#4 print_sbyte_at::b#1 print_sbyte_at::b#3 print_sbyte_at::b#2 ] ] with [ zp ZP_BYTE:27 [ print_byte_at::b#0 ] ] - score: 1
@@ -1899,28 +1890,23 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
-  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  // f(x) = >(( x * x ))
-  .label mulf_sqr1 = $2000
-  // g(x) =  >((( 1 - x ) * ( 1 - x )))
-  .label mulf_sqr2 = $2200
 //SEG3 @begin
 bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 kickasm(location (const byte*) mulf_sqr1#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((i*i)/256) }     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }     }  }}
-//SEG6 kickasm(location (const byte*) mulf_sqr2#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }       }  }}
-//SEG7 [3] call main 
-//SEG8 [5] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [4] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+//SEG9 @end
 bend:
-//SEG11 main
+//SEG10 main
 main: {
     .label at = 2
     .label at_2 = 4
@@ -1930,45 +1916,45 @@ main: {
     .label at_line = 4
     .label at_6 = 7
     .label at_12 = 7
-  //SEG12 [6] call init_screen 
-  //SEG13 [64] phi from main to init_screen [phi:main->init_screen]
+  //SEG11 [5] call init_screen 
+  //SEG12 [63] phi from main to init_screen [phi:main->init_screen]
   init_screen_from_main:
     jsr init_screen
-  //SEG14 [7] phi from main to main::@1 [phi:main->main::@1]
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG15 [7] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG14 [6] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400+4
     sta at
     lda #>$400+4
     sta at+1
-  //SEG16 [7] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+  //SEG15 [6] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG17 [7] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG16 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  //SEG18 [7] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG19 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 [6] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG18 [6] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp b1
-  //SEG20 main::@1
+  //SEG19 main::@1
   b1:
-  //SEG21 [8] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
+  //SEG20 [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
     lda vals,x
     sta print_sbyte_at.b
-  //SEG22 [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
+  //SEG21 [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
     lda at
     sta print_sbyte_at.at
     lda at+1
     sta print_sbyte_at.at+1
-  //SEG23 [10] call print_sbyte_at 
-  //SEG24 [35] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
+  //SEG22 [9] call print_sbyte_at 
+  //SEG23 [34] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
   print_sbyte_at_from_b1:
-  //SEG25 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
-  //SEG26 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
+  //SEG24 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
+  //SEG25 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b5
-  //SEG27 main::@5
+  //SEG26 main::@5
   b5:
-  //SEG28 [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG27 [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at
@@ -1976,30 +1962,30 @@ main: {
     bcc !+
     inc at+1
   !:
-  //SEG29 [12] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
+  //SEG28 [11] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG30 [13] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG29 [12] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #9
     bne b1_from_b5
-  //SEG31 [14] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
+  //SEG30 [13] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
   b2_from_b5:
-  //SEG32 [14] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
+  //SEG31 [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG33 [14] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
+  //SEG32 [13] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
     lda #<$400
     sta at_line
     lda #>$400
     sta at_line+1
     jmp b2
-  //SEG34 [14] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG33 [13] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
-  //SEG35 [14] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
-  //SEG36 [14] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
+  //SEG34 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
+  //SEG35 [13] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
     jmp b2
-  //SEG37 main::@2
+  //SEG36 main::@2
   b2:
-  //SEG38 [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG37 [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc at_2
@@ -2007,44 +1993,44 @@ main: {
     bcc !+
     inc at_2+1
   !:
-  //SEG39 [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG38 [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy i
     lda vals,y
     sta print_sbyte_at.b
-  //SEG40 [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG39 [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta print_sbyte_at.at
     lda at_2+1
     sta print_sbyte_at.at+1
-  //SEG41 [18] call print_sbyte_at 
-  //SEG42 [35] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
+  //SEG40 [17] call print_sbyte_at 
+  //SEG41 [34] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
   print_sbyte_at_from_b2:
-  //SEG43 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
-  //SEG44 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
+  //SEG42 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
+  //SEG43 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b6
-  //SEG45 main::@6
+  //SEG44 main::@6
   b6:
-  //SEG46 [19] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG45 [18] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta at_12
     lda at_2+1
     sta at_12+1
-  //SEG47 [20] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  //SEG46 [19] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   b3_from_b6:
-  //SEG48 [20] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
+  //SEG47 [19] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-  //SEG49 [20] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
+  //SEG48 [19] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
     jmp b3
-  //SEG50 [20] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG49 [19] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
   b3_from_b8:
-  //SEG51 [20] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
-  //SEG52 [20] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
+  //SEG50 [19] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+  //SEG51 [19] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
     jmp b3
-  //SEG53 main::@3
+  //SEG52 main::@3
   b3:
-  //SEG54 [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG53 [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at_3
@@ -2052,112 +2038,112 @@ main: {
     bcc !+
     inc at_3+1
   !:
-  //SEG55 [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
+  //SEG54 [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
     ldy i
     lda vals,y
-  //SEG56 [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
+  //SEG55 [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
     ldy j
     ldx vals,y
-  //SEG57 [24] call fmul8 
+  //SEG56 [23] call fmul8 
     jsr fmul8
-  //SEG58 [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
+  //SEG57 [24] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
     jmp b7
-  //SEG59 main::@7
+  //SEG58 main::@7
   b7:
-  //SEG60 [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
-  //SEG61 [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
+  //SEG59 [25] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
+  //SEG60 [26] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
     sta print_sbyte_at.b
-  //SEG62 [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
+  //SEG61 [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
     lda at_3
     sta print_sbyte_at.at
     lda at_3+1
     sta print_sbyte_at.at+1
-  //SEG63 [29] call print_sbyte_at 
-  //SEG64 [35] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
+  //SEG62 [28] call print_sbyte_at 
+  //SEG63 [34] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
   print_sbyte_at_from_b7:
-  //SEG65 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
-  //SEG66 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
+  //SEG64 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
+  //SEG65 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     jmp b8
-  //SEG67 main::@8
+  //SEG66 main::@8
   b8:
-  //SEG68 [30] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
+  //SEG67 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG69 [31] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG68 [30] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp j
     bne b3_from_b8
     jmp b4
-  //SEG70 main::@4
+  //SEG69 main::@4
   b4:
-  //SEG71 [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG70 [31] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG72 [33] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG71 [32] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp i
     bne b2_from_b4
     jmp breturn
-  //SEG73 main::@return
+  //SEG72 main::@return
   breturn:
-  //SEG74 [34] return 
+  //SEG73 [33] return 
     rts
 }
-//SEG75 print_sbyte_at
+//SEG74 print_sbyte_at
 // Print a signed byte as hex at a specific screen position
 // print_sbyte_at(signed byte zeropage($c) b, byte* zeropage($a) at)
 print_sbyte_at: {
     .label b = $c
     .label at = $a
-  //SEG76 [36] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
+  //SEG75 [35] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
     lda b
     bmi b1
     jmp b3
-  //SEG77 print_sbyte_at::@3
+  //SEG76 print_sbyte_at::@3
   b3:
-  //SEG78 [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
-  //SEG79 [38] call print_char_at 
-  //SEG80 [47] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
+  //SEG77 [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
+  //SEG78 [37] call print_char_at 
+  //SEG79 [46] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   print_char_at_from_b3:
-  //SEG81 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
-  //SEG82 [47] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG80 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
+  //SEG81 [46] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
     lda #' '
     sta print_char_at.ch
     jsr print_char_at
-  //SEG83 [39] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
+  //SEG82 [38] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
   b2_from_b3:
   b2_from_b4:
-  //SEG84 [39] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
+  //SEG83 [38] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
     jmp b2
-  //SEG85 print_sbyte_at::@2
+  //SEG84 print_sbyte_at::@2
   b2:
-  //SEG86 [40] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
-  //SEG87 [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
+  //SEG85 [39] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
+  //SEG86 [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
     inc print_byte_at.at
     bne !+
     inc print_byte_at.at+1
   !:
-  //SEG88 [42] call print_byte_at 
+  //SEG87 [41] call print_byte_at 
     jsr print_byte_at
     jmp breturn
-  //SEG89 print_sbyte_at::@return
+  //SEG88 print_sbyte_at::@return
   breturn:
-  //SEG90 [43] return 
+  //SEG89 [42] return 
     rts
-  //SEG91 print_sbyte_at::@1
+  //SEG90 print_sbyte_at::@1
   b1:
-  //SEG92 [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
-  //SEG93 [45] call print_char_at 
-  //SEG94 [47] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
+  //SEG91 [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
+  //SEG92 [44] call print_char_at 
+  //SEG93 [46] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG95 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
-  //SEG96 [47] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG94 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
+  //SEG95 [46] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
     lda #'-'
     sta print_char_at.ch
     jsr print_char_at
     jmp b4
-  //SEG97 print_sbyte_at::@4
+  //SEG96 print_sbyte_at::@4
   b4:
-  //SEG98 [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
+  //SEG97 [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
     lda b
     eor #$ff
     clc
@@ -2165,81 +2151,81 @@ print_sbyte_at: {
     sta b
     jmp b2_from_b4
 }
-//SEG99 print_char_at
+//SEG98 print_char_at
 // Print a single char
 // print_char_at(byte zeropage($d) ch, byte* zeropage($a) at)
 print_char_at: {
     .label at = $a
     .label ch = $d
-  //SEG100 [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
+  //SEG99 [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
     lda ch
     ldy #0
     sta (at),y
     jmp breturn
-  //SEG101 print_char_at::@return
+  //SEG100 print_char_at::@return
   breturn:
-  //SEG102 [49] return 
+  //SEG101 [48] return 
     rts
 }
-//SEG103 print_byte_at
+//SEG102 print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage($c) b, byte* zeropage($a) at)
 print_byte_at: {
     .label b = $c
     .label at = $a
-  //SEG104 [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+  //SEG103 [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
-  //SEG105 [51] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
+  //SEG104 [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG106 [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-  //SEG107 [53] call print_char_at 
-  //SEG108 [47] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  //SEG105 [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
+  //SEG106 [52] call print_char_at 
+  //SEG107 [46] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
-  //SEG109 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG110 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  //SEG108 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  //SEG109 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp b1
-  //SEG111 print_byte_at::@1
+  //SEG110 print_byte_at::@1
   b1:
-  //SEG112 [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+  //SEG111 [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and b
     tay
-  //SEG113 [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz1_plus_1 
+  //SEG112 [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz1_plus_1 
     inc print_char_at.at
     bne !+
     inc print_char_at.at+1
   !:
-  //SEG114 [56] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
+  //SEG113 [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG115 [57] call print_char_at 
-  //SEG116 [47] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  //SEG114 [56] call print_char_at 
+  //SEG115 [46] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG117 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG118 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  //SEG116 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  //SEG117 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp breturn
-  //SEG119 print_byte_at::@return
+  //SEG118 print_byte_at::@return
   breturn:
-  //SEG120 [58] return 
+  //SEG119 [57] return 
     rts
 }
-//SEG121 fmul8
+//SEG120 fmul8
 // fmul8(signed byte register(A) a, signed byte register(X) b)
 fmul8: {
-  //SEG122 [59] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsaa 
+  //SEG121 [58] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsaa 
     sta ap
-  //SEG123 [60] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsxx 
+  //SEG122 [59] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsxx 
     txa
     sta bp
-  //SEG124 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
+  //SEG123 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
     lda ap
     sta A1+1
     eor #$ff
@@ -2251,75 +2237,75 @@ fmul8: {
   A2:
     sbc mulf_sqr2,x
     sta cp
-  //SEG125 [62] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsaa=_deref_pbsc1 
+  //SEG124 [61] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsaa=_deref_pbsc1 
     lda cp
     jmp breturn
-  //SEG126 fmul8::@return
+  //SEG125 fmul8::@return
   breturn:
-  //SEG127 [63] return 
+  //SEG126 [62] return 
     rts
 }
-//SEG128 init_screen
+//SEG127 init_screen
 init_screen: {
     .const WHITE = 1
     .label COLS = $e
-  //SEG129 [65] call print_cls 
-  //SEG130 [79] phi from init_screen to print_cls [phi:init_screen->print_cls]
+  //SEG128 [64] call print_cls 
+  //SEG129 [78] phi from init_screen to print_cls [phi:init_screen->print_cls]
   print_cls_from_init_screen:
     jsr print_cls
-  //SEG131 [66] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
+  //SEG130 [65] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   b1_from_init_screen:
-  //SEG132 [66] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuxx=vbuc1 
+  //SEG131 [65] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG133 [66] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
+  //SEG132 [65] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
   b1_from_b1:
-  //SEG134 [66] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
+  //SEG133 [65] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
     jmp b1
-  //SEG135 init_screen::@1
+  //SEG134 init_screen::@1
   b1:
-  //SEG136 [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG135 [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #WHITE
     sta $d800,x
-  //SEG137 [68] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuxx=_inc_vbuxx 
+  //SEG136 [67] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG138 [69] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG137 [68] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne b1_from_b1
-  //SEG139 [70] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
+  //SEG138 [69] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
   b2_from_b1:
-  //SEG140 [70] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuxx=vbuc1 
+  //SEG139 [69] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG141 [70] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
+  //SEG140 [69] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
     lda #<$d800
     sta COLS
     lda #>$d800
     sta COLS+1
     jmp b2
-  //SEG142 [70] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
+  //SEG141 [69] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
   b2_from_b2:
-  //SEG143 [70] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
-  //SEG144 [70] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
+  //SEG142 [69] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
+  //SEG143 [69] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
     jmp b2
-  //SEG145 init_screen::@2
+  //SEG144 init_screen::@2
   b2:
-  //SEG146 [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG145 [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
     sta (COLS),y
-  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG146 [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #1
     sta (COLS),y
-  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #2
     sta (COLS),y
-  //SEG149 [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     lda #WHITE
     ldy #3
     sta (COLS),y
-  //SEG150 [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG149 [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc COLS
@@ -2327,45 +2313,45 @@ init_screen: {
     bcc !+
     inc COLS+1
   !:
-  //SEG151 [76] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuxx=_inc_vbuxx 
+  //SEG150 [75] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG152 [77] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG151 [76] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne b2_from_b2
     jmp breturn
-  //SEG153 init_screen::@return
+  //SEG152 init_screen::@return
   breturn:
-  //SEG154 [78] return 
+  //SEG153 [77] return 
     rts
 }
-//SEG155 print_cls
+//SEG154 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $10
-  //SEG156 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG155 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG157 [80] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG156 [79] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_screen
     sta sc
     lda #>print_screen
     sta sc+1
     jmp b1
-  //SEG158 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG157 [79] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG159 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG158 [79] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG160 print_cls::@1
+  //SEG159 print_cls::@1
   b1:
-  //SEG161 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG160 [80] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG162 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG161 [81] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG163 [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG162 [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_screen+$3e8
     bne b1_from_b1
@@ -2373,23 +2359,28 @@ print_cls: {
     cmp #<print_screen+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG164 print_cls::@return
+  //SEG163 print_cls::@return
   breturn:
-  //SEG165 [84] return 
+  //SEG164 [83] return 
     rts
 }
-//SEG166 File Data
+//SEG165 File Data
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
-.pc = mulf_sqr1 "mulf_sqr1"
-  .for(var i=0;i<$200;i++) {
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
+  .align $100
+mulf_sqr1:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "mulf_sqr2"
-  .for(var i=0;i<$200;i++) {
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
+  .align $100
+mulf_sqr2:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -2435,6 +2426,7 @@ Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
+Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
@@ -2558,10 +2550,20 @@ FINAL SYMBOL TABLE
 (byte) main::k#2 reg byte x 6.6000000000000005
 (signed byte) main::r
 (signed byte) main::r#0 reg byte a 202.0
-(byte*) mulf_sqr1
-(const byte*) mulf_sqr1#0 mulf_sqr1 = (byte*) 8192
-(byte*) mulf_sqr2
-(const byte*) mulf_sqr2#0 mulf_sqr2 = (byte*) 8704
+(byte[$200]) mulf_sqr1
+(const byte[$200]) mulf_sqr1#0 mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((i*i)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
+    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
+    }
+ }}
+(byte[$200]) mulf_sqr2
+(const byte[$200]) mulf_sqr2#0 mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
+    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
+    }
+ }}
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0 reg byte a 4.0
 (byte~) print_byte_at::$2 reg byte y 2.0
@@ -2637,7 +2639,7 @@ reg byte a [ fmul8::return#1 ]
 
 
 FINAL ASSEMBLER
-Score: 15124
+Score: 10004
 
 //SEG0 File Comments
 // Seriously fast multiply 8-bit version (8bit*8bit=8bit)
@@ -2657,20 +2659,14 @@ Score: 15124
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
-  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  // f(x) = >(( x * x ))
-  .label mulf_sqr1 = $2000
-  // g(x) =  >((( 1 - x ) * ( 1 - x )))
-  .label mulf_sqr2 = $2200
 //SEG3 @begin
-//SEG4 @1
-//SEG5 kickasm(location (const byte*) mulf_sqr1#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((i*i)/256) }     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }     }  }}
-//SEG6 kickasm(location (const byte*) mulf_sqr2#0) {{ .for(var i=0;i<$200;i++) {     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }       }  }}
-//SEG7 [3] call main 
-//SEG8 [5] phi from @1 to main [phi:@1->main]
-//SEG9 [4] phi from @1 to @end [phi:@1->@end]
-//SEG10 @end
-//SEG11 main
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
 main: {
     .label at = 2
     .label at_2 = 4
@@ -2680,37 +2676,37 @@ main: {
     .label at_line = 4
     .label at_6 = 7
     .label at_12 = 7
-  //SEG12 [6] call init_screen 
-  //SEG13 [64] phi from main to init_screen [phi:main->init_screen]
+  //SEG11 [5] call init_screen 
+  //SEG12 [63] phi from main to init_screen [phi:main->init_screen]
     jsr init_screen
-  //SEG14 [7] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 [7] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG14 [6] phi (byte*) main::at#4 = (byte*) 1024+(byte) 4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400+4
     sta at
     lda #>$400+4
     sta at+1
-  //SEG16 [7] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+  //SEG15 [6] phi (byte) main::k#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  //SEG17 [7] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  //SEG18 [7] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG19 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG20 main::@1
+  //SEG16 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG17 [6] phi (byte*) main::at#4 = (byte*) main::at#1 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG18 [6] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG19 main::@1
   b1:
-  //SEG21 [8] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
+  //SEG20 [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals#0 + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
     lda vals,x
     sta print_sbyte_at.b
-  //SEG22 [9] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
+  //SEG21 [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
     lda at
     sta print_sbyte_at.at
     lda at+1
     sta print_sbyte_at.at+1
-  //SEG23 [10] call print_sbyte_at 
-  //SEG24 [35] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
-  //SEG25 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
-  //SEG26 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
+  //SEG22 [9] call print_sbyte_at 
+  //SEG23 [34] phi from main::@1 to print_sbyte_at [phi:main::@1->print_sbyte_at]
+  //SEG24 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#0 [phi:main::@1->print_sbyte_at#0] -- register_copy 
+  //SEG25 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#1 [phi:main::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-  //SEG27 main::@5
-  //SEG28 [11] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG26 main::@5
+  //SEG27 [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at
@@ -2718,26 +2714,26 @@ main: {
     bcc !+
     inc at+1
   !:
-  //SEG29 [12] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
+  //SEG28 [11] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG30 [13] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG29 [12] if((byte) main::k#1!=(byte) 9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #9
     bne b1
-  //SEG31 [14] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
-  //SEG32 [14] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
+  //SEG30 [13] phi from main::@5 to main::@2 [phi:main::@5->main::@2]
+  //SEG31 [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG33 [14] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
+  //SEG32 [13] phi (byte*) main::at_line#2 = (byte*) 1024 [phi:main::@5->main::@2#1] -- pbuz1=pbuc1 
     lda #<$400
     sta at_line
     lda #>$400
     sta at_line+1
-  //SEG34 [14] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  //SEG35 [14] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
-  //SEG36 [14] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
-  //SEG37 main::@2
+  //SEG33 [13] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG34 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@2#0] -- register_copy 
+  //SEG35 [13] phi (byte*) main::at_line#2 = (byte*) main::at#2 [phi:main::@4->main::@2#1] -- register_copy 
+  //SEG36 main::@2
   b2:
-  //SEG38 [15] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG37 [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc at_2
@@ -2745,37 +2741,37 @@ main: {
     bcc !+
     inc at_2+1
   !:
-  //SEG39 [16] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+  //SEG38 [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy i
     lda vals,y
     sta print_sbyte_at.b
-  //SEG40 [17] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG39 [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta print_sbyte_at.at
     lda at_2+1
     sta print_sbyte_at.at+1
-  //SEG41 [18] call print_sbyte_at 
-  //SEG42 [35] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
-  //SEG43 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
-  //SEG44 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
+  //SEG40 [17] call print_sbyte_at 
+  //SEG41 [34] phi from main::@2 to print_sbyte_at [phi:main::@2->print_sbyte_at]
+  //SEG42 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#1 [phi:main::@2->print_sbyte_at#0] -- register_copy 
+  //SEG43 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#2 [phi:main::@2->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-  //SEG45 main::@6
-  //SEG46 [19] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
+  //SEG44 main::@6
+  //SEG45 [18] (byte*~) main::at#12 ← (byte*) main::at#2 -- pbuz1=pbuz2 
     lda at_2
     sta at_12
     lda at_2+1
     sta at_12+1
-  //SEG47 [20] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-  //SEG48 [20] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
+  //SEG46 [19] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  //SEG47 [19] phi (byte) main::j#2 = (byte) 0 [phi:main::@6->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-  //SEG49 [20] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
-  //SEG50 [20] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
-  //SEG51 [20] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
-  //SEG52 [20] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
-  //SEG53 main::@3
+  //SEG48 [19] phi (byte*) main::at#6 = (byte*~) main::at#12 [phi:main::@6->main::@3#1] -- register_copy 
+  //SEG49 [19] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG50 [19] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+  //SEG51 [19] phi (byte*) main::at#6 = (byte*) main::at#3 [phi:main::@8->main::@3#1] -- register_copy 
+  //SEG52 main::@3
   b3:
-  //SEG54 [21] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG53 [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 -- pbuz1=pbuz1_plus_vbuc1 
     lda #4
     clc
     adc at_3
@@ -2783,91 +2779,91 @@ main: {
     bcc !+
     inc at_3+1
   !:
-  //SEG55 [22] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
+  //SEG54 [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals#0 + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
     ldy i
     lda vals,y
-  //SEG56 [23] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
+  //SEG55 [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals#0 + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
     ldy j
     ldx vals,y
-  //SEG57 [24] call fmul8 
+  //SEG56 [23] call fmul8 
     jsr fmul8
-  //SEG58 [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
-  //SEG59 main::@7
-  //SEG60 [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
-  //SEG61 [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
+  //SEG57 [24] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
+  //SEG58 main::@7
+  //SEG59 [25] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
+  //SEG60 [26] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
     sta print_sbyte_at.b
-  //SEG62 [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
+  //SEG61 [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
     lda at_3
     sta print_sbyte_at.at
     lda at_3+1
     sta print_sbyte_at.at+1
-  //SEG63 [29] call print_sbyte_at 
-  //SEG64 [35] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
-  //SEG65 [35] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
-  //SEG66 [35] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
+  //SEG62 [28] call print_sbyte_at 
+  //SEG63 [34] phi from main::@7 to print_sbyte_at [phi:main::@7->print_sbyte_at]
+  //SEG64 [34] phi (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#2 [phi:main::@7->print_sbyte_at#0] -- register_copy 
+  //SEG65 [34] phi (signed byte) print_sbyte_at::b#4 = (signed byte) print_sbyte_at::b#3 [phi:main::@7->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-  //SEG67 main::@8
-  //SEG68 [30] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
+  //SEG66 main::@8
+  //SEG67 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG69 [31] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG68 [30] if((byte) main::j#1!=(byte) 9) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp j
     bne b3
-  //SEG70 main::@4
-  //SEG71 [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG69 main::@4
+  //SEG70 [31] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG72 [33] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG71 [32] if((byte) main::i#1!=(byte) 9) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     cmp i
     bne b2
-  //SEG73 main::@return
-  //SEG74 [34] return 
+  //SEG72 main::@return
+  //SEG73 [33] return 
     rts
 }
-//SEG75 print_sbyte_at
+//SEG74 print_sbyte_at
 // Print a signed byte as hex at a specific screen position
 // print_sbyte_at(signed byte zeropage($c) b, byte* zeropage($a) at)
 print_sbyte_at: {
     .label b = $c
     .label at = $a
-  //SEG76 [36] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
+  //SEG75 [35] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
     lda b
     bmi b1
-  //SEG77 print_sbyte_at::@3
-  //SEG78 [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
-  //SEG79 [38] call print_char_at 
-  //SEG80 [47] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
-  //SEG81 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
-  //SEG82 [47] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG76 print_sbyte_at::@3
+  //SEG77 [36] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
+  //SEG78 [37] call print_char_at 
+  //SEG79 [46] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
+  //SEG80 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
+  //SEG81 [46] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
     lda #' '
     sta print_char_at.ch
     jsr print_char_at
-  //SEG83 [39] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
-  //SEG84 [39] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
-  //SEG85 print_sbyte_at::@2
+  //SEG82 [38] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
+  //SEG83 [38] phi (signed byte) print_sbyte_at::b#6 = (signed byte) print_sbyte_at::b#4 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
+  //SEG84 print_sbyte_at::@2
   b2:
-  //SEG86 [40] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
-  //SEG87 [41] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
+  //SEG85 [39] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#6
+  //SEG86 [40] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
     inc print_byte_at.at
     bne !+
     inc print_byte_at.at+1
   !:
-  //SEG88 [42] call print_byte_at 
+  //SEG87 [41] call print_byte_at 
     jsr print_byte_at
-  //SEG89 print_sbyte_at::@return
-  //SEG90 [43] return 
+  //SEG88 print_sbyte_at::@return
+  //SEG89 [42] return 
     rts
-  //SEG91 print_sbyte_at::@1
+  //SEG90 print_sbyte_at::@1
   b1:
-  //SEG92 [44] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
-  //SEG93 [45] call print_char_at 
-  //SEG94 [47] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
-  //SEG95 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
-  //SEG96 [47] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
+  //SEG91 [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
+  //SEG92 [44] call print_char_at 
+  //SEG93 [46] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
+  //SEG94 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
+  //SEG95 [46] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
     lda #'-'
     sta print_char_at.ch
     jsr print_char_at
-  //SEG97 print_sbyte_at::@4
-  //SEG98 [46] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
+  //SEG96 print_sbyte_at::@4
+  //SEG97 [45] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#4 -- vbsz1=_neg_vbsz1 
     lda b
     eor #$ff
     clc
@@ -2875,73 +2871,73 @@ print_sbyte_at: {
     sta b
     jmp b2
 }
-//SEG99 print_char_at
+//SEG98 print_char_at
 // Print a single char
 // print_char_at(byte zeropage($d) ch, byte* zeropage($a) at)
 print_char_at: {
     .label at = $a
     .label ch = $d
-  //SEG100 [48] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
+  //SEG99 [47] *((byte*) print_char_at::at#4) ← (byte) print_char_at::ch#4 -- _deref_pbuz1=vbuz2 
     lda ch
     ldy #0
     sta (at),y
-  //SEG101 print_char_at::@return
-  //SEG102 [49] return 
+  //SEG100 print_char_at::@return
+  //SEG101 [48] return 
     rts
 }
-//SEG103 print_byte_at
+//SEG102 print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage($c) b, byte* zeropage($a) at)
 print_byte_at: {
     .label b = $c
     .label at = $a
-  //SEG104 [50] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+  //SEG103 [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
-  //SEG105 [51] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
+  //SEG104 [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG106 [52] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-  //SEG107 [53] call print_char_at 
-  //SEG108 [47] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
-  //SEG109 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG110 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  //SEG105 [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
+  //SEG106 [52] call print_char_at 
+  //SEG107 [46] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  //SEG108 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  //SEG109 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-  //SEG111 print_byte_at::@1
-  //SEG112 [54] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+  //SEG110 print_byte_at::@1
+  //SEG111 [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and b
     tay
-  //SEG113 [55] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz1_plus_1 
+  //SEG112 [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz1_plus_1 
     inc print_char_at.at
     bne !+
     inc print_char_at.at+1
   !:
-  //SEG114 [56] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
+  //SEG113 [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG115 [57] call print_char_at 
-  //SEG116 [47] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  //SEG117 [47] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG118 [47] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  //SEG114 [56] call print_char_at 
+  //SEG115 [46] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  //SEG116 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  //SEG117 [46] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-  //SEG119 print_byte_at::@return
-  //SEG120 [58] return 
+  //SEG118 print_byte_at::@return
+  //SEG119 [57] return 
     rts
 }
-//SEG121 fmul8
+//SEG120 fmul8
 // fmul8(signed byte register(A) a, signed byte register(X) b)
 fmul8: {
-  //SEG122 [59] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsaa 
+  //SEG121 [58] *((const signed byte*) ap#0) ← (signed byte) fmul8::a#0 -- _deref_pbsc1=vbsaa 
     sta ap
-  //SEG123 [60] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsxx 
+  //SEG122 [59] *((const signed byte*) bp#0) ← (signed byte) fmul8::b#0 -- _deref_pbsc1=vbsxx 
     txa
     sta bp
-  //SEG124 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
+  //SEG123 asm { ldaap staA1+1 eor#$ff staA2+1 ldxbp sec A1: ldamulf_sqr1,x A2: sbcmulf_sqr2,x stacp  }
     lda ap
     sta A1+1
     eor #$ff
@@ -2953,60 +2949,60 @@ fmul8: {
   A2:
     sbc mulf_sqr2,x
     sta cp
-  //SEG125 [62] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsaa=_deref_pbsc1 
-  //SEG126 fmul8::@return
-  //SEG127 [63] return 
+  //SEG124 [61] (signed byte) fmul8::return#1 ← *((const signed byte*) cp#0) -- vbsaa=_deref_pbsc1 
+  //SEG125 fmul8::@return
+  //SEG126 [62] return 
     rts
 }
-//SEG128 init_screen
+//SEG127 init_screen
 init_screen: {
     .const WHITE = 1
     .label COLS = $e
-  //SEG129 [65] call print_cls 
-  //SEG130 [79] phi from init_screen to print_cls [phi:init_screen->print_cls]
+  //SEG128 [64] call print_cls 
+  //SEG129 [78] phi from init_screen to print_cls [phi:init_screen->print_cls]
     jsr print_cls
-  //SEG131 [66] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
-  //SEG132 [66] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuxx=vbuc1 
+  //SEG130 [65] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
+  //SEG131 [65] phi (byte) init_screen::l#2 = (byte) 0 [phi:init_screen->init_screen::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG133 [66] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
-  //SEG134 [66] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
-  //SEG135 init_screen::@1
+  //SEG132 [65] phi from init_screen::@1 to init_screen::@1 [phi:init_screen::@1->init_screen::@1]
+  //SEG133 [65] phi (byte) init_screen::l#2 = (byte) init_screen::l#1 [phi:init_screen::@1->init_screen::@1#0] -- register_copy 
+  //SEG134 init_screen::@1
   b1:
-  //SEG136 [67] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG135 [66] *((byte*) 55296 + (byte) init_screen::l#2) ← (const byte) init_screen::WHITE#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #WHITE
     sta $d800,x
-  //SEG137 [68] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuxx=_inc_vbuxx 
+  //SEG136 [67] (byte) init_screen::l#1 ← ++ (byte) init_screen::l#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG138 [69] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG137 [68] if((byte) init_screen::l#1!=(byte) $28) goto init_screen::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne b1
-  //SEG139 [70] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
-  //SEG140 [70] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuxx=vbuc1 
+  //SEG138 [69] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
+  //SEG139 [69] phi (byte) init_screen::m#2 = (byte) 0 [phi:init_screen::@1->init_screen::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG141 [70] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
+  //SEG140 [69] phi (byte*) init_screen::COLS#3 = (byte*) 55296 [phi:init_screen::@1->init_screen::@2#1] -- pbuz1=pbuc1 
     lda #<$d800
     sta COLS
     lda #>$d800
     sta COLS+1
-  //SEG142 [70] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
-  //SEG143 [70] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
-  //SEG144 [70] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
-  //SEG145 init_screen::@2
+  //SEG141 [69] phi from init_screen::@2 to init_screen::@2 [phi:init_screen::@2->init_screen::@2]
+  //SEG142 [69] phi (byte) init_screen::m#2 = (byte) init_screen::m#1 [phi:init_screen::@2->init_screen::@2#0] -- register_copy 
+  //SEG143 [69] phi (byte*) init_screen::COLS#3 = (byte*) init_screen::COLS#1 [phi:init_screen::@2->init_screen::@2#1] -- register_copy 
+  //SEG144 init_screen::@2
   b2:
-  //SEG146 [71] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG145 [70] *((byte*) init_screen::COLS#3) ← (const byte) init_screen::WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
     sta (COLS),y
-  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG146 [71] *((byte*) init_screen::COLS#3 + (byte) 1) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     ldy #1
     sta (COLS),y
-  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG147 [72] *((byte*) init_screen::COLS#3 + (byte) 2) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     ldy #2
     sta (COLS),y
-  //SEG149 [74] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG148 [73] *((byte*) init_screen::COLS#3 + (byte) 3) ← (const byte) init_screen::WHITE#0 -- pbuz1_derefidx_vbuc1=vbuc2 
     ldy #3
     sta (COLS),y
-  //SEG150 [75] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG149 [74] (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc COLS
@@ -3014,61 +3010,66 @@ init_screen: {
     bcc !+
     inc COLS+1
   !:
-  //SEG151 [76] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuxx=_inc_vbuxx 
+  //SEG150 [75] (byte) init_screen::m#1 ← ++ (byte) init_screen::m#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG152 [77] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG151 [76] if((byte) init_screen::m#1!=(byte) $19) goto init_screen::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne b2
-  //SEG153 init_screen::@return
-  //SEG154 [78] return 
+  //SEG152 init_screen::@return
+  //SEG153 [77] return 
     rts
 }
-//SEG155 print_cls
+//SEG154 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $10
-  //SEG156 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  //SEG157 [80] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG155 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG156 [79] phi (byte*) print_cls::sc#2 = (const byte*) print_screen#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_screen
     sta sc
     lda #>print_screen
     sta sc+1
-  //SEG158 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  //SEG159 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-  //SEG160 print_cls::@1
+  //SEG157 [79] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG158 [79] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG159 print_cls::@1
   b1:
-  //SEG161 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG160 [80] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG162 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG161 [81] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG163 [83] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG162 [82] if((byte*) print_cls::sc#1!=(const byte*) print_screen#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_screen+$3e8
     bne b1
     lda sc
     cmp #<print_screen+$3e8
     bne b1
-  //SEG164 print_cls::@return
-  //SEG165 [84] return 
+  //SEG163 print_cls::@return
+  //SEG164 [83] return 
     rts
 }
-//SEG166 File Data
+//SEG165 File Data
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
-.pc = mulf_sqr1 "mulf_sqr1"
-  .for(var i=0;i<$200;i++) {
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
+  .align $100
+mulf_sqr1:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "mulf_sqr2"
-  .for(var i=0;i<$200;i++) {
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
+  .align $100
+mulf_sqr2:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  

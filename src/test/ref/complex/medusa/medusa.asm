@@ -8,8 +8,6 @@
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  .label MEDUSA_SCREEN = $1000
-  .label MEDUSA_COLORS = $1400
   .label SCREEN = $400
 main: {
     lda #BLACK
@@ -76,11 +74,11 @@ memcpy: {
   !:
     jmp b1
 }
-.pc = MEDUSA_SCREEN "MEDUSA_SCREEN"
-  .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+MEDUSA_SCREEN:
+.var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
 
-.pc = MEDUSA_COLORS "MEDUSA_COLORS"
-  .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+MEDUSA_COLORS:
+.var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
 

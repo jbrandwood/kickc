@@ -4,20 +4,18 @@
 import "c64"
 import "string"
 
-byte* MEDUSA_SCREEN = 0x1000;
-byte* MEDUSA_COLORS = 0x1400;
-
-byte* SCREEN = 0x0400;
-
-kickasm(pc MEDUSA_SCREEN, resource "medusas.prg" ) {{
+byte[1000] MEDUSA_SCREEN = kickasm(resource "medusas.prg" ) {{
     .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
-}}
+}};
 
-kickasm(pc MEDUSA_COLORS, resource "medusac.prg" ) {{
+
+byte[] MEDUSA_COLORS = kickasm(resource "medusac.prg" ) {{
     .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
-}}
+}};
+
+byte* SCREEN = 0x0400;
 
 void main() {
     *BGCOL = BLACK;

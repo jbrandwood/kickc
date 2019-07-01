@@ -13,11 +13,6 @@
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
-  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  // f(x) = >(( x * x ))
-  .label mulf_sqr1 = $2000
-  // g(x) =  >((( 1 - x ) * ( 1 - x )))
-  .label mulf_sqr2 = $2200
 main: {
     .label at = 2
     .label at_2 = 4
@@ -252,15 +247,20 @@ print_cls: {
 }
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
-.pc = mulf_sqr1 "mulf_sqr1"
-  .for(var i=0;i<$200;i++) {
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
+  .align $100
+mulf_sqr1:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "mulf_sqr2"
-  .for(var i=0;i<$200;i++) {
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
+  .align $100
+mulf_sqr2:
+.for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  

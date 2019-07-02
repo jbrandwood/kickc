@@ -37,7 +37,7 @@ public class TestPrograms {
 
    @Test
    public void testArraysInitKasm0() throws IOException, URISyntaxException {
-      compileAndCompare("arrays-init-kasm-0", log());
+      compileAndCompare("arrays-init-kasm-0");
    }
 
    @Test
@@ -92,7 +92,7 @@ public class TestPrograms {
 
    @Test
    public void testBitmapPlot2() throws IOException, URISyntaxException {
-      compileAndCompare("bitmap-plot-2", log());
+      compileAndCompare("bitmap-plot-2");
    }
 
    @Test

@@ -171,13 +171,7 @@ atan2_16: {
     bne !-
   !e:
     lda yi+1
-    bne !+
-    lda yi
-    beq !e+
-    lsr
-  !:
     bpl b13
-  !e:
     lda xi
     sec
     sbc yd

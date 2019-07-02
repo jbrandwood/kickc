@@ -174,15 +174,9 @@ atan2_16: {
     .label x = $1b
     .label y = $1d
     lda y+1
-    bne !+
-    lda y
-    beq !e+
-    lsr
-  !:
     bmi !b1+
     jmp b1
   !b1:
-  !e:
     sec
     lda #0
     sbc y
@@ -192,15 +186,9 @@ atan2_16: {
     sta _2+1
   b3:
     lda x+1
-    bne !+
-    lda x
-    beq !e+
-    lsr
-  !:
     bmi !b4+
     jmp b4
   !b4:
-  !e:
     sec
     lda #0
     sbc x
@@ -274,13 +262,7 @@ atan2_16: {
     bne !-
   !e:
     lda yi+1
-    bne !+
-    lda yi
-    beq !e+
-    lsr
-  !:
     bpl b13
-  !e:
     lda xi
     sec
     sbc yd

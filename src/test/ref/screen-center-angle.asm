@@ -28,8 +28,8 @@ main: {
     .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
-    .label _4 = $1c
-    .label cyclecount = $1c
+    .label _4 = $1f
+    .label cyclecount = $1f
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -55,9 +55,9 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($1c) dw)
+// print_dword_at(dword zeropage($1f) dw)
 print_dword_at: {
-    .label dw = $1c
+    .label dw = $1f
     lda dw+2
     sta print_word_at.w
     lda dw+3
@@ -141,7 +141,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $1c
+    .label return = $1f
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -158,49 +158,92 @@ clock: {
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
-// The actual value stored is distance*2 to increase precision
-// init_angle_screen(byte* zeropage($a) screen)
+// Utilizes symmetry around the  center
 init_angle_screen: {
-    .label _7 = $11
-    .label xw = $20
-    .label yw = $22
-    .label angle_w = $11
-    .label screen = $a
+    .label _10 = $14
+    .label xw = $23
+    .label yw = $25
+    .label angle_w = $14
+    .label ang_w = $27
+    .label xb = $e
+    .label screen_topline = $a
+    .label screen_bottomline = $c
     .label y = 9
-    lda #<SCREEN
-    sta screen
-    lda #>SCREEN
-    sta screen+1
-    lda #-$c
+    lda #<SCREEN+$28*$c
+    sta screen_bottomline
+    lda #>SCREEN+$28*$c
+    sta screen_bottomline+1
+    lda #<SCREEN+$28*$c
+    sta screen_topline
+    lda #>SCREEN+$28*$c
+    sta screen_topline+1
+    lda #0
     sta y
   b1:
-    ldx #-$13
+    lda #$27
+    sta xb
+    ldx #0
   b2:
-    ldy #0
     txa
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
     sta xw+1
     sty xw
     lda y
+    asl
     sta yw+1
     sty yw
     jsr atan2_16
     lda #$80
     clc
-    adc _7
-    sta _7
+    adc _10
+    sta _10
     bcc !+
-    inc _7+1
+    inc _10+1
   !:
-    lda _7+1
-    ldy #0
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
+    lda _10+1
+    sta ang_w
+    lda #$80
+    clc
+    adc ang_w
+    stx $ff
+    ldy $ff
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    stx $ff
+    ldy $ff
+    sta (screen_bottomline),y
+    lda ang_w
+    eor #$ff
+    clc
+    adc #1
+    ldy xb
+    sta (screen_topline),y
+    lda ang_w
+    sta (screen_bottomline),y
     inx
-    cpx #$15
-    bne b2
+    dec xb
+    cpx #$13+1
+    bcc b2
+    lda screen_topline
+    sec
+    sbc #<$28
+    sta screen_topline
+    lda screen_topline+1
+    sbc #>$28
+    sta screen_topline+1
+    lda #$28
+    clc
+    adc screen_bottomline
+    sta screen_bottomline
+    bcc !+
+    inc screen_bottomline+1
+  !:
     inc y
     lda #$d
     cmp y
@@ -210,19 +253,19 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($20) x, signed word zeropage($22) y)
+// atan2_16(signed word zeropage($23) x, signed word zeropage($25) y)
 atan2_16: {
-    .label _2 = $c
-    .label _7 = $e
-    .label yi = $c
-    .label xi = $e
-    .label xd = $24
-    .label yd = $26
-    .label angle = $11
-    .label i = $10
-    .label return = $11
-    .label x = $20
-    .label y = $22
+    .label _2 = $f
+    .label _7 = $11
+    .label yi = $f
+    .label xi = $11
+    .label xd = $28
+    .label yd = $2a
+    .label angle = $14
+    .label i = $13
+    .label return = $14
+    .label x = $23
+    .label y = $25
     lda y+1
     bmi !b1+
     jmp b1
@@ -407,15 +450,15 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($16) charset)
+// init_font_hex(byte* zeropage($19) charset)
 init_font_hex: {
-    .label _0 = $28
-    .label idx = $1b
-    .label proto_lo = $18
-    .label charset = $16
-    .label c1 = $1a
-    .label proto_hi = $13
-    .label c = $15
+    .label _0 = $2c
+    .label idx = $1e
+    .label proto_lo = $1b
+    .label charset = $19
+    .label c1 = $1d
+    .label proto_hi = $16
+    .label c = $18
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

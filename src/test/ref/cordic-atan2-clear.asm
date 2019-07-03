@@ -15,7 +15,7 @@ main: {
     jsr init_font_hex
     lda #toD0181_return
     sta D018
-    jsr init_screen
+    jsr init_angle_screen
     lda #<CHARSET
     sta clear_char
     lda #>CHARSET
@@ -41,47 +41,93 @@ main: {
   !:
     jmp b2
 }
-init_screen: {
-    .label _7 = $c
-    .label xw = $17
-    .label yw = $19
-    .label angle_w = $c
-    .label screen = 5
+// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Utilizes symmetry around the  center
+init_angle_screen: {
+    .label _10 = $f
+    .label xw = $1a
+    .label yw = $1c
+    .label angle_w = $f
+    .label ang_w = $1e
+    .label xb = 9
+    .label screen_topline = 5
+    .label screen_bottomline = 7
     .label y = 4
-    lda #<SCREEN
-    sta screen
-    lda #>SCREEN
-    sta screen+1
-    lda #-$c
+    lda #<SCREEN+$28*$c
+    sta screen_bottomline
+    lda #>SCREEN+$28*$c
+    sta screen_bottomline+1
+    lda #<SCREEN+$28*$c
+    sta screen_topline
+    lda #>SCREEN+$28*$c
+    sta screen_topline+1
+    lda #0
     sta y
   b1:
-    ldx #-$13
+    lda #$27
+    sta xb
+    ldx #0
   b2:
-    ldy #0
     txa
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
     sta xw+1
     sty xw
     lda y
+    asl
     sta yw+1
     sty yw
     jsr atan2_16
     lda #$80
     clc
-    adc _7
-    sta _7
+    adc _10
+    sta _10
     bcc !+
-    inc _7+1
+    inc _10+1
   !:
-    lda _7+1
-    ldy #0
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
+    lda _10+1
+    sta ang_w
+    lda #$80
+    clc
+    adc ang_w
+    stx $ff
+    ldy $ff
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    stx $ff
+    ldy $ff
+    sta (screen_bottomline),y
+    lda ang_w
+    eor #$ff
+    clc
+    adc #1
+    ldy xb
+    sta (screen_topline),y
+    lda ang_w
+    sta (screen_bottomline),y
     inx
-    cpx #$15
-    bne b2
+    dec xb
+    cpx #$13+1
+    bcc b2
+    lda screen_topline
+    sec
+    sbc #<$28
+    sta screen_topline
+    lda screen_topline+1
+    sbc #>$28
+    sta screen_topline+1
+    lda #$28
+    clc
+    adc screen_bottomline
+    sta screen_bottomline
+    bcc !+
+    inc screen_bottomline+1
+  !:
     inc y
     lda #$d
     cmp y
@@ -91,19 +137,19 @@ init_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($17) x, signed word zeropage($19) y)
+// atan2_16(signed word zeropage($1a) x, signed word zeropage($1c) y)
 atan2_16: {
-    .label _2 = 7
-    .label _7 = 9
-    .label yi = 7
-    .label xi = 9
-    .label xd = $1b
-    .label yd = $1d
-    .label angle = $c
-    .label i = $b
-    .label return = $c
-    .label x = $17
-    .label y = $19
+    .label _2 = $a
+    .label _7 = $c
+    .label yi = $a
+    .label xi = $c
+    .label xd = $1f
+    .label yd = $21
+    .label angle = $f
+    .label i = $e
+    .label return = $f
+    .label x = $1a
+    .label y = $1c
     lda y+1
     bmi !b1+
     jmp b1
@@ -266,15 +312,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($11) charset)
+// init_font_hex(byte* zeropage($14) charset)
 init_font_hex: {
-    .label _0 = $1f
-    .label idx = $16
-    .label proto_lo = $13
-    .label charset = $11
-    .label c1 = $15
-    .label proto_hi = $e
-    .label c = $10
+    .label _0 = $23
+    .label idx = $19
+    .label proto_lo = $16
+    .label charset = $14
+    .label c1 = $18
+    .label proto_hi = $11
+    .label c = $13
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

@@ -47,12 +47,12 @@
   .label CIA1_PORT_B = $dc01
   // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64

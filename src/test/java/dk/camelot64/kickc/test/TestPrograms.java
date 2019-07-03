@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCiaTimerSimple() throws IOException, URISyntaxException {
+      compileAndCompare("cia-timer-simple");
+   }
+
+   @Test
    public void testArraysInitKasm0() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init-kasm-0");
    }

@@ -177,7 +177,7 @@ public class Compiler {
       new Pass1AddressOfVolatile(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
-      new PassNAddTypeConversionAssignment(program).execute();
+      new PassNAddTypeConversionAssignment(program, false).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
 
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
@@ -187,7 +187,7 @@ public class Compiler {
       new PassNStructPointerRewriting(program).execute();
 
       new PassNAddBooleanCasts(program).execute();
-      new PassNAddTypeConversionAssignment(program).execute();
+      new PassNAddTypeConversionAssignment(program, false).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
       new Pass1ProcedureInline(program).execute();
@@ -266,7 +266,7 @@ public class Compiler {
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
       optimizations.add(new PassNTypeInference(program));
-      optimizations.add(new PassNAddTypeConversionAssignment(program));
+      optimizations.add(new PassNAddTypeConversionAssignment(program, true));
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));

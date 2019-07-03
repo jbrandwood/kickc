@@ -1,11 +1,5 @@
 Resolved forward reference mulf_sqr1 to (byte[$200]) mulf_sqr1
 Resolved forward reference mulf_sqr2 to (byte[$200]) mulf_sqr2
-Adding pointer type conversion cast (byte*) print_screen in (byte*) print_screen ← (number) $400
-Adding pointer type conversion cast (byte*) main::at_line in (byte*) main::at_line ← (number) $400
-Adding pointer type conversion cast (byte*) init_screen::COLS in (byte*) init_screen::COLS ← (number) $d800
-Adding pointer type conversion cast (signed byte*) ap in (signed byte*) ap ← (number) $fd
-Adding pointer type conversion cast (signed byte*) bp in (signed byte*) bp ← (number) $fe
-Adding pointer type conversion cast (signed byte*) cp in (signed byte*) cp ← (number) $ff
 Identified constant variable (byte) init_screen::WHITE
 Identified constant variable (signed byte*) ap
 Identified constant variable (signed byte*) bp
@@ -22,22 +16,24 @@ Culled Empty Block (label) print_sbyte_at::@4
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
+Culled Empty Block (label) @12
 Culled Empty Block (label) @13
-Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
-Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) @18
-Culled Empty Block (label) main::@6
+Culled Empty Block (label) @19
+Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) @20
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @22
 Culled Empty Block (label) init_screen::@4
 Culled Empty Block (label) fmul8::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) print_screen#0 ← ((byte*)) (number) $400
-  to:@12
+  to:@14
 print_sbyte_at: scope:[print_sbyte_at]  from main::@1 main::@10 main::@3
   (byte*) print_sbyte_at::at#6 ← phi( main::@1/(byte*) print_sbyte_at::at#0 main::@10/(byte*) print_sbyte_at::at#2 main::@3/(byte*) print_sbyte_at::at#1 )
   (signed byte) print_sbyte_at::b#4 ← phi( main::@1/(signed byte) print_sbyte_at::b#1 main::@10/(signed byte) print_sbyte_at::b#3 main::@3/(signed byte) print_sbyte_at::b#2 )
@@ -82,10 +78,10 @@ print_sbyte_at::@7: scope:[print_sbyte_at]  from print_sbyte_at::@2
 print_sbyte_at::@return: scope:[print_sbyte_at]  from print_sbyte_at::@7
   return 
   to:@return
-@12: scope:[]  from @begin
+@14: scope:[]  from @begin
   (byte*) print_screen#8 ← phi( @begin/(byte*) print_screen#0 )
   (byte[]) print_hextab#0 ← (const string) $0
-  to:@19
+  to:@21
 print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
   (byte*) print_byte_at::at#1 ← phi( print_sbyte_at::@2/(byte*) print_byte_at::at#0 )
   (byte) print_byte_at::b#1 ← phi( print_sbyte_at::@2/(byte) print_byte_at::b#0 )
@@ -132,12 +128,12 @@ print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   return 
   to:@return
-@19: scope:[]  from @12
-  (byte*) print_screen#7 ← phi( @12/(byte*) print_screen#8 )
+@21: scope:[]  from @14
+  (byte*) print_screen#7 ← phi( @14/(byte*) print_screen#8 )
   (signed byte[]) vals#0 ← { (number) -$5f, (number) -$40, (number) -$20, (number) -$10, (number) 0, (number) $10, (number) $20, (number) $40, (number) $5f }
-  to:@21
-main: scope:[main]  from @22
-  (byte*) print_screen#4 ← phi( @22/(byte*) print_screen#5 )
+  to:@23
+main: scope:[main]  from @24
+  (byte*) print_screen#4 ← phi( @24/(byte*) print_screen#5 )
   call init_screen 
   to:main::@7
 main::@7: scope:[main]  from main
@@ -260,12 +256,12 @@ init_screen::@3: scope:[init_screen]  from init_screen::@2 init_screen::@3
 init_screen::@return: scope:[init_screen]  from init_screen::@3
   return 
   to:@return
-@21: scope:[]  from @19
-  (byte*) print_screen#6 ← phi( @19/(byte*) print_screen#7 )
+@23: scope:[]  from @21
+  (byte*) print_screen#6 ← phi( @21/(byte*) print_screen#7 )
   (signed byte*) ap#0 ← ((signed byte*)) (number) $fd
   (signed byte*) bp#0 ← ((signed byte*)) (number) $fe
   (signed byte*) cp#0 ← ((signed byte*)) (number) $ff
-  to:@22
+  to:@24
 fmul8: scope:[fmul8]  from main::@4
   (signed byte) fmul8::b#1 ← phi( main::@4/(signed byte) fmul8::b#0 )
   (signed byte) fmul8::a#1 ← phi( main::@4/(signed byte) fmul8::a#0 )
@@ -279,8 +275,8 @@ fmul8::@return: scope:[fmul8]  from fmul8
   (signed byte) fmul8::return#2 ← (signed byte) fmul8::return#4
   return 
   to:@return
-@22: scope:[]  from @21
-  (byte*) print_screen#5 ← phi( @21/(byte*) print_screen#6 )
+@24: scope:[]  from @23
+  (byte*) print_screen#5 ← phi( @23/(byte*) print_screen#6 )
   (byte[$200]) mulf_sqr1#0 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -294,18 +290,18 @@ fmul8::@return: scope:[fmul8]  from fmul8
     }
  }}
   call main 
-  to:@23
-@23: scope:[]  from @22
+  to:@25
+@25: scope:[]  from @24
   to:@end
-@end: scope:[]  from @23
+@end: scope:[]  from @25
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "0123456789abcdef"
-(label) @12
-(label) @19
+(label) @14
 (label) @21
-(label) @22
 (label) @23
+(label) @24
+(label) @25
 (label) @begin
 (label) @end
 (signed byte*) ap
@@ -737,11 +733,11 @@ Added new block during phi lifting main::@14(between main::@11 and main::@4)
 Added new block during phi lifting init_screen::@6(between init_screen::@1 and init_screen::@1)
 Added new block during phi lifting init_screen::@7(between init_screen::@3 and init_screen::@3)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @19
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @21
-Adding NOP phi() at start of @22
 Adding NOP phi() at start of @23
+Adding NOP phi() at start of @24
+Adding NOP phi() at start of @25
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@7
@@ -786,10 +782,10 @@ Coalesced [109] init_screen::m#3 ← init_screen::m#1
 Coalesced [110] init_screen::l#3 ← init_screen::l#1
 Coalesced [117] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 14 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @19
+Culled Empty Block (label) @14
 Culled Empty Block (label) @21
 Culled Empty Block (label) @23
+Culled Empty Block (label) @25
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@13
@@ -803,7 +799,7 @@ Culled Empty Block (label) init_screen::@2
 Culled Empty Block (label) init_screen::@7
 Culled Empty Block (label) init_screen::@6
 Culled Empty Block (label) print_cls::@3
-Renumbering block @22 to @1
+Renumbering block @24 to @1
 Renumbering block print_sbyte_at::@5 to print_sbyte_at::@4
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3

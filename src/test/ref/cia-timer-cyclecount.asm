@@ -1,4 +1,4 @@
-// Setup and run a simple CIA-timer
+// Counting cycles using a CIA timer
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -14,11 +14,30 @@
   .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
+  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  .const CLOCKS_PER_INIT = $12
   .label SCREEN = $400
 main: {
-    jsr clock_start
+    .label _1 = 9
+    .label cyclecount = 9
   b1:
+    jsr clock_start
+    nop
     jsr clock
+    lda cyclecount
+    sec
+    sbc #<CLOCKS_PER_INIT
+    sta cyclecount
+    lda cyclecount+1
+    sbc #>CLOCKS_PER_INIT
+    sta cyclecount+1
+    lda cyclecount+2
+    sbc #<CLOCKS_PER_INIT>>$10
+    sta cyclecount+2
+    lda cyclecount+3
+    sbc #>CLOCKS_PER_INIT>>$10
+    sta cyclecount+3
     jsr print_dword_at
     jmp b1
 }

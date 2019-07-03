@@ -1,0 +1,31 @@
+// Implementation of library functions found in C standard library time.h
+
+import "c64"
+
+// Type suitable for storing the processor time.
+typedef unsigned long clock_t ;
+
+// Clock cycles per second (on a C64 PAL)
+const unsigned long CLOCKS_PER_SEC = 19656*60;
+
+// Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+// To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+const unsigned long CLOCKS_PER_INIT = 0x12;
+
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock_t clock(void) {
+    return 0xffffffff - *CIA2_TIMER_AB;
+}
+
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+void clock_start(void) {
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES;
+    *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A;
+    *CIA2_TIMER_AB = 0xffffffff;
+    *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A;
+    *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES;
+}
+

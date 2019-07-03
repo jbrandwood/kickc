@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCiaTimerCyclecount() throws IOException, URISyntaxException {
+      compileAndCompare("cia-timer-cyclecount");
+   }
+
+   @Test
    public void testCiaTimerSimple() throws IOException, URISyntaxException {
       compileAndCompare("cia-timer-simple");
    }

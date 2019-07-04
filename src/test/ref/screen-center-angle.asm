@@ -28,8 +28,8 @@ main: {
     .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
-    .label _4 = $1f
-    .label cyclecount = $1f
+    .label _4 = $23
+    .label cyclecount = $23
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -55,9 +55,9 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($1f) dw)
+// print_dword_at(dword zeropage($23) dw)
 print_dword_at: {
-    .label dw = $1f
+    .label dw = $23
     lda dw+2
     sta print_word_at.w
     lda dw+3
@@ -141,7 +141,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $1f
+    .label return = $23
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -161,11 +161,12 @@ clock: {
 // Utilizes symmetry around the  center
 init_angle_screen: {
     .label _10 = $14
-    .label xw = $23
-    .label yw = $25
+    .label xw = $27
+    .label yw = $29
     .label angle_w = $14
-    .label ang_w = $27
-    .label xb = $e
+    .label ang_w = $2b
+    .label x = $e
+    .label xb = $f
     .label screen_topline = $a
     .label screen_bottomline = $c
     .label y = 9
@@ -182,9 +183,10 @@ init_angle_screen: {
   b1:
     lda #$27
     sta xb
-    ldx #0
+    lda #0
+    sta x
   b2:
-    txa
+    lda x
     asl
     eor #$ff
     clc
@@ -209,14 +211,11 @@ init_angle_screen: {
     lda #$80
     clc
     adc ang_w
-    stx $ff
-    ldy $ff
+    ldy x
     sta (screen_topline),y
     lda #$80
     sec
     sbc ang_w
-    stx $ff
-    ldy $ff
     sta (screen_bottomline),y
     lda ang_w
     eor #$ff
@@ -226,9 +225,10 @@ init_angle_screen: {
     sta (screen_topline),y
     lda ang_w
     sta (screen_bottomline),y
-    inx
+    inc x
     dec xb
-    cpx #$13+1
+    lda x
+    cmp #$13+1
     bcc b2
     lda screen_topline
     sec
@@ -253,19 +253,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($23) x, signed word zeropage($25) y)
+// atan2_16(signed word zeropage($27) x, signed word zeropage($29) y)
 atan2_16: {
-    .label _2 = $f
-    .label _7 = $11
-    .label yi = $f
-    .label xi = $11
-    .label xd = $28
-    .label yd = $2a
+    .label _2 = $10
+    .label _7 = $12
+    .label yi = $10
+    .label xi = $12
     .label angle = $14
-    .label i = $13
+    .label xd = $18
+    .label yd = $16
     .label return = $14
-    .label x = $23
-    .label y = $25
+    .label x = $27
+    .label y = $29
     lda y+1
     bmi !b1+
     jmp b1
@@ -293,7 +292,7 @@ atan2_16: {
     lda #0
     sta angle
     sta angle+1
-    sta i
+    tax
   b10:
     lda yi+1
     bne b11
@@ -324,38 +323,32 @@ atan2_16: {
   b8:
     rts
   b11:
-    ldy i
+    txa
+    tay
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-    cpy #0
-    beq !e+
-  !:
-    lda xd+1
-    cmp #$80
-    ror xd+1
-    ror xd
-    dey
-    bne !-
-  !e:
-    ldy i
     lda yi
     sta yd
     lda yi+1
     sta yd+1
+  b13:
+    cpy #1+1
+    bcs b14
     cpy #0
-    beq !e+
-  !:
+    beq b17
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-    dey
-    bne !-
-  !e:
+  b17:
     lda yi+1
-    bpl b13
+    bpl b18
     lda xi
     sec
     sbc yd
@@ -370,7 +363,7 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     sec
@@ -380,15 +373,14 @@ atan2_16: {
     lda angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-  b14:
-    inc i
-    lda #CORDIC_ITERATIONS_16-1+1
-    cmp i
+  b19:
+    inx
+    cpx #CORDIC_ITERATIONS_16-1+1
     bne !b12+
     jmp b12
   !b12:
     jmp b10
-  b13:
+  b18:
     lda xi
     clc
     adc yd
@@ -403,7 +395,7 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     clc
@@ -413,7 +405,27 @@ atan2_16: {
     lda angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-    jmp b14
+    jmp b19
+  b14:
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    dey
+    dey
+    jmp b13
   b4:
     lda x
     sta xi
@@ -450,15 +462,15 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($19) charset)
+// init_font_hex(byte* zeropage($1d) charset)
 init_font_hex: {
     .label _0 = $2c
-    .label idx = $1e
-    .label proto_lo = $1b
-    .label charset = $19
-    .label c1 = $1d
-    .label proto_hi = $16
-    .label c = $18
+    .label idx = $22
+    .label proto_lo = $1f
+    .label charset = $1d
+    .label c1 = $21
+    .label proto_hi = $1a
+    .label c = $1c
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

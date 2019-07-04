@@ -13,10 +13,11 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label _11 = $a
-    .label xw = $15
-    .label yw = $17
+    .label xw = $19
+    .label yw = $1b
     .label angle_w = $a
-    .label screen = 3
+    .label screen = 4
+    .label x = 3
     .label y = 2
     jsr init_font_hex
     lda #toD0181_return
@@ -28,10 +29,11 @@ main: {
     lda #-$c
     sta y
   b1:
-    ldx #-$13
+    lda #-$13
+    sta x
   b2:
+    lda x
     ldy #0
-    txa
     sta xw+1
     sty xw
     lda y
@@ -52,8 +54,9 @@ main: {
     bne !+
     inc screen+1
   !:
-    inx
-    cpx #$15
+    inc x
+    lda #$15
+    cmp x
     bne b2
     inc y
     lda #$d
@@ -69,19 +72,18 @@ main: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($15) x, signed word zeropage($17) y)
+// atan2_16(signed word zeropage($19) x, signed word zeropage($1b) y)
 atan2_16: {
-    .label _2 = 5
-    .label _7 = 7
-    .label yi = 5
-    .label xi = 7
-    .label xd = $19
-    .label yd = $1b
+    .label _2 = 6
+    .label _7 = 8
+    .label yi = 6
+    .label xi = 8
     .label angle = $a
-    .label i = 9
+    .label xd = $e
+    .label yd = $c
     .label return = $a
-    .label x = $15
-    .label y = $17
+    .label x = $19
+    .label y = $1b
     lda y+1
     bmi !b1+
     jmp b1
@@ -109,7 +111,7 @@ atan2_16: {
     lda #0
     sta angle
     sta angle+1
-    sta i
+    tax
   b10:
     lda yi+1
     bne b11
@@ -140,38 +142,32 @@ atan2_16: {
   b8:
     rts
   b11:
-    ldy i
+    txa
+    tay
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-    cpy #0
-    beq !e+
-  !:
-    lda xd+1
-    cmp #$80
-    ror xd+1
-    ror xd
-    dey
-    bne !-
-  !e:
-    ldy i
     lda yi
     sta yd
     lda yi+1
     sta yd+1
+  b13:
+    cpy #1+1
+    bcs b14
     cpy #0
-    beq !e+
-  !:
+    beq b17
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-    dey
-    bne !-
-  !e:
+  b17:
     lda yi+1
-    bpl b13
+    bpl b18
     lda xi
     sec
     sbc yd
@@ -186,7 +182,7 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     sec
@@ -196,15 +192,14 @@ atan2_16: {
     lda angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-  b14:
-    inc i
-    lda #CORDIC_ITERATIONS_16-1+1
-    cmp i
+  b19:
+    inx
+    cpx #CORDIC_ITERATIONS_16-1+1
     bne !b12+
     jmp b12
   !b12:
     jmp b10
-  b13:
+  b18:
     lda xi
     clc
     adc yd
@@ -219,7 +214,7 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     clc
@@ -229,7 +224,27 @@ atan2_16: {
     lda angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-    jmp b14
+    jmp b19
+  b14:
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    dey
+    dey
+    jmp b13
   b4:
     lda x
     sta xi
@@ -244,15 +259,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($f) charset)
+// init_font_hex(byte* zeropage($13) charset)
 init_font_hex: {
     .label _0 = $1d
-    .label idx = $14
-    .label proto_lo = $11
-    .label charset = $f
-    .label c1 = $13
-    .label proto_hi = $c
-    .label c = $e
+    .label idx = $18
+    .label proto_lo = $15
+    .label charset = $13
+    .label c1 = $17
+    .label proto_hi = $10
+    .label c = $12
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

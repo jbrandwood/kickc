@@ -45,11 +45,12 @@ main: {
 // Utilizes symmetry around the  center
 init_angle_screen: {
     .label _10 = $f
-    .label xw = $1a
-    .label yw = $1c
+    .label xw = $1e
+    .label yw = $20
     .label angle_w = $f
-    .label ang_w = $1e
-    .label xb = 9
+    .label ang_w = $22
+    .label x = 9
+    .label xb = $a
     .label screen_topline = 5
     .label screen_bottomline = 7
     .label y = 4
@@ -66,9 +67,10 @@ init_angle_screen: {
   b1:
     lda #$27
     sta xb
-    ldx #0
+    lda #0
+    sta x
   b2:
-    txa
+    lda x
     asl
     eor #$ff
     clc
@@ -93,14 +95,11 @@ init_angle_screen: {
     lda #$80
     clc
     adc ang_w
-    stx $ff
-    ldy $ff
+    ldy x
     sta (screen_topline),y
     lda #$80
     sec
     sbc ang_w
-    stx $ff
-    ldy $ff
     sta (screen_bottomline),y
     lda ang_w
     eor #$ff
@@ -110,9 +109,10 @@ init_angle_screen: {
     sta (screen_topline),y
     lda ang_w
     sta (screen_bottomline),y
-    inx
+    inc x
     dec xb
-    cpx #$13+1
+    lda x
+    cmp #$13+1
     bcc b2
     lda screen_topline
     sec
@@ -137,19 +137,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($1a) x, signed word zeropage($1c) y)
+// atan2_16(signed word zeropage($1e) x, signed word zeropage($20) y)
 atan2_16: {
-    .label _2 = $a
-    .label _7 = $c
-    .label yi = $a
-    .label xi = $c
-    .label xd = $1f
-    .label yd = $21
+    .label _2 = $b
+    .label _7 = $d
+    .label yi = $b
+    .label xi = $d
     .label angle = $f
-    .label i = $e
+    .label xd = $13
+    .label yd = $11
     .label return = $f
-    .label x = $1a
-    .label y = $1c
+    .label x = $1e
+    .label y = $20
     lda y+1
     bmi !b1+
     jmp b1
@@ -177,7 +176,7 @@ atan2_16: {
     lda #0
     sta angle
     sta angle+1
-    sta i
+    tax
   b10:
     lda yi+1
     bne b11
@@ -208,38 +207,32 @@ atan2_16: {
   b8:
     rts
   b11:
-    ldy i
+    txa
+    tay
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-    cpy #0
-    beq !e+
-  !:
-    lda xd+1
-    cmp #$80
-    ror xd+1
-    ror xd
-    dey
-    bne !-
-  !e:
-    ldy i
     lda yi
     sta yd
     lda yi+1
     sta yd+1
+  b13:
+    cpy #1+1
+    bcs b14
     cpy #0
-    beq !e+
-  !:
+    beq b17
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-    dey
-    bne !-
-  !e:
+  b17:
     lda yi+1
-    bpl b13
+    bpl b18
     lda xi
     sec
     sbc yd
@@ -254,7 +247,7 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     sec
@@ -264,15 +257,14 @@ atan2_16: {
     lda angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-  b14:
-    inc i
-    lda #CORDIC_ITERATIONS_16-1+1
-    cmp i
+  b19:
+    inx
+    cpx #CORDIC_ITERATIONS_16-1+1
     bne !b12+
     jmp b12
   !b12:
     jmp b10
-  b13:
+  b18:
     lda xi
     clc
     adc yd
@@ -287,7 +279,7 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-    lda i
+    txa
     asl
     tay
     clc
@@ -297,7 +289,27 @@ atan2_16: {
     lda angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-    jmp b14
+    jmp b19
+  b14:
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    dey
+    dey
+    jmp b13
   b4:
     lda x
     sta xi
@@ -312,15 +324,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($14) charset)
+// init_font_hex(byte* zeropage($18) charset)
 init_font_hex: {
     .label _0 = $23
-    .label idx = $19
-    .label proto_lo = $16
-    .label charset = $14
-    .label c1 = $18
-    .label proto_hi = $11
-    .label c = $13
+    .label idx = $1d
+    .label proto_lo = $1a
+    .label charset = $18
+    .label c1 = $1c
+    .label proto_hi = $15
+    .label c = $17
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

@@ -6,29 +6,170 @@
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label D018 = $d018
+  // CIA #2 Timer A+B Value (32-bit)
+  .label CIA2_TIMER_AB = $dd04
+  // CIA #2 Timer A Control Register
+  .label CIA2_TIMER_A_CONTROL = $dd0e
+  // CIA #2 Timer B Control Register
+  .label CIA2_TIMER_B_CONTROL = $dd0f
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
+  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
+  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  .const CLOCKS_PER_INIT = $12
   .label CHARSET = $2000
   .label SCREEN = $2800
   .const NUM_SQUARES = $30
   .label SQUARES = malloc.return
 main: {
+    .label BASE_SCREEN = $400
+    .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
+    .label _4 = $21
+    .label cyclecount = $21
     jsr init_font_hex
     lda #toD0181_return
     sta D018
+    jsr clock_start
     jsr init_dist_screen
+    jsr clock
+    lda cyclecount
+    sec
+    sbc #<CLOCKS_PER_INIT
+    sta cyclecount
+    lda cyclecount+1
+    sbc #>CLOCKS_PER_INIT
+    sta cyclecount+1
+    lda cyclecount+2
+    sbc #<CLOCKS_PER_INIT>>$10
+    sta cyclecount+2
+    lda cyclecount+3
+    sbc #>CLOCKS_PER_INIT>>$10
+    sta cyclecount+3
+    jsr print_dword_at
+    lda #toD0182_return
+    sta D018
+    rts
+}
+// Print a dword as HEX at a specific position
+// print_dword_at(dword zeropage($21) dw)
+print_dword_at: {
+    .label dw = $21
+    lda dw+2
+    sta print_word_at.w
+    lda dw+3
+    sta print_word_at.w+1
+    lda #<main.BASE_SCREEN
+    sta print_word_at.at
+    lda #>main.BASE_SCREEN
+    sta print_word_at.at+1
+    jsr print_word_at
+    lda dw
+    sta print_word_at.w
+    lda dw+1
+    sta print_word_at.w+1
+    lda #<main.BASE_SCREEN+4
+    sta print_word_at.at
+    lda #>main.BASE_SCREEN+4
+    sta print_word_at.at+1
+    jsr print_word_at
+    rts
+}
+// Print a word as HEX at a specific position
+// print_word_at(word zeropage(2) w, byte* zeropage(4) at)
+print_word_at: {
+    .label w = 2
+    .label at = 4
+    lda w+1
+    sta print_byte_at.b
+    jsr print_byte_at
+    lda w
+    sta print_byte_at.b
+    lda print_byte_at.at
+    clc
+    adc #2
+    sta print_byte_at.at
+    bcc !+
+    inc print_byte_at.at+1
+  !:
+    jsr print_byte_at
+    rts
+}
+// Print a byte as HEX at a specific position
+// print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
+print_byte_at: {
+    .label b = 6
+    .label at = 4
+    lda b
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    ldx print_hextab,y
+    lda at
+    sta print_char_at.at
+    lda at+1
+    sta print_char_at.at+1
+    jsr print_char_at
+    lda #$f
+    and b
+    tay
+    lda at
+    clc
+    adc #1
+    sta print_char_at.at
+    lda at+1
+    adc #0
+    sta print_char_at.at+1
+    ldx print_hextab,y
+    jsr print_char_at
+    rts
+}
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zeropage(9) at)
+print_char_at: {
+    .label at = 9
+    txa
+    ldy #0
+    sta (at),y
+    rts
+}
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $21
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta return+3
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 init_dist_screen: {
-    .label yds = $19
-    .label xds = $1b
-    .label ds = $1b
-    .label x = 7
-    .label xb = 9
-    .label screen_topline = 3
-    .label screen_bottomline = 5
-    .label y = 2
+    .label yds = $25
+    .label xds = $27
+    .label ds = $27
+    .label x = $10
+    .label xb = $11
+    .label screen_topline = $c
+    .label screen_bottomline = $e
+    .label y = $b
     jsr init_squares
     lda #<SCREEN+$28*$18
     sta screen_bottomline
@@ -118,12 +259,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($1b) val)
+// sqrt(word zeropage($27) val)
 sqrt: {
-    .label _1 = $a
-    .label _3 = $a
-    .label found = $a
-    .label val = $1b
+    .label _1 = $12
+    .label _3 = $12
+    .label found = $12
+    .label val = $27
     jsr bsearch16u
     lda _3
     sec
@@ -142,14 +283,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($1b) key, word* zeropage($a) items, byte register(X) num)
+// bsearch16u(word zeropage($27) key, word* zeropage($12) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $a
-    .label pivot = $1d
-    .label result = $1f
-    .label return = $a
-    .label items = $a
-    .label key = $1b
+    .label _2 = $12
+    .label pivot = $29
+    .label result = $2b
+    .label return = $12
+    .label items = $12
+    .label key = $27
     lda #<SQUARES
     sta items
     lda #>SQUARES
@@ -229,8 +370,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $1b
-    .label return_2 = $19
+    .label return = $27
+    .label return_2 = $25
     asl
     tay
     lda SQUARES,y
@@ -242,8 +383,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $e
-    .label sqr = $c
+    .label squares = $16
+    .label sqr = $14
     jsr malloc
     ldx #0
     lda #<SQUARES
@@ -288,16 +429,38 @@ malloc: {
     .label return = HEAP_START
     rts
 }
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    sta CIA2_TIMER_A_CONTROL
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2_TIMER_B_CONTROL
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2_TIMER_B_CONTROL
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2_TIMER_A_CONTROL
+    rts
+}
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($13) charset)
+// init_font_hex(byte* zeropage($1b) charset)
 init_font_hex: {
-    .label _0 = $21
-    .label idx = $18
-    .label proto_lo = $15
-    .label charset = $13
-    .label c1 = $17
-    .label proto_hi = $10
-    .label c = $12
+    .label _0 = $2d
+    .label idx = $20
+    .label proto_lo = $1d
+    .label charset = $1b
+    .label c1 = $1f
+    .label proto_hi = $18
+    .label c = $1a
     lda #0
     sta c
     lda #<FONT_HEX_PROTO
@@ -380,3 +543,4 @@ init_font_hex: {
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
+  print_hextab: .text "0123456789abcdef"

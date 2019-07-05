@@ -167,17 +167,17 @@ init_angle_screen: {
     .label ang_w = $2b
     .label x = $e
     .label xb = $f
-    .label screen_topline = $a
-    .label screen_bottomline = $c
+    .label screen_topline = $c
+    .label screen_bottomline = $a
     .label y = 9
-    lda #<SCREEN+$28*$c
-    sta screen_bottomline
-    lda #>SCREEN+$28*$c
-    sta screen_bottomline+1
     lda #<SCREEN+$28*$c
     sta screen_topline
     lda #>SCREEN+$28*$c
     sta screen_topline+1
+    lda #<SCREEN+$28*$c
+    sta screen_bottomline
+    lda #>SCREEN+$28*$c
+    sta screen_bottomline+1
     lda #0
     sta y
   b1:
@@ -208,6 +208,12 @@ init_angle_screen: {
   !:
     lda _10+1
     sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
     lda #$80
     clc
     adc ang_w
@@ -216,14 +222,6 @@ init_angle_screen: {
     lda #$80
     sec
     sbc ang_w
-    sta (screen_bottomline),y
-    lda ang_w
-    eor #$ff
-    clc
-    adc #1
-    ldy xb
-    sta (screen_topline),y
-    lda ang_w
     sta (screen_bottomline),y
     inc x
     dec xb
@@ -334,7 +332,7 @@ atan2_16: {
     lda yi+1
     sta yd+1
   b13:
-    cpy #1+1
+    cpy #2
     bcs b14
     cpy #0
     beq b17

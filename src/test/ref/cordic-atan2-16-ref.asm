@@ -243,7 +243,7 @@ atan2_16: {
     lda yi+1
     sta yd+1
   b13:
-    cpy #1+1
+    cpy #2
     bcs b14
     cpy #0
     beq b17

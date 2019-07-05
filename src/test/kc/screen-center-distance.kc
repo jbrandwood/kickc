@@ -4,6 +4,8 @@ import "stdlib"
 import "sqr"
 import "c64"
 import "font-hex"
+import "time"
+import "print"
 
 #reserve(08)
 
@@ -13,7 +15,13 @@ const byte* SCREEN = 0x2800;
 void main() {
     init_font_hex(CHARSET);
     *D018 = toD018(SCREEN, CHARSET);
+    clock_start();
     init_dist_screen(SCREEN);
+    clock_t cyclecount = clock()-CLOCKS_PER_INIT;
+    byte* BASE_SCREEN = 0x0400;
+    byte* BASE_CHARSET = 0x1000;
+    print_dword_at(cyclecount, BASE_SCREEN);
+    *D018 = toD018(BASE_SCREEN, BASE_CHARSET);
 }
 
 // Populates 1000 bytes (a screen) with values representing the distance to the center.

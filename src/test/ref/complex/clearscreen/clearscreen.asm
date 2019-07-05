@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-  .const SIZEOF_WORD = 2
   .const STATUS_FREE = 0
   .const STATUS_NEW = 1
   .const STATUS_PROCESSING = 2
@@ -16,6 +15,8 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
+  // The number of iterations performed during 16-bit CORDIC atan2 calculation
+  .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -68,22 +69,16 @@
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
   .const NOT_FOUND = $ff
-  .const NUM_SQUARES = $30
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
   .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
   .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
   .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
-  .label heap_head = $23
-  .label SQUARES = $49
-  .label SCREEN_COPY = $29
-  .label SCREEN_DIST = $2b
+  .label heap_head = $27
+  .label SCREEN_COPY = $2b
+  .label SCREEN_DIST = $2d
 bbegin:
-  lda #<$3e8
-  sta malloc.size
-  lda #>$3e8
-  sta malloc.size+1
   lda #<HEAP_START
   sta heap_head
   lda #>HEAP_START
@@ -93,27 +88,19 @@ bbegin:
   sta SCREEN_COPY
   lda malloc.mem+1
   sta SCREEN_COPY+1
-  lda #<$3e8
-  sta malloc.size
-  lda #>$3e8
-  sta malloc.size+1
   jsr malloc
-  lda malloc.mem
-  sta SCREEN_DIST
-  lda malloc.mem+1
-  sta SCREEN_DIST+1
   jsr main
   rts
 main: {
     .label dst = 4
     .label src = 2
     .label i = 6
-    .label center_y = $2d
+    .label center_y = $2f
     lda SCREEN_DIST
-    sta init_dist_screen.screen
+    sta init_angle_screen.screen
     lda SCREEN_DIST+1
-    sta init_dist_screen.screen+1
-    jsr init_dist_screen
+    sta init_angle_screen.screen+1
+    jsr init_angle_screen
     lda SCREEN_COPY
     sta dst
     lda SCREEN_COPY+1
@@ -197,36 +184,36 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($2e) center_x, byte zeropage($2d) center_y)
+// startProcessing(byte zeropage($30) center_x, byte zeropage($2f) center_y)
 startProcessing: {
-    .label _0 = $2f
-    .label _1 = $2f
+    .label _0 = $31
+    .label _1 = $31
     .label _5 = $a
     .label _6 = $a
     .label _8 = 8
     .label _9 = 8
-    .label _11 = $36
-    .label _12 = $36
-    .label _13 = $36
-    .label _15 = $38
-    .label _16 = $38
-    .label _17 = $38
-    .label _23 = $3b
-    .label center_x = $2e
-    .label center_y = $2d
+    .label _11 = $38
+    .label _12 = $38
+    .label _13 = $38
+    .label _15 = $3a
+    .label _16 = $3a
+    .label _17 = $3a
+    .label _23 = $3d
+    .label center_x = $30
+    .label center_y = $2f
     .label i = 7
-    .label offset = $2f
-    .label colPtr = $33
-    .label spriteCol = $35
-    .label screenPtr = $2f
+    .label offset = $31
+    .label colPtr = $35
+    .label spriteCol = $37
+    .label screenPtr = $31
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $36
-    .label spriteY = $38
-    .label spritePtr = $3a
+    .label spriteX = $38
+    .label spriteY = $3a
+    .label spritePtr = $3c
     .label freeIdx = 7
-    .label _47 = $31
-    .label _48 = $2f
+    .label _47 = $33
+    .label _48 = $31
     ldx #$ff
   b1:
     lda #0
@@ -480,9 +467,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _8 = $3d
-    .label _9 = $3d
-    .label _10 = $3d
+    .label _8 = $3f
+    .label _9 = $3f
+    .label _10 = $3f
     .label screen_line = $c
     .label dist_line = $e
     .label y = $10
@@ -491,8 +478,8 @@ getCharToProcess: {
     .label closest_dist = $11
     .label closest_x = $12
     .label closest_y = $13
-    .label _12 = $3f
-    .label _13 = $3d
+    .label _12 = $41
+    .label _13 = $3f
     lda SCREEN_COPY
     sta screen_line
     lda SCREEN_COPY+1
@@ -663,292 +650,308 @@ initSprites: {
     sta SPRITES_EXPAND_Y
     rts
 }
-// Populates 1000 bytes (a screen) with values representing the distance to the center.
-// The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage($17) screen)
-init_dist_screen: {
+// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Utilizes symmetry around the  center
+// init_angle_screen(byte* zeropage($17) screen)
+init_angle_screen: {
+    .label _10 = $21
     .label screen = $17
-    .label screen_bottomline = $19
-    .label yds = $41
-    .label xds = $43
-    .label ds = $43
+    .label screen_topline = $19
+    .label screen_bottomline = $17
+    .label xw = $43
+    .label yw = $45
+    .label angle_w = $21
+    .label ang_w = $47
     .label x = $1b
     .label xb = $1c
-    .label screen_topline = $17
     .label y = $16
-    jsr init_squares
     lda screen
     clc
-    adc #<$28*$18
-    sta screen_bottomline
+    adc #<$28*$c
+    sta screen_topline
     lda screen+1
-    adc #>$28*$18
+    adc #>$28*$c
+    sta screen_topline+1
+    clc
+    lda screen_bottomline
+    adc #<$28*$c
+    sta screen_bottomline
+    lda screen_bottomline+1
+    adc #>$28*$c
     sta screen_bottomline+1
     lda #0
     sta y
   b1:
-    lda y
-    asl
-    cmp #$18
-    bcs b2
-    eor #$ff
-    clc
-    adc #$18+1
-  b4:
-    jsr sqr
-    lda sqr.return
-    sta sqr.return_2
-    lda sqr.return+1
-    sta sqr.return_2+1
     lda #$27
     sta xb
     lda #0
     sta x
-  b5:
+  b2:
     lda x
     asl
-    cmp #$27
-    bcs b6
     eor #$ff
     clc
     adc #$27+1
-  b8:
-    jsr sqr
-    lda ds
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
     clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
-    jsr sqrt
+    adc _10
+    sta _10
+    bcc !+
+    inc _10+1
+  !:
+    lda _10+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
     ldy x
     sta (screen_topline),y
-    sta (screen_bottomline),y
-    ldy xb
-    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
     sta (screen_bottomline),y
     inc x
     dec xb
     lda x
     cmp #$13+1
-    bcc b5
-    lda #$28
-    clc
-    adc screen_topline
-    sta screen_topline
-    bcc !+
-    inc screen_topline+1
-  !:
-    lda screen_bottomline
+    bcc b2
+    lda screen_topline
     sec
     sbc #<$28
-    sta screen_bottomline
-    lda screen_bottomline+1
+    sta screen_topline
+    lda screen_topline+1
     sbc #>$28
-    sta screen_bottomline+1
+    sta screen_topline+1
+    lda #$28
+    clc
+    adc screen_bottomline
+    sta screen_bottomline
+    bcc !+
+    inc screen_bottomline+1
+  !:
     inc y
     lda #$d
     cmp y
     bne b1
     rts
-  b6:
-    sec
-    sbc #$27
-    jmp b8
-  b2:
-    sec
-    sbc #$18
-    jmp b4
 }
-// Find the (integer) square root of a word value
-// If the square is not an integer then it returns the largest integer N where N*N <= val
-// Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($43) val)
-sqrt: {
-    .label _1 = $1d
-    .label _3 = $1d
-    .label found = $1d
-    .label val = $43
-    lda SQUARES
-    sta bsearch16u.items
-    lda SQUARES+1
-    sta bsearch16u.items+1
-    jsr bsearch16u
-    lda _3
-    sec
-    sbc SQUARES
-    sta _3
-    lda _3+1
-    sbc SQUARES+1
-    sta _3+1
-    lsr _1+1
-    ror _1
-    lda _1
-    rts
-}
-// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
-// - key - The value to look for
-// - items - Pointer to the start of the array to search in
-// - num - The number of items in the array
-// Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($43) key, word* zeropage($1d) items, byte register(X) num)
-bsearch16u: {
+// Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
+// Finding the angle requires a binary search using CORDIC_ITERATIONS_16
+// Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
+// atan2_16(signed word zeropage($43) x, signed word zeropage($45) y)
+atan2_16: {
     .label _2 = $1d
-    .label pivot = $45
-    .label result = $47
-    .label return = $1d
-    .label items = $1d
-    .label key = $43
-    ldx #NUM_SQUARES
-  b3:
-    cpx #0
-    bne b4
-    ldy #1
-    lda (items),y
-    cmp key+1
-    bne !+
-    dey
-    lda (items),y
-    cmp key
-    beq b2
-  !:
-    bcc b2
-    lda _2
+    .label _7 = $1f
+    .label yi = $1d
+    .label xi = $1f
+    .label angle = $21
+    .label xd = $25
+    .label yd = $23
+    .label return = $21
+    .label x = $43
+    .label y = $45
+    lda y+1
+    bmi !b1+
+    jmp b1
+  !b1:
     sec
-    sbc #<1*SIZEOF_WORD
+    lda #0
+    sbc y
     sta _2
-    lda _2+1
-    sbc #>1*SIZEOF_WORD
+    lda #0
+    sbc y+1
     sta _2+1
-  b2:
-    rts
-  b4:
-    txa
-    lsr
-    asl
-    clc
-    adc items
-    sta pivot
-    lda #0
-    adc items+1
-    sta pivot+1
+  b3:
+    lda x+1
+    bmi !b4+
+    jmp b4
+  !b4:
     sec
-    lda key
-    ldy #0
-    sbc (pivot),y
-    sta result
-    lda key+1
-    iny
-    sbc (pivot),y
-    sta result+1
-    bne b6
-    lda result
-    bne b6
-    lda pivot
-    sta return
-    lda pivot+1
-    sta return+1
-    rts
-  b6:
-    lda result+1
-    bmi b7
-    bne !+
-    lda result
-    beq b7
-  !:
-    lda #1*SIZEOF_WORD
-    clc
-    adc pivot
-    sta items
     lda #0
-    adc pivot+1
-    sta items+1
-    dex
-  b7:
-    txa
-    lsr
+    sbc x
+    sta _7
+    lda #0
+    sbc x+1
+    sta _7+1
+  b6:
+    lda #0
+    sta angle
+    sta angle+1
     tax
-    jmp b3
-}
-// Find the square of a byte value
-// Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
-sqr: {
-    .label return = $43
-    .label return_2 = $41
+  b10:
+    lda yi+1
+    bne b11
+    lda yi
+    bne b11
+  b12:
+    lsr angle+1
+    ror angle
+    lda x+1
+    bpl b7
+    sec
+    lda #<$8000
+    sbc angle
+    sta angle
+    lda #>$8000
+    sbc angle+1
+    sta angle+1
+  b7:
+    lda y+1
+    bpl b8
+    sec
+    lda #0
+    sbc angle
+    sta angle
+    lda #0
+    sbc angle+1
+    sta angle+1
+  b8:
+    rts
+  b11:
+    txa
+    tay
+    lda xi
+    sta xd
+    lda xi+1
+    sta xd+1
+    lda yi
+    sta yd
+    lda yi+1
+    sta yd+1
+  b13:
+    cpy #2
+    bcs b14
+    cpy #0
+    beq b17
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+  b17:
+    lda yi+1
+    bpl b18
+    lda xi
+    sec
+    sbc yd
+    sta xi
+    lda xi+1
+    sbc yd+1
+    sta xi+1
+    lda yi
+    clc
+    adc xd
+    sta yi
+    lda yi+1
+    adc xd+1
+    sta yi+1
+    txa
     asl
     tay
-    lda (SQUARES),y
-    sta return
-    iny
-    lda (SQUARES),y
-    sta return+1
-    rts
-}
-// Initialize squares table
-// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
-init_squares: {
-    .label squares = $21
-    .label sqr = $1f
-    lda #NUM_SQUARES*SIZEOF_WORD
-    sta malloc.size
-    lda #0
-    sta malloc.size+1
-    jsr malloc
-    lda SQUARES
-    sta squares
-    lda SQUARES+1
-    sta squares+1
-    ldx #0
-    txa
-    sta sqr
-    sta sqr+1
-  b1:
-    ldy #0
-    lda sqr
-    sta (squares),y
-    iny
-    lda sqr+1
-    sta (squares),y
-    lda #SIZEOF_WORD
+    sec
+    lda angle
+    sbc CORDIC_ATAN2_ANGLES_16,y
+    sta angle
+    lda angle+1
+    sbc CORDIC_ATAN2_ANGLES_16+1,y
+    sta angle+1
+  b19:
+    inx
+    cpx #CORDIC_ITERATIONS_16-1+1
+    bne !b12+
+    jmp b12
+  !b12:
+    jmp b10
+  b18:
+    lda xi
     clc
-    adc squares
-    sta squares
-    bcc !+
-    inc squares+1
-  !:
+    adc yd
+    sta xi
+    lda xi+1
+    adc yd+1
+    sta xi+1
+    lda yi
+    sec
+    sbc xd
+    sta yi
+    lda yi+1
+    sbc xd+1
+    sta yi+1
     txa
     asl
+    tay
     clc
-    adc #1
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inx
-    cpx #NUM_SQUARES-1+1
-    bne b1
-    rts
+    lda angle
+    adc CORDIC_ATAN2_ANGLES_16,y
+    sta angle
+    lda angle+1
+    adc CORDIC_ATAN2_ANGLES_16+1,y
+    sta angle+1
+    jmp b19
+  b14:
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    dey
+    dey
+    jmp b13
+  b4:
+    lda x
+    sta xi
+    lda x+1
+    sta xi+1
+    jmp b6
+  b1:
+    lda y
+    sta yi
+    lda y+1
+    sta yi+1
+    jmp b3
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($25) size)
 malloc: {
-    .label mem = $49
-    .label size = $25
+    .label mem = $2d
     lda heap_head
     sta mem
     lda heap_head+1
     sta mem+1
-    lda heap_head
     clc
-    adc size
+    lda heap_head
+    adc #<$3e8
     sta heap_head
     lda heap_head+1
-    adc size+1
+    adc #>$3e8
     sta heap_head+1
     rts
 }
@@ -978,14 +981,14 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _15 = $50
-    .label _25 = $4e
-    .label processing = $4b
-    .label bitmask = $4d
-    .label i = $27
-    .label xpos = $4e
-    .label ypos = $52
-    .label numActive = $28
+    .label _15 = $4d
+    .label _25 = $4b
+    .label processing = $48
+    .label bitmask = $4a
+    .label i = $29
+    .label xpos = $4b
+    .label ypos = $4f
+    .label numActive = $2a
     lda #0
     sta numActive
     sta i
@@ -1278,6 +1281,11 @@ irqTop: {
     ldy #00
     rti
 }
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+CORDIC_ATAN2_ANGLES_16:
+.for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
+
   // Values added to VX
 VXSIN:
 .for(var i=0; i<40; i++) {

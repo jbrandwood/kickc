@@ -23,6 +23,12 @@
 (const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte) $7f
 (byte*) COLS
 (const byte*) COLS#0 COLS = (byte*) 55296
+(word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16
+(const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
+ }}
+(byte) CORDIC_ITERATIONS_16
+(const byte) CORDIC_ITERATIONS_16#0 CORDIC_ITERATIONS_16 = (byte) $f
 (bool) DEBUG
 (void()**) HARDWARE_IRQ
 (const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = (void()**) 65534
@@ -40,8 +46,6 @@
 (const byte) NOT_FOUND#0 NOT_FOUND = (byte) $ff
 (byte) NUM_PROCESSING
 (const byte) NUM_PROCESSING#0 NUM_PROCESSING = (byte) 8
-(byte) NUM_SQUARES
-(const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL OFFSET_STRUCT_PROCESSINGSPRITE_COL = (byte) $a
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID OFFSET_STRUCT_PROCESSINGSPRITE_ID = (byte) 8
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR OFFSET_STRUCT_PROCESSINGSPRITE_PTR = (byte) 9
@@ -83,10 +87,9 @@
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte*) SCREEN_COPY
-(void*) SCREEN_COPY#0 SCREEN_COPY zp ZP_WORD:41 0.0273972602739726
+(void*) SCREEN_COPY#0 SCREEN_COPY zp ZP_WORD:43 0.0273972602739726
 (byte*) SCREEN_DIST
-(void*) SCREEN_DIST#0 SCREEN_DIST zp ZP_WORD:43 0.028169014084507043
-(const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
+(void*) SCREEN_DIST#0 SCREEN_DIST zp ZP_WORD:45 0.028169014084507043
 (byte*) SPRITES_COLS
 (const byte*) SPRITES_COLS#0 SPRITES_COLS = (byte*) 53287
 (byte*) SPRITES_ENABLE
@@ -107,8 +110,6 @@
 (const byte*) SPRITE_DATA#0 SPRITE_DATA = (byte*) 8192
 (word) SPRITE_PTRS
 (const word) SPRITE_PTRS#0 SPRITE_PTRS = (word) $3f8
-(word*) SQUARES
-(void*) SQUARES#1 SQUARES zp ZP_WORD:73 0.03225806451612903
 (const byte) STATUS_FREE STATUS_FREE = (byte) 0
 (const byte) STATUS_NEW STATUS_NEW = (byte) 1
 (const byte) STATUS_PROCESSING STATUS_PROCESSING = (byte) 2
@@ -133,47 +134,89 @@
 (const word) YPOS_BOTTOMMOST#0 YPOS_BOTTOMMOST = (word)(const byte) BORDER_YPOS_BOTTOM#0<<(byte) 4
 (word) YPOS_TOPMOST
 (const word) YPOS_TOPMOST#0 YPOS_TOPMOST = (word)(const byte) BORDER_YPOS_TOP#0-(byte) 8<<(byte) 4
-(word*()) bsearch16u((word) bsearch16u::key , (word*) bsearch16u::items , (byte) bsearch16u::num)
-(byte~) bsearch16u::$16 reg byte a 2002.0
-(word*~) bsearch16u::$2 $2 zp ZP_WORD:29 4.0
-(byte~) bsearch16u::$6 reg byte a 2002.0
-(label) bsearch16u::@1
-(label) bsearch16u::@2
-(label) bsearch16u::@3
-(label) bsearch16u::@4
-(label) bsearch16u::@5
-(label) bsearch16u::@6
-(label) bsearch16u::@7
-(label) bsearch16u::@8
-(label) bsearch16u::@9
-(label) bsearch16u::@return
-(word*) bsearch16u::items
-(word*) bsearch16u::items#0 items zp ZP_WORD:29 1001.0
-(word*) bsearch16u::items#1 items zp ZP_WORD:29 2.0
-(word*) bsearch16u::items#2 items zp ZP_WORD:29 334.5555555555556
-(word*) bsearch16u::items#8 items zp ZP_WORD:29 1501.5
-(word) bsearch16u::key
-(word) bsearch16u::key#0 key zp ZP_WORD:67 0.26666666666666666
-(byte) bsearch16u::num
-(byte) bsearch16u::num#0 reg byte x 2002.0
-(byte) bsearch16u::num#1 reg byte x 2002.0
-(byte) bsearch16u::num#3 reg byte x 556.1111111111111
-(byte) bsearch16u::num#5 reg byte x 3003.0
-(word*) bsearch16u::pivot
-(word*) bsearch16u::pivot#0 pivot zp ZP_WORD:69 501.0
-(signed word) bsearch16u::result
-(signed word) bsearch16u::result#0 result zp ZP_WORD:71 1501.5
-(word*) bsearch16u::return
-(word*) bsearch16u::return#1 return zp ZP_WORD:29 2.0
-(word*) bsearch16u::return#2 return zp ZP_WORD:29 6.0
-(word*) bsearch16u::return#3 return zp ZP_WORD:29 4.0
-(word*~) bsearch16u::return#6 return zp ZP_WORD:29 4.0
+(word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
+(signed word~) atan2_16::$2 $2 zp ZP_WORD:29 4.0
+(byte~) atan2_16::$23 reg byte a 2002.0
+(byte~) atan2_16::$24 reg byte a 2002.0
+(signed word~) atan2_16::$7 $7 zp ZP_WORD:31 4.0
+(label) atan2_16::@1
+(label) atan2_16::@10
+(label) atan2_16::@11
+(label) atan2_16::@12
+(label) atan2_16::@13
+(label) atan2_16::@14
+(label) atan2_16::@15
+(label) atan2_16::@16
+(label) atan2_16::@17
+(label) atan2_16::@18
+(label) atan2_16::@19
+(label) atan2_16::@2
+(label) atan2_16::@20
+(label) atan2_16::@21
+(label) atan2_16::@3
+(label) atan2_16::@4
+(label) atan2_16::@5
+(label) atan2_16::@6
+(label) atan2_16::@7
+(label) atan2_16::@8
+(label) atan2_16::@9
+(label) atan2_16::@return
+(word) atan2_16::angle
+(word) atan2_16::angle#1 angle zp ZP_WORD:33 3.0
+(word) atan2_16::angle#11 angle zp ZP_WORD:33 4.0
+(word) atan2_16::angle#12 angle zp ZP_WORD:33 190.66666666666666
+(word) atan2_16::angle#13 angle zp ZP_WORD:33 1334.6666666666667
+(word) atan2_16::angle#2 angle zp ZP_WORD:33 2002.0
+(word) atan2_16::angle#3 angle zp ZP_WORD:33 2002.0
+(word) atan2_16::angle#4 angle zp ZP_WORD:33 4.0
+(word) atan2_16::angle#5 angle zp ZP_WORD:33 4.0
+(word) atan2_16::angle#6 angle zp ZP_WORD:33 2004.0
+(byte) atan2_16::i
+(byte) atan2_16::i#1 reg byte x 1501.5
+(byte) atan2_16::i#2 reg byte x 208.54166666666669
+(word) atan2_16::return
+(word) atan2_16::return#0 return zp ZP_WORD:33 34.99999999999999
+(word) atan2_16::return#2 return zp ZP_WORD:33 202.0
+(byte) atan2_16::shift
+(byte) atan2_16::shift#1 reg byte y 20002.0
+(byte) atan2_16::shift#2 reg byte y 8001.25
+(byte~) atan2_16::shift#5 reg byte y 667.3333333333334
+(signed word) atan2_16::x
+(signed word) atan2_16::x#0 x zp ZP_WORD:67 2.8684210526315796
+(signed word) atan2_16::xd
+(signed word) atan2_16::xd#1 xd zp ZP_WORD:37 6667.333333333333
+(signed word~) atan2_16::xd#10 xd zp ZP_WORD:37 1001.0
+(signed word) atan2_16::xd#2 xd zp ZP_WORD:37 1001.0
+(signed word) atan2_16::xd#3 xd zp ZP_WORD:37 7668.333333333332
+(signed word) atan2_16::xd#5 xd zp ZP_WORD:37 1001.0
+(signed word) atan2_16::xi
+(signed word) atan2_16::xi#0 xi zp ZP_WORD:31 6.0
+(signed word) atan2_16::xi#1 xi zp ZP_WORD:31 500.5
+(signed word~) atan2_16::xi#13 xi zp ZP_WORD:31 4.0
+(signed word) atan2_16::xi#2 xi zp ZP_WORD:31 500.5
+(signed word) atan2_16::xi#3 xi zp ZP_WORD:31 267.0666666666667
+(signed word) atan2_16::xi#8 xi zp ZP_WORD:31 1001.0
+(signed word) atan2_16::y
+(signed word) atan2_16::y#0 y zp ZP_WORD:69 2.724999999999999
+(signed word) atan2_16::yd
+(signed word) atan2_16::yd#1 yd zp ZP_WORD:35 10001.0
+(signed word~) atan2_16::yd#10 yd zp ZP_WORD:35 2002.0
+(signed word) atan2_16::yd#2 yd zp ZP_WORD:35 2002.0
+(signed word) atan2_16::yd#3 yd zp ZP_WORD:35 4601.0
+(signed word) atan2_16::yd#5 yd zp ZP_WORD:35 2002.0
+(signed word) atan2_16::yi
+(signed word) atan2_16::yi#0 yi zp ZP_WORD:29 1.2000000000000002
+(signed word) atan2_16::yi#1 yi zp ZP_WORD:29 667.3333333333334
+(signed word~) atan2_16::yi#16 yi zp ZP_WORD:29 4.0
+(signed word) atan2_16::yi#2 yi zp ZP_WORD:29 667.3333333333334
+(signed word) atan2_16::yi#3 yi zp ZP_WORD:29 353.4117647058823
+(signed word) atan2_16::yi#8 yi zp ZP_WORD:29 1001.0
 (struct ProcessingChar()) getCharToProcess()
-(byte*~) getCharToProcess::$10 $10 zp ZP_WORD:61 4.0
-(word) getCharToProcess::$12 $12 zp ZP_WORD:63 4.0
-(word) getCharToProcess::$13 $13 zp ZP_WORD:61 4.0
-(word~) getCharToProcess::$8 $8 zp ZP_WORD:61 3.0
-(word~) getCharToProcess::$9 $9 zp ZP_WORD:61 4.0
+(byte*~) getCharToProcess::$10 $10 zp ZP_WORD:63 4.0
+(word) getCharToProcess::$12 $12 zp ZP_WORD:65 4.0
+(word) getCharToProcess::$13 $13 zp ZP_WORD:63 4.0
+(word~) getCharToProcess::$8 $8 zp ZP_WORD:63 3.0
+(word~) getCharToProcess::$9 $9 zp ZP_WORD:63 4.0
 (label) getCharToProcess::@1
 (label) getCharToProcess::@10
 (label) getCharToProcess::@11
@@ -229,8 +272,8 @@
 (byte) getCharToProcess::y#1 y zp ZP_BYTE:16 101.0
 (byte) getCharToProcess::y#7 y zp ZP_BYTE:16 80.2
 (byte*) heap_head
-(byte*) heap_head#1 heap_head zp ZP_WORD:35 0.6000000000000001
-(byte*) heap_head#12 heap_head zp ZP_WORD:35 4.0
+(byte*) heap_head#1 heap_head zp ZP_WORD:39 1.0
+(byte*) heap_head#5 heap_head zp ZP_WORD:39 3.0
 (void()) initSprites()
 (label) initSprites::@1
 (label) initSprites::@2
@@ -242,75 +285,46 @@
 (byte*) initSprites::sp
 (byte*) initSprites::sp#1 sp zp ZP_WORD:20 16.5
 (byte*) initSprites::sp#2 sp zp ZP_WORD:20 16.5
-(void()) init_dist_screen((byte*) init_dist_screen::screen)
-(byte~) init_dist_screen::$13 reg byte a 202.0
-(byte~) init_dist_screen::$15 reg byte a 202.0
-(byte~) init_dist_screen::$5 reg byte a 22.0
-(byte~) init_dist_screen::$7 reg byte a 22.0
-(label) init_dist_screen::@1
-(label) init_dist_screen::@10
-(label) init_dist_screen::@11
-(label) init_dist_screen::@12
-(label) init_dist_screen::@13
-(label) init_dist_screen::@2
-(label) init_dist_screen::@3
-(label) init_dist_screen::@4
-(label) init_dist_screen::@5
-(label) init_dist_screen::@6
-(label) init_dist_screen::@7
-(label) init_dist_screen::@8
-(label) init_dist_screen::@9
-(label) init_dist_screen::@return
-(byte) init_dist_screen::d
-(byte) init_dist_screen::d#0 reg byte a 126.25
-(word) init_dist_screen::ds
-(word) init_dist_screen::ds#0 ds zp ZP_WORD:67 202.0
-(byte*) init_dist_screen::screen
-(byte*) init_dist_screen::screen#0 screen zp ZP_WORD:23 1.5
-(byte*) init_dist_screen::screen_bottomline
-(byte*) init_dist_screen::screen_bottomline#0 screen_bottomline zp ZP_WORD:25 4.0
-(byte*) init_dist_screen::screen_bottomline#1 screen_bottomline zp ZP_WORD:25 7.333333333333333
-(byte*) init_dist_screen::screen_bottomline#10 screen_bottomline zp ZP_WORD:25 6.848484848484849
-(byte*) init_dist_screen::screen_topline
-(byte*) init_dist_screen::screen_topline#1 screen_topline zp ZP_WORD:23 5.5
-(byte*) init_dist_screen::screen_topline#10 screen_topline zp ZP_WORD:23 7.0625
-(byte) init_dist_screen::x
-(byte) init_dist_screen::x#1 x zp ZP_BYTE:27 101.0
-(byte) init_dist_screen::x#2 x zp ZP_BYTE:27 26.578947368421055
-(byte) init_dist_screen::x2
-(byte) init_dist_screen::x2#0 reg byte a 202.0
-(byte) init_dist_screen::xb
-(byte) init_dist_screen::xb#1 xb zp ZP_BYTE:28 101.0
-(byte) init_dist_screen::xb#2 xb zp ZP_BYTE:28 20.2
-(byte) init_dist_screen::xd
-(byte) init_dist_screen::xd#0 reg byte a 303.0
-(word) init_dist_screen::xds
-(word) init_dist_screen::xds#0 xds zp ZP_WORD:67 202.0
-(byte) init_dist_screen::y
-(byte) init_dist_screen::y#1 y zp ZP_BYTE:22 16.5
-(byte) init_dist_screen::y#10 y zp ZP_BYTE:22 0.9705882352941178
-(byte) init_dist_screen::y2
-(byte) init_dist_screen::y2#0 reg byte a 22.0
-(byte) init_dist_screen::yd
-(byte) init_dist_screen::yd#0 reg byte a 33.0
-(word) init_dist_screen::yds
-(word) init_dist_screen::yds#0 yds zp ZP_WORD:65 4.869565217391305
-(void()) init_squares()
-(byte~) init_squares::$3 reg byte a 22.0
-(byte~) init_squares::$4 reg byte a 22.0
-(label) init_squares::@1
-(label) init_squares::@2
-(label) init_squares::@return
-(byte) init_squares::i
-(byte) init_squares::i#1 reg byte x 16.5
-(byte) init_squares::i#2 reg byte x 5.5
-(word) init_squares::sqr
-(word) init_squares::sqr#1 sqr zp ZP_WORD:31 7.333333333333333
-(word) init_squares::sqr#2 sqr zp ZP_WORD:31 6.6000000000000005
-(word*) init_squares::squares
-(word*) init_squares::squares#0 squares zp ZP_WORD:33 4.0
-(word*) init_squares::squares#1 squares zp ZP_WORD:33 3.6666666666666665
-(word*) init_squares::squares#2 squares zp ZP_WORD:33 17.5
+(void()) init_angle_screen((byte*) init_angle_screen::screen)
+(word~) init_angle_screen::$10 $10 zp ZP_WORD:33 202.0
+(byte~) init_angle_screen::$12 reg byte a 202.0
+(byte~) init_angle_screen::$13 reg byte a 202.0
+(byte~) init_angle_screen::$14 reg byte a 202.0
+(byte~) init_angle_screen::$2 reg byte a 202.0
+(byte~) init_angle_screen::$3 reg byte a 202.0
+(byte~) init_angle_screen::$6 reg byte a 202.0
+(label) init_angle_screen::@1
+(label) init_angle_screen::@2
+(label) init_angle_screen::@3
+(label) init_angle_screen::@4
+(label) init_angle_screen::@return
+(byte) init_angle_screen::ang_w
+(byte) init_angle_screen::ang_w#0 ang_w zp ZP_BYTE:71 84.16666666666666
+(word) init_angle_screen::angle_w
+(word) init_angle_screen::angle_w#0 angle_w zp ZP_WORD:33 202.0
+(byte*) init_angle_screen::screen
+(byte*) init_angle_screen::screen#0 screen zp ZP_WORD:23 3.0
+(byte*) init_angle_screen::screen_bottomline
+(byte*) init_angle_screen::screen_bottomline#0 screen_bottomline zp ZP_WORD:23 4.0
+(byte*) init_angle_screen::screen_bottomline#1 screen_bottomline zp ZP_WORD:23 7.333333333333333
+(byte*) init_angle_screen::screen_bottomline#5 screen_bottomline zp ZP_WORD:23 9.040000000000001
+(byte*) init_angle_screen::screen_topline
+(byte*) init_angle_screen::screen_topline#0 screen_topline zp ZP_WORD:25 2.0
+(byte*) init_angle_screen::screen_topline#1 screen_topline zp ZP_WORD:25 5.5
+(byte*) init_angle_screen::screen_topline#5 screen_topline zp ZP_WORD:25 9.416666666666666
+(byte) init_angle_screen::x
+(byte) init_angle_screen::x#1 x zp ZP_BYTE:27 101.0
+(byte) init_angle_screen::x#2 x zp ZP_BYTE:27 25.25
+(byte) init_angle_screen::xb
+(byte) init_angle_screen::xb#1 xb zp ZP_BYTE:28 101.0
+(byte) init_angle_screen::xb#2 xb zp ZP_BYTE:28 19.238095238095237
+(signed word) init_angle_screen::xw
+(word) init_angle_screen::xw#0 xw zp ZP_WORD:67 33.666666666666664
+(byte) init_angle_screen::y
+(byte) init_angle_screen::y#1 y zp ZP_BYTE:22 16.5
+(byte) init_angle_screen::y#4 y zp ZP_BYTE:22 4.730769230769231
+(signed word) init_angle_screen::yw
+(word) init_angle_screen::yw#0 yw zp ZP_WORD:69 50.5
 interrupt(HARDWARE_ALL)(void()) irqBottom()
 (label) irqBottom::@1
 (label) irqBottom::@2
@@ -343,7 +357,7 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (byte) main::center_x
 (byte) main::center_x#0 reg byte y 5.5
 (byte) main::center_y
-(byte) main::center_y#0 center_y zp ZP_BYTE:45 5.5
+(byte) main::center_y#0 center_y zp ZP_BYTE:47 5.5
 (byte*) main::dst
 (byte*) main::dst#0 dst zp ZP_WORD:4 4.0
 (byte*) main::dst#1 dst zp ZP_WORD:4 11.0
@@ -357,17 +371,16 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (void*()) malloc((word) malloc::size)
 (label) malloc::@return
 (byte*) malloc::mem
-(byte*) malloc::mem#0 mem zp ZP_WORD:73 0.3333333333333333
+(byte*) malloc::mem#0 mem zp ZP_WORD:45 0.4
 (void*) malloc::return
 (word) malloc::size
-(word) malloc::size#3 size zp ZP_WORD:37 1.0
 (void()) processChars()
 (byte~) processChars::$11 reg byte a 22.0
 (byte~) processChars::$12 reg byte a 22.0
 (byte~) processChars::$14 reg byte a 22.0
-(word~) processChars::$15 $15 zp ZP_WORD:80 11.0
+(word~) processChars::$15 $15 zp ZP_WORD:77 11.0
 (byte~) processChars::$17 reg byte x 6.6000000000000005
-(word~) processChars::$25 $25 zp ZP_WORD:78 11.0
+(word~) processChars::$25 $25 zp ZP_WORD:75 11.0
 (byte~) processChars::$26 reg byte a 22.0
 (byte~) processChars::$30 reg byte a 22.0
 (byte~) processChars::$33 reg byte a 22.0
@@ -394,24 +407,24 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (label) processChars::@9
 (label) processChars::@return
 (byte) processChars::bitmask
-(byte) processChars::bitmask#0 bitmask zp ZP_BYTE:77 2.2
+(byte) processChars::bitmask#0 bitmask zp ZP_BYTE:74 2.2
 (byte) processChars::i
-(byte) processChars::i#1 i zp ZP_BYTE:39 16.5
-(byte) processChars::i#10 i zp ZP_BYTE:39 1.4042553191489362
+(byte) processChars::i#1 i zp ZP_BYTE:41 16.5
+(byte) processChars::i#10 i zp ZP_BYTE:41 1.4042553191489362
 (byte) processChars::numActive
-(byte) processChars::numActive#1 numActive zp ZP_BYTE:40 22.0
-(byte) processChars::numActive#10 numActive zp ZP_BYTE:40 0.7333333333333333
-(byte) processChars::numActive#3 numActive zp ZP_BYTE:40 11.0
+(byte) processChars::numActive#1 numActive zp ZP_BYTE:42 22.0
+(byte) processChars::numActive#10 numActive zp ZP_BYTE:42 0.7333333333333333
+(byte) processChars::numActive#3 numActive zp ZP_BYTE:42 11.0
 (struct ProcessingSprite*) processChars::processing
-(struct ProcessingSprite*) processChars::processing#0 processing zp ZP_WORD:75 0.3142857142857143
+(struct ProcessingSprite*) processChars::processing#0 processing zp ZP_WORD:72 0.3142857142857143
 (byte) processChars::xchar
 (byte) processChars::xchar#0 reg byte a 22.0
 (word) processChars::xpos
-(word) processChars::xpos#0 xpos zp ZP_WORD:78 2.0625
+(word) processChars::xpos#0 xpos zp ZP_WORD:75 2.0625
 (byte) processChars::ychar
 (byte) processChars::ychar#0 reg byte a 22.0
 (byte) processChars::ypos
-(byte) processChars::ypos#0 ypos zp ZP_BYTE:82 2.75
+(byte) processChars::ypos#0 ypos zp ZP_BYTE:79 2.75
 (void()) setupRasterIrq((word) setupRasterIrq::raster , (void()*) setupRasterIrq::irqRoutine)
 (label) setupRasterIrq::@1
 (label) setupRasterIrq::@2
@@ -419,49 +432,25 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (void()*) setupRasterIrq::irqRoutine
 (const void()*) setupRasterIrq::irqRoutine#0 irqRoutine = &interrupt(HARDWARE_ALL)(void()) irqTop()
 (word) setupRasterIrq::raster
-(word()) sqr((byte) sqr::val)
-(byte~) sqr::$0 reg byte a 4.0
-(label) sqr::@return
-(word) sqr::return
-(word) sqr::return#0 return zp ZP_WORD:67 28.5
-(word) sqr::return#2 return#2 zp ZP_WORD:65 22.0
-(word) sqr::return#3 return zp ZP_WORD:67 202.0
-(byte) sqr::val
-(byte) sqr::val#0 reg byte a 22.0
-(byte) sqr::val#1 reg byte a 202.0
-(byte) sqr::val#2 reg byte a 114.0
-(byte()) sqrt((word) sqrt::val)
-(word~) sqrt::$1 $1 zp ZP_WORD:29 2.0
-(word~) sqrt::$3 $3 zp ZP_WORD:29 4.0
-(label) sqrt::@1
-(label) sqrt::@return
-(word*) sqrt::found
-(word*) sqrt::found#0 found zp ZP_WORD:29 4.0
-(byte) sqrt::return
-(byte) sqrt::return#0 reg byte a 34.33333333333333
-(byte) sqrt::return#2 reg byte a 202.0
-(byte) sqrt::sq
-(word) sqrt::val
-(word) sqrt::val#0 val zp ZP_WORD:67 103.0
 (void()) startProcessing((byte) startProcessing::center_x , (byte) startProcessing::center_y , (byte) startProcessing::center_dist)
-(word~) startProcessing::$0 $0 zp ZP_WORD:47 3.0
-(word~) startProcessing::$1 $1 zp ZP_WORD:47 4.0
-(word~) startProcessing::$11 $11 zp ZP_WORD:54 4.0
-(word~) startProcessing::$12 $12 zp ZP_WORD:54 4.0
-(word~) startProcessing::$13 $13 zp ZP_WORD:54 4.0
-(word~) startProcessing::$15 $15 zp ZP_WORD:56 4.0
-(word~) startProcessing::$16 $16 zp ZP_WORD:56 4.0
-(word~) startProcessing::$17 $17 zp ZP_WORD:56 4.0
+(word~) startProcessing::$0 $0 zp ZP_WORD:49 3.0
+(word~) startProcessing::$1 $1 zp ZP_WORD:49 4.0
+(word~) startProcessing::$11 $11 zp ZP_WORD:56 4.0
+(word~) startProcessing::$12 $12 zp ZP_WORD:56 4.0
+(word~) startProcessing::$13 $13 zp ZP_WORD:56 4.0
+(word~) startProcessing::$15 $15 zp ZP_WORD:58 4.0
+(word~) startProcessing::$16 $16 zp ZP_WORD:58 4.0
+(word~) startProcessing::$17 $17 zp ZP_WORD:58 4.0
 (byte~) startProcessing::$22 reg byte a 2.0
-(word~) startProcessing::$23 $23 zp ZP_WORD:59 0.5
+(word~) startProcessing::$23 $23 zp ZP_WORD:61 0.5
 (byte~) startProcessing::$30 reg byte a 2002.0
 (byte~) startProcessing::$31 reg byte x 2.2222222222222228
 (byte) startProcessing::$42 reg byte a 2002.0
 (byte) startProcessing::$43 reg byte a 2002.0
 (byte) startProcessing::$44 reg byte a 2002.0
 (byte) startProcessing::$45 reg byte a 2002.0
-(word) startProcessing::$47 $47 zp ZP_WORD:49 4.0
-(word) startProcessing::$48 $48 zp ZP_WORD:47 4.0
+(word) startProcessing::$47 $47 zp ZP_WORD:51 4.0
+(word) startProcessing::$48 $48 zp ZP_WORD:49 4.0
 (word~) startProcessing::$5 $5 zp ZP_WORD:10 4.0
 (byte) startProcessing::$50 reg byte a 4.0
 (byte) startProcessing::$51 reg byte a 4.0
@@ -483,9 +472,9 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (struct ProcessingChar) startProcessing::center
 (byte) startProcessing::center_dist
 (byte) startProcessing::center_x
-(byte) startProcessing::center_x#0 center_x zp ZP_BYTE:46 0.30952380952380953
+(byte) startProcessing::center_x#0 center_x zp ZP_BYTE:48 0.30952380952380953
 (byte) startProcessing::center_y
-(byte) startProcessing::center_y#0 center_y zp ZP_BYTE:45 0.24444444444444444
+(byte) startProcessing::center_y#0 center_y zp ZP_BYTE:47 0.24444444444444444
 (byte) startProcessing::ch
 (byte) startProcessing::ch#0 reg byte a 2.0
 (byte*) startProcessing::chargenData
@@ -493,7 +482,7 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (byte*) startProcessing::chargenData#1 chargenData zp ZP_WORD:8 67.33333333333333
 (byte*) startProcessing::chargenData#2 chargenData zp ZP_WORD:8 101.66666666666666
 (byte*) startProcessing::colPtr
-(byte*) startProcessing::colPtr#0 colPtr zp ZP_WORD:51 4.0
+(byte*) startProcessing::colPtr#0 colPtr zp ZP_WORD:53 4.0
 (byte) startProcessing::freeIdx
 (byte) startProcessing::freeIdx#2 freeIdx zp ZP_BYTE:7 28.0
 (byte) startProcessing::freeIdx#6 reg byte x 20.2
@@ -506,22 +495,22 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (byte) startProcessing::i1#1 reg byte x 151.5
 (byte) startProcessing::i1#2 reg byte x 50.5
 (word) startProcessing::offset
-(word) startProcessing::offset#0 offset zp ZP_WORD:47 2.0
+(word) startProcessing::offset#0 offset zp ZP_WORD:49 2.0
 (byte*) startProcessing::screenPtr
-(byte*) startProcessing::screenPtr#0 screenPtr zp ZP_WORD:47 0.14285714285714285
+(byte*) startProcessing::screenPtr#0 screenPtr zp ZP_WORD:49 0.14285714285714285
 (byte) startProcessing::spriteCol
-(byte) startProcessing::spriteCol#0 spriteCol zp ZP_BYTE:53 0.0975609756097561
+(byte) startProcessing::spriteCol#0 spriteCol zp ZP_BYTE:55 0.0975609756097561
 (byte*) startProcessing::spriteData
 (byte*) startProcessing::spriteData#0 spriteData zp ZP_WORD:10 0.5714285714285714
 (byte*) startProcessing::spriteData#1 spriteData zp ZP_WORD:10 50.5
 (byte*) startProcessing::spriteData#2 spriteData zp ZP_WORD:10 152.5
 (byte) startProcessing::spriteIdx
 (byte) startProcessing::spritePtr
-(byte) startProcessing::spritePtr#0 spritePtr zp ZP_BYTE:58 0.3076923076923077
+(byte) startProcessing::spritePtr#0 spritePtr zp ZP_BYTE:60 0.3076923076923077
 (word) startProcessing::spriteX
-(word) startProcessing::spriteX#0 spriteX zp ZP_WORD:54 0.3076923076923077
+(word) startProcessing::spriteX#0 spriteX zp ZP_WORD:56 0.3076923076923077
 (word) startProcessing::spriteY
-(word) startProcessing::spriteY#0 spriteY zp ZP_WORD:56 0.4
+(word) startProcessing::spriteY#0 spriteY zp ZP_WORD:58 0.4
 
 zp ZP_WORD:2 [ main::src#2 main::src#1 ]
 zp ZP_WORD:4 [ main::dst#2 main::dst#1 main::dst#0 ]
@@ -541,25 +530,23 @@ zp ZP_BYTE:19 [ getCharToProcess::closest_y#7 getCharToProcess::closest_y#9 getC
 reg byte x [ getCharToProcess::return_dist#1 getCharToProcess::return_dist#5 getCharToProcess::return_dist#6 getCharToProcess::dist#0 ]
 zp ZP_WORD:20 [ initSprites::sp#2 initSprites::sp#1 ]
 reg byte x [ initSprites::i#2 initSprites::i#1 ]
-zp ZP_BYTE:22 [ init_dist_screen::y#10 init_dist_screen::y#1 ]
-zp ZP_WORD:23 [ init_dist_screen::screen_topline#10 init_dist_screen::screen_topline#1 init_dist_screen::screen#0 ]
-zp ZP_WORD:25 [ init_dist_screen::screen_bottomline#10 init_dist_screen::screen_bottomline#1 init_dist_screen::screen_bottomline#0 ]
-reg byte a [ init_dist_screen::yd#0 init_dist_screen::$7 init_dist_screen::$5 ]
-zp ZP_BYTE:27 [ init_dist_screen::x#2 init_dist_screen::x#1 ]
-zp ZP_BYTE:28 [ init_dist_screen::xb#2 init_dist_screen::xb#1 ]
-reg byte a [ init_dist_screen::xd#0 init_dist_screen::$15 init_dist_screen::$13 ]
-zp ZP_WORD:29 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 sqrt::$1 ]
-reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ]
-reg byte a [ sqr::val#2 sqr::val#0 sqr::val#1 ]
-zp ZP_WORD:31 [ init_squares::sqr#2 init_squares::sqr#1 ]
-zp ZP_WORD:33 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ]
-reg byte x [ init_squares::i#2 init_squares::i#1 ]
-zp ZP_WORD:35 [ heap_head#12 heap_head#1 ]
-zp ZP_WORD:37 [ malloc::size#3 ]
-zp ZP_BYTE:39 [ processChars::i#10 processChars::i#1 ]
-zp ZP_BYTE:40 [ processChars::numActive#10 processChars::numActive#3 processChars::numActive#1 ]
-zp ZP_WORD:41 [ SCREEN_COPY#0 ]
-zp ZP_WORD:43 [ SCREEN_DIST#0 ]
+zp ZP_BYTE:22 [ init_angle_screen::y#4 init_angle_screen::y#1 ]
+zp ZP_WORD:23 [ init_angle_screen::screen_bottomline#5 init_angle_screen::screen_bottomline#0 init_angle_screen::screen_bottomline#1 init_angle_screen::screen#0 ]
+zp ZP_WORD:25 [ init_angle_screen::screen_topline#5 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 ]
+zp ZP_BYTE:27 [ init_angle_screen::x#2 init_angle_screen::x#1 ]
+zp ZP_BYTE:28 [ init_angle_screen::xb#2 init_angle_screen::xb#1 ]
+zp ZP_WORD:29 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 ]
+zp ZP_WORD:31 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 ]
+reg byte x [ atan2_16::i#2 atan2_16::i#1 ]
+zp ZP_WORD:33 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::return#2 init_angle_screen::angle_w#0 init_angle_screen::$10 ]
+reg byte y [ atan2_16::shift#2 atan2_16::shift#5 atan2_16::shift#1 ]
+zp ZP_WORD:35 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ]
+zp ZP_WORD:37 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ]
+zp ZP_WORD:39 [ heap_head#5 heap_head#1 ]
+zp ZP_BYTE:41 [ processChars::i#10 processChars::i#1 ]
+zp ZP_BYTE:42 [ processChars::numActive#10 processChars::numActive#3 processChars::numActive#1 ]
+zp ZP_WORD:43 [ SCREEN_COPY#0 ]
+zp ZP_WORD:45 [ SCREEN_DIST#0 malloc::mem#0 ]
 reg byte a [ main::$26 ]
 reg byte a [ main::$27 ]
 reg byte a [ main::$28 ]
@@ -569,60 +556,56 @@ reg byte y [ getCharToProcess::return_x#0 ]
 reg byte a [ getCharToProcess::return_y#0 ]
 reg byte x [ getCharToProcess::return_dist#0 ]
 reg byte y [ main::center_x#0 ]
-zp ZP_BYTE:45 [ main::center_y#0 startProcessing::center_y#0 ]
+zp ZP_BYTE:47 [ main::center_y#0 startProcessing::center_y#0 ]
 reg byte a [ main::center_dist#0 ]
-zp ZP_BYTE:46 [ startProcessing::center_x#0 ]
+zp ZP_BYTE:48 [ startProcessing::center_x#0 ]
 reg byte a [ startProcessing::$42 ]
 reg byte a [ startProcessing::$43 ]
 reg byte a [ startProcessing::$44 ]
 reg byte a [ startProcessing::$45 ]
 reg byte a [ startProcessing::$30 ]
-zp ZP_WORD:47 [ startProcessing::$0 startProcessing::$48 startProcessing::$1 startProcessing::offset#0 startProcessing::screenPtr#0 ]
-zp ZP_WORD:49 [ startProcessing::$47 ]
-zp ZP_WORD:51 [ startProcessing::colPtr#0 ]
-zp ZP_BYTE:53 [ startProcessing::spriteCol#0 ]
+zp ZP_WORD:49 [ startProcessing::$0 startProcessing::$48 startProcessing::$1 startProcessing::offset#0 startProcessing::screenPtr#0 ]
+zp ZP_WORD:51 [ startProcessing::$47 ]
+zp ZP_WORD:53 [ startProcessing::colPtr#0 ]
+zp ZP_BYTE:55 [ startProcessing::spriteCol#0 ]
 reg byte a [ startProcessing::ch#0 ]
-zp ZP_WORD:54 [ startProcessing::$11 startProcessing::$12 startProcessing::$13 startProcessing::spriteX#0 ]
-zp ZP_WORD:56 [ startProcessing::$15 startProcessing::$16 startProcessing::$17 startProcessing::spriteY#0 ]
-zp ZP_BYTE:58 [ startProcessing::spritePtr#0 ]
+zp ZP_WORD:56 [ startProcessing::$11 startProcessing::$12 startProcessing::$13 startProcessing::spriteX#0 ]
+zp ZP_WORD:58 [ startProcessing::$15 startProcessing::$16 startProcessing::$17 startProcessing::spriteY#0 ]
+zp ZP_BYTE:60 [ startProcessing::spritePtr#0 ]
 reg byte a [ startProcessing::$22 ]
-zp ZP_WORD:59 [ startProcessing::$23 ]
+zp ZP_WORD:61 [ startProcessing::$23 ]
 reg byte a [ startProcessing::$50 ]
 reg byte a [ startProcessing::$51 ]
 reg byte a [ startProcessing::$52 ]
 reg byte a [ startProcessing::$53 ]
 reg byte x [ startProcessing::$31 ]
-zp ZP_WORD:61 [ getCharToProcess::$8 getCharToProcess::$13 getCharToProcess::$9 getCharToProcess::$10 ]
-zp ZP_WORD:63 [ getCharToProcess::$12 ]
-reg byte a [ init_dist_screen::y2#0 ]
-zp ZP_WORD:65 [ sqr::return#2 init_dist_screen::yds#0 ]
-reg byte a [ init_dist_screen::x2#0 ]
-zp ZP_WORD:67 [ sqr::return#3 init_dist_screen::xds#0 sqr::return#0 init_dist_screen::ds#0 sqrt::val#0 bsearch16u::key#0 ]
-reg byte a [ sqrt::return#2 ]
-reg byte a [ init_dist_screen::d#0 ]
-reg byte a [ sqrt::return#0 ]
-reg byte a [ bsearch16u::$6 ]
-reg byte a [ bsearch16u::$16 ]
-zp ZP_WORD:69 [ bsearch16u::pivot#0 ]
-zp ZP_WORD:71 [ bsearch16u::result#0 ]
-reg byte a [ sqr::$0 ]
-zp ZP_WORD:73 [ SQUARES#1 malloc::mem#0 ]
-reg byte a [ init_squares::$3 ]
-reg byte a [ init_squares::$4 ]
+zp ZP_WORD:63 [ getCharToProcess::$8 getCharToProcess::$13 getCharToProcess::$9 getCharToProcess::$10 ]
+zp ZP_WORD:65 [ getCharToProcess::$12 ]
+reg byte a [ init_angle_screen::$2 ]
+reg byte a [ init_angle_screen::$3 ]
+zp ZP_WORD:67 [ init_angle_screen::xw#0 atan2_16::x#0 ]
+reg byte a [ init_angle_screen::$6 ]
+zp ZP_WORD:69 [ init_angle_screen::yw#0 atan2_16::y#0 ]
+zp ZP_BYTE:71 [ init_angle_screen::ang_w#0 ]
+reg byte a [ init_angle_screen::$12 ]
+reg byte a [ init_angle_screen::$13 ]
+reg byte a [ init_angle_screen::$14 ]
+reg byte a [ atan2_16::$24 ]
+reg byte a [ atan2_16::$23 ]
 reg byte a [ processChars::$67 ]
 reg byte a [ processChars::$68 ]
 reg byte a [ processChars::$69 ]
 reg byte a [ processChars::$70 ]
 reg byte a [ processChars::$37 ]
-zp ZP_WORD:75 [ processChars::processing#0 ]
-zp ZP_BYTE:77 [ processChars::bitmask#0 ]
-zp ZP_WORD:78 [ processChars::xpos#0 processChars::$25 ]
+zp ZP_WORD:72 [ processChars::processing#0 ]
+zp ZP_BYTE:74 [ processChars::bitmask#0 ]
+zp ZP_WORD:75 [ processChars::xpos#0 processChars::$25 ]
 reg byte a [ processChars::$11 ]
 reg byte a [ processChars::$12 ]
 reg byte x [ processChars::$17 ]
 reg byte a [ processChars::$14 ]
-zp ZP_WORD:80 [ processChars::$15 ]
-zp ZP_BYTE:82 [ processChars::ypos#0 ]
+zp ZP_WORD:77 [ processChars::$15 ]
+zp ZP_BYTE:79 [ processChars::ypos#0 ]
 reg byte a [ processChars::$26 ]
 reg byte a [ processChars::xchar#0 ]
 reg byte a [ processChars::$38 ]

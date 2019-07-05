@@ -112,9 +112,7 @@ public class SymbolTypeInference {
             Variable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
             return structMember.getType();
          } else {
-            AsmFragmentInstanceSpec asmFragmentInstanceSpec = null;
-            Program program = asmFragmentInstanceSpec.getProgram();
-            throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString(program));
+            throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());
          }
       } else if(rValue instanceof StructZero) {
          return ((StructZero)rValue).getTypeStruct();

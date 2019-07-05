@@ -36,6 +36,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNesArray() throws IOException, URISyntaxException {
+      compileAndCompare("nes-array");
+   }
+
+   @Test
+   public void testLiverangeProblem0() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-problem-0");
+   }
+
+   @Test
    public void testCiaTimerCyclecount() throws IOException, URISyntaxException {
       compileAndCompare("cia-timer-cyclecount");
    }

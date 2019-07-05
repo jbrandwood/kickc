@@ -167,6 +167,11 @@ public class CompileLog {
       this.verboseLiveRanges = verboseLiveRanges;
    }
 
+   public CompileLog verboseLiveRanges() {
+      setVerboseLiveRanges(true);
+      return this;
+   }
+
    public boolean isVerboseFragmentLog() {
       return verboseFragmentLog;
    }

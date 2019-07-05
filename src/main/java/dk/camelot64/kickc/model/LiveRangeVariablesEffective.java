@@ -105,6 +105,13 @@ public class LiveRangeVariablesEffective {
             referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
          } else {
             callPaths = new CallPaths(ROOT_PROCEDURE);
+            // Interrupt is called outside procedure scope - create initial call-path.
+            ArrayList<CallGraph.CallBlock.Call> rootPath = new ArrayList<>();
+            ArrayList<VariableRef> rootAlive = new ArrayList<>();
+            // Initialize with global cross-scope aliases (assumed empty)
+            Pass2AliasElimination.Aliases rootAliases = new Pass2AliasElimination.Aliases();
+            LiveRangeVariablesEffective.CallPath rootCallPath = new LiveRangeVariablesEffective.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
+            callPaths.add(rootCallPath);
             referencedInProcedure = new ArrayList<>();
          }
          Pass2AliasElimination.Aliases callAliases = null;
@@ -169,7 +176,7 @@ public class LiveRangeVariablesEffective {
 
    /**
     * All variables alive in a specific procedure at a specific call-path.
-    * The call-path is th path from the main()-procedure to the procedure in question.
+    * The call-path is the path from the main()-procedure to the procedure in question.
     */
    public static class CallPath {
 

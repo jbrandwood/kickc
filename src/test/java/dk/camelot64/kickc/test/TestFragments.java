@@ -138,10 +138,7 @@ public class TestFragments {
 
    @Test
    public void testFragmentsExist() {
-
       testFragmentExists("vbuaa=pbuc2_derefidx_vbuxx");
-
-
       testFragmentExists("pwsc1_derefidx_vbuxx=vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuyy=vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuxx=pwsc1_derefidx_vbuxx_minus_vwsc2");
@@ -173,6 +170,8 @@ public class TestFragments {
 
       testFragmentExists("vbsaa=pbsc1_derefidx_vbsz1_minus_pbsc1_derefidx_vbsz2");
       testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc1_derefidx_vbsyy");
+      testFragmentExists("vbuz1=pbuz2_derefidx_vbuz3_plus_pbuz4_derefidx_pbuz5_derefidx_vbuz3");
+      testFragmentExists("vbuz1=pbuz2_derefidx_pbuz3_derefidx_vbuz4_plus_pbuz5_derefidx_pbuz6_derefidx_vbuz4");
 
    }
 

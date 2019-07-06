@@ -36,7 +36,12 @@ public class TestPrograms {
    }
 
    @Test
-   public void testSCreenShowSpiral() throws IOException, URISyntaxException {
+   public void testPlasmaCenter() throws IOException, URISyntaxException {
+      compileAndCompare("plasma-center");
+   }
+
+   @Test
+   public void testScreenShowSpiral() throws IOException, URISyntaxException {
       compileAndCompare("screen-show-spiral");
    }
 

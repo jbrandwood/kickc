@@ -322,5 +322,5 @@ sid_rnd_init: {
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*sin(toRadians(360*i/256)))
+        .byte round(127.5+127.5*sin(2*PI*i/256))
 

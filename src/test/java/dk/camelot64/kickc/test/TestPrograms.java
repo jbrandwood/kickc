@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSCreenShowSpiral() throws IOException, URISyntaxException {
+      compileAndCompare("screen-show-spiral");
+   }
+
+   @Test
    public void testNesArray() throws IOException, URISyntaxException {
       compileAndCompare("nes-array");
    }

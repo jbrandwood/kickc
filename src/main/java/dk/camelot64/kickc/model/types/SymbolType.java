@@ -49,7 +49,7 @@ public interface SymbolType {
          case "signed byte":
             return SBYTE;
          case "char":
-            return SBYTE;
+            return BYTE;
          case "unsigned char":
             return BYTE;
          case "signed char":

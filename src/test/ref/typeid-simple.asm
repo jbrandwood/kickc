@@ -59,5 +59,28 @@ main: {
     // Pointer to pointer
     lda #TYPEID_POINTER_POINTER_BYTE
     sta SCREEN+$10
+    // Test C types
+    lda #TYPEID_BYTE
+    sta SCREEN+$28
+    sta SCREEN+$29
+    lda #TYPEID_SIGNED_BYTE
+    sta SCREEN+$2a
+    lda #TYPEID_SIGNED_WORD
+    sta SCREEN+$2b
+    lda #TYPEID_WORD
+    sta SCREEN+$2c
+    lda #TYPEID_SIGNED_WORD
+    sta SCREEN+$2d
+    sta SCREEN+$2e
+    lda #TYPEID_WORD
+    sta SCREEN+$2f
+    lda #TYPEID_SIGNED_WORD
+    sta SCREEN+$30
+    lda #TYPEID_SIGNED_DWORD
+    sta SCREEN+$31
+    lda #TYPEID_DWORD
+    sta SCREEN+$32
+    lda #TYPEID_SIGNED_DWORD
+    sta SCREEN+$33
     rts
 }

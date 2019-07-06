@@ -286,8 +286,8 @@ testShort: {
 }
 testChar: {
     .const u = $e
-    .const n = -$e
-    .const s = -$e
+    .const n = $e
+    .label s = -$e
     lda #<$400
     sta print_char_cursor
     lda #>$400
@@ -302,10 +302,9 @@ testChar: {
     lda #' '
     jsr print_char
     ldx #n
-    jsr print_sbyte
+    jsr print_byte
     lda #' '
     jsr print_char
-    ldx #s
     jsr print_sbyte
     lda #<$400
     sta print_line_cursor
@@ -316,24 +315,13 @@ testChar: {
     str: .text "char: @"
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
 print_sbyte: {
-    cpx #0
-    bmi b1
-    lda #' '
-    jsr print_char
-  b2:
-    jsr print_byte
-    rts
-  b1:
+    .const b = -testChar.s
     lda #'-'
     jsr print_char
-    txa
-    eor #$ff
-    clc
-    adc #1
-    tax
-    jmp b2
+    ldx #b
+    jsr print_byte
+    rts
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {

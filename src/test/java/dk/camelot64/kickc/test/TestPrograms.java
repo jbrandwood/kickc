@@ -1218,12 +1218,12 @@ public class TestPrograms {
       compileAndCompare("const-if-problem");
    }
 
-   /*
    @Test
    public void testTetrisNullPointer() throws IOException, URISyntaxException {
       compileAndCompare("tetris-npe");
    }
 
+   /*
    @Test
    public void testUnrollCall() throws IOException, URISyntaxException {
       compileAndCompare("unroll-call");

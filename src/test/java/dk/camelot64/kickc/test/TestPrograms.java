@@ -2614,8 +2614,14 @@ public class TestPrograms {
       File asmLogFile = getBinFile(fileName, ".log");
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
-      int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
-      System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+      int asmRes = -1;
+      try {
+         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
+      } catch(Throwable e) {
+         fail("KickAssembling file failed! " + e.getMessage());
+      } finally {
+         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+      }
       if(asmRes != 0) {
          fail("KickAssembling file failed! " + kickAssOut.toString());
       }

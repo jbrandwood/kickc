@@ -205,7 +205,14 @@ public class KickC implements Callable<Void> {
             System.out.println("Assembling to " + prgPath.toString());
             ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
             System.setOut(new PrintStream(kasmLogOutputStream));
-            int kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
+            int kasmResult = -1;
+            try {
+               kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
+            } catch (Throwable e) {
+               throw new CompileError("KickAssembling file failed! " , e);
+            } finally {
+               System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+            }
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             if(kasmResult != 0) {
                throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());

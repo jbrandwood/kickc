@@ -80,8 +80,14 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       File asmPrgFile = getTmpFile(fileName, ".prg");
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
-      int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
-      System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+      int asmRes = -1;
+      try {
+         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
+      } catch(Throwable e) {
+         throw new CompileError("Error! KickAssembler failed, while trying to fix long branch. " + e);
+      }  finally {
+         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+      }
       String output = kickAssOut.toString();
 
       // Look for a long branch distance error

@@ -158,72 +158,72 @@ Allocated zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
 Allocated zp ZP_BYTE:3 [ main::y#0 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const BLACK = 0
     .label screen = $400
     .label cols = $d800
     .label y = 3
     .label x = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuz1=vbuz2_plus_vbuc1 
+    // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuz1=vbuz2_plus_vbuc1 
     lax x
     axs #-[$c]
     stx y
-  // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy y
     sta screen,y
-  // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #BLACK
     ldy y
     sta cols,y
-  // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
+    // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp x
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
@@ -244,66 +244,66 @@ Uplifting [main] best 393 combination reg byte y [ main::x#2 main::x#1 ] reg byt
 Uplifting [] best 393 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const BLACK = 0
     .label screen = $400
     .label cols = $d800
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuxx=vbuyy_plus_vbuc1 
+    // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuxx=vbuyy_plus_vbuc1 
     tya
     tax
     axs #-[$c]
-  // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x
-  // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #BLACK
     sta cols,x
-  // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -356,49 +356,54 @@ reg byte x [ main::y#0 ]
 FINAL ASSEMBLER
 Score: 291
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .const BLACK = 0
     .label screen = $400
     .label cols = $d800
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuxx=vbuyy_plus_vbuc1 
+    // y=x+12
+    // [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c -- vbuxx=vbuyy_plus_vbuc1 
     tya
     tax
     axs #-[$c]
-  // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[y] = 'a'
+    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x
-  // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // cols[y] = BLACK
+    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #BLACK
     sta cols,x
-  // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    // for(byte x:0..10)
+    // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [10] if((byte) main::x#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1
-  // main::@return
-  // [11] return 
+    // main::@return
+    // }
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 

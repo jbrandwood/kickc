@@ -133,55 +133,55 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests a pointer to a boolean
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
+    // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
+    // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
+    // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+    // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
     bne b1
     jmp breturn
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
+    // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((bool*) 1024) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -198,55 +198,55 @@ Uplifting [main] best 56 combination
 Uplifting [] best 56 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests a pointer to a boolean
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
+    // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
+    // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
+    // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+    // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
     bne b1
     jmp breturn
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
+    // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -284,42 +284,48 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 40
 
-// File Comments
+  // File Comments
 // Tests a pointer to a boolean
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
+    // bscreen[0] = true
+    // [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
+    // bscreen[1] = false
+    // [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
+    // *bscreen = true
+    // [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+    // if(*bscreen)
+    // [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     cmp #0
     bne b1
     rts
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
+    // *(++bscreen)= true
+    // [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+3
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 

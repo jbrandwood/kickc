@@ -166,77 +166,77 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test fragment promotion of a constant (400) to signed word even if it also matches an unsigned word
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label _1 = 3
     .label i = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta _1
-  // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuz1=vwsc2 
+    // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuz1=vwsc2 
     ldy _1
     lda #<$190
     sta world,y
     lda #>$190
     sta world+1,y
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp i
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
+    // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
     lda world
     sta screen
     lda world+1
     sta screen+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   world: .fill 2*3, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -258,72 +258,72 @@ Uplifting [main] best 412 combination reg byte x [ main::i#2 main::i#1 ] reg byt
 Uplifting [] best 412 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test fragment promotion of a constant (400) to signed word even if it also matches an unsigned word
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
+    // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
     tay
     lda #<$190
     sta world,y
     lda #>$190
     sta world+1,y
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
+    // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
     lda world
     sta screen
     lda world+1
     sta screen+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   world: .fill 2*3, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -377,54 +377,58 @@ reg byte a [ main::$1 ]
 FINAL ASSEMBLER
 Score: 307
 
-// File Comments
+  // File Comments
 // Test fragment promotion of a constant (400) to signed word even if it also matches an unsigned word
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label screen = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // world[i]= 400
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
+    // [7] *((const signed word[3]) world#0 + (byte~) main::$1) ← (signed word) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
     tay
     lda #<$190
     sta world,y
     lda #>$190
     sta world+1,y
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i:0..2)
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
     bne b1
-  // main::@2
-  // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
+    // main::@2
+    // *screen = world[0]
+    // [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) -- _deref_pwsc1=_deref_pwsc2 
     lda world
     sta screen
     lda world+1
     sta screen+1
-  // main::@return
-  // [11] return 
+    // main::@return
+    // }
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   world: .fill 2*3, 0
 

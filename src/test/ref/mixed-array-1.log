@@ -117,47 +117,47 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test an array with mixed byte/number types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
+    // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
     lda msg
     sta SCREEN
-  // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
+    // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+1
     sta SCREEN+1
-  // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
+    // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+2
     sta SCREEN+2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
     msg: .byte -1, 0, 1
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -172,47 +172,47 @@ Uplifting [main] best 45 combination
 Uplifting [] best 45 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test an array with mixed byte/number types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
+    // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
     lda msg
     sta SCREEN
-  // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
+    // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+1
     sta SCREEN+1
-  // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
+    // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+2
     sta SCREEN+2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
     msg: .byte -1, 0, 1
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -248,35 +248,39 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 30
 
-// File Comments
+  // File Comments
 // Test an array with mixed byte/number types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
+    // SCREEN[0] = msg[0]
+    // [4] *((const signed byte*) main::SCREEN#0) ← *((const signed byte[]) main::msg#0) -- _deref_pbsc1=_deref_pbsc2 
     lda msg
     sta SCREEN
-  // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
+    // SCREEN[1] = msg[1]
+    // [5] *((const signed byte*) main::SCREEN#0+(byte) 1) ← *((const signed byte[]) main::msg#0+(byte) 1) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+1
     sta SCREEN+1
-  // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
+    // SCREEN[2] = msg[2]
+    // [6] *((const signed byte*) main::SCREEN#0+(byte) 2) ← *((const signed byte[]) main::msg#0+(byte) 2) -- _deref_pbsc1=_deref_pbsc2 
     lda msg+2
     sta SCREEN+2
-  // main::@return
-  // [7] return 
+    // main::@return
+    // }
+    // [7] return 
     rts
     msg: .byte -1, 0, 1
 }
-// File Data
+  // File Data
 

@@ -224,31 +224,31 @@ Allocated zp ZP_WORD:11 [ main::$6 ]
 Allocated zp ZP_WORD:13 [ main::$9 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests a word-array with 128+ elements
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _1 = 3
@@ -258,29 +258,29 @@ main: {
     .label _6 = $b
     .label i = 2
     .label _9 = $d
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
+    // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
     lda i
     sta _1
     lda #0
     sta _1+1
-  // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
+    // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
     lda i
     sta _2
     lda #0
     sta _2+1
-  // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz2_rol_vbuc1 
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz2_rol_vbuc1 
     ldy #8
     lda _2
     sta _3
@@ -294,7 +294,7 @@ main: {
     dey
     bne !-
   !e:
-  // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz2_plus_vbuz3 
+    // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz2_plus_vbuz3 
     lda i
     clc
     adc _3
@@ -302,14 +302,14 @@ main: {
     lda #0
     adc _3+1
     sta _4+1
-  // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda _1
     asl
     sta _6
     lda _1+1
     rol
     sta _6+1
-  // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
+    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
     lda _6
     clc
     adc #<words
@@ -317,34 +317,34 @@ main: {
     lda _6+1
     adc #>words
     sta _9+1
-  // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _4
     sta (_9),y
     iny
     lda _4+1
     sta (_9),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda i
     cmp #0
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
   words: .fill 2*$100, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -388,31 +388,31 @@ Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::$1 main::$6 main::$9 ]
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::$2 main::$3 main::$4 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests a word-array with 128+ elements
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _1 = 2
@@ -421,28 +421,28 @@ main: {
     .label _4 = 4
     .label _6 = 2
     .label _9 = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
+    // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta _1
     lda #0
     sta _1+1
-  // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
+    // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta _2
     lda #0
     sta _2+1
-  // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
     ldy #8
     cpy #0
     beq !e+
@@ -452,7 +452,7 @@ main: {
     dey
     bne !-
   !e:
-  // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
+    // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
     adc _4
@@ -460,10 +460,10 @@ main: {
     bcc !+
     inc _4+1
   !:
-  // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl _6
     rol _6+1
-  // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
     lda _9
     adc #<words
@@ -471,33 +471,33 @@ main: {
     lda _9+1
     adc #>words
     sta _9+1
-  // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _4
     sta (_9),y
     iny
     lda _4+1
     sta (_9),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
   words: .fill 2*$100, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -558,22 +558,22 @@ zp ZP_WORD:4 [ main::$2 main::$3 main::$4 ]
 FINAL ASSEMBLER
 Score: 1192
 
-// File Comments
+  // File Comments
 // Tests a word-array with 128+ elements
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label _1 = 2
@@ -582,24 +582,26 @@ main: {
     .label _4 = 4
     .label _6 = 2
     .label _9 = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
+    // (word)i
+    // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta _1
     lda #0
     sta _1+1
-  // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
+    // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
     sta _2
     lda #0
     sta _2+1
-  // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
+    // ((word)i)*0x100
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
     ldy #8
     cpy #0
     beq !e+
@@ -609,7 +611,8 @@ main: {
     dey
     bne !-
   !e:
-  // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
+    // ((word)i)*0x100+i
+    // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
     adc _4
@@ -617,10 +620,11 @@ main: {
     bcc !+
     inc _4+1
   !:
-  // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // words[(word)i] = ((word)i)*0x100+i
+    // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl _6
     rol _6+1
-  // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
     lda _9
     adc #<words
@@ -628,28 +632,31 @@ main: {
     lda _9+1
     adc #>words
     sta _9+1
-  // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _4
     sta (_9),y
     iny
     lda _4+1
     sta (_9),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i: 0..0xff)
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1
-  // main::@2
-  // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // main::@2
+    // SCREEN[0] = words[(word)255]
+    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
     sta SCREEN+1
-  // main::@return
-  // [16] return 
+    // main::@return
+    // }
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
   words: .fill 2*$100, 0
 

@@ -187,71 +187,71 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .const ch = 'a'
   .const num = 1
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label i = 2
-  // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
     lda #ch
     sta SCREEN
-  // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
     lda #num
     sta SCREEN+2
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda str,y
     sta SCREEN+4,y
-  // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda nums,y
     sta SCREEN+9,y
-  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp i
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   str: .text "bcde@"
   nums: .byte 2, 3, 4, 5
 
@@ -275,66 +275,66 @@ Uplifting [main] best 395 combination reg byte x [ main::i#2 main::i#1 ]
 Uplifting [] best 395 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .const ch = 'a'
   .const num = 1
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
     lda #ch
     sta SCREEN
-  // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
     lda #num
     sta SCREEN+2
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda str,x
     sta SCREEN+4,x
-  // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda nums,x
     sta SCREEN+9,x
-  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   str: .text "bcde@"
   nums: .byte 2, 3, 4, 5
 
@@ -389,52 +389,58 @@ reg byte x [ main::i#2 main::i#1 ]
 FINAL ASSEMBLER
 Score: 293
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .const ch = 'a'
   .const num = 1
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
+    // SCREEN[0] = ch
+    // [4] *((const byte*) SCREEN#0) ← (const byte) ch#0 -- _deref_pbuc1=vbuc2 
     lda #ch
     sta SCREEN
-  // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
+    // SCREEN[2] = num
+    // [5] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 -- _deref_pbuc1=vbuc2 
     lda #num
     sta SCREEN+2
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // SCREEN[4+i] = str[i]
+    // [7] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← *((const byte[]) str#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda str,x
     sta SCREEN+4,x
-  // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // SCREEN[9+i] = nums[i]
+    // [8] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← *((const byte[]) nums#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda nums,x
     sta SCREEN+9,x
-  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i : 0..3)
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [10] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
     bne b1
-  // main::@return
-  // [11] return 
+    // main::@return
+    // }
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
   str: .text "bcde@"
   nums: .byte 2, 3, 4, 5
 

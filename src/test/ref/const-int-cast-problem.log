@@ -129,70 +129,70 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test a problem with converting casted constant numbers to fixed type constant integers
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _0 = 3
     .label i = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #$79
     sta i
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+    // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda i
     lsr
     lsr
     lsr
     lsr
     sta _0
-  // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _0
     ldy i
     sta SCREEN,y
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$7b
     cmp i
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) always clobbers reg byte a 
@@ -209,63 +209,63 @@ Uplifting [main] best 343 combination reg byte x [ main::i#2 main::i#1 ] reg byt
 Uplifting [] best 343 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test a problem with converting casted constant numbers to fixed type constant integers
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #$79
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
+    // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
     txa
     lsr
     lsr
     lsr
     lsr
-  // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$7b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -313,46 +313,50 @@ reg byte a [ main::$0 ]
 FINAL ASSEMBLER
 Score: 241
 
-// File Comments
+  // File Comments
 // Test a problem with converting casted constant numbers to fixed type constant integers
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) $79 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #$79
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
+    // i>>4
+    // [6] (byte~) main::$0 ← (byte) main::i#2 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
     txa
     lsr
     lsr
     lsr
     lsr
-  // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN[i] = i>>4
+    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i: 121..122)
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#1!=(byte) $7b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$7b
     bne b1
-  // main::@return
-  // [10] return 
+    // main::@return
+    // }
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 

@@ -1361,13 +1361,13 @@ Allocated zp ZP_BYTE:21 [ scroll_bit::bits#0 ]
 Allocated zp ZP_BYTE:22 [ scroll_bit::$9 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // An 8x8 char letter scroller
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -1378,127 +1378,127 @@ INITIAL ASM
   .label current_bit = 3
   .label current_chargen = 4
   .label nxt = $b
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fillscreen 
-  // [63] phi from main to fillscreen [phi:main->fillscreen]
+    // [5] call fillscreen 
+    // [63] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+    // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuz1=vbuc1 
+    // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuz1=vbuc1 
     lda #7
     sta scroll
     jmp b1
   // Wait for raster
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // [10] call scroll_soft 
+    // [10] call scroll_soft 
     jsr scroll_soft
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
-  // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
-  // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
-  // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
+    // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
+    // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
+    // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
     jmp b1
 }
-// scroll_soft
+  // scroll_soft
 scroll_soft: {
-  // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuz1=_dec_vbuz1 
+    // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuz1=_dec_vbuz1 
     dec scroll
-  // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
     cmp scroll
     bne b1_from_scroll_soft
-  // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+    // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
   b2_from_scroll_soft:
     jmp b2
-  // scroll_soft::@2
+    // scroll_soft::@2
   b2:
-  // [15] call scroll_bit 
+    // [15] call scroll_bit 
     jsr scroll_bit
-  // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+    // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
   b1_from_b2:
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuz1=vbuc1 
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuz1=vbuc1 
     lda #7
     sta scroll
     jmp b1
-  // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+    // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
   b1_from_scroll_soft:
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
     jmp b1
-  // scroll_soft::@1
+    // scroll_soft::@1
   b1:
-  // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuz1 
+    // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuz1 
     lda scroll
     sta SCROLL
     jmp breturn
-  // scroll_soft::@return
+    // scroll_soft::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// scroll_bit
+  // scroll_bit
 scroll_bit: {
     .label _7 = $13
     .label _9 = $16
@@ -1507,31 +1507,31 @@ scroll_bit: {
     .label sc = 7
     .label r = 6
     .label b = 9
-  // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+    // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1_from_scroll_bit
-  // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
+    // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
   b2_from_scroll_bit:
     jmp b2
-  // scroll_bit::@2
+    // scroll_bit::@2
   b2:
-  // [22] call next_char 
+    // [22] call next_char 
     jsr next_char
-  // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
+    // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
     lda next_char.return_1
     sta next_char.return
     jmp b8
-  // scroll_bit::@8
+    // scroll_bit::@8
   b8:
-  // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuz2 
+    // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuz2 
     lda next_char.return
     sta c
     lda #0
     sta c+1
-  // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda c
     asl
     sta _7
@@ -1542,7 +1542,7 @@ scroll_bit: {
     rol _7+1
     asl _7
     rol _7+1
-  // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz2 
+    // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz2 
     lda _7
     clc
     adc #<CHARGEN
@@ -1550,88 +1550,88 @@ scroll_bit: {
     lda _7+1
     adc #>CHARGEN
     sta current_chargen+1
-  // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+    // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+    // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
   b1_from_scroll_bit:
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  // scroll_bit::@1
+    // scroll_bit::@1
   b1:
-  // [28] call scroll_hard 
-  // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+    // [28] call scroll_hard 
+    // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
   scroll_hard_from_b1:
     jsr scroll_hard
     jmp b7
-  // scroll_bit::@7
+    // scroll_bit::@7
   b7:
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
+    // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
   b3_from_b7:
-  // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
+    // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuz1=vbuc1 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta r
     jmp b3
-  // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
+    // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
   b3_from_b4:
-  // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
-  // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
+    // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
     jmp b3
-  // scroll_bit::@3
+    // scroll_bit::@3
   b3:
-  // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     ldy r
     lda (current_chargen),y
     sta bits
-  // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuz1=vbuz2_band_vbuz3 
+    // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuz1=vbuz2_band_vbuz3 
     lda bits
     and current_bit
     sta _9
-  // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuz1_eq_0_then_la1 
+    // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuz1_eq_0_then_la1 
     lda _9
     cmp #0
     beq b4_from_b3
-  // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
+    // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
   b5_from_b3:
     jmp b5
-  // scroll_bit::@5
+    // scroll_bit::@5
   b5:
-  // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
+    // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
   b4_from_b5:
-  // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuz1=vbuc1 
+    // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuz1=vbuc1 
     lda #$80+' '
     sta b
     jmp b4
-  // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
+    // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
   b4_from_b3:
-  // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuz1=vbuc1 
+    // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuz1=vbuc1 
     lda #' '
     sta b
     jmp b4
-  // scroll_bit::@4
+    // scroll_bit::@4
   b4:
-  // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuz2 
+    // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuz2 
     lda b
     ldy #0
     sta (sc),y
-  // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc sc
@@ -1639,162 +1639,162 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuz1=_inc_vbuz1 
+    // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuz1=_inc_vbuz1 
     inc r
-  // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp r
     bne b3_from_b4
     jmp b6
-  // scroll_bit::@6
+    // scroll_bit::@6
   b6:
-  // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // scroll_bit::@return
+    // scroll_bit::@return
   breturn:
-  // [43] return 
+    // [43] return 
     rts
 }
-// scroll_hard
+  // scroll_hard
 scroll_hard: {
     .label i = $a
-  // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+    // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
   b1_from_scroll_hard:
-  // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuz1=vbuc1 
+    // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
   // Hard scroll
-  // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+    // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
   b1_from_b1:
-  // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+    // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
     jmp b1
-  // scroll_hard::@1
+    // scroll_hard::@1
   b1:
-  // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+1,y
     sta SCREEN,y
-  // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*1+1,y
     sta SCREEN+$28*1,y
-  // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*2+1,y
     sta SCREEN+$28*2,y
-  // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*3+1,y
     sta SCREEN+$28*3,y
-  // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*4+1,y
     sta SCREEN+$28*4,y
-  // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*5+1,y
     sta SCREEN+$28*5,y
-  // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*6+1,y
     sta SCREEN+$28*6,y
-  // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*7+1,y
     sta SCREEN+$28*7,y
-  // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuz1=_inc_vbuz1 
+    // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$27
     cmp i
     bne b1_from_b1
     jmp breturn
-  // scroll_hard::@return
+    // scroll_hard::@return
   breturn:
-  // [56] return 
+    // [56] return 
     rts
 }
-// next_char
+  // next_char
 // Find the next char of the scroll text
 next_char: {
     .label return = $10
     .label c = $d
     .label return_1 = $d
-  // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuz1=_deref_pbuz2 
+    // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (nxt),y
     sta c
-  // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #'@'
     cmp c
     bne b1_from_next_char
     jmp b2
-  // next_char::@2
+    // next_char::@2
   b2:
-  // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
+    // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta c
-  // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+    // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
     jmp b1
-  // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+    // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
   b1_from_next_char:
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
     jmp b1
-  // next_char::@1
+    // next_char::@1
   b1:
-  // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+    // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
     jmp breturn
-  // next_char::@return
+    // next_char::@return
   breturn:
-  // [62] return 
+    // [62] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = $e
-  // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
     jmp b1
-  // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  // fillscreen::@1
+    // fillscreen::@1
   b1:
-  // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -1804,12 +1804,12 @@ fillscreen: {
     bcc b1_from_b1
   !:
     jmp breturn
-  // fillscreen::@return
+    // fillscreen::@return
   breturn:
-  // [68] return 
+    // [68] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -1905,13 +1905,13 @@ Allocated (was zp ZP_WORD:11) zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 
 Allocated (was zp ZP_WORD:14) zp ZP_WORD:9 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // An 8x8 char letter scroller
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -1921,157 +1921,157 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fillscreen 
-  // [63] phi from main to fillscreen [phi:main->fillscreen]
+    // [5] call fillscreen 
+    // [63] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+    // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuxx=vbuc1 
+    // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuxx=vbuc1 
     ldx #7
     jmp b1
   // Wait for raster
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1_from_b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // [10] call scroll_soft 
+    // [10] call scroll_soft 
     jsr scroll_soft
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
-  // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
-  // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
-  // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
+    // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
+    // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
+    // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
     jmp b1
 }
-// scroll_soft
+  // scroll_soft
 scroll_soft: {
-  // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
+    // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
     dex
-  // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne b1_from_scroll_soft
-  // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+    // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
   b2_from_scroll_soft:
     jmp b2
-  // scroll_soft::@2
+    // scroll_soft::@2
   b2:
-  // [15] call scroll_bit 
+    // [15] call scroll_bit 
     jsr scroll_bit
-  // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+    // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
   b1_from_b2:
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
     ldx #7
     jmp b1
-  // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+    // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
   b1_from_scroll_soft:
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
     jmp b1
-  // scroll_soft::@1
+    // scroll_soft::@1
   b1:
-  // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
+    // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
     stx SCROLL
     jmp breturn
-  // scroll_soft::@return
+    // scroll_soft::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// scroll_bit
+  // scroll_bit
 scroll_bit: {
     .label _7 = 3
     .label c = 3
     .label sc = 5
-  // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+    // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1_from_scroll_bit
-  // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
+    // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
   b2_from_scroll_bit:
     jmp b2
-  // scroll_bit::@2
+    // scroll_bit::@2
   b2:
-  // [22] call next_char 
+    // [22] call next_char 
     jsr next_char
-  // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuxx 
+    // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuxx 
     txa
     jmp b8
-  // scroll_bit::@8
+    // scroll_bit::@8
   b8:
-  // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuaa 
+    // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuaa 
     sta c
     lda #0
     sta c+1
-  // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl _7
     rol _7+1
     asl _7
     rol _7+1
     asl _7
     rol _7+1
-  // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz1 
+    // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda current_chargen
     adc #<CHARGEN
@@ -2079,81 +2079,81 @@ scroll_bit: {
     lda current_chargen+1
     adc #>CHARGEN
     sta current_chargen+1
-  // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+    // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+    // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
   b1_from_scroll_bit:
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  // scroll_bit::@1
+    // scroll_bit::@1
   b1:
-  // [28] call scroll_hard 
-  // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+    // [28] call scroll_hard 
+    // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
   scroll_hard_from_b1:
     jsr scroll_hard
     jmp b7
-  // scroll_bit::@7
+    // scroll_bit::@7
   b7:
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
+    // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
   b3_from_b7:
-  // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
+    // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuxx=vbuc1 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-  // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
+    // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
   b3_from_b4:
-  // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
-  // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
+    // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
     jmp b3
-  // scroll_bit::@3
+    // scroll_bit::@3
   b3:
-  // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
+    // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
     txa
     tay
     lda (current_chargen),y
-  // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
+    // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
     and current_bit
-  // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuaa_eq_0_then_la1 
+    // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4_from_b3
-  // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
+    // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
   b5_from_b3:
     jmp b5
-  // scroll_bit::@5
+    // scroll_bit::@5
   b5:
-  // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
+    // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
   b4_from_b5:
-  // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuaa=vbuc1 
+    // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuaa=vbuc1 
     lda #$80+' '
     jmp b4
-  // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
+    // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
   b4_from_b3:
-  // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuaa=vbuc1 
+    // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuaa=vbuc1 
     lda #' '
     jmp b4
-  // scroll_bit::@4
+    // scroll_bit::@4
   b4:
-  // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
+    // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc sc
@@ -2161,145 +2161,145 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
+    // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b3_from_b4
     jmp b6
-  // scroll_bit::@6
+    // scroll_bit::@6
   b6:
-  // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // scroll_bit::@return
+    // scroll_bit::@return
   breturn:
-  // [43] return 
+    // [43] return 
     rts
 }
-// scroll_hard
+  // scroll_hard
 scroll_hard: {
-  // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+    // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
   b1_from_scroll_hard:
-  // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
+    // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   // Hard scroll
-  // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+    // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
   b1_from_b1:
-  // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+    // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
     jmp b1
-  // scroll_hard::@1
+    // scroll_hard::@1
   b1:
-  // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+1,x
     sta SCREEN,x
-  // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*1+1,x
     sta SCREEN+$28*1,x
-  // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*2+1,x
     sta SCREEN+$28*2,x
-  // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*3+1,x
     sta SCREEN+$28*3,x
-  // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*4+1,x
     sta SCREEN+$28*4,x
-  // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*5+1,x
     sta SCREEN+$28*5,x
-  // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*6+1,x
     sta SCREEN+$28*6,x
-  // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
-  // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
+    // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne b1_from_b1
     jmp breturn
-  // scroll_hard::@return
+    // scroll_hard::@return
   breturn:
-  // [56] return 
+    // [56] return 
     rts
 }
-// next_char
+  // next_char
 // Find the next char of the scroll text
 next_char: {
-  // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
+    // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
     ldy #0
     lda (nxt),y
     tax
-  // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #'@'
     bne b1_from_next_char
     jmp b2
-  // next_char::@2
+    // next_char::@2
   b2:
-  // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
+    // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
     ldx TEXT
-  // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+    // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
     jmp b1
-  // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+    // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
   b1_from_next_char:
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
     jmp b1
-  // next_char::@1
+    // next_char::@1
   b1:
-  // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+    // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
     jmp breturn
-  // next_char::@return
+    // next_char::@return
   breturn:
-  // [62] return 
+    // [62] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 9
-  // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
     jmp b1
-  // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  // fillscreen::@1
+    // fillscreen::@1
   b1:
-  // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -2309,12 +2309,12 @@ fillscreen: {
     bcc b1_from_b1
   !:
     jmp breturn
-  // fillscreen::@return
+    // fillscreen::@return
   breturn:
-  // [68] return 
+    // [68] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 
 ASSEMBLER OPTIMIZATIONS
@@ -2525,13 +2525,13 @@ reg byte a [ scroll_bit::$9 ]
 FINAL ASSEMBLER
 Score: 20826
 
-// File Comments
+  // File Comments
 // An 8x8 char letter scroller
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -2541,123 +2541,139 @@ Score: 20826
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call fillscreen 
-  // [63] phi from main to fillscreen [phi:main->fillscreen]
+    // fillscreen(SCREEN, $20)
+    // [5] call fillscreen 
+    // [63] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+    // [6] phi (byte) current_bit#29 = (byte) 1 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuxx=vbuc1 
+    // [6] phi (byte) scroll#18 = (byte) 7 [phi:main->main::@1#3] -- vbuxx=vbuc1 
     ldx #7
   // Wait for raster
-  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // main::@1
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // main::@1
   b1:
-  // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(*RASTER!=$fe)
+    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1
-  // main::@2
+    // main::@2
   b2:
-  // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(*RASTER!=$ff)
+    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
-  // main::@3
-  // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // main::@3
+    // ++*BGCOL;
+    // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // [10] call scroll_soft 
+    // scroll_soft()
+    // [10] call scroll_soft 
     jsr scroll_soft
-  // main::@4
-  // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // main::@4
+    // --*BGCOL;
+    // [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
-  // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
-  // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
-  // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@4->main::@1#1] -- register_copy 
+    // [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@4->main::@1#2] -- register_copy 
+    // [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@4->main::@1#3] -- register_copy 
     jmp b1
 }
-// scroll_soft
+  // scroll_soft
 scroll_soft: {
-  // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
+    // if(--scroll==$ff)
+    // [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
     dex
-  // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne b1
-  // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
-  // scroll_soft::@2
-  // [15] call scroll_bit 
+    // [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+    // scroll_soft::@2
+    // scroll_bit()
+    // [15] call scroll_bit 
     jsr scroll_bit
-  // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
+    // [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#35 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
     ldx #7
-  // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
-  // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
-  // scroll_soft::@1
+    // [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+    // [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+    // [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+    // [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+    // [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+    // scroll_soft::@1
   b1:
-  // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
+    // *SCROLL = scroll
+    // [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
     stx SCROLL
-  // scroll_soft::@return
-  // [18] return 
+    // scroll_soft::@return
+    // }
+    // [18] return 
     rts
 }
-// scroll_bit
+  // scroll_bit
 scroll_bit: {
     .label _7 = 3
     .label c = 3
     .label sc = 5
-  // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    // current_bit = current_bit/2
+    // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+    // if(current_bit==0)
+    // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1
-  // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
-  // scroll_bit::@2
-  // [22] call next_char 
+    // [21] phi from scroll_bit to scroll_bit::@2 [phi:scroll_bit->scroll_bit::@2]
+    // scroll_bit::@2
+    // next_char()
+    // [22] call next_char 
     jsr next_char
-  // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuxx 
+    // [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuxx 
     txa
-  // scroll_bit::@8
-  // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuaa 
+    // scroll_bit::@8
+    // c = next_char()
+    // [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 -- vwuz1=vbuaa 
     sta c
     lda #0
     sta c+1
-  // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // c*8
+    // [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl _7
     rol _7+1
     asl _7
     rol _7+1
     asl _7
     rol _7+1
-  // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz1 
+    // current_chargen = CHARGEN+c*8
+    // [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda current_chargen
     adc #<CHARGEN
@@ -2665,65 +2681,73 @@ scroll_bit: {
     lda current_chargen+1
     adc #>CHARGEN
     sta current_chargen+1
-  // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+    // [27] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) $80 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
-  // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
-  // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
-  // scroll_bit::@1
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+    // [27] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+    // [27] phi (byte*) nxt#35 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+    // [27] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+    // [27] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+    // scroll_bit::@1
   b1:
-  // [28] call scroll_hard 
-  // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+    // scroll_hard()
+    // [28] call scroll_hard 
+    // [44] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
     jsr scroll_hard
-  // scroll_bit::@7
-  // asm { sei  }
+    // scroll_bit::@7
+    // asm
+    // asm { sei  }
     sei
-  // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // *PROCPORT = $32
+    // [30] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
-  // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
+    // [31] phi from scroll_bit::@7 to scroll_bit::@3 [phi:scroll_bit::@7->scroll_bit::@3]
+    // [31] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte) $28+(byte) $27 [phi:scroll_bit::@7->scroll_bit::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuxx=vbuc1 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) 0 [phi:scroll_bit::@7->scroll_bit::@3#1] -- vbuxx=vbuc1 
     ldx #0
-  // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
-  // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
-  // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
-  // scroll_bit::@3
+    // [31] phi from scroll_bit::@4 to scroll_bit::@3 [phi:scroll_bit::@4->scroll_bit::@3]
+    // [31] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@4->scroll_bit::@3#0] -- register_copy 
+    // [31] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@4->scroll_bit::@3#1] -- register_copy 
+    // scroll_bit::@3
   b3:
-  // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
+    // bits = current_chargen[r]
+    // [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
     txa
     tay
     lda (current_chargen),y
-  // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
+    // bits & current_bit
+    // [33] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
     and current_bit
-  // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuaa_eq_0_then_la1 
+    // if((bits & current_bit) != 0)
+    // [34] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
-  // scroll_bit::@5
-  // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
-  // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuaa=vbuc1 
+    // [35] phi from scroll_bit::@3 to scroll_bit::@5 [phi:scroll_bit::@3->scroll_bit::@5]
+    // scroll_bit::@5
+    // [36] phi from scroll_bit::@5 to scroll_bit::@4 [phi:scroll_bit::@5->scroll_bit::@4]
+    // [36] phi (byte) scroll_bit::b#2 = (byte) $80+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@4#0] -- vbuaa=vbuc1 
     lda #$80+' '
     jmp b4
-  // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
+    // [36] phi from scroll_bit::@3 to scroll_bit::@4 [phi:scroll_bit::@3->scroll_bit::@4]
   b2:
-  // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuaa=vbuc1 
+    // [36] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@3->scroll_bit::@4#0] -- vbuaa=vbuc1 
     lda #' '
-  // scroll_bit::@4
+    // scroll_bit::@4
   b4:
-  // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
+    // *sc = b
+    // [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // sc = sc+40
+    // [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc sc
@@ -2731,123 +2755,144 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
+    // for(byte r:0..7)
+    // [39] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [40] if((byte) scroll_bit::r#1!=(byte) 8) goto scroll_bit::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b3
-  // scroll_bit::@6
-  // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // scroll_bit::@6
+    // *PROCPORT = $37
+    // [41] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm
+    // asm { cli  }
     cli
-  // scroll_bit::@return
-  // [43] return 
+    // scroll_bit::@return
+    // }
+    // [43] return 
     rts
 }
-// scroll_hard
+  // scroll_hard
 scroll_hard: {
-  // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
-  // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
+    // [45] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+    // [45] phi (byte) scroll_hard::i#2 = (byte) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
     ldx #0
   // Hard scroll
-  // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
-  // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
-  // scroll_hard::@1
+    // [45] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+    // [45] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+    // scroll_hard::@1
   b1:
-  // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*0)[i]=(SCREEN+40*0)[i+1]
+    // [46] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+1,x
     sta SCREEN,x
-  // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*1)[i]=(SCREEN+40*1)[i+1]
+    // [47] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*1+1,x
     sta SCREEN+$28*1,x
-  // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*2)[i]=(SCREEN+40*2)[i+1]
+    // [48] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*2+1,x
     sta SCREEN+$28*2,x
-  // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*3)[i]=(SCREEN+40*3)[i+1]
+    // [49] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*3+1,x
     sta SCREEN+$28*3,x
-  // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*4)[i]=(SCREEN+40*4)[i+1]
+    // [50] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 4+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*4+1,x
     sta SCREEN+$28*4,x
-  // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*5)[i]=(SCREEN+40*5)[i+1]
+    // [51] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 5+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*5+1,x
     sta SCREEN+$28*5,x
-  // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*6)[i]=(SCREEN+40*6)[i+1]
+    // [52] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte)(number) $28*(number) 6+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*6+1,x
     sta SCREEN+$28*6,x
-  // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // (SCREEN+40*7)[i]=(SCREEN+40*7)[i+1]
+    // [53] *((const byte*) SCREEN#0+(word)(number) $28*(number) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(word)(number) $28*(number) 7+(byte) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
-  // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i=0;i!=39;i++)
+    // [54] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [55] if((byte) scroll_hard::i#1!=(byte) $27) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne b1
-  // scroll_hard::@return
-  // [56] return 
+    // scroll_hard::@return
+    // }
+    // [56] return 
     rts
 }
-// next_char
+  // next_char
 // Find the next char of the scroll text
 next_char: {
-  // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
+    // c = *nxt
+    // [57] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
     ldy #0
     lda (nxt),y
     tax
-  // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // if(c=='@')
+    // [58] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #'@'
     bne b1
-  // next_char::@2
-  // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
+    // next_char::@2
+    // c = *nxt
+    // [59] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
     ldx TEXT
-  // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [60] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
-  // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
-  // next_char::@1
+    // [60] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+    // [60] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+    // [60] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+    // next_char::@1
   b1:
-  // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+    // nxt++;
+    // [61] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  // next_char::@return
-  // [62] return 
+    // next_char::@return
+    // }
+    // [62] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 9
-  // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
-  // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  // fillscreen::@1
+    // [64] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [64] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // fillscreen::@1
   b1:
-  // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // *cursor = fill
+    // [65] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // for( byte* cursor = screen; cursor < screen+1000; cursor++)
+    // [66] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [67] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -2856,10 +2901,11 @@ fillscreen: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-  // fillscreen::@return
-  // [68] return 
+    // fillscreen::@return
+    // }
+    // [68] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 

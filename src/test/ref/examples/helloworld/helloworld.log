@@ -340,70 +340,70 @@ Allocated zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
 Allocated zp ZP_WORD:6 [ print_char_cursor#10 print_char_cursor#1 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label print_char_cursor = 6
   .label print_line_cursor = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print_str 
-  // [14] phi from main to print_str [phi:main->print_str]
+    // [5] call print_str 
+    // [14] phi from main to print_str [phi:main->print_str]
   print_str_from_main:
     jsr print_str
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print_ln 
-  // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
+    // [7] call print_ln 
+    // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
   print_ln_from_b1:
     jsr print_ln
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
     str: .text "hello world!@"
 }
-// print_ln
+  // print_ln
 // Print a newline
 print_ln: {
-  // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+    // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
   b1_from_print_ln:
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
     jmp b1
-  // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+    // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
   b1_from_b1:
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp b1
-  // print_ln::@1
+    // print_ln::@1
   b1:
-  // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc print_line_cursor
@@ -411,7 +411,7 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1_from_b1
@@ -421,65 +421,65 @@ print_ln: {
     bcc b1_from_b1
   !:
     jmp breturn
-  // print_ln::@return
+    // print_ln::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// print_str
+  // print_str
 // Print a zero-terminated string
 // print_str(byte* zeropage(4) str)
 print_str: {
     .label str = 4
-  // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<main.str
     sta str
     lda #>main.str
     sta str+1
     jmp b1
-  // print_str::@1
+    // print_str::@1
   b1:
-  // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print_str::@return
+    // print_str::@return
   breturn:
-  // [17] return 
+    // [17] return 
     rts
-  // print_str::@2
+    // print_str::@2
   b2:
-  // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (print_char_cursor),y
-  // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
-  // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
+    // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
   b1_from_b2:
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
-  // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:7 [ print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
@@ -502,70 +502,70 @@ Uplifting [print_ln] best 1423 combination
 Uplifting [main] best 1423 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label print_char_cursor = 6
   .label print_line_cursor = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print_str 
-  // [14] phi from main to print_str [phi:main->print_str]
+    // [5] call print_str 
+    // [14] phi from main to print_str [phi:main->print_str]
   print_str_from_main:
     jsr print_str
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print_ln 
-  // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
+    // [7] call print_ln 
+    // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
   print_ln_from_b1:
     jsr print_ln
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
     str: .text "hello world!@"
 }
-// print_ln
+  // print_ln
 // Print a newline
 print_ln: {
-  // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+    // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
   b1_from_print_ln:
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
     jmp b1
-  // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+    // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
   b1_from_b1:
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp b1
-  // print_ln::@1
+    // print_ln::@1
   b1:
-  // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc print_line_cursor
@@ -573,7 +573,7 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1_from_b1
@@ -583,65 +583,65 @@ print_ln: {
     bcc b1_from_b1
   !:
     jmp breturn
-  // print_ln::@return
+    // print_ln::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// print_str
+  // print_str
 // Print a zero-terminated string
 // print_str(byte* zeropage(4) str)
 print_str: {
     .label str = 4
-  // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<main.str
     sta str
     lda #>main.str
     sta str+1
     jmp b1
-  // print_str::@1
+    // print_str::@1
   b1:
-  // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print_str::@return
+    // print_str::@return
   breturn:
-  // [17] return 
+    // [17] return 
     rts
-  // print_str::@2
+    // print_str::@2
   b2:
-  // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (print_char_cursor),y
-  // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
-  // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
+    // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
   b1_from_b2:
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
-  // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -717,50 +717,54 @@ zp ZP_WORD:6 [ print_char_cursor#10 print_char_cursor#1 ]
 FINAL ASSEMBLER
 Score: 1235
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label print_char_cursor = 6
   .label print_line_cursor = 2
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call print_str 
-  // [14] phi from main to print_str [phi:main->print_str]
+    // print_str("hello world!")
+    // [5] call print_str 
+    // [14] phi from main to print_str [phi:main->print_str]
     jsr print_str
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call print_ln 
-  // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // print_ln()
+    // [7] call print_ln 
+    // [9] phi from main::@1 to print_ln [phi:main::@1->print_ln]
     jsr print_ln
-  // main::@return
-  // [8] return 
+    // main::@return
+    // }
+    // [8] return 
     rts
     str: .text "hello world!@"
 }
-// print_ln
+  // print_ln
 // Print a newline
 print_ln: {
-  // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+    // [10] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
-  // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
-  // print_ln::@1
+    // [10] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+    // [10] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+    // print_ln::@1
   b1:
-  // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // print_line_cursor + $28
+    // [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc print_line_cursor
@@ -768,7 +772,8 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // while (print_line_cursor<print_char_cursor)
+    // [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1
@@ -777,56 +782,61 @@ print_ln: {
     cmp print_char_cursor
     bcc b1
   !:
-  // print_ln::@return
-  // [13] return 
+    // print_ln::@return
+    // }
+    // [13] return 
     rts
 }
-// print_str
+  // print_str
 // Print a zero-terminated string
 // print_str(byte* zeropage(4) str)
 print_str: {
     .label str = 4
-  // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_str::str#2 = (const string) main::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<main.str
     sta str
     lda #>main.str
     sta str+1
-  // print_str::@1
+    // print_str::@1
   b1:
-  // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str!='@')
+    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
-  // print_str::@return
-  // [17] return 
+    // print_str::@return
+    // }
+    // [17] return 
     rts
-  // print_str::@2
+    // print_str::@2
   b2:
-  // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
+    // *(print_char_cursor++) = *(str++)
+    // [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-  // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
+    // *(print_char_cursor++) = *(str++);
+    // [19] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#10 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
-  // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
-  // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
-  // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
+    // [15] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
+    // [15] phi (byte*) print_char_cursor#10 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
 

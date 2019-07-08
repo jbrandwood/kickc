@@ -149,60 +149,60 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::a#2 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests that chained assignments work as intended
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label a = 2
-  // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-  // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen+$28
-  // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-  // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuz1=_deref_pbuc1 
+    // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuz1=_deref_pbuc1 
     lda screen+1
     sta a
-  // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda a
     sta screen+$29
-  // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-  // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::screen#0) ← (byte) 'c' [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -220,57 +220,57 @@ Uplifting [main] best 59 combination reg byte a [ main::a#2 ]
 Uplifting [] best 59 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests that chained assignments work as intended
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
-  // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-  // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen+$28
-  // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-  // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuaa=_deref_pbuc1 
     lda screen+1
-  // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
-  // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-  // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -310,43 +310,51 @@ reg byte a [ main::a#2 ]
 FINAL ASSEMBLER
 Score: 38
 
-// File Comments
+  // File Comments
 // Tests that chained assignments work as intended
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label screen = $400
-  // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // screen[0] = a = 'c'
+    // [4] *((const byte*) main::screen#0) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-  // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // screen[40] = a
+    // [5] *((const byte*) main::screen#0+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     sta screen+$28
-  // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // screen[1] = 'm'
+    // [6] *((const byte*) main::screen#0+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-  // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuaa=_deref_pbuc1 
-  // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // a = screen[1] = 'm'
+    // [7] (byte) main::a#2 ← *((const byte*) main::screen#0+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // screen[41] = a
+    // [8] *((const byte*) main::screen#0+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
-  // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // screen[2] = 1 + (a = 'l')
+    // [9] *((const byte*) main::screen#0+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-  // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // screen[42] = a
+    // [10] *((const byte*) main::screen#0+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
-  // main::@return
-  // [11] return 
+    // main::@return
+    // }
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 

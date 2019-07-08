@@ -386,106 +386,106 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // A Minimal test of boolean constants.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call bool_const_if 
-  // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // [5] call bool_const_if 
+    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
   bool_const_if_from_main:
     jsr bool_const_if
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call bool_const_vars 
-  // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [7] call bool_const_vars 
+    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
   bool_const_vars_from_b1:
     jsr bool_const_vars
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call bool_const_inline 
-  // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [9] call bool_const_inline 
+    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
   bool_const_inline_from_b2:
     jsr bool_const_inline
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// bool_const_inline
+  // bool_const_inline
 // A constant boolean inside an if()
 bool_const_inline: {
     jmp b1
-  // bool_const_inline::@1
+    // bool_const_inline::@1
   b1:
-  // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
     jmp breturn
-  // bool_const_inline::@return
+    // bool_const_inline::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// bool_const_vars
+  // bool_const_vars
 // A bunch of constant boolean vars (used in an if)
 bool_const_vars: {
     jmp b1
-  // bool_const_vars::@1
+    // bool_const_vars::@1
   b1:
-  // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
     jmp breturn
-  // bool_const_vars::@return
+    // bool_const_vars::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// bool_const_if
+  // bool_const_if
 // A constant boolean inside an if()
 bool_const_if: {
     jmp b1
-  // bool_const_if::@1
+    // bool_const_if::@1
   b1:
-  // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
     jmp breturn
-  // bool_const_if::@return
+    // bool_const_if::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' [ ] ( main:2::bool_const_inline:9 [ ] ) always clobbers reg byte a 
@@ -506,106 +506,106 @@ Uplifting [bool_const_inline] best 180 combination
 Uplifting [] best 180 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // A Minimal test of boolean constants.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call bool_const_if 
-  // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // [5] call bool_const_if 
+    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
   bool_const_if_from_main:
     jsr bool_const_if
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call bool_const_vars 
-  // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [7] call bool_const_vars 
+    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
   bool_const_vars_from_b1:
     jsr bool_const_vars
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call bool_const_inline 
-  // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [9] call bool_const_inline 
+    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
   bool_const_inline_from_b2:
     jsr bool_const_inline
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// bool_const_inline
+  // bool_const_inline
 // A constant boolean inside an if()
 bool_const_inline: {
     jmp b1
-  // bool_const_inline::@1
+    // bool_const_inline::@1
   b1:
-  // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
     jmp breturn
-  // bool_const_inline::@return
+    // bool_const_inline::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// bool_const_vars
+  // bool_const_vars
 // A bunch of constant boolean vars (used in an if)
 bool_const_vars: {
     jmp b1
-  // bool_const_vars::@1
+    // bool_const_vars::@1
   b1:
-  // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
     jmp breturn
-  // bool_const_vars::@return
+    // bool_const_vars::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// bool_const_if
+  // bool_const_if
 // A constant boolean inside an if()
 bool_const_if: {
     jmp b1
-  // bool_const_if::@1
+    // bool_const_if::@1
   b1:
-  // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
     jmp breturn
-  // bool_const_if::@return
+    // bool_const_if::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -678,72 +678,82 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 60
 
-// File Comments
+  // File Comments
 // A Minimal test of boolean constants.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call bool_const_if 
-  // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // bool_const_if()
+    // [5] call bool_const_if 
+    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
     jsr bool_const_if
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call bool_const_vars 
-  // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // bool_const_vars()
+    // [7] call bool_const_vars 
+    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
     jsr bool_const_vars
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [9] call bool_const_inline 
-  // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // bool_const_inline()
+    // [9] call bool_const_inline 
+    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
     jsr bool_const_inline
-  // main::@return
-  // [10] return 
+    // main::@return
+    // }
+    // [10] return 
     rts
 }
-// bool_const_inline
+  // bool_const_inline
 // A constant boolean inside an if()
 bool_const_inline: {
-  // bool_const_inline::@1
-  // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // bool_const_inline::@1
+    // SCREEN[2] = 't'
+    // [12] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
-  // bool_const_inline::@return
-  // [13] return 
+    // bool_const_inline::@return
+    // }
+    // [13] return 
     rts
 }
-// bool_const_vars
+  // bool_const_vars
 // A bunch of constant boolean vars (used in an if)
 bool_const_vars: {
-  // bool_const_vars::@1
-  // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // bool_const_vars::@1
+    // SCREEN[1] = 'f'
+    // [15] *((const byte*) SCREEN#0+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
-  // bool_const_vars::@return
-  // [16] return 
+    // bool_const_vars::@return
+    // }
+    // [16] return 
     rts
 }
-// bool_const_if
+  // bool_const_if
 // A constant boolean inside an if()
 bool_const_if: {
-  // bool_const_if::@1
-  // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // bool_const_if::@1
+    // SCREEN[0] = 't'
+    // [18] *((const byte*) SCREEN#0) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
-  // bool_const_if::@return
-  // [19] return 
+    // bool_const_if::@return
+    // }
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 

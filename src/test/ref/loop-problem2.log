@@ -242,105 +242,105 @@ Allocated zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
 Allocated zp ZP_BYTE:4 [ mode_ctrl::before#0 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print_cls 
-  // [14] phi from main to print_cls [phi:main->print_cls]
+    // [5] call print_cls 
+    // [14] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call mode_ctrl 
-  // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [7] call mode_ctrl 
+    // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
   mode_ctrl_from_b1:
     jsr mode_ctrl
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// mode_ctrl
+  // mode_ctrl
 mode_ctrl: {
     .label before = 4
     jmp b1
-  // mode_ctrl::@1
+    // mode_ctrl::@1
   b1:
-  // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuz1=_deref_pbuc1 
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuz1=_deref_pbuc1 
     lda BORDERCOL
     sta before
-  // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
+    // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
     cmp before
     beq b2
     jmp b3
-  // mode_ctrl::@3
+    // mode_ctrl::@3
   b3:
-  // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
-  // mode_ctrl::@2
+    // mode_ctrl::@2
   b2:
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
 }
-// print_cls
+  // print_cls
 print_cls: {
     .label sc = 2
-  // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
     jmp b1
-  // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  // print_cls::@1
+    // print_cls::@1
   b1:
-  // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1_from_b1
@@ -348,12 +348,12 @@ print_cls: {
     cmp #<SCREEN+$3e8
     bne b1_from_b1
     jmp breturn
-  // print_cls::@return
+    // print_cls::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) BORDERCOL#0) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
@@ -375,102 +375,102 @@ Uplifting [main] best 932 combination
 Uplifting [] best 932 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print_cls 
-  // [14] phi from main to print_cls [phi:main->print_cls]
+    // [5] call print_cls 
+    // [14] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call mode_ctrl 
-  // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [7] call mode_ctrl 
+    // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
   mode_ctrl_from_b1:
     jsr mode_ctrl
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// mode_ctrl
+  // mode_ctrl
 mode_ctrl: {
     jmp b1
-  // mode_ctrl::@1
+    // mode_ctrl::@1
   b1:
-  // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+    // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq b2
     jmp b3
-  // mode_ctrl::@3
+    // mode_ctrl::@3
   b3:
-  // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
-  // mode_ctrl::@2
+    // mode_ctrl::@2
   b2:
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
 }
-// print_cls
+  // print_cls
 print_cls: {
     .label sc = 2
-  // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
     jmp b1
-  // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  // print_cls::@1
+    // print_cls::@1
   b1:
-  // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1_from_b1
@@ -478,12 +478,12 @@ print_cls: {
     cmp #<SCREEN+$3e8
     bne b1_from_b1
     jmp breturn
-  // print_cls::@return
+    // print_cls::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -552,88 +552,98 @@ reg byte a [ mode_ctrl::before#0 ]
 FINAL ASSEMBLER
 Score: 764
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call print_cls 
-  // [14] phi from main to print_cls [phi:main->print_cls]
+    // print_cls()
+    // [5] call print_cls 
+    // [14] phi from main to print_cls [phi:main->print_cls]
     jsr print_cls
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call mode_ctrl 
-  // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // mode_ctrl()
+    // [7] call mode_ctrl 
+    // [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
     jsr mode_ctrl
-  // main::@return
-  // [8] return 
+    // main::@return
+    // }
+    // [8] return 
     rts
 }
-// mode_ctrl
+  // mode_ctrl
 mode_ctrl: {
-  // mode_ctrl::@1
+    // mode_ctrl::@1
   b1:
-  // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
+    // before = *BORDERCOL
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+    // if(before==$ff)
+    // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq b2
-  // mode_ctrl::@3
-  // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // mode_ctrl::@3
+    // *BORDERCOL = 3
+    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
-  // mode_ctrl::@2
+    // mode_ctrl::@2
   b2:
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // *BORDERCOL = 2
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
 }
-// print_cls
+  // print_cls
 print_cls: {
     .label sc = 2
-  // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-  // print_cls::@1
+    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // print_cls::@1
   b1:
-  // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // *sc = ' '
+    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1
     lda sc
     cmp #<SCREEN+$3e8
     bne b1
-  // print_cls::@return
-  // [19] return 
+    // print_cls::@return
+    // }
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 

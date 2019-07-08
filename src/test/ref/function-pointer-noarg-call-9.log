@@ -145,65 +145,65 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ idx#0 idx#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests calling into a function pointer which modifies global volatile
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fn1 
+    // [5] call fn1 
     jsr fn1
-  // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
-  // [7] call fn1 
+    // [7] call fn1 
     jsr fn1
-  // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
-  // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) idx#0 ← (byte) 0 [ idx#0 ] (  [ idx#0 ] ) always clobbers reg byte a 
@@ -223,65 +223,65 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ idx#0 idx#1 ]
 Uplifting [] best 72 combination zp ZP_BYTE:2 [ idx#0 idx#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests calling into a function pointer which modifies global volatile
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fn1 
+    // [5] call fn1 
     jsr fn1
-  // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
-  // [7] call fn1 
+    // [7] call fn1 
     jsr fn1
-  // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
-  // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -322,53 +322,61 @@ zp ZP_BYTE:2 [ idx#0 idx#1 ]
 FINAL ASSEMBLER
 Score: 66
 
-// File Comments
+  // File Comments
 // Tests calling into a function pointer which modifies global volatile
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // idx = 0
+  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
   jsr main
   rts
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call fn1 
+    // (*f)()
+    // [5] call fn1 
     jsr fn1
-  // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // SCREEN[idx] = 'a'
+    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
-  // [7] call fn1 
+    // (*f)()
+    // [7] call fn1 
     jsr fn1
-  // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // SCREEN[idx] = 'a'
+    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy idx
     sta SCREEN,y
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
-  // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // idx++;
+    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
     inc idx
-  // fn1::@return
-  // [11] return 
+    // fn1::@return
+    // }
+    // [11] return 
     rts
 }
-// File Data
+  // File Data
 

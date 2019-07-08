@@ -364,125 +364,125 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ val#0 val#1 val#2 val#12 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test address-of by assigning the affected variable in multiple ways
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label val = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta val
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN1 = $400
     .label ptr = val
     .label SCREEN2 = SCREEN1+$28
-  // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1
-  // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2
-  // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
+    // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
     // Here we have not yet used address-of - so val can be versioned freely
     lda #1
     sta val
-  // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+1
-  // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2+1
-  // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
+    // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
     // Set value directly
     lda #2
     sta val
-  // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+2
-  // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+2
-  // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     // Set value through pointer
     lda #3
     sta ptr
-  // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+3
-  // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+3
-  // [15] call setv 
+    // [15] call setv 
     jsr setv
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+4
-  // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+4
-  // [18] call setp 
+    // [18] call setp 
     jsr setp
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+5
-  // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+5
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [21] return 
+    // [21] return 
     rts
 }
-// setp
+  // setp
 setp: {
     .const v = 5
-  // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta main.ptr
     jmp breturn
-  // setp::@return
+    // setp::@return
   breturn:
-  // [23] return 
+    // [23] return 
     rts
 }
-// setv
+  // setv
 setv: {
     .const v = 4
-  // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta val
     jmp breturn
-  // setv::@return
+    // setv::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) val#0 ← (byte) 0 [ val#0 ] (  [ val#0 ] ) always clobbers reg byte a 
@@ -519,125 +519,125 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ val#0 val#1 val#2 val#
 Uplifting [] best 175 combination zp ZP_BYTE:2 [ val#0 val#1 val#2 val#12 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test address-of by assigning the affected variable in multiple ways
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label val = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta val
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN1 = $400
     .label ptr = val
     .label SCREEN2 = SCREEN1+$28
-  // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1
-  // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2
-  // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
+    // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
     // Here we have not yet used address-of - so val can be versioned freely
     lda #1
     sta val
-  // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+1
-  // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2+1
-  // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
+    // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
     // Set value directly
     lda #2
     sta val
-  // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+2
-  // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+2
-  // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     // Set value through pointer
     lda #3
     sta ptr
-  // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+3
-  // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+3
-  // [15] call setv 
+    // [15] call setv 
     jsr setv
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+4
-  // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+4
-  // [18] call setp 
+    // [18] call setp 
     jsr setp
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+5
-  // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+5
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [21] return 
+    // [21] return 
     rts
 }
-// setp
+  // setp
 setp: {
     .const v = 5
-  // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta main.ptr
     jmp breturn
-  // setp::@return
+    // setp::@return
   breturn:
-  // [23] return 
+    // [23] return 
     rts
 }
-// setv
+  // setv
 setv: {
     .const v = 4
-  // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta val
     jmp breturn
-  // setv::@return
+    // setv::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -701,106 +701,129 @@ zp ZP_BYTE:2 [ val#0 val#1 val#2 val#12 ]
 FINAL ASSEMBLER
 Score: 154
 
-// File Comments
+  // File Comments
 // Test address-of by assigning the affected variable in multiple ways
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label val = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // val = 0
+  // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta val
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
   jsr main
   rts
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN1 = $400
     .label ptr = val
     .label SCREEN2 = SCREEN1+$28
-  // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
+    // SCREEN1[idx] = val
+    // [4] *((const byte*) main::SCREEN1#0) ← (byte) val#0 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1
-  // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // SCREEN2[idx++] = '.'
+    // [5] *((const byte*) main::SCREEN2#0) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2
-  // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
+    // val = 1
+    // [6] (byte) val#1 ← (byte) 1 -- vbuz1=vbuc1 
     // Here we have not yet used address-of - so val can be versioned freely
     lda #1
     sta val
-  // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
+    // SCREEN1[idx] = val
+    // [7] *((const byte*) main::SCREEN1#0+(byte) 1) ← (byte) val#1 -- _deref_pbuc1=vbuz1 
     sta SCREEN1+1
-  // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // SCREEN2[idx++] = '.'
+    // [8] *((const byte*) main::SCREEN2#0+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2+1
-  // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
+    // val = 2
+    // [9] (byte) val#2 ← (byte) 2 -- vbuz1=vbuc1 
     // Set value directly
     lda #2
     sta val
-  // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // SCREEN1[idx] = val
+    // [10] *((const byte*) main::SCREEN1#0+(byte) 2) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     sta SCREEN1+2
-  // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // SCREEN2[idx++] = *ptr
+    // [11] *((const byte*) main::SCREEN2#0+(byte) 2) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+2
-  // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // *ptr = 3
+    // [12] *((const byte*) main::ptr#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     // Set value through pointer
     lda #3
     sta ptr
-  // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
+    // SCREEN1[idx] = val
+    // [13] *((const byte*) main::SCREEN1#0+(byte) 3) ← (byte) val#2 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+3
-  // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // SCREEN2[idx++] = *ptr
+    // [14] *((const byte*) main::SCREEN2#0+(byte) 3) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+3
-  // [15] call setv 
+    // setv(4)
+    // [15] call setv 
     jsr setv
-  // main::@1
-  // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // main::@1
+    // SCREEN1[idx] = val
+    // [16] *((const byte*) main::SCREEN1#0+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+4
-  // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // SCREEN2[idx++] = *ptr
+    // [17] *((const byte*) main::SCREEN2#0+(byte) 4) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+4
-  // [18] call setp 
+    // setp(ptr, 5)
+    // [18] call setp 
     jsr setp
-  // main::@2
-  // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
+    // main::@2
+    // SCREEN1[idx] = val
+    // [19] *((const byte*) main::SCREEN1#0+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda val
     sta SCREEN1+5
-  // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
+    // SCREEN2[idx++] = *ptr
+    // [20] *((const byte*) main::SCREEN2#0+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda ptr
     sta SCREEN2+5
-  // main::@return
-  // [21] return 
+    // main::@return
+    // }
+    // [21] return 
     rts
 }
-// setp
+  // setp
 setp: {
     .const v = 5
-  // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    // *p = v
+    // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta main.ptr
-  // setp::@return
-  // [23] return 
+    // setp::@return
+    // }
+    // [23] return 
     rts
 }
-// setv
+  // setv
 setv: {
     .const v = 4
-  // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // val = v
+    // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta val
-  // setv::@return
-  // [25] return 
+    // setv::@return
+    // }
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 

@@ -140,52 +140,52 @@ Allocated zp ZP_WORD:2 [ main::b#2 main::b#1 ]
 Allocated zp ZP_BYTE:4 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label b = 2
     .label i = 4
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta b
     lda #0
     sta b+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
+    // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
     clc
     lda b
     adc #<$28*8
@@ -193,19 +193,19 @@ main: {
     lda b+1
     adc #>$28*8
     sta b+1
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp i
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 [ main::i#2 main::b#1 ] ( main:2 [ main::i#2 main::b#1 ] ) always clobbers reg byte a 
@@ -222,50 +222,50 @@ Uplifting [main] best 473 combination zp ZP_WORD:2 [ main::b#2 main::b#1 ] reg b
 Uplifting [] best 473 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label b = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta b
     lda #0
     sta b+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
+    // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
     clc
     lda b
     adc #<$28*8
@@ -273,18 +273,18 @@ main: {
     lda b+1
     adc #>$28*8
     sta b+1
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -335,36 +335,37 @@ reg byte x [ main::i#2 main::i#1 ]
 FINAL ASSEMBLER
 Score: 351
 
-// File Comments
+  // File Comments
 // Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label b = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
     txa
     sta b
     sta b+1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::b#2 = (word) main::b#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
+    // b = b + 40*8
+    // [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8 -- vwuz1=vwuz1_plus_vwuc1 
     clc
     lda b
     adc #<$28*8
@@ -372,14 +373,16 @@ main: {
     lda b+1
     adc #>$28*8
     sta b+1
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i : 0..10)
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
 

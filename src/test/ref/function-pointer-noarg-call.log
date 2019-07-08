@@ -109,51 +109,51 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests creating, assigning and calling pointers to non-args no-return functions
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fn1 
+    // [5] call fn1 
     jsr fn1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 
@@ -167,51 +167,51 @@ Uplifting [fn1] best 42 combination
 Uplifting [] best 42 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests creating, assigning and calling pointers to non-args no-return functions
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call fn1 
+    // [5] call fn1 
     jsr fn1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -251,36 +251,40 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 24
 
-// File Comments
+  // File Comments
 // Tests creating, assigning and calling pointers to non-args no-return functions
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call fn1 
+    // (*f)()
+    // [5] call fn1 
     jsr fn1
-  // main::@return
-  // [6] return 
+    // main::@return
+    // }
+    // [6] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // (*BORDERCOL)++;
+    // [7] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // fn1::@return
-  // [8] return 
+    // fn1::@return
+    // }
+    // [8] return 
     rts
 }
-// File Data
+  // File Data
 

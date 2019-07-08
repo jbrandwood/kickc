@@ -411,32 +411,32 @@ Allocated zp ZP_BYTE:8 [ main::$11 ]
 Allocated zp ZP_BYTE:9 [ main::$12 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests using integer conditions in && and || operator
 // This should produce '01010101', '00110011', '00010001', '01110111' at the top of the screen
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _0 = 4
     .label _3 = 5
@@ -446,131 +446,131 @@ main: {
     .label _12 = 9
     .label idx = 3
     .label i = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
-  // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _0
-  // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuz1_then_la1 
+    // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _0
     beq b2
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'+'
     ldy idx
     sta SCREEN,y
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
+    // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
     lda #2
     and i
     sta _3
-  // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuz1_then_la1 
+    // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _3
     beq b3
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'+'
     ldy idx
     sta SCREEN+$28*1,y
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _6
-  // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
+    // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
     lda #2
     and i
     sta _7
-  // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _6
     beq b4
     jmp b10
-  // main::@10
+    // main::@10
   b10:
-  // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _7
     beq b4
     jmp b8
-  // main::@8
+    // main::@8
   b8:
-  // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'+'
     ldy idx
     sta SCREEN+$28*2,y
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _11
-  // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
+    // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuz2_band_vbuc1 
     lda #2
     and i
     sta _12
-  // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
+    // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
     cmp _11
     bne b9
     jmp b11
-  // main::@11
+    // main::@11
   b11:
-  // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
+    // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _12
     beq b5
     jmp b9
-  // main::@9
+    // main::@9
   b9:
-  // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'+'
     ldy idx
     sta SCREEN+$28*3,y
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuz1=_inc_vbuz1 
+    // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuz1=_inc_vbuz1 
+    // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuz1=_inc_vbuz1 
     inc i
-  // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp i
     bne b1_from_b5
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' [ main::i#10 main::idx#10 ] ( main:2 [ main::i#10 main::idx#10 ] ) always clobbers reg byte a 
@@ -626,151 +626,151 @@ Allocated (was zp ZP_BYTE:8) zp ZP_BYTE:4 [ main::$11 ]
 Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:5 [ main::$12 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests using integer conditions in && and || operator
 // This should produce '01010101', '00110011', '00010001', '01110111' at the top of the screen
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _6 = 2
     .label _7 = 3
     .label _11 = 4
     .label _12 = 5
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuaa=vbuyy_band_vbuc1 
+    // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuaa=vbuyy_band_vbuc1 
     tya
     and #1
-  // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuaa_then_la1 
+    // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq b2
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN,x
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuaa=vbuyy_band_vbuc1 
+    // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuaa=vbuyy_band_vbuc1 
     tya
     and #2
-  // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
+    // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq b3
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*1,x
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
+    // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #1
     sta _6
-  // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
+    // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #2
     sta _7
-  // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _6
     beq b4
     jmp b10
-  // main::@10
+    // main::@10
   b10:
-  // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _7
     beq b4
     jmp b8
-  // main::@8
+    // main::@8
   b8:
-  // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*2,x
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
+    // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #1
     sta _11
-  // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
+    // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #2
     sta _12
-  // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
+    // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
     cmp _11
     bne b9
     jmp b11
-  // main::@11
+    // main::@11
   b11:
-  // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
+    // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _12
     beq b5
     jmp b9
-  // main::@9
+    // main::@9
   b9:
-  // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*3,x
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuxx=_inc_vbuxx 
+    // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuxx=_inc_vbuxx 
     inx
-  // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuyy=_inc_vbuyy 
+    // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuyy=_inc_vbuyy 
     iny
-  // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
     bne b1_from_b5
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -860,117 +860,134 @@ zp ZP_BYTE:5 [ main::$12 ]
 FINAL ASSEMBLER
 Score: 1121
 
-// File Comments
+  // File Comments
 // Tests using integer conditions in && and || operator
 // This should produce '01010101', '00110011', '00010001', '01110111' at the top of the screen
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label _6 = 2
     .label _7 = 3
     .label _11 = 4
     .label _12 = 5
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::idx#10 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::i#10 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [5] phi (byte) main::idx#10 = (byte) main::idx#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuaa=vbuyy_band_vbuc1 
+    // i&1
+    // [6] (byte~) main::$0 ← (byte) main::i#10 & (byte) 1 -- vbuaa=vbuyy_band_vbuc1 
     tya
     and #1
-  // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuaa_then_la1 
+    // if(i&1)
+    // [7] if((byte) 0==(byte~) main::$0) goto main::@2 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq b2
-  // main::@6
-  // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // main::@6
+    // (SCREEN+40*0)[idx] = '+'
+    // [8] *((const byte*) SCREEN#0 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN,x
-  // main::@2
+    // main::@2
   b2:
-  // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuaa=vbuyy_band_vbuc1 
+    // i&2
+    // [9] (byte~) main::$3 ← (byte) main::i#10 & (byte) 2 -- vbuaa=vbuyy_band_vbuc1 
     tya
     and #2
-  // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
+    // if(i&2)
+    // [10] if((byte) 0==(byte~) main::$3) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq b3
-  // main::@7
-  // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // main::@7
+    // (SCREEN+40*1)[idx] = '+'
+    // [11] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 1 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*1,x
-  // main::@3
+    // main::@3
   b3:
-  // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
+    // i&1
+    // [12] (byte~) main::$6 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #1
     sta _6
-  // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
+    // i&2
+    // [13] (byte~) main::$7 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #2
     sta _7
-  // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // if(i&1 && i&2)
+    // [14] if((byte) 0==(byte~) main::$6) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp _6
     beq b4
-  // main::@10
-  // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
+    // main::@10
+    // [15] if((byte) 0==(byte~) main::$7) goto main::@4 -- vbuc1_eq_vbuz1_then_la1 
     cmp _7
     beq b4
-  // main::@8
-  // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // main::@8
+    // (SCREEN+40*2)[idx] = '+'
+    // [16] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 2 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*2,x
-  // main::@4
+    // main::@4
   b4:
-  // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
+    // i&1
+    // [17] (byte~) main::$11 ← (byte) main::i#10 & (byte) 1 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #1
     sta _11
-  // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
+    // i&2
+    // [18] (byte~) main::$12 ← (byte) main::i#10 & (byte) 2 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #2
     sta _12
-  // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
+    // if(i&1 || i&2)
+    // [19] if((byte) 0!=(byte~) main::$11) goto main::@9 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
     cmp _11
     bne b9
-  // main::@11
-  // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
+    // main::@11
+    // [20] if((byte) 0==(byte~) main::$12) goto main::@5 -- vbuc1_eq_vbuz1_then_la1 
     cmp _12
     beq b5
-  // main::@9
+    // main::@9
   b9:
-  // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // (SCREEN+40*3)[idx] = '+'
+    // [21] *((const byte*) SCREEN#0+(byte)(number) $28*(number) 3 + (byte) main::idx#10) ← (byte) '+' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'+'
     sta SCREEN+$28*3,x
-  // main::@5
+    // main::@5
   b5:
-  // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuxx=_inc_vbuxx 
+    // idx++;
+    // [22] (byte) main::idx#1 ← ++ (byte) main::idx#10 -- vbuxx=_inc_vbuxx 
     inx
-  // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuyy=_inc_vbuyy 
+    // for( byte i:0..7)
+    // [23] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuyy=_inc_vbuyy 
     iny
-  // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [24] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
     bne b1
-  // main::@return
-  // [25] return 
+    // main::@return
+    // }
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 

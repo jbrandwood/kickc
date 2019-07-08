@@ -248,30 +248,30 @@ Allocated zp ZP_BYTE:6 [ main::sb#0 ]
 Allocated zp ZP_BYTE:7 [ main::$12 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Check that multiplication by factors of 2 is converted to shifts
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _3 = 3
@@ -280,76 +280,76 @@ main: {
     .label _12 = 7
     .label sb = 6
     .label i = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy i
     tya
     sta SCREEN,y
-  // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta _3
-  // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _3
     ldy i
     sta SCREEN+1*$28,y
-  // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda i
     asl
     asl
     sta _5
-  // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _5
     ldy i
     sta SCREEN+2*$28,y
-  // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuz1=vbuz2_rol_3 
+    // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuz1=vbuz2_rol_3 
     lda i
     asl
     asl
     asl
     sta _7
-  // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _7
     ldy i
     sta SCREEN+3*$28,y
-  // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsz1=_neg_vbsz2 
+    // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsz1=_neg_vbsz2 
     lda i
     eor #$ff
     clc
     adc #1
     sta sb
-  // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsz1=vbsz2_rol_1 
+    // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsz1=vbsz2_rol_1 
     lda sb
     asl
     sta _12
-  // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _12
     ldy i
     sta SCREEN+5*$28,y
-  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp i
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$3 ] ( main:2 [ main::i#2 main::$3 ] ) always clobbers reg byte a 
@@ -384,85 +384,85 @@ Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::$12 ]
 Uplifting [main] best 743 combination reg byte a [ main::$12 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Check that multiplication by factors of 2 is converted to shifts
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-  // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+1*$28,x
-  // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
     asl
     asl
-  // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
-  // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
+    // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
     txa
     asl
     asl
     asl
-  // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+3*$28,x
-  // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsaa=_neg_vbsxx 
+    // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsaa=_neg_vbsxx 
     txa
     eor #$ff
     clc
     adc #1
-  // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
+    // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
     asl
-  // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
-  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -519,68 +519,80 @@ reg byte a [ main::$12 ]
 FINAL ASSEMBLER
 Score: 641
 
-// File Comments
+  // File Comments
 // Check that multiplication by factors of 2 is converted to shifts
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // (SCREEN+0*40)[i] = i*1
+    // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-  // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // i*2
+    // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (SCREEN+1*40)[i] = i*2
+    // [8] *((const byte*) main::SCREEN#0+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+1*$28,x
-  // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
+    // i*4
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
     asl
     asl
-  // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (SCREEN+2*40)[i] = i*4
+    // [10] *((const byte*) main::SCREEN#0+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
-  // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
+    // i*8
+    // [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
     txa
     asl
     asl
     asl
-  // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (SCREEN+3*40)[i] = i*8
+    // [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+3*$28,x
-  // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsaa=_neg_vbsxx 
+    // sb = -(signed byte)i
+    // [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 -- vbsaa=_neg_vbsxx 
     txa
     eor #$ff
     clc
     adc #1
-  // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
+    // sb*2
+    // [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
     asl
-  // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (SCREEN+5*40)[i] = (byte)(sb*2)
+    // [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
-  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i: 0..10)
+    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [17] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1
-  // main::@return
-  // [18] return 
+    // main::@return
+    // }
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
 

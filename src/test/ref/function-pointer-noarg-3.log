@@ -259,116 +259,116 @@ Allocated zp ZP_WORD:3 [ main::f#3 ]
 Allocated zp ZP_BYTE:5 [ main::$0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// kickasm() {{ ff:     jmp (main.f)  }}
+  // kickasm() {{ ff:     jmp (main.f)  }}
   ff:
     jmp (main.f)
 
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _0 = 5
     .label i = 2
     .label f = 3
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _0
-  // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
+    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
     beq b3_from_b2
-  // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
-  // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-// fn2
+  // fn2
 fn2: {
     .label BGCOL = $d021
-  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-  // fn2::@return
+    // fn2::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
@@ -388,111 +388,111 @@ Uplifting [] best 3393 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::f#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// kickasm() {{ ff:     jmp (main.f)  }}
+  // kickasm() {{ ff:     jmp (main.f)  }}
   ff:
     jmp (main.f)
 
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label f = 2
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
-  // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-// fn2
+  // fn2
 fn2: {
     .label BGCOL = $d021
-  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-  // fn2::@return
+    // fn2::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  // fn1::@return
+    // fn1::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -562,84 +562,93 @@ reg byte a [ main::$0 ]
 FINAL ASSEMBLER
 Score: 3225
 
-// File Comments
+  // File Comments
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// @1
-// kickasm() {{ ff:     jmp (main.f)  }}
+  // Global Constants & labels
+  // @begin
+  // @1
+  // kickasm
+  // kickasm() {{ ff:     jmp (main.f)  }}
   ff:
     jmp (main.f)
 
-// [2] phi from @1 to @2 [phi:@1->@2]
-// @2
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
-// [4] phi from @2 to @end [phi:@2->@end]
-// @end
-// main
+  // [2] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
+  // [4] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
 main: {
     .label f = 2
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // main::@1
-  // main::@2
+    // main::@1
+    // main::@2
   b2:
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // ++i;
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // i&1
+    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+    // if((i&1)==0)
+    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3
-  // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  // main::@3
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // main::@3
   b3:
-  // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
-  // main::@4
+    // main::@4
   b4:
-  // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm
+    // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
-  // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b2
 }
-// fn2
+  // fn2
 fn2: {
     .label BGCOL = $d021
-  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // (*BGCOL)++;
+    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // fn2::@return
-  // [14] return 
+    // fn2::@return
+    // }
+    // [14] return 
     rts
 }
-// fn1
+  // fn1
 fn1: {
     .label BORDERCOL = $d020
-  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // (*BORDERCOL)++;
+    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // fn1::@return
-  // [16] return 
+    // fn1::@return
+    // }
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 

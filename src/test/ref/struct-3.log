@@ -280,92 +280,92 @@ Allocated zp ZP_BYTE:3 [ idx#11 idx#12 ]
 Allocated zp ZP_BYTE:4 [ idx#4 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Minimal struct - passing struct value parameter
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 4
   .label idx_11 = 3
   .label idx_12 = 3
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label p1_y = 4
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
   print_from_main:
-  // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta idx_11
-  // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuz1=vbuc1 
+    // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #1
     sta print.p_x
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuz1=vbuc1 
+    // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuz1=vbuc1 
     lda #2
     sta print.p_x
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte zeropage(2) p_x)
 print: {
     .label p_x = 2
-  // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda p_x
     ldy idx_11
     sta SCREEN,y
-  // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuz1=_inc_vbuz2 
+    // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuz1=_inc_vbuz2 
     ldy idx_11
     iny
     sty idx
-  // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #main.p1_y
     ldy idx
     sta SCREEN,y
-  // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuz2 
+    // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuz2 
     ldy idx
     iny
     sty idx_12
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 [ idx#4 ] ( main:2::print:5 [ idx#4 ] main:2::print:7 [ idx#4 ] ) always clobbers reg byte a 
@@ -387,78 +387,78 @@ Uplifting [Point] best 67 combination
 Uplifting [main] best 67 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Minimal struct - passing struct value parameter
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label p1_y = 4
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
   print_from_main:
-  // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-  // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuaa=vbuc1 
+    // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuaa=vbuc1 
     lda #1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuaa=vbuc1 
+    // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuaa=vbuc1 
     lda #2
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte register(A) p_x)
 print: {
-  // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
     inx
-  // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #main.p1_y
     sta SCREEN,x
-  // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
     inx
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -519,58 +519,66 @@ reg byte x [ idx#4 ]
 FINAL ASSEMBLER
 Score: 46
 
-// File Comments
+  // File Comments
 // Minimal struct - passing struct value parameter
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label p1_y = 4
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
-  // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // print(p1)
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
+    // [9] phi (byte) idx#11 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-  // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuaa=vbuc1 
+    // [9] phi (byte) print::p_x#2 = (byte) 1 [phi:main->print#1] -- vbuaa=vbuc1 
     lda #1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
-  // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuaa=vbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // print(p1)
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte) print::p_x#2 = (byte) 2 [phi:main::@1->print#1] -- vbuaa=vbuc1 
     lda #2
     jsr print
-  // main::@return
-  // [8] return 
+    // main::@return
+    // }
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte register(A) p_x)
 print: {
-  // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN[idx++] = p.x
+    // [10] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
+    // SCREEN[idx++] = p.x;
+    // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
     inx
-  // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SCREEN[idx++] = p.y
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #main.p1_y
     sta SCREEN,x
-  // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
+    // SCREEN[idx++] = p.y;
+    // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
     inx
-  // print::@return
-  // [14] return 
+    // print::@return
+    // }
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 

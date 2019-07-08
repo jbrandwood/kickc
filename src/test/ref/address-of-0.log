@@ -145,64 +145,64 @@ Allocated zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ]
 Allocated zp ZP_BYTE:3 [ main::c#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test address-of - use the pointer to get the value
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
     .label c = 3
-  // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   b1_from_main:
   b1_from_b1:
-  // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
     ldy bp
     iny
     sty c
-  // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy b
     sta SCREEN,y
-  // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+    // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::b#0 ← (byte) 0 [ main::b#0 ] ( main:2 [ main::b#0 ] ) always clobbers reg byte a 
@@ -221,62 +221,62 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::b#2 main::b#0 ma
 Uplifting [main] best 368 combination zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test address-of - use the pointer to get the value
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
-  // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   b1_from_main:
   b1_from_b1:
-  // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda bp
     clc
     adc #1
-  // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy b
     sta SCREEN,y
-  // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+    // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -325,47 +325,52 @@ reg byte a [ main::c#0 ]
 FINAL ASSEMBLER
 Score: 296
 
-// File Comments
+  // File Comments
 // Test address-of - use the pointer to get the value
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
-  // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
+    // for( byte b: 0..10)
+    // [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+    // c = *bp +1
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda bp
     clc
     adc #1
-  // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // SCREEN[b] = c
+    // [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy b
     sta SCREEN,y
-  // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+    // for( byte b: 0..10)
+    // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1
-  // main::@return
-  // [10] return 
+    // main::@return
+    // }
+    // [10] return 
     rts
 }
-// File Data
+  // File Data
 

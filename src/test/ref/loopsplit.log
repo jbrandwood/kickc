@@ -204,84 +204,84 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label i = 2
     .label s = 3
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta s
-  // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #$64
     sta i
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuz1=_dec_vbuz1 
+    // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuz1=_dec_vbuz1 
     dec i
-  // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuz1_gt_0_then_la1 
+    // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuz1_gt_0_then_la1 
     lda i
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuz1 
     lda s
     sta SCREEN
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuz1_ge_vbuc1_then_la1 
+    // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuz1_ge_vbuc1_then_la1 
     lda i
     cmp #$32+1
     bcs b4
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuz1=_dec_vbuz1 
+    // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuz1=_dec_vbuz1 
     dec s
-  // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
+    // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
   b1_from_b4:
   b1_from_b5:
-  // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
     jmp b1
-  // main::@4
+    // main::@4
   b4:
-  // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuz1=_inc_vbuz1 
     inc s
     jmp b1_from_b4
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
@@ -295,78 +295,78 @@ Uplifting [main] best 365 combination reg byte y [ main::s#3 main::s#1 main::s#2
 Uplifting [] best 365 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #$64
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
+    // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
     dex
-  // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
+    // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
     cpx #0
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuyy 
+    // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuyy 
     sty SCREEN
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuxx_ge_vbuc1_then_la1 
+    // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$32+1
     bcs b4
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
+    // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
     dey
-  // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
+    // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
   b1_from_b4:
   b1_from_b5:
-  // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
     jmp b1
-  // main::@4
+    // main::@4
   b4:
-  // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
+    // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
     iny
     jmp b1_from_b4
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -428,57 +428,63 @@ reg byte y [ main::s#3 main::s#1 main::s#2 ]
 FINAL ASSEMBLER
 Score: 260
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #$64
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
+    // while(--i>0)
+    // [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
     dex
-  // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
+    // [7] if((byte) main::i#1>(byte) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
     cpx #0
     bne b2
-  // main::@3
-  // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuyy 
+    // main::@3
+    // *SCREEN = s
+    // [8] *((const byte*) main::SCREEN#0) ← (byte) main::s#3 -- _deref_pbuc1=vbuyy 
     sty SCREEN
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuxx_ge_vbuc1_then_la1 
+    // if(i>50)
+    // [10] if((byte) main::i#1>=(byte) $32+(byte) 1) goto main::@4 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$32+1
     bcs b4
-  // main::@5
-  // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
+    // main::@5
+    // s--;
+    // [11] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
     dey
-  // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
-  // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
+    // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
+    // [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
     jmp b1
-  // main::@4
+    // main::@4
   b4:
-  // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
+    // s++;
+    // [12] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
     iny
     jmp b1
 }
-// File Data
+  // File Data
 

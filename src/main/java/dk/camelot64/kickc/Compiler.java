@@ -569,7 +569,7 @@ public class Compiler {
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");
-      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(false, true, true, false), program));
 
    }
 

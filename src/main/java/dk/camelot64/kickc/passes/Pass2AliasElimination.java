@@ -2,9 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
@@ -26,6 +24,8 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       final Aliases aliases = findAliases(getProgram());
+
+      fixAliasSources(aliases);
       removeAliasAssignments(aliases);
       replaceVariables(aliases.getReplacements(getScope()));
       for(AliasSet aliasSet : aliases.getAliasSets()) {
@@ -192,13 +192,49 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       return aliases;
    }
 
+   /**
+    * Fix the statement source of alias-assignments to be the largest of the sources of any alias
+    *
+    * @param aliases The aliases
+    */
+   private void fixAliasSources(Aliases aliases) {
+      for(AliasSet aliasSet : aliases.getAliasSets()) {
+         // Find the best statement source among the aliases
+         StatementSource bestSource = null;
+         List<StatementLValue> assignments = new ArrayList<>();
+         for(VariableRef aliasVar : aliasSet.getVars()) {
+            StatementLValue assignment = getGraph().getAssignment(aliasVar);
+            if(assignment!=null) {
+               assignments.add(assignment);
+               StatementSource source = assignment.getSource();
+               if(bestSource == null) {
+                  bestSource = source;
+               } else if(source != null) {
+                  if(source.contains(bestSource)) {
+                     bestSource = source;
+                  } else if(!bestSource.contains(source)) {
+                     // The sources do not contain each other
+                     bestSource = null;
+                     assignments = null;
+                     break;
+                  }
+               }
+            }
+         }
+         if(bestSource!=null) {
+            // Found a best source - update all statements
+            for(StatementLValue assignment : assignments) {
+               assignment.setSource(bestSource);
+            }
+         }
+      }
+   }
 
    /**
     * Remove all assignments that just assign an alias to itself
     *
     * @param aliases The aliases
     */
-
    private void removeAliasAssignments(Aliases aliases) {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {

@@ -273,61 +273,61 @@ Allocated zp ZP_BYTE:2 [ raster::col#2 raster::col#0 raster::col#1 ]
 Allocated zp ZP_BYTE:3 [ raster::i#2 raster::i#1 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
-  // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [8] call raster 
+    // [8] call raster 
     jsr raster
     jmp b1
 }
-// raster
+  // raster
 raster: {
     .label col = 2
     .label i = 3
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -347,36 +347,36 @@ raster: {
     nop
     nop
     nop
-  // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuz1=_deref_pbuc1 
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuz1=_deref_pbuc1 
     lda rastercols
     sta col
-  // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
+    // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
   b1_from_raster:
-  // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
     jmp b1
-  // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
+    // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
   b1_from_b1:
-  // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
+    // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
     jmp b1
-  // raster::@1
+    // raster::@1
   b1:
-  // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
     lda col
     sta BORDERCOL
-  // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuz1=_inc_vbuz1 
+    // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda rastercols,y
     sta col
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -399,17 +399,17 @@ raster: {
     nop
     nop
     nop
-  // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
     cmp col
     bne b1_from_b1
     jmp breturn
-  // raster::@return
+    // raster::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -428,59 +428,59 @@ Uplifting [main] best 9585 combination
 Uplifting [] best 9585 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
-  // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [8] call raster 
+    // [8] call raster 
     jsr raster
     jmp b1
 }
-// raster
+  // raster
 raster: {
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -500,30 +500,30 @@ raster: {
     nop
     nop
     nop
-  // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
     lda rastercols
-  // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
+    // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
   b1_from_raster:
-  // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuxx=vbuc1 
+    // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
     jmp b1
-  // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
+    // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
   b1_from_b1:
-  // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
+    // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
     jmp b1
-  // raster::@1
+    // raster::@1
   b1:
-  // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
-  // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
+    // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda rastercols,x
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -546,16 +546,16 @@ raster: {
     nop
     nop
     nop
-  // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #$ff
     bne b1_from_b1
     jmp breturn
-  // raster::@return
+    // raster::@return
   breturn:
-  // [18] return 
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 ASSEMBLER OPTIMIZATIONS
@@ -621,46 +621,51 @@ reg byte x [ raster::i#2 raster::i#1 ]
 FINAL ASSEMBLER
 Score: 8340
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // main::@1
+    // main::@1
   b1:
-  // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while (*RASTER!=$a)
+    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
-  // main::@2
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while (*RASTER!=$b)
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
-  // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  // main::@3
-  // [8] call raster 
+    // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // main::@3
+    // raster()
+    // [8] call raster 
     jsr raster
     jmp b1
 }
-// raster
+  // raster
 raster: {
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -680,26 +685,32 @@ raster: {
     nop
     nop
     nop
-  // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
+    // col = rastercols[i]
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
     lda rastercols
-  // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
-  // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuxx=vbuc1 
+    // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
+    // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
-  // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
-  // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
-  // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
-  // raster::@1
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
+    // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
+    // [11] phi (byte) raster::i#2 = (byte) raster::i#1 [phi:raster::@1->raster::@1#0] -- register_copy 
+    // [11] phi (byte) raster::col#2 = (byte) raster::col#1 [phi:raster::@1->raster::@1#1] -- register_copy 
+    // raster::@1
   b1:
-  // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // *BGCOL = col
+    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-  // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // *BORDERCOL = col
+    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
-  // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
+    // col  = rastercols[++i];
+    // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // col  = rastercols[++i]
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda rastercols,x
-  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+    // asm
+    // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -722,13 +733,15 @@ raster: {
     nop
     nop
     nop
-  // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // while (col!=$ff)
+    // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #$ff
     bne b1
-  // raster::@return
-  // [18] return 
+    // raster::@return
+    // }
+    // [18] return 
     rts
 }
-// File Data
+  // File Data
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 

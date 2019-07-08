@@ -3055,7 +3055,7 @@ Allocated zp ZP_BYTE:65 [ makecharset::$11 ]
 Allocated zp ZP_BYTE:66 [ sid_rnd::return#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // A KickC version of the plasma routine from the CC65 samples
 // This version has an unrolled inner loop to reach 50+FPS
 // This version also optimizes the inner loop by calculating the Y buffer as a set of differences
@@ -3063,11 +3063,11 @@ INITIAL ASM
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
@@ -3089,115 +3089,115 @@ INITIAL ASM
   .label c1B = 5
   .label c2A = 6
   .label c2B = 7
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .label col = 2
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BORDERCOL
-  // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta col
     lda #>COLS
     sta col+1
     jmp b1
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
+    // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
     lda #BLACK
     ldy #0
     sta (col),y
-  // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
+    // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
     inc col
     bne !+
     inc col+1
   !:
-  // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda col+1
     cmp #>COLS+$3e8+1
     bne b1_from_b1
     lda col
     cmp #<COLS+$3e8+1
     bne b1_from_b1
-  // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [12] call makecharset 
-  // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
+    // [12] call makecharset 
+    // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
   makecharset_from_b2:
     jsr makecharset
-  // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
+    // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
   toD0181_from_b2:
     jmp toD0181
-  // main::toD0181
+    // main::toD0181
   toD0181:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
+    // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
   b3_from_b5:
-  // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
+    // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta c2B
-  // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
+    // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta c2A
-  // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
     lda #0
     sta c1B
-  // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
     lda #0
     sta c1A
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [17] call doplasma 
+    // [17] call doplasma 
     jsr doplasma
-  // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   b3_from_b4:
-  // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
-  // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
-  // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
-  // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
+    // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
+    // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
+    // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
+    // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
     jmp b3
 }
-// doplasma
+  // doplasma
 // Render plasma to the passed screen
 doplasma: {
     .label _1 = $1a
@@ -3237,139 +3237,139 @@ doplasma: {
     .label val_46 = $33
     .label val_48 = $34
     .label val_50 = $35
-  // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
+    // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
     lda c1A
     sta c1a
-  // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
+    // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
     lda c1B
     sta c1b
-  // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
+    // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
   b1_from_doplasma:
-  // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
+    // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuz1=vbuc1 
+    // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta yprev
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
     jmp b1
   // Calculate ybuff as a bunch of differences
-  // doplasma::@1
+    // doplasma::@1
   b1:
-  // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy c1a
     lda SINTABLE,y
     ldy c1b
     clc
     adc SINTABLE,y
     sta yval
-  // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuz1=vbuz2_minus_vbuz3 
+    // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuz1=vbuz2_minus_vbuz3 
     lda yval
     sec
     sbc yprev
     sta _1
-  // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _1
     ldy i
     sta ybuf,y
-  // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
+    // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1a
     axs #-[4]
     stx c1a
-  // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
+    // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1b
     axs #-[9]
     stx c1b
-  // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
+    // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$19
     bcc b8
     jmp b2
-  // doplasma::@2
+    // doplasma::@2
   b2:
-  // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1A
     axs #-[3]
     stx c1A
-  // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
+    // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
     lax c1B
     axs #5
     stx c1B
-  // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
+    // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
     lda c2A
     sta c2a
-  // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
+    // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
     lda c2B
     sta c2b
-  // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
+    // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
   b3_from_b2:
-  // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
+    // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i1
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
     jmp b3
-  // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
+    // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
   b3_from_b3:
-  // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
+    // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
     jmp b3
-  // doplasma::@3
+    // doplasma::@3
   b3:
-  // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy c2a
     lda SINTABLE,y
     ldy c2b
     clc
     adc SINTABLE,y
     sta _3
-  // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _3
     ldy i1
     sta xbuf,y
-  // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2a
     axs #-[3]
     stx c2a
-  // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
+    // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2b
     axs #-[7]
     stx c2b
-  // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
+    // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
     inc i1
-  // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda i1
     cmp #$28
     bcc b3_from_b3
     jmp b4
-  // doplasma::@4
+    // doplasma::@4
   b4:
-  // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda c2A
     clc
     adc #2
     sta c2A
-  // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
+    // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
     lax c2B
     axs #3
     stx c2B
-  // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
+    // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
   b5_from_b4:
-  // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuz1=vbuc1 
+    // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta i2
     jmp b5
-  // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
+    // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
   b5_from_b7:
-  // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
+    // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
     jmp b5
-  // doplasma::@5
+    // doplasma::@5
   b5:
-  // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     // Find the first value on the row
     ldy i2
     lda xbuf,y
@@ -3377,335 +3377,335 @@ doplasma: {
     jmp b6
   // Calculate the next values as sums of diffs
   // Use experimental loop unrolling to increase the speed
-  // doplasma::@6
+    // doplasma::@6
   b6:
-  // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf
     clc
     adc val
     sta val_1
-  // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_1
     ldy i2
     sta SCREEN1,y
     jmp b6_1
-  // doplasma::@6_1
+    // doplasma::@6_1
   b6_1:
-  // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+1
     clc
     adc val_1
     sta val_4
-  // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_4
     ldy i2
     sta SCREEN1+1*$28,y
     jmp b6_2
-  // doplasma::@6_2
+    // doplasma::@6_2
   b6_2:
-  // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+2
     clc
     adc val_4
     sta val_6
-  // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_6
     ldy i2
     sta SCREEN1+2*$28,y
     jmp b6_3
-  // doplasma::@6_3
+    // doplasma::@6_3
   b6_3:
-  // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+3
     clc
     adc val_6
     sta val_8
-  // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_8
     ldy i2
     sta SCREEN1+3*$28,y
     jmp b6_4
-  // doplasma::@6_4
+    // doplasma::@6_4
   b6_4:
-  // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+4
     clc
     adc val_8
     sta val_10
-  // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_10
     ldy i2
     sta SCREEN1+4*$28,y
     jmp b6_5
-  // doplasma::@6_5
+    // doplasma::@6_5
   b6_5:
-  // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+5
     clc
     adc val_10
     sta val_12
-  // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_12
     ldy i2
     sta SCREEN1+5*$28,y
     jmp b6_6
-  // doplasma::@6_6
+    // doplasma::@6_6
   b6_6:
-  // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+6
     clc
     adc val_12
     sta val_14
-  // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_14
     ldy i2
     sta SCREEN1+6*$28,y
     jmp b6_7
-  // doplasma::@6_7
+    // doplasma::@6_7
   b6_7:
-  // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+7
     clc
     adc val_14
     sta val_16
-  // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_16
     ldy i2
     sta SCREEN1+7*$28,y
     jmp b6_8
-  // doplasma::@6_8
+    // doplasma::@6_8
   b6_8:
-  // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+8
     clc
     adc val_16
     sta val_18
-  // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_18
     ldy i2
     sta SCREEN1+8*$28,y
     jmp b6_9
-  // doplasma::@6_9
+    // doplasma::@6_9
   b6_9:
-  // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+9
     clc
     adc val_18
     sta val_20
-  // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_20
     ldy i2
     sta SCREEN1+9*$28,y
     jmp b6_10
-  // doplasma::@6_10
+    // doplasma::@6_10
   b6_10:
-  // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$a
     clc
     adc val_20
     sta val_22
-  // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_22
     ldy i2
     sta SCREEN1+$a*$28,y
     jmp b6_11
-  // doplasma::@6_11
+    // doplasma::@6_11
   b6_11:
-  // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$b
     clc
     adc val_22
     sta val_24
-  // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_24
     ldy i2
     sta SCREEN1+$b*$28,y
     jmp b6_12
-  // doplasma::@6_12
+    // doplasma::@6_12
   b6_12:
-  // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$c
     clc
     adc val_24
     sta val_26
-  // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_26
     ldy i2
     sta SCREEN1+$c*$28,y
     jmp b6_13
-  // doplasma::@6_13
+    // doplasma::@6_13
   b6_13:
-  // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$d
     clc
     adc val_26
     sta val_28
-  // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_28
     ldy i2
     sta SCREEN1+$d*$28,y
     jmp b6_14
-  // doplasma::@6_14
+    // doplasma::@6_14
   b6_14:
-  // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$e
     clc
     adc val_28
     sta val_30
-  // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_30
     ldy i2
     sta SCREEN1+$e*$28,y
     jmp b6_15
-  // doplasma::@6_15
+    // doplasma::@6_15
   b6_15:
-  // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$f
     clc
     adc val_30
     sta val_32
-  // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_32
     ldy i2
     sta SCREEN1+$f*$28,y
     jmp b6_16
-  // doplasma::@6_16
+    // doplasma::@6_16
   b6_16:
-  // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$10
     clc
     adc val_32
     sta val_34
-  // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_34
     ldy i2
     sta SCREEN1+$10*$28,y
     jmp b6_17
-  // doplasma::@6_17
+    // doplasma::@6_17
   b6_17:
-  // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$11
     clc
     adc val_34
     sta val_36
-  // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_36
     ldy i2
     sta SCREEN1+$11*$28,y
     jmp b6_18
-  // doplasma::@6_18
+    // doplasma::@6_18
   b6_18:
-  // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$12
     clc
     adc val_36
     sta val_38
-  // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_38
     ldy i2
     sta SCREEN1+$12*$28,y
     jmp b6_19
-  // doplasma::@6_19
+    // doplasma::@6_19
   b6_19:
-  // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$13
     clc
     adc val_38
     sta val_40
-  // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_40
     ldy i2
     sta SCREEN1+$13*$28,y
     jmp b6_20
-  // doplasma::@6_20
+    // doplasma::@6_20
   b6_20:
-  // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$14
     clc
     adc val_40
     sta val_42
-  // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_42
     ldy i2
     sta SCREEN1+$14*$28,y
     jmp b6_21
-  // doplasma::@6_21
+    // doplasma::@6_21
   b6_21:
-  // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$15
     clc
     adc val_42
     sta val_44
-  // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_44
     ldy i2
     sta SCREEN1+$15*$28,y
     jmp b6_22
-  // doplasma::@6_22
+    // doplasma::@6_22
   b6_22:
-  // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$16
     clc
     adc val_44
     sta val_46
-  // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_46
     ldy i2
     sta SCREEN1+$16*$28,y
     jmp b6_23
-  // doplasma::@6_23
+    // doplasma::@6_23
   b6_23:
-  // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$17
     clc
     adc val_46
     sta val_48
-  // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_48
     ldy i2
     sta SCREEN1+$17*$28,y
     jmp b6_24
-  // doplasma::@6_24
+    // doplasma::@6_24
   b6_24:
-  // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuz1=vbuz2_plus__deref_pbuc1 
+    // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuz1=vbuz2_plus__deref_pbuc1 
     lda ybuf+$18
     clc
     adc val_48
     sta val_50
-  // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val_50
     ldy i2
     sta SCREEN1+$18*$28,y
     jmp b7
-  // doplasma::@7
+    // doplasma::@7
   b7:
-  // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuz1=_inc_vbuz1 
+    // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuz1=_inc_vbuz1 
     inc i2
-  // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuz1_lt_vbuc1_then_la1 
+    // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuz1_lt_vbuc1_then_la1 
     lda i2
     cmp #$28
     bcc b5_from_b7
     jmp breturn
-  // doplasma::@return
+    // doplasma::@return
   breturn:
-  // [95] return 
+    // [95] return 
     rts
-  // doplasma::@8
+    // doplasma::@8
   b8:
-  // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuz1=vbuz2 
+    // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuz1=vbuz2 
     lda yval
     sta yprev
-  // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
+    // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
   b1_from_b8:
-  // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
-  // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
+    // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
+    // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
     jmp b1
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
-// makecharset
+  // makecharset
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
     .label _2 = $36
@@ -3720,116 +3720,116 @@ makecharset: {
     .label i = $14
     .label c = $10
     .label _16 = $3f
-  // [98] call sid_rnd_init 
+    // [98] call sid_rnd_init 
     jsr sid_rnd_init
-  // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
+    // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
   b10_from_makecharset:
     jmp b10
-  // makecharset::@10
+    // makecharset::@10
   b10:
-  // [100] call print_cls 
-  // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+    // [100] call print_cls 
+    // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
   print_cls_from_b10:
     jsr print_cls
-  // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
+    // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
   b1_from_b10:
-  // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
+    // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta print_char_cursor
     lda #>print_line_cursor
     sta print_char_cursor+1
-  // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
+    // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta c
     lda #0
     sta c+1
     jmp b1
-  // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
+    // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
   b1_from_b9:
-  // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
-  // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
+    // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
+    // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
     jmp b1
-  // makecharset::@1
+    // makecharset::@1
   b1:
-  // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuz1=_lo_vwuz2 
+    // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuz1=_lo_vwuz2 
     lda c
     sta _2
-  // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
     lda SINTABLE,y
     sta s
-  // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
+    // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
   b2_from_b1:
-  // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
+    // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b2
-  // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
+    // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
   b2_from_b6:
-  // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
+    // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
     jmp b2
-  // makecharset::@2
+    // makecharset::@2
   b2:
-  // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
+    // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
   b3_from_b2:
-  // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuz1=vbuc1 
+    // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta b
-  // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuz1=vbuc1 
+    // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta ii
     jmp b3
-  // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
+    // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
   b3_from_b4:
-  // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
-  // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
+    // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
+    // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
     jmp b3
-  // makecharset::@3
+    // makecharset::@3
   b3:
-  // [106] call sid_rnd 
+    // [106] call sid_rnd 
     jsr sid_rnd
-  // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0 -- vbuz1=vbuz2 
+    // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0 -- vbuz1=vbuz2 
     lda sid_rnd.return
     sta sid_rnd.return_2
     jmp b11
-  // makecharset::@11
+    // makecharset::@11
   b11:
-  // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2 -- vbuz1=vbuz2 
+    // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2 -- vbuz1=vbuz2 
     lda sid_rnd.return_2
     sta _3
-  // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuz2_band_vbuc1 
+    // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuz2_band_vbuc1 
     lda #$ff
     and _3
     sta _4
-  // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
+    // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
     lda s
     cmp _4
     bcs b4_from_b11
     jmp b5
-  // makecharset::@5
+    // makecharset::@5
   b5:
-  // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuz1=vbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuz1=vbuz1_bor_pbuc1_derefidx_vbuz2 
     lda b
     ldy ii
     ora bittab,y
     sta b
-  // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
+    // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
   b4_from_b11:
   b4_from_b5:
-  // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
+    // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
     jmp b4
-  // makecharset::@4
+    // makecharset::@4
   b4:
-  // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuz1=_inc_vbuz1 
+    // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuz1=_inc_vbuz1 
     inc ii
-  // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda ii
     cmp #8
     bcc b3_from_b4
     jmp b6
-  // makecharset::@6
+    // makecharset::@6
   b6:
-  // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda c
     asl
     sta _8
@@ -3840,7 +3840,7 @@ makecharset: {
     rol _8+1
     asl _8
     rol _8+1
-  // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz2_plus_vbuz3 
+    // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz2_plus_vbuz3 
     lda i
     clc
     adc _8
@@ -3848,7 +3848,7 @@ makecharset: {
     lda #0
     adc _8+1
     sta _9+1
-  // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz2 
+    // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz2 
     lda _9
     clc
     adc #<CHARSET
@@ -3856,47 +3856,47 @@ makecharset: {
     lda _9+1
     adc #>CHARSET
     sta _16+1
-  // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuz2 
+    // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuz2 
     lda b
     ldy #0
     sta (_16),y
-  // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2_from_b6
     jmp b7
-  // makecharset::@7
+    // makecharset::@7
   b7:
-  // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuz1=vwuz2_band_vbuc1 
+    // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuz1=vwuz2_band_vbuc1 
     lda c
     and #7
     sta _11
-  // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuz1_neq_0_then_la1 
+    // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuz1_neq_0_then_la1 
     lda _11
     cmp #0
     bne b9_from_b7
-  // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+    // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
   b8_from_b7:
     jmp b8
-  // makecharset::@8
+    // makecharset::@8
   b8:
-  // [124] call print_char 
+    // [124] call print_char 
     jsr print_char
-  // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+    // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
   b9_from_b7:
   b9_from_b8:
-  // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+    // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
     jmp b9
-  // makecharset::@9
+    // makecharset::@9
   b9:
-  // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+    // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+    // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1_from_b9
@@ -3906,74 +3906,74 @@ makecharset: {
     bcc b1_from_b9
   !:
     jmp breturn
-  // makecharset::@return
+    // makecharset::@return
   breturn:
-  // [128] return 
+    // [128] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-// print_char
+  // print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+    // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+    // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  // print_char::@return
+    // print_char::@return
   breturn:
-  // [131] return 
+    // [131] return 
     rts
 }
-// sid_rnd
+  // sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
     .label return = $42
     .label return_2 = $38
-  // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuz1=_deref_pbuc1 
+    // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuz1=_deref_pbuc1 
     lda SID_VOICE3_OSC
     sta return
     jmp breturn
-  // sid_rnd::@return
+    // sid_rnd::@return
   breturn:
-  // [133] return 
+    // [133] return 
     rts
 }
-// print_cls
+  // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $17
-  // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
     jmp b1
-  // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  // print_cls::@1
+    // print_cls::@1
   b1:
-  // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1_from_b1
@@ -3981,29 +3981,29 @@ print_cls: {
     cmp #<print_line_cursor+$3e8
     bne b1_from_b1
     jmp breturn
-  // print_cls::@return
+    // print_cls::@return
   breturn:
-  // [139] return 
+    // [139] return 
     rts
 }
-// sid_rnd_init
+  // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+    // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  // sid_rnd_init::@return
+    // sid_rnd_init::@return
   breturn:
-  // [142] return 
+    // [142] return 
     rts
 }
-// File Data
+  // File Data
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
@@ -4321,7 +4321,7 @@ Allocated (was zp ZP_BYTE:58) zp ZP_BYTE:23 [ makecharset::$4 ]
 Allocated (was zp ZP_WORD:59) zp ZP_WORD:24 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // A KickC version of the plasma routine from the CC65 samples
 // This version has an unrolled inner loop to reach 50+FPS
 // This version also optimizes the inner loop by calculating the Y buffer as a set of differences
@@ -4329,11 +4329,11 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
@@ -4355,115 +4355,115 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label c1B = 5
   .label c2A = 6
   .label c2B = 7
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .label col = 2
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BORDERCOL
-  // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta col
     lda #>COLS
     sta col+1
     jmp b1
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
+    // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
     lda #BLACK
     ldy #0
     sta (col),y
-  // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
+    // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
     inc col
     bne !+
     inc col+1
   !:
-  // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda col+1
     cmp #>COLS+$3e8+1
     bne b1_from_b1
     lda col
     cmp #<COLS+$3e8+1
     bne b1_from_b1
-  // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [12] call makecharset 
-  // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
+    // [12] call makecharset 
+    // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
   makecharset_from_b2:
     jsr makecharset
-  // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
+    // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
   toD0181_from_b2:
     jmp toD0181
-  // main::toD0181
+    // main::toD0181
   toD0181:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
+    // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
   b3_from_b5:
-  // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
+    // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta c2B
-  // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
+    // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta c2A
-  // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
     lda #0
     sta c1B
-  // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
     lda #0
     sta c1A
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [17] call doplasma 
+    // [17] call doplasma 
     jsr doplasma
-  // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   b3_from_b4:
-  // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
-  // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
-  // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
-  // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
+    // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
+    // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
+    // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
+    // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
     jmp b3
 }
-// doplasma
+  // doplasma
 // Render plasma to the passed screen
 doplasma: {
     .label c1a = 8
@@ -4473,366 +4473,366 @@ doplasma: {
     .label c2a = $b
     .label c2b = $c
     .label i1 = $d
-  // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
+    // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
     lda c1A
     sta c1a
-  // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
+    // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
     lda c1B
     sta c1b
-  // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
+    // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
   b1_from_doplasma:
-  // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
+    // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuxx=vbuc1 
+    // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
     jmp b1
   // Calculate ybuff as a bunch of differences
-  // doplasma::@1
+    // doplasma::@1
   b1:
-  // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy c1a
     lda SINTABLE,y
     ldy c1b
     clc
     adc SINTABLE,y
     sta yval
-  // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
+    // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
     txa
     eor #$ff
     sec
     adc yval
-  // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta ybuf,y
-  // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
+    // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1a
     axs #-[4]
     stx c1a
-  // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
+    // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1b
     axs #-[9]
     stx c1b
-  // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
+    // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$19
     bcc b8
     jmp b2
-  // doplasma::@2
+    // doplasma::@2
   b2:
-  // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1A
     axs #-[3]
     stx c1A
-  // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
+    // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
     lax c1B
     axs #5
     stx c1B
-  // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
+    // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
     lda c2A
     sta c2a
-  // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
+    // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
     lda c2B
     sta c2b
-  // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
+    // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
   b3_from_b2:
-  // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
+    // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i1
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
     jmp b3
-  // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
+    // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
   b3_from_b3:
-  // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
+    // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
     jmp b3
-  // doplasma::@3
+    // doplasma::@3
   b3:
-  // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuaa=pbuc1_derefidx_vbuz1_plus_pbuc1_derefidx_vbuz2 
+    // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuaa=pbuc1_derefidx_vbuz1_plus_pbuc1_derefidx_vbuz2 
     ldy c2a
     lda SINTABLE,y
     ldy c2b
     clc
     adc SINTABLE,y
-  // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i1
     sta xbuf,y
-  // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2a
     axs #-[3]
     stx c2a
-  // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
+    // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2b
     axs #-[7]
     stx c2b
-  // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
+    // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
     inc i1
-  // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda i1
     cmp #$28
     bcc b3_from_b3
     jmp b4
-  // doplasma::@4
+    // doplasma::@4
   b4:
-  // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda c2A
     clc
     adc #2
     sta c2A
-  // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
+    // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
     lax c2B
     axs #3
     stx c2B
-  // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
+    // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
   b5_from_b4:
-  // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuxx=vbuc1 
+    // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b5
-  // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
+    // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
   b5_from_b7:
-  // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
+    // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
     jmp b5
-  // doplasma::@5
+    // doplasma::@5
   b5:
-  // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     // Find the first value on the row
     lda xbuf,x
     jmp b6
   // Calculate the next values as sums of diffs
   // Use experimental loop unrolling to increase the speed
-  // doplasma::@6
+    // doplasma::@6
   b6:
-  // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf
-  // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1,x
     jmp b6_1
-  // doplasma::@6_1
+    // doplasma::@6_1
   b6_1:
-  // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+1
-  // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+1*$28,x
     jmp b6_2
-  // doplasma::@6_2
+    // doplasma::@6_2
   b6_2:
-  // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+2
-  // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+2*$28,x
     jmp b6_3
-  // doplasma::@6_3
+    // doplasma::@6_3
   b6_3:
-  // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+3
-  // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+3*$28,x
     jmp b6_4
-  // doplasma::@6_4
+    // doplasma::@6_4
   b6_4:
-  // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+4
-  // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+4*$28,x
     jmp b6_5
-  // doplasma::@6_5
+    // doplasma::@6_5
   b6_5:
-  // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+5
-  // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+5*$28,x
     jmp b6_6
-  // doplasma::@6_6
+    // doplasma::@6_6
   b6_6:
-  // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+6
-  // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+6*$28,x
     jmp b6_7
-  // doplasma::@6_7
+    // doplasma::@6_7
   b6_7:
-  // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+7
-  // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+7*$28,x
     jmp b6_8
-  // doplasma::@6_8
+    // doplasma::@6_8
   b6_8:
-  // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+8
-  // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+8*$28,x
     jmp b6_9
-  // doplasma::@6_9
+    // doplasma::@6_9
   b6_9:
-  // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+9
-  // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+9*$28,x
     jmp b6_10
-  // doplasma::@6_10
+    // doplasma::@6_10
   b6_10:
-  // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$a
-  // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$a*$28,x
     jmp b6_11
-  // doplasma::@6_11
+    // doplasma::@6_11
   b6_11:
-  // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$b
-  // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$b*$28,x
     jmp b6_12
-  // doplasma::@6_12
+    // doplasma::@6_12
   b6_12:
-  // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$c
-  // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$c*$28,x
     jmp b6_13
-  // doplasma::@6_13
+    // doplasma::@6_13
   b6_13:
-  // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$d
-  // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$d*$28,x
     jmp b6_14
-  // doplasma::@6_14
+    // doplasma::@6_14
   b6_14:
-  // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$e
-  // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$e*$28,x
     jmp b6_15
-  // doplasma::@6_15
+    // doplasma::@6_15
   b6_15:
-  // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$f
-  // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$f*$28,x
     jmp b6_16
-  // doplasma::@6_16
+    // doplasma::@6_16
   b6_16:
-  // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$10
-  // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$10*$28,x
     jmp b6_17
-  // doplasma::@6_17
+    // doplasma::@6_17
   b6_17:
-  // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$11
-  // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$11*$28,x
     jmp b6_18
-  // doplasma::@6_18
+    // doplasma::@6_18
   b6_18:
-  // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$12
-  // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$12*$28,x
     jmp b6_19
-  // doplasma::@6_19
+    // doplasma::@6_19
   b6_19:
-  // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$13
-  // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$13*$28,x
     jmp b6_20
-  // doplasma::@6_20
+    // doplasma::@6_20
   b6_20:
-  // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$14
-  // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$14*$28,x
     jmp b6_21
-  // doplasma::@6_21
+    // doplasma::@6_21
   b6_21:
-  // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$15
-  // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$15*$28,x
     jmp b6_22
-  // doplasma::@6_22
+    // doplasma::@6_22
   b6_22:
-  // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$16
-  // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$16*$28,x
     jmp b6_23
-  // doplasma::@6_23
+    // doplasma::@6_23
   b6_23:
-  // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$17
-  // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$17*$28,x
     jmp b6_24
-  // doplasma::@6_24
+    // doplasma::@6_24
   b6_24:
-  // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$18
-  // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$18*$28,x
     jmp b7
-  // doplasma::@7
+    // doplasma::@7
   b7:
-  // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuxx=_inc_vbuxx 
+    // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuxx_lt_vbuc1_then_la1 
+    // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
     bcc b5_from_b7
     jmp breturn
-  // doplasma::@return
+    // doplasma::@return
   breturn:
-  // [95] return 
+    // [95] return 
     rts
-  // doplasma::@8
+    // doplasma::@8
   b8:
-  // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuxx=vbuz1 
+    // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuxx=vbuz1 
     ldx yval
-  // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
+    // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
   b1_from_b8:
-  // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
-  // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
+    // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
+    // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
     jmp b1
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
-// makecharset
+  // makecharset
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
     .label _4 = $17
@@ -4842,106 +4842,106 @@ makecharset: {
     .label i = $12
     .label c = $e
     .label _16 = $18
-  // [98] call sid_rnd_init 
+    // [98] call sid_rnd_init 
     jsr sid_rnd_init
-  // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
+    // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
   b10_from_makecharset:
     jmp b10
-  // makecharset::@10
+    // makecharset::@10
   b10:
-  // [100] call print_cls 
-  // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+    // [100] call print_cls 
+    // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
   print_cls_from_b10:
     jsr print_cls
-  // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
+    // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
   b1_from_b10:
-  // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
+    // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta print_char_cursor
     lda #>print_line_cursor
     sta print_char_cursor+1
-  // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
+    // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta c
     lda #0
     sta c+1
     jmp b1
-  // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
+    // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
   b1_from_b9:
-  // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
-  // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
+    // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
+    // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
     jmp b1
-  // makecharset::@1
+    // makecharset::@1
   b1:
-  // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuaa=_lo_vwuz1 
+    // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuaa=_lo_vwuz1 
     lda c
-  // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda SINTABLE,y
     sta s
-  // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
+    // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
   b2_from_b1:
-  // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
+    // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b2
-  // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
+    // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
   b2_from_b6:
-  // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
+    // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
     jmp b2
-  // makecharset::@2
+    // makecharset::@2
   b2:
-  // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
+    // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
   b3_from_b2:
-  // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuyy=vbuc1 
+    // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuyy=vbuc1 
     ldy #0
-  // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuxx=vbuc1 
+    // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-  // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
+    // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
   b3_from_b4:
-  // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
-  // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
+    // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
+    // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
     jmp b3
-  // makecharset::@3
+    // makecharset::@3
   b3:
-  // [106] call sid_rnd 
+    // [106] call sid_rnd 
     jsr sid_rnd
-  // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0
+    // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0
     jmp b11
-  // makecharset::@11
+    // makecharset::@11
   b11:
-  // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2
-  // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuaa_band_vbuc1 
+    // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2
+    // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuaa_band_vbuc1 
     and #$ff
     sta _4
-  // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
+    // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
     lda s
     cmp _4
     bcs b4_from_b11
     jmp b5
-  // makecharset::@5
+    // makecharset::@5
   b5:
-  // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
+    // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
     tya
     ora bittab,x
     tay
-  // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
+    // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
   b4_from_b11:
   b4_from_b5:
-  // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
+    // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
     jmp b4
-  // makecharset::@4
+    // makecharset::@4
   b4:
-  // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuxx=_inc_vbuxx 
+    // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuxx_lt_vbuc1_then_la1 
+    // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #8
     bcc b3_from_b4
     jmp b6
-  // makecharset::@6
+    // makecharset::@6
   b6:
-  // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda c
     asl
     sta _8
@@ -4952,7 +4952,7 @@ makecharset: {
     rol _8+1
     asl _8
     rol _8+1
-  // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz1_plus_vbuz2 
+    // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz1_plus_vbuz2 
     lda i
     clc
     adc _9
@@ -4960,7 +4960,7 @@ makecharset: {
     bcc !+
     inc _9+1
   !:
-  // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
+    // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _16
     adc #<CHARSET
@@ -4968,45 +4968,45 @@ makecharset: {
     lda _16+1
     adc #>CHARSET
     sta _16+1
-  // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
     tya
     ldy #0
     sta (_16),y
-  // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2_from_b6
     jmp b7
-  // makecharset::@7
+    // makecharset::@7
   b7:
-  // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuaa=vwuz1_band_vbuc1 
+    // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuaa=vwuz1_band_vbuc1 
     lda c
     and #7
-  // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
+    // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9_from_b7
-  // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+    // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
   b8_from_b7:
     jmp b8
-  // makecharset::@8
+    // makecharset::@8
   b8:
-  // [124] call print_char 
+    // [124] call print_char 
     jsr print_char
-  // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+    // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
   b9_from_b7:
   b9_from_b8:
-  // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+    // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
     jmp b9
-  // makecharset::@9
+    // makecharset::@9
   b9:
-  // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+    // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+    // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1_from_b9
@@ -5016,71 +5016,71 @@ makecharset: {
     bcc b1_from_b9
   !:
     jmp breturn
-  // makecharset::@return
+    // makecharset::@return
   breturn:
-  // [128] return 
+    // [128] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-// print_char
+  // print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+    // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+    // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  // print_char::@return
+    // print_char::@return
   breturn:
-  // [131] return 
+    // [131] return 
     rts
 }
-// sid_rnd
+  // sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-  // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
+    // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
     jmp breturn
-  // sid_rnd::@return
+    // sid_rnd::@return
   breturn:
-  // [133] return 
+    // [133] return 
     rts
 }
-// print_cls
+  // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $13
-  // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
     jmp b1
-  // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  // print_cls::@1
+    // print_cls::@1
   b1:
-  // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1_from_b1
@@ -5088,29 +5088,29 @@ print_cls: {
     cmp #<print_line_cursor+$3e8
     bne b1_from_b1
     jmp breturn
-  // print_cls::@return
+    // print_cls::@return
   breturn:
-  // [139] return 
+    // [139] return 
     rts
 }
-// sid_rnd_init
+  // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+    // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  // sid_rnd_init::@return
+    // sid_rnd_init::@return
   breturn:
-  // [142] return 
+    // [142] return 
     rts
 }
-// File Data
+  // File Data
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
@@ -5581,7 +5581,7 @@ reg byte a [ sid_rnd::return#0 ]
 FINAL ASSEMBLER
 Score: 93714
 
-// File Comments
+  // File Comments
 // A KickC version of the plasma routine from the CC65 samples
 // This version has an unrolled inner loop to reach 50+FPS
 // This version also optimizes the inner loop by calculating the Y buffer as a set of differences
@@ -5589,11 +5589,11 @@ Score: 93714
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
@@ -5615,84 +5615,92 @@ Score: 93714
   .label c1B = 5
   .label c2A = 6
   .label c2B = 7
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .label col = 2
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // *BORDERCOL = BLUE
+    // [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BORDERCOL
-  // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // *BGCOL = BLUE
+    // [6] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     sta BGCOL
-  // [7] phi from main to main::@1 [phi:main->main::@1]
-  // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi (byte*) main::col#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta col
     lda #>COLS
     sta col+1
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi (byte*) main::col#2 = (byte*) main::col#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
+    // *col = BLACK
+    // [8] *((byte*) main::col#2) ← (const byte) BLACK#0 -- _deref_pbuz1=vbuc1 
     lda #BLACK
     ldy #0
     sta (col),y
-  // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
+    // for(unsigned char* col : COLS..COLS+1000)
+    // [9] (byte*) main::col#1 ← ++ (byte*) main::col#2 -- pbuz1=_inc_pbuz1 
     inc col
     bne !+
     inc col+1
   !:
-  // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [10] if((byte*) main::col#1!=(const byte*) COLS#0+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda col+1
     cmp #>COLS+$3e8+1
     bne b1
     lda col
     cmp #<COLS+$3e8+1
     bne b1
-  // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [12] call makecharset 
-  // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // makecharset(CHARSET)
+    // [12] call makecharset 
+    // [97] phi from main::@2 to makecharset [phi:main::@2->makecharset]
     jsr makecharset
-  // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
-  // main::toD0181
-  // main::@5
-  // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [13] phi from main::@2 to main::toD0181 [phi:main::@2->main::toD0181]
+    // main::toD0181
+    // main::@5
+    // *D018 = toD018(SCREEN1, CHARSET)
+    // [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
-  // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
+    // [15] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
+    // [15] phi (byte) c2B#1 = (byte) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta c2B
-  // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
+    // [15] phi (byte) c2A#1 = (byte) 0 [phi:main::@5->main::@3#1] -- vbuz1=vbuc1 
     sta c2A
-  // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1B#1 = (byte) 0 [phi:main::@5->main::@3#2] -- vbuz1=vbuc1 
     sta c1B
-  // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
+    // [15] phi (byte) c1A#1 = (byte) 0 [phi:main::@5->main::@3#3] -- vbuz1=vbuc1 
     sta c1A
-  // main::@3
-  // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  // main::@4
+    // main::@3
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // main::@4
   b4:
-  // [17] call doplasma 
+    // doplasma(SCREEN1)
+    // [17] call doplasma 
     jsr doplasma
-  // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
-  // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
-  // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
-  // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
+    // [15] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [15] phi (byte) c2B#1 = (byte) c2B#3 [phi:main::@4->main::@3#0] -- register_copy 
+    // [15] phi (byte) c2A#1 = (byte) c2A#3 [phi:main::@4->main::@3#1] -- register_copy 
+    // [15] phi (byte) c1B#1 = (byte) c1B#3 [phi:main::@4->main::@3#2] -- register_copy 
+    // [15] phi (byte) c1A#1 = (byte) c1A#3 [phi:main::@4->main::@3#3] -- register_copy 
     jmp b4
 }
-// doplasma
+  // doplasma
 // Render plasma to the passed screen
 doplasma: {
     .label c1a = 8
@@ -5702,301 +5710,373 @@ doplasma: {
     .label c2a = $b
     .label c2b = $c
     .label i1 = $d
-  // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
+    // c1a = c1A
+    // [18] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
     lda c1A
     sta c1a
-  // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
+    // c1b = c1B
+    // [19] (byte) doplasma::c1b#0 ← (byte) c1B#1 -- vbuz1=vbuz2 
     lda c1B
     sta c1b
-  // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
-  // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
+    // [20] phi from doplasma to doplasma::@1 [phi:doplasma->doplasma::@1]
+    // [20] phi (byte) doplasma::i#2 = (byte) 0 [phi:doplasma->doplasma::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuxx=vbuc1 
+    // [20] phi (byte) doplasma::yprev#2 = (byte) 0 [phi:doplasma->doplasma::@1#1] -- vbuxx=vbuc1 
     tax
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#0 [phi:doplasma->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#0 [phi:doplasma->doplasma::@1#3] -- register_copy 
   // Calculate ybuff as a bunch of differences
-  // doplasma::@1
+    // doplasma::@1
   b1:
-  // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // SINTABLE[c1a] + SINTABLE[c1b]
+    // [21] (byte) doplasma::yval#0 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c1b#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc1_derefidx_vbuz3 
     ldy c1a
     lda SINTABLE,y
     ldy c1b
     clc
     adc SINTABLE,y
     sta yval
-  // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
+    // yval - yprev
+    // [22] (byte~) doplasma::$1 ← (byte) doplasma::yval#0 - (byte) doplasma::yprev#2 -- vbuaa=vbuz1_minus_vbuxx 
     txa
     eor #$ff
     sec
     adc yval
-  // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // ybuf[i] = yval - yprev
+    // [23] *((const byte[$19]) doplasma::ybuf#0 + (byte) doplasma::i#2) ← (byte~) doplasma::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta ybuf,y
-  // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
+    // c1a += 4
+    // [24] (byte) doplasma::c1a#1 ← (byte) doplasma::c1a#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1a
     axs #-[4]
     stx c1a
-  // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
+    // c1b += 9
+    // [25] (byte) doplasma::c1b#1 ← (byte) doplasma::c1b#2 + (byte) 9 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1b
     axs #-[9]
     stx c1b
-  // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
+    // for (unsigned char i = 0; i < 25; ++i)
+    // [26] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
+    // [27] if((byte) doplasma::i#1<(byte) $19) goto doplasma::@8 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$19
     bcs !b8+
     jmp b8
   !b8:
-  // doplasma::@2
-  // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // doplasma::@2
+    // c1A += 3
+    // [28] (byte) c1A#3 ← (byte) c1A#1 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c1A
     axs #-[3]
     stx c1A
-  // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
+    // c1B -= 5
+    // [29] (byte) c1B#3 ← (byte) c1B#1 - (byte) 5 -- vbuz1=vbuz1_minus_vbuc1 
     lax c1B
     axs #5
     stx c1B
-  // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
+    // c2a = c2A
+    // [30] (byte) doplasma::c2a#0 ← (byte) c2A#1 -- vbuz1=vbuz2 
     lda c2A
     sta c2a
-  // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
+    // c2b = c2B
+    // [31] (byte) doplasma::c2b#0 ← (byte) c2B#1 -- vbuz1=vbuz2 
     lda c2B
     sta c2b
-  // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
-  // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
+    // [32] phi from doplasma::@2 to doplasma::@3 [phi:doplasma::@2->doplasma::@3]
+    // [32] phi (byte) doplasma::i1#2 = (byte) 0 [phi:doplasma::@2->doplasma::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i1
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
-  // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
-  // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
-  // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
-  // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
-  // doplasma::@3
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#0 [phi:doplasma::@2->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#0 [phi:doplasma::@2->doplasma::@3#2] -- register_copy 
+    // [32] phi from doplasma::@3 to doplasma::@3 [phi:doplasma::@3->doplasma::@3]
+    // [32] phi (byte) doplasma::i1#2 = (byte) doplasma::i1#1 [phi:doplasma::@3->doplasma::@3#0] -- register_copy 
+    // [32] phi (byte) doplasma::c2b#2 = (byte) doplasma::c2b#1 [phi:doplasma::@3->doplasma::@3#1] -- register_copy 
+    // [32] phi (byte) doplasma::c2a#2 = (byte) doplasma::c2a#1 [phi:doplasma::@3->doplasma::@3#2] -- register_copy 
+    // doplasma::@3
   b3:
-  // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuaa=pbuc1_derefidx_vbuz1_plus_pbuc1_derefidx_vbuz2 
+    // SINTABLE[c2a] + SINTABLE[c2b]
+    // [33] (byte~) doplasma::$3 ← *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2a#2) + *((const byte[$100]) SINTABLE#0 + (byte) doplasma::c2b#2) -- vbuaa=pbuc1_derefidx_vbuz1_plus_pbuc1_derefidx_vbuz2 
     ldy c2a
     lda SINTABLE,y
     ldy c2b
     clc
     adc SINTABLE,y
-  // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // xbuf[i] = (SINTABLE[c2a] + SINTABLE[c2b])
+    // [34] *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i1#2) ← (byte~) doplasma::$3 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i1
     sta xbuf,y
-  // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
+    // c2a += 3
+    // [35] (byte) doplasma::c2a#1 ← (byte) doplasma::c2a#2 + (byte) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2a
     axs #-[3]
     stx c2a
-  // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
+    // c2b += 7
+    // [36] (byte) doplasma::c2b#1 ← (byte) doplasma::c2b#2 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
     lax c2b
     axs #-[7]
     stx c2b
-  // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
+    // for (unsigned char i = 0; i < 40; ++i)
+    // [37] (byte) doplasma::i1#1 ← ++ (byte) doplasma::i1#2 -- vbuz1=_inc_vbuz1 
     inc i1
-  // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) doplasma::i1#1<(byte) $28) goto doplasma::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda i1
     cmp #$28
     bcc b3
-  // doplasma::@4
-  // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // doplasma::@4
+    // c2A += 2
+    // [39] (byte) c2A#3 ← (byte) c2A#1 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda c2A
     clc
     adc #2
     sta c2A
-  // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
+    // c2B -= 3
+    // [40] (byte) c2B#3 ← (byte) c2B#1 - (byte) 3 -- vbuz1=vbuz1_minus_vbuc1 
     lax c2B
     axs #3
     stx c2B
-  // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
-  // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuxx=vbuc1 
+    // [41] phi from doplasma::@4 to doplasma::@5 [phi:doplasma::@4->doplasma::@5]
+    // [41] phi (byte) doplasma::i2#2 = (byte) 0 [phi:doplasma::@4->doplasma::@5#0] -- vbuxx=vbuc1 
     ldx #0
-  // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
-  // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
-  // doplasma::@5
+    // [41] phi from doplasma::@7 to doplasma::@5 [phi:doplasma::@7->doplasma::@5]
+    // [41] phi (byte) doplasma::i2#2 = (byte) doplasma::i2#1 [phi:doplasma::@7->doplasma::@5#0] -- register_copy 
+    // doplasma::@5
   b5:
-  // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // val =  xbuf[i]
+    // [42] (byte) doplasma::val#0 ← *((const byte[$28]) doplasma::xbuf#0 + (byte) doplasma::i2#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     // Find the first value on the row
     lda xbuf,x
   // Calculate the next values as sums of diffs
   // Use experimental loop unrolling to increase the speed
-  // doplasma::@6
-  // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6
+    // val += ybuf[ii]
+    // [43] (byte) doplasma::val#1 ← (byte) doplasma::val#0 + *((const byte[$19]) doplasma::ybuf#0) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf
-  // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [44] *((const byte*) SCREEN1#0 + (byte) doplasma::i2#2) ← (byte) doplasma::val#1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1,x
-  // doplasma::@6_1
-  // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_1
+    // val += ybuf[ii]
+    // [45] (byte) doplasma::val#4 ← (byte) doplasma::val#1 + *((const byte[$19]) doplasma::ybuf#0+(byte) 1) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+1
-  // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [46] *((const byte*) SCREEN1#0+(byte) 1*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+1*$28,x
-  // doplasma::@6_2
-  // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_2
+    // val += ybuf[ii]
+    // [47] (byte) doplasma::val#6 ← (byte) doplasma::val#4 + *((const byte[$19]) doplasma::ybuf#0+(byte) 2) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+2
-  // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [48] *((const byte*) SCREEN1#0+(byte) 2*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+2*$28,x
-  // doplasma::@6_3
-  // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_3
+    // val += ybuf[ii]
+    // [49] (byte) doplasma::val#8 ← (byte) doplasma::val#6 + *((const byte[$19]) doplasma::ybuf#0+(byte) 3) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+3
-  // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [50] *((const byte*) SCREEN1#0+(byte) 3*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+3*$28,x
-  // doplasma::@6_4
-  // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_4
+    // val += ybuf[ii]
+    // [51] (byte) doplasma::val#10 ← (byte) doplasma::val#8 + *((const byte[$19]) doplasma::ybuf#0+(byte) 4) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+4
-  // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [52] *((const byte*) SCREEN1#0+(byte) 4*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#10 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+4*$28,x
-  // doplasma::@6_5
-  // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_5
+    // val += ybuf[ii]
+    // [53] (byte) doplasma::val#12 ← (byte) doplasma::val#10 + *((const byte[$19]) doplasma::ybuf#0+(byte) 5) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+5
-  // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [54] *((const byte*) SCREEN1#0+(byte) 5*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+5*$28,x
-  // doplasma::@6_6
-  // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_6
+    // val += ybuf[ii]
+    // [55] (byte) doplasma::val#14 ← (byte) doplasma::val#12 + *((const byte[$19]) doplasma::ybuf#0+(byte) 6) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+6
-  // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [56] *((const byte*) SCREEN1#0+(byte) 6*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+6*$28,x
-  // doplasma::@6_7
-  // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_7
+    // val += ybuf[ii]
+    // [57] (byte) doplasma::val#16 ← (byte) doplasma::val#14 + *((const byte[$19]) doplasma::ybuf#0+(byte) 7) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+7
-  // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [58] *((const byte*) SCREEN1#0+(byte) 7*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#16 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+7*$28,x
-  // doplasma::@6_8
-  // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_8
+    // val += ybuf[ii]
+    // [59] (byte) doplasma::val#18 ← (byte) doplasma::val#16 + *((const byte[$19]) doplasma::ybuf#0+(byte) 8) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+8
-  // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [60] *((const byte*) SCREEN1#0+(byte) 8*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#18 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+8*$28,x
-  // doplasma::@6_9
-  // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_9
+    // val += ybuf[ii]
+    // [61] (byte) doplasma::val#20 ← (byte) doplasma::val#18 + *((const byte[$19]) doplasma::ybuf#0+(byte) 9) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+9
-  // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [62] *((const byte*) SCREEN1#0+(byte) 9*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#20 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+9*$28,x
-  // doplasma::@6_10
-  // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_10
+    // val += ybuf[ii]
+    // [63] (byte) doplasma::val#22 ← (byte) doplasma::val#20 + *((const byte[$19]) doplasma::ybuf#0+(byte) $a) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$a
-  // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [64] *((const byte*) SCREEN1#0+(byte) $a*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#22 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$a*$28,x
-  // doplasma::@6_11
-  // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_11
+    // val += ybuf[ii]
+    // [65] (byte) doplasma::val#24 ← (byte) doplasma::val#22 + *((const byte[$19]) doplasma::ybuf#0+(byte) $b) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$b
-  // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [66] *((const byte*) SCREEN1#0+(byte) $b*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#24 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$b*$28,x
-  // doplasma::@6_12
-  // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_12
+    // val += ybuf[ii]
+    // [67] (byte) doplasma::val#26 ← (byte) doplasma::val#24 + *((const byte[$19]) doplasma::ybuf#0+(byte) $c) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$c
-  // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [68] *((const byte*) SCREEN1#0+(byte) $c*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#26 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$c*$28,x
-  // doplasma::@6_13
-  // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_13
+    // val += ybuf[ii]
+    // [69] (byte) doplasma::val#28 ← (byte) doplasma::val#26 + *((const byte[$19]) doplasma::ybuf#0+(byte) $d) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$d
-  // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [70] *((const byte*) SCREEN1#0+(byte) $d*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#28 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$d*$28,x
-  // doplasma::@6_14
-  // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_14
+    // val += ybuf[ii]
+    // [71] (byte) doplasma::val#30 ← (byte) doplasma::val#28 + *((const byte[$19]) doplasma::ybuf#0+(byte) $e) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$e
-  // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [72] *((const byte*) SCREEN1#0+(byte) $e*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#30 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$e*$28,x
-  // doplasma::@6_15
-  // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_15
+    // val += ybuf[ii]
+    // [73] (byte) doplasma::val#32 ← (byte) doplasma::val#30 + *((const byte[$19]) doplasma::ybuf#0+(byte) $f) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$f
-  // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [74] *((const byte*) SCREEN1#0+(byte) $f*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#32 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$f*$28,x
-  // doplasma::@6_16
-  // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_16
+    // val += ybuf[ii]
+    // [75] (byte) doplasma::val#34 ← (byte) doplasma::val#32 + *((const byte[$19]) doplasma::ybuf#0+(byte) $10) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$10
-  // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [76] *((const byte*) SCREEN1#0+(byte) $10*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#34 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$10*$28,x
-  // doplasma::@6_17
-  // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_17
+    // val += ybuf[ii]
+    // [77] (byte) doplasma::val#36 ← (byte) doplasma::val#34 + *((const byte[$19]) doplasma::ybuf#0+(byte) $11) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$11
-  // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [78] *((const byte*) SCREEN1#0+(byte) $11*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#36 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$11*$28,x
-  // doplasma::@6_18
-  // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_18
+    // val += ybuf[ii]
+    // [79] (byte) doplasma::val#38 ← (byte) doplasma::val#36 + *((const byte[$19]) doplasma::ybuf#0+(byte) $12) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$12
-  // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [80] *((const byte*) SCREEN1#0+(byte) $12*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#38 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$12*$28,x
-  // doplasma::@6_19
-  // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_19
+    // val += ybuf[ii]
+    // [81] (byte) doplasma::val#40 ← (byte) doplasma::val#38 + *((const byte[$19]) doplasma::ybuf#0+(byte) $13) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$13
-  // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [82] *((const byte*) SCREEN1#0+(byte) $13*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#40 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$13*$28,x
-  // doplasma::@6_20
-  // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_20
+    // val += ybuf[ii]
+    // [83] (byte) doplasma::val#42 ← (byte) doplasma::val#40 + *((const byte[$19]) doplasma::ybuf#0+(byte) $14) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$14
-  // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [84] *((const byte*) SCREEN1#0+(byte) $14*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#42 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$14*$28,x
-  // doplasma::@6_21
-  // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_21
+    // val += ybuf[ii]
+    // [85] (byte) doplasma::val#44 ← (byte) doplasma::val#42 + *((const byte[$19]) doplasma::ybuf#0+(byte) $15) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$15
-  // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [86] *((const byte*) SCREEN1#0+(byte) $15*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#44 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$15*$28,x
-  // doplasma::@6_22
-  // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_22
+    // val += ybuf[ii]
+    // [87] (byte) doplasma::val#46 ← (byte) doplasma::val#44 + *((const byte[$19]) doplasma::ybuf#0+(byte) $16) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$16
-  // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [88] *((const byte*) SCREEN1#0+(byte) $16*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#46 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$16*$28,x
-  // doplasma::@6_23
-  // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_23
+    // val += ybuf[ii]
+    // [89] (byte) doplasma::val#48 ← (byte) doplasma::val#46 + *((const byte[$19]) doplasma::ybuf#0+(byte) $17) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$17
-  // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [90] *((const byte*) SCREEN1#0+(byte) $17*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#48 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$17*$28,x
-  // doplasma::@6_24
-  // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuaa=vbuaa_plus__deref_pbuc1 
+    // doplasma::@6_24
+    // val += ybuf[ii]
+    // [91] (byte) doplasma::val#50 ← (byte) doplasma::val#48 + *((const byte[$19]) doplasma::ybuf#0+(byte) $18) -- vbuaa=vbuaa_plus__deref_pbuc1 
     clc
     adc ybuf+$18
-  // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // (screen+ii*40)[i] = val
+    // [92] *((const byte*) SCREEN1#0+(byte) $18*(byte) $28 + (byte) doplasma::i2#2) ← (byte) doplasma::val#50 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN1+$18*$28,x
-  // doplasma::@7
-  // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuxx=_inc_vbuxx 
+    // doplasma::@7
+    // for (unsigned char i = 0; i < 40; ++i)
+    // [93] (byte) doplasma::i2#1 ← ++ (byte) doplasma::i2#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuxx_lt_vbuc1_then_la1 
+    // [94] if((byte) doplasma::i2#1<(byte) $28) goto doplasma::@5 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28
     bcs !b5+
     jmp b5
   !b5:
-  // doplasma::@return
-  // [95] return 
+    // doplasma::@return
+    // }
+    // [95] return 
     rts
-  // doplasma::@8
+    // doplasma::@8
   b8:
-  // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuxx=vbuz1 
+    // [96] (byte~) doplasma::yprev#3 ← (byte) doplasma::yval#0 -- vbuxx=vbuz1 
     ldx yval
-  // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
-  // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
-  // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
-  // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
-  // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
+    // [20] phi from doplasma::@8 to doplasma::@1 [phi:doplasma::@8->doplasma::@1]
+    // [20] phi (byte) doplasma::i#2 = (byte) doplasma::i#1 [phi:doplasma::@8->doplasma::@1#0] -- register_copy 
+    // [20] phi (byte) doplasma::yprev#2 = (byte~) doplasma::yprev#3 [phi:doplasma::@8->doplasma::@1#1] -- register_copy 
+    // [20] phi (byte) doplasma::c1b#2 = (byte) doplasma::c1b#1 [phi:doplasma::@8->doplasma::@1#2] -- register_copy 
+    // [20] phi (byte) doplasma::c1a#2 = (byte) doplasma::c1a#1 [phi:doplasma::@8->doplasma::@1#3] -- register_copy 
     jmp b1
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
-// makecharset
+  // makecharset
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
     .label _4 = $17
@@ -6006,80 +6086,90 @@ makecharset: {
     .label i = $12
     .label c = $e
     .label _16 = $18
-  // [98] call sid_rnd_init 
+    // sid_rnd_init()
+    // [98] call sid_rnd_init 
     jsr sid_rnd_init
-  // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
-  // makecharset::@10
-  // [100] call print_cls 
-  // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+    // [99] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
+    // makecharset::@10
+    // print_cls()
+    // [100] call print_cls 
+    // [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
     jsr print_cls
-  // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
-  // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
+    // [101] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
+    // [101] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta print_char_cursor
     lda #>print_line_cursor
     sta print_char_cursor+1
-  // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
+    // [101] phi (word) makecharset::c#2 = (byte) 0 [phi:makecharset::@10->makecharset::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta c
     sta c+1
-  // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
-  // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
-  // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
-  // makecharset::@1
+    // [101] phi from makecharset::@9 to makecharset::@1 [phi:makecharset::@9->makecharset::@1]
+    // [101] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#18 [phi:makecharset::@9->makecharset::@1#0] -- register_copy 
+    // [101] phi (word) makecharset::c#2 = (word) makecharset::c#1 [phi:makecharset::@9->makecharset::@1#1] -- register_copy 
+    // makecharset::@1
   b1:
-  // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuaa=_lo_vwuz1 
+    // <c
+    // [102] (byte~) makecharset::$2 ← < (word) makecharset::c#2 -- vbuaa=_lo_vwuz1 
     lda c
-  // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // s = SINTABLE[<c]
+    // [103] (byte) makecharset::s#0 ← *((const byte[$100]) SINTABLE#0 + (byte~) makecharset::$2) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda SINTABLE,y
     sta s
-  // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
-  // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
+    // [104] phi from makecharset::@1 to makecharset::@2 [phi:makecharset::@1->makecharset::@2]
+    // [104] phi (byte) makecharset::i#7 = (byte) 0 [phi:makecharset::@1->makecharset::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
-  // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
-  // makecharset::@2
+    // [104] phi from makecharset::@6 to makecharset::@2 [phi:makecharset::@6->makecharset::@2]
+    // [104] phi (byte) makecharset::i#7 = (byte) makecharset::i#1 [phi:makecharset::@6->makecharset::@2#0] -- register_copy 
+    // makecharset::@2
   b2:
-  // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
-  // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuyy=vbuc1 
+    // [105] phi from makecharset::@2 to makecharset::@3 [phi:makecharset::@2->makecharset::@3]
+    // [105] phi (byte) makecharset::b#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#0] -- vbuyy=vbuc1 
     ldy #0
-  // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuxx=vbuc1 
+    // [105] phi (byte) makecharset::ii#2 = (byte) 0 [phi:makecharset::@2->makecharset::@3#1] -- vbuxx=vbuc1 
     ldx #0
-  // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
-  // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
-  // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
-  // makecharset::@3
+    // [105] phi from makecharset::@4 to makecharset::@3 [phi:makecharset::@4->makecharset::@3]
+    // [105] phi (byte) makecharset::b#2 = (byte) makecharset::b#3 [phi:makecharset::@4->makecharset::@3#0] -- register_copy 
+    // [105] phi (byte) makecharset::ii#2 = (byte) makecharset::ii#1 [phi:makecharset::@4->makecharset::@3#1] -- register_copy 
+    // makecharset::@3
   b3:
-  // [106] call sid_rnd 
+    // sid_rnd()
+    // [106] call sid_rnd 
     jsr sid_rnd
-  // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0
-  // makecharset::@11
-  // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2
-  // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuaa_band_vbuc1 
+    // [107] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0
+    // makecharset::@11
+    // [108] (byte~) makecharset::$3 ← (byte) sid_rnd::return#2
+    // sid_rnd() & 0xFF
+    // [109] (byte~) makecharset::$4 ← (byte~) makecharset::$3 & (byte) $ff -- vbuz1=vbuaa_band_vbuc1 
     and #$ff
     sta _4
-  // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
+    // if ((sid_rnd() & 0xFF) > s)
+    // [110] if((byte~) makecharset::$4<=(byte) makecharset::s#0) goto makecharset::@4 -- vbuz1_le_vbuz2_then_la1 
     lda s
     cmp _4
     bcs b4
-  // makecharset::@5
-  // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
+    // makecharset::@5
+    // b |= bittab[ii]
+    // [111] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
     tya
     ora bittab,x
     tay
-  // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
-  // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
-  // makecharset::@4
+    // [112] phi from makecharset::@11 makecharset::@5 to makecharset::@4 [phi:makecharset::@11/makecharset::@5->makecharset::@4]
+    // [112] phi (byte) makecharset::b#3 = (byte) makecharset::b#2 [phi:makecharset::@11/makecharset::@5->makecharset::@4#0] -- register_copy 
+    // makecharset::@4
   b4:
-  // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuxx=_inc_vbuxx 
+    // for (unsigned char ii = 0; ii < 8; ++ii)
+    // [113] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuxx_lt_vbuc1_then_la1 
+    // [114] if((byte) makecharset::ii#1<(byte) 8) goto makecharset::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #8
     bcc b3
-  // makecharset::@6
-  // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // makecharset::@6
+    // c*8
+    // [115] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda c
     asl
     sta _8
@@ -6090,7 +6180,8 @@ makecharset: {
     rol _8+1
     asl _8
     rol _8+1
-  // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz1_plus_vbuz2 
+    // (c*8) + i
+    // [116] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 -- vwuz1=vwuz1_plus_vbuz2 
     lda i
     clc
     adc _9
@@ -6098,7 +6189,8 @@ makecharset: {
     bcc !+
     inc _9+1
   !:
-  // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
+    // charset[(c*8) + i] = b
+    // [117] (byte*~) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _16
     adc #<CHARSET
@@ -6106,37 +6198,42 @@ makecharset: {
     lda _16+1
     adc #>CHARSET
     sta _16+1
-  // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    // [118] *((byte*~) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
     tya
     ldy #0
     sta (_16),y
-  // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    // for ( unsigned char i = 0; i < 8; ++i)
+    // [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [120] if((byte) makecharset::i#1<(byte) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2
-  // makecharset::@7
-  // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuaa=vwuz1_band_vbuc1 
+    // makecharset::@7
+    // c & 0x07
+    // [121] (byte~) makecharset::$11 ← (word) makecharset::c#2 & (byte) 7 -- vbuaa=vwuz1_band_vbuc1 
     lda c
     and #7
-  // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
+    // if ((c & 0x07) == 0)
+    // [122] if((byte~) makecharset::$11!=(byte) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9
-  // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
-  // makecharset::@8
-  // [124] call print_char 
+    // [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+    // makecharset::@8
+    // print_char('.')
+    // [124] call print_char 
     jsr print_char
-  // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
-  // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
-  // makecharset::@9
+    // [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+    // [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+    // makecharset::@9
   b9:
-  // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+    // for (unsigned int c = 0; c < 0x100; ++c)
+    // [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+    // [127] if((word) makecharset::c#1<(word) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1
@@ -6145,88 +6242,100 @@ makecharset: {
     cmp #<$100
     bcc b1
   !:
-  // makecharset::@return
-  // [128] return 
+    // makecharset::@return
+    // }
+    // [128] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-// print_char
+  // print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+    // *(print_char_cursor++) = ch
+    // [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+    // *(print_char_cursor++) = ch;
+    // [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  // print_char::@return
-  // [131] return 
+    // print_char::@return
+    // }
+    // [131] return 
     rts
 }
-// sid_rnd
+  // sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-  // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
+    // return *SID_VOICE3_OSC;
+    // [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
-  // sid_rnd::@return
-  // [133] return 
+    // sid_rnd::@return
+    // }
+    // [133] return 
     rts
 }
-// print_cls
+  // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $13
-  // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
-  // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-  // print_cls::@1
+    // [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+    // [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    // print_cls::@1
   b1:
-  // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // *sc = ' '
+    // [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // for(byte* sc=print_screen; sc!=print_screen+1000; sc++)
+    // [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1
     lda sc
     cmp #<print_line_cursor+$3e8
     bne b1
-  // print_cls::@return
-  // [139] return 
+    // print_cls::@return
+    // }
+    // [139] return 
     rts
 }
-// sid_rnd_init
+  // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // *SID_VOICE3_FREQ = $ffff
+    // [140] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
+    // [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
-  // sid_rnd_init::@return
-  // [142] return 
+    // sid_rnd_init::@return
+    // }
+    // [142] return 
     rts
 }
-// File Data
+  // File Data
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)

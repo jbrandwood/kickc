@@ -99,46 +99,46 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Example of inline kickasm in a function
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
-  // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
+    // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
     lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
         }
     
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -151,46 +151,46 @@ Uplifting [main] best 283 combination
 Uplifting [] best 283 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Example of inline kickasm in a function
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
-  // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
+    // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
     lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
         }
     
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -224,34 +224,37 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 268
 
-// File Comments
+  // File Comments
 // Example of inline kickasm in a function
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // *(SCREEN+1000) = 0
+    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
-  // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
+    // kickasm
+    // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
     lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
         }
     
-  // main::@return
-  // [6] return 
+    // main::@return
+    // }
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 

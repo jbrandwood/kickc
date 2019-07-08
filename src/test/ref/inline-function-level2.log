@@ -620,33 +620,33 @@ Allocated zp ZP_BYTE:14 [ main::plot1_xpos#0 ]
 Allocated zp ZP_BYTE:15 [ main::plot2_xpos#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Inline functions in two levels
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label cur_line = 6
   .label cur_line_10 = $b
   .label cur_line_11 = $b
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -663,30 +663,30 @@ main: {
     .label plot2_xpos = $f
     .label line2_pos = 9
     .label line2_i = $d
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -695,49 +695,49 @@ main: {
     cmp #<$400+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
+    // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
   line1_from_b1:
     jmp line1
-  // main::line1
+    // main::line1
   line1:
-  // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
+    // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
   line1_b1_from_line1:
-  // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuz1=vbuc1 
     lda #0
     sta line1_i
-  // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line
     lda #>$400
     sta cur_line+1
-  // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
     lda #<line1_xpos*$100
     sta line1_pos
     lda #>line1_xpos*$100
     sta line1_pos+1
     jmp line1_b1
-  // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
+    // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
   line1_b1_from_b2:
-  // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
-  // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
-  // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
+    // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
+    // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
+    // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
     jmp line1_b1
-  // main::line1_@1
+    // main::line1_@1
   line1_b1:
-  // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuz1=_hi_vwuz2 
+    // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuz1=_hi_vwuz2 
     lda line1_pos+1
     sta plot1_xpos
     jmp plot1
-  // main::plot1
+    // main::plot1
   plot1:
-  // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #line1_ch
     ldy plot1_xpos
     sta (cur_line),y
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line1_xadd
     clc
     adc line1_pos
@@ -745,7 +745,7 @@ main: {
     bcc !+
     inc line1_pos+1
   !:
-  // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line
@@ -753,55 +753,55 @@ main: {
     bcc !+
     inc cur_line+1
   !:
-  // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuz1=_inc_vbuz1 
     inc line1_i
-  // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuz1_lt_vbuc1_then_la1 
     lda line1_i
     cmp #line1_ysize
     bcc line1_b1_from_b2
-  // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
+    // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
   line2_from_b2:
     jmp line2
-  // main::line2
+    // main::line2
   line2:
-  // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
+    // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
   line2_b1_from_line2:
-  // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuz1=vbuc1 
+    // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuz1=vbuc1 
     lda #0
     sta line2_i
-  // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
+    // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line_10
     lda #>$400
     sta cur_line_10+1
-  // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
     lda #<line2_xpos*$100
     sta line2_pos
     lda #>line2_xpos*$100
     sta line2_pos+1
     jmp line2_b1
-  // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
+    // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
   line2_b1_from_b3:
-  // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
-  // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
-  // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
+    // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
+    // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
+    // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
     jmp line2_b1
-  // main::line2_@1
+    // main::line2_@1
   line2_b1:
-  // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuz1=_hi_vwuz2 
+    // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuz1=_hi_vwuz2 
     lda line2_pos+1
     sta plot2_xpos
     jmp plot2
-  // main::plot2
+    // main::plot2
   plot2:
-  // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #line2_ch
     ldy plot2_xpos
     sta (cur_line_10),y
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line2_xadd
     clc
     adc line2_pos
@@ -809,7 +809,7 @@ main: {
     bcc !+
     inc line2_pos+1
   !:
-  // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line_11
@@ -817,19 +817,19 @@ main: {
     bcc !+
     inc cur_line_11+1
   !:
-  // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuz1=_inc_vbuz1 
+    // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuz1=_inc_vbuz1 
     inc line2_i
-  // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuz1_lt_vbuc1_then_la1 
     lda line2_i
     cmp #line2_ysize
     bcc line2_b1_from_b3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
@@ -875,33 +875,33 @@ Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ main::line2_pos#2 main::line2_pos#1 
 Allocated (was zp ZP_WORD:11) zp ZP_WORD:10 [ cur_line#10 cur_line#11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Inline functions in two levels
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label cur_line = 6
   .label cur_line_10 = $a
   .label cur_line_11 = $a
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -914,30 +914,30 @@ main: {
     .label sc = 2
     .label line1_pos = 4
     .label line2_pos = 8
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -946,47 +946,47 @@ main: {
     cmp #<$400+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
+    // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
   line1_from_b1:
     jmp line1
-  // main::line1
+    // main::line1
   line1:
-  // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
+    // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
   line1_b1_from_line1:
-  // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuxx=vbuc1 
+    // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line
     lda #>$400
     sta cur_line+1
-  // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
     lda #<line1_xpos*$100
     sta line1_pos
     lda #>line1_xpos*$100
     sta line1_pos+1
     jmp line1_b1
-  // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
+    // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
   line1_b1_from_b2:
-  // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
-  // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
-  // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
+    // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
+    // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
+    // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
     jmp line1_b1
-  // main::line1_@1
+    // main::line1_@1
   line1_b1:
-  // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuaa=_hi_vwuz1 
+    // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuaa=_hi_vwuz1 
     lda line1_pos+1
     jmp plot1
-  // main::plot1
+    // main::plot1
   plot1:
-  // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
+    // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
     tay
     lda #line1_ch
     sta (cur_line),y
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line1_xadd
     clc
     adc line1_pos
@@ -994,7 +994,7 @@ main: {
     bcc !+
     inc line1_pos+1
   !:
-  // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line
@@ -1002,52 +1002,52 @@ main: {
     bcc !+
     inc cur_line+1
   !:
-  // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuxx=_inc_vbuxx 
+    // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuxx_lt_vbuc1_then_la1 
+    // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #line1_ysize
     bcc line1_b1_from_b2
-  // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
+    // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
   line2_from_b2:
     jmp line2
-  // main::line2
+    // main::line2
   line2:
-  // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
+    // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
   line2_b1_from_line2:
-  // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuxx=vbuc1 
+    // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
+    // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line_10
     lda #>$400
     sta cur_line_10+1
-  // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
     lda #<line2_xpos*$100
     sta line2_pos
     lda #>line2_xpos*$100
     sta line2_pos+1
     jmp line2_b1
-  // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
+    // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
   line2_b1_from_b3:
-  // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
-  // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
-  // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
+    // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
+    // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
+    // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
     jmp line2_b1
-  // main::line2_@1
+    // main::line2_@1
   line2_b1:
-  // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuaa=_hi_vwuz1 
+    // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuaa=_hi_vwuz1 
     lda line2_pos+1
     jmp plot2
-  // main::plot2
+    // main::plot2
   plot2:
-  // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
+    // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
     tay
     lda #line2_ch
     sta (cur_line_10),y
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line2_xadd
     clc
     adc line2_pos
@@ -1055,7 +1055,7 @@ main: {
     bcc !+
     inc line2_pos+1
   !:
-  // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line_11
@@ -1063,18 +1063,18 @@ main: {
     bcc !+
     inc cur_line_11+1
   !:
-  // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuxx=_inc_vbuxx 
+    // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuxx_lt_vbuc1_then_la1 
+    // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #line2_ysize
     bcc line2_b1_from_b3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -1204,24 +1204,24 @@ reg byte a [ main::plot2_xpos#0 ]
 FINAL ASSEMBLER
 Score: 2036
 
-// File Comments
+  // File Comments
 // Inline functions in two levels
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label cur_line = 6
   .label cur_line_10 = $a
   .label cur_line_11 = $a
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -1234,26 +1234,28 @@ main: {
     .label sc = 2
     .label line1_pos = 4
     .label line2_pos = 8
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // *sc = ' '
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // for(byte* sc = $400;sc<$400+1000;sc++)
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1
@@ -1262,36 +1264,39 @@ main: {
     cmp #<$400+$3e8
     bcc b1
   !:
-  // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
-  // main::line1
-  // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
-  // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuxx=vbuc1 
+    // [9] phi from main::@1 to main::line1 [phi:main::@1->main::line1]
+    // main::line1
+    // [10] phi from main::line1 to main::line1_@1 [phi:main::line1->main::line1_@1]
+    // [10] phi (byte) main::line1_i#2 = (byte) 0 [phi:main::line1->main::line1_@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) cur_line#13 = (byte*) 1024 [phi:main::line1->main::line1_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line
     lda #>$400
     sta cur_line+1
-  // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    // [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word) $100 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
     lda #<line1_xpos*$100
     sta line1_pos
     lda #>line1_xpos*$100
     sta line1_pos+1
-  // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
-  // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
-  // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
-  // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
-  // main::line1_@1
+    // [10] phi from main::@2 to main::line1_@1 [phi:main::@2->main::line1_@1]
+    // [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@2->main::line1_@1#0] -- register_copy 
+    // [10] phi (byte*) cur_line#13 = (byte*) cur_line#1 [phi:main::@2->main::line1_@1#1] -- register_copy 
+    // [10] phi (word) main::line1_pos#2 = (word) main::line1_pos#1 [phi:main::@2->main::line1_@1#2] -- register_copy 
+    // main::line1_@1
   line1_b1:
-  // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuaa=_hi_vwuz1 
+    // plot(>pos, ch)
+    // [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 -- vbuaa=_hi_vwuz1 
     lda line1_pos+1
-  // main::plot1
-  // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
+    // main::plot1
+    // *(cur_line+xpos) = ch
+    // [12] *((byte*) cur_line#13 + (byte) main::plot1_xpos#0) ← (const byte) main::line1_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
     tay
     lda #line1_ch
     sta (cur_line),y
-  // main::@2
-  // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // main::@2
+    // pos += xadd
+    // [13] (word) main::line1_pos#1 ← (word) main::line1_pos#2 + (const byte) main::line1_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line1_xadd
     clc
     adc line1_pos
@@ -1299,7 +1304,8 @@ main: {
     bcc !+
     inc line1_pos+1
   !:
-  // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // cur_line += 40
+    // [14] (byte*) cur_line#1 ← (byte*) cur_line#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line
@@ -1307,41 +1313,45 @@ main: {
     bcc !+
     inc cur_line+1
   !:
-  // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i=0;i<ysize; i++)
+    // [15] (byte) main::line1_i#1 ← ++ (byte) main::line1_i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuxx_lt_vbuc1_then_la1 
+    // [16] if((byte) main::line1_i#1<(const byte) main::line1_ysize#0) goto main::line1_@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #line1_ysize
     bcc line1_b1
-  // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
-  // main::line2
-  // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
-  // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuxx=vbuc1 
+    // [17] phi from main::@2 to main::line2 [phi:main::@2->main::line2]
+    // main::line2
+    // [18] phi from main::line2 to main::line2_@1 [phi:main::line2->main::line2_@1]
+    // [18] phi (byte) main::line2_i#2 = (byte) 0 [phi:main::line2->main::line2_@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
+    // [18] phi (byte*) cur_line#10 = (byte*) 1024 [phi:main::line2->main::line2_@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta cur_line_10
     lda #>$400
     sta cur_line_10+1
-  // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    // [18] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word) $100 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
     lda #<line2_xpos*$100
     sta line2_pos
     lda #>line2_xpos*$100
     sta line2_pos+1
-  // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
-  // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
-  // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
-  // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
-  // main::line2_@1
+    // [18] phi from main::@3 to main::line2_@1 [phi:main::@3->main::line2_@1]
+    // [18] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@3->main::line2_@1#0] -- register_copy 
+    // [18] phi (byte*) cur_line#10 = (byte*) cur_line#11 [phi:main::@3->main::line2_@1#1] -- register_copy 
+    // [18] phi (word) main::line2_pos#2 = (word) main::line2_pos#1 [phi:main::@3->main::line2_@1#2] -- register_copy 
+    // main::line2_@1
   line2_b1:
-  // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuaa=_hi_vwuz1 
+    // plot(>pos, ch)
+    // [19] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 -- vbuaa=_hi_vwuz1 
     lda line2_pos+1
-  // main::plot2
-  // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
+    // main::plot2
+    // *(cur_line+xpos) = ch
+    // [20] *((byte*) cur_line#10 + (byte) main::plot2_xpos#0) ← (const byte) main::line2_ch#0 -- pbuz1_derefidx_vbuaa=vbuc1 
     tay
     lda #line2_ch
     sta (cur_line_10),y
-  // main::@3
-  // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
+    // main::@3
+    // pos += xadd
+    // [21] (word) main::line2_pos#1 ← (word) main::line2_pos#2 + (const byte) main::line2_xadd#0 -- vwuz1=vwuz1_plus_vbuc1 
     lda #line2_xadd
     clc
     adc line2_pos
@@ -1349,7 +1359,8 @@ main: {
     bcc !+
     inc line2_pos+1
   !:
-  // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // cur_line += 40
+    // [22] (byte*) cur_line#11 ← (byte*) cur_line#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cur_line_11
@@ -1357,14 +1368,16 @@ main: {
     bcc !+
     inc cur_line_11+1
   !:
-  // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i=0;i<ysize; i++)
+    // [23] (byte) main::line2_i#1 ← ++ (byte) main::line2_i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuxx_lt_vbuc1_then_la1 
+    // [24] if((byte) main::line2_i#1<(const byte) main::line2_ysize#0) goto main::line2_@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #line2_ysize
     bcc line2_b1
-  // main::@return
-  // [25] return 
+    // main::@return
+    // }
+    // [25] return 
     rts
 }
-// File Data
+  // File Data
 

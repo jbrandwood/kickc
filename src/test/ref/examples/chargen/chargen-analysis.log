@@ -2553,13 +2553,13 @@ Allocated zp ZP_BYTE:60 [ keyboard_matrix_read::return#0 ]
 Allocated zp ZP_BYTE:61 [ keyboard_get_keycode::return#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Allows analysis of the CHARGEN ROM font
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
@@ -2624,23 +2624,23 @@ INITIAL ASM
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _15 = $1f
     .label _18 = $21
@@ -2654,31 +2654,31 @@ main: {
     .label ch = 7
     .label cur_pos = 5
     .label shift = 6
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
     jmp b1
   // Clear screen
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -2687,417 +2687,417 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] call print_str_at 
-  // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
+    // [10] call print_str_at 
+    // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
   print_str_at_from_b2:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
     sta print_str_at.at
     lda #>SCREEN+1
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str_at.str
     lda #>str
     sta print_str_at.str+1
     jsr print_str_at
-  // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
+    // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
   b16_from_b2:
     jmp b16
-  // main::@16
+    // main::@16
   b16:
-  // [12] call print_str_at 
-  // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
+    // [12] call print_str_at 
+    // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
   print_str_at_from_b16:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
     sta print_str_at.at
     lda #>SCREEN+1+$a
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str_at.str
     lda #>str1
     sta print_str_at.str+1
     jsr print_str_at
-  // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
+    // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
   b17_from_b16:
     jmp b17
-  // main::@17
+    // main::@17
   b17:
-  // [14] call print_str_at 
-  // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
+    // [14] call print_str_at 
+    // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
   print_str_at_from_b17:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
     sta print_str_at.at
     lda #>SCREEN+1+$14
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str_at.str
     lda #>str2
     sta print_str_at.str+1
     jsr print_str_at
-  // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
+    // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
   b18_from_b17:
     jmp b18
-  // main::@18
+    // main::@18
   b18:
-  // [16] call print_str_at 
-  // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
+    // [16] call print_str_at 
+    // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
   print_str_at_from_b18:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
     sta print_str_at.at
     lda #>SCREEN+1+$1e
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str_at.str
     lda #>str3
     sta print_str_at.str+1
     jsr print_str_at
-  // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
+    // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
   b3_from_b18:
-  // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
+    // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b3
-  // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
+    // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
   b3_from_b19:
-  // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
+    // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta plot_chargen.pos
-  // [19] call plot_chargen 
-  // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
+    // [19] call plot_chargen 
+    // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
   plot_chargen_from_b3:
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuz1=vbuc1 
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuz1=vbuc1 
     lda #0
     sta plot_chargen.shift
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuz1=vbuc1 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuz1=vbuc1 
     lda #$20
     sta plot_chargen.ch
     jsr plot_chargen
     jmp b19
-  // main::@19
+    // main::@19
   b19:
-  // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp i
     bne b3_from_b19
-  // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
+    // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
   b4_from_b19:
-  // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
+    // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [23] call keyboard_key_pressed 
-  // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
+    // [23] call keyboard_key_pressed 
+    // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
   keyboard_key_pressed_from_b4:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F1
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_2
     jmp b20
-  // main::@20
+    // main::@20
   b20:
-  // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+    // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
     sta _15
-  // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuz1_eq_0_then_la1 
+    // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuz1_eq_0_then_la1 
     lda _15
     cmp #0
     beq b27_from_b20
-  // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
+    // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
   b5_from_b20:
-  // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
+    // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
     jmp b5
-  // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
+    // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
   b27_from_b20:
     jmp b27
-  // main::@27
+    // main::@27
   b27:
-  // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
+    // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
   b5_from_b27:
-  // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
+    // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [29] call keyboard_key_pressed 
-  // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
+    // [29] call keyboard_key_pressed 
+    // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
   keyboard_key_pressed_from_b5:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F3
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_10
     jmp b21
-  // main::@21
+    // main::@21
   b21:
-  // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
+    // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_10
     sta _18
-  // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuz1_eq_0_then_la1 
+    // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuz1_eq_0_then_la1 
     lda _18
     cmp #0
     beq b28_from_b21
-  // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
+    // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
   b6_from_b21:
-  // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
+    // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #1
     sta cur_pos
     jmp b6
-  // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
+    // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
   b28_from_b21:
     jmp b28
-  // main::@28
+    // main::@28
   b28:
-  // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
+    // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
   b6_from_b28:
-  // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
+    // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [35] call keyboard_key_pressed 
-  // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
+    // [35] call keyboard_key_pressed 
+    // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
   keyboard_key_pressed_from_b6:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F5
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_11
     jmp b22
-  // main::@22
+    // main::@22
   b22:
-  // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11 -- vbuz1=vbuz2 
+    // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_11
     sta _21
-  // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuz1_eq_0_then_la1 
+    // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuz1_eq_0_then_la1 
     lda _21
     cmp #0
     beq b29_from_b22
-  // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
+    // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
   b7_from_b22:
-  // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
+    // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #2
     sta cur_pos
     jmp b7
-  // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
+    // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
   b29_from_b22:
     jmp b29
-  // main::@29
+    // main::@29
   b29:
-  // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
+    // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
   b7_from_b29:
-  // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
+    // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [41] call keyboard_key_pressed 
-  // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
+    // [41] call keyboard_key_pressed 
+    // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
   keyboard_key_pressed_from_b7:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F7
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_12
     jmp b23
-  // main::@23
+    // main::@23
   b23:
-  // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12 -- vbuz1=vbuz2 
+    // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_12
     sta _24
-  // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuz1_eq_0_then_la1 
+    // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuz1_eq_0_then_la1 
     lda _24
     cmp #0
     beq b30_from_b23
-  // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
+    // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
   b8_from_b23:
-  // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
+    // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #3
     sta cur_pos
     jmp b8
-  // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
+    // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
   b30_from_b23:
     jmp b30
-  // main::@30
+    // main::@30
   b30:
-  // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
+    // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
   b8_from_b30:
-  // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
+    // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
     jmp b8
-  // main::@8
+    // main::@8
   b8:
-  // [47] call keyboard_key_pressed 
-  // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
+    // [47] call keyboard_key_pressed 
+    // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
   keyboard_key_pressed_from_b8:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_LSHIFT
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_13
     jmp b24
-  // main::@24
+    // main::@24
   b24:
-  // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13 -- vbuz1=vbuz2 
+    // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_13
     sta _27
-  // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
+    // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
     lda _27
     cmp #0
     bne b9_from_b24
-  // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
+    // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
   b10_from_b24:
-  // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
     lda #0
     sta shift
     jmp b10
-  // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
+    // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
   b9_from_b24:
     jmp b9
-  // main::@9
+    // main::@9
   b9:
-  // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
+    // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
   b10_from_b9:
-  // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
     lda #1
     sta shift
     jmp b10
-  // main::@10
+    // main::@10
   b10:
-  // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
   b11_from_b10:
-  // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
+    // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #0
     sta ch
     jmp b11
   // Check for key presses - and plot char if found
-  // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
+    // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
   b11_from_b13:
-  // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
+    // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
     jmp b11
-  // main::@11
+    // main::@11
   b11:
-  // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
+    // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
     lda ch
     sta keyboard_get_keycode.ch
-  // [55] call keyboard_get_keycode 
+    // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
+    // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
     lda keyboard_get_keycode.return
     sta keyboard_get_keycode.return_2
     jmp b25
-  // main::@25
+    // main::@25
   b25:
-  // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
+    // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
     lda keyboard_get_keycode.return_2
     sta key
-  // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuz1_eq_vbuc1_then_la1 
+    // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #$3f
     cmp key
     beq b12_from_b25
     jmp b14
-  // main::@14
+    // main::@14
   b14:
-  // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuz1=vbuz2 
+    // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuz1=vbuz2 
     lda key
     sta keyboard_key_pressed.key
-  // [60] call keyboard_key_pressed 
-  // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
+    // [60] call keyboard_key_pressed 
+    // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
   keyboard_key_pressed_from_b14:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
     jsr keyboard_key_pressed
-  // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_14
     jmp b26
-  // main::@26
+    // main::@26
   b26:
-  // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14 -- vbuz1=vbuz2 
+    // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_14
     sta pressed
-  // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
+    // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
   b12_from_b26:
-  // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
+    // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
     jmp b12
-  // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
+    // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
   b12_from_b25:
-  // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuz1=vbuc1 
+    // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuz1=vbuc1 
     lda #0
     sta pressed
     jmp b12
-  // main::@12
+    // main::@12
   b12:
-  // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuz1_eq_0_then_la1 
+    // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuz1_eq_0_then_la1 
     lda pressed
     cmp #0
     beq b13
     jmp b15
-  // main::@15
+    // main::@15
   b15:
-  // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuz1=vbuz2 
+    // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuz1=vbuz2 
     lda cur_pos
     sta plot_chargen.pos
-  // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuz1=vbuz2 
+    // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuz1=vbuz2 
     lda ch
     sta plot_chargen.ch
-  // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuz1=vbuz2 
+    // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuz1=vbuz2 
     lda shift
     sta plot_chargen.shift
-  // [68] call plot_chargen 
-  // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
+    // [68] call plot_chargen 
+    // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
   plot_chargen_from_b15:
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
     jsr plot_chargen
     jmp b13
-  // main::@13
+    // main::@13
   b13:
-  // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
+    // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp ch
     bne b11_from_b13
-  // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+    // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
   b4_from_b13:
-  // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
+    // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
     jmp b4
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"
     str3: .text "f7@"
 }
-// plot_chargen
+  // plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte zeropage($b) pos, byte zeropage(9) ch, byte zeropage($a) shift)
 plot_chargen: {
@@ -3114,14 +3114,14 @@ plot_chargen: {
     .label x = $12
     .label y = $e
     .label c = $13
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuz2 
+    // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuz2 
     lda ch
     sta _0
     lda #0
     sta _0+1
-  // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda _0
     asl
     sta _1
@@ -3132,7 +3132,7 @@ plot_chargen: {
     rol _1+1
     asl _1
     rol _1+1
-  // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz2 
     lda _1
     clc
     adc #<CHARGEN
@@ -3140,14 +3140,14 @@ plot_chargen: {
     lda _1+1
     adc #>CHARGEN
     sta chargen+1
-  // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuz1_eq_0_then_la1 
+    // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuz1_eq_0_then_la1 
     lda shift
     cmp #0
     beq b1_from_plot_chargen
     jmp b2
-  // plot_chargen::@2
+    // plot_chargen::@2
   b2:
-  // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
+    // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda chargen
     adc #<$800
@@ -3155,37 +3155,37 @@ plot_chargen: {
     lda chargen+1
     adc #>$800
     sta chargen+1
-  // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
+    // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
   b1_from_plot_chargen:
   b1_from_b2:
-  // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
+    // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
     jmp b1
-  // plot_chargen::@1
+    // plot_chargen::@1
   b1:
-  // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuz1=vbuz2 
+    // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuz1=vbuz2 
     lda pos
     sta mul8u.a
-  // [81] call mul8u 
-  // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
+    // [81] call mul8u 
+    // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
   mul8u_from_b1:
     jsr mul8u
-  // [82] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
+    // [82] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
     lda mul8u.res
     sta mul8u.return
     lda mul8u.res+1
     sta mul8u.return+1
     jmp b9
-  // plot_chargen::@9
+    // plot_chargen::@9
   b9:
-  // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
+    // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
     lda mul8u.return
     sta _7
     lda mul8u.return+1
     sta _7+1
-  // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz2 
+    // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz2 
     lda _7
     clc
     adc #<SCREEN+$28+1
@@ -3193,88 +3193,88 @@ plot_chargen: {
     lda _7+1
     adc #>SCREEN+$28+1
     sta sc+1
-  // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
+    // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
   b3_from_b9:
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b3
-  // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
+    // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
   b3_from_b7:
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
     jmp b3
-  // plot_chargen::@3
+    // plot_chargen::@3
   b3:
-  // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     ldy y
     lda (chargen),y
     sta bits
-  // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
+    // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
   b4_from_b3:
-  // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuz1=vbuc1 
+    // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta x
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
     jmp b4
-  // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
+    // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
   b4_from_b5:
-  // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
+    // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
     jmp b4
-  // plot_chargen::@4
+    // plot_chargen::@4
   b4:
-  // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
+    // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and bits
     sta _10
-  // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuz1_eq_0_then_la1 
+    // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuz1_eq_0_then_la1 
     lda _10
     cmp #0
     beq b5_from_b4
-  // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
+    // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
   b6_from_b4:
     jmp b6
-  // plot_chargen::@6
+    // plot_chargen::@6
   b6:
-  // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
+    // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
   b5_from_b6:
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuz1=vbuc1 
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuz1=vbuc1 
     lda #'*'
     sta c
     jmp b5
-  // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
+    // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
   b5_from_b4:
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuz1=vbuc1 
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuz1=vbuc1 
     lda #'.'
     sta c
     jmp b5
-  // plot_chargen::@5
+    // plot_chargen::@5
   b5:
-  // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuz2 
+    // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuz2 
     lda c
     ldy #0
     sta (sc),y
-  // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
+    // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl bits
-  // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuz1=_inc_vbuz1 
+    // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp x
     bne b4_from_b5
     jmp b7
-  // plot_chargen::@7
+    // plot_chargen::@7
   b7:
-  // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
+    // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
     adc sc
@@ -3282,27 +3282,27 @@ plot_chargen: {
     bcc !+
     inc sc+1
   !:
-  // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
+    // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
     inc y
-  // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp y
     bne b3_from_b7
     jmp b8
-  // plot_chargen::@8
+    // plot_chargen::@8
   b8:
-  // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // plot_chargen::@return
+    // plot_chargen::@return
   breturn:
-  // [102] return 
+    // [102] return 
     rts
 }
-// mul8u
+  // mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte zeropage($14) a)
 mul8u: {
@@ -3312,45 +3312,45 @@ mul8u: {
     .label mb = $17
     .label res = $15
     .label return = $30
-  // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
-  // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+    // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+    // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta res
     lda #0
     sta res+1
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
-  // mul8u::@1
+    // mul8u::@1
   b1:
-  // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
+    // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
     lda a
     cmp #0
     bne b2
     jmp breturn
-  // mul8u::@return
+    // mul8u::@return
   breturn:
-  // [106] return 
+    // [106] return 
     rts
-  // mul8u::@2
+    // mul8u::@2
   b2:
-  // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and a
     sta _1
-  // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
+    // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
     lda _1
     cmp #0
     beq b3_from_b2
     jmp b4
-  // mul8u::@4
+    // mul8u::@4
   b4:
-  // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -3358,26 +3358,26 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
-  // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp b3
-  // mul8u::@3
+    // mul8u::@3
   b3:
-  // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr a
-  // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
-  // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-// keyboard_key_pressed
+  // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
@@ -3395,42 +3395,42 @@ keyboard_key_pressed: {
     .label return_12 = $24
     .label return_13 = $26
     .label return_14 = $2b
-  // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and key
     sta colidx
-  // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
+    // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
     lda key
     lsr
     lsr
     lsr
     sta rowidx
-  // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
+    // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
     lda rowidx
     sta keyboard_matrix_read.rowid
-  // [117] call keyboard_matrix_read 
+    // [117] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+    // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return
     sta keyboard_matrix_read.return_2
     jmp b1
-  // keyboard_key_pressed::@1
+    // keyboard_key_pressed::@1
   b1:
-  // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+    // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return_2
     sta _2
-  // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+    // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
     lda _2
     ldy colidx
     and keyboard_matrix_col_bitmask,y
     sta return
     jmp breturn
-  // keyboard_key_pressed::@return
+    // keyboard_key_pressed::@return
   breturn:
-  // [121] return 
+    // [121] return 
     rts
 }
-// keyboard_matrix_read
+  // keyboard_matrix_read
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -3441,21 +3441,21 @@ keyboard_matrix_read: {
     .label return = $3c
     .label rowid = $38
     .label return_2 = $39
-  // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-  // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
+    // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta return
     jmp breturn
-  // keyboard_matrix_read::@return
+    // keyboard_matrix_read::@return
   breturn:
-  // [124] return 
+    // [124] return 
     rts
 }
-// keyboard_get_keycode
+  // keyboard_get_keycode
 // Get the keycode corresponding to a specific screen code character
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
@@ -3465,60 +3465,60 @@ keyboard_get_keycode: {
     .label return = $3d
     .label ch = $28
     .label return_2 = $29
-  // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy ch
     lda keyboard_char_keycodes,y
     sta return
     jmp breturn
-  // keyboard_get_keycode::@return
+    // keyboard_get_keycode::@return
   breturn:
-  // [126] return 
+    // [126] return 
     rts
 }
-// print_str_at
+  // print_str_at
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage($1a) str, byte* zeropage($1c) at)
 print_str_at: {
     .label at = $1c
     .label str = $1a
-  // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
+    // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
   b1_from_print_str_at:
   b1_from_b2:
-  // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
-  // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
+    // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
+    // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
     jmp b1
-  // print_str_at::@1
+    // print_str_at::@1
   b1:
-  // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print_str_at::@return
+    // print_str_at::@return
   breturn:
-  // [130] return 
+    // [130] return 
     rts
-  // print_str_at::@2
+    // print_str_at::@2
   b2:
-  // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
+    // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (at),y
-  // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
+    // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
     inc at
     bne !+
     inc at+1
   !:
-  // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
+    // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1_from_b2
 }
-// File Data
+  // File Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
@@ -3712,13 +3712,13 @@ Allocated (was zp ZP_WORD:26) zp ZP_WORD:16 [ print_str_at::str#5 print_str_at::
 Allocated (was zp ZP_WORD:28) zp ZP_WORD:18 [ print_str_at::at#5 print_str_at::at#7 print_str_at::at#4 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Allows analysis of the CHARGEN ROM font
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
@@ -3783,54 +3783,54 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label sc = 2
     .label i = 4
     .label ch = 7
     .label cur_pos = 5
     .label shift = 6
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
     jmp b1
   // Clear screen
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -3839,368 +3839,368 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] call print_str_at 
-  // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
+    // [10] call print_str_at 
+    // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
   print_str_at_from_b2:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
     sta print_str_at.at
     lda #>SCREEN+1
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str_at.str
     lda #>str
     sta print_str_at.str+1
     jsr print_str_at
-  // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
+    // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
   b16_from_b2:
     jmp b16
-  // main::@16
+    // main::@16
   b16:
-  // [12] call print_str_at 
-  // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
+    // [12] call print_str_at 
+    // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
   print_str_at_from_b16:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
     sta print_str_at.at
     lda #>SCREEN+1+$a
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str_at.str
     lda #>str1
     sta print_str_at.str+1
     jsr print_str_at
-  // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
+    // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
   b17_from_b16:
     jmp b17
-  // main::@17
+    // main::@17
   b17:
-  // [14] call print_str_at 
-  // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
+    // [14] call print_str_at 
+    // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
   print_str_at_from_b17:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
     sta print_str_at.at
     lda #>SCREEN+1+$14
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str_at.str
     lda #>str2
     sta print_str_at.str+1
     jsr print_str_at
-  // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
+    // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
   b18_from_b17:
     jmp b18
-  // main::@18
+    // main::@18
   b18:
-  // [16] call print_str_at 
-  // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
+    // [16] call print_str_at 
+    // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
   print_str_at_from_b18:
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
     sta print_str_at.at
     lda #>SCREEN+1+$1e
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str_at.str
     lda #>str3
     sta print_str_at.str+1
     jsr print_str_at
-  // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
+    // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
   b3_from_b18:
-  // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
+    // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b3
-  // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
+    // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
   b3_from_b19:
-  // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
+    // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
+    // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
     ldy i
-  // [19] call plot_chargen 
-  // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
+    // [19] call plot_chargen 
+    // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
   plot_chargen_from_b3:
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuxx=vbuc1 
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuxx=vbuc1 
     ldx #0
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuaa=vbuc1 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuaa=vbuc1 
     lda #$20
     jsr plot_chargen
     jmp b19
-  // main::@19
+    // main::@19
   b19:
-  // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp i
     bne b3_from_b19
-  // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
+    // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
   b4_from_b19:
-  // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
+    // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [23] call keyboard_key_pressed 
-  // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
+    // [23] call keyboard_key_pressed 
+    // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
   keyboard_key_pressed_from_b4:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F1
     jsr keyboard_key_pressed
-  // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     jmp b20
-  // main::@20
+    // main::@20
   b20:
-  // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
-  // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuaa_eq_0_then_la1 
+    // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
+    // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b27_from_b20
-  // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
+    // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
   b5_from_b20:
-  // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
+    // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
     jmp b5
-  // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
+    // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
   b27_from_b20:
     jmp b27
-  // main::@27
+    // main::@27
   b27:
-  // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
+    // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
   b5_from_b27:
-  // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
+    // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [29] call keyboard_key_pressed 
-  // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
+    // [29] call keyboard_key_pressed 
+    // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
   keyboard_key_pressed_from_b5:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F3
     jsr keyboard_key_pressed
-  // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+    // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
     jmp b21
-  // main::@21
+    // main::@21
   b21:
-  // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10
-  // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuaa_eq_0_then_la1 
+    // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10
+    // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b28_from_b21
-  // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
+    // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
   b6_from_b21:
-  // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
+    // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #1
     sta cur_pos
     jmp b6
-  // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
+    // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
   b28_from_b21:
     jmp b28
-  // main::@28
+    // main::@28
   b28:
-  // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
+    // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
   b6_from_b28:
-  // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
+    // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [35] call keyboard_key_pressed 
-  // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
+    // [35] call keyboard_key_pressed 
+    // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
   keyboard_key_pressed_from_b6:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F5
     jsr keyboard_key_pressed
-  // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
+    // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
     jmp b22
-  // main::@22
+    // main::@22
   b22:
-  // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11
-  // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuaa_eq_0_then_la1 
+    // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11
+    // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b29_from_b22
-  // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
+    // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
   b7_from_b22:
-  // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
+    // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #2
     sta cur_pos
     jmp b7
-  // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
+    // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
   b29_from_b22:
     jmp b29
-  // main::@29
+    // main::@29
   b29:
-  // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
+    // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
   b7_from_b29:
-  // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
+    // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [41] call keyboard_key_pressed 
-  // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
+    // [41] call keyboard_key_pressed 
+    // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
   keyboard_key_pressed_from_b7:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F7
     jsr keyboard_key_pressed
-  // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
+    // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
     jmp b23
-  // main::@23
+    // main::@23
   b23:
-  // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12
-  // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuaa_eq_0_then_la1 
+    // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12
+    // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b30_from_b23
-  // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
+    // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
   b8_from_b23:
-  // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
+    // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #3
     sta cur_pos
     jmp b8
-  // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
+    // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
   b30_from_b23:
     jmp b30
-  // main::@30
+    // main::@30
   b30:
-  // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
+    // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
   b8_from_b30:
-  // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
+    // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
     jmp b8
-  // main::@8
+    // main::@8
   b8:
-  // [47] call keyboard_key_pressed 
-  // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
+    // [47] call keyboard_key_pressed 
+    // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
   keyboard_key_pressed_from_b8:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
-  // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
+    // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
     jmp b24
-  // main::@24
+    // main::@24
   b24:
-  // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13
-  // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuaa_neq_0_then_la1 
+    // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13
+    // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9_from_b24
-  // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
+    // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
   b10_from_b24:
-  // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
     lda #0
     sta shift
     jmp b10
-  // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
+    // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
   b9_from_b24:
     jmp b9
-  // main::@9
+    // main::@9
   b9:
-  // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
+    // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
   b10_from_b9:
-  // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
     lda #1
     sta shift
     jmp b10
-  // main::@10
+    // main::@10
   b10:
-  // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
   b11_from_b10:
-  // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
+    // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #0
     sta ch
     jmp b11
   // Check for key presses - and plot char if found
-  // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
+    // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
   b11_from_b13:
-  // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
+    // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
     jmp b11
-  // main::@11
+    // main::@11
   b11:
-  // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
+    // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
     ldx ch
-  // [55] call keyboard_get_keycode 
+    // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+    // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
     jmp b25
-  // main::@25
+    // main::@25
   b25:
-  // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-  // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
+    // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+    // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$3f
     beq b12_from_b25
     jmp b14
-  // main::@14
+    // main::@14
   b14:
-  // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuxx=vbuaa 
+    // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuxx=vbuaa 
     tax
-  // [60] call keyboard_key_pressed 
-  // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
+    // [60] call keyboard_key_pressed 
+    // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
   keyboard_key_pressed_from_b14:
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
     jsr keyboard_key_pressed
-  // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
+    // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
     jmp b26
-  // main::@26
+    // main::@26
   b26:
-  // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14
-  // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
+    // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14
+    // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
   b12_from_b26:
-  // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
+    // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
     jmp b12
-  // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
+    // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
   b12_from_b25:
-  // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuaa=vbuc1 
+    // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuaa=vbuc1 
     lda #0
     jmp b12
-  // main::@12
+    // main::@12
   b12:
-  // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
+    // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13
     jmp b15
-  // main::@15
+    // main::@15
   b15:
-  // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
+    // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
     ldy cur_pos
-  // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
+    // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
     lda ch
-  // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
+    // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
     ldx shift
-  // [68] call plot_chargen 
-  // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
+    // [68] call plot_chargen 
+    // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
   plot_chargen_from_b15:
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
     jsr plot_chargen
     jmp b13
-  // main::@13
+    // main::@13
   b13:
-  // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
+    // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp ch
     bne b11_from_b13
-  // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+    // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
   b4_from_b13:
-  // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
+    // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
     jmp b4
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"
     str3: .text "f7@"
 }
-// plot_chargen
+  // plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
@@ -4211,20 +4211,20 @@ plot_chargen: {
     .label sc = $c
     .label bits = $b
     .label y = $a
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
+    // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
     sta _0
     lda #0
     sta _0+1
-  // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl _1
     rol _1+1
     asl _1
     rol _1+1
     asl _1
     rol _1+1
-  // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda chargen
     adc #<CHARGEN
@@ -4232,13 +4232,13 @@ plot_chargen: {
     lda chargen+1
     adc #>CHARGEN
     sta chargen+1
-  // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
+    // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
     cpx #0
     beq b1_from_plot_chargen
     jmp b2
-  // plot_chargen::@2
+    // plot_chargen::@2
   b2:
-  // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
+    // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda chargen
     adc #<$800
@@ -4246,29 +4246,29 @@ plot_chargen: {
     lda chargen+1
     adc #>$800
     sta chargen+1
-  // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
+    // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
   b1_from_plot_chargen:
   b1_from_b2:
-  // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
+    // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
     jmp b1
-  // plot_chargen::@1
+    // plot_chargen::@1
   b1:
-  // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuxx=vbuyy 
+    // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuxx=vbuyy 
     tya
     tax
-  // [81] call mul8u 
-  // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
+    // [81] call mul8u 
+    // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
   mul8u_from_b1:
     jsr mul8u
-  // [82] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // [82] (word) mul8u::return#2 ← (word) mul8u::res#2
     jmp b9
-  // plot_chargen::@9
+    // plot_chargen::@9
   b9:
-  // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2
-  // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
+    // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2
+    // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda sc
     adc #<SCREEN+$28+1
@@ -4276,81 +4276,81 @@ plot_chargen: {
     lda sc+1
     adc #>SCREEN+$28+1
     sta sc+1
-  // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
+    // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
   b3_from_b9:
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b3
-  // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
+    // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
   b3_from_b7:
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
     jmp b3
-  // plot_chargen::@3
+    // plot_chargen::@3
   b3:
-  // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     ldy y
     lda (chargen),y
     sta bits
-  // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
+    // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
   b4_from_b3:
-  // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
+    // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
     ldx #0
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
     jmp b4
-  // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
+    // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
   b4_from_b5:
-  // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
+    // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
     jmp b4
-  // plot_chargen::@4
+    // plot_chargen::@4
   b4:
-  // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
+    // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
     and bits
-  // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
+    // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5_from_b4
-  // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
+    // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
   b6_from_b4:
     jmp b6
-  // plot_chargen::@6
+    // plot_chargen::@6
   b6:
-  // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
+    // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
   b5_from_b6:
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuaa=vbuc1 
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuaa=vbuc1 
     lda #'*'
     jmp b5
-  // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
+    // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
   b5_from_b4:
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuaa=vbuc1 
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuaa=vbuc1 
     lda #'.'
     jmp b5
-  // plot_chargen::@5
+    // plot_chargen::@5
   b5:
-  // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuaa 
+    // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
+    // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl bits
-  // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
+    // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b4_from_b5
     jmp b7
-  // plot_chargen::@7
+    // plot_chargen::@7
   b7:
-  // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
+    // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
     adc sc
@@ -4358,27 +4358,27 @@ plot_chargen: {
     bcc !+
     inc sc+1
   !:
-  // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
+    // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
     inc y
-  // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp y
     bne b3_from_b7
     jmp b8
-  // plot_chargen::@8
+    // plot_chargen::@8
   b8:
-  // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // plot_chargen::@return
+    // plot_chargen::@return
   breturn:
-  // [102] return 
+    // [102] return 
     rts
 }
-// mul8u
+  // mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
@@ -4386,42 +4386,42 @@ mul8u: {
     .label mb = $e
     .label res = $c
     .label return = $c
-  // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
-  // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+    // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+    // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta res
     lda #0
     sta res+1
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
-  // mul8u::@1
+    // mul8u::@1
   b1:
-  // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b2
     jmp breturn
-  // mul8u::@return
+    // mul8u::@return
   breturn:
-  // [106] return 
+    // [106] return 
     rts
-  // mul8u::@2
+    // mul8u::@2
   b2:
-  // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
     jmp b4
-  // mul8u::@4
+    // mul8u::@4
   b4:
-  // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -4429,61 +4429,61 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
-  // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp b3
-  // mul8u::@3
+    // mul8u::@3
   b3:
-  // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
-  // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
-  // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-// keyboard_key_pressed
+  // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-  // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
-  // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-  // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-  // [117] call keyboard_matrix_read 
+    // [117] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     jmp b1
-  // keyboard_key_pressed::@1
+    // keyboard_key_pressed::@1
   b1:
-  // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     jmp breturn
-  // keyboard_key_pressed::@return
+    // keyboard_key_pressed::@return
   breturn:
-  // [121] return 
+    // [121] return 
     rts
 }
-// keyboard_matrix_read
+  // keyboard_matrix_read
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -4491,77 +4491,77 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-  // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-  // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+    // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp breturn
-  // keyboard_matrix_read::@return
+    // keyboard_matrix_read::@return
   breturn:
-  // [124] return 
+    // [124] return 
     rts
 }
-// keyboard_get_keycode
+  // keyboard_get_keycode
 // Get the keycode corresponding to a specific screen code character
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
-  // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     jmp breturn
-  // keyboard_get_keycode::@return
+    // keyboard_get_keycode::@return
   breturn:
-  // [126] return 
+    // [126] return 
     rts
 }
-// print_str_at
+  // print_str_at
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage($10) str, byte* zeropage($12) at)
 print_str_at: {
     .label at = $12
     .label str = $10
-  // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
+    // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
   b1_from_print_str_at:
   b1_from_b2:
-  // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
-  // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
+    // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
+    // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
     jmp b1
-  // print_str_at::@1
+    // print_str_at::@1
   b1:
-  // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print_str_at::@return
+    // print_str_at::@return
   breturn:
-  // [130] return 
+    // [130] return 
     rts
-  // print_str_at::@2
+    // print_str_at::@2
   b2:
-  // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
+    // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (at),y
-  // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
+    // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
     inc at
     bne !+
     inc at+1
   !:
-  // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
+    // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1_from_b2
 }
-// File Data
+  // File Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
@@ -5111,13 +5111,13 @@ reg byte a [ keyboard_get_keycode::return#0 ]
 FINAL ASSEMBLER
 Score: 626893
 
-// File Comments
+  // File Comments
 // Allows analysis of the CHARGEN ROM font
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
@@ -5182,41 +5182,43 @@ Score: 626893
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label sc = 2
     .label i = 4
     .label ch = 7
     .label cur_pos = 5
     .label shift = 6
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
   // Clear screen
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // *sc = ' '
+    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
+    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -5225,277 +5227,307 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [10] call print_str_at 
-  // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // print_str_at("f1", SCREEN+1)
+    // [10] call print_str_at 
+    // [127] phi from main::@2 to print_str_at [phi:main::@2->print_str_at]
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@2->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
     sta print_str_at.at
     lda #>SCREEN+1
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@2->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str_at.str
     lda #>str
     sta print_str_at.str+1
     jsr print_str_at
-  // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
-  // main::@16
-  // [12] call print_str_at 
-  // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
+    // [11] phi from main::@2 to main::@16 [phi:main::@2->main::@16]
+    // main::@16
+    // print_str_at("f3", SCREEN+1+10)
+    // [12] call print_str_at 
+    // [127] phi from main::@16 to print_str_at [phi:main::@16->print_str_at]
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@16->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
     sta print_str_at.at
     lda #>SCREEN+1+$a
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@16->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str_at.str
     lda #>str1
     sta print_str_at.str+1
     jsr print_str_at
-  // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
-  // main::@17
-  // [14] call print_str_at 
-  // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
+    // [13] phi from main::@16 to main::@17 [phi:main::@16->main::@17]
+    // main::@17
+    // print_str_at("f5", SCREEN+1+20)
+    // [14] call print_str_at 
+    // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
     sta print_str_at.at
     lda #>SCREEN+1+$14
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str_at.str
     lda #>str2
     sta print_str_at.str+1
     jsr print_str_at
-  // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
-  // main::@18
-  // [16] call print_str_at 
-  // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
-  // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
+    // [15] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
+    // main::@18
+    // print_str_at("f7", SCREEN+1+30)
+    // [16] call print_str_at 
+    // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
+    // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
     sta print_str_at.at
     lda #>SCREEN+1+$1e
     sta print_str_at.at+1
-  // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
+    // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str_at.str
     lda #>str3
     sta print_str_at.str+1
     jsr print_str_at
-  // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
-  // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
+    // [17] phi from main::@18 to main::@3 [phi:main::@18->main::@3]
+    // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@18->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
-  // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
-  // main::@3
+    // [17] phi from main::@19 to main::@3 [phi:main::@19->main::@3]
+    // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@19->main::@3#0] -- register_copy 
+    // main::@3
   b3:
-  // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
+    // plot_chargen(i, $20, 0)
+    // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
     ldy i
-  // [19] call plot_chargen 
-  // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuxx=vbuc1 
+    // [19] call plot_chargen 
+    // [71] phi from main::@3 to plot_chargen [phi:main::@3->plot_chargen]
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@3->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@3->plot_chargen#1] -- vbuxx=vbuc1 
     ldx #0
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuaa=vbuc1 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@3->plot_chargen#2] -- vbuaa=vbuc1 
     lda #$20
     jsr plot_chargen
-  // main::@19
-  // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // main::@19
+    // for(byte i : 0..3 )
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [21] if((byte) main::i#1!=(byte) 4) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp i
     bne b3
-  // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
-  // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
+    // [22] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
+    // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
-  // main::@4
+    // main::@4
   b4:
-  // [23] call keyboard_key_pressed 
-  // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // keyboard_key_pressed(KEY_F1)
+    // [23] call keyboard_key_pressed 
+    // [113] phi from main::@4 to keyboard_key_pressed [phi:main::@4->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F1
     jsr keyboard_key_pressed
-  // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-  // main::@20
-  // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
-  // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuaa_eq_0_then_la1 
+    // keyboard_key_pressed(KEY_F1)
+    // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // main::@20
+    // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
+    // if(keyboard_key_pressed(KEY_F1)!=0)
+    // [26] if((byte~) main::$15==(byte) 0) goto main::@27 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5
-  // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
-  // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
+    // [28] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
+    // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta cur_pos
-  // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
-  // main::@27
-  // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
-  // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
-  // main::@5
+    // [27] phi from main::@20 to main::@27 [phi:main::@20->main::@27]
+    // main::@27
+    // [28] phi from main::@27 to main::@5 [phi:main::@27->main::@5]
+    // [28] phi (byte) main::cur_pos#22 = (byte) main::cur_pos#24 [phi:main::@27->main::@5#0] -- register_copy 
+    // main::@5
   b5:
-  // [29] call keyboard_key_pressed 
-  // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // keyboard_key_pressed(KEY_F3)
+    // [29] call keyboard_key_pressed 
+    // [113] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F3
     jsr keyboard_key_pressed
-  // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-  // main::@21
-  // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10
-  // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuaa_eq_0_then_la1 
+    // keyboard_key_pressed(KEY_F3)
+    // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+    // main::@21
+    // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10
+    // if(keyboard_key_pressed(KEY_F3)!=0)
+    // [32] if((byte~) main::$18==(byte) 0) goto main::@28 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
-  // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
-  // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
+    // [34] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
+    // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #1
     sta cur_pos
-  // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
-  // main::@28
-  // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
-  // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
-  // main::@6
+    // [33] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
+    // main::@28
+    // [34] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
+    // [34] phi (byte) main::cur_pos#20 = (byte) main::cur_pos#22 [phi:main::@28->main::@6#0] -- register_copy 
+    // main::@6
   b6:
-  // [35] call keyboard_key_pressed 
-  // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // keyboard_key_pressed(KEY_F5)
+    // [35] call keyboard_key_pressed 
+    // [113] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F5
     jsr keyboard_key_pressed
-  // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
-  // main::@22
-  // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11
-  // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuaa_eq_0_then_la1 
+    // keyboard_key_pressed(KEY_F5)
+    // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
+    // main::@22
+    // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11
+    // if(keyboard_key_pressed(KEY_F5)!=0)
+    // [38] if((byte~) main::$21==(byte) 0) goto main::@29 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b7
-  // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
-  // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
+    // [40] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
+    // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #2
     sta cur_pos
-  // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
-  // main::@29
-  // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
-  // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
-  // main::@7
+    // [39] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
+    // main::@29
+    // [40] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
+    // [40] phi (byte) main::cur_pos#18 = (byte) main::cur_pos#20 [phi:main::@29->main::@7#0] -- register_copy 
+    // main::@7
   b7:
-  // [41] call keyboard_key_pressed 
-  // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // keyboard_key_pressed(KEY_F7)
+    // [41] call keyboard_key_pressed 
+    // [113] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F7
     jsr keyboard_key_pressed
-  // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
-  // main::@23
-  // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12
-  // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuaa_eq_0_then_la1 
+    // keyboard_key_pressed(KEY_F7)
+    // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
+    // main::@23
+    // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12
+    // if(keyboard_key_pressed(KEY_F7)!=0)
+    // [44] if((byte~) main::$24==(byte) 0) goto main::@30 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8
-  // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
-  // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
+    // [46] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
+    // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #3
     sta cur_pos
-  // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
-  // main::@30
-  // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
-  // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
-  // main::@8
+    // [45] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
+    // main::@30
+    // [46] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
+    // [46] phi (byte) main::cur_pos#11 = (byte) main::cur_pos#18 [phi:main::@30->main::@8#0] -- register_copy 
+    // main::@8
   b8:
-  // [47] call keyboard_key_pressed 
-  // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // keyboard_key_pressed(KEY_LSHIFT)
+    // [47] call keyboard_key_pressed 
+    // [113] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
-  // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
-  // main::@24
-  // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13
-  // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuaa_neq_0_then_la1 
+    // keyboard_key_pressed(KEY_LSHIFT)
+    // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
+    // main::@24
+    // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13
+    // if(keyboard_key_pressed(KEY_LSHIFT)!=0)
+    // [50] if((byte~) main::$27!=(byte) 0) goto main::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9
-  // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
-  // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi from main::@24 to main::@10 [phi:main::@24->main::@10]
+    // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@24->main::@10#0] -- vbuz1=vbuc1 
     lda #0
     sta shift
     jmp b10
-  // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
-  // main::@9
+    // [51] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
+    // main::@9
   b9:
-  // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
-  // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
+    // [52] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
+    // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@9->main::@10#0] -- vbuz1=vbuc1 
     lda #1
     sta shift
-  // main::@10
+    // main::@10
   b10:
-  // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
-  // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
+    // [53] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #0
     sta ch
   // Check for key presses - and plot char if found
-  // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
-  // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
-  // main::@11
+    // [53] phi from main::@13 to main::@11 [phi:main::@13->main::@11]
+    // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@11#0] -- register_copy 
+    // main::@11
   b11:
-  // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
+    // keyboard_get_keycode(ch)
+    // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
     ldx ch
-  // [55] call keyboard_get_keycode 
+    // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
-  // main::@25
-  // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-  // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
+    // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+    // main::@25
+    // key = keyboard_get_keycode(ch)
+    // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+    // if(key!=$3f)
+    // [58] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$3f
     beq b2
-  // main::@14
-  // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuxx=vbuaa 
+    // main::@14
+    // keyboard_key_pressed(key)
+    // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuxx=vbuaa 
     tax
-  // [60] call keyboard_key_pressed 
-  // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
-  // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
+    // [60] call keyboard_key_pressed 
+    // [113] phi from main::@14 to keyboard_key_pressed [phi:main::@14->keyboard_key_pressed]
+    // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@14->keyboard_key_pressed#0] -- register_copy 
     jsr keyboard_key_pressed
-  // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
-  // main::@26
-  // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14
-  // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
-  // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
+    // keyboard_key_pressed(key)
+    // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
+    // main::@26
+    // pressed = keyboard_key_pressed(key)
+    // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14
+    // [63] phi from main::@26 to main::@12 [phi:main::@26->main::@12]
+    // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@26->main::@12#0] -- register_copy 
     jmp b12
-  // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
+    // [63] phi from main::@25 to main::@12 [phi:main::@25->main::@12]
   b2:
-  // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuaa=vbuc1 
+    // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@25->main::@12#0] -- vbuaa=vbuc1 
     lda #0
-  // main::@12
+    // main::@12
   b12:
-  // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
+    // if(pressed!=0)
+    // [64] if((byte) main::pressed#2==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13
-  // main::@15
-  // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
+    // main::@15
+    // plot_chargen(cur_pos, ch, shift)
+    // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
     ldy cur_pos
-  // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
+    // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
     lda ch
-  // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
+    // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
     ldx shift
-  // [68] call plot_chargen 
-  // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
-  // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
-  // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
-  // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
+    // [68] call plot_chargen 
+    // [71] phi from main::@15 to plot_chargen [phi:main::@15->plot_chargen]
+    // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@15->plot_chargen#0] -- register_copy 
+    // [71] phi (byte) plot_chargen::shift#2 = (byte) plot_chargen::shift#1 [phi:main::@15->plot_chargen#1] -- register_copy 
+    // [71] phi (byte) plot_chargen::ch#2 = (byte) plot_chargen::ch#1 [phi:main::@15->plot_chargen#2] -- register_copy 
     jsr plot_chargen
-  // main::@13
+    // main::@13
   b13:
-  // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // for( byte ch : 0..$3f)
+    // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
+    // [70] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp ch
     bne b11
-  // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
-  // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
+    // [22] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+    // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@13->main::@4#0] -- register_copy 
     jmp b4
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"
     str3: .text "f7@"
 }
-// plot_chargen
+  // plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
@@ -5506,20 +5538,24 @@ plot_chargen: {
     .label sc = $c
     .label bits = $b
     .label y = $a
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
+    // (word)ch
+    // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
     sta _0
     lda #0
     sta _0+1
-  // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // (word)ch*8
+    // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl _1
     rol _1+1
     asl _1
     rol _1+1
     asl _1
     rol _1+1
-  // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // chargen = CHARGEN+(word)ch*8
+    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda chargen
     adc #<CHARGEN
@@ -5527,11 +5563,13 @@ plot_chargen: {
     lda chargen+1
     adc #>CHARGEN
     sta chargen+1
-  // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
+    // if(shift!=0)
+    // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
     cpx #0
     beq b1
-  // plot_chargen::@2
-  // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
+    // plot_chargen::@2
+    // chargen = chargen + $0800
+    // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda chargen
     adc #<$800
@@ -5539,23 +5577,27 @@ plot_chargen: {
     lda chargen+1
     adc #>$800
     sta chargen+1
-  // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
-  // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
-  // plot_chargen::@1
+    // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
+    // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
+    // plot_chargen::@1
   b1:
-  // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // *PROCPORT = $32
+    // [79] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuxx=vbuyy 
+    // mul8u(pos, 10)
+    // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuxx=vbuyy 
     tya
     tax
-  // [81] call mul8u 
-  // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
+    // [81] call mul8u 
+    // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
     jsr mul8u
-  // [82] (word) mul8u::return#2 ← (word) mul8u::res#2
-  // plot_chargen::@9
-  // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2
-  // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
+    // mul8u(pos, 10)
+    // [82] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // plot_chargen::@9
+    // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2
+    // sc = SCREEN+40+1+mul8u(pos, 10)
+    // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda sc
     adc #<SCREEN+$28+1
@@ -5563,66 +5605,74 @@ plot_chargen: {
     lda sc+1
     adc #>SCREEN+$28+1
     sta sc+1
-  // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
+    // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta y
-  // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
-  // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
-  // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
-  // plot_chargen::@3
+    // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
+    // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
+    // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
+    // plot_chargen::@3
   b3:
-  // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    // bits = chargen[y]
+    // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     ldy y
     lda (chargen),y
     sta bits
-  // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
-  // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
+    // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
+    // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
     ldx #0
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
-  // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
-  // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
-  // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
-  // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
-  // plot_chargen::@4
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
+    // [87] phi from plot_chargen::@5 to plot_chargen::@4 [phi:plot_chargen::@5->plot_chargen::@4]
+    // [87] phi (byte) plot_chargen::x#2 = (byte) plot_chargen::x#1 [phi:plot_chargen::@5->plot_chargen::@4#0] -- register_copy 
+    // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#1 [phi:plot_chargen::@5->plot_chargen::@4#1] -- register_copy 
+    // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#1 [phi:plot_chargen::@5->plot_chargen::@4#2] -- register_copy 
+    // plot_chargen::@4
   b4:
-  // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
+    // bits & $80
+    // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
     and bits
-  // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
+    // if((bits & $80) != 0)
+    // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
-  // plot_chargen::@6
-  // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuaa=vbuc1 
+    // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
+    // plot_chargen::@6
+    // [91] phi from plot_chargen::@6 to plot_chargen::@5 [phi:plot_chargen::@6->plot_chargen::@5]
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuaa=vbuc1 
     lda #'*'
     jmp b5
-  // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
+    // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
   b2:
-  // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuaa=vbuc1 
+    // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuaa=vbuc1 
     lda #'.'
-  // plot_chargen::@5
+    // plot_chargen::@5
   b5:
-  // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuaa 
+    // *sc = c
+    // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
+    // sc++;
+    // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // bits = bits*2
+    // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl bits
-  // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
+    // for(byte x:0..7)
+    // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b4
-  // plot_chargen::@7
-  // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
+    // plot_chargen::@7
+    // sc = sc+32
+    // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
     adc sc
@@ -5630,23 +5680,27 @@ plot_chargen: {
     bcc !+
     inc sc+1
   !:
-  // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
+    // for(byte y:0..7)
+    // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
     inc y
-  // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp y
     bne b3
-  // plot_chargen::@8
-  // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // plot_chargen::@8
+    // *PROCPORT = $37
+    // [100] *((const byte*) PROCPORT#0) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  // asm { cli  }
+    // asm
+    // asm { cli  }
     cli
-  // plot_chargen::@return
-  // [102] return 
+    // plot_chargen::@return
+    // }
+    // [102] return 
     rts
 }
-// mul8u
+  // mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
@@ -5654,34 +5708,39 @@ mul8u: {
     .label mb = $e
     .label res = $c
     .label return = $c
-  // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-  // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+    // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+    // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     sta res
     sta res+1
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
-  // mul8u::@1
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // mul8u::@1
   b1:
-  // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    // while(a!=0)
+    // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b2
-  // mul8u::@return
-  // [106] return 
+    // mul8u::@return
+    // }
+    // [106] return 
     rts
-  // mul8u::@2
+    // mul8u::@2
   b2:
-  // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // a&1
+    // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    // if( (a&1) != 0)
+    // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3
-  // mul8u::@4
-  // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // mul8u::@4
+    // res = res + mb
+    // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -5689,53 +5748,60 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-  // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
-  // mul8u::@3
+    // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // mul8u::@3
   b3:
-  // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    // a = a>>1
+    // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
-  // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // mb = mb<<1
+    // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-  // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-// keyboard_key_pressed
+  // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-  // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    // colidx = key&7
+    // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
-  // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    // rowidx = key>>3
+    // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-  // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    // keyboard_matrix_read(rowidx)
+    // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-  // [117] call keyboard_matrix_read 
+    // [117] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-  // keyboard_key_pressed::@1
-  // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    // keyboard_key_pressed::@1
+    // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
+    // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
-  // keyboard_key_pressed::@return
-  // [121] return 
+    // keyboard_key_pressed::@return
+    // }
+    // [121] return 
     rts
 }
-// keyboard_matrix_read
+  // keyboard_matrix_read
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -5743,67 +5809,76 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-  // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-  // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+    // ~*CIA1_PORT_B
+    // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-  // keyboard_matrix_read::@return
-  // [124] return 
+    // keyboard_matrix_read::@return
+    // }
+    // [124] return 
     rts
 }
-// keyboard_get_keycode
+  // keyboard_get_keycode
 // Get the keycode corresponding to a specific screen code character
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
-  // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // return keyboard_char_keycodes[ch];
+    // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
-  // keyboard_get_keycode::@return
-  // [126] return 
+    // keyboard_get_keycode::@return
+    // }
+    // [126] return 
     rts
 }
-// print_str_at
+  // print_str_at
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage($10) str, byte* zeropage($12) at)
 print_str_at: {
     .label at = $12
     .label str = $10
-  // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
-  // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
-  // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
-  // print_str_at::@1
+    // [128] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
+    // [128] phi (byte*) print_str_at::at#5 = (byte*) print_str_at::at#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
+    // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
+    // print_str_at::@1
   b1:
-  // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str!='@')
+    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
-  // print_str_at::@return
-  // [130] return 
+    // print_str_at::@return
+    // }
+    // [130] return 
     rts
-  // print_str_at::@2
+    // print_str_at::@2
   b2:
-  // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
+    // *(at++) = *(str++)
+    // [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     sta (at),y
-  // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
+    // *(at++) = *(str++);
+    // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
     inc at
     bne !+
     inc at+1
   !:
-  // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
+    // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1
 }
-// File Data
+  // File Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)

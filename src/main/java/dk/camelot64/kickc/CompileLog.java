@@ -71,6 +71,11 @@ public class CompileLog {
    private boolean verboseStatementSequence = false;
 
    /**
+    * Print the C-source code for each SSA statement when printing the control flow graph
+    */
+   private boolean verboseSsaSourceCode = false;
+
+   /**
     * Should the log be output to System.out while being built
     */
    private boolean sysOut = false;
@@ -89,6 +94,19 @@ public class CompileLog {
 
    public StringBuilder getLog() {
       return log;
+   }
+
+   public CompileLog verboseSsaSourceCode() {
+      setVerboseSsaSourceCode(true);
+      return this;
+   }
+
+   public boolean isVerboseSsaSourceCode() {
+      return verboseSsaSourceCode;
+   }
+
+   public void setVerboseSsaSourceCode(boolean verboseSsaSourceCode) {
+      this.verboseSsaSourceCode = verboseSsaSourceCode;
    }
 
    public boolean isVerboseCreateSsa() {

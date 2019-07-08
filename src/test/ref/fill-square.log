@@ -1,0 +1,693 @@
+Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) main::@4
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@1
+main: scope:[main]  from @1
+  (byte) main::y#0 ← (byte) 5
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@3/(byte) main::y#1 )
+  (word~) main::$0 ← ((word)) (byte) main::y#2
+  (number~) main::$1 ← (word~) main::$0 * (number) $28
+  (byte*~) main::$2 ← (byte*) SCREEN#0 + (number~) main::$1
+  (byte*) main::line#0 ← (byte*~) main::$2
+  (byte) main::x#0 ← (byte) 5
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte*) main::line#1 ← phi( main::@1/(byte*) main::line#0 main::@2/(byte*) main::line#1 )
+  (byte) main::y#3 ← phi( main::@1/(byte) main::y#2 main::@2/(byte) main::y#3 )
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#0 main::@2/(byte) main::x#1 )
+  (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#3
+  *((byte*) main::line#1 + (byte) main::x#2) ← (byte~) main::$3
+  (byte) main::x#1 ← (byte) main::x#2 + rangenext(5,$f)
+  (bool~) main::$4 ← (byte) main::x#1 != rangelast(5,$f)
+  if((bool~) main::$4) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) main::y#4 ← phi( main::@2/(byte) main::y#3 )
+  (byte) main::y#1 ← (byte) main::y#4 + rangenext(5,$f)
+  (bool~) main::$5 ← (byte) main::y#1 != rangelast(5,$f)
+  if((bool~) main::$5) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(word~) main::$0
+(number~) main::$1
+(byte*~) main::$2
+(byte~) main::$3
+(bool~) main::$4
+(bool~) main::$5
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte*) main::line
+(byte*) main::line#0
+(byte*) main::line#1
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::y
+(byte) main::y#0
+(byte) main::y#1
+(byte) main::y#2
+(byte) main::y#3
+(byte) main::y#4
+
+Adding number conversion cast (unumber) $28 in (number~) main::$1 ← (word~) main::$0 * (number) $28
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 * (unumber)(number) $28
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (word~) main::$0 ← (word)(byte) main::y#2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to word in (unumber~) main::$1 ← (word~) main::$0 * (byte) $28
+Alias (byte*) main::line#0 = (byte*~) main::$2 
+Alias (byte) main::y#3 = (byte) main::y#4 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte) main::y#3
+Self Phi Eliminated (byte*) main::line#1
+Successful SSA optimization Pass2SelfPhiElimination
+Identical Phi Values (byte) main::y#3 (byte) main::y#2
+Identical Phi Values (byte*) main::line#1 (byte*) main::line#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$4 [13] if((byte) main::x#1!=rangelast(5,$f)) goto main::@2
+Simple Condition (bool~) main::$5 [17] if((byte) main::y#1!=rangelast(5,$f)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte) main::y#0 = 5
+Constant (const byte) main::x#0 = 5
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [11] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [13] if(main::x#1!=rangelast(5,$f)) goto main::@2 to (number) $10
+Resolved ranged next value [15] main::y#1 ← ++ main::y#2 to ++
+Resolved ranged comparison value [17] if(main::y#1!=rangelast(5,$f)) goto main::@1 to (number) $10
+Adding number conversion cast (unumber) $10 in if((byte) main::x#1!=(number) $10) goto main::@2
+Adding number conversion cast (unumber) $10 in if((byte) main::y#1!=(number) $10) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $10
+Simplifying constant integer cast $10
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Rewriting multiplication to use shift and addition[2] (word~) main::$1 ← (word~) main::$0 * (byte) $28
+Inlining constant with var siblings (const byte) main::y#0
+Inlining constant with var siblings (const byte) main::x#0
+Constant inlined main::x#0 = (byte) 5
+Constant inlined main::y#0 = (byte) 5
+Successful SSA optimization Pass2ConstantInlining
+Alias (word~) main::$1 = (word) main::$8 
+Successful SSA optimization Pass2AliasElimination
+Added new block during phi lifting main::@5(between main::@3 and main::@1)
+Added new block during phi lifting main::@6(between main::@2 and main::@2)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 2 initial phi equivalence classes
+Coalesced [20] main::y#5 ← main::y#1
+Coalesced [21] main::x#3 ← main::x#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::y#2 ← phi( main/(byte) 5 main::@3/(byte) main::y#1 )
+  [6] (word~) main::$0 ← (word)(byte) main::y#2
+  [7] (word) main::$6 ← (word~) main::$0 << (byte) 2
+  [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0
+  [9] (word~) main::$1 ← (word) main::$7 << (byte) 3
+  [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  [11] (byte) main::x#2 ← phi( main::@1/(byte) 5 main::@2/(byte) main::x#1 )
+  [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2
+  [13] *((byte*) main::line#0 + (byte) main::x#2) ← (byte~) main::$3
+  [14] (byte) main::x#1 ← ++ (byte) main::x#2
+  [15] if((byte) main::x#1!=(byte) $10) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [16] (byte) main::y#1 ← ++ (byte) main::y#2
+  [17] if((byte) main::y#1!=(byte) $10) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [18] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) main()
+(word~) main::$0 16.5
+(word~) main::$1 22.0
+(byte~) main::$3 202.0
+(word) main::$6 22.0
+(word) main::$7 22.0
+(byte*) main::line
+(byte*) main::line#0 18.666666666666664
+(byte) main::x
+(byte) main::x#1 151.5
+(byte) main::x#2 134.66666666666666
+(byte) main::y
+(byte) main::y#1 16.5
+(byte) main::y#2 11.181818181818182
+
+Initial phi equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::x#2 main::x#1 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$6 to zero page equivalence class [ main::$6 ]
+Added variable main::$7 to zero page equivalence class [ main::$7 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::line#0 to zero page equivalence class [ main::line#0 ]
+Added variable main::$3 to zero page equivalence class [ main::$3 ]
+Complete equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::x#2 main::x#1 ]
+[ main::$0 ]
+[ main::$6 ]
+[ main::$7 ]
+[ main::$1 ]
+[ main::line#0 ]
+[ main::$3 ]
+Allocated zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Allocated zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
+Allocated zp ZP_WORD:4 [ main::$0 ]
+Allocated zp ZP_WORD:6 [ main::$6 ]
+Allocated zp ZP_WORD:8 [ main::$7 ]
+Allocated zp ZP_WORD:10 [ main::$1 ]
+Allocated zp ZP_WORD:12 [ main::line#0 ]
+Allocated zp ZP_BYTE:14 [ main::$3 ]
+
+INITIAL ASM
+  // File Comments
+// Fill a square on the screen
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _0 = 4
+    .label _1 = $a
+    .label _3 = $e
+    .label line = $c
+    .label x = 3
+    .label y = 2
+    .label _6 = 6
+    .label _7 = 8
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::y#2 = (byte) 5 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #5
+    sta y
+    jmp b1
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (word~) main::$0 ← (word)(byte) main::y#2 -- vwuz1=_word_vbuz2 
+    lda y
+    sta _0
+    lda #0
+    sta _0+1
+    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda _0
+    asl
+    sta _6
+    lda _0+1
+    rol
+    sta _6+1
+    asl _6
+    rol _6+1
+    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz3 
+    lda _6
+    clc
+    adc _0
+    sta _7
+    lda _6+1
+    adc _0+1
+    sta _7+1
+    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    lda _7
+    asl
+    sta _1
+    lda _7+1
+    rol
+    sta _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda _1
+    clc
+    adc #<SCREEN
+    sta line
+    lda _1+1
+    adc #>SCREEN
+    sta line+1
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [11] phi (byte) main::x#2 = (byte) 5 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #5
+    sta x
+    jmp b2
+    // [11] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+    // [11] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 -- vbuz1=vbuz2_plus_vbuz3 
+    lda x
+    clc
+    adc y
+    sta _3
+    // [13] *((byte*) main::line#0 + (byte) main::x#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuz2=vbuz3 
+    lda _3
+    ldy x
+    sta (line),y
+    // [14] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
+    inc x
+    // [15] if((byte) main::x#1!=(byte) $10) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$10
+    cmp x
+    bne b2_from_b2
+    jmp b3
+    // main::@3
+  b3:
+    // [16] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    inc y
+    // [17] if((byte) main::y#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$10
+    cmp y
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [18] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
+Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
+Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::y#2 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::x#2 main::x#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:4 [ main::$0 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_WORD:6 [ main::$6 ] : zp ZP_WORD:6 , 
+Potential registers zp ZP_WORD:8 [ main::$7 ] : zp ZP_WORD:8 , 
+Potential registers zp ZP_WORD:10 [ main::$1 ] : zp ZP_WORD:10 , 
+Potential registers zp ZP_WORD:12 [ main::line#0 ] : zp ZP_WORD:12 , 
+Potential registers zp ZP_BYTE:14 [ main::$3 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 286.17: zp ZP_BYTE:3 [ main::x#2 main::x#1 ] 202: zp ZP_BYTE:14 [ main::$3 ] 27.68: zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 22: zp ZP_WORD:6 [ main::$6 ] 22: zp ZP_WORD:8 [ main::$7 ] 22: zp ZP_WORD:10 [ main::$1 ] 18.67: zp ZP_WORD:12 [ main::line#0 ] 16.5: zp ZP_WORD:4 [ main::$0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 4443 combination reg byte y [ main::x#2 main::x#1 ] reg byte a [ main::$3 ] zp ZP_BYTE:2 [ main::y#2 main::y#1 ] zp ZP_WORD:6 [ main::$6 ] zp ZP_WORD:8 [ main::$7 ] zp ZP_WORD:10 [ main::$1 ] zp ZP_WORD:12 [ main::line#0 ] zp ZP_WORD:4 [ main::$0 ] 
+Uplifting [] best 4443 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Uplifting [main] best 4443 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ main::$0 ] ] with [ zp ZP_WORD:8 [ main::$7 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:10 [ main::$1 ] ] with [ zp ZP_WORD:12 [ main::line#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ main::$0 main::$7 ] ] with [ zp ZP_WORD:10 [ main::$1 main::line#0 ] ] - score: 1
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ main::$0 main::$7 main::$1 main::line#0 ]
+Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ main::$6 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Fill a square on the screen
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _0 = 3
+    .label _1 = 3
+    .label line = 3
+    .label y = 2
+    .label _6 = 5
+    .label _7 = 3
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::y#2 = (byte) 5 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #5
+    sta y
+    jmp b1
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (word~) main::$0 ← (word)(byte) main::y#2 -- vwuz1=_word_vbuz2 
+    lda y
+    sta _0
+    lda #0
+    sta _0+1
+    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda _0
+    asl
+    sta _6
+    lda _0+1
+    rol
+    sta _6+1
+    asl _6
+    rol _6+1
+    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    lda _7
+    clc
+    adc _6
+    sta _7
+    lda _7+1
+    adc _6+1
+    sta _7+1
+    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda line
+    adc #<SCREEN
+    sta line
+    lda line+1
+    adc #>SCREEN
+    sta line+1
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [11] phi (byte) main::x#2 = (byte) 5 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #5
+    jmp b2
+    // [11] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+    // [11] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 -- vbuaa=vbuyy_plus_vbuz1 
+    tya
+    clc
+    adc y
+    // [13] *((byte*) main::line#0 + (byte) main::x#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
+    sta (line),y
+    // [14] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [15] if((byte) main::x#1!=(byte) $10) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$10
+    bne b2_from_b2
+    jmp b3
+    // main::@3
+  b3:
+    // [16] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    inc y
+    // [17] if((byte) main::y#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$10
+    cmp y
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [18] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b2_from_b2 with b2
+Replacing label b1_from_b3 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b3:
+Removing instruction b2_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2_from_b1:
+Removing instruction b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(void()) main()
+(word~) main::$0 $0 zp ZP_WORD:3 16.5
+(word~) main::$1 $1 zp ZP_WORD:3 22.0
+(byte~) main::$3 reg byte a 202.0
+(word) main::$6 $6 zp ZP_WORD:5 22.0
+(word) main::$7 $7 zp ZP_WORD:3 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte*) main::line
+(byte*) main::line#0 line zp ZP_WORD:3 18.666666666666664
+(byte) main::x
+(byte) main::x#1 reg byte y 151.5
+(byte) main::x#2 reg byte y 134.66666666666666
+(byte) main::y
+(byte) main::y#1 y zp ZP_BYTE:2 16.5
+(byte) main::y#2 y zp ZP_BYTE:2 11.181818181818182
+
+zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+reg byte y [ main::x#2 main::x#1 ]
+zp ZP_WORD:3 [ main::$0 main::$7 main::$1 main::line#0 ]
+zp ZP_WORD:5 [ main::$6 ]
+reg byte a [ main::$3 ]
+
+
+FINAL ASSEMBLER
+Score: 3381
+
+  // File Comments
+// Fill a square on the screen
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label _0 = 3
+    .label _1 = 3
+    .label line = 3
+    .label y = 2
+    .label _6 = 5
+    .label _7 = 3
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::y#2 = (byte) 5 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #5
+    sta y
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // main::@1
+  b1:
+    // (word)y
+    // [6] (word~) main::$0 ← (word)(byte) main::y#2 -- vwuz1=_word_vbuz2 
+    lda y
+    sta _0
+    lda #0
+    sta _0+1
+    // (word)y*40
+    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda _0
+    asl
+    sta _6
+    lda _0+1
+    rol
+    sta _6+1
+    asl _6
+    rol _6+1
+    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    lda _7
+    clc
+    adc _6
+    sta _7
+    lda _7+1
+    adc _6+1
+    sta _7+1
+    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    // line = SCREEN+(word)y*40
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda line
+    adc #<SCREEN
+    sta line
+    lda line+1
+    adc #>SCREEN
+    sta line+1
+    // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [11] phi (byte) main::x#2 = (byte) 5 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #5
+    // [11] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [11] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // main::@2
+  b2:
+    // x+y
+    // [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 -- vbuaa=vbuyy_plus_vbuz1 
+    tya
+    clc
+    adc y
+    // line[x] = x+y
+    // [13] *((byte*) main::line#0 + (byte) main::x#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
+    sta (line),y
+    // for( byte x: 5..15)
+    // [14] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [15] if((byte) main::x#1!=(byte) $10) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$10
+    bne b2
+    // main::@3
+    // for( byte y: 5..15)
+    // [16] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    inc y
+    // [17] if((byte) main::y#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$10
+    cmp y
+    bne b1
+    // main::@return
+    // }
+    // [18] return 
+    rts
+}
+  // File Data
+

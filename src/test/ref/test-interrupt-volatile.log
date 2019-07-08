@@ -168,68 +168,68 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ col#2 col#0 col#1 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
   b1_from_main:
   b1_from_b2:
-  // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b1_from_b2
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // asm { lda$dc0d  }
+    // entry interrupt(KERNEL_MIN)
+    // asm { lda$dc0d  }
     lda $dc0d
-  // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [9] return  - exit interrupt(KERNEL_MIN)
+    // [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
@@ -250,68 +250,68 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#2 col#0 col#1 ]
 Uplifting [] best 186 combination zp ZP_BYTE:2 [ col#2 col#0 col#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
   b1_from_main:
   b1_from_b2:
-  // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b1_from_b2
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // asm { lda$dc0d  }
+    // entry interrupt(KERNEL_MIN)
+    // asm { lda$dc0d  }
     lda $dc0d
-  // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [9] return  - exit interrupt(KERNEL_MIN)
+    // [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -358,54 +358,60 @@ zp ZP_BYTE:2 [ col#2 col#0 col#1 ]
 FINAL ASSEMBLER
 Score: 123
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-// @begin
+  // @begin
 bbegin:
-// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // col = 0
+  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
   jsr main
   rts
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // *KERNEL_IRQ = &irq
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
-  // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
-  // main::@1
-  // main::@2
+    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+    // [5] phi (byte) col#2 = (byte) col#0 [phi:main/main::@2->main::@1#0] -- register_copy 
+    // main::@1
+    // main::@2
   b2:
-  // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
+    // col++;
+    // [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b2
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // asm { lda$dc0d  }
+    // entry interrupt(KERNEL_MIN)
+    // asm
+    // asm { lda$dc0d  }
     lda $dc0d
-  // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // *BGCOL = col
+    // [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  // irq::@return
-  // [9] return  - exit interrupt(KERNEL_MIN)
+    // irq::@return
+    // }
+    // [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 

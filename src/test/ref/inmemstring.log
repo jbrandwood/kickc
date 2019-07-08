@@ -203,85 +203,85 @@ Allocated zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
 Allocated zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label i = 2
     .label cursor = 3
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
-  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda TEXT,y
     ldy #0
     sta (cursor),y
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
     inc i
-  // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp i
     bne b3_from_b1
-  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b2
-  // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -291,12 +291,12 @@ main: {
     bcc b1_from_b2
   !:
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "camelot "
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -318,80 +318,80 @@ Uplifting [] best 828 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::cursor#2 main::cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label cursor = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
-  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b3_from_b1
-  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
+    // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b2
-  // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -401,12 +401,12 @@ main: {
     bcc b1_from_b2
   !:
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "camelot "
 
 ASSEMBLER OPTIMIZATIONS
@@ -471,60 +471,63 @@ zp ZP_WORD:2 [ main::cursor#2 main::cursor#1 ]
 FINAL ASSEMBLER
 Score: 636
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label cursor = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
-  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // *cursor = TEXT[i]
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y
-  // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
+    // if(++i==8)
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) 8) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b2
-  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
+    // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [10] phi (byte) main::i#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  // main::@3
-  // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
-  // main::@2
+    // [9] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // main::@3
+    // [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    // [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+    // main::@2
   b2:
-  // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
+    // while(++cursor<SCREEN+1000)
+    // [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -533,10 +536,11 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-  // main::@return
-  // [13] return 
+    // main::@return
+    // }
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   TEXT: .text "camelot "
 

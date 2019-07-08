@@ -2076,83 +2076,83 @@ Allocated zp ZP_BYTE:60 [ init_font_hex::$2 ]
 Allocated zp ZP_BYTE:61 [ init_font_hex::idx#3 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label RASTER = $d012
   .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $2800
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label clear_char = 2
-  // [5] call init_font_hex 
-  // [87] phi from main to init_font_hex [phi:main->init_font_hex]
+    // [5] call init_font_hex 
+    // [87] phi from main to init_font_hex [phi:main->init_font_hex]
   init_font_hex_from_main:
     jsr init_font_hex
-  // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
-  // main::toD0181
+    // main::toD0181
   toD0181:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [8] call init_angle_screen 
-  // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
+    // [8] call init_angle_screen 
+    // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
   init_angle_screen_from_b5:
     jsr init_angle_screen
-  // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
+    // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta clear_char
     lda #>CHARSET
     sta clear_char+1
     jmp b1
-  // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
+    // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
     lda clear_char+1
     cmp #>CHARSET+$800
     bcc !+
@@ -2162,23 +2162,23 @@ main: {
     bcs b1_from_b3
   !:
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (clear_char),y
-  // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
+    // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
     inc clear_char
     bne !+
     inc clear_char+1
   !:
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-// init_angle_screen
+  // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
@@ -2198,95 +2198,95 @@ init_angle_screen: {
     .label screen_topline = 5
     .label screen_bottomline = 7
     .label y = 4
-  // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
+    // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   b1_from_init_angle_screen:
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_bottomline
     lda #>SCREEN+$28*$c
     sta screen_bottomline+1
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_topline
     lda #>SCREEN+$28*$c
     sta screen_topline+1
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b1
-  // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
+    // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
   b1_from_b3:
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
     jmp b1
-  // init_angle_screen::@1
+    // init_angle_screen::@1
   b1:
-  // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
+    // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
   b2_from_b1:
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
     sta xb
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp b2
-  // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
+    // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
   b2_from_b4:
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
     jmp b2
-  // init_angle_screen::@2
+    // init_angle_screen::@2
   b2:
-  // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda x
     asl
     sta _2
-  // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuz1=vbuc1_minus_vbuz2 
+    // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$27
     sec
     sbc _2
     sta _3
-  // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
+    // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
     lda _3
     ldy #0
     sta xw+1
     sty xw
-  // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda y
     asl
     sta _6
-  // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
+    // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
     lda _6
     ldy #0
     sta yw+1
     sty yw
-  // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0 -- vwsz1=vwsz2 
+    // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0 -- vwsz1=vwsz2 
     lda xw
     sta atan2_16.x
     lda xw+1
     sta atan2_16.x+1
-  // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0 -- vwsz1=vwsz2 
+    // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0 -- vwsz1=vwsz2 
     lda yw
     sta atan2_16.y
     lda yw+1
     sta atan2_16.y+1
-  // [24] call atan2_16 
+    // [24] call atan2_16 
     jsr atan2_16
-  // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0 -- vwuz1=vwuz2 
+    // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0 -- vwuz1=vwuz2 
     lda atan2_16.return
     sta atan2_16.return_2
     lda atan2_16.return+1
     sta atan2_16.return_2+1
     jmp b4
-  // init_angle_screen::@4
+    // init_angle_screen::@4
   b4:
-  // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2 -- vwuz1=vwuz2 
+    // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2 -- vwuz1=vwuz2 
     lda atan2_16.return_2
     sta angle_w
     lda atan2_16.return_2+1
     sta angle_w+1
-  // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz2_plus_vbuc1 
+    // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz2_plus_vbuc1 
     lda #$80
     clc
     adc angle_w
@@ -2294,52 +2294,52 @@ init_angle_screen: {
     lda #0
     adc angle_w+1
     sta _10+1
-  // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
+    // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
     lda _10+1
     sta ang_w
-  // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_plus_vbuz2 
+    // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax ang_w
     axs #-[$80]
     stx _12
-  // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _12
     ldy x
     sta (screen_topline),y
-  // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_minus_vbuz2 
+    // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$80
     sec
     sbc ang_w
     sta _13
-  // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _13
     ldy x
     sta (screen_bottomline),y
-  // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuz1=_neg_vbuz2 
+    // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuz1=_neg_vbuz2 
     lda ang_w
     eor #$ff
     clc
     adc #1
     sta _14
-  // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _14
     ldy xb
     sta (screen_topline),y
-  // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ang_w
     ldy xb
     sta (screen_bottomline),y
-  // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
+    // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
+    // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec xb
-  // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$13+1
     bcc b2_from_b4
     jmp b3
-  // init_angle_screen::@3
+    // init_angle_screen::@3
   b3:
-  // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
+    // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
     lda screen_topline
     sec
     sbc #<$28
@@ -2347,7 +2347,7 @@ init_angle_screen: {
     lda screen_topline+1
     sbc #>$28
     sta screen_topline+1
-  // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen_bottomline
@@ -2355,19 +2355,19 @@ init_angle_screen: {
     bcc !+
     inc screen_bottomline+1
   !:
-  // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
+    // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp y
     bne b1_from_b3
     jmp breturn
-  // init_angle_screen::@return
+    // init_angle_screen::@return
   breturn:
-  // [43] return 
+    // [43] return 
     rts
 }
-// atan2_16
+  // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
@@ -2393,13 +2393,13 @@ atan2_16: {
     .label angle_6 = $10
     .label angle_12 = $10
     .label angle_13 = $10
-  // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
+    // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda y+1
     bpl b1
     jmp b2
-  // atan2_16::@2
+    // atan2_16::@2
   b2:
-  // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
+    // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc y
@@ -2407,20 +2407,20 @@ atan2_16: {
     lda #0
     sbc y+1
     sta _2+1
-  // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
+    // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
   b3_from_b1:
   b3_from_b2:
-  // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
+    // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
     jmp b3
-  // atan2_16::@3
+    // atan2_16::@3
   b3:
-  // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
+    // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda x+1
     bpl b4
     jmp b5
-  // atan2_16::@5
+    // atan2_16::@5
   b5:
-  // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
+    // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc x
@@ -2428,54 +2428,54 @@ atan2_16: {
     lda #0
     sbc x+1
     sta _7+1
-  // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
+    // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
   b6_from_b4:
   b6_from_b5:
-  // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
+    // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
     jmp b6
-  // atan2_16::@6
+    // atan2_16::@6
   b6:
-  // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
+    // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
   b10_from_b6:
-  // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
+    // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #0
     sta angle_12
     lda #0
     sta angle_12+1
-  // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuz1=vbuc1 
+    // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
     jmp b10
-  // atan2_16::@10
+    // atan2_16::@10
   b10:
-  // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
+    // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda yi+1
     bne b11
     lda yi
     bne b11
-  // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
+    // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
   b12_from_b10:
   b12_from_b19:
-  // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
+    // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
     jmp b12
-  // atan2_16::@12
+    // atan2_16::@12
   b12:
-  // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
+    // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda angle_6+1
     lsr
     sta angle+1
     lda angle_6
     ror
     sta angle
-  // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
+    // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda x+1
     bpl b7_from_b12
     jmp b21
-  // atan2_16::@21
+    // atan2_16::@21
   b21:
-  // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
+    // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
     sbc angle
@@ -2483,20 +2483,20 @@ atan2_16: {
     lda #>$8000
     sbc angle+1
     sta angle+1
-  // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
+    // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
   b7_from_b12:
   b7_from_b21:
-  // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
+    // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
     jmp b7
-  // atan2_16::@7
+    // atan2_16::@7
   b7:
-  // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
+    // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda y+1
     bpl b8_from_b7
     jmp b9
-  // atan2_16::@9
+    // atan2_16::@9
   b9:
-  // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
+    // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
     sbc angle
@@ -2504,81 +2504,81 @@ atan2_16: {
     lda #0
     sbc angle+1
     sta angle+1
-  // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
+    // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
   b8_from_b7:
   b8_from_b9:
-  // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
+    // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
     jmp b8
-  // atan2_16::@8
+    // atan2_16::@8
   b8:
     jmp breturn
-  // atan2_16::@return
+    // atan2_16::@return
   breturn:
-  // [60] return 
+    // [60] return 
     rts
-  // atan2_16::@11
+    // atan2_16::@11
   b11:
-  // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuz1=vbuz2 
+    // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuz1=vbuz2 
     lda i
     sta shift
-  // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
+    // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-  // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
+    // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
     lda yi
     sta yd
     lda yi+1
     sta yd+1
-  // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
+    // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
   b13_from_b11:
   b13_from_b14:
-  // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
-  // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
-  // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
+    // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
+    // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
+    // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
     jmp b13
-  // atan2_16::@13
+    // atan2_16::@13
   b13:
-  // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuz1_ge_vbuc1_then_la1 
+    // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuz1_ge_vbuc1_then_la1 
     lda shift
     cmp #2
     bcs b14
     jmp b15
-  // atan2_16::@15
+    // atan2_16::@15
   b15:
-  // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuz1_then_la1 
+    // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp shift
     beq b17_from_b15
     jmp b16
-  // atan2_16::@16
+    // atan2_16::@16
   b16:
-  // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda xd+1
     cmp #$80
     ror xd+1
     ror xd
-  // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-  // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
+    // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
   b17_from_b15:
   b17_from_b16:
-  // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
-  // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
+    // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
+    // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
     jmp b17
-  // atan2_16::@17
+    // atan2_16::@17
   b17:
-  // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
+    // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda yi+1
     bpl b18
     jmp b20
-  // atan2_16::@20
+    // atan2_16::@20
   b20:
-  // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda xi
     sec
     sbc yd
@@ -2586,7 +2586,7 @@ atan2_16: {
     lda xi+1
     sbc yd+1
     sta xi+1
-  // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda yi
     clc
     adc xd
@@ -2594,11 +2594,11 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-  // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta _24
-  // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
+    // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
     ldy _24
     sec
     lda angle_3
@@ -2607,31 +2607,31 @@ atan2_16: {
     lda angle_3+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle_3+1
-  // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
+    // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
   b19_from_b18:
   b19_from_b20:
-  // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
-  // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
-  // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
+    // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
+    // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
+    // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
     jmp b19
-  // atan2_16::@19
+    // atan2_16::@19
   b19:
-  // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
+    // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
+    // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_16-1+1
     cmp i
     beq b12_from_b19
-  // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
+    // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
   b10_from_b19:
-  // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
-  // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
+    // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
+    // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
     jmp b10
-  // atan2_16::@18
+    // atan2_16::@18
   b18:
-  // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda xi
     clc
     adc yd
@@ -2639,7 +2639,7 @@ atan2_16: {
     lda xi+1
     adc yd+1
     sta xi+1
-  // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda yi
     sec
     sbc xd
@@ -2647,11 +2647,11 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-  // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta _23
-  // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
+    // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
     ldy _23
     clc
     lda angle_2
@@ -2661,9 +2661,9 @@ atan2_16: {
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle_2+1
     jmp b19_from_b18
-  // atan2_16::@14
+    // atan2_16::@14
   b14:
-  // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda xd+1
     cmp #$80
     ror xd+1
@@ -2672,7 +2672,7 @@ atan2_16: {
     cmp #$80
     ror xd+1
     ror xd
-  // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda yd+1
     cmp #$80
     ror yd+1
@@ -2681,28 +2681,28 @@ atan2_16: {
     cmp #$80
     ror yd+1
     ror yd
-  // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
+    // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
     dec shift
     dec shift
     jmp b13_from_b14
-  // atan2_16::@4
+    // atan2_16::@4
   b4:
-  // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
+    // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda x
     sta xi
     lda x+1
     sta xi+1
     jmp b6_from_b4
-  // atan2_16::@1
+    // atan2_16::@1
   b1:
-  // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
+    // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda y
     sta yi
     lda y+1
     sta yi+1
     jmp b3_from_b1
 }
-// init_font_hex
+  // init_font_hex
 // Make charset from proto chars
 // init_font_hex(byte* zeropage($1c) charset)
 init_font_hex: {
@@ -2717,71 +2717,71 @@ init_font_hex: {
     .label c1 = $20
     .label proto_hi = $19
     .label c = $1b
-  // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
   b1_from_init_font_hex:
-  // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta c
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_hi
     lda #>FONT_HEX_PROTO
     sta proto_hi+1
-  // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta charset
     lda #>CHARSET
     sta charset+1
     jmp b1
-  // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
-  // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-  // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
     jmp b1
-  // init_font_hex::@1
+    // init_font_hex::@1
   b1:
-  // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
   b2_from_b1:
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta c1
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_lo
     lda #>FONT_HEX_PROTO
     sta proto_lo+1
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
-  // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
   b2_from_b4:
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
     jmp b2
-  // init_font_hex::@2
+    // init_font_hex::@2
   b2:
-  // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (charset),y
-  // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
   b3_from_b2:
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta idx
-  // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b3
-  // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   b3_from_b3:
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-  // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
     jmp b3
-  // init_font_hex::@3
+    // init_font_hex::@3
   b3:
-  // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
+    // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
     ldy i
     lda (proto_hi),y
     asl
@@ -2789,43 +2789,43 @@ init_font_hex: {
     asl
     asl
     sta _0
-  // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
+    // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
     ldy i
     lda (proto_lo),y
     asl
     sta _1
-  // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
+    // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
     lda _0
     ora _1
     sta _2
-  // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _2
     ldy idx
     sta (charset),y
-  // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
+    // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
     cmp i
     bne b3_from_b3
     jmp b4
-  // init_font_hex::@4
+    // init_font_hex::@4
   b4:
-  // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy idx
     sta (charset),y
-  // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
+    // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
     ldy idx
     iny
     sty idx_3
-  // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy idx_3
     sta (charset),y
-  // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_lo
@@ -2833,7 +2833,7 @@ init_font_hex: {
     bcc !+
     inc proto_lo+1
   !:
-  // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc charset
@@ -2841,16 +2841,16 @@ init_font_hex: {
     bcc !+
     inc charset+1
   !:
-  // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc c1
-  // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c1
     bne b2_from_b4
     jmp b5
-  // init_font_hex::@5
+    // init_font_hex::@5
   b5:
-  // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_hi
@@ -2858,19 +2858,19 @@ init_font_hex: {
     bcc !+
     inc proto_hi+1
   !:
-  // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc c
-  // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c
     bne b1_from_b5
     jmp breturn
-  // init_font_hex::@return
+    // init_font_hex::@return
   breturn:
-  // [109] return 
+    // [109] return 
     rts
 }
-// File Data
+  // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
@@ -3114,83 +3114,83 @@ Allocated (was zp ZP_BYTE:52) zp ZP_BYTE:34 [ init_angle_screen::ang_w#0 ]
 Allocated (was zp ZP_BYTE:58) zp ZP_BYTE:35 [ init_font_hex::$0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label RASTER = $d012
   .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $2800
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label clear_char = 2
-  // [5] call init_font_hex 
-  // [87] phi from main to init_font_hex [phi:main->init_font_hex]
+    // [5] call init_font_hex 
+    // [87] phi from main to init_font_hex [phi:main->init_font_hex]
   init_font_hex_from_main:
     jsr init_font_hex
-  // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
-  // main::toD0181
+    // main::toD0181
   toD0181:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [8] call init_angle_screen 
-  // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
+    // [8] call init_angle_screen 
+    // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
   init_angle_screen_from_b5:
     jsr init_angle_screen
-  // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
+    // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta clear_char
     lda #>CHARSET
     sta clear_char+1
     jmp b1
-  // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
+    // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
     lda clear_char+1
     cmp #>CHARSET+$800
     bcc !+
@@ -3200,23 +3200,23 @@ main: {
     bcs b1_from_b3
   !:
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (clear_char),y
-  // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
+    // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
     inc clear_char
     bne !+
     inc clear_char+1
   !:
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-// init_angle_screen
+  // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
@@ -3230,74 +3230,74 @@ init_angle_screen: {
     .label screen_topline = 5
     .label screen_bottomline = 7
     .label y = 4
-  // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
+    // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   b1_from_init_angle_screen:
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_bottomline
     lda #>SCREEN+$28*$c
     sta screen_bottomline+1
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_topline
     lda #>SCREEN+$28*$c
     sta screen_topline+1
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b1
-  // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
+    // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
   b1_from_b3:
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
     jmp b1
-  // init_angle_screen::@1
+    // init_angle_screen::@1
   b1:
-  // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
+    // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
   b2_from_b1:
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
     sta xb
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp b2
-  // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
+    // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
   b2_from_b4:
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
     jmp b2
-  // init_angle_screen::@2
+    // init_angle_screen::@2
   b2:
-  // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda x
     asl
-  // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuaa=vbuc1_minus_vbuaa 
+    // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
     clc
     adc #$27+1
-  // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
+    // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
     sta xw+1
     sty xw
-  // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda y
     asl
-  // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
+    // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
     sta yw+1
     sty yw
-  // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
-  // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
-  // [24] call atan2_16 
+    // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
+    // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
+    // [24] call atan2_16 
     jsr atan2_16
-  // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0
+    // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0
     jmp b4
-  // init_angle_screen::@4
+    // init_angle_screen::@4
   b4:
-  // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2
-  // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
+    // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2
+    // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
     adc _10
@@ -3305,47 +3305,47 @@ init_angle_screen: {
     bcc !+
     inc _10+1
   !:
-  // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
+    // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
     lda _10+1
     sta ang_w
-  // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
+    // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
     lda #$80
     clc
     adc ang_w
-  // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy x
     sta (screen_topline),y
-  // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
+    // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
     lda #$80
     sec
     sbc ang_w
-  // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy x
     sta (screen_bottomline),y
-  // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
+    // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
     lda ang_w
     eor #$ff
     clc
     adc #1
-  // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy xb
     sta (screen_topline),y
-  // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ang_w
     ldy xb
     sta (screen_bottomline),y
-  // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
+    // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
+    // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec xb
-  // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$13+1
     bcc b2_from_b4
     jmp b3
-  // init_angle_screen::@3
+    // init_angle_screen::@3
   b3:
-  // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
+    // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
     lda screen_topline
     sec
     sbc #<$28
@@ -3353,7 +3353,7 @@ init_angle_screen: {
     lda screen_topline+1
     sbc #>$28
     sta screen_topline+1
-  // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen_bottomline
@@ -3361,19 +3361,19 @@ init_angle_screen: {
     bcc !+
     inc screen_bottomline+1
   !:
-  // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
+    // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp y
     bne b1_from_b3
     jmp breturn
-  // init_angle_screen::@return
+    // init_angle_screen::@return
   breturn:
-  // [43] return 
+    // [43] return 
     rts
 }
-// atan2_16
+  // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
@@ -3389,13 +3389,13 @@ atan2_16: {
     .label return = $f
     .label x = $1e
     .label y = $20
-  // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
+    // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda y+1
     bpl b1
     jmp b2
-  // atan2_16::@2
+    // atan2_16::@2
   b2:
-  // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
+    // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc y
@@ -3403,20 +3403,20 @@ atan2_16: {
     lda #0
     sbc y+1
     sta _2+1
-  // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
+    // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
   b3_from_b1:
   b3_from_b2:
-  // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
+    // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
     jmp b3
-  // atan2_16::@3
+    // atan2_16::@3
   b3:
-  // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
+    // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda x+1
     bpl b4
     jmp b5
-  // atan2_16::@5
+    // atan2_16::@5
   b5:
-  // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
+    // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc x
@@ -3424,49 +3424,49 @@ atan2_16: {
     lda #0
     sbc x+1
     sta _7+1
-  // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
+    // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
   b6_from_b4:
   b6_from_b5:
-  // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
+    // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
     jmp b6
-  // atan2_16::@6
+    // atan2_16::@6
   b6:
-  // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
+    // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
   b10_from_b6:
-  // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
+    // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #0
     sta angle
     lda #0
     sta angle+1
-  // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
+    // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
     ldx #0
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
     jmp b10
-  // atan2_16::@10
+    // atan2_16::@10
   b10:
-  // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
+    // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda yi+1
     bne b11
     lda yi
     bne b11
-  // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
+    // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
   b12_from_b10:
   b12_from_b19:
-  // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
+    // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
     jmp b12
-  // atan2_16::@12
+    // atan2_16::@12
   b12:
-  // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr angle+1
     ror angle
-  // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
+    // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda x+1
     bpl b7_from_b12
     jmp b21
-  // atan2_16::@21
+    // atan2_16::@21
   b21:
-  // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
+    // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
     sbc angle
@@ -3474,20 +3474,20 @@ atan2_16: {
     lda #>$8000
     sbc angle+1
     sta angle+1
-  // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
+    // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
   b7_from_b12:
   b7_from_b21:
-  // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
+    // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
     jmp b7
-  // atan2_16::@7
+    // atan2_16::@7
   b7:
-  // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
+    // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda y+1
     bpl b8_from_b7
     jmp b9
-  // atan2_16::@9
+    // atan2_16::@9
   b9:
-  // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
+    // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
     sbc angle
@@ -3495,79 +3495,79 @@ atan2_16: {
     lda #0
     sbc angle+1
     sta angle+1
-  // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
+    // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
   b8_from_b7:
   b8_from_b9:
-  // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
+    // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
     jmp b8
-  // atan2_16::@8
+    // atan2_16::@8
   b8:
     jmp breturn
-  // atan2_16::@return
+    // atan2_16::@return
   breturn:
-  // [60] return 
+    // [60] return 
     rts
-  // atan2_16::@11
+    // atan2_16::@11
   b11:
-  // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
+    // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
     txa
     tay
-  // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
+    // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-  // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
+    // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
     lda yi
     sta yd
     lda yi+1
     sta yd+1
-  // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
+    // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
   b13_from_b11:
   b13_from_b14:
-  // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
-  // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
-  // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
+    // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
+    // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
+    // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
     jmp b13
-  // atan2_16::@13
+    // atan2_16::@13
   b13:
-  // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
+    // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
     cpy #2
     bcs b14
     jmp b15
-  // atan2_16::@15
+    // atan2_16::@15
   b15:
-  // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
+    // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
     cpy #0
     beq b17_from_b15
     jmp b16
-  // atan2_16::@16
+    // atan2_16::@16
   b16:
-  // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda xd+1
     cmp #$80
     ror xd+1
     ror xd
-  // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-  // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
+    // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
   b17_from_b15:
   b17_from_b16:
-  // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
-  // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
+    // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
+    // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
     jmp b17
-  // atan2_16::@17
+    // atan2_16::@17
   b17:
-  // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
+    // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda yi+1
     bpl b18
     jmp b20
-  // atan2_16::@20
+    // atan2_16::@20
   b20:
-  // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda xi
     sec
     sbc yd
@@ -3575,7 +3575,7 @@ atan2_16: {
     lda xi+1
     sbc yd+1
     sta xi+1
-  // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda yi
     clc
     adc xd
@@ -3583,10 +3583,10 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-  // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda angle
@@ -3595,30 +3595,30 @@ atan2_16: {
     lda angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-  // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
+    // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
   b19_from_b18:
   b19_from_b20:
-  // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
-  // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
-  // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
+    // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
+    // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
+    // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
     jmp b19
-  // atan2_16::@19
+    // atan2_16::@19
   b19:
-  // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
+    // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     beq b12_from_b19
-  // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
+    // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
   b10_from_b19:
-  // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
-  // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
+    // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
+    // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
     jmp b10
-  // atan2_16::@18
+    // atan2_16::@18
   b18:
-  // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda xi
     clc
     adc yd
@@ -3626,7 +3626,7 @@ atan2_16: {
     lda xi+1
     adc yd+1
     sta xi+1
-  // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda yi
     sec
     sbc xd
@@ -3634,10 +3634,10 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-  // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda angle
@@ -3647,9 +3647,9 @@ atan2_16: {
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
     jmp b19_from_b18
-  // atan2_16::@14
+    // atan2_16::@14
   b14:
-  // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda xd+1
     cmp #$80
     ror xd+1
@@ -3658,7 +3658,7 @@ atan2_16: {
     cmp #$80
     ror xd+1
     ror xd
-  // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda yd+1
     cmp #$80
     ror yd+1
@@ -3667,28 +3667,28 @@ atan2_16: {
     cmp #$80
     ror yd+1
     ror yd
-  // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
+    // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
     dey
     jmp b13_from_b14
-  // atan2_16::@4
+    // atan2_16::@4
   b4:
-  // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
+    // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda x
     sta xi
     lda x+1
     sta xi+1
     jmp b6_from_b4
-  // atan2_16::@1
+    // atan2_16::@1
   b1:
-  // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
+    // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda y
     sta yi
     lda y+1
     sta yi+1
     jmp b3_from_b1
 }
-// init_font_hex
+  // init_font_hex
 // Make charset from proto chars
 // init_font_hex(byte* zeropage($18) charset)
 init_font_hex: {
@@ -3699,70 +3699,70 @@ init_font_hex: {
     .label c1 = $1c
     .label proto_hi = $15
     .label c = $17
-  // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
   b1_from_init_font_hex:
-  // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta c
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_hi
     lda #>FONT_HEX_PROTO
     sta proto_hi+1
-  // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta charset
     lda #>CHARSET
     sta charset+1
     jmp b1
-  // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
-  // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-  // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
     jmp b1
-  // init_font_hex::@1
+    // init_font_hex::@1
   b1:
-  // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
   b2_from_b1:
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta c1
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_lo
     lda #>FONT_HEX_PROTO
     sta proto_lo+1
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
-  // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
   b2_from_b4:
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
     jmp b2
-  // init_font_hex::@2
+    // init_font_hex::@2
   b2:
-  // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (charset),y
-  // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
   b3_from_b2:
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta idx
-  // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-  // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   b3_from_b3:
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-  // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
     jmp b3
-  // init_font_hex::@3
+    // init_font_hex::@3
   b3:
-  // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
+    // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
     txa
     tay
     lda (proto_hi),y
@@ -3771,37 +3771,37 @@ init_font_hex: {
     asl
     asl
     sta _0
-  // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
+    // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
-  // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
+    // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
     ora _0
-  // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy idx
     sta (charset),y
-  // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
+    // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #5
     bne b3_from_b3
     jmp b4
-  // init_font_hex::@4
+    // init_font_hex::@4
   b4:
-  // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy idx
     sta (charset),y
-  // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
+    // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
     ldy idx
     iny
-  // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #0
     sta (charset),y
-  // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_lo
@@ -3809,7 +3809,7 @@ init_font_hex: {
     bcc !+
     inc proto_lo+1
   !:
-  // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc charset
@@ -3817,16 +3817,16 @@ init_font_hex: {
     bcc !+
     inc charset+1
   !:
-  // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc c1
-  // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c1
     bne b2_from_b4
     jmp b5
-  // init_font_hex::@5
+    // init_font_hex::@5
   b5:
-  // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_hi
@@ -3834,19 +3834,19 @@ init_font_hex: {
     bcc !+
     inc proto_hi+1
   !:
-  // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc c
-  // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c
     bne b1_from_b5
     jmp breturn
-  // init_font_hex::@return
+    // init_font_hex::@return
   breturn:
-  // [109] return 
+    // [109] return 
     rts
 }
-// File Data
+  // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
@@ -4227,59 +4227,64 @@ reg byte y [ init_font_hex::idx#3 ]
 FINAL ASSEMBLER
 Score: 1056679
 
-// File Comments
+  // File Comments
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label RASTER = $d012
   .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $2800
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label clear_char = 2
-  // [5] call init_font_hex 
-  // [87] phi from main to init_font_hex [phi:main->init_font_hex]
+    // init_font_hex(CHARSET)
+    // [5] call init_font_hex 
+    // [87] phi from main to init_font_hex [phi:main->init_font_hex]
     jsr init_font_hex
-  // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
-  // main::toD0181
-  // main::@5
-  // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // main::toD0181
+    // main::@5
+    // *D018 = toD018(SCREEN, CHARSET)
+    // [7] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  // [8] call init_angle_screen 
-  // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
+    // init_angle_screen(SCREEN)
+    // [8] call init_angle_screen 
+    // [14] phi from main::@5 to init_angle_screen [phi:main::@5->init_angle_screen]
     jsr init_angle_screen
-  // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
+    // [9] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [9] phi (byte*) main::clear_char#5 = (const byte*) CHARSET#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta clear_char
     lda #>CHARSET
     sta clear_char+1
-  // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  // main::@1
-  // main::@2
+    // [9] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // main::@1
+    // main::@2
   b2:
-  // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(*RASTER!=0xff)
+    // [10] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
-  // main::@3
-  // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
+    // main::@3
+    // if(clear_char<CHARSET+0x0800)
+    // [11] if((byte*) main::clear_char#5>=(const byte*) CHARSET#0+(word) $800) goto main::@1 -- pbuz1_ge_pbuc1_then_la1 
     lda clear_char+1
     cmp #>CHARSET+$800
     bcc !+
@@ -4288,21 +4293,23 @@ main: {
     cmp #<CHARSET+$800
     bcs b2
   !:
-  // main::@4
-  // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // main::@4
+    // *clear_char++ = 0
+    // [12] *((byte*) main::clear_char#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (clear_char),y
-  // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
+    // *clear_char++ = 0;
+    // [13] (byte*) main::clear_char#1 ← ++ (byte*) main::clear_char#5 -- pbuz1=_inc_pbuz1 
     inc clear_char
     bne !+
     inc clear_char+1
   !:
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [9] phi (byte*) main::clear_char#5 = (byte*) main::clear_char#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b2
 }
-// init_angle_screen
+  // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
@@ -4316,63 +4323,71 @@ init_angle_screen: {
     .label screen_topline = 5
     .label screen_bottomline = 7
     .label y = 4
-  // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_bottomline
     lda #>SCREEN+$28*$c
     sta screen_bottomline+1
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta screen_topline
     lda #>SCREEN+$28*$c
     sta screen_topline+1
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta y
-  // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
-  // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
-  // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
-  // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
-  // init_angle_screen::@1
+    // [15] phi from init_angle_screen::@3 to init_angle_screen::@1 [phi:init_angle_screen::@3->init_angle_screen::@1]
+    // [15] phi (byte*) init_angle_screen::screen_bottomline#5 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#0] -- register_copy 
+    // [15] phi (byte*) init_angle_screen::screen_topline#5 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@3->init_angle_screen::@1#1] -- register_copy 
+    // [15] phi (byte) init_angle_screen::y#4 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@3->init_angle_screen::@1#2] -- register_copy 
+    // init_angle_screen::@1
   b1:
-  // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
+    // [16] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
     sta xb
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta x
-  // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
-  // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
-  // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
-  // init_angle_screen::@2
+    // [16] phi from init_angle_screen::@4 to init_angle_screen::@2 [phi:init_angle_screen::@4->init_angle_screen::@2]
+    // [16] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@4->init_angle_screen::@2#0] -- register_copy 
+    // [16] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@4->init_angle_screen::@2#1] -- register_copy 
+    // init_angle_screen::@2
   b2:
-  // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // x*2
+    // [17] (byte~) init_angle_screen::$2 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda x
     asl
-  // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuaa=vbuc1_minus_vbuaa 
+    // 39-x*2
+    // [18] (byte~) init_angle_screen::$3 ← (byte) $27 - (byte~) init_angle_screen::$2 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
     clc
     adc #$27+1
-  // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
+    // (word){ 39-x*2, 0 }
+    // [19] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$3 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
     sta xw+1
     sty xw
-  // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // y*2
+    // [20] (byte~) init_angle_screen::$6 ← (byte) init_angle_screen::y#4 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda y
     asl
-  // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
+    // (word){ y*2, 0 }
+    // [21] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$6 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     sta yw+1
     sty yw
-  // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
-  // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
-  // [24] call atan2_16 
+    // atan2_16(xw, yw)
+    // [22] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
+    // [23] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
+    // [24] call atan2_16 
     jsr atan2_16
-  // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0
-  // init_angle_screen::@4
-  // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2
-  // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
+    // [25] (word) atan2_16::return#2 ← (word) atan2_16::return#0
+    // init_angle_screen::@4
+    // angle_w = atan2_16(xw, yw)
+    // [26] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2
+    // angle_w+0x0080
+    // [27] (word~) init_angle_screen::$10 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
     adc _10
@@ -4380,43 +4395,53 @@ init_angle_screen: {
     bcc !+
     inc _10+1
   !:
-  // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
+    // ang_w = >(angle_w+0x0080)
+    // [28] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$10 -- vbuz1=_hi_vwuz2 
     lda _10+1
     sta ang_w
-  // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
+    // 0x80+ang_w
+    // [29] (byte~) init_angle_screen::$12 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
     lda #$80
     clc
     adc ang_w
-  // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // screen_topline[x] = 0x80+ang_w
+    // [30] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$12 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy x
     sta (screen_topline),y
-  // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
+    // 0x80-ang_w
+    // [31] (byte~) init_angle_screen::$13 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
     lda #$80
     sec
     sbc ang_w
-  // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // screen_bottomline[x] = 0x80-ang_w
+    // [32] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuaa 
     sta (screen_bottomline),y
-  // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
+    // -ang_w
+    // [33] (byte~) init_angle_screen::$14 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
     lda ang_w
     eor #$ff
     clc
     adc #1
-  // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // screen_topline[xb] = -ang_w
+    // [34] *((byte*) init_angle_screen::screen_topline#5 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy xb
     sta (screen_topline),y
-  // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // screen_bottomline[xb] = ang_w
+    // [35] *((byte*) init_angle_screen::screen_bottomline#5 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ang_w
     sta (screen_bottomline),y
-  // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    // [36] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
+    // [37] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec xb
-  // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [38] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$13+1
     bcc b2
-  // init_angle_screen::@3
-  // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
+    // init_angle_screen::@3
+    // screen_topline -= 40
+    // [39] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#5 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
     lda screen_topline
     sec
     sbc #<$28
@@ -4424,7 +4449,8 @@ init_angle_screen: {
     lda screen_topline+1
     sbc #>$28
     sta screen_topline+1
-  // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // screen_bottomline += 40
+    // [40] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen_bottomline
@@ -4432,17 +4458,19 @@ init_angle_screen: {
     bcc !+
     inc screen_bottomline+1
   !:
-  // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
+    // for(byte y: 0..12)
+    // [41] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [42] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp y
     bne b1
-  // init_angle_screen::@return
-  // [43] return 
+    // init_angle_screen::@return
+    // }
+    // [43] return 
     rts
 }
-// atan2_16
+  // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
@@ -4458,13 +4486,14 @@ atan2_16: {
     .label return = $f
     .label x = $1e
     .label y = $20
-  // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
+    // (y>=0)?y:-y
+    // [44] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda y+1
     bmi !b1+
     jmp b1
   !b1:
-  // atan2_16::@2
-  // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
+    // atan2_16::@2
+    // [45] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc y
@@ -4472,17 +4501,18 @@ atan2_16: {
     lda #0
     sbc y+1
     sta _2+1
-  // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
-  // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
-  // atan2_16::@3
+    // [46] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
+    // [46] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
+    // atan2_16::@3
   b3:
-  // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
+    // (x>=0)?x:-x
+    // [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda x+1
     bmi !b4+
     jmp b4
   !b4:
-  // atan2_16::@5
-  // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
+    // atan2_16::@5
+    // [48] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc x
@@ -4490,38 +4520,42 @@ atan2_16: {
     lda #0
     sbc x+1
     sta _7+1
-  // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
-  // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
-  // atan2_16::@6
+    // [49] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
+    // [49] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
+    // atan2_16::@6
   b6:
-  // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
-  // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
+    // [50] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
+    // [50] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #0
     sta angle
     sta angle+1
-  // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
+    // [50] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
     tax
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
-  // atan2_16::@10
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
+    // atan2_16::@10
   b10:
-  // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
+    // if(yi==0)
+    // [51] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda yi+1
     bne b11
     lda yi
     bne b11
-  // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
-  // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
-  // atan2_16::@12
+    // [52] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
+    // [52] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
+    // atan2_16::@12
   b12:
-  // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    // angle /=2
+    // [53] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr angle+1
     ror angle
-  // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
+    // if(x<0)
+    // [54] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda x+1
     bpl b7
-  // atan2_16::@21
-  // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
+    // atan2_16::@21
+    // angle = 0x8000-angle
+    // [55] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
     sbc angle
@@ -4529,15 +4563,17 @@ atan2_16: {
     lda #>$8000
     sbc angle+1
     sta angle+1
-  // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
-  // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
-  // atan2_16::@7
+    // [56] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
+    // [56] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
+    // atan2_16::@7
   b7:
-  // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
+    // if(y<0)
+    // [57] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda y+1
     bpl b8
-  // atan2_16::@9
-  // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
+    // atan2_16::@9
+    // angle = -angle
+    // [58] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
     sbc angle
@@ -4545,62 +4581,69 @@ atan2_16: {
     lda #0
     sbc angle+1
     sta angle+1
-  // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
-  // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
-  // atan2_16::@8
+    // [59] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
+    // [59] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
+    // atan2_16::@8
   b8:
-  // atan2_16::@return
-  // [60] return 
+    // atan2_16::@return
+    // }
+    // [60] return 
     rts
-  // atan2_16::@11
+    // atan2_16::@11
   b11:
-  // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
+    // [61] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
     txa
     tay
-  // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
+    // [62] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
     lda xi
     sta xd
     lda xi+1
     sta xd+1
-  // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
+    // [63] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
     lda yi
     sta yd
     lda yi+1
     sta yd+1
-  // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
-  // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
-  // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
-  // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
-  // atan2_16::@13
+    // [64] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
+    // [64] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
+    // [64] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
+    // [64] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
+    // atan2_16::@13
   b13:
-  // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
+    // while(shift>=2)
+    // [65] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
     cpy #2
     bcs b14
-  // atan2_16::@15
-  // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
+    // atan2_16::@15
+    // if(shift)
+    // [66] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
     cpy #0
     beq b17
-  // atan2_16::@16
-  // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // atan2_16::@16
+    // xd >>= 1
+    // [67] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda xd+1
     cmp #$80
     ror xd+1
     ror xd
-  // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
+    // yd >>= 1
+    // [68] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda yd+1
     cmp #$80
     ror yd+1
     ror yd
-  // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
-  // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
-  // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
-  // atan2_16::@17
+    // [69] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
+    // [69] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
+    // [69] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
+    // atan2_16::@17
   b17:
-  // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
+    // if(yi>=0)
+    // [70] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda yi+1
     bpl b18
-  // atan2_16::@20
-  // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // atan2_16::@20
+    // xi -= yd
+    // [71] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda xi
     sec
     sbc yd
@@ -4608,7 +4651,8 @@ atan2_16: {
     lda xi+1
     sbc yd+1
     sta xi+1
-  // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // yi += xd
+    // [72] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda yi
     clc
     adc xd
@@ -4616,10 +4660,11 @@ atan2_16: {
     lda yi+1
     adc xd+1
     sta yi+1
-  // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // angle -= CORDIC_ATAN2_ANGLES_16[i]
+    // [73] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [74] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda angle
@@ -4628,28 +4673,30 @@ atan2_16: {
     lda angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
-  // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
-  // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
-  // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
-  // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
-  // atan2_16::@19
+    // [75] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
+    // [75] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
+    // [75] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
+    // [75] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
+    // atan2_16::@19
   b19:
-  // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // [76] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [77] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !b12+
     jmp b12
   !b12:
-  // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
-  // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
-  // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
-  // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
-  // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
+    // [50] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
+    // [50] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
+    // [50] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
+    // [50] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
+    // [50] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
     jmp b10
-  // atan2_16::@18
+    // atan2_16::@18
   b18:
-  // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
+    // xi += yd
+    // [78] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda xi
     clc
     adc yd
@@ -4657,7 +4704,8 @@ atan2_16: {
     lda xi+1
     adc yd+1
     sta xi+1
-  // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
+    // yi -= xd
+    // [79] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda yi
     sec
     sbc xd
@@ -4665,10 +4713,11 @@ atan2_16: {
     lda yi+1
     sbc xd+1
     sta yi+1
-  // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // angle += CORDIC_ATAN2_ANGLES_16[i]
+    // [80] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [81] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda angle
@@ -4678,9 +4727,10 @@ atan2_16: {
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta angle+1
     jmp b19
-  // atan2_16::@14
+    // atan2_16::@14
   b14:
-  // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // xd >>= 2
+    // [82] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda xd+1
     cmp #$80
     ror xd+1
@@ -4689,7 +4739,8 @@ atan2_16: {
     cmp #$80
     ror xd+1
     ror xd
-  // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
+    // yd >>= 2
+    // [83] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda yd+1
     cmp #$80
     ror yd+1
@@ -4698,28 +4749,29 @@ atan2_16: {
     cmp #$80
     ror yd+1
     ror yd
-  // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
+    // shift -=2
+    // [84] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
     dey
     jmp b13
-  // atan2_16::@4
+    // atan2_16::@4
   b4:
-  // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
+    // [85] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda x
     sta xi
     lda x+1
     sta xi+1
     jmp b6
-  // atan2_16::@1
+    // atan2_16::@1
   b1:
-  // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
+    // [86] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda y
     sta yi
     lda y+1
     sta yi+1
     jmp b3
 }
-// init_font_hex
+  // init_font_hex
 // Make charset from proto chars
 // init_font_hex(byte* zeropage($18) charset)
 init_font_hex: {
@@ -4730,58 +4782,60 @@ init_font_hex: {
     .label c1 = $1c
     .label proto_hi = $15
     .label c = $17
-  // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
-  // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [88] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [88] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta c
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_hi
     lda #>FONT_HEX_PROTO
     sta proto_hi+1
-  // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [88] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta charset
     lda #>CHARSET
     sta charset+1
-  // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
-  // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-  // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-  // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
-  // init_font_hex::@1
+    // [88] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [88] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [88] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [88] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // init_font_hex::@1
   b1:
-  // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [89] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta c1
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta proto_lo
     lda #>FONT_HEX_PROTO
     sta proto_lo+1
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
-  // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
-  // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-  // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-  // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
-  // init_font_hex::@2
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [89] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [89] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [89] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [89] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // init_font_hex::@2
   b2:
-  // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // charset[idx++] = 0
+    // [90] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (charset),y
-  // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [91] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta idx
-  // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
-  // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
-  // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-  // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
-  // init_font_hex::@3
+    // [91] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [91] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [91] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // init_font_hex::@3
   b3:
-  // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
+    // proto_hi[i]<<4
+    // [92] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
     txa
     tay
     lda (proto_hi),y
@@ -4790,33 +4844,42 @@ init_font_hex: {
     asl
     asl
     sta _0
-  // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
+    // proto_lo[i]<<1
+    // [93] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
-  // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    // [94] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
     ora _0
-  // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    // [95] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy idx
     sta (charset),y
-  // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    // [96] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i: 0..4)
+    // [97] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [98] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #5
     bne b3
-  // init_font_hex::@4
-  // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // init_font_hex::@4
+    // charset[idx++] = 0
+    // [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy idx
     sta (charset),y
-  // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
+    // charset[idx++] = 0;
+    // [100] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
     iny
-  // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // charset[idx++] = 0
+    // [101] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     sta (charset),y
-  // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // proto_lo += 5
+    // [102] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_lo
@@ -4824,7 +4887,8 @@ init_font_hex: {
     bcc !+
     inc proto_lo+1
   !:
-  // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // charset += 8
+    // [103] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc charset
@@ -4832,14 +4896,16 @@ init_font_hex: {
     bcc !+
     inc charset+1
   !:
-  // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // for( byte c: 0..15 )
+    // [104] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc c1
-  // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [105] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c1
     bne b2
-  // init_font_hex::@5
-  // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // init_font_hex::@5
+    // proto_hi += 5
+    // [106] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc proto_hi
@@ -4847,17 +4913,19 @@ init_font_hex: {
     bcc !+
     inc proto_hi+1
   !:
-  // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // for( byte c: 0..15 )
+    // [107] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc c
-  // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [108] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c
     bne b1
-  // init_font_hex::@return
-  // [109] return 
+    // init_font_hex::@return
+    // }
+    // [109] return 
     rts
 }
-// File Data
+  // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...

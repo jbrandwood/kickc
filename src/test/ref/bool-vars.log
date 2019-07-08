@@ -710,99 +710,99 @@ Allocated zp ZP_BYTE:10 [ bool_or::$1 ]
 Allocated zp ZP_BYTE:11 [ bool_and::$1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // A test of boolean conditions using && || and !
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call bool_and 
-  // [47] phi from main to bool_and [phi:main->bool_and]
+    // [5] call bool_and 
+    // [47] phi from main to bool_and [phi:main->bool_and]
   bool_and_from_main:
     jsr bool_and
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call bool_or 
-  // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+    // [7] call bool_or 
+    // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
   bool_or_from_b1:
     jsr bool_or
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call bool_not 
-  // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+    // [9] call bool_not 
+    // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
   bool_not_from_b2:
     jsr bool_not
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] call bool_complex 
-  // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
+    // [11] call bool_complex 
+    // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
   bool_complex_from_b3:
     jsr bool_complex
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [12] return 
+    // [12] return 
     rts
 }
-// bool_complex
+  // bool_complex
 bool_complex: {
     .label screen = $478
     .label _1 = 7
     .label o1 = 6
     .label o2 = 8
     .label i = 2
-  // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
+    // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
   b1_from_bool_complex:
-  // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuz1=vbuc1 
+    // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
+    // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
   b1_from_b3:
-  // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
+    // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
     jmp b1
-  // bool_complex::@1
+    // bool_complex::@1
   b1:
-  // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuz2_lt_vbuc1 
+    // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuz2_lt_vbuc1 
     lda i
     cmp #$a
     lda #0
     rol
     eor #1
     sta o1
-  // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
+    // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
     lda _1
     eor #0
     beq !+
@@ -810,244 +810,244 @@ bool_complex: {
   !:
     eor #1
     sta o2
-  // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
+    // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b6
     jmp b5
-  // bool_complex::@6
+    // bool_complex::@6
   b6:
-  // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
+    // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b2
     jmp b5
-  // bool_complex::@5
+    // bool_complex::@5
   b5:
-  // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b4
     jmp b7
-  // bool_complex::@7
+    // bool_complex::@7
   b7:
-  // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b4
     jmp b2
-  // bool_complex::@2
+    // bool_complex::@2
   b2:
-  // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy i
     sta screen,y
     jmp b3
-  // bool_complex::@3
+    // bool_complex::@3
   b3:
-  // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuz1=_inc_vbuz1 
+    // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp i
     bne b1_from_b3
     jmp breturn
-  // bool_complex::@return
+    // bool_complex::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
-  // bool_complex::@4
+    // bool_complex::@4
   b4:
-  // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy i
     sta screen,y
     jmp b3
 }
-// bool_not
+  // bool_not
 bool_not: {
     .label screen = $450
     .label _1 = 9
     .label i = 3
-  // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+    // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
   b1_from_bool_not:
-  // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuz1=vbuc1 
+    // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+    // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
   b1_from_b3:
-  // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+    // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
     jmp b1
-  // bool_not::@1
+    // bool_not::@1
   b1:
-  // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b4
     jmp b5
-  // bool_not::@5
+    // bool_not::@5
   b5:
-  // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuz1_eq_0_then_la1 
+    // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuz1_eq_0_then_la1 
     lda _1
     cmp #0
     beq b4
     jmp b2
-  // bool_not::@2
+    // bool_not::@2
   b2:
-  // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy i
     sta screen,y
     jmp b3
-  // bool_not::@3
+    // bool_not::@3
   b3:
-  // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuz1=_inc_vbuz1 
+    // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp i
     bne b1_from_b3
     jmp breturn
-  // bool_not::@return
+    // bool_not::@return
   breturn:
-  // [35] return 
+    // [35] return 
     rts
-  // bool_not::@4
+    // bool_not::@4
   b4:
-  // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy i
     sta screen,y
     jmp b3
 }
-// bool_or
+  // bool_or
 bool_or: {
     .label screen = $428
     .label _1 = $a
     .label i = 4
-  // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+    // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
   b1_from_bool_or:
-  // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuz1=vbuc1 
+    // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+    // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
   b1_from_b3:
-  // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+    // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
     jmp b1
-  // bool_or::@1
+    // bool_or::@1
   b1:
-  // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b2
     jmp b5
-  // bool_or::@5
+    // bool_or::@5
   b5:
-  // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuz1_eq_0_then_la1 
+    // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuz1_eq_0_then_la1 
     lda _1
     cmp #0
     beq b2
     jmp b4
-  // bool_or::@4
+    // bool_or::@4
   b4:
-  // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy i
     sta screen,y
     jmp b3
-  // bool_or::@3
+    // bool_or::@3
   b3:
-  // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuz1=_inc_vbuz1 
+    // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp i
     bne b1_from_b3
     jmp breturn
-  // bool_or::@return
+    // bool_or::@return
   breturn:
-  // [45] return 
+    // [45] return 
     rts
-  // bool_or::@2
+    // bool_or::@2
   b2:
-  // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy i
     sta screen,y
     jmp b3
 }
-// bool_and
+  // bool_and
 bool_and: {
     .label screen = $400
     .label _1 = $b
     .label i = 5
-  // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+    // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
   b1_from_bool_and:
-  // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuz1=vbuc1 
+    // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+    // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
   b1_from_b3:
-  // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+    // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
     jmp b1
-  // bool_and::@1
+    // bool_and::@1
   b1:
-  // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuz1_ge_vbuc1_then_la1 
+    // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuz1_ge_vbuc1_then_la1 
     lda i
     cmp #$a
     bcs b4
     jmp b5
-  // bool_and::@5
+    // bool_and::@5
   b5:
-  // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuz1_eq_0_then_la1 
+    // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuz1_eq_0_then_la1 
     lda _1
     cmp #0
     beq b2
     jmp b4
-  // bool_and::@4
+    // bool_and::@4
   b4:
-  // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy i
     sta screen,y
     jmp b3
-  // bool_and::@3
+    // bool_and::@3
   b3:
-  // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuz1=_inc_vbuz1 
+    // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp i
     bne b1_from_b3
     jmp breturn
-  // bool_and::@return
+    // bool_and::@return
   breturn:
-  // [55] return 
+    // [55] return 
     rts
-  // bool_and::@2
+    // bool_and::@2
   b2:
-  // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy i
     sta screen,y
     jmp b3
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) always clobbers reg byte a 
@@ -1118,308 +1118,308 @@ Allocated (was zp ZP_BOOL:6) zp ZP_BOOL:2 [ bool_complex::o1#0 ]
 Allocated (was zp ZP_BOOL:8) zp ZP_BOOL:3 [ bool_complex::o2#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // A test of boolean conditions using && || and !
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call bool_and 
-  // [47] phi from main to bool_and [phi:main->bool_and]
+    // [5] call bool_and 
+    // [47] phi from main to bool_and [phi:main->bool_and]
   bool_and_from_main:
     jsr bool_and
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call bool_or 
-  // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+    // [7] call bool_or 
+    // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
   bool_or_from_b1:
     jsr bool_or
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call bool_not 
-  // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+    // [9] call bool_not 
+    // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
   bool_not_from_b2:
     jsr bool_not
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] call bool_complex 
-  // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
+    // [11] call bool_complex 
+    // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
   bool_complex_from_b3:
     jsr bool_complex
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [12] return 
+    // [12] return 
     rts
 }
-// bool_complex
+  // bool_complex
 bool_complex: {
     .label screen = $478
     .label o1 = 2
     .label o2 = 3
-  // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
+    // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
   b1_from_bool_complex:
-  // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
+    // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
+    // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
   b1_from_b3:
-  // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
+    // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
     jmp b1
-  // bool_complex::@1
+    // bool_complex::@1
   b1:
-  // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuxx_lt_vbuc1 
+    // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuxx_lt_vbuc1 
     cpx #$a
     lda #0
     rol
     eor #1
     sta o1
-  // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuaa_eq_vbuc1 
+    // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuaa_eq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
     eor #1
     sta o2
-  // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
+    // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b6
     jmp b5
-  // bool_complex::@6
+    // bool_complex::@6
   b6:
-  // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
+    // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b2
     jmp b5
-  // bool_complex::@5
+    // bool_complex::@5
   b5:
-  // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b4
     jmp b7
-  // bool_complex::@7
+    // bool_complex::@7
   b7:
-  // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b4
     jmp b2
-  // bool_complex::@2
+    // bool_complex::@2
   b2:
-  // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
-  // bool_complex::@3
+    // bool_complex::@3
   b3:
-  // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuxx=_inc_vbuxx 
+    // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  // bool_complex::@return
+    // bool_complex::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
-  // bool_complex::@4
+    // bool_complex::@4
   b4:
-  // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-// bool_not
+  // bool_not
 bool_not: {
     .label screen = $450
-  // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+    // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
   b1_from_bool_not:
-  // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
+    // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+    // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
   b1_from_b3:
-  // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+    // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
     jmp b1
-  // bool_not::@1
+    // bool_not::@1
   b1:
-  // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b4
     jmp b5
-  // bool_not::@5
+    // bool_not::@5
   b5:
-  // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuaa_eq_0_then_la1 
+    // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
     jmp b2
-  // bool_not::@2
+    // bool_not::@2
   b2:
-  // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
-  // bool_not::@3
+    // bool_not::@3
   b3:
-  // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuxx=_inc_vbuxx 
+    // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  // bool_not::@return
+    // bool_not::@return
   breturn:
-  // [35] return 
+    // [35] return 
     rts
-  // bool_not::@4
+    // bool_not::@4
   b4:
-  // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-// bool_or
+  // bool_or
 bool_or: {
     .label screen = $428
-  // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+    // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
   b1_from_bool_or:
-  // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
+    // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+    // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
   b1_from_b3:
-  // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+    // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
     jmp b1
-  // bool_or::@1
+    // bool_or::@1
   b1:
-  // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
     jmp b5
-  // bool_or::@5
+    // bool_or::@5
   b5:
-  // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuaa_eq_0_then_la1 
+    // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     jmp b4
-  // bool_or::@4
+    // bool_or::@4
   b4:
-  // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
-  // bool_or::@3
+    // bool_or::@3
   b3:
-  // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuxx=_inc_vbuxx 
+    // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  // bool_or::@return
+    // bool_or::@return
   breturn:
-  // [45] return 
+    // [45] return 
     rts
-  // bool_or::@2
+    // bool_or::@2
   b2:
-  // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-// bool_and
+  // bool_and
 bool_and: {
     .label screen = $400
-  // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+    // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
   b1_from_bool_and:
-  // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
+    // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+    // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
   b1_from_b3:
-  // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+    // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
     jmp b1
-  // bool_and::@1
+    // bool_and::@1
   b1:
-  // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuxx_ge_vbuc1_then_la1 
+    // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$a
     bcs b4
     jmp b5
-  // bool_and::@5
+    // bool_and::@5
   b5:
-  // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuaa_eq_0_then_la1 
+    // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     jmp b4
-  // bool_and::@4
+    // bool_and::@4
   b4:
-  // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
-  // bool_and::@3
+    // bool_and::@3
   b3:
-  // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuxx=_inc_vbuxx 
+    // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  // bool_and::@return
+    // bool_and::@return
   breturn:
-  // [55] return 
+    // [55] return 
     rts
-  // bool_and::@2
+    // bool_and::@2
   b2:
-  // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -1596,239 +1596,270 @@ reg byte a [ bool_and::$1 ]
 FINAL ASSEMBLER
 Score: 2059
 
-// File Comments
+  // File Comments
 // A test of boolean conditions using && || and !
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call bool_and 
-  // [47] phi from main to bool_and [phi:main->bool_and]
+    // bool_and()
+    // [5] call bool_and 
+    // [47] phi from main to bool_and [phi:main->bool_and]
     jsr bool_and
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call bool_or 
-  // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // bool_or()
+    // [7] call bool_or 
+    // [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
     jsr bool_or
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [9] call bool_not 
-  // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // bool_not()
+    // [9] call bool_not 
+    // [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
     jsr bool_not
-  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  // main::@3
-  // [11] call bool_complex 
-  // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // main::@3
+    // bool_complex()
+    // [11] call bool_complex 
+    // [13] phi from main::@3 to bool_complex [phi:main::@3->bool_complex]
     jsr bool_complex
-  // main::@return
-  // [12] return 
+    // main::@return
+    // }
+    // [12] return 
     rts
 }
-// bool_complex
+  // bool_complex
 bool_complex: {
     .label screen = $478
     .label o1 = 2
     .label o2 = 3
-  // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
-  // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
+    // [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
+    // [14] phi (byte) bool_complex::i#2 = (byte) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
-  // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
-  // bool_complex::@1
+    // [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
+    // [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
+    // bool_complex::@1
   b1:
-  // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuxx_lt_vbuc1 
+    // o1 = (i<10)
+    // [15] (bool) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte) $a -- vboz1=vbuxx_lt_vbuc1 
     cpx #$a
     lda #0
     rol
     eor #1
     sta o1
-  // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // i&1
+    // [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuaa_eq_vbuc1 
+    // o2 = (i&1)==0
+    // [17] (bool) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte) 0 -- vboz1=vbuaa_eq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
     eor #1
     sta o2
-  // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
+    // if( o5 )
+    // [18] if((bool) bool_complex::o1#0) goto bool_complex::@6 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b6
     jmp b5
-  // bool_complex::@6
+    // bool_complex::@6
   b6:
-  // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
+    // [19] if((bool) bool_complex::o2#0) goto bool_complex::@2 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b2
-  // bool_complex::@5
+    // bool_complex::@5
   b5:
-  // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // [20] if((bool) bool_complex::o1#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o1
     cmp #0
     bne b4
-  // bool_complex::@7
-  // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
+    // bool_complex::@7
+    // [21] if((bool) bool_complex::o2#0) goto bool_complex::@4 -- vboz1_then_la1 
     lda o2
     cmp #0
     bne b4
-  // bool_complex::@2
+    // bool_complex::@2
   b2:
-  // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = '*'
+    // [22] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
-  // bool_complex::@3
+    // bool_complex::@3
   b3:
-  // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i : 0..20)
+    // [23] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [24] if((byte) bool_complex::i#1!=(byte) $15) goto bool_complex::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  // bool_complex::@return
-  // [25] return 
+    // bool_complex::@return
+    // }
+    // [25] return 
     rts
-  // bool_complex::@4
+    // bool_complex::@4
   b4:
-  // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = ' '
+    // [26] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-// bool_not
+  // bool_not
 bool_not: {
     .label screen = $450
-  // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
-  // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
+    // [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+    // [28] phi (byte) bool_not::i#2 = (byte) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
-  // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
-  // bool_not::@1
+    // [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+    // [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+    // bool_not::@1
   b1:
-  // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // i&1
+    // [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // if(o3)
+    // [30] if((byte) bool_not::i#2<(byte) $a) goto bool_not::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b4
-  // bool_not::@5
-  // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuaa_eq_0_then_la1 
+    // bool_not::@5
+    // [31] if((byte~) bool_not::$1==(byte) 0) goto bool_not::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
-  // bool_not::@2
-  // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // bool_not::@2
+    // screen[i] = '*'
+    // [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
-  // bool_not::@3
+    // bool_not::@3
   b3:
-  // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i : 0..20)
+    // [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [34] if((byte) bool_not::i#1!=(byte) $15) goto bool_not::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  // bool_not::@return
-  // [35] return 
+    // bool_not::@return
+    // }
+    // [35] return 
     rts
-  // bool_not::@4
+    // bool_not::@4
   b4:
-  // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = ' '
+    // [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-// bool_or
+  // bool_or
 bool_or: {
     .label screen = $428
-  // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
-  // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
+    // [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+    // [38] phi (byte) bool_or::i#2 = (byte) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
-  // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
-  // bool_or::@1
+    // [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+    // [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+    // bool_or::@1
   b1:
-  // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // i&1
+    // [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // if(o3)
+    // [40] if((byte) bool_or::i#2<(byte) $a) goto bool_or::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
-  // bool_or::@5
-  // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuaa_eq_0_then_la1 
+    // bool_or::@5
+    // [41] if((byte~) bool_or::$1==(byte) 0) goto bool_or::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  // bool_or::@4
-  // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // bool_or::@4
+    // screen[i] = ' '
+    // [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
-  // bool_or::@3
+    // bool_or::@3
   b3:
-  // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i : 0..20)
+    // [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [44] if((byte) bool_or::i#1!=(byte) $15) goto bool_or::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  // bool_or::@return
-  // [45] return 
+    // bool_or::@return
+    // }
+    // [45] return 
     rts
-  // bool_or::@2
+    // bool_or::@2
   b2:
-  // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = '*'
+    // [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-// bool_and
+  // bool_and
 bool_and: {
     .label screen = $400
-  // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
-  // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
+    // [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+    // [48] phi (byte) bool_and::i#2 = (byte) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
-  // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
-  // bool_and::@1
+    // [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+    // [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+    // bool_and::@1
   b1:
-  // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // i&1
+    // [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuxx_ge_vbuc1_then_la1 
+    // if(o3)
+    // [50] if((byte) bool_and::i#2>=(byte) $a) goto bool_and::@4 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$a
     bcs b4
-  // bool_and::@5
-  // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuaa_eq_0_then_la1 
+    // bool_and::@5
+    // [51] if((byte~) bool_and::$1==(byte) 0) goto bool_and::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  // bool_and::@4
+    // bool_and::@4
   b4:
-  // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = ' '
+    // [52] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
-  // bool_and::@3
+    // bool_and::@3
   b3:
-  // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i : 0..20)
+    // [53] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [54] if((byte) bool_and::i#1!=(byte) $15) goto bool_and::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  // bool_and::@return
-  // [55] return 
+    // bool_and::@return
+    // }
+    // [55] return 
     rts
-  // bool_and::@2
+    // bool_and::@2
   b2:
-  // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // screen[i] = '*'
+    // [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-// File Data
+  // File Data
 

@@ -215,47 +215,47 @@ Allocated zp ZP_BYTE:3 [ main::c#0 ]
 Allocated zp ZP_BYTE:4 [ fillscreen::c#0 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label c = 3
-  // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuz1=_deref_pbuc1 
+    // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuz1=_deref_pbuc1 
     lda SCREEN
     sta c
-  // [5] (byte) fillscreen::c#0 ← (byte) main::c#0 -- vbuz1=vbuz2 
+    // [5] (byte) fillscreen::c#0 ← (byte) main::c#0 -- vbuz1=vbuz2 
     lda c
     sta fillscreen.c
-  // [6] call fillscreen 
-  // [8] phi from main to fillscreen [phi:main->fillscreen]
+    // [6] call fillscreen 
+    // [8] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // fillscreen(byte zeropage(4) c)
 fillscreen: {
     .label SCREEN2 = SCREEN+$100
@@ -263,47 +263,47 @@ fillscreen: {
     .label SCREEN4 = SCREEN+$3e8
     .label c = 4
     .label j = 2
-  // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta j
     jmp b1
-  // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  // fillscreen::@1
+    // fillscreen::@1
   b1:
-  // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy j
     sta SCREEN,y
-  // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy j
     sta SCREEN2,y
-  // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy j
     sta SCREEN3,y
-  // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy j
     sta SCREEN4,y
-  // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuz1=_inc_vbuz1 
+    // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuz1_neq_0_then_la1 
+    // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuz1_neq_0_then_la1 
     lda j
     cmp #0
     bne b1_from_b1
     jmp breturn
-  // fillscreen::@return
+    // fillscreen::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ fillscreen::j#2 fillscreen::j#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
@@ -320,79 +320,79 @@ Uplifting [main] best 412 combination reg byte a [ main::c#0 ]
 Uplifting [] best 412 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuaa=_deref_pbuc1 
+    // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuaa=_deref_pbuc1 
     lda SCREEN
-  // [5] (byte) fillscreen::c#0 ← (byte) main::c#0
-  // [6] call fillscreen 
-  // [8] phi from main to fillscreen [phi:main->fillscreen]
+    // [5] (byte) fillscreen::c#0 ← (byte) main::c#0
+    // [6] call fillscreen 
+    // [8] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // fillscreen(byte register(A) c)
 fillscreen: {
     .label SCREEN2 = SCREEN+$100
     .label SCREEN3 = SCREEN+$200
     .label SCREEN4 = SCREEN+$3e8
-  // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
+    // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  // fillscreen::@1
+    // fillscreen::@1
   b1:
-  // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN2,x
-  // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN3,x
-  // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN4,x
-  // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
+    // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
+    // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1_from_b1
     jmp breturn
-  // fillscreen::@return
+    // fillscreen::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -454,60 +454,69 @@ reg byte a [ fillscreen::c#0 ]
 FINAL ASSEMBLER
 Score: 307
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuaa=_deref_pbuc1 
+    // c = (*SCREEN)
+    // [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) -- vbuaa=_deref_pbuc1 
     lda SCREEN
-  // [5] (byte) fillscreen::c#0 ← (byte) main::c#0
-  // [6] call fillscreen 
-  // [8] phi from main to fillscreen [phi:main->fillscreen]
+    // fillscreen(c)
+    // [5] (byte) fillscreen::c#0 ← (byte) main::c#0
+    // [6] call fillscreen 
+    // [8] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
-  // main::@return
-  // [7] return 
+    // main::@return
+    // }
+    // [7] return 
     rts
 }
-// fillscreen
+  // fillscreen
 // fillscreen(byte register(A) c)
 fillscreen: {
     .label SCREEN2 = SCREEN+$100
     .label SCREEN3 = SCREEN+$200
     .label SCREEN4 = SCREEN+$3e8
-  // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
+    // [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  // fillscreen::@1
+    // [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+    // [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    // fillscreen::@1
   b1:
-  // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN[j] = c
+    // [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN2[j] = c
+    // [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN2,x
-  // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN3[j] = c
+    // [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN3,x
-  // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // SCREEN4[j] = c
+    // [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN4,x
-  // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
+    // for(byte j : 0..255)
+    // [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
+    // [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1
-  // fillscreen::@return
-  // [16] return 
+    // fillscreen::@return
+    // }
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 

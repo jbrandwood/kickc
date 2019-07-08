@@ -94,31 +94,31 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Illustrates how inline kickassembler can reference data from the outside program
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x
@@ -128,12 +128,12 @@ main: {
         bne !-
     
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [5] return 
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
   table: .text "cml!"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -146,31 +146,31 @@ Uplifting [main] best 277 combination
 Uplifting [] best 277 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Illustrates how inline kickassembler can reference data from the outside program
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x
@@ -180,12 +180,12 @@ main: {
         bne !-
     
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [5] return 
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
   table: .text "cml!"
 
 ASSEMBLER OPTIMIZATIONS
@@ -222,23 +222,24 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 262
 
-// File Comments
+  // File Comments
 // Illustrates how inline kickassembler can reference data from the outside program
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm
+    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x
@@ -247,10 +248,11 @@ main: {
         cpx #4
         bne !-
     
-  // main::@return
-  // [5] return 
+    // main::@return
+    // }
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
   table: .text "cml!"
 

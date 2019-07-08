@@ -1637,13 +1637,13 @@ Allocated zp ZP_BYTE:5 [ assertType::t2#42 ]
 Allocated zp ZP_BYTE:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests different integer literal types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
@@ -1655,49 +1655,49 @@ INITIAL ASM
   .label SCREEN = $400
   .label COLS = $d800
   .label idx = 6
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label s = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta s
     lda #>SCREEN
     sta s+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (s),y
-  // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
     inc s
     bne !+
     inc s+1
   !:
-  // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda s+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -1706,614 +1706,614 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] call testUnaryOperator 
-  // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
+    // [10] call testUnaryOperator 
+    // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
   testUnaryOperator_from_b2:
     jsr testUnaryOperator
-  // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] call testBinaryOperator 
-  // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
+    // [12] call testBinaryOperator 
+    // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
   testBinaryOperator_from_b3:
     jsr testBinaryOperator
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// testBinaryOperator
+  // testBinaryOperator
 testBinaryOperator: {
-  // [15] call assertType 
-  // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
+    // [15] call assertType 
+    // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
   assertType_from_testBinaryOperator:
-  // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuz1=vbuc1 
     lda #$28
     sta idx
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t1
     jsr assertType
-  // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
+    // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
   b1_from_testBinaryOperator:
     jmp b1
-  // testBinaryOperator::@1
+    // testBinaryOperator::@1
   b1:
-  // [17] call assertType 
-  // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
+    // [17] call assertType 
+    // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
   assertType_from_b1:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t1
     jsr assertType
-  // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
+    // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
   b2_from_b1:
     jmp b2
-  // testBinaryOperator::@2
+    // testBinaryOperator::@2
   b2:
-  // [19] call assertType 
-  // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
+    // [19] call assertType 
+    // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
   assertType_from_b2:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
+    // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
   b3_from_b2:
     jmp b3
-  // testBinaryOperator::@3
+    // testBinaryOperator::@3
   b3:
-  // [21] call assertType 
-  // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
+    // [21] call assertType 
+    // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
   assertType_from_b3:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
+    // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
   b4_from_b3:
     jmp b4
-  // testBinaryOperator::@4
+    // testBinaryOperator::@4
   b4:
-  // [23] call assertType 
-  // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
+    // [23] call assertType 
+    // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
   assertType_from_b4:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
+    // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
   b5_from_b4:
     jmp b5
-  // testBinaryOperator::@5
+    // testBinaryOperator::@5
   b5:
-  // [25] call assertType 
-  // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
+    // [25] call assertType 
+    // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
   assertType_from_b5:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
     jmp b6
-  // testBinaryOperator::@6
+    // testBinaryOperator::@6
   b6:
-  // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [27] call assertType 
-  // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
+    // [27] call assertType 
+    // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
   assertType_from_b6:
-  // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t1
     jsr assertType
-  // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
+    // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
   b7_from_b6:
     jmp b7
-  // testBinaryOperator::@7
+    // testBinaryOperator::@7
   b7:
-  // [29] call assertType 
-  // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
+    // [29] call assertType 
+    // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
   assertType_from_b7:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t1
     jsr assertType
-  // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
+    // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
   b8_from_b7:
     jmp b8
-  // testBinaryOperator::@8
+    // testBinaryOperator::@8
   b8:
-  // [31] call assertType 
-  // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
+    // [31] call assertType 
+    // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
   assertType_from_b8:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
+    // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
   b9_from_b8:
     jmp b9
-  // testBinaryOperator::@9
+    // testBinaryOperator::@9
   b9:
-  // [33] call assertType 
-  // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
+    // [33] call assertType 
+    // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
   assertType_from_b9:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
+    // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
   b10_from_b9:
     jmp b10
-  // testBinaryOperator::@10
+    // testBinaryOperator::@10
   b10:
-  // [35] call assertType 
-  // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
+    // [35] call assertType 
+    // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
   assertType_from_b10:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
+    // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
   b11_from_b10:
     jmp b11
-  // testBinaryOperator::@11
+    // testBinaryOperator::@11
   b11:
-  // [37] call assertType 
-  // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
+    // [37] call assertType 
+    // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
   assertType_from_b11:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
     jmp b12
-  // testBinaryOperator::@12
+    // testBinaryOperator::@12
   b12:
-  // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
+    // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [39] call assertType 
-  // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
+    // [39] call assertType 
+    // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
   assertType_from_b12:
-  // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
+    // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
   b13_from_b12:
     jmp b13
-  // testBinaryOperator::@13
+    // testBinaryOperator::@13
   b13:
-  // [41] call assertType 
-  // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
+    // [41] call assertType 
+    // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
   assertType_from_b13:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
+    // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
   b14_from_b13:
     jmp b14
-  // testBinaryOperator::@14
+    // testBinaryOperator::@14
   b14:
-  // [43] call assertType 
-  // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
+    // [43] call assertType 
+    // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
   assertType_from_b14:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
+    // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
   b15_from_b14:
     jmp b15
-  // testBinaryOperator::@15
+    // testBinaryOperator::@15
   b15:
-  // [45] call assertType 
-  // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
+    // [45] call assertType 
+    // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
   assertType_from_b15:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
+    // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
   b16_from_b15:
     jmp b16
-  // testBinaryOperator::@16
+    // testBinaryOperator::@16
   b16:
-  // [47] call assertType 
-  // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
+    // [47] call assertType 
+    // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
   assertType_from_b16:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
+    // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
   b17_from_b16:
     jmp b17
-  // testBinaryOperator::@17
+    // testBinaryOperator::@17
   b17:
-  // [49] call assertType 
-  // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
+    // [49] call assertType 
+    // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
   assertType_from_b17:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
-  // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
+    // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
   b18_from_b17:
     jmp b18
-  // testBinaryOperator::@18
+    // testBinaryOperator::@18
   b18:
-  // [51] call assertType 
-  // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
+    // [51] call assertType 
+    // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
   assertType_from_b18:
-  // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuz1=vbuc1 
     lda #$50
     sta idx
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
+    // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
   b19_from_b18:
     jmp b19
-  // testBinaryOperator::@19
+    // testBinaryOperator::@19
   b19:
-  // [53] call assertType 
-  // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
+    // [53] call assertType 
+    // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
   assertType_from_b19:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
+    // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
   b20_from_b19:
     jmp b20
-  // testBinaryOperator::@20
+    // testBinaryOperator::@20
   b20:
-  // [55] call assertType 
-  // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
+    // [55] call assertType 
+    // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
   assertType_from_b20:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
+    // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
   b21_from_b20:
     jmp b21
-  // testBinaryOperator::@21
+    // testBinaryOperator::@21
   b21:
-  // [57] call assertType 
-  // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
+    // [57] call assertType 
+    // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
   assertType_from_b21:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
+    // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
   b22_from_b21:
     jmp b22
-  // testBinaryOperator::@22
+    // testBinaryOperator::@22
   b22:
-  // [59] call assertType 
-  // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
+    // [59] call assertType 
+    // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
   assertType_from_b22:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
+    // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
   b23_from_b22:
     jmp b23
-  // testBinaryOperator::@23
+    // testBinaryOperator::@23
   b23:
-  // [61] call assertType 
-  // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
+    // [61] call assertType 
+    // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
   assertType_from_b23:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
     jmp b24
-  // testBinaryOperator::@24
+    // testBinaryOperator::@24
   b24:
-  // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
+    // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [63] call assertType 
-  // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
+    // [63] call assertType 
+    // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
   assertType_from_b24:
-  // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
+    // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
   b25_from_b24:
     jmp b25
-  // testBinaryOperator::@25
+    // testBinaryOperator::@25
   b25:
-  // [65] call assertType 
-  // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
+    // [65] call assertType 
+    // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
   assertType_from_b25:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
+    // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
   b26_from_b25:
     jmp b26
-  // testBinaryOperator::@26
+    // testBinaryOperator::@26
   b26:
-  // [67] call assertType 
-  // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
+    // [67] call assertType 
+    // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
   assertType_from_b26:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
+    // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
   b27_from_b26:
     jmp b27
-  // testBinaryOperator::@27
+    // testBinaryOperator::@27
   b27:
-  // [69] call assertType 
-  // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
+    // [69] call assertType 
+    // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
   assertType_from_b27:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
+    // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
   b28_from_b27:
     jmp b28
-  // testBinaryOperator::@28
+    // testBinaryOperator::@28
   b28:
-  // [71] call assertType 
-  // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
+    // [71] call assertType 
+    // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
   assertType_from_b28:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
+    // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
   b29_from_b28:
     jmp b29
-  // testBinaryOperator::@29
+    // testBinaryOperator::@29
   b29:
-  // [73] call assertType 
-  // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
+    // [73] call assertType 
+    // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
   assertType_from_b29:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
     jmp b30
-  // testBinaryOperator::@30
+    // testBinaryOperator::@30
   b30:
-  // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
+    // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [75] call assertType 
-  // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
+    // [75] call assertType 
+    // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
   assertType_from_b30:
-  // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
-  // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
+    // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
   b31_from_b30:
     jmp b31
-  // testBinaryOperator::@31
+    // testBinaryOperator::@31
   b31:
-  // [77] call assertType 
-  // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
+    // [77] call assertType 
+    // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
   assertType_from_b31:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
-  // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
+    // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
   b32_from_b31:
     jmp b32
-  // testBinaryOperator::@32
+    // testBinaryOperator::@32
   b32:
-  // [79] call assertType 
-  // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
+    // [79] call assertType 
+    // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
   assertType_from_b32:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
-  // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
+    // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
   b33_from_b32:
     jmp b33
-  // testBinaryOperator::@33
+    // testBinaryOperator::@33
   b33:
-  // [81] call assertType 
-  // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
+    // [81] call assertType 
+    // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
   assertType_from_b33:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
-  // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
+    // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
   b34_from_b33:
     jmp b34
-  // testBinaryOperator::@34
+    // testBinaryOperator::@34
   b34:
-  // [83] call assertType 
-  // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
+    // [83] call assertType 
+    // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
   assertType_from_b34:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
+    // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
   b35_from_b34:
     jmp b35
-  // testBinaryOperator::@35
+    // testBinaryOperator::@35
   b35:
-  // [85] call assertType 
-  // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
+    // [85] call assertType 
+    // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
   assertType_from_b35:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
     jmp breturn
-  // testBinaryOperator::@return
+    // testBinaryOperator::@return
   breturn:
-  // [86] return 
+    // [86] return 
     rts
 }
-// assertType
+  // assertType
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
@@ -2321,141 +2321,141 @@ testBinaryOperator: {
 assertType: {
     .label t1 = 4
     .label t2 = 5
-  // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuz1_eq_vbuz2_then_la1 
+    // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuz1_eq_vbuz2_then_la1 
     lda t1
     cmp t2
     beq b1
     jmp b3
-  // assertType::@3
+    // assertType::@3
   b3:
-  // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #RED
     ldy idx
     sta COLS,y
     jmp b2
-  // assertType::@2
+    // assertType::@2
   b2:
-  // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda t1
     ldy idx
     sta SCREEN,y
-  // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuz1=_inc_vbuz1 
+    // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  // assertType::@return
+    // assertType::@return
   breturn:
-  // [92] return 
+    // [92] return 
     rts
-  // assertType::@1
+    // assertType::@1
   b1:
-  // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy idx
     sta COLS,y
     jmp b2
 }
-// testUnaryOperator
+  // testUnaryOperator
 testUnaryOperator: {
-  // [95] call assertType 
-  // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
+    // [95] call assertType 
+    // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
   assertType_from_testUnaryOperator:
-  // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t1
     jsr assertType
-  // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
+    // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
   b1_from_testUnaryOperator:
     jmp b1
-  // testUnaryOperator::@1
+    // testUnaryOperator::@1
   b1:
-  // [97] call assertType 
-  // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
+    // [97] call assertType 
+    // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
   assertType_from_b1:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t1
     jsr assertType
-  // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
+    // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
   b2_from_b1:
     jmp b2
-  // testUnaryOperator::@2
+    // testUnaryOperator::@2
   b2:
-  // [99] call assertType 
-  // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
+    // [99] call assertType 
+    // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
   assertType_from_b2:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t1
     jsr assertType
-  // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
+    // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
   b3_from_b2:
     jmp b3
-  // testUnaryOperator::@3
+    // testUnaryOperator::@3
   b3:
-  // [101] call assertType 
-  // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
+    // [101] call assertType 
+    // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
   assertType_from_b3:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t1
     jsr assertType
-  // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
+    // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
   b4_from_b3:
     jmp b4
-  // testUnaryOperator::@4
+    // testUnaryOperator::@4
   b4:
-  // [103] call assertType 
-  // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
+    // [103] call assertType 
+    // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
   assertType_from_b4:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t1
     jsr assertType
-  // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
+    // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
   b5_from_b4:
     jmp b5
-  // testUnaryOperator::@5
+    // testUnaryOperator::@5
   b5:
-  // [105] call assertType 
-  // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
+    // [105] call assertType 
+    // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
   assertType_from_b5:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t1
     jsr assertType
     jmp breturn
-  // testUnaryOperator::@return
+    // testUnaryOperator::@return
   breturn:
-  // [106] return 
+    // [106] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((byte*) main::s#2) ← (byte) ' ' [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a reg byte y 
@@ -2492,13 +2492,13 @@ Uplifting [assertType] best 1345 combination zp ZP_BYTE:5 [ assertType::t2#42 ]
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assertType::t2#42 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests different integer literal types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
@@ -2509,49 +2509,49 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const GREEN = 5
   .label SCREEN = $400
   .label COLS = $d800
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label s = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta s
     lda #>SCREEN
     sta s+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (s),y
-  // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
+    // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
     inc s
     bne !+
     inc s+1
   !:
-  // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda s+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -2560,707 +2560,707 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1_from_b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] call testUnaryOperator 
-  // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
+    // [10] call testUnaryOperator 
+    // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
   testUnaryOperator_from_b2:
     jsr testUnaryOperator
-  // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] call testBinaryOperator 
-  // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
+    // [12] call testBinaryOperator 
+    // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
   testBinaryOperator_from_b3:
     jsr testBinaryOperator
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// testBinaryOperator
+  // testBinaryOperator
 testBinaryOperator: {
-  // [15] call assertType 
-  // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
+    // [15] call assertType 
+    // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
   assertType_from_testBinaryOperator:
-  // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuxx=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuxx=vbuc1 
     ldx #$28
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_BYTE
     jsr assertType
-  // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
+    // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
   b1_from_testBinaryOperator:
     jmp b1
-  // testBinaryOperator::@1
+    // testBinaryOperator::@1
   b1:
-  // [17] call assertType 
-  // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
+    // [17] call assertType 
+    // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
   assertType_from_b1:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_BYTE
     jsr assertType
-  // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
+    // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
   b2_from_b1:
     jmp b2
-  // testBinaryOperator::@2
+    // testBinaryOperator::@2
   b2:
-  // [19] call assertType 
-  // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
+    // [19] call assertType 
+    // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
   assertType_from_b2:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
+    // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
   b3_from_b2:
     jmp b3
-  // testBinaryOperator::@3
+    // testBinaryOperator::@3
   b3:
-  // [21] call assertType 
-  // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
+    // [21] call assertType 
+    // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
   assertType_from_b3:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
+    // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
   b4_from_b3:
     jmp b4
-  // testBinaryOperator::@4
+    // testBinaryOperator::@4
   b4:
-  // [23] call assertType 
-  // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
+    // [23] call assertType 
+    // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
   assertType_from_b4:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
+    // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
   b5_from_b4:
     jmp b5
-  // testBinaryOperator::@5
+    // testBinaryOperator::@5
   b5:
-  // [25] call assertType 
-  // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
+    // [25] call assertType 
+    // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
   assertType_from_b5:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     jmp b6
-  // testBinaryOperator::@6
+    // testBinaryOperator::@6
   b6:
-  // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [27] call assertType 
-  // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
+    // [27] call assertType 
+    // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
   assertType_from_b6:
-  // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_BYTE
     jsr assertType
-  // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
+    // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
   b7_from_b6:
     jmp b7
-  // testBinaryOperator::@7
+    // testBinaryOperator::@7
   b7:
-  // [29] call assertType 
-  // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
+    // [29] call assertType 
+    // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
   assertType_from_b7:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_BYTE
     jsr assertType
-  // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
+    // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
   b8_from_b7:
     jmp b8
-  // testBinaryOperator::@8
+    // testBinaryOperator::@8
   b8:
-  // [31] call assertType 
-  // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
+    // [31] call assertType 
+    // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
   assertType_from_b8:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
+    // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
   b9_from_b8:
     jmp b9
-  // testBinaryOperator::@9
+    // testBinaryOperator::@9
   b9:
-  // [33] call assertType 
-  // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
+    // [33] call assertType 
+    // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
   assertType_from_b9:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
+    // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
   b10_from_b9:
     jmp b10
-  // testBinaryOperator::@10
+    // testBinaryOperator::@10
   b10:
-  // [35] call assertType 
-  // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
+    // [35] call assertType 
+    // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
   assertType_from_b10:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
+    // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
   b11_from_b10:
     jmp b11
-  // testBinaryOperator::@11
+    // testBinaryOperator::@11
   b11:
-  // [37] call assertType 
-  // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
+    // [37] call assertType 
+    // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
   assertType_from_b11:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     jmp b12
-  // testBinaryOperator::@12
+    // testBinaryOperator::@12
   b12:
-  // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [39] call assertType 
-  // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
+    // [39] call assertType 
+    // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
   assertType_from_b12:
-  // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
+    // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
   b13_from_b12:
     jmp b13
-  // testBinaryOperator::@13
+    // testBinaryOperator::@13
   b13:
-  // [41] call assertType 
-  // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
+    // [41] call assertType 
+    // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
   assertType_from_b13:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
+    // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
   b14_from_b13:
     jmp b14
-  // testBinaryOperator::@14
+    // testBinaryOperator::@14
   b14:
-  // [43] call assertType 
-  // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
+    // [43] call assertType 
+    // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
   assertType_from_b14:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
+    // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
   b15_from_b14:
     jmp b15
-  // testBinaryOperator::@15
+    // testBinaryOperator::@15
   b15:
-  // [45] call assertType 
-  // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
+    // [45] call assertType 
+    // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
   assertType_from_b15:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
+    // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
   b16_from_b15:
     jmp b16
-  // testBinaryOperator::@16
+    // testBinaryOperator::@16
   b16:
-  // [47] call assertType 
-  // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
+    // [47] call assertType 
+    // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
   assertType_from_b16:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
+    // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
   b17_from_b16:
     jmp b17
-  // testBinaryOperator::@17
+    // testBinaryOperator::@17
   b17:
-  // [49] call assertType 
-  // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
+    // [49] call assertType 
+    // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
   assertType_from_b17:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-  // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
+    // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
   b18_from_b17:
     jmp b18
-  // testBinaryOperator::@18
+    // testBinaryOperator::@18
   b18:
-  // [51] call assertType 
-  // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
+    // [51] call assertType 
+    // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
   assertType_from_b18:
-  // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuxx=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuxx=vbuc1 
     ldx #$50
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
+    // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
   b19_from_b18:
     jmp b19
-  // testBinaryOperator::@19
+    // testBinaryOperator::@19
   b19:
-  // [53] call assertType 
-  // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
+    // [53] call assertType 
+    // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
   assertType_from_b19:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
+    // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
   b20_from_b19:
     jmp b20
-  // testBinaryOperator::@20
+    // testBinaryOperator::@20
   b20:
-  // [55] call assertType 
-  // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
+    // [55] call assertType 
+    // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
   assertType_from_b20:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
+    // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
   b21_from_b20:
     jmp b21
-  // testBinaryOperator::@21
+    // testBinaryOperator::@21
   b21:
-  // [57] call assertType 
-  // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
+    // [57] call assertType 
+    // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
   assertType_from_b21:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
+    // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
   b22_from_b21:
     jmp b22
-  // testBinaryOperator::@22
+    // testBinaryOperator::@22
   b22:
-  // [59] call assertType 
-  // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
+    // [59] call assertType 
+    // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
   assertType_from_b22:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
+    // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
   b23_from_b22:
     jmp b23
-  // testBinaryOperator::@23
+    // testBinaryOperator::@23
   b23:
-  // [61] call assertType 
-  // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
+    // [61] call assertType 
+    // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
   assertType_from_b23:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     jmp b24
-  // testBinaryOperator::@24
+    // testBinaryOperator::@24
   b24:
-  // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [63] call assertType 
-  // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
+    // [63] call assertType 
+    // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
   assertType_from_b24:
-  // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
+    // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
   b25_from_b24:
     jmp b25
-  // testBinaryOperator::@25
+    // testBinaryOperator::@25
   b25:
-  // [65] call assertType 
-  // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
+    // [65] call assertType 
+    // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
   assertType_from_b25:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
+    // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
   b26_from_b25:
     jmp b26
-  // testBinaryOperator::@26
+    // testBinaryOperator::@26
   b26:
-  // [67] call assertType 
-  // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
+    // [67] call assertType 
+    // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
   assertType_from_b26:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
+    // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
   b27_from_b26:
     jmp b27
-  // testBinaryOperator::@27
+    // testBinaryOperator::@27
   b27:
-  // [69] call assertType 
-  // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
+    // [69] call assertType 
+    // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
   assertType_from_b27:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
+    // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
   b28_from_b27:
     jmp b28
-  // testBinaryOperator::@28
+    // testBinaryOperator::@28
   b28:
-  // [71] call assertType 
-  // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
+    // [71] call assertType 
+    // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
   assertType_from_b28:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
+    // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
   b29_from_b28:
     jmp b29
-  // testBinaryOperator::@29
+    // testBinaryOperator::@29
   b29:
-  // [73] call assertType 
-  // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
+    // [73] call assertType 
+    // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
   assertType_from_b29:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
     jmp b30
-  // testBinaryOperator::@30
+    // testBinaryOperator::@30
   b30:
-  // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [75] call assertType 
-  // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
+    // [75] call assertType 
+    // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
   assertType_from_b30:
-  // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-  // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
+    // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
   b31_from_b30:
     jmp b31
-  // testBinaryOperator::@31
+    // testBinaryOperator::@31
   b31:
-  // [77] call assertType 
-  // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
+    // [77] call assertType 
+    // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
   assertType_from_b31:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-  // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
+    // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
   b32_from_b31:
     jmp b32
-  // testBinaryOperator::@32
+    // testBinaryOperator::@32
   b32:
-  // [79] call assertType 
-  // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
+    // [79] call assertType 
+    // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
   assertType_from_b32:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-  // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
+    // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
   b33_from_b32:
     jmp b33
-  // testBinaryOperator::@33
+    // testBinaryOperator::@33
   b33:
-  // [81] call assertType 
-  // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
+    // [81] call assertType 
+    // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
   assertType_from_b33:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-  // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
+    // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
   b34_from_b33:
     jmp b34
-  // testBinaryOperator::@34
+    // testBinaryOperator::@34
   b34:
-  // [83] call assertType 
-  // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
+    // [83] call assertType 
+    // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
   assertType_from_b34:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
+    // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
   b35_from_b34:
     jmp b35
-  // testBinaryOperator::@35
+    // testBinaryOperator::@35
   b35:
-  // [85] call assertType 
-  // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
+    // [85] call assertType 
+    // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
   assertType_from_b35:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     jmp breturn
-  // testBinaryOperator::@return
+    // testBinaryOperator::@return
   breturn:
-  // [86] return 
+    // [86] return 
     rts
 }
-// assertType
+  // assertType
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
 // assertType(byte register(Y) t1, byte zeropage(4) t2)
 assertType: {
     .label t2 = 4
-  // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
+    // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
     tya
     cmp t2
     beq b1
     jmp b3
-  // assertType::@3
+    // assertType::@3
   b3:
-  // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta COLS,x
     jmp b2
-  // assertType::@2
+    // assertType::@2
   b2:
-  // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
-  // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuxx=_inc_vbuxx 
+    // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuxx=_inc_vbuxx 
     inx
     jmp breturn
-  // assertType::@return
+    // assertType::@return
   breturn:
-  // [92] return 
+    // [92] return 
     rts
-  // assertType::@1
+    // assertType::@1
   b1:
-  // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta COLS,x
     jmp b2
 }
-// testUnaryOperator
+  // testUnaryOperator
 testUnaryOperator: {
-  // [95] call assertType 
-  // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
+    // [95] call assertType 
+    // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
   assertType_from_testUnaryOperator:
-  // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuxx=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuxx=vbuc1 
     ldx #0
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_BYTE
     jsr assertType
-  // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
+    // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
   b1_from_testUnaryOperator:
     jmp b1
-  // testUnaryOperator::@1
+    // testUnaryOperator::@1
   b1:
-  // [97] call assertType 
-  // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
+    // [97] call assertType 
+    // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
   assertType_from_b1:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_BYTE
     jsr assertType
-  // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
+    // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
   b2_from_b1:
     jmp b2
-  // testUnaryOperator::@2
+    // testUnaryOperator::@2
   b2:
-  // [99] call assertType 
-  // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
+    // [99] call assertType 
+    // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
   assertType_from_b2:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_WORD
     jsr assertType
-  // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
+    // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
   b3_from_b2:
     jmp b3
-  // testUnaryOperator::@3
+    // testUnaryOperator::@3
   b3:
-  // [101] call assertType 
-  // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
+    // [101] call assertType 
+    // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
   assertType_from_b3:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
-  // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
+    // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
   b4_from_b3:
     jmp b4
-  // testUnaryOperator::@4
+    // testUnaryOperator::@4
   b4:
-  // [103] call assertType 
-  // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
+    // [103] call assertType 
+    // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
   assertType_from_b4:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_DWORD
     jsr assertType
-  // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
+    // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
   b5_from_b4:
     jmp b5
-  // testUnaryOperator::@5
+    // testUnaryOperator::@5
   b5:
-  // [105] call assertType 
-  // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
+    // [105] call assertType 
+    // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
   assertType_from_b5:
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     jmp breturn
-  // testUnaryOperator::@return
+    // testUnaryOperator::@return
   breturn:
-  // [106] return 
+    // [106] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -3601,13 +3601,13 @@ reg byte x [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
 FINAL ASSEMBLER
 Score: 1129
 
-// File Comments
+  // File Comments
 // Tests different integer literal types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
@@ -3618,36 +3618,38 @@ Score: 1129
   .const GREEN = 5
   .label SCREEN = $400
   .label COLS = $d800
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label s = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::s#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta s
     lda #>SCREEN
     sta s+1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // *s = ' '
+    // [6] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (s),y
-  // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
+    // for(byte* s=SCREEN;s<SCREEN+1000;s++)
+    // [7] (byte*) main::s#1 ← ++ (byte*) main::s#2 -- pbuz1=_inc_pbuz1 
     inc s
     bne !+
     inc s+1
   !:
-  // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [8] if((byte*) main::s#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda s+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -3656,528 +3658,585 @@ main: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-  // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [10] call testUnaryOperator 
-  // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
+    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // testUnaryOperator()
+    // [10] call testUnaryOperator 
+    // [94] phi from main::@2 to testUnaryOperator [phi:main::@2->testUnaryOperator]
     jsr testUnaryOperator
-  // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  // main::@3
-  // [12] call testBinaryOperator 
-  // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
+    // [11] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // main::@3
+    // testBinaryOperator()
+    // [12] call testBinaryOperator 
+    // [14] phi from main::@3 to testBinaryOperator [phi:main::@3->testBinaryOperator]
     jsr testBinaryOperator
-  // main::@return
-  // [13] return 
+    // main::@return
+    // }
+    // [13] return 
     rts
 }
-// testBinaryOperator
+  // testBinaryOperator
 testBinaryOperator: {
-  // [15] call assertType 
-  // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
-  // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuxx=vbuc1 
+    // assertType(typeid(12ub+12ub), typeid(unsigned byte))
+    // [15] call assertType 
+    // [87] phi from testBinaryOperator to assertType [phi:testBinaryOperator->assertType]
+    // [87] phi (byte) idx#105 = (byte) $28 [phi:testBinaryOperator->assertType#0] -- vbuxx=vbuc1 
     ldx #$28
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
-  // testBinaryOperator::@1
-  // [17] call assertType 
-  // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [16] phi from testBinaryOperator to testBinaryOperator::@1 [phi:testBinaryOperator->testBinaryOperator::@1]
+    // testBinaryOperator::@1
+    // assertType(typeid(12ub+12sb), typeid(unsigned byte))
+    // [17] call assertType 
+    // [87] phi from testBinaryOperator::@1 to assertType [phi:testBinaryOperator::@1->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
-  // testBinaryOperator::@2
-  // [19] call assertType 
-  // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [18] phi from testBinaryOperator::@1 to testBinaryOperator::@2 [phi:testBinaryOperator::@1->testBinaryOperator::@2]
+    // testBinaryOperator::@2
+    // assertType(typeid(12ub+12uw), typeid(unsigned word))
+    // [19] call assertType 
+    // [87] phi from testBinaryOperator::@2 to assertType [phi:testBinaryOperator::@2->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
-  // testBinaryOperator::@3
-  // [21] call assertType 
-  // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [20] phi from testBinaryOperator::@2 to testBinaryOperator::@3 [phi:testBinaryOperator::@2->testBinaryOperator::@3]
+    // testBinaryOperator::@3
+    // assertType(typeid(12ub+12sw), typeid(signed word))
+    // [21] call assertType 
+    // [87] phi from testBinaryOperator::@3 to assertType [phi:testBinaryOperator::@3->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
-  // testBinaryOperator::@4
-  // [23] call assertType 
-  // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [22] phi from testBinaryOperator::@3 to testBinaryOperator::@4 [phi:testBinaryOperator::@3->testBinaryOperator::@4]
+    // testBinaryOperator::@4
+    // assertType(typeid(12ub+12ud), typeid(unsigned dword))
+    // [23] call assertType 
+    // [87] phi from testBinaryOperator::@4 to assertType [phi:testBinaryOperator::@4->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
-  // testBinaryOperator::@5
-  // [25] call assertType 
-  // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [24] phi from testBinaryOperator::@4 to testBinaryOperator::@5 [phi:testBinaryOperator::@4->testBinaryOperator::@5]
+    // testBinaryOperator::@5
+    // assertType(typeid(12ub+12sd), typeid(signed dword))
+    // [25] call assertType 
+    // [87] phi from testBinaryOperator::@5 to assertType [phi:testBinaryOperator::@5->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testBinaryOperator::@6
-  // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // testBinaryOperator::@6
+    // idx++;
+    // [26] (byte) idx#19 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [27] call assertType 
-  // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
+    // assertType(typeid(12sb+12ub), typeid(unsigned byte))
+    // [27] call assertType 
+    // [87] phi from testBinaryOperator::@6 to assertType [phi:testBinaryOperator::@6->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#19 [phi:testBinaryOperator::@6->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testBinaryOperator::@6->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
-  // testBinaryOperator::@7
-  // [29] call assertType 
-  // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
+    // [28] phi from testBinaryOperator::@6 to testBinaryOperator::@7 [phi:testBinaryOperator::@6->testBinaryOperator::@7]
+    // testBinaryOperator::@7
+    // assertType(typeid(12sb+12sb), typeid(signed byte))
+    // [29] call assertType 
+    // [87] phi from testBinaryOperator::@7 to assertType [phi:testBinaryOperator::@7->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@7->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testBinaryOperator::@7->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
-  // testBinaryOperator::@8
-  // [31] call assertType 
-  // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
+    // [30] phi from testBinaryOperator::@7 to testBinaryOperator::@8 [phi:testBinaryOperator::@7->testBinaryOperator::@8]
+    // testBinaryOperator::@8
+    // assertType(typeid(12sb+12uw), typeid(unsigned word))
+    // [31] call assertType 
+    // [87] phi from testBinaryOperator::@8 to assertType [phi:testBinaryOperator::@8->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@8->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@8->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
-  // testBinaryOperator::@9
-  // [33] call assertType 
-  // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
+    // [32] phi from testBinaryOperator::@8 to testBinaryOperator::@9 [phi:testBinaryOperator::@8->testBinaryOperator::@9]
+    // testBinaryOperator::@9
+    // assertType(typeid(12sb+12sw), typeid(signed word))
+    // [33] call assertType 
+    // [87] phi from testBinaryOperator::@9 to assertType [phi:testBinaryOperator::@9->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@9->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@9->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
-  // testBinaryOperator::@10
-  // [35] call assertType 
-  // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
+    // [34] phi from testBinaryOperator::@9 to testBinaryOperator::@10 [phi:testBinaryOperator::@9->testBinaryOperator::@10]
+    // testBinaryOperator::@10
+    // assertType(typeid(12sb+12ud), typeid(unsigned dword))
+    // [35] call assertType 
+    // [87] phi from testBinaryOperator::@10 to assertType [phi:testBinaryOperator::@10->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@10->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@10->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
-  // testBinaryOperator::@11
-  // [37] call assertType 
-  // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
+    // [36] phi from testBinaryOperator::@10 to testBinaryOperator::@11 [phi:testBinaryOperator::@10->testBinaryOperator::@11]
+    // testBinaryOperator::@11
+    // assertType(typeid(12sb+12sd), typeid(signed dword))
+    // [37] call assertType 
+    // [87] phi from testBinaryOperator::@11 to assertType [phi:testBinaryOperator::@11->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@11->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@11->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testBinaryOperator::@12
-  // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // testBinaryOperator::@12
+    // idx++;
+    // [38] (byte) idx#26 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [39] call assertType 
-  // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
+    // assertType(typeid(12uw+12ub), typeid(unsigned word))
+    // [39] call assertType 
+    // [87] phi from testBinaryOperator::@12 to assertType [phi:testBinaryOperator::@12->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#26 [phi:testBinaryOperator::@12->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@12->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
-  // testBinaryOperator::@13
-  // [41] call assertType 
-  // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
+    // [40] phi from testBinaryOperator::@12 to testBinaryOperator::@13 [phi:testBinaryOperator::@12->testBinaryOperator::@13]
+    // testBinaryOperator::@13
+    // assertType(typeid(12uw+12sb), typeid(unsigned word))
+    // [41] call assertType 
+    // [87] phi from testBinaryOperator::@13 to assertType [phi:testBinaryOperator::@13->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@13->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@13->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
-  // testBinaryOperator::@14
-  // [43] call assertType 
-  // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
+    // [42] phi from testBinaryOperator::@13 to testBinaryOperator::@14 [phi:testBinaryOperator::@13->testBinaryOperator::@14]
+    // testBinaryOperator::@14
+    // assertType(typeid(12uw+12uw), typeid(unsigned word))
+    // [43] call assertType 
+    // [87] phi from testBinaryOperator::@14 to assertType [phi:testBinaryOperator::@14->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@14->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@14->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
-  // testBinaryOperator::@15
-  // [45] call assertType 
-  // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
+    // [44] phi from testBinaryOperator::@14 to testBinaryOperator::@15 [phi:testBinaryOperator::@14->testBinaryOperator::@15]
+    // testBinaryOperator::@15
+    // assertType(typeid(12uw+12sw), typeid(unsigned word))
+    // [45] call assertType 
+    // [87] phi from testBinaryOperator::@15 to assertType [phi:testBinaryOperator::@15->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@15->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@15->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
-  // testBinaryOperator::@16
-  // [47] call assertType 
-  // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
+    // [46] phi from testBinaryOperator::@15 to testBinaryOperator::@16 [phi:testBinaryOperator::@15->testBinaryOperator::@16]
+    // testBinaryOperator::@16
+    // assertType(typeid(12uw+12ud), typeid(unsigned dword))
+    // [47] call assertType 
+    // [87] phi from testBinaryOperator::@16 to assertType [phi:testBinaryOperator::@16->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@16->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@16->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
-  // testBinaryOperator::@17
-  // [49] call assertType 
-  // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
+    // [48] phi from testBinaryOperator::@16 to testBinaryOperator::@17 [phi:testBinaryOperator::@16->testBinaryOperator::@17]
+    // testBinaryOperator::@17
+    // assertType(typeid(12uw+12sd), typeid(signed dword))
+    // [49] call assertType 
+    // [87] phi from testBinaryOperator::@17 to assertType [phi:testBinaryOperator::@17->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@17->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@17->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
-  // testBinaryOperator::@18
-  // [51] call assertType 
-  // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
-  // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuxx=vbuc1 
+    // [50] phi from testBinaryOperator::@17 to testBinaryOperator::@18 [phi:testBinaryOperator::@17->testBinaryOperator::@18]
+    // testBinaryOperator::@18
+    // assertType(typeid(12sw+12ub), typeid(signed word))
+    // [51] call assertType 
+    // [87] phi from testBinaryOperator::@18 to assertType [phi:testBinaryOperator::@18->assertType]
+    // [87] phi (byte) idx#105 = (byte) $50 [phi:testBinaryOperator::@18->assertType#0] -- vbuxx=vbuc1 
     ldx #$50
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@18->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
-  // testBinaryOperator::@19
-  // [53] call assertType 
-  // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
+    // [52] phi from testBinaryOperator::@18 to testBinaryOperator::@19 [phi:testBinaryOperator::@18->testBinaryOperator::@19]
+    // testBinaryOperator::@19
+    // assertType(typeid(12sw+12sb), typeid(signed word))
+    // [53] call assertType 
+    // [87] phi from testBinaryOperator::@19 to assertType [phi:testBinaryOperator::@19->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@19->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@19->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
-  // testBinaryOperator::@20
-  // [55] call assertType 
-  // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
+    // [54] phi from testBinaryOperator::@19 to testBinaryOperator::@20 [phi:testBinaryOperator::@19->testBinaryOperator::@20]
+    // testBinaryOperator::@20
+    // assertType(typeid(12sw+12uw), typeid(unsigned word))
+    // [55] call assertType 
+    // [87] phi from testBinaryOperator::@20 to assertType [phi:testBinaryOperator::@20->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@20->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testBinaryOperator::@20->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
-  // testBinaryOperator::@21
-  // [57] call assertType 
-  // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
+    // [56] phi from testBinaryOperator::@20 to testBinaryOperator::@21 [phi:testBinaryOperator::@20->testBinaryOperator::@21]
+    // testBinaryOperator::@21
+    // assertType(typeid(12sw+12sw), typeid(signed word))
+    // [57] call assertType 
+    // [87] phi from testBinaryOperator::@21 to assertType [phi:testBinaryOperator::@21->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@21->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testBinaryOperator::@21->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
-  // testBinaryOperator::@22
-  // [59] call assertType 
-  // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
+    // [58] phi from testBinaryOperator::@21 to testBinaryOperator::@22 [phi:testBinaryOperator::@21->testBinaryOperator::@22]
+    // testBinaryOperator::@22
+    // assertType(typeid(12sw+12ud), typeid(unsigned dword))
+    // [59] call assertType 
+    // [87] phi from testBinaryOperator::@22 to assertType [phi:testBinaryOperator::@22->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@22->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@22->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
-  // testBinaryOperator::@23
-  // [61] call assertType 
-  // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
+    // [60] phi from testBinaryOperator::@22 to testBinaryOperator::@23 [phi:testBinaryOperator::@22->testBinaryOperator::@23]
+    // testBinaryOperator::@23
+    // assertType(typeid(12sw+12sd), typeid(signed dword))
+    // [61] call assertType 
+    // [87] phi from testBinaryOperator::@23 to assertType [phi:testBinaryOperator::@23->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@23->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@23->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testBinaryOperator::@24
-  // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // testBinaryOperator::@24
+    // idx++;
+    // [62] (byte) idx#40 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [63] call assertType 
-  // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
+    // assertType(typeid(12ud+12ub), typeid(unsigned dword))
+    // [63] call assertType 
+    // [87] phi from testBinaryOperator::@24 to assertType [phi:testBinaryOperator::@24->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#40 [phi:testBinaryOperator::@24->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@24->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
-  // testBinaryOperator::@25
-  // [65] call assertType 
-  // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
+    // [64] phi from testBinaryOperator::@24 to testBinaryOperator::@25 [phi:testBinaryOperator::@24->testBinaryOperator::@25]
+    // testBinaryOperator::@25
+    // assertType(typeid(12ud+12sb), typeid(unsigned dword))
+    // [65] call assertType 
+    // [87] phi from testBinaryOperator::@25 to assertType [phi:testBinaryOperator::@25->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@25->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@25->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
-  // testBinaryOperator::@26
-  // [67] call assertType 
-  // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
+    // [66] phi from testBinaryOperator::@25 to testBinaryOperator::@26 [phi:testBinaryOperator::@25->testBinaryOperator::@26]
+    // testBinaryOperator::@26
+    // assertType(typeid(12ud+12uw), typeid(unsigned dword))
+    // [67] call assertType 
+    // [87] phi from testBinaryOperator::@26 to assertType [phi:testBinaryOperator::@26->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@26->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@26->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
-  // testBinaryOperator::@27
-  // [69] call assertType 
-  // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
+    // [68] phi from testBinaryOperator::@26 to testBinaryOperator::@27 [phi:testBinaryOperator::@26->testBinaryOperator::@27]
+    // testBinaryOperator::@27
+    // assertType(typeid(12ud+12sw), typeid(unsigned dword))
+    // [69] call assertType 
+    // [87] phi from testBinaryOperator::@27 to assertType [phi:testBinaryOperator::@27->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@27->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@27->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
-  // testBinaryOperator::@28
-  // [71] call assertType 
-  // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
+    // [70] phi from testBinaryOperator::@27 to testBinaryOperator::@28 [phi:testBinaryOperator::@27->testBinaryOperator::@28]
+    // testBinaryOperator::@28
+    // assertType(typeid(12ud+12ud), typeid(unsigned dword))
+    // [71] call assertType 
+    // [87] phi from testBinaryOperator::@28 to assertType [phi:testBinaryOperator::@28->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@28->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@28->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
-  // testBinaryOperator::@29
-  // [73] call assertType 
-  // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
+    // [72] phi from testBinaryOperator::@28 to testBinaryOperator::@29 [phi:testBinaryOperator::@28->testBinaryOperator::@29]
+    // testBinaryOperator::@29
+    // assertType(typeid(12ud+12sd), typeid(unsigned dword))
+    // [73] call assertType 
+    // [87] phi from testBinaryOperator::@29 to assertType [phi:testBinaryOperator::@29->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@29->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@29->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testBinaryOperator::@30
-  // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
+    // testBinaryOperator::@30
+    // idx++;
+    // [74] (byte) idx#47 ← ++ (byte) idx#108 -- vbuxx=_inc_vbuxx 
     inx
-  // [75] call assertType 
-  // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
+    // assertType(typeid(12sd+12ub), typeid(signed dword))
+    // [75] call assertType 
+    // [87] phi from testBinaryOperator::@30 to assertType [phi:testBinaryOperator::@30->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#47 [phi:testBinaryOperator::@30->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@30->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
-  // testBinaryOperator::@31
-  // [77] call assertType 
-  // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
+    // [76] phi from testBinaryOperator::@30 to testBinaryOperator::@31 [phi:testBinaryOperator::@30->testBinaryOperator::@31]
+    // testBinaryOperator::@31
+    // assertType(typeid(12sd+12sb), typeid(signed dword))
+    // [77] call assertType 
+    // [87] phi from testBinaryOperator::@31 to assertType [phi:testBinaryOperator::@31->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@31->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@31->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
-  // testBinaryOperator::@32
-  // [79] call assertType 
-  // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
+    // [78] phi from testBinaryOperator::@31 to testBinaryOperator::@32 [phi:testBinaryOperator::@31->testBinaryOperator::@32]
+    // testBinaryOperator::@32
+    // assertType(typeid(12sd+12uw), typeid(signed dword))
+    // [79] call assertType 
+    // [87] phi from testBinaryOperator::@32 to assertType [phi:testBinaryOperator::@32->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@32->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@32->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
-  // testBinaryOperator::@33
-  // [81] call assertType 
-  // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
+    // [80] phi from testBinaryOperator::@32 to testBinaryOperator::@33 [phi:testBinaryOperator::@32->testBinaryOperator::@33]
+    // testBinaryOperator::@33
+    // assertType(typeid(12sd+12sw), typeid(signed dword))
+    // [81] call assertType 
+    // [87] phi from testBinaryOperator::@33 to assertType [phi:testBinaryOperator::@33->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@33->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@33->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
-  // testBinaryOperator::@34
-  // [83] call assertType 
-  // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
+    // [82] phi from testBinaryOperator::@33 to testBinaryOperator::@34 [phi:testBinaryOperator::@33->testBinaryOperator::@34]
+    // testBinaryOperator::@34
+    // assertType(typeid(12sd+12ud), typeid(unsigned dword))
+    // [83] call assertType 
+    // [87] phi from testBinaryOperator::@34 to assertType [phi:testBinaryOperator::@34->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@34->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testBinaryOperator::@34->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
-  // testBinaryOperator::@35
-  // [85] call assertType 
-  // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
+    // [84] phi from testBinaryOperator::@34 to testBinaryOperator::@35 [phi:testBinaryOperator::@34->testBinaryOperator::@35]
+    // testBinaryOperator::@35
+    // assertType(typeid(12sd+12sd), typeid(signed dword))
+    // [85] call assertType 
+    // [87] phi from testBinaryOperator::@35 to assertType [phi:testBinaryOperator::@35->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testBinaryOperator::@35->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testBinaryOperator::@35->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testBinaryOperator::@return
-  // [86] return 
+    // testBinaryOperator::@return
+    // }
+    // [86] return 
     rts
 }
-// assertType
+  // assertType
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
 // assertType(byte register(Y) t1, byte zeropage(4) t2)
 assertType: {
     .label t2 = 4
-  // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
+    // if(t1==t2)
+    // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
     tya
     cmp t2
     beq b1
-  // assertType::@3
-  // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // assertType::@3
+    // COLS[idx] = RED
+    // [89] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta COLS,x
-  // assertType::@2
+    // assertType::@2
   b2:
-  // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // SCREEN[idx++] = t1
+    // [90] *((const byte*) SCREEN#0 + (byte) idx#105) ← (byte) assertType::t1#42 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
-  // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuxx=_inc_vbuxx 
+    // SCREEN[idx++] = t1;
+    // [91] (byte) idx#108 ← ++ (byte) idx#105 -- vbuxx=_inc_vbuxx 
     inx
-  // assertType::@return
-  // [92] return 
+    // assertType::@return
+    // }
+    // [92] return 
     rts
-  // assertType::@1
+    // assertType::@1
   b1:
-  // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // COLS[idx] = GREEN
+    // [93] *((const byte*) COLS#0 + (byte) idx#105) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta COLS,x
     jmp b2
 }
-// testUnaryOperator
+  // testUnaryOperator
 testUnaryOperator: {
-  // [95] call assertType 
-  // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
-  // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuxx=vbuc1 
+    // assertType(typeid(-12ub), typeid(unsigned byte))
+    // [95] call assertType 
+    // [87] phi from testUnaryOperator to assertType [phi:testUnaryOperator->assertType]
+    // [87] phi (byte) idx#105 = (byte) 0 [phi:testUnaryOperator->assertType#0] -- vbuxx=vbuc1 
     ldx #0
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_BYTE [phi:testUnaryOperator->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
-  // testUnaryOperator::@1
-  // [97] call assertType 
-  // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
+    // [96] phi from testUnaryOperator to testUnaryOperator::@1 [phi:testUnaryOperator->testUnaryOperator::@1]
+    // testUnaryOperator::@1
+    // assertType(typeid(-12sb), typeid(signed byte))
+    // [97] call assertType 
+    // [87] phi from testUnaryOperator::@1 to assertType [phi:testUnaryOperator::@1->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@1->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_BYTE [phi:testUnaryOperator::@1->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
-  // testUnaryOperator::@2
-  // [99] call assertType 
-  // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
+    // [98] phi from testUnaryOperator::@1 to testUnaryOperator::@2 [phi:testUnaryOperator::@1->testUnaryOperator::@2]
+    // testUnaryOperator::@2
+    // assertType(typeid(-12uw), typeid(unsigned word))
+    // [99] call assertType 
+    // [87] phi from testUnaryOperator::@2 to assertType [phi:testUnaryOperator::@2->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@2->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_WORD [phi:testUnaryOperator::@2->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
-  // testUnaryOperator::@3
-  // [101] call assertType 
-  // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
+    // [100] phi from testUnaryOperator::@2 to testUnaryOperator::@3 [phi:testUnaryOperator::@2->testUnaryOperator::@3]
+    // testUnaryOperator::@3
+    // assertType(typeid(-12sw), typeid(signed word))
+    // [101] call assertType 
+    // [87] phi from testUnaryOperator::@3 to assertType [phi:testUnaryOperator::@3->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@3->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_WORD [phi:testUnaryOperator::@3->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
-  // testUnaryOperator::@4
-  // [103] call assertType 
-  // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
+    // [102] phi from testUnaryOperator::@3 to testUnaryOperator::@4 [phi:testUnaryOperator::@3->testUnaryOperator::@4]
+    // testUnaryOperator::@4
+    // assertType(typeid(-12ud), typeid(unsigned dword))
+    // [103] call assertType 
+    // [87] phi from testUnaryOperator::@4 to assertType [phi:testUnaryOperator::@4->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@4->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_DWORD [phi:testUnaryOperator::@4->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
-  // testUnaryOperator::@5
-  // [105] call assertType 
-  // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
-  // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
-  // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
+    // [104] phi from testUnaryOperator::@4 to testUnaryOperator::@5 [phi:testUnaryOperator::@4->testUnaryOperator::@5]
+    // testUnaryOperator::@5
+    // assertType(typeid(-12sd), typeid(signed dword))
+    // [105] call assertType 
+    // [87] phi from testUnaryOperator::@5 to assertType [phi:testUnaryOperator::@5->assertType]
+    // [87] phi (byte) idx#105 = (byte) idx#108 [phi:testUnaryOperator::@5->assertType#0] -- register_copy 
+    // [87] phi (byte) assertType::t2#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
     sta assertType.t2
-  // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
+    // [87] phi (byte) assertType::t1#42 = (const byte) TYPEID_SIGNED_DWORD [phi:testUnaryOperator::@5->assertType#2] -- vbuyy=vbuc1 
     tay
     jsr assertType
-  // testUnaryOperator::@return
-  // [106] return 
+    // testUnaryOperator::@return
+    // }
+    // [106] return 
     rts
 }
-// File Data
+  // File Data
 

@@ -280,117 +280,117 @@ Allocated zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
 Allocated zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests calling into a function pointer with local variables
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 4
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [6] call do10 
-  // [8] phi from main to do10 [phi:main->do10]
+    // [6] call do10 
+    // [8] phi from main to do10 [phi:main->do10]
   do10_from_main:
     jsr do10
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
 }
-// do10
+  // do10
 do10: {
     .label i = 2
-  // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
+    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
   b1_from_do10:
-  // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
   b1_from_b1:
-  // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
     jmp b1
-  // do10::@1
+    // do10::@1
   b1:
-  // [10] call hello 
+    // [10] call hello 
     jsr hello
-  // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1_from_b1
     jmp breturn
-  // do10::@return
+    // do10::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// hello
+  // hello
 hello: {
     .label i = 3
-  // [14] (byte~) idx#7 ← (byte) idx#0
-  // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
+    // [14] (byte~) idx#7 ← (byte) idx#0
+    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
   b1_from_hello:
-  // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
+    // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   b1_from_b1:
-  // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+    // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
     jmp b1
-  // hello::@1
+    // hello::@1
   b1:
-  // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy i
     lda msg,y
     ldy idx
     sta SCREEN,y
-  // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
+    // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
     lda #'@'
     ldy i
     cmp msg,y
     bne b1_from_b1
     jmp breturn
-  // hello::@return
+    // hello::@return
   breturn:
-  // [20] return 
+    // [20] return 
     rts
 }
-// File Data
+  // File Data
   msg: .text "hello @"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -425,113 +425,113 @@ Uplifting [do10] best 4349 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ idx#0 idx#3 idx#7 idx#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests calling into a function pointer with local variables
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 3
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [6] call do10 
-  // [8] phi from main to do10 [phi:main->do10]
+    // [6] call do10 
+    // [8] phi from main to do10 [phi:main->do10]
   do10_from_main:
     jsr do10
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [7] return 
+    // [7] return 
     rts
 }
-// do10
+  // do10
 do10: {
     .label i = 2
-  // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
+    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
   b1_from_do10:
-  // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
   b1_from_b1:
-  // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
     jmp b1
-  // do10::@1
+    // do10::@1
   b1:
-  // [10] call hello 
+    // [10] call hello 
     jsr hello
-  // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1_from_b1
     jmp breturn
-  // do10::@return
+    // do10::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// hello
+  // hello
 hello: {
-  // [14] (byte~) idx#7 ← (byte) idx#0
-  // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
+    // [14] (byte~) idx#7 ← (byte) idx#0
+    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
   b1_from_hello:
-  // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
+    // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   b1_from_b1:
-  // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+    // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
     jmp b1
-  // hello::@1
+    // hello::@1
   b1:
-  // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
     lda msg,x
     ldy idx
     sta SCREEN,y
-  // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
+    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
+    // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
     lda msg,x
     cmp #'@'
     bne b1_from_b1
     jmp breturn
-  // hello::@return
+    // hello::@return
   breturn:
-  // [20] return 
+    // [20] return 
     rts
 }
-// File Data
+  // File Data
   msg: .text "hello @"
 
 ASSEMBLER OPTIMIZATIONS
@@ -607,89 +607,99 @@ zp ZP_BYTE:3 [ idx#0 idx#3 idx#7 idx#1 ]
 FINAL ASSEMBLER
 Score: 3326
 
-// File Comments
+  // File Comments
 // Tests calling into a function pointer with local variables
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 3
-// @begin
+  // @begin
 bbegin:
-// @1
-// [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // @1
+  // idx = 0
+  // [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
-// [2] phi from @1 to @2 [phi:@1->@2]
-// @2
-// [3] call main 
-// [5] phi from @2 to main [phi:@2->main]
+  // [2] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [3] call main 
+  // [5] phi from @2 to main [phi:@2->main]
   jsr main
   rts
-// [4] phi from @2 to @end [phi:@2->@end]
-// @end
-// main
+  // [4] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
 main: {
-  // [6] call do10 
-  // [8] phi from main to do10 [phi:main->do10]
+    // do10(f)
+    // [6] call do10 
+    // [8] phi from main to do10 [phi:main->do10]
     jsr do10
-  // main::@return
-  // [7] return 
+    // main::@return
+    // }
+    // [7] return 
     rts
 }
-// do10
+  // do10
 do10: {
     .label i = 2
-  // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
+    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-  // do10::@1
+    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // do10::@1
   b1:
-  // [10] call hello 
+    // (*fn)()
+    // [10] call hello 
     jsr hello
-  // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    // for( byte i: 0..9)
+    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1
-  // do10::@return
-  // [13] return 
+    // do10::@return
+    // }
+    // [13] return 
     rts
 }
-// hello
+  // hello
 hello: {
-  // [14] (byte~) idx#7 ← (byte) idx#0
-  // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
-  // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
+    // [14] (byte~) idx#7 ← (byte) idx#0
+    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
+    // [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
-  // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
-  // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
-  // hello::@1
+    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+    // hello::@1
   b1:
-  // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    // SCREEN[idx++] = msg[i++]
+    // [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
     lda msg,x
     ldy idx
     sta SCREEN,y
-  // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    // SCREEN[idx++] = msg[i++];
+    // [17] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
     inc idx
-  // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
+    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
+    // while(msg[i]!='@')
+    // [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
     lda msg,x
     cmp #'@'
     bne b1
-  // hello::@return
-  // [20] return 
+    // hello::@return
+    // }
+    // [20] return 
     rts
 }
-// File Data
+  // File Data
   msg: .text "hello @"
 

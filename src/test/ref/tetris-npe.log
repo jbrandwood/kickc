@@ -255,84 +255,84 @@ Allocated zp ZP_BYTE:2 [ counter#3 counter#1 ]
 Allocated zp ZP_BYTE:3 [ ypos#2 ypos#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // NullPointerException using current_movedown_rate in the main loop
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label SCREEN = $400
   .const RATE = $32
   .label counter = 2
   .label ypos = 3
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta ypos
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #RATE
     sta counter
     jmp b1
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-  // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuz1=_dec_vbuz1 
+    // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuz1=_dec_vbuz1 
     dec counter
-  // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda counter
     cmp #0
     bne b1_from_b3
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuz1=_inc_vbuz1 
+    // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuz1=_inc_vbuz1 
     inc ypos
-  // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuz1 
     lda ypos
     sta SCREEN
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuz1=vbuc1 
     lda #RATE
     sta counter
     jmp b1
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 [ counter#3 ypos#2 ] ( main:2 [ counter#3 ypos#2 ] ) always clobbers reg byte a 
@@ -350,77 +350,77 @@ Uplifting [] best 14052 combination reg byte y [ counter#3 counter#1 ] reg byte 
 Uplifting [main] best 14052 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // NullPointerException using current_movedown_rate in the main loop
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label SCREEN = $400
   .const RATE = $32
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #RATE
     jmp b1
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-  // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuyy=_dec_vbuyy 
+    // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuyy=_dec_vbuyy 
     dey
-  // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuyy_neq_0_then_la1 
+    // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuyy_neq_0_then_la1 
     cpy #0
     bne b1_from_b3
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuxx=_inc_vbuxx 
+    // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuxx 
+    // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuyy=vbuc1 
     ldy #RATE
     jmp b1
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -483,55 +483,59 @@ reg byte x [ ypos#2 ypos#1 ]
 FINAL ASSEMBLER
 Score: 10110
 
-// File Comments
+  // File Comments
 // NullPointerException using current_movedown_rate in the main loop
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label RASTER = $d012
   .label SCREEN = $400
   .const RATE = $32
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) ypos#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #RATE
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
-  // main::@1
-  // main::@2
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // main::@1
+    // main::@2
   b2:
-  // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(*RASTER!=$ff)
+    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
-  // main::@3
-  // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuyy=_dec_vbuyy 
+    // main::@3
+    // if(--counter==0)
+    // [7] (byte) counter#1 ← -- (byte) counter#3 -- vbuyy=_dec_vbuyy 
     dey
-  // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuyy_neq_0_then_la1 
+    // [8] if((byte) counter#1!=(byte) 0) goto main::@1 -- vbuyy_neq_0_then_la1 
     cpy #0
     bne b2
-  // main::@4
-  // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuxx=_inc_vbuxx 
+    // main::@4
+    // ypos++;
+    // [9] (byte) ypos#1 ← ++ (byte) ypos#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuxx 
+    // *SCREEN = ypos
+    // [10] *((const byte*) SCREEN#0) ← (byte) ypos#1 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
-  // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuyy=vbuc1 
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi (byte) ypos#2 = (byte) ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main::@4->main::@1#1] -- vbuyy=vbuc1 
     ldy #RATE
     jmp b2
 }
-// File Data
+  // File Data
 

@@ -288,32 +288,32 @@ Allocated zp ZP_BYTE:6 [ main::$2 ]
 Allocated zp ZP_BYTE:7 [ main::$3 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label _2 = 6
@@ -321,61 +321,61 @@ main: {
     .label sub = 5
     .label cur_item = 3
     .label item = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
     sta cur_item+1
-  // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta item
     jmp b1
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-  // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta sub
     jmp b2
-  // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuz1=vbuz2_rol_4 
     lda item
     asl
     asl
     asl
     asl
     sta _2
-  // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuz1=vbuz2_bor_vbuz3 
+    // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuz1=vbuz2_bor_vbuz3 
     lda _2
     ora sub
     sta _3
-  // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _3
     ldy sub
     sta (cur_item),y
-  // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
     inc sub
-  // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #ITEM_SIZE-1+1
     cmp sub
     bne b2_from_b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
+    // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
     lda #ITEM_SIZE
     clc
     adc cur_item
@@ -383,19 +383,19 @@ main: {
     bcc !+
     inc cur_item+1
   !:
-  // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuz1=_inc_vbuz1 
     inc item
-  // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #ITEM_COUNT-1+1
     cmp item
     bne b1_from_b3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// File Data
+  // File Data
   items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -421,83 +421,83 @@ Uplifting [] best 4418 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::cur_item#4 main::cur_item#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label cur_item = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
     sta cur_item+1
-  // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-  // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b2
-  // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
-  // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
+    // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
     sty $ff
     ora $ff
-  // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (cur_item),y
-  // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
+    // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #ITEM_SIZE-1+1
     bne b2_from_b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
+    // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
     lda #ITEM_SIZE
     clc
     adc cur_item
@@ -505,18 +505,18 @@ main: {
     bcc !+
     inc cur_item+1
   !:
-  // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
     inx
-  // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #ITEM_COUNT-1+1
     bne b1_from_b3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// File Data
+  // File Data
   items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -588,64 +588,69 @@ reg byte a [ main::$3 ]
 FINAL ASSEMBLER
 Score: 3416
 
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label cur_item = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
     sta cur_item+1
-  // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [6] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
-  // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
-  // main::@2
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [6] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // main::@2
   b2:
-  // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // item*$10
+    // [7] (byte~) main::$2 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
-  // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
+    // item*$10|sub
+    // [8] (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
     sty $ff
     ora $ff
-  // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // cur_item[sub] = item*$10|sub
+    // [9] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$3 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (cur_item),y
-  // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
+    // for( byte sub: 0..ITEM_SIZE-1)
+    // [10] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    // [11] if((byte) main::sub#1!=(const byte) ITEM_SIZE#0-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #ITEM_SIZE-1+1
     bne b2
-  // main::@3
-  // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
+    // main::@3
+    // cur_item += ITEM_SIZE
+    // [12] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const byte) ITEM_SIZE#0 -- pbuz1=pbuz1_plus_vbuc1 
     lda #ITEM_SIZE
     clc
     adc cur_item
@@ -653,15 +658,17 @@ main: {
     bcc !+
     inc cur_item+1
   !:
-  // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
+    // for( byte item: 0..ITEM_COUNT-1)
+    // [13] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
     inx
-  // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [14] if((byte) main::item#1!=(const byte) ITEM_COUNT#0-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #ITEM_COUNT-1+1
     bne b1
-  // main::@return
-  // [15] return 
+    // main::@return
+    // }
+    // [15] return 
     rts
 }
-// File Data
+  // File Data
   items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 

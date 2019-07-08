@@ -240,92 +240,92 @@ Allocated zp ZP_BYTE:6 [ main::$0 ]
 Allocated zp ZP_BYTE:7 [ sum::return#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 /* Tests that block comments are compiled correctly
  * Has a bunch of comments that will be moved into the generated ASM
  */
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The C64 screen
   .label SCREEN = $400
   // One of the bytes used for addition
   .const a = 'a'
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 /* The program entry point */
 main: {
     .label _0 = 6
     .label i = 3
     .label b = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta b
     jmp b1
   // Do some sums
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuz1=vbuz2 
+    // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuz1=vbuz2 
     lda b
     sta sum.b
-  // [7] call sum 
+    // [7] call sum 
     jsr sum
-  // [8] (byte) sum::return#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
+    // [8] (byte) sum::return#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
     lda sum.return_1
     sta sum.return
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
+    // [9] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
     lda sum.return
     sta _0
-  // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     // Output the result on the screen
     lda _0
     ldy i
     sta SCREEN,y
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// sum
+  // sum
 /** Adds up two bytes and returns the result
  * a - the first byte
  * b - the second byte
@@ -336,17 +336,17 @@ sum: {
     .label b = 4
     .label return = 5
     .label return_1 = 7
-  // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuz1=vbuc1_plus_vbuz2 
+    // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax b
     axs #-[a]
     stx return_1
     jmp breturn
-  // sum::@return
+    // sum::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
@@ -368,79 +368,79 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::b#2 main::b#1 ]
 Uplifting [main] best 406 combination reg byte x [ main::b#2 main::b#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 /* Tests that block comments are compiled correctly
  * Has a bunch of comments that will be moved into the generated ASM
  */
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The C64 screen
   .label SCREEN = $400
   // One of the bytes used for addition
   .const a = 'a'
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 /* The program entry point */
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   // Do some sums
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
+    // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
     txa
-  // [7] call sum 
+    // [7] call sum 
     jsr sum
-  // [8] (byte) sum::return#0 ← (byte) sum::return#1
+    // [8] (byte) sum::return#0 ← (byte) sum::return#1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] (byte~) main::$0 ← (byte) sum::return#0
-  // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [9] (byte~) main::$0 ← (byte) sum::return#0
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
     // Output the result on the screen
     sta SCREEN,y
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 
+    // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// sum
+  // sum
 /** Adds up two bytes and returns the result
  * a - the first byte
  * b - the second byte
@@ -448,16 +448,16 @@ main: {
  */
 // sum(byte register(A) b)
 sum: {
-  // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
+    // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #a
     jmp breturn
-  // sum::@return
+    // sum::@return
   breturn:
-  // [16] return 
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -528,62 +528,67 @@ reg byte a [ sum::return#1 ]
 FINAL ASSEMBLER
 Score: 271
 
-// File Comments
+  // File Comments
 /* Tests that block comments are compiled correctly
  * Has a bunch of comments that will be moved into the generated ASM
  */
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // The C64 screen
   .label SCREEN = $400
   // One of the bytes used for addition
   .const a = 'a'
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 /* The program entry point */
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
   // Do some sums
-  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
+    // sum(a, b)
+    // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
     txa
-  // [7] call sum 
+    // [7] call sum 
     jsr sum
-  // [8] (byte) sum::return#0 ← (byte) sum::return#1
-  // main::@2
-  // [9] (byte~) main::$0 ← (byte) sum::return#0
-  // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [8] (byte) sum::return#0 ← (byte) sum::return#1
+    // main::@2
+    // [9] (byte~) main::$0 ← (byte) sum::return#0
+    // SCREEN[i++] = sum(a, b)
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
     // Output the result on the screen
     sta SCREEN,y
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // SCREEN[i++] = sum(a, b);
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 
+    // for(byte b: 0..10 )
+    // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1
-  // main::@return
-  // [14] return 
+    // main::@return
+    // }
+    // [14] return 
     rts
 }
-// sum
+  // sum
 /** Adds up two bytes and returns the result
  * a - the first byte
  * b - the second byte
@@ -591,12 +596,14 @@ main: {
  */
 // sum(byte register(A) b)
 sum: {
-  // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
+    // a+b
+    // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #a
-  // sum::@return
-  // [16] return 
+    // sum::@return
+    // }
+    // [16] return 
     rts
 }
-// File Data
+  // File Data
 

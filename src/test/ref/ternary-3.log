@@ -383,30 +383,30 @@ Allocated zp ZP_BYTE:12 [ m2::return#1 ]
 Allocated zp ZP_BOOL:13 [ cond::return#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests the ternary operator - when the condition is constant
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _0 = 6
@@ -414,132 +414,132 @@ main: {
     .label _4 = 3
     .label _5 = 3
     .label i = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) cond::b#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    // [6] (byte) cond::b#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta cond.b
-  // [7] call cond 
+    // [7] call cond 
     jsr cond
-  // [8] (bool) cond::return#0 ← (bool) cond::return#1 -- vboz1=vboz2 
+    // [8] (bool) cond::return#0 ← (bool) cond::return#1 -- vboz1=vboz2 
     lda cond.return_1
     sta cond.return
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [9] (bool~) main::$0 ← (bool) cond::return#0 -- vboz1=vboz2 
+    // [9] (bool~) main::$0 ← (bool) cond::return#0 -- vboz1=vboz2 
     lda cond.return
     sta _0
-  // [10] if((bool~) main::$0) goto main::@2 -- vboz1_then_la1 
+    // [10] if((bool~) main::$0) goto main::@2 -- vboz1_then_la1 
     lda _0
     cmp #0
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] (byte) m2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    // [11] (byte) m2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta m2.i
-  // [12] call m2 
+    // [12] call m2 
     jsr m2
-  // [13] (byte) m2::return#0 ← (byte) m2::return#1 -- vbuz1=vbuz2 
+    // [13] (byte) m2::return#0 ← (byte) m2::return#1 -- vbuz1=vbuz2 
     lda m2.return_1
     sta m2.return
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [14] (byte~) main::$2 ← (byte) m2::return#0 -- vbuz1=vbuz2 
+    // [14] (byte~) main::$2 ← (byte) m2::return#0 -- vbuz1=vbuz2 
     lda m2.return
     sta _2
-  // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+    // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
   b4_from_b6:
   b4_from_b7:
-  // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+    // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _5
     ldy i
     sta SCREEN,y
-  // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1_from_b4
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [20] (byte) m1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    // [20] (byte) m1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta m1.i
-  // [21] call m1 
+    // [21] call m1 
     jsr m1
-  // [22] (byte) m1::return#0 ← (byte) m1::return#1 -- vbuz1=vbuz2 
+    // [22] (byte) m1::return#0 ← (byte) m1::return#1 -- vbuz1=vbuz2 
     lda m1.return_1
     sta m1.return
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [23] (byte~) main::$4 ← (byte) m1::return#0 -- vbuz1=vbuz2 
+    // [23] (byte~) main::$4 ← (byte) m1::return#0 -- vbuz1=vbuz2 
     lda m1.return
     sta _4
     jmp b4_from_b6
 }
-// m1
+  // m1
 // m1(byte zeropage(9) i)
 m1: {
     .label i = 9
     .label return = $a
     .label return_1 = $b
-  // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax i
     axs #-[5]
     stx return_1
     jmp breturn
-  // m1::@return
+    // m1::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// m2
+  // m2
 // m2(byte zeropage(7) i)
 m2: {
     .label i = 7
     .label return = 8
     .label return_1 = $c
-  // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuz1=vbuc1_plus_vbuz2 
+    // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax i
     axs #-[$a]
     stx return_1
     jmp breturn
-  // m2::@return
+    // m2::@return
   breturn:
-  // [27] return 
+    // [27] return 
     rts
 }
-// cond
+  // cond
 // cond(byte zeropage(4) b)
 cond: {
     .label b = 4
     .label return = 5
     .label return_1 = $d
-  // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboz1=vbuz2_lt_vbuc1 
+    // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboz1=vbuz2_lt_vbuc1 
     lda b
     cmp #5
     lda #0
@@ -547,12 +547,12 @@ cond: {
     eor #1
     sta return_1
     jmp breturn
-  // cond::@return
+    // cond::@return
   breturn:
-  // [29] return 
+    // [29] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 [ cond::return#1 ] ( main:2::cond:7 [ main::i#2 cond::return#1 ] ) always clobbers reg byte a 
@@ -585,137 +585,137 @@ Uplifting [m2] best 695 combination reg byte a [ m2::return#0 ] reg byte y [ m2:
 Uplifting [] best 695 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests the ternary operator - when the condition is constant
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte) cond::b#0 ← (byte) main::i#2
-  // [7] call cond 
+    // [6] (byte) cond::b#0 ← (byte) main::i#2
+    // [7] call cond 
     jsr cond
-  // [8] (bool) cond::return#0 ← (bool) cond::return#1
+    // [8] (bool) cond::return#0 ← (bool) cond::return#1
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [9] (bool~) main::$0 ← (bool) cond::return#0
-  // [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
+    // [9] (bool~) main::$0 ← (bool) cond::return#0
+    // [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
     cmp #0
     bne b2
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [11] (byte) m2::i#0 ← (byte) main::i#2
-  // [12] call m2 
+    // [11] (byte) m2::i#0 ← (byte) main::i#2
+    // [12] call m2 
     jsr m2
-  // [13] (byte) m2::return#0 ← (byte) m2::return#1
+    // [13] (byte) m2::return#0 ← (byte) m2::return#1
     jmp b7
-  // main::@7
+    // main::@7
   b7:
-  // [14] (byte~) main::$2 ← (byte) m2::return#0
-  // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+    // [14] (byte~) main::$2 ← (byte) m2::return#0
+    // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
   b4_from_b6:
   b4_from_b7:
-  // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+    // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
-  // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$a
     bne b1_from_b4
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [20] (byte) m1::i#0 ← (byte) main::i#2
-  // [21] call m1 
+    // [20] (byte) m1::i#0 ← (byte) main::i#2
+    // [21] call m1 
     jsr m1
-  // [22] (byte) m1::return#0 ← (byte) m1::return#1
+    // [22] (byte) m1::return#0 ← (byte) m1::return#1
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [23] (byte~) main::$4 ← (byte) m1::return#0
+    // [23] (byte~) main::$4 ← (byte) m1::return#0
     jmp b4_from_b6
 }
-// m1
+  // m1
 // m1(byte register(Y) i)
 m1: {
-  // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
     tya
     clc
     adc #5
     jmp breturn
-  // m1::@return
+    // m1::@return
   breturn:
-  // [25] return 
+    // [25] return 
     rts
 }
-// m2
+  // m2
 // m2(byte register(Y) i)
 m2: {
-  // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
     tya
     clc
     adc #$a
     jmp breturn
-  // m2::@return
+    // m2::@return
   breturn:
-  // [27] return 
+    // [27] return 
     rts
 }
-// cond
+  // cond
 // cond(byte register(Y) b)
 cond: {
-  // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuyy_lt_vbuc1 
+    // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuyy_lt_vbuc1 
     cpy #5
     lda #0
     rol
     eor #1
     jmp breturn
-  // cond::@return
+    // cond::@return
   breturn:
-  // [29] return 
+    // [29] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -821,103 +821,118 @@ reg byte a [ cond::return#1 ]
 FINAL ASSEMBLER
 Score: 434
 
-// File Comments
+  // File Comments
 // Tests the ternary operator - when the condition is constant
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte) cond::b#0 ← (byte) main::i#2
-  // [7] call cond 
+    // cond(i)
+    // [6] (byte) cond::b#0 ← (byte) main::i#2
+    // [7] call cond 
     jsr cond
-  // [8] (bool) cond::return#0 ← (bool) cond::return#1
-  // main::@5
-  // [9] (bool~) main::$0 ← (bool) cond::return#0
-  // [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
+    // [8] (bool) cond::return#0 ← (bool) cond::return#1
+    // main::@5
+    // [9] (bool~) main::$0 ← (bool) cond::return#0
+    // cond(i)?m1(i):m2(i)
+    // [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
     cmp #0
     bne b2
-  // main::@3
-  // [11] (byte) m2::i#0 ← (byte) main::i#2
-  // [12] call m2 
+    // main::@3
+    // m2(i)
+    // [11] (byte) m2::i#0 ← (byte) main::i#2
+    // [12] call m2 
     jsr m2
-  // [13] (byte) m2::return#0 ← (byte) m2::return#1
-  // main::@7
-  // [14] (byte~) main::$2 ← (byte) m2::return#0
-  // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
-  // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
-  // main::@4
+    // [13] (byte) m2::return#0 ← (byte) m2::return#1
+    // main::@7
+    // cond(i)?m1(i):m2(i)
+    // [14] (byte~) main::$2 ← (byte) m2::return#0
+    // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+    // [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+    // main::@4
   b4:
-  // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // SCREEN[i] = cond(i)?m1(i):m2(i)
+    // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
-  // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // for( byte i: 0..9)
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$a
     bne b1
-  // main::@return
-  // [19] return 
+    // main::@return
+    // }
+    // [19] return 
     rts
-  // main::@2
+    // main::@2
   b2:
-  // [20] (byte) m1::i#0 ← (byte) main::i#2
-  // [21] call m1 
+    // m1(i)
+    // [20] (byte) m1::i#0 ← (byte) main::i#2
+    // [21] call m1 
     jsr m1
-  // [22] (byte) m1::return#0 ← (byte) m1::return#1
-  // main::@6
-  // [23] (byte~) main::$4 ← (byte) m1::return#0
+    // [22] (byte) m1::return#0 ← (byte) m1::return#1
+    // main::@6
+    // cond(i)?m1(i):m2(i)
+    // [23] (byte~) main::$4 ← (byte) m1::return#0
     jmp b4
 }
-// m1
+  // m1
 // m1(byte register(Y) i)
 m1: {
-  // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    // 5+i
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
     tya
     clc
     adc #5
-  // m1::@return
-  // [25] return 
+    // m1::@return
+    // }
+    // [25] return 
     rts
 }
-// m2
+  // m2
 // m2(byte register(Y) i)
 m2: {
-  // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    // 10+i
+    // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
     tya
     clc
     adc #$a
-  // m2::@return
-  // [27] return 
+    // m2::@return
+    // }
+    // [27] return 
     rts
 }
-// cond
+  // cond
 // cond(byte register(Y) b)
 cond: {
-  // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuyy_lt_vbuc1 
+    // b<5
+    // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuyy_lt_vbuc1 
     cpy #5
     lda #0
     rol
     eor #1
-  // cond::@return
-  // [29] return 
+    // cond::@return
+    // }
+    // [29] return 
     rts
 }
-// File Data
+  // File Data
 

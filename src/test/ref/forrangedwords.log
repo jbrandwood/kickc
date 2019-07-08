@@ -214,29 +214,29 @@ Allocated zp ZP_BYTE:8 [ main::$3 ]
 Allocated zp ZP_BYTE:9 [ main::$4 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _0 = 6
@@ -245,74 +245,74 @@ main: {
     .label _4 = 9
     .label w = 2
     .label sw = 4
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta w
     lda #>0
     sta w+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuz1=_lo_vwuz2 
+    // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuz1=_lo_vwuz2 
     lda w
     sta _0
-  // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     lda _0
     sta SCREEN
-  // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuz1=_hi_vwuz2 
+    // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuz1=_hi_vwuz2 
     lda w+1
     sta _1
-  // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda _1
     sta SCREEN+1
-  // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
+    // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
     inc w
     bne !+
     inc w+1
   !:
-  // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
+    // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
     lda w
     bne b1_from_b1
     lda w+1
     bne b1_from_b1
-  // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
     lda #<-$7fff
     sta sw
     lda #>-$7fff
     sta sw+1
     jmp b2
-  // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuz1=_lo_vwsz2 
+    // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuz1=_lo_vwsz2 
     lda sw
     sta _3
-  // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
     lda _3
     sta SCREEN+3
-  // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuz1=_hi_vwsz2 
+    // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuz1=_hi_vwsz2 
     lda sw+1
     sta _4
-  // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda _4
     sta SCREEN+4
-  // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
+    // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
     inc sw
     bne !+
     inc sw+1
   !:
-  // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
+    // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
     lda sw+1
     cmp #>$7fff
     bne b2_from_b2
@@ -320,12 +320,12 @@ main: {
     cmp #<$7fff
     bne b2_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] ) always clobbers reg byte a 
@@ -350,93 +350,93 @@ Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 1158 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label w = 2
     .label sw = 4
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta w
     lda #>0
     sta w+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
+    // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
     lda w
-  // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
+    // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
     lda w+1
-  // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-  // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
+    // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
     inc w
     bne !+
     inc w+1
   !:
-  // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
+    // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
     lda w
     bne b1_from_b1
     lda w+1
     bne b1_from_b1
-  // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
     lda #<-$7fff
     sta sw
     lda #>-$7fff
     sta sw+1
     jmp b2
-  // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
+    // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
     lda sw
-  // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
-  // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
+    // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
     lda sw+1
-  // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
-  // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
+    // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
     inc sw
     bne !+
     inc sw+1
   !:
-  // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
+    // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
     lda sw+1
     cmp #>$7fff
     bne b2_from_b2
@@ -444,12 +444,12 @@ main: {
     cmp #<$7fff
     bne b2_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -517,84 +517,95 @@ reg byte a [ main::$4 ]
 FINAL ASSEMBLER
 Score: 976
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label w = 2
     .label sw = 4
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta w
     sta w+1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
+    // <w
+    // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
     lda w
-  // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // SCREEN[0] = <w
+    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
+    // >w
+    // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
     lda w+1
-  // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // SCREEN[1] = >w
+    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-  // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
+    // for( word w: 0..$ffff)
+    // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
     inc w
     bne !+
     inc w+1
   !:
-  // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
+    // [11] if((word) main::w#1!=(byte) 0) goto main::@1 -- vwuz1_neq_0_then_la1 
     lda w
     bne b1
     lda w+1
     bne b1
-  // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [12] phi (signed word) main::sw#2 = (signed word) -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
     lda #<-$7fff
     sta sw
     lda #>-$7fff
     sta sw+1
-  // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
-  // main::@2
+    // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // main::@2
   b2:
-  // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
+    // <sw
+    // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
     lda sw
-  // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // SCREEN[3] = <sw
+    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
-  // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
+    // >sw
+    // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
     lda sw+1
-  // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // SCREEN[4] = >sw
+    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
-  // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
+    // for( signed word sw: -$7fff..$7ffe)
+    // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
     inc sw
     bne !+
     inc sw+1
   !:
-  // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
+    // [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2 -- vwsz1_neq_vwsc1_then_la1 
     lda sw+1
     cmp #>$7fff
     bne b2
     lda sw
     cmp #<$7fff
     bne b2
-  // main::@return
-  // [19] return 
+    // main::@return
+    // }
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 

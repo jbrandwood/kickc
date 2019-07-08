@@ -99,45 +99,45 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test of simple enum - anonymous enum definition
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const OFF = 0
     .const ON = 1
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-  // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -151,45 +151,45 @@ Uplifting [main] best 33 combination
 Uplifting [] best 33 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test of simple enum - anonymous enum definition
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .const OFF = 0
     .const ON = 1
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-  // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -226,33 +226,36 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 18
 
-// File Comments
+  // File Comments
 // Test of simple enum - anonymous enum definition
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .const OFF = 0
     .const ON = 1
     .label SCREEN = $400
-  // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // SCREEN[0] = state
+    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-  // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // SCREEN[1] = state
+    // [5] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
-  // main::@return
-  // [6] return 
+    // main::@return
+    // }
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 

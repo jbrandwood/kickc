@@ -83,41 +83,41 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests casting pointer types to other pointer types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label sb_screen = $400
     .const sb = $ff
-  // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [5] return 
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -130,41 +130,41 @@ Uplifting [main] best 27 combination
 Uplifting [] best 27 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests casting pointer types to other pointer types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label sb_screen = $400
     .const sb = $ff
-  // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [5] return 
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -200,29 +200,31 @@ FINAL SYMBOL TABLE
 FINAL ASSEMBLER
 Score: 12
 
-// File Comments
+  // File Comments
 // Tests casting pointer types to other pointer types
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label sb_screen = $400
     .const sb = $ff
-  // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // *sb_screen = sb
+    // [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
-  // main::@return
-  // [5] return 
+    // main::@return
+    // }
+    // [5] return 
     rts
 }
-// File Data
+  // File Data
 

@@ -157,29 +157,29 @@ Allocated zp ZP_BYTE:6 [ main::$3 ]
 Allocated zp ZP_BYTE:7 [ main::$4 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test a constant word pointers (pointing to a word placed on zeropage).
 // The result when running is "CML!" on the screen.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label wp = w
@@ -188,47 +188,47 @@ main: {
     .label _3 = 6
     .label _4 = 7
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda wp
     sta _1
-  // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda _1
     sta screen
-  // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda wp+1
     sta _2
-  // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda _2
     sta screen+1
-  // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda wp
     sta _3
-  // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
     lda _3
     sta screen+2
-  // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda wp+1
     sta _4
-  // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda _4
     sta screen+3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (word) main::w#0 ← (word) $d03 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -248,66 +248,66 @@ Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 75 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test a constant word pointers (pointing to a word placed on zeropage).
 // The result when running is "CML!" on the screen.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen
-  // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+1
-  // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+2
-  // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta screen+3
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -354,54 +354,65 @@ reg byte a [ main::$4 ]
 FINAL ASSEMBLER
 Score: 60
 
-// File Comments
+  // File Comments
 // Test a constant word pointers (pointing to a word placed on zeropage).
 // The result when running is "CML!" on the screen.
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // w = $0d03
+    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // <*wp
+    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // screen[0] = <*wp
+    // [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen
-  // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // >*wp
+    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // screen[1] = >*wp
+    // [8] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+1
-  // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // *wp = $210c
+    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // <*wp
+    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // screen[2] = <*wp
+    // [11] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+2
-  // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // >*wp
+    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // screen[3] = >*wp
+    // [13] *((const byte*) main::screen#0+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta screen+3
-  // main::@return
-  // [14] return 
+    // main::@return
+    // }
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 

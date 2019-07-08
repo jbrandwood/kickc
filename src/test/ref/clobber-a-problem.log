@@ -244,100 +244,100 @@ Allocated zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ]
 Allocated zp ZP_BYTE:4 [ irq::$0 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 3
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
+  // [3] call main 
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// irq
+  // irq
 irq: {
     .label _0 = 4
     .label raster_next = 2
-  // entry interrupt(HARDWARE_CLOBBER)
+    // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
     sty regy+1
-  // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
+    // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax irq_raster_next
     axs #-[$15]
     stx irq_raster_next
-  // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
+    // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
     // Setup next interrupt
     lda irq_raster_next
     sta raster_next
-  // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and raster_next
     sta _0
-  // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+    // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda _0
     cmp #0
     bne b1_from_irq
     jmp b2
-  // irq::@2
+    // irq::@2
   b2:
-  // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuz1=vbuz1_minus_1 
+    // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuz1=vbuz1_minus_1 
     dec raster_next
-  // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+    // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+    // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  // irq::@1
+    // irq::@1
   b1:
-  // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
     lda raster_next
     sta RASTER
-  // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [16] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -346,7 +346,7 @@ irq: {
     ldy #00
     rti
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (byte) irq_raster_next#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
@@ -376,100 +376,100 @@ Removing interrupt register storage regy: in SEG30 [16] return  - exit interrupt
 Removing interrupt register storage ldy #00 in SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 2
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
+  // [3] call main 
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(HARDWARE_CLOBBER)
+    // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-  // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
+    // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax irq_raster_next
     axs #-[$15]
     stx irq_raster_next
-  // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
+    // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
     // Setup next interrupt
     ldx irq_raster_next
-  // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
+    // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
+    // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1_from_irq
     jmp b2
-  // irq::@2
+    // irq::@2
   b2:
-  // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuxx=vbuxx_minus_1 
+    // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+    // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+    // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  // irq::@1
+    // irq::@1
   b1:
-  // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+    // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [16] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
     ldx #00
     rti
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -536,81 +536,93 @@ reg byte a [ irq::$0 ]
 FINAL ASSEMBLER
 Score: 159
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 2
-// @begin
+  // @begin
 bbegin:
-// @1
-// [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // @1
+  // irq_raster_next = 0
+  // [1] (byte) irq_raster_next#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-// [2] phi from @1 to @2 [phi:@1->@2]
-// @2
-// [3] call main 
+  // [2] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [3] call main 
   jsr main
   rts
-// [4] phi from @2 to @end [phi:@2->@end]
-// @end
-// main
+  // [4] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
 main: {
-  // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // *KERNEL_IRQ = &irq
+    // [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // main::@return
-  // [6] return 
+    // main::@return
+    // }
+    // [6] return 
     rts
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(HARDWARE_CLOBBER)
+    // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-  // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+    // *BORDERCOL = DARK_GREY
+    // [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
+    // irq_raster_next += 21
+    // [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax irq_raster_next
     axs #-[$15]
     stx irq_raster_next
-  // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
+    // raster_next = irq_raster_next
+    // [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
   // Setup next interrupt
-  // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
+    // raster_next&7
+    // [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
+    // if((raster_next&7)==0)
+    // [11] if((byte~) irq::$0!=(byte) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1
-  // irq::@2
-  // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuxx=vbuxx_minus_1 
+    // irq::@2
+    // raster_next -=1
+    // [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-  // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
-  // irq::@1
+    // [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+    // [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+    // irq::@1
   b1:
-  // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+    // *RASTER = raster_next
+    // [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // *BORDERCOL = BLACK
+    // [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // irq::@return
-  // [16] return  - exit interrupt(HARDWARE_CLOBBER)
+    // irq::@return
+    // }
+    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
     ldx #00
     rti
 }
-// File Data
+  // File Data
 

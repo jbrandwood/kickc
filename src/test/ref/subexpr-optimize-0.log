@@ -167,64 +167,64 @@ Allocated zp ZP_BYTE:5 [ main::$1 ]
 Allocated zp ZP_WORD:6 [ main::screen#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests optimization of identical sub-expressions
 // The two examples of i*2 is detected as identical leading to optimized ASM where *2 is only calculated once
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _1 = 5
     .label screen = 6
     .label screen_2 = 3
     .label i = 2
     .label screen_3 = 3
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen_3
     lda #>$400
     sta screen_3+1
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta _1
-  // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     lda _1
     ldy #0
     sta (screen_3),y
-  // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
+    // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
     lda screen_3
     clc
     adc #1
@@ -232,11 +232,11 @@ main: {
     lda screen_3+1
     adc #0
     sta screen+1
-  // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     lda _1
     ldy #0
     sta (screen),y
-  // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
+    // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
     lda screen
     clc
     adc #1
@@ -244,19 +244,19 @@ main: {
     lda screen+1
     adc #0
     sta screen_2+1
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp i
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::screen#3 main::$1 ] ( main:2 [ main::i#2 main::screen#3 main::$1 ] ) always clobbers reg byte a 
@@ -291,85 +291,85 @@ Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::screen#3 main::screen#2 main::
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ main::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests optimization of identical sub-expressions
 // The two examples of i*2 is detected as identical leading to optimized ASM where *2 is only calculated once
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label _1 = 4
     .label screen = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
     sta _1
-  // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     lda _1
     ldy #0
     sta (screen),y
-  // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     lda _1
     ldy #0
     sta (screen),y
-  // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
+    // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -422,67 +422,74 @@ zp ZP_BYTE:4 [ main::$1 ]
 FINAL ASSEMBLER
 Score: 701
 
-// File Comments
+  // File Comments
 // Tests optimization of identical sub-expressions
 // The two examples of i*2 is detected as identical leading to optimized ASM where *2 is only calculated once
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label _1 = 4
     .label screen = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
-  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // i*2
+    // [6] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
     sta _1
-  // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // *screen++ = i*2
+    // [7] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     ldy #0
     sta (screen),y
-  // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
+    // *screen++ = i*2;
+    // [8] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
+    // *screen++ = i*2
+    // [9] *((byte*) main::screen#1) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
     lda _1
     ldy #0
     sta (screen),y
-  // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
+    // *screen++ = i*2;
+    // [10] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i: 0..2)
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
     bne b1
-  // main::@return
-  // [13] return 
+    // main::@return
+    // }
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
 

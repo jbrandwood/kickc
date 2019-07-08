@@ -180,6 +180,10 @@ public class ControlFlowBlock {
                out.append("  //" + comment.getComment() + "\n");
             }
          }
+         if(program.getLog().isVerboseSsaSourceCode()) {
+            if(statement.getSource()!=null && statement.getSource().getCode()!=null)
+            out.append("  // " + statement.getSource().getCode()).append("\n");
+         }
          out.append("  " + statement.toString(program, program.getLog().isVerboseLiveRanges()) + "\n");
       }
       if(defaultSuccessor != null) {

@@ -107,46 +107,46 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::col#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test setting the program PC through a #pc directive
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $1000 "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BGCOL = $d021
   .label RASTER = $d012
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label col = 2
-  // asm { sei  }
+    // asm { sei  }
     sei
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta col
-  // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp b1
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::col#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
@@ -159,43 +159,43 @@ Uplifting [main] best 127 combination reg byte a [ main::col#0 ]
 Uplifting [] best 127 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test setting the program PC through a #pc directive
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $1000 "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BGCOL = $d021
   .label RASTER = $d012
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     jmp b1
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -233,32 +233,35 @@ reg byte a [ main::col#0 ]
 FINAL ASSEMBLER
 Score: 112
 
-// File Comments
+  // File Comments
 // Test setting the program PC through a #pc directive
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $1000 "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label BGCOL = $d021
   .label RASTER = $d012
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // main::@1
+    // main::@1
   b1:
-  // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // col = *RASTER
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // *BGCOL = col
+    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     jmp b1
 }
-// File Data
+  // File Data
 

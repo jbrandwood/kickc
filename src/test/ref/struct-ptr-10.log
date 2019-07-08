@@ -298,31 +298,31 @@ Allocated zp ZP_WORD:19 [ main::$15 ]
 Allocated zp ZP_WORD:21 [ main::$16 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Minimal struct -  array with 256+ structs
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _0 = 6
@@ -336,31 +336,31 @@ main: {
     .label _14 = $11
     .label _15 = $13
     .label _16 = $15
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuz1=_byte_vwuz2 
+    // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuz1=_byte_vwuz2 
     lda i
     sta _0
-  // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda i
     asl
     sta _3
     lda i+1
     rol
     sta _3+1
-  // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
     lda _3
     clc
     adc #<points
@@ -368,11 +368,11 @@ main: {
     lda _3+1
     adc #>points
     sta _11+1
-  // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (_11),y
-  // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
     lda _3
     clc
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -380,44 +380,44 @@ main: {
     lda _3+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _12+1
-  // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuz2 
+    // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuz2 
     lda _0
     ldy #0
     sta (_12),y
-  // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
+    // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$1f4
     bne b1_from_b1
     lda i
     cmp #<$1f4
     bne b1_from_b1
-  // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
+    // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
     lda #<0
     sta i1
     lda #>0
     sta i1+1
     jmp b2
-  // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda i1
     asl
     sta _4
     lda i1+1
     rol
     sta _4+1
-  // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points
@@ -425,7 +425,7 @@ main: {
     lda _4+1
     adc #>points
     sta _13+1
-  // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<SCREEN
@@ -433,12 +433,12 @@ main: {
     lda _4+1
     adc #>SCREEN
     sta _14+1
-  // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
+    // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (_13),y
     ldy #0
     sta (_14),y
-  // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -446,7 +446,7 @@ main: {
     lda _4+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _15+1
-  // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<SCREEN+OFFSET_STRUCT_POINT_Y
@@ -454,17 +454,17 @@ main: {
     lda _4+1
     adc #>SCREEN+OFFSET_STRUCT_POINT_Y
     sta _16+1
-  // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
+    // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (_15),y
     ldy #0
     sta (_16),y
-  // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
+    // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
     inc i1
     bne !+
     inc i1+1
   !:
-  // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
+    // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
     lda i1+1
     cmp #>$1f4
     bne b2_from_b2
@@ -472,12 +472,12 @@ main: {
     cmp #<$1f4
     bne b2_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [24] return 
+    // [24] return 
     rts
 }
-// File Data
+  // File Data
   points: .fill 2*$1f4, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -543,31 +543,31 @@ Allocated (was zp ZP_WORD:17) zp ZP_WORD:14 [ main::$14 ]
 Allocated (was zp ZP_WORD:19) zp ZP_WORD:16 [ main::$15 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Minimal struct -  array with 256+ structs
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _3 = 6
@@ -580,31 +580,31 @@ main: {
     .label _14 = $e
     .label _15 = $10
     .label _16 = $a
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuxx=_byte_vwuz1 
+    // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuxx=_byte_vwuz1 
     lda i
     tax
-  // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda i
     asl
     sta _3
     lda i+1
     rol
     sta _3+1
-  // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
     lda _3
     clc
     adc #<points
@@ -612,11 +612,11 @@ main: {
     lda _3+1
     adc #>points
     sta _11+1
-  // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (_11),y
-  // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _12
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -624,44 +624,44 @@ main: {
     lda _12+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _12+1
-  // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuxx 
+    // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (_12),y
-  // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
+    // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$1f4
     bne b1_from_b1
     lda i
     cmp #<$1f4
     bne b1_from_b1
-  // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
+    // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
     lda #<0
     sta i1
     lda #>0
     sta i1+1
     jmp b2
-  // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
-  // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda i1
     asl
     sta _4
     lda i1+1
     rol
     sta _4+1
-  // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points
@@ -669,7 +669,7 @@ main: {
     lda _4+1
     adc #>points
     sta _13+1
-  // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<SCREEN
@@ -677,12 +677,12 @@ main: {
     lda _4+1
     adc #>SCREEN
     sta _14+1
-  // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
+    // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (_13),y
     ldy #0
     sta (_14),y
-  // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -690,7 +690,7 @@ main: {
     lda _4+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _15+1
-  // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz1 
+    // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _16
     adc #<SCREEN+OFFSET_STRUCT_POINT_Y
@@ -698,17 +698,17 @@ main: {
     lda _16+1
     adc #>SCREEN+OFFSET_STRUCT_POINT_Y
     sta _16+1
-  // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
+    // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (_15),y
     ldy #0
     sta (_16),y
-  // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
+    // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
     inc i1
     bne !+
     inc i1+1
   !:
-  // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
+    // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
     lda i1+1
     cmp #>$1f4
     bne b2_from_b2
@@ -716,12 +716,12 @@ main: {
     cmp #<$1f4
     bne b2_from_b2
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [24] return 
+    // [24] return 
     rts
 }
-// File Data
+  // File Data
   points: .fill 2*$1f4, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -809,22 +809,22 @@ zp ZP_WORD:16 [ main::$15 ]
 FINAL ASSEMBLER
 Score: 2566
 
-// File Comments
+  // File Comments
 // Minimal struct -  array with 256+ structs
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label _3 = 6
@@ -837,25 +837,27 @@ main: {
     .label _14 = $e
     .label _15 = $10
     .label _16 = $a
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta i
     sta i+1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuxx=_byte_vwuz1 
+    // (byte)i
+    // [6] (byte~) main::$0 ← (byte)(word) main::i#2 -- vbuxx=_byte_vwuz1 
     lda i
     tax
-  // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // points[i] = { 2, (byte)i }
+    // [7] (word~) main::$3 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     asl
     sta _3
     lda i+1
     rol
     sta _3+1
-  // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$11 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz2 
     lda _3
     clc
     adc #<points
@@ -863,11 +865,11 @@ main: {
     lda _3+1
     adc #>points
     sta _11+1
-  // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$11) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (_11),y
-  // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] (byte*~) main::$12 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _12
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -875,38 +877,40 @@ main: {
     lda _12+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _12+1
-  // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuxx 
+    // [11] *((byte*~) main::$12) ← (byte~) main::$0 -- _deref_pbuz1=vbuxx 
     txa
     sta (_12),y
-  // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    // for( word i: 0..499)
+    // [12] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
+    // [13] if((word) main::i#1!=(word) $1f4) goto main::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$1f4
     bne b1
     lda i
     cmp #<$1f4
     bne b1
-  // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi (word) main::i1#2 = (word) 0 [phi:main::@1->main::@2#0] -- vwuz1=vwuc1 
     lda #<0
     sta i1
     sta i1+1
-  // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
-  // main::@2
+    // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [14] phi (word) main::i1#2 = (word) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // main::@2
   b2:
-  // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // SCREEN[i] = points[i]
+    // [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda i1
     asl
     sta _4
     lda i1+1
     rol
     sta _4+1
-  // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [16] (byte*~) main::$13 ← (byte*)(const struct Point[$1f4]) points#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points
@@ -914,7 +918,7 @@ main: {
     lda _4+1
     adc #>points
     sta _13+1
-  // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [17] (byte*~) main::$14 ← (byte*)(const struct Point*) main::SCREEN#0 + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<SCREEN
@@ -922,11 +926,11 @@ main: {
     lda _4+1
     adc #>SCREEN
     sta _14+1
-  // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
+    // [18] *((byte*~) main::$14) ← *((byte*~) main::$13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (_13),y
     sta (_14),y
-  // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
+    // [19] (byte*~) main::$15 ← (byte*)(const struct Point[$1f4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<points+OFFSET_STRUCT_POINT_Y
@@ -934,7 +938,7 @@ main: {
     lda _4+1
     adc #>points+OFFSET_STRUCT_POINT_Y
     sta _15+1
-  // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz1 
+    // [20] (byte*~) main::$16 ← (byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$4 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda _16
     adc #<SCREEN+OFFSET_STRUCT_POINT_Y
@@ -942,25 +946,27 @@ main: {
     lda _16+1
     adc #>SCREEN+OFFSET_STRUCT_POINT_Y
     sta _16+1
-  // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
+    // [21] *((byte*~) main::$16) ← *((byte*~) main::$15) -- _deref_pbuz1=_deref_pbuz2 
     lda (_15),y
     sta (_16),y
-  // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
+    // for( word i: 0..499)
+    // [22] (word) main::i1#1 ← ++ (word) main::i1#2 -- vwuz1=_inc_vwuz1 
     inc i1
     bne !+
     inc i1+1
   !:
-  // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
+    // [23] if((word) main::i1#1!=(word) $1f4) goto main::@2 -- vwuz1_neq_vwuc1_then_la1 
     lda i1+1
     cmp #>$1f4
     bne b2
     lda i1
     cmp #<$1f4
     bne b2
-  // main::@return
-  // [24] return 
+    // main::@return
+    // }
+    // [24] return 
     rts
 }
-// File Data
+  // File Data
   points: .fill 2*$1f4, 0
 

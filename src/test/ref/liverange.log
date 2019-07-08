@@ -272,106 +272,106 @@ Allocated zp ZP_BYTE:8 [ main::a#2 ]
 Allocated zp ZP_BYTE:9 [ inci::return#2 ]
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label i = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label _0 = 4
     .label _2 = 7
     .label a = 5
     .label a_2 = 8
-  // [5] call inci 
-  // [16] phi from main to inci [phi:main->inci]
+    // [5] call inci 
+    // [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
+    // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jsr inci
-  // [6] (byte) inci::return#0 ← (byte) inci::return#2 -- vbuz1=vbuz2 
+    // [6] (byte) inci::return#0 ← (byte) inci::return#2 -- vbuz1=vbuz2 
     lda inci.return_2
     sta inci.return
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] (byte~) main::$0 ← (byte) inci::return#0 -- vbuz1=vbuz2 
+    // [7] (byte~) main::$0 ← (byte) inci::return#0 -- vbuz1=vbuz2 
     lda inci.return
     sta _0
-  // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuz2 
+    // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuz2 
     lax _0
     axs #-[4]
     stx a
-  // [9] call inci 
-  // [16] phi from main::@1 to inci [phi:main::@1->inci]
+    // [9] call inci 
+    // [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
-  // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+    // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  // [10] (byte) inci::return#1 ← (byte) inci::return#2 -- vbuz1=vbuz2 
+    // [10] (byte) inci::return#1 ← (byte) inci::return#2 -- vbuz1=vbuz2 
     lda inci.return_2
     sta inci.return_1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [11] (byte~) main::$2 ← (byte) inci::return#1 -- vbuz1=vbuz2 
+    // [11] (byte~) main::$2 ← (byte) inci::return#1 -- vbuz1=vbuz2 
     lda inci.return_1
     sta _2
-  // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuz1=vbuz2_plus_vbuz3 
     lda a
     clc
     adc _2
     sta a_2
-  // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuz1 
     lda i
     sta SCREEN
-  // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda a_2
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// inci
+  // inci
 inci: {
     .label return = 3
     .label return_1 = 6
     .label return_2 = 9
-  // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
+    // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
     lax i
     axs #-[7]
     stx i
-  // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuz1=vbuz2 
+    // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuz1=vbuz2 
     lda i
     sta return_2
     jmp breturn
-  // inci::@return
+    // inci::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
@@ -403,87 +403,87 @@ Uplifting [main] best 82 combination zp ZP_BYTE:5 [ main::a#1 ]
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::a#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label a = 2
-  // [5] call inci 
-  // [16] phi from main to inci [phi:main->inci]
+    // [5] call inci 
+    // [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+    // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
     ldy #0
     jsr inci
-  // [6] (byte) inci::return#0 ← (byte) inci::return#2
+    // [6] (byte) inci::return#0 ← (byte) inci::return#2
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] (byte~) main::$0 ← (byte) inci::return#0
-  // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
+    // [7] (byte~) main::$0 ← (byte) inci::return#0
+    // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
     sta a
-  // [9] call inci 
-  // [16] phi from main::@1 to inci [phi:main::@1->inci]
+    // [9] call inci 
+    // [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
-  // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+    // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  // [10] (byte) inci::return#1 ← (byte) inci::return#2
+    // [10] (byte) inci::return#1 ← (byte) inci::return#2
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [11] (byte~) main::$2 ← (byte) inci::return#1
-  // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
+    // [11] (byte~) main::$2 ← (byte) inci::return#1
+    // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
     clc
     adc a
     tax
-  // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
+    // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN
-  // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
+    // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// inci
+  // inci
 inci: {
-  // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
+    // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
     tya
     clc
     adc #7
     tay
-  // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuaa=vbuyy 
+    // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuaa=vbuyy 
     tya
     jmp breturn
-  // inci::@return
+    // inci::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -550,66 +550,78 @@ reg byte a [ inci::return#2 ]
 FINAL ASSEMBLER
 Score: 58
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label a = 2
-  // [5] call inci 
-  // [16] phi from main to inci [phi:main->inci]
-  // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+    // inci()
+    // [5] call inci 
+    // [16] phi from main to inci [phi:main->inci]
+    // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
     ldy #0
     jsr inci
-  // [6] (byte) inci::return#0 ← (byte) inci::return#2
-  // main::@1
-  // [7] (byte~) main::$0 ← (byte) inci::return#0
-  // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
+    // inci()
+    // [6] (byte) inci::return#0 ← (byte) inci::return#2
+    // main::@1
+    // [7] (byte~) main::$0 ← (byte) inci::return#0
+    // a=a+inci()
+    // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
     sta a
-  // [9] call inci 
-  // [16] phi from main::@1 to inci [phi:main::@1->inci]
-  // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+    // inci()
+    // [9] call inci 
+    // [16] phi from main::@1 to inci [phi:main::@1->inci]
+    // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  // [10] (byte) inci::return#1 ← (byte) inci::return#2
-  // main::@2
-  // [11] (byte~) main::$2 ← (byte) inci::return#1
-  // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
+    // inci()
+    // [10] (byte) inci::return#1 ← (byte) inci::return#2
+    // main::@2
+    // [11] (byte~) main::$2 ← (byte) inci::return#1
+    // a=a+inci()
+    // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
     clc
     adc a
     tax
-  // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
+    // *SCREEN = i
+    // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN
-  // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
+    // *(SCREEN+1) = a
+    // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
-  // main::@return
-  // [15] return 
+    // main::@return
+    // }
+    // [15] return 
     rts
 }
-// inci
+  // inci
 inci: {
-  // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
+    // i+7
+    // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
     tya
     clc
     adc #7
     tay
-  // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuaa=vbuyy 
+    // return i;
+    // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuaa=vbuyy 
     tya
-  // inci::@return
-  // [19] return 
+    // inci::@return
+    // }
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 

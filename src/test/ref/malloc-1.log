@@ -272,72 +272,72 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_WORD:3 [ main::w#2 main::w#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Experiments with malloc() - a word array
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label WORDS = malloc.return
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call malloc 
-// [13] phi from @1 to malloc [phi:@1->malloc]
+  // [2] call malloc 
+  // [13] phi from @1 to malloc [phi:@1->malloc]
 malloc_from_b1:
   jsr malloc
-// [3] phi from @1 to @2 [phi:@1->@2]
+  // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [4] call main 
-// [6] phi from @2 to main [phi:@2->main]
+  // [4] call main 
+  // [6] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [5] phi from @2 to @end [phi:@2->@end]
+  // [5] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label w = 3
     .label i = 2
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<WORDS
     sta w
     lda #>WORDS
     sta w+1
-  // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuz2 
+    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuz2 
     lda i
     ldy #0
     sta (w),y
     tya
     iny
     sta (w),y
-  // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc w
@@ -345,30 +345,30 @@ main: {
     bcc !+
     inc w+1
   !:
-  // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda i
     cmp #0
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [12] return 
+    // [12] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label return = HEAP_START
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] *((word*) main::w#2) ← (byte) main::i#2 [ main::i#2 main::w#2 ] ( main:4 [ main::i#2 main::w#2 ] ) always clobbers reg byte a reg byte y 
@@ -391,70 +391,70 @@ Uplifting [] best 713 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::w#2 main::w#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Experiments with malloc() - a word array
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label WORDS = malloc.return
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call malloc 
-// [13] phi from @1 to malloc [phi:@1->malloc]
+  // [2] call malloc 
+  // [13] phi from @1 to malloc [phi:@1->malloc]
 malloc_from_b1:
   jsr malloc
-// [3] phi from @1 to @2 [phi:@1->@2]
+  // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [4] call main 
-// [6] phi from @2 to main [phi:@2->main]
+  // [4] call main 
+  // [6] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-// [5] phi from @2 to @end [phi:@2->@end]
+  // [5] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label w = 2
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<WORDS
     sta w
     lda #>WORDS
     sta w+1
-  // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
+    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
     txa
     ldy #0
     sta (w),y
     tya
     iny
     sta (w),y
-  // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc w
@@ -462,29 +462,29 @@ main: {
     bcc !+
     inc w+1
   !:
-  // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [12] return 
+    // [12] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label return = HEAP_START
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -548,56 +548,59 @@ zp ZP_WORD:2 [ main::w#2 main::w#1 ]
 FINAL ASSEMBLER
 Score: 590
 
-// File Comments
+  // File Comments
 // Experiments with malloc() - a word array
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label WORDS = malloc.return
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call malloc 
-// [13] phi from @1 to malloc [phi:@1->malloc]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // malloc(0x200)
+  // [2] call malloc 
+  // [13] phi from @1 to malloc [phi:@1->malloc]
   jsr malloc
-// [3] phi from @1 to @2 [phi:@1->@2]
-// @2
-// [4] call main 
-// [6] phi from @2 to main [phi:@2->main]
+  // [3] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [4] call main 
+  // [6] phi from @2 to main [phi:@2->main]
   jsr main
   rts
-// [5] phi from @2 to @end [phi:@2->@end]
-// @end
-// main
+  // [5] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
 main: {
     .label w = 2
-  // [7] phi from main to main::@1 [phi:main->main::@1]
-  // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<WORDS
     sta w
     lda #>WORDS
     sta w+1
-  // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-  // main::@1
+    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // main::@1
   b1:
-  // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
+    // *w++ = i
+    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
     txa
     ldy #0
     sta (w),y
     tya
     iny
     sta (w),y
-  // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // *w++ = i;
+    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc w
@@ -605,23 +608,25 @@ main: {
     bcc !+
     inc w+1
   !:
-  // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // for( byte i: 0..255)
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1
-  // main::@return
-  // [12] return 
+    // main::@return
+    // }
+    // [12] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label return = HEAP_START
-  // malloc::@return
-  // [14] return 
+    // malloc::@return
+    // [14] return 
     rts
 }
-// File Data
+  // File Data
 

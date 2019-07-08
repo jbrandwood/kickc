@@ -200,13 +200,13 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // A minimal working raster IRQ
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -218,75 +218,75 @@ INITIAL ASM
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// irq
+  // irq
 // Interrupt Routine
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // entry interrupt(KERNEL_MIN)
+    // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -308,13 +308,13 @@ Uplifting [irq] best 89 combination
 Uplifting [] best 89 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // A minimal working raster IRQ
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -326,75 +326,75 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // asm { cli  }
+    // asm { cli  }
     cli
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [11] return 
+    // [11] return 
     rts
 }
-// irq
+  // irq
 // Interrupt Routine
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // entry interrupt(KERNEL_MIN)
+    // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -452,13 +452,13 @@ interrupt(KERNEL_MIN)(void()) irq()
 FINAL ASSEMBLER
 Score: 71
 
-// File Comments
+  // File Comments
 // A minimal working raster IRQ
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -470,61 +470,73 @@ Score: 71
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VIC_CONTROL |=$80
+    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // *RASTER = $00
+    // [7] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // *IRQ_ENABLE = IRQ_RASTER
+    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // *KERNEL_IRQ = &irq
+    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // asm { cli  }
+    // asm
+    // asm { cli  }
     cli
-  // main::@return
-  // [11] return 
+    // main::@return
+    // }
+    // [11] return 
     rts
 }
-// irq
+  // irq
 // Interrupt Routine
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // entry interrupt(KERNEL_MIN)
+    // *BGCOL = WHITE
+    // [12] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // *BGCOL = BLACK
+    // [13] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // *IRQ_STATUS = IRQ_RASTER
+    // [14] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  // irq::@return
-  // [15] return  - exit interrupt(KERNEL_MIN)
+    // irq::@return
+    // }
+    // [15] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 

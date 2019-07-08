@@ -232,76 +232,76 @@ Allocated zp ZP_BYTE:4 [ screen_idx#10 screen_idx#11 ]
 Allocated zp ZP_BYTE:5 [ print::$2 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
   print_from_main:
-  // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta screen_idx
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.m
     lda #>msg1
     sta print.m+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.m
     lda #>msg2
     sta print.m+1
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(2) m)
 print: {
     .label _2 = 5
     .label m = 2
-  // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda screen_idx
     asl
     sta _2
-  // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
     ldx _2
     ldy #2
     lda (m),y
@@ -309,15 +309,15 @@ print: {
     iny
     lda (m),y
     sta SCREEN+1,x
-  // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
     inc screen_idx
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'
 
@@ -344,74 +344,74 @@ Attempting to uplift remaining variables inzp ZP_BYTE:4 [ screen_idx#10 screen_i
 Uplifting [] best 107 combination zp ZP_BYTE:4 [ screen_idx#10 screen_idx#11 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
   print_from_main:
-  // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta screen_idx
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.m
     lda #>msg1
     sta print.m+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.m
     lda #>msg2
     sta print.m+1
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [8] return 
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-  // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda screen_idx
     asl
-  // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y
@@ -419,15 +419,15 @@ print: {
     iny
     lda (m),y
     sta SCREEN+1,x
-  // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
     inc screen_idx
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [13] return 
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'
 
@@ -487,58 +487,62 @@ reg byte a [ print::$2 ]
 FINAL ASSEMBLER
 Score: 86
 
-// File Comments
+  // File Comments
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call print 
-  // [9] phi from main to print [phi:main->print]
-  // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+    // print(msg1)
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
+    // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta screen_idx
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.m
     lda #>msg1
     sta print.m+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call print 
-  // [9] phi from main::@1 to print [phi:main::@1->print]
-  // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-  // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // print(msg2)
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.m
     lda #>msg2
     sta print.m+1
     jsr print
-  // main::@return
-  // [8] return 
+    // main::@return
+    // }
+    // [8] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-  // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // SCREEN[screen_idx++] = *(word*)(m+2)
+    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda screen_idx
     asl
-  // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y
@@ -546,13 +550,15 @@ print: {
     iny
     lda (m),y
     sta SCREEN+1,x
-  // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
+    // SCREEN[screen_idx++] = *(word*)(m+2);
+    // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
     inc screen_idx
-  // print::@return
-  // [13] return 
+    // print::@return
+    // }
+    // [13] return 
     rts
 }
-// File Data
+  // File Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'
 

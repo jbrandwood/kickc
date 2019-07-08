@@ -132,57 +132,57 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label FGCOL = $d021
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // entry interrupt(KERNEL_MIN)
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // asm { lda$dc0d  }
+    // asm { lda$dc0d  }
     lda $dc0d
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [8] return  - exit interrupt(KERNEL_MIN)
+    // [8] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -198,57 +198,57 @@ Uplifting [irq] best 133 combination
 Uplifting [] best 133 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label FGCOL = $d021
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // entry interrupt(KERNEL_MIN)
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // asm { lda$dc0d  }
+    // asm { lda$dc0d  }
     lda $dc0d
     jmp breturn
-  // irq::@return
+    // irq::@return
   breturn:
-  // [8] return  - exit interrupt(KERNEL_MIN)
+    // [8] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -289,44 +289,49 @@ interrupt(KERNEL_MIN)(void()) irq()
 FINAL ASSEMBLER
 Score: 115
 
-// File Comments
-// Basic Upstart
+  // File Comments
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label FGCOL = $d021
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // *KERNEL_IRQ = &irq
+    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  // main::@1
+    // main::@1
   b1:
-  // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // (*FGCOL)++;
+    // [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-// irq
+  // irq
 irq: {
-  // entry interrupt(KERNEL_MIN)
-  // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // entry interrupt(KERNEL_MIN)
+    // (*BGCOL)++;
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  // asm { lda$dc0d  }
+    // asm
+    // asm { lda$dc0d  }
     lda $dc0d
-  // irq::@return
-  // [8] return  - exit interrupt(KERNEL_MIN)
+    // irq::@return
+    // }
+    // [8] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-// File Data
+  // File Data
 

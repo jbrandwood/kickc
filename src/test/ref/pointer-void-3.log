@@ -250,119 +250,119 @@ Allocated zp ZP_WORD:10 [ main::buf2#0 ]
 Allocated zp ZP_WORD:12 [ malloc::return#2 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test void pointer - issues when assigning returns from malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label heap_head = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label buf1 = 6
     .label buf2 = $a
-  // [5] call malloc 
-  // [16] phi from main to malloc [phi:main->malloc]
+    // [5] call malloc 
+    // [16] phi from main to malloc [phi:main->malloc]
   malloc_from_main:
-  // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<$c000
     sta heap_head
     lda #>$c000
     sta heap_head+1
     jsr malloc
-  // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
+    // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
     lda malloc.return_2
     sta malloc.return
     lda malloc.return_2+1
     sta malloc.return+1
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] (void*) main::buf1#0 ← (void*) malloc::return#0 -- pvoz1=pvoz2 
+    // [7] (void*) main::buf1#0 ← (void*) malloc::return#0 -- pvoz1=pvoz2 
     lda malloc.return
     sta buf1
     lda malloc.return+1
     sta buf1+1
-  // [8] call malloc 
-  // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
+    // [8] call malloc 
+    // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
   malloc_from_b1:
-  // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
+    // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
     jsr malloc
-  // [9] (void*) malloc::return#1 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
+    // [9] (void*) malloc::return#1 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
     lda malloc.return_2
     sta malloc.return_1
     lda malloc.return_2+1
     sta malloc.return_1+1
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] (void*) main::buf2#0 ← (void*) malloc::return#1 -- pvoz1=pvoz2 
+    // [10] (void*) main::buf2#0 ← (void*) malloc::return#1 -- pvoz1=pvoz2 
     lda malloc.return_1
     sta buf2
     lda malloc.return_1+1
     sta buf2+1
-  // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (buf1),y
-  // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
     lda #'b'
     ldy #0
     sta (buf2),y
-  // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta SCREEN
-  // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// malloc
+  // malloc
 malloc: {
     .label return = 4
     .label return_1 = 8
     .label return_2 = $c
-  // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
     inc heap_head
     bne !+
     inc heap_head+1
   !:
-  // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
+    // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
     lda heap_head
     sta return_2
     lda heap_head+1
     sta return_2+1
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (void*) malloc::return#0 ← (void*) malloc::return#2 [ malloc::return#0 heap_head#11 ] ( main:2 [ malloc::return#0 heap_head#11 ] ) always clobbers reg byte a 
@@ -395,107 +395,107 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:8 [ malloc::re
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test void pointer - issues when assigning returns from malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label heap_head = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label buf1 = 4
     .label buf2 = 6
-  // [5] call malloc 
-  // [16] phi from main to malloc [phi:main->malloc]
+    // [5] call malloc 
+    // [16] phi from main to malloc [phi:main->malloc]
   malloc_from_main:
-  // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<$c000
     sta heap_head
     lda #>$c000
     sta heap_head+1
     jsr malloc
-  // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
+    // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
     lda malloc.return_2
     sta malloc.return
     lda malloc.return_2+1
     sta malloc.return+1
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] (void*) main::buf1#0 ← (void*) malloc::return#0
-  // [8] call malloc 
-  // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
+    // [7] (void*) main::buf1#0 ← (void*) malloc::return#0
+    // [8] call malloc 
+    // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
   malloc_from_b1:
-  // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
+    // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
     jsr malloc
-  // [9] (void*) malloc::return#1 ← (void*) malloc::return#2
+    // [9] (void*) malloc::return#1 ← (void*) malloc::return#2
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [10] (void*) main::buf2#0 ← (void*) malloc::return#1
-  // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [10] (void*) main::buf2#0 ← (void*) malloc::return#1
+    // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (buf1),y
-  // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
     lda #'b'
     ldy #0
     sta (buf2),y
-  // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta SCREEN
-  // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta SCREEN+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [15] return 
+    // [15] return 
     rts
 }
-// malloc
+  // malloc
 malloc: {
     .label return = 4
     .label return_1 = 6
     .label return_2 = 6
-  // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
     inc heap_head
     bne !+
     inc heap_head+1
   !:
-  // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
+    // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
     lda heap_head
     sta return_2
     lda heap_head+1
     sta return_2+1
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [19] return 
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -560,83 +560,94 @@ zp ZP_WORD:6 [ malloc::return#1 main::buf2#0 malloc::return#2 ]
 FINAL ASSEMBLER
 Score: 106
 
-// File Comments
+  // File Comments
 // Test void pointer - issues when assigning returns from malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label heap_head = 2
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label buf1 = 4
     .label buf2 = 6
-  // [5] call malloc 
-  // [16] phi from main to malloc [phi:main->malloc]
-  // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // malloc()
+    // [5] call malloc 
+    // [16] phi from main to malloc [phi:main->malloc]
+    // [16] phi (byte*) heap_head#10 = (byte*) 49152 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<$c000
     sta heap_head
     lda #>$c000
     sta heap_head+1
     jsr malloc
-  // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
+    // malloc()
+    // [6] (void*) malloc::return#0 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
     lda malloc.return_2
     sta malloc.return
     lda malloc.return_2+1
     sta malloc.return+1
-  // main::@1
-  // [7] (void*) main::buf1#0 ← (void*) malloc::return#0
-  // [8] call malloc 
-  // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
-  // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
+    // main::@1
+    // [7] (void*) main::buf1#0 ← (void*) malloc::return#0
+    // [8] call malloc 
+    // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
+    // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
     jsr malloc
-  // [9] (void*) malloc::return#1 ← (void*) malloc::return#2
-  // main::@2
-  // [10] (void*) main::buf2#0 ← (void*) malloc::return#1
-  // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // malloc()
+    // [9] (void*) malloc::return#1 ← (void*) malloc::return#2
+    // main::@2
+    // [10] (void*) main::buf2#0 ← (void*) malloc::return#1
+    // *buf1 = 'a'
+    // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (buf1),y
-  // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    // *buf2 = 'b'
+    // [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
     lda #'b'
     sta (buf2),y
-  // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // SCREEN[0] = *buf1
+    // [13] *((const byte*) SCREEN#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     lda (buf1),y
     sta SCREEN
-  // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // SCREEN[1] = *buf2
+    // [14] *((const byte*) SCREEN#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     lda (buf2),y
     sta SCREEN+1
-  // main::@return
-  // [15] return 
+    // main::@return
+    // }
+    // [15] return 
     rts
 }
-// malloc
+  // malloc
 malloc: {
     .label return = 4
     .label return_1 = 6
     .label return_2 = 6
-  // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
+    // heap_head++;
+    // [17] (byte*) heap_head#11 ← ++ (byte*) heap_head#10 -- pbuz1=_inc_pbuz1 
     inc heap_head
     bne !+
     inc heap_head+1
   !:
-  // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
+    // return heap_head;
+    // [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 -- pvoz1=pvoz2 
     lda heap_head
     sta return_2
     lda heap_head+1
     sta return_2+1
-  // malloc::@return
-  // [19] return 
+    // malloc::@return
+    // }
+    // [19] return 
     rts
 }
-// File Data
+  // File Data
 

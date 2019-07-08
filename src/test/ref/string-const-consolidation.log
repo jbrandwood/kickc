@@ -258,116 +258,116 @@ Allocated zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 Allocated zp ZP_WORD:4 [ print::string#4 print::string#3 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Tests that identical strings are consolidated
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label screen = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print 
-  // [11] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
   print_from_main:
-  // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [11] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call print 
-  // [11] phi from main::@2 to print [phi:main::@2->print]
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(4) string)
 print: {
     .label string = 4
-  // [12] phi from print to print::@1 [phi:print->print::@1]
+    // [12] phi from print to print::@1 [phi:print->print::@1]
   b1_from_print:
-  // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
     lda #<rex1
     sta string
     lda #>rex1
     sta string+1
     jmp b1
-  // print::@1
+    // print::@1
   b1:
-  // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (string),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
-  // print::@2
+    // print::@2
   b2:
-  // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
+    // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (string),y
     ldy #0
     sta (screen),y
-  // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+    // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
     inc string
     bne !+
     inc string+1
   !:
-  // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
+    // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
   b1_from_b2:
-  // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
+    // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
   rex1: .text "rex@"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -386,116 +386,116 @@ Uplifting [] best 776 combination zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 Uplifting [main] best 776 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Tests that identical strings are consolidated
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label screen = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // [5] call print 
-  // [11] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
   print_from_main:
-  // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [7] call print 
-  // [11] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [9] call print 
-  // [11] phi from main::@2 to print [phi:main::@2->print]
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
     jsr print
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [10] return 
+    // [10] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(4) string)
 print: {
     .label string = 4
-  // [12] phi from print to print::@1 [phi:print->print::@1]
+    // [12] phi from print to print::@1 [phi:print->print::@1]
   b1_from_print:
-  // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
     lda #<rex1
     sta string
     lda #>rex1
     sta string+1
     jmp b1
-  // print::@1
+    // print::@1
   b1:
-  // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (string),y
     cmp #'@'
     bne b2
     jmp breturn
-  // print::@return
+    // print::@return
   breturn:
-  // [14] return 
+    // [14] return 
     rts
-  // print::@2
+    // print::@2
   b2:
-  // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
+    // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (string),y
     ldy #0
     sta (screen),y
-  // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+    // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
     inc string
     bne !+
     inc string+1
   !:
-  // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
+    // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
   b1_from_b2:
-  // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
+    // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
   rex1: .text "rex@"
 
 ASSEMBLER OPTIMIZATIONS
@@ -563,89 +563,97 @@ zp ZP_WORD:4 [ print::string#4 print::string#3 ]
 FINAL ASSEMBLER
 Score: 675
 
-// File Comments
+  // File Comments
 // Tests that identical strings are consolidated
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label screen = 2
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  // [5] call print 
-  // [11] phi from main to print [phi:main->print]
-  // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    // print(rex1)
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
+    // [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     jsr print
-  // [6] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [7] call print 
-  // [11] phi from main::@1 to print [phi:main::@1->print]
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // print(rex2)
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [9] call print 
-  // [11] phi from main::@2 to print [phi:main::@2->print]
-  // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // print("rex")
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
+    // [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
     jsr print
-  // main::@return
-  // [10] return 
+    // main::@return
+    // }
+    // [10] return 
     rts
 }
-// print
+  // print
 // print(byte* zeropage(4) string)
 print: {
     .label string = 4
-  // [12] phi from print to print::@1 [phi:print->print::@1]
-  // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    // [12] phi from print to print::@1 [phi:print->print::@1]
+    // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (const byte[]) rex1#0 [phi:print->print::@1#1] -- pbuz1=pbuc1 
     lda #<rex1
     sta string
     lda #>rex1
     sta string+1
-  // print::@1
+    // print::@1
   b1:
-  // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*string!='@')
+    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (string),y
     cmp #'@'
     bne b2
-  // print::@return
-  // [14] return 
+    // print::@return
+    // }
+    // [14] return 
     rts
-  // print::@2
+    // print::@2
   b2:
-  // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
+    // *screen++ = *string++
+    // [15] *((byte*) screen#12) ← *((byte*) print::string#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (string),y
     sta (screen),y
-  // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+    // *screen++ = *string++;
+    // [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print::string#3 ← ++ (byte*) print::string#4 -- pbuz1=_inc_pbuz1 
     inc string
     bne !+
     inc string+1
   !:
-  // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
-  // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
-  // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
+    // [12] phi from print::@2 to print::@1 [phi:print::@2->print::@1]
+    // [12] phi (byte*) screen#12 = (byte*) screen#5 [phi:print::@2->print::@1#0] -- register_copy 
+    // [12] phi (byte*) print::string#4 = (byte*) print::string#3 [phi:print::@2->print::@1#1] -- register_copy 
     jmp b1
 }
-// File Data
+  // File Data
   rex1: .text "rex@"
 

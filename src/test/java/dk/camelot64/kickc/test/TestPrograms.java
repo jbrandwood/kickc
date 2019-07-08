@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFillSquare() throws IOException, URISyntaxException {
+      compileAndCompare("fill-square");
+   }
+
+   @Test
    public void testPlasmaCenter() throws IOException, URISyntaxException {
       compileAndCompare("plasma-center");
    }
@@ -1595,7 +1600,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("examples/multiplexer/simple-multiplexer", 10);
+      compileAndCompare("examples/multiplexer/simple-multiplexer",10);
    }
 
    @Test
@@ -2585,7 +2590,7 @@ public class TestPrograms {
 
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
-      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false),program ));
+      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false, false, false),program ));
       success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, null));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());

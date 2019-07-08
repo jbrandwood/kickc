@@ -2297,13 +2297,13 @@ Allocated zp ZP_BYTE:32 [ plexSort::s#2 ]
 Allocated zp ZP_BYTE:33 [ init::$8 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // A simple usage of the flexible sprite multiplexer routine
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -2328,46 +2328,46 @@ INITIAL ASM
   .label plex_free_next = 5
   .label plex_sprite_idx = 6
   .label plex_show_idx = 7
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
+  // [3] call main 
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [6] call init 
+    // [6] call init 
     jsr init
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] call loop 
-  // [10] phi from main::@1 to loop [phi:main::@1->loop]
+    // [8] call loop 
+    // [10] phi from main::@1 to loop [phi:main::@1->loop]
   loop_from_b1:
     jsr loop
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// loop
+  // loop
 // The raster loop
 loop: {
     .label _4 = $12
@@ -2376,160 +2376,160 @@ loop: {
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $13
     .label ss = 9
-  // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
+    // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
-  // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta sin_idx
     jmp b1
-  // loop::@1
+    // loop::@1
   b1:
     jmp b2
-  // loop::@2
+    // loop::@2
   b2:
-  // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // loop::@3
+    // loop::@3
   b3:
-  // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuz1=vbuz2 
+    // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuz1=vbuz2 
     lda sin_idx
     sta y_idx
-  // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
+    // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
   b4_from_b3:
-  // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuz1=vbuc1 
+    // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta sy
-  // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
+    // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
     jmp b4
-  // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
+    // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
   b4_from_b4:
-  // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
-  // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
+    // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
+    // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
     jmp b4
-  // loop::@4
+    // loop::@4
   b4:
-  // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy y_idx
     lda YSIN,y
     ldy sy
     sta PLEX_YPOS,y
-  // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuz1=vbuz1_plus_vbuc1 
+    // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuz1=vbuz1_plus_vbuc1 
     lax y_idx
     axs #-[8]
     stx y_idx
-  // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuz1=_inc_vbuz1 
     inc sy
-  // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp sy
     bne b4_from_b4
     jmp b5
-  // loop::@5
+    // loop::@5
   b5:
-  // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc sin_idx
-  // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [22] call plexSort 
-  // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
+    // [22] call plexSort 
+    // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
   plexSort_from_b5:
     jsr plexSort
     jmp b11
-  // loop::@11
+    // loop::@11
   b11:
-  // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp b6
-  // loop::@6
+    // loop::@6
   b6:
-  // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #VIC_RST8
     and D011
     sta _4
-  // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuz1_neq_0_then_la1 
+    // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuz1_neq_0_then_la1 
     lda _4
     cmp #0
     bne b6
-  // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
+    // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
   b7_from_b6:
-  // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
+    // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta ss
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
-  // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
     lda #0
     sta plex_show_idx
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
     lda #0
     sta plex_sprite_idx
-  // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
     lda #0
     sta plex_free_next
     jmp b7
   // Show the sprites
-  // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
+    // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
   b7_from_b12:
-  // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
-  // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
-  // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
+    // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
+    // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
+    // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
     jmp b7
-  // loop::@7
+    // loop::@7
   b7:
-  // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp plexFreeNextYpos1
-  // loop::plexFreeNextYpos1
+    // loop::plexFreeNextYpos1
   plexFreeNextYpos1:
-  // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy plex_free_next
     lda PLEX_FREE_YPOS,y
     sta plexFreeNextYpos1_return
     jmp b8
-  // loop::@8
+    // loop::@8
   b8:
-  // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
+    // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp plexFreeNextYpos1_return
     bcc b8
     jmp b9
-  // loop::@9
+    // loop::@9
   b9:
-  // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [31] call plexShowSprite 
+    // [31] call plexShowSprite 
     jsr plexShowSprite
     jmp b12
-  // loop::@12
+    // loop::@12
   b12:
-  // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
+    // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
     inc ss
-  // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp ss
     bne b7_from_b12
     jmp b10
-  // loop::@10
+    // loop::@10
   b10:
-  // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
+    // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
   b1_from_b10:
-  // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
+    // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
     jmp b1
 }
-// plexShowSprite
+  // plexShowSprite
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
@@ -2543,129 +2543,129 @@ plexShowSprite: {
     .label plexFreeAdd1__0 = $16
     .label plexFreeAdd1__1 = $17
     .label xpos_idx = $18
-  // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
-  // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuz2 
+    // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuz2 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     ldx PLEX_YPOS,y
     stx plexFreeAdd1_ypos
-  // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda plexFreeAdd1_ypos
     ldy plex_sprite_idx2
     sta SPRITES_YPOS,y
     jmp plexFreeAdd1
-  // plexShowSprite::plexFreeAdd1
+    // plexShowSprite::plexFreeAdd1
   plexFreeAdd1:
-  // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuz1=vbuz2_plus_vbuc1 
+    // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuz1=vbuz2_plus_vbuc1 
     lax plexFreeAdd1_ypos
     axs #-[$15]
     stx plexFreeAdd1__0
-  // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda plexFreeAdd1__0
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-  // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuz1=vbuz2_plus_1 
+    // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy plex_free_next
     iny
     sty plexFreeAdd1__1
-  // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and plexFreeAdd1__1
     sta plex_free_next
     jmp b4
-  // plexShowSprite::@4
+    // plexShowSprite::@4
   b4:
-  // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
+    // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-  // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy plex_show_idx
     lda PLEX_SORTED_IDX,y
     sta xpos_idx
-  // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda xpos_idx
     asl
     sta _11
-  // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuz1=_lo_pwuc1_derefidx_vbuz2 
+    // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuz1=_lo_pwuc1_derefidx_vbuz2 
     ldy _11
     lda PLEX_XPOS,y
     sta _2
-  // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _2
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-  // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuz1=_hi_pwuc1_derefidx_vbuz2 
+    // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuz1=_hi_pwuc1_derefidx_vbuz2 
     ldy _11
     lda PLEX_XPOS+1,y
     sta _3
-  // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuz1_neq_0_then_la1 
+    // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuz1_neq_0_then_la1 
     lda _3
     cmp #0
     bne b1
     jmp b3
-  // plexShowSprite::@3
+    // plexShowSprite::@3
   b3:
-  // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuz1=vbuc1_bxor_vbuz2 
+    // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuz1=vbuc1_bxor_vbuz2 
     lda #$ff
     eor plex_sprite_msb
     sta _9
-  // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
+    // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     lda SPRITES_XMSB
     and _9
     sta SPRITES_XMSB
     jmp b2
-  // plexShowSprite::@2
+    // plexShowSprite::@2
   b2:
-  // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuz1=vbuz2_plus_1 
+    // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy plex_sprite_idx
     iny
     sty _5
-  // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and _5
     sta plex_sprite_idx
-  // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
+    // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
     inc plex_show_idx
-  // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl plex_sprite_msb
-  // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
+    // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
     lda plex_sprite_msb
     cmp #0
     bne b5_from_b2
-  // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
+    // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
   breturn_from_b2:
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
     jmp breturn
-  // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
+    // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
   b5_from_b2:
     jmp b5
-  // plexShowSprite::@5
+    // plexShowSprite::@5
   b5:
-  // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
+    // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
   breturn_from_b5:
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
     jmp breturn
-  // plexShowSprite::@return
+    // plexShowSprite::@return
   breturn:
-  // [58] return 
+    // [58] return 
     rts
-  // plexShowSprite::@1
+    // plexShowSprite::@1
   b1:
-  // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
+    // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
     ora plex_sprite_msb
     sta SPRITES_XMSB
     jmp b2
 }
-// plexSort
+  // plexSort
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
 // Uses an insertion sort:
@@ -2682,164 +2682,164 @@ plexSort: {
     .label s = $b
     .label s_2 = $20
     .label plexFreePrepare1_s = $c
-  // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
+    // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
   b1_from_plexSort:
-  // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
+    // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta m
     jmp b1
-  // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
+    // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
   b1_from_b2:
-  // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
+    // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
     jmp b1
-  // plexSort::@1
+    // plexSort::@1
   b1:
-  // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy m
     lda PLEX_SORTED_IDX+1,y
     sta nxt_idx
-  // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy nxt_idx
     lda PLEX_YPOS,y
     sta nxt_y
-  // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
+    // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
     lda nxt_y
     ldx m
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcs b2
     jmp b5
-  // plexSort::@5
+    // plexSort::@5
   b5:
-  // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuz1=vbuz2 
+    // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuz1=vbuz2 
     lda m
     sta s
-  // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
+    // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
   b3_from_b5:
   b3_from_b6:
-  // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
+    // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
     jmp b3
-  // plexSort::@3
+    // plexSort::@3
   b3:
-  // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy s
     lda PLEX_SORTED_IDX,y
     sta PLEX_SORTED_IDX+1,y
-  // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuz1=_dec_vbuz1 
+    // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuz1=_dec_vbuz1 
     dec s
-  // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuz1_eq_vbuc1_then_la1 
+    // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
     cmp s
     beq b4
     jmp b6
-  // plexSort::@6
+    // plexSort::@6
   b6:
-  // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
+    // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
     lda nxt_y
     ldx s
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3_from_b6
     jmp b4
-  // plexSort::@4
+    // plexSort::@4
   b4:
-  // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuz1=_inc_vbuz2 
+    // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuz1=_inc_vbuz2 
     ldy s
     iny
     sty s_2
-  // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda nxt_idx
     ldy s_2
     sta PLEX_SORTED_IDX,y
     jmp b2
-  // plexSort::@2
+    // plexSort::@2
   b2:
-  // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
+    // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
-  // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-2+1
     cmp m
     bne b1_from_b2
-  // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
+    // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
   plexFreePrepare1_from_b2:
     jmp plexFreePrepare1
-  // plexSort::plexFreePrepare1
+    // plexSort::plexFreePrepare1
   plexFreePrepare1:
-  // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
+    // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
   plexFreePrepare1_b1_from_plexFreePrepare1:
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuz1=vbuc1 
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuz1=vbuc1 
     lda #0
     sta plexFreePrepare1_s
     jmp plexFreePrepare1_b1
-  // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
+    // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
   plexFreePrepare1_b1_from_plexFreePrepare1_b1:
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
     jmp plexFreePrepare1_b1
-  // plexSort::plexFreePrepare1_@1
+    // plexSort::plexFreePrepare1_@1
   plexFreePrepare1_b1:
-  // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy plexFreePrepare1_s
     sta PLEX_FREE_YPOS,y
-  // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuz1=_inc_vbuz1 
+    // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuz1=_inc_vbuz1 
     inc plexFreePrepare1_s
-  // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp plexFreePrepare1_s
     bne plexFreePrepare1_b1_from_plexFreePrepare1_b1
     jmp breturn
-  // plexSort::@return
+    // plexSort::@return
   breturn:
-  // [80] return 
+    // [80] return 
     rts
 }
-// init
+  // init
 // Initialize the program
 init: {
     .label _8 = $21
     .label xp = $e
     .label sx = $d
     .label ss = $10
-  // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
+    // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
-  // [82] call plexInit 
-  // [96] phi from init to plexInit [phi:init->plexInit]
+    // [82] call plexInit 
+    // [96] phi from init to plexInit [phi:init->plexInit]
   plexInit_from_init:
     jsr plexInit
-  // [83] phi from init to init::@1 [phi:init->init::@1]
+    // [83] phi from init to init::@1 [phi:init->init::@1]
   b1_from_init:
-  // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
+    // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
     lda #$20
     sta xp
     lda #0
     sta xp+1
-  // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuz1=vbuc1 
+    // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta sx
     jmp b1
-  // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
+    // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
   b1_from_b1:
-  // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
-  // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
+    // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
+    // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
     jmp b1
-  // init::@1
+    // init::@1
   b1:
-  // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #SPRITE/$40
     ldy sx
     sta PLEX_PTR,y
-  // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda sx
     asl
     sta _8
-  // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuz1=vwuz2 
+    // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy _8
     lda xp
     sta PLEX_XPOS,y
     lda xp+1
     sta PLEX_XPOS+1,y
-  // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
+    // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
     lda #9
     clc
     adc xp
@@ -2847,85 +2847,85 @@ init: {
     bcc !+
     inc xp+1
   !:
-  // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuz1=_inc_vbuz1 
+    // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuz1=_inc_vbuz1 
     inc sx
-  // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp sx
     bne b1_from_b1
     jmp b2
-  // init::@2
+    // init::@2
   b2:
-  // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
-  // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+    // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
-  // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuz1=vbuc1 
+    // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta ss
     jmp b3
-  // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
   b3_from_b3:
-  // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
     jmp b3
-  // init::@3
+    // init::@3
   b3:
-  // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy ss
     sta SPRITES_COLS,y
-  // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuz1=_inc_vbuz1 
+    // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuz1=_inc_vbuz1 
     inc ss
-  // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp ss
     bne b3_from_b3
     jmp breturn
-  // init::@return
+    // init::@return
   breturn:
-  // [95] return 
+    // [95] return 
     rts
 }
-// plexInit
+  // plexInit
 // Initialize the multiplexer data structures
 plexInit: {
     .label i = $11
-  // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
+    // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
   plexSetScreen1_from_plexInit:
     jmp plexSetScreen1
-  // plexInit::plexSetScreen1
+    // plexInit::plexSetScreen1
   plexSetScreen1:
-  // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
+    // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
   b1_from_plexSetScreen1:
-  // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuz1=vbuc1 
+    // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
+    // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
   b1_from_b1:
-  // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
+    // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
     jmp b1
-  // plexInit::@1
+    // plexInit::@1
   b1:
-  // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy i
     tya
     sta PLEX_SORTED_IDX,y
-  // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuz1=_inc_vbuz1 
+    // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp i
     bne b1_from_b1
     jmp breturn
-  // plexInit::@return
+    // plexInit::@return
   breturn:
-  // [102] return 
+    // [102] return 
     rts
 }
-// File Data
+  // File Data
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
   .align $100
@@ -3132,13 +3132,13 @@ Allocated (was zp ZP_BYTE:30) zp ZP_BYTE:13 [ plexSort::nxt_idx#0 ]
 Allocated (was zp ZP_BYTE:31) zp ZP_BYTE:14 [ plexSort::nxt_y#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // A simple usage of the flexible sprite multiplexer routine
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -3163,306 +3163,306 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label plex_free_next = 3
   .label plex_sprite_idx = 4
   .label plex_show_idx = 5
-// @begin
+  // @begin
 bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
-// [2] phi from @1 to @2 [phi:@1->@2]
+  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-// @2
+  // @2
 b2:
-// [3] call main 
+  // [3] call main 
   jsr main
-// [4] phi from @2 to @end [phi:@2->@end]
+  // [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
-  // asm { sei  }
+    // asm { sei  }
     sei
-  // [6] call init 
+    // [6] call init 
     jsr init
-  // [7] phi from main to main::@1 [phi:main->main::@1]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [8] call loop 
-  // [10] phi from main::@1 to loop [phi:main::@1->loop]
+    // [8] call loop 
+    // [10] phi from main::@1 to loop [phi:main::@1->loop]
   loop_from_b1:
     jsr loop
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// loop
+  // loop
 // The raster loop
 loop: {
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $b
     .label ss = 7
-  // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
+    // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
-  // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta sin_idx
     jmp b1
-  // loop::@1
+    // loop::@1
   b1:
     jmp b2
-  // loop::@2
+    // loop::@2
   b2:
-  // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
     jmp b3
-  // loop::@3
+    // loop::@3
   b3:
-  // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
+    // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
     ldx sin_idx
-  // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
+    // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
   b4_from_b3:
-  // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuyy=vbuc1 
+    // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuyy=vbuc1 
     ldy #0
-  // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
+    // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
     jmp b4
-  // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
+    // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
   b4_from_b4:
-  // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
-  // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
+    // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
+    // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
     jmp b4
-  // loop::@4
+    // loop::@4
   b4:
-  // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda YSIN,x
     sta PLEX_YPOS,y
-  // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuxx=vbuxx_plus_vbuc1 
+    // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[8]
-  // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
+    // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuyy_neq_vbuc1_then_la1 
+    // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuyy_neq_vbuc1_then_la1 
     cpy #PLEX_COUNT-1+1
     bne b4_from_b4
     jmp b5
-  // loop::@5
+    // loop::@5
   b5:
-  // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc sin_idx
-  // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [22] call plexSort 
-  // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
+    // [22] call plexSort 
+    // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
   plexSort_from_b5:
     jsr plexSort
     jmp b11
-  // loop::@11
+    // loop::@11
   b11:
-  // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp b6
-  // loop::@6
+    // loop::@6
   b6:
-  // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #VIC_RST8
     and D011
-  // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuaa_neq_0_then_la1 
+    // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b6
-  // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
+    // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
   b7_from_b6:
-  // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
+    // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta ss
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
-  // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
     lda #0
     sta plex_show_idx
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
     lda #0
     sta plex_sprite_idx
-  // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
     lda #0
     sta plex_free_next
     jmp b7
   // Show the sprites
-  // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
+    // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
   b7_from_b12:
-  // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
-  // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
-  // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
+    // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
+    // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
+    // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
     jmp b7
-  // loop::@7
+    // loop::@7
   b7:
-  // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp plexFreeNextYpos1
-  // loop::plexFreeNextYpos1
+    // loop::plexFreeNextYpos1
   plexFreeNextYpos1:
-  // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy plex_free_next
     lda PLEX_FREE_YPOS,y
     sta plexFreeNextYpos1_return
     jmp b8
-  // loop::@8
+    // loop::@8
   b8:
-  // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
+    // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp plexFreeNextYpos1_return
     bcc b8
     jmp b9
-  // loop::@9
+    // loop::@9
   b9:
-  // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [31] call plexShowSprite 
+    // [31] call plexShowSprite 
     jsr plexShowSprite
     jmp b12
-  // loop::@12
+    // loop::@12
   b12:
-  // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
+    // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
     inc ss
-  // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp ss
     bne b7_from_b12
     jmp b10
-  // loop::@10
+    // loop::@10
   b10:
-  // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
+    // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
   b1_from_b10:
-  // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
+    // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
     jmp b1
 }
-// plexShowSprite
+  // plexShowSprite
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = $c
-  // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
-  // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuaa=pbuc1_derefidx_pbuc2_derefidx_vbuz1 
+    // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuaa=pbuc1_derefidx_pbuc2_derefidx_vbuz1 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
-  // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_sprite_idx2
     sta SPRITES_YPOS,y
     jmp plexFreeAdd1
-  // plexShowSprite::plexFreeAdd1
+    // plexShowSprite::plexFreeAdd1
   plexFreeAdd1:
-  // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuaa=vbuaa_plus_vbuc1 
+    // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #$15
-  // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-  // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx plex_free_next
     inx
-  // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax plex_free_next
     jmp b4
-  // plexShowSprite::@4
+    // plexShowSprite::@4
   b4:
-  // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
+    // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-  // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy plex_show_idx
     lda PLEX_SORTED_IDX,y
-  // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
+    // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-  // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_lo_pwuc1_derefidx_vbuxx 
+    // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_lo_pwuc1_derefidx_vbuxx 
     lda PLEX_XPOS,x
-  // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-  // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_hi_pwuc1_derefidx_vbuxx 
+    // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_hi_pwuc1_derefidx_vbuxx 
     lda PLEX_XPOS+1,x
-  // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuaa_neq_0_then_la1 
+    // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1
     jmp b3
-  // plexShowSprite::@3
+    // plexShowSprite::@3
   b3:
-  // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuaa=vbuc1_bxor_vbuz1 
+    // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
     eor plex_sprite_msb
-  // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
+    // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
     jmp b2
-  // plexShowSprite::@2
+    // plexShowSprite::@2
   b2:
-  // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx plex_sprite_idx
     inx
-  // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax plex_sprite_idx
-  // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
+    // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
     inc plex_show_idx
-  // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl plex_sprite_msb
-  // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
+    // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
     lda plex_sprite_msb
     cmp #0
     bne b5_from_b2
-  // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
+    // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
   breturn_from_b2:
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
     jmp breturn
-  // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
+    // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
   b5_from_b2:
     jmp b5
-  // plexShowSprite::@5
+    // plexShowSprite::@5
   b5:
-  // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
+    // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
   breturn_from_b5:
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
     jmp breturn
-  // plexShowSprite::@return
+    // plexShowSprite::@return
   breturn:
-  // [58] return 
+    // [58] return 
     rts
-  // plexShowSprite::@1
+    // plexShowSprite::@1
   b1:
-  // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
+    // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
     ora plex_sprite_msb
     sta SPRITES_XMSB
     jmp b2
 }
-// plexSort
+  // plexSort
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
 // Uses an insertion sort:
@@ -3476,148 +3476,148 @@ plexSort: {
     .label nxt_idx = $d
     .label nxt_y = $e
     .label m = 8
-  // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
+    // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
   b1_from_plexSort:
-  // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
+    // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta m
     jmp b1
-  // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
+    // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
   b1_from_b2:
-  // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
+    // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
     jmp b1
-  // plexSort::@1
+    // plexSort::@1
   b1:
-  // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy m
     lda PLEX_SORTED_IDX+1,y
     sta nxt_idx
-  // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy nxt_idx
     lda PLEX_YPOS,y
     sta nxt_y
-  // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
+    // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
     lda nxt_y
     ldx m
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcs b2
     jmp b5
-  // plexSort::@5
+    // plexSort::@5
   b5:
-  // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuxx=vbuz1 
+    // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuxx=vbuz1 
     ldx m
-  // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
+    // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
   b3_from_b5:
   b3_from_b6:
-  // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
+    // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
     jmp b3
-  // plexSort::@3
+    // plexSort::@3
   b3:
-  // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PLEX_SORTED_IDX,x
     sta PLEX_SORTED_IDX+1,x
-  // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuxx=_dec_vbuxx 
+    // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuxx=_dec_vbuxx 
     dex
-  // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuxx_eq_vbuc1_then_la1 
+    // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuxx_eq_vbuc1_then_la1 
     cpx #$ff
     beq b4
     jmp b6
-  // plexSort::@6
+    // plexSort::@6
   b6:
-  // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuxx_then_la1 
+    // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuxx_then_la1 
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3_from_b6
     jmp b4
-  // plexSort::@4
+    // plexSort::@4
   b4:
-  // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuxx=_inc_vbuxx 
+    // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuxx=_inc_vbuxx 
     inx
-  // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda nxt_idx
     sta PLEX_SORTED_IDX,x
     jmp b2
-  // plexSort::@2
+    // plexSort::@2
   b2:
-  // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
+    // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
-  // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-2+1
     cmp m
     bne b1_from_b2
-  // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
+    // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
   plexFreePrepare1_from_b2:
     jmp plexFreePrepare1
-  // plexSort::plexFreePrepare1
+    // plexSort::plexFreePrepare1
   plexFreePrepare1:
-  // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
+    // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
   plexFreePrepare1_b1_from_plexFreePrepare1:
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuxx=vbuc1 
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp plexFreePrepare1_b1
-  // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
+    // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
   plexFreePrepare1_b1_from_plexFreePrepare1_b1:
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
     jmp plexFreePrepare1_b1
-  // plexSort::plexFreePrepare1_@1
+    // plexSort::plexFreePrepare1_@1
   plexFreePrepare1_b1:
-  // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta PLEX_FREE_YPOS,x
-  // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuxx=_inc_vbuxx 
+    // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne plexFreePrepare1_b1_from_plexFreePrepare1_b1
     jmp breturn
-  // plexSort::@return
+    // plexSort::@return
   breturn:
-  // [80] return 
+    // [80] return 
     rts
 }
-// init
+  // init
 // Initialize the program
 init: {
     .label xp = 9
-  // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
+    // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
-  // [82] call plexInit 
-  // [96] phi from init to plexInit [phi:init->plexInit]
+    // [82] call plexInit 
+    // [96] phi from init to plexInit [phi:init->plexInit]
   plexInit_from_init:
     jsr plexInit
-  // [83] phi from init to init::@1 [phi:init->init::@1]
+    // [83] phi from init to init::@1 [phi:init->init::@1]
   b1_from_init:
-  // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
+    // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
     lda #$20
     sta xp
     lda #0
     sta xp+1
-  // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuxx=vbuc1 
+    // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
+    // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
   b1_from_b1:
-  // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
-  // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
+    // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
+    // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
     jmp b1
-  // init::@1
+    // init::@1
   b1:
-  // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta PLEX_PTR,x
-  // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda xp
     sta PLEX_XPOS,y
     lda xp+1
     sta PLEX_XPOS+1,y
-  // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
+    // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
     lda #9
     clc
     adc xp
@@ -3625,77 +3625,77 @@ init: {
     bcc !+
     inc xp+1
   !:
-  // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuxx=_inc_vbuxx 
+    // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #PLEX_COUNT-1+1
     bne b1_from_b1
     jmp b2
-  // init::@2
+    // init::@2
   b2:
-  // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
-  // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+    // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
-  // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuxx=vbuc1 
+    // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-  // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
   b3_from_b3:
-  // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
     jmp b3
-  // init::@3
+    // init::@3
   b3:
-  // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta SPRITES_COLS,x
-  // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuxx=_inc_vbuxx 
+    // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b3_from_b3
     jmp breturn
-  // init::@return
+    // init::@return
   breturn:
-  // [95] return 
+    // [95] return 
     rts
 }
-// plexInit
+  // plexInit
 // Initialize the multiplexer data structures
 plexInit: {
-  // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
+    // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
   plexSetScreen1_from_plexInit:
     jmp plexSetScreen1
-  // plexInit::plexSetScreen1
+    // plexInit::plexSetScreen1
   plexSetScreen1:
-  // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
+    // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
   b1_from_plexSetScreen1:
-  // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuxx=vbuc1 
+    // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
+    // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
   b1_from_b1:
-  // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
+    // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
     jmp b1
-  // plexInit::@1
+    // plexInit::@1
   b1:
-  // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta PLEX_SORTED_IDX,x
-  // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuxx=_inc_vbuxx 
+    // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #PLEX_COUNT-1+1
     bne b1_from_b1
     jmp breturn
-  // plexInit::@return
+    // plexInit::@return
   breturn:
-  // [102] return 
+    // [102] return 
     rts
 }
-// File Data
+  // File Data
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
   .align $100
@@ -4070,13 +4070,13 @@ reg byte a [ init::$8 ]
 FINAL ASSEMBLER
 Score: 62204
 
-// File Comments
+  // File Comments
 // A simple usage of the flexible sprite multiplexer routine
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -4101,245 +4101,290 @@ Score: 62204
   .label plex_free_next = 3
   .label plex_sprite_idx = 4
   .label plex_show_idx = 5
-// @begin
-// @1
-// kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
-// [2] phi from @1 to @2 [phi:@1->@2]
-// @2
-// [3] call main 
-// [4] phi from @2 to @end [phi:@2->@end]
-// @end
-// main
+  // @begin
+  // @1
+  // kickasm
+  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // [2] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [3] call main 
+  // [4] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
 main: {
-  // asm { sei  }
+    // asm
+    // asm { sei  }
     sei
-  // [6] call init 
+    // init()
+    // [6] call init 
     jsr init
-  // [7] phi from main to main::@1 [phi:main->main::@1]
-  // main::@1
-  // [8] call loop 
-  // [10] phi from main::@1 to loop [phi:main::@1->loop]
+    // [7] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // loop()
+    // [8] call loop 
+    // [10] phi from main::@1 to loop [phi:main::@1->loop]
     jsr loop
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
 }
-// loop
+  // loop
 // The raster loop
 loop: {
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $b
     .label ss = 7
-  // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
-  // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
+    // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
+    // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta sin_idx
-  // loop::@1
-  // loop::@2
+    // loop::@1
+    // loop::@2
   b2:
-  // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(*RASTER!=$ff)
+    // [12] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
-  // loop::@3
-  // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // loop::@3
+    // (*BORDERCOL)++;
+    // [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
+    // [14] (byte~) loop::y_idx#4 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
     ldx sin_idx
-  // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
-  // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuyy=vbuc1 
+    // [15] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
+    // [15] phi (byte) loop::sy#2 = (byte) 0 [phi:loop::@3->loop::@4#0] -- vbuyy=vbuc1 
     ldy #0
-  // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
-  // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
-  // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
-  // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
-  // loop::@4
+    // [15] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#4 [phi:loop::@3->loop::@4#1] -- register_copy 
+    // [15] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
+    // [15] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@4->loop::@4#0] -- register_copy 
+    // [15] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@4->loop::@4#1] -- register_copy 
+    // loop::@4
   b4:
-  // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // PLEX_YPOS[sy] = YSIN[y_idx]
+    // [16] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte[$100]) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda YSIN,x
     sta PLEX_YPOS,y
-  // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuxx=vbuxx_plus_vbuc1 
+    // y_idx += 8
+    // [17] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte) 8 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[8]
-  // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
+    // for(byte sy: 0..PLEX_COUNT-1)
+    // [18] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuyy_neq_vbuc1_then_la1 
+    // [19] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@4 -- vbuyy_neq_vbuc1_then_la1 
     cpy #PLEX_COUNT-1+1
     bne b4
-  // loop::@5
-  // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // loop::@5
+    // sin_idx +=1
+    // [20] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc sin_idx
-  // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // (*BORDERCOL)++;
+    // [21] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [22] call plexSort 
-  // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
+    // plexSort()
+    // [22] call plexSort 
+    // [60] phi from loop::@5 to plexSort [phi:loop::@5->plexSort]
     jsr plexSort
-  // loop::@11
-  // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // loop::@11
+    // *BORDERCOL = BLACK
+    // [23] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // loop::@6
+    // loop::@6
   b6:
-  // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // *D011&VIC_RST8
+    // [24] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #VIC_RST8
     and D011
-  // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuaa_neq_0_then_la1 
+    // while((*D011&VIC_RST8)!=0)
+    // [25] if((byte~) loop::$4!=(byte) 0) goto loop::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b6
-  // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
-  // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
+    // [26] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
+    // [26] phi (byte) loop::ss#5 = (byte) 0 [phi:loop::@6->loop::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta ss
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) 1 [phi:loop::@6->loop::@7#1] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
-  // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_show_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#2] -- vbuz1=vbuc1 
     lda #0
     sta plex_show_idx
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) 0 [phi:loop::@6->loop::@7#3] -- vbuz1=vbuc1 
     sta plex_sprite_idx
-  // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
+    // [26] phi (byte) plex_free_next#17 = (byte) 0 [phi:loop::@6->loop::@7#4] -- vbuz1=vbuc1 
     sta plex_free_next
   // Show the sprites
-  // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
-  // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
-  // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
-  // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
-  // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
-  // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
-  // loop::@7
+    // [26] phi from loop::@12 to loop::@7 [phi:loop::@12->loop::@7]
+    // [26] phi (byte) loop::ss#5 = (byte) loop::ss#1 [phi:loop::@12->loop::@7#0] -- register_copy 
+    // [26] phi (byte) plex_sprite_msb#42 = (byte) plex_sprite_msb#16 [phi:loop::@12->loop::@7#1] -- register_copy 
+    // [26] phi (byte) plex_show_idx#42 = (byte) plex_show_idx#15 [phi:loop::@12->loop::@7#2] -- register_copy 
+    // [26] phi (byte) plex_sprite_idx#42 = (byte) plex_sprite_idx#15 [phi:loop::@12->loop::@7#3] -- register_copy 
+    // [26] phi (byte) plex_free_next#17 = (byte) plex_free_next#13 [phi:loop::@12->loop::@7#4] -- register_copy 
+    // loop::@7
   b7:
-  // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // *BORDERCOL = BLACK
+    // [27] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // loop::plexFreeNextYpos1
-  // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // loop::plexFreeNextYpos1
+    // return PLEX_FREE_YPOS[plex_free_next];
+    // [28] (byte) loop::plexFreeNextYpos1_return#0 ← *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy plex_free_next
     lda PLEX_FREE_YPOS,y
     sta plexFreeNextYpos1_return
-  // loop::@8
+    // loop::@8
   b8:
-  // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
+    // while(*RASTER<rasterY)
+    // [29] if(*((const byte*) RASTER#0)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp plexFreeNextYpos1_return
     bcc b8
-  // loop::@9
-  // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // loop::@9
+    // (*BORDERCOL)++;
+    // [30] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  // [31] call plexShowSprite 
+    // plexShowSprite()
+    // [31] call plexShowSprite 
     jsr plexShowSprite
-  // loop::@12
-  // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
+    // loop::@12
+    // for( byte ss: 0..PLEX_COUNT-1)
+    // [32] (byte) loop::ss#1 ← ++ (byte) loop::ss#5 -- vbuz1=_inc_vbuz1 
     inc ss
-  // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-1+1
     cmp ss
     bne b7
-  // loop::@10
-  // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    // loop::@10
+    // *BORDERCOL = BLACK
+    // [34] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
-  // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
+    // [11] phi from loop::@10 to loop::@1 [phi:loop::@10->loop::@1]
+    // [11] phi (byte) loop::sin_idx#6 = (byte) loop::sin_idx#1 [phi:loop::@10->loop::@1#0] -- register_copy 
     jmp b2
 }
-// plexShowSprite
+  // plexShowSprite
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = $c
-  // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // plex_sprite_idx2 = plex_sprite_idx<<1
+    // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
-  // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuaa=pbuc1_derefidx_pbuc2_derefidx_vbuz1 
+    // ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
+    // [36] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- vbuaa=pbuc1_derefidx_pbuc2_derefidx_vbuz1 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
-  // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // SPRITES_YPOS[plex_sprite_idx2] = ypos
+    // [37] *((const byte*) SPRITES_YPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_sprite_idx2
     sta SPRITES_YPOS,y
-  // plexShowSprite::plexFreeAdd1
-  // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuaa=vbuaa_plus_vbuc1 
+    // plexShowSprite::plexFreeAdd1
+    // ypos+21
+    // [38] (byte~) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte) $15 -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #$15
-  // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
+    // [39] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte~) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-  // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // plex_free_next+1
+    // [40] (byte~) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx plex_free_next
     inx
-  // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // plex_free_next = (plex_free_next+1)&7
+    // [41] (byte) plex_free_next#13 ← (byte~) plexShowSprite::plexFreeAdd1_$1#0 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax plex_free_next
-  // plexShowSprite::@4
-  // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
+    // plexShowSprite::@4
+    // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
+    // [42] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#42) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
     ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-  // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
+    // [43] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#42) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy plex_show_idx
     lda PLEX_SORTED_IDX,y
-  // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
+    // <PLEX_XPOS[xpos_idx]
+    // [44] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-  // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_lo_pwuc1_derefidx_vbuxx 
+    // [45] (byte~) plexShowSprite::$2 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_lo_pwuc1_derefidx_vbuxx 
     lda PLEX_XPOS,x
-  // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx]
+    // [46] *((const byte*) SPRITES_XPOS#0 + (byte) plexShowSprite::plex_sprite_idx2#0) ← (byte~) plexShowSprite::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-  // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_hi_pwuc1_derefidx_vbuxx 
+    // >PLEX_XPOS[xpos_idx]
+    // [47] (byte~) plexShowSprite::$3 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) plexShowSprite::$11) -- vbuaa=_hi_pwuc1_derefidx_vbuxx 
     lda PLEX_XPOS+1,x
-  // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuaa_neq_0_then_la1 
+    // if(>PLEX_XPOS[xpos_idx]!=0)
+    // [48] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1
-  // plexShowSprite::@3
-  // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuaa=vbuc1_bxor_vbuz1 
+    // plexShowSprite::@3
+    // $ff^plex_sprite_msb
+    // [49] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#42 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
     eor plex_sprite_msb
-  // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
+    // *SPRITES_XMSB &= ($ff^plex_sprite_msb)
+    // [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
-  // plexShowSprite::@2
+    // plexShowSprite::@2
   b2:
-  // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // plex_sprite_idx+1
+    // [51] (byte~) plexShowSprite::$5 ← (byte) plex_sprite_idx#42 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx plex_sprite_idx
     inx
-  // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // plex_sprite_idx = (plex_sprite_idx+1)&7
+    // [52] (byte) plex_sprite_idx#15 ← (byte~) plexShowSprite::$5 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax plex_sprite_idx
-  // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
+    // plex_show_idx++;
+    // [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#42 -- vbuz1=_inc_vbuz1 
     inc plex_show_idx
-  // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    // plex_sprite_msb <<=1
+    // [54] (byte) plex_sprite_msb#3 ← (byte) plex_sprite_msb#42 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl plex_sprite_msb
-  // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
+    // if(plex_sprite_msb==0)
+    // [55] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@5 -- vbuz1_neq_0_then_la1 
     lda plex_sprite_msb
     cmp #0
     bne b5
-  // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
+    // [57] phi from plexShowSprite::@2 to plexShowSprite::@return [phi:plexShowSprite::@2->plexShowSprite::@return]
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) 1 [phi:plexShowSprite::@2->plexShowSprite::@return#0] -- vbuz1=vbuc1 
     lda #1
     sta plex_sprite_msb
     rts
-  // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
-  // plexShowSprite::@5
+    // [56] phi from plexShowSprite::@2 to plexShowSprite::@5 [phi:plexShowSprite::@2->plexShowSprite::@5]
+    // plexShowSprite::@5
   b5:
-  // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
-  // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
-  // plexShowSprite::@return
-  // [58] return 
+    // [57] phi from plexShowSprite::@5 to plexShowSprite::@return [phi:plexShowSprite::@5->plexShowSprite::@return]
+    // [57] phi (byte) plex_sprite_msb#16 = (byte) plex_sprite_msb#3 [phi:plexShowSprite::@5->plexShowSprite::@return#0] -- register_copy 
+    // plexShowSprite::@return
+    // }
+    // [58] return 
     rts
-  // plexShowSprite::@1
+    // plexShowSprite::@1
   b1:
-  // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
+    // *SPRITES_XMSB |= plex_sprite_msb
+    // [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#42 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
     ora plex_sprite_msb
     sta SPRITES_XMSB
     jmp b2
 }
-// plexSort
+  // plexSort
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
 // Uses an insertion sort:
@@ -4353,119 +4398,136 @@ plexSort: {
     .label nxt_idx = $d
     .label nxt_y = $e
     .label m = 8
-  // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
-  // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
+    // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
+    // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta m
-  // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
-  // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
-  // plexSort::@1
+    // [61] phi from plexSort::@2 to plexSort::@1 [phi:plexSort::@2->plexSort::@1]
+    // [61] phi (byte) plexSort::m#2 = (byte) plexSort::m#1 [phi:plexSort::@2->plexSort::@1#0] -- register_copy 
+    // plexSort::@1
   b1:
-  // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // nxt_idx = PLEX_SORTED_IDX[m+1]
+    // [62] (byte) plexSort::nxt_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::m#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy m
     lda PLEX_SORTED_IDX+1,y
     sta nxt_idx
-  // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // nxt_y = PLEX_YPOS[nxt_idx]
+    // [63] (byte) plexSort::nxt_y#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) plexSort::nxt_idx#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     tay
     lda PLEX_YPOS,y
     sta nxt_y
-  // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
+    // if(nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[m]])
+    // [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 -- vbuz1_ge_pbuc1_derefidx_pbuc2_derefidx_vbuz2_then_la1 
     ldx m
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcs b2
-  // plexSort::@5
-  // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuxx=vbuz1 
-  // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
-  // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
-  // plexSort::@3
+    // plexSort::@5
+    // [65] (byte~) plexSort::s#6 ← (byte) plexSort::m#2 -- vbuxx=vbuz1 
+    // [66] phi from plexSort::@5 plexSort::@6 to plexSort::@3 [phi:plexSort::@5/plexSort::@6->plexSort::@3]
+    // [66] phi (byte) plexSort::s#3 = (byte~) plexSort::s#6 [phi:plexSort::@5/plexSort::@6->plexSort::@3#0] -- register_copy 
+    // plexSort::@3
   b3:
-  // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // PLEX_SORTED_IDX[s+1] = PLEX_SORTED_IDX[s]
+    // [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PLEX_SORTED_IDX,x
     sta PLEX_SORTED_IDX+1,x
-  // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuxx=_dec_vbuxx 
+    // s--;
+    // [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuxx=_dec_vbuxx 
     dex
-  // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuxx_eq_vbuc1_then_la1 
+    // while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
+    // [69] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuxx_eq_vbuc1_then_la1 
     cpx #$ff
     beq b4
-  // plexSort::@6
-  // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuxx_then_la1 
+    // plexSort::@6
+    // [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3 -- vbuz1_lt_pbuc1_derefidx_pbuc2_derefidx_vbuxx_then_la1 
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3
-  // plexSort::@4
+    // plexSort::@4
   b4:
-  // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuxx=_inc_vbuxx 
+    // s++;
+    // [71] (byte) plexSort::s#2 ← ++ (byte) plexSort::s#1 -- vbuxx=_inc_vbuxx 
     inx
-  // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // PLEX_SORTED_IDX[s] = nxt_idx
+    // [72] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda nxt_idx
     sta PLEX_SORTED_IDX,x
-  // plexSort::@2
+    // plexSort::@2
   b2:
-  // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
+    // for(byte m: 0..PLEX_COUNT-2)
+    // [73] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
-  // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [74] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte) 2+(byte) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #PLEX_COUNT-2+1
     cmp m
     bne b1
-  // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
-  // plexSort::plexFreePrepare1
-  // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuxx=vbuc1 
+    // [75] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
+    // plexSort::plexFreePrepare1
+    // [76] phi from plexSort::plexFreePrepare1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1]
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) 0 [phi:plexSort::plexFreePrepare1->plexSort::plexFreePrepare1_@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
-  // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
-  // plexSort::plexFreePrepare1_@1
+    // [76] phi from plexSort::plexFreePrepare1_@1 to plexSort::plexFreePrepare1_@1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1]
+    // [76] phi (byte) plexSort::plexFreePrepare1_s#2 = (byte) plexSort::plexFreePrepare1_s#1 [phi:plexSort::plexFreePrepare1_@1->plexSort::plexFreePrepare1_@1#0] -- register_copy 
+    // plexSort::plexFreePrepare1_@1
   plexFreePrepare1_b1:
-  // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // PLEX_FREE_YPOS[s] = 0
+    // [77] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta PLEX_FREE_YPOS,x
-  // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuxx=_inc_vbuxx 
+    // for( byte s: 0..7)
+    // [78] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [79] if((byte) plexSort::plexFreePrepare1_s#1!=(byte) 8) goto plexSort::plexFreePrepare1_@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne plexFreePrepare1_b1
-  // plexSort::@return
-  // [80] return 
+    // plexSort::@return
+    // }
+    // [80] return 
     rts
 }
-// init
+  // init
 // Initialize the program
 init: {
     .label xp = 9
-  // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
+    // *D011 = VIC_DEN | VIC_RSEL | 3
+    // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
-  // [82] call plexInit 
-  // [96] phi from init to plexInit [phi:init->plexInit]
+    // plexInit(SCREEN)
+    // [82] call plexInit 
+    // [96] phi from init to plexInit [phi:init->plexInit]
     jsr plexInit
-  // [83] phi from init to init::@1 [phi:init->init::@1]
-  // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
+    // [83] phi from init to init::@1 [phi:init->init::@1]
+    // [83] phi (word) init::xp#2 = (byte) $20 [phi:init->init::@1#0] -- vwuz1=vbuc1 
     lda #$20
     sta xp
     lda #0
     sta xp+1
-  // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuxx=vbuc1 
+    // [83] phi (byte) init::sx#2 = (byte) 0 [phi:init->init::@1#1] -- vbuxx=vbuc1 
     tax
-  // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
-  // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
-  // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
-  // init::@1
+    // [83] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
+    // [83] phi (word) init::xp#2 = (word) init::xp#1 [phi:init::@1->init::@1#0] -- register_copy 
+    // [83] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
+    // init::@1
   b1:
-  // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // PLEX_PTR[sx] = (byte)(SPRITE/$40)
+    // [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta PLEX_PTR,x
-  // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // PLEX_XPOS[sx] = xp
+    // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [86] *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte~) init::$8) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda xp
     sta PLEX_XPOS,y
     lda xp+1
     sta PLEX_XPOS+1,y
-  // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
+    // xp += 9
+    // [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 -- vwuz1=vwuz1_plus_vbuc1 
     lda #9
     clc
     adc xp
@@ -4473,60 +4535,68 @@ init: {
     bcc !+
     inc xp+1
   !:
-  // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuxx=_inc_vbuxx 
+    // for(byte sx: 0..PLEX_COUNT-1)
+    // [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #PLEX_COUNT-1+1
     bne b1
-  // init::@2
-  // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // init::@2
+    // *SPRITES_ENABLE = $ff
+    // [90] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
-  // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
-  // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuxx=vbuc1 
+    // [91] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+    // [91] phi (byte) init::ss#2 = (byte) 0 [phi:init::@2->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
-  // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
-  // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
-  // init::@3
+    // [91] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [91] phi (byte) init::ss#2 = (byte) init::ss#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // init::@3
   b3:
-  // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SPRITES_COLS[ss] = GREEN
+    // [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta SPRITES_COLS,x
-  // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuxx=_inc_vbuxx 
+    // for(byte ss: 0..7)
+    // [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [94] if((byte) init::ss#1!=(byte) 8) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b3
-  // init::@return
-  // [95] return 
+    // init::@return
+    // }
+    // [95] return 
     rts
 }
-// plexInit
+  // plexInit
 // Initialize the multiplexer data structures
 plexInit: {
-  // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
-  // plexInit::plexSetScreen1
-  // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
-  // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuxx=vbuc1 
+    // [97] phi from plexInit to plexInit::plexSetScreen1 [phi:plexInit->plexInit::plexSetScreen1]
+    // plexInit::plexSetScreen1
+    // [98] phi from plexInit::plexSetScreen1 to plexInit::@1 [phi:plexInit::plexSetScreen1->plexInit::@1]
+    // [98] phi (byte) plexInit::i#2 = (byte) 0 [phi:plexInit::plexSetScreen1->plexInit::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
-  // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
-  // plexInit::@1
+    // [98] phi from plexInit::@1 to plexInit::@1 [phi:plexInit::@1->plexInit::@1]
+    // [98] phi (byte) plexInit::i#2 = (byte) plexInit::i#1 [phi:plexInit::@1->plexInit::@1#0] -- register_copy 
+    // plexInit::@1
   b1:
-  // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // PLEX_SORTED_IDX[i] = i
+    // [99] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexInit::i#2) ← (byte) plexInit::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta PLEX_SORTED_IDX,x
-  // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuxx=_inc_vbuxx 
+    // for(byte i: 0..PLEX_COUNT-1)
+    // [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte) 1+(byte) 1) goto plexInit::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #PLEX_COUNT-1+1
     bne b1
-  // plexInit::@return
-  // [102] return 
+    // plexInit::@return
+    // }
+    // [102] return 
     rts
 }
-// File Data
+  // File Data
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
   .align $100

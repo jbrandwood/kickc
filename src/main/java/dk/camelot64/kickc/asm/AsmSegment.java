@@ -206,7 +206,7 @@ public class AsmSegment {
                StatementSource source = statement.getSource();
                if(source != null) {
                   if(source.getFile() != null || source.getLineNumber() != null) {
-                     out.append(printState.getIndent()).append("// ");
+                     out.append(printState.getIndent()).append("  // ");
                      if(source.getFile() != null)
                         out.append(source.getFile());
                      out.append(":");
@@ -225,17 +225,22 @@ public class AsmSegment {
                StatementSource source = statement.getSource();
                if(source != null) {
                   if(source.getCode() != null) {
-                     out.append(printState.getIndent()).append("// ");
-                     if(source.getCode() != null)
-                        out.append(source.getCode().replace("\n", "\n" + printState.getIndent() + "// "));
-                     out.append("\n");
+                     if(!source.getCode().equals(printState.getCurrentCode())) {
+                        printState.setCurrentCode(source.getCode());
+                        out.append(printState.getIndent()).append("  // ");
+                        if(source.getCode() != null)
+                           out.append(source.getCode().replace("\n", "\n" + printState.getIndent() + "  // "));
+                        out.append("\n");
+                     }
+                  } else {
+                     printState.setCurrentCode(null);
                   }
                }
             }
          }
       }
       if(printState.isSourceIclInfo()) {
-         out.append(printState.getIndent()).append("//");
+         out.append(printState.getIndent()).append("  //");
          if(printState.isSourceSegmentIdInfo()) {
             out.append("SEG").append(getIndex());
          }

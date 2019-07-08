@@ -116,49 +116,49 @@ Complete equivalence classes
 Allocated zp ZP_WORD:2 [ main::w#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Test simple void pointer (conversion without casting)
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label wp = w
     .label vp = wp
     .label bp = vp
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta w
     lda #>$4d2
     sta w+1
-  // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda bp
     sta SCREEN
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (word) main::w#0 ← (word) $4d2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -173,49 +173,49 @@ Uplifting [main] best 39 combination zp ZP_WORD:2 [ main::w#0 ]
 Uplifting [] best 39 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Test simple void pointer (conversion without casting)
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
+  // Global Constants & labels
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
+  // [2] call main 
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label SCREEN = $400
     .label wp = w
     .label vp = wp
     .label bp = vp
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta w
     lda #>$4d2
     sta w+1
-  // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda bp
     sta SCREEN
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [6] return 
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -258,37 +258,40 @@ zp ZP_WORD:2 [ main::w#0 ]
 FINAL ASSEMBLER
 Score: 24
 
-// File Comments
+  // File Comments
 // Test simple void pointer (conversion without casting)
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label SCREEN = $400
     .label wp = w
     .label vp = wp
     .label bp = vp
     .label w = 2
-  // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // w = 1234
+    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta w
     lda #>$4d2
     sta w+1
-  // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // *SCREEN = *bp
+    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda bp
     sta SCREEN
-  // main::@return
-  // [6] return 
+    // main::@return
+    // }
+    // [6] return 
     rts
 }
-// File Data
+  // File Data
 

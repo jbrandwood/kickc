@@ -145,63 +145,63 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SZ = $f
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label sub = 2
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta sub
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy sub
     tya
     sta items,y
-  // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
+    // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
     inc sub
-  // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #SZ+1
     cmp sub
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
   items: .fill SZ, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -215,59 +215,59 @@ Uplifting [main] best 263 combination reg byte x [ main::sub#2 main::sub#1 ]
 Uplifting [] best 263 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SZ = $f
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
-  // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne b1_from_b1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [9] return 
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
   items: .fill SZ, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -317,43 +317,46 @@ reg byte x [ main::sub#2 main::sub#1 ]
 FINAL ASSEMBLER
 Score: 161
 
-// File Comments
+  // File Comments
 // Illustrates symbolic array lengths
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   .const SZ = $f
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
-  // [5] phi from main to main::@1 [phi:main->main::@1]
-  // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::sub#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // cur_item[sub] = sub
+    // [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
-  // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
+    // for( byte sub: 0..SZ)
+    // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-  // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne b1
-  // main::@return
-  // [9] return 
+    // main::@return
+    // }
+    // [9] return 
     rts
 }
-// File Data
+  // File Data
   items: .fill SZ, 0
 

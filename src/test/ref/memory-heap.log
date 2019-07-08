@@ -414,156 +414,156 @@ Allocated zp ZP_BYTE:9 [ main::$4 ]
 Allocated zp ZP_WORD:10 [ malloc::mem#0 ]
 
 INITIAL ASM
-// File Comments
+  // File Comments
 // Experiments with malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label heap_head = 3
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label _4 = 9
     .label buf1 = 5
     .label buf2 = 7
     .label i = 2
-  // [5] call malloc 
-  // [24] phi from main to malloc [phi:main->malloc]
+    // [5] call malloc 
+    // [24] phi from main to malloc [phi:main->malloc]
   malloc_from_main:
-  // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_START
     sta heap_head
     lda #>HEAP_START
     sta heap_head+1
     jsr malloc
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
+    // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda malloc.mem
     sta buf1
     lda malloc.mem+1
     sta buf1+1
-  // [7] call malloc 
-  // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
+    // [7] call malloc 
+    // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
   malloc_from_b3:
-  // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
+    // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
     jsr malloc
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
+    // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda malloc.mem
     sta buf2
     lda malloc.mem+1
     sta buf2+1
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuz2=vbuz2 
+    // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuz2=vbuz2 
     lda i
     tay
     sta (buf1),y
-  // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuz1=vbuc1_minus_vbuz2 
+    // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$ff
     sec
     sbc i
     sta _4
-  // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda _4
     ldy i
     sta (buf2),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$64
     cmp i
     bne b1_from_b1
-  // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [16] call free 
-  // [22] phi from main::@2 to free [phi:main::@2->free]
+    // [16] call free 
+    // [22] phi from main::@2 to free [phi:main::@2->free]
   free_from_b2:
     jsr free
-  // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
+    // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
   b5_from_b2:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [18] call free 
-  // [22] phi from main::@5 to free [phi:main::@5->free]
+    // [18] call free 
+    // [22] phi from main::@5 to free [phi:main::@5->free]
   free_from_b5:
     jsr free
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta screen
-  // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta screen+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [21] return 
+    // [21] return 
     rts
 }
-// free
+  // free
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 free: {
     jmp breturn
-  // free::@return
+    // free::@return
   breturn:
-  // [23] return 
+    // [23] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = $a
-  // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
+    // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
     lda heap_head
     sta mem
     lda heap_head+1
     sta mem+1
-  // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
+    // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$64
     clc
     adc heap_head
@@ -572,12 +572,12 @@ malloc: {
     inc heap_head+1
   !:
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [27] return 
+    // [27] return 
     rts
 }
-// File Data
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 [ main::buf1#0 heap_head#1 ] ( main:2 [ main::buf1#0 heap_head#1 ] ) always clobbers reg byte a 
@@ -619,145 +619,145 @@ Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::buf1#0 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ main::buf2#0 malloc::mem#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-// File Comments
+  // File Comments
 // Experiments with malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label heap_head = 2
-// @begin
+  // @begin
 bbegin:
-// [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-// @1
+  // @1
 b1:
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-// [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-// @end
+  // @end
 bend:
-// main
+  // main
 main: {
     .label screen = $400
     .label buf1 = 4
     .label buf2 = 6
-  // [5] call malloc 
-  // [24] phi from main to malloc [phi:main->malloc]
+    // [5] call malloc 
+    // [24] phi from main to malloc [phi:main->malloc]
   malloc_from_main:
-  // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_START
     sta heap_head
     lda #>HEAP_START
     sta heap_head+1
     jsr malloc
     jmp b3
-  // main::@3
+    // main::@3
   b3:
-  // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
+    // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda malloc.mem
     sta buf1
     lda malloc.mem+1
     sta buf1+1
-  // [7] call malloc 
-  // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
+    // [7] call malloc 
+    // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
   malloc_from_b3:
-  // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
+    // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
     jsr malloc
     jmp b4
-  // main::@4
+    // main::@4
   b4:
-  // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuyy=vbuc1 
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  // main::@1
+    // main::@1
   b1:
-  // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
+    // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
     sta (buf1),y
-  // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuyy 
+    // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuyy 
     tya
     eor #$ff
     clc
     adc #$ff+1
-  // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (buf2),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$64
     bne b1_from_b1
-  // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  // main::@2
+    // main::@2
   b2:
-  // [16] call free 
-  // [22] phi from main::@2 to free [phi:main::@2->free]
+    // [16] call free 
+    // [22] phi from main::@2 to free [phi:main::@2->free]
   free_from_b2:
     jsr free
-  // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
+    // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
   b5_from_b2:
     jmp b5
-  // main::@5
+    // main::@5
   b5:
-  // [18] call free 
-  // [22] phi from main::@5 to free [phi:main::@5->free]
+    // [18] call free 
+    // [22] phi from main::@5 to free [phi:main::@5->free]
   free_from_b5:
     jsr free
     jmp b6
-  // main::@6
+    // main::@6
   b6:
-  // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta screen
-  // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta screen+1
     jmp breturn
-  // main::@return
+    // main::@return
   breturn:
-  // [21] return 
+    // [21] return 
     rts
 }
-// free
+  // free
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 free: {
     jmp breturn
-  // free::@return
+    // free::@return
   breturn:
-  // [23] return 
+    // [23] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 6
-  // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
+    // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
     lda heap_head
     sta mem
     lda heap_head+1
     sta mem+1
-  // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
+    // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$64
     clc
     adc heap_head
@@ -766,12 +766,12 @@ malloc: {
     inc heap_head+1
   !:
     jmp breturn
-  // malloc::@return
+    // malloc::@return
   breturn:
-  // [27] return 
+    // [27] return 
     rts
 }
-// File Data
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -867,111 +867,125 @@ reg byte a [ main::$4 ]
 FINAL ASSEMBLER
 Score: 418
 
-// File Comments
+  // File Comments
 // Experiments with malloc()
-// Basic Upstart
+  // Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-// Global Constants & labels
+  // Global Constants & labels
   // Start of the heap used by malloc()
   .label HEAP_START = $c000
   .label heap_head = 2
-// @begin
-// [1] phi from @begin to @1 [phi:@begin->@1]
-// @1
-// [2] call main 
-// [4] phi from @1 to main [phi:@1->main]
-// [3] phi from @1 to @end [phi:@1->@end]
-// @end
-// main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
     .label screen = $400
     .label buf1 = 4
     .label buf2 = 6
-  // [5] call malloc 
-  // [24] phi from main to malloc [phi:main->malloc]
-  // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
+    // malloc(100)
+    // [5] call malloc 
+    // [24] phi from main to malloc [phi:main->malloc]
+    // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_START#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_START
     sta heap_head
     lda #>HEAP_START
     sta heap_head+1
     jsr malloc
-  // main::@3
-  // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
+    // main::@3
+    // malloc(100)
+    // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda malloc.mem
     sta buf1
     lda malloc.mem+1
     sta buf1+1
-  // [7] call malloc 
-  // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
-  // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
+    // [7] call malloc 
+    // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
+    // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
     jsr malloc
-  // main::@4
-  // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0
-  // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuyy=vbuc1 
+    // main::@4
+    // malloc(100)
+    // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0
+    // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  // main::@1
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
   b1:
-  // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
+    // buf1[i] = i
+    // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
     sta (buf1),y
-  // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuyy 
+    // 255-i
+    // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuyy 
     tya
     eor #$ff
     clc
     adc #$ff+1
-  // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // buf2[i] = 255-i
+    // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (buf2),y
-  // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // for(unsigned char i:0..99)
+    // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$64
     bne b1
-  // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  // main::@2
-  // [16] call free 
-  // [22] phi from main::@2 to free [phi:main::@2->free]
+    // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // free(buf1)
+    // [16] call free 
+    // [22] phi from main::@2 to free [phi:main::@2->free]
     jsr free
-  // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
-  // main::@5
-  // [18] call free 
-  // [22] phi from main::@5 to free [phi:main::@5->free]
+    // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
+    // main::@5
+    // free(buf2)
+    // [18] call free 
+    // [22] phi from main::@5 to free [phi:main::@5->free]
     jsr free
-  // main::@6
-  // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // main::@6
+    // screen[0] = *buf1
+    // [19] *((const byte*) main::screen#0) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta screen
-  // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // screen[1] = *buf2
+    // [20] *((const byte*) main::screen#0+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     lda (buf2),y
     sta screen+1
-  // main::@return
-  // [21] return 
+    // main::@return
+    // }
+    // [21] return 
     rts
 }
-// free
+  // free
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 free: {
-  // free::@return
-  // [23] return 
+    // free::@return
+    // [23] return 
     rts
 }
-// malloc
+  // malloc
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 6
-  // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
+    // mem = heap_head
+    // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 -- pbuz1=pbuz2 
     lda heap_head
     sta mem
     lda heap_head+1
     sta mem+1
-  // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
+    // heap_head+= size
+    // [26] (byte*) heap_head#1 ← (byte*) heap_head#7 + (byte) $64 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$64
     clc
     adc heap_head
@@ -979,9 +993,10 @@ malloc: {
     bcc !+
     inc heap_head+1
   !:
-  // malloc::@return
-  // [27] return 
+    // malloc::@return
+    // }
+    // [27] return 
     rts
 }
-// File Data
+  // File Data
 

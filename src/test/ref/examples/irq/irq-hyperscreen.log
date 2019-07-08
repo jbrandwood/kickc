@@ -294,13 +294,13 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // A raster IRQ that opens the top/bottom border.
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -320,126 +320,126 @@ INITIAL ASM
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
-  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG11 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG14 [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG17 asm { cli  }
+  // asm { cli  }
     cli
     jmp breturn
-  //SEG18 main::@return
+  // main::@return
   breturn:
-  //SEG19 [12] return 
+  // [12] return 
     rts
 }
-//SEG20 irq_bottom_2
+// irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-  //SEG21 entry interrupt(KERNEL_KEYBOARD)
-  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_KEYBOARD)
+  // [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG25 [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
-  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG28 irq_bottom_2::@return
+  // irq_bottom_2::@return
   breturn:
-  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  // [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG30 irq_bottom_1
+// irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-  //SEG31 entry interrupt(KERNEL_MIN)
-  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_MIN)
+  // [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG35 [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
-  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  // [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG38 irq_bottom_1::@return
+  // irq_bottom_1::@return
   breturn:
-  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
+  // [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -473,13 +473,13 @@ Uplifting [irq_bottom_2] best 175 combination
 Uplifting [] best 175 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // A raster IRQ that opens the top/bottom border.
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -499,126 +499,126 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
-  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG11 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG14 [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG17 asm { cli  }
+  // asm { cli  }
     cli
     jmp breturn
-  //SEG18 main::@return
+  // main::@return
   breturn:
-  //SEG19 [12] return 
+  // [12] return 
     rts
 }
-//SEG20 irq_bottom_2
+// irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-  //SEG21 entry interrupt(KERNEL_KEYBOARD)
-  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_KEYBOARD)
+  // [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG25 [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
-  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG28 irq_bottom_2::@return
+  // irq_bottom_2::@return
   breturn:
-  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  // [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG30 irq_bottom_1
+// irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-  //SEG31 entry interrupt(KERNEL_MIN)
-  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_MIN)
+  // [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG35 [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
-  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  // [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG38 irq_bottom_1::@return
+  // irq_bottom_1::@return
   breturn:
-  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
+  // [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -684,13 +684,13 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 FINAL ASSEMBLER
 Score: 154
 
-//SEG0 File Comments
+// File Comments
 // A raster IRQ that opens the top/bottom border.
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -710,110 +710,110 @@ Score: 154
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte*) GHOST_BYTE#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG11 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG14 [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG17 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG18 main::@return
-  //SEG19 [12] return 
+  // main::@return
+  // [12] return 
     rts
 }
-//SEG20 irq_bottom_2
+// irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-  //SEG21 entry interrupt(KERNEL_KEYBOARD)
-  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_KEYBOARD)
+  // [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG25 [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) RASTER#0) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
-  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  // [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG28 irq_bottom_2::@return
-  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  // irq_bottom_2::@return
+  // [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG30 irq_bottom_1
+// irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-  //SEG31 entry interrupt(KERNEL_MIN)
-  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // entry interrupt(KERNEL_MIN)
+  // [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $ff^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG35 [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [23] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
-  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  // [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  // [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG38 irq_bottom_1::@return
-  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
+  // irq_bottom_1::@return
+  // [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 

@@ -91,56 +91,56 @@ Complete equivalence classes
 Allocated zp ZP_WORD:2 [ main::screen#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests optimization of constant pointers to pointers
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label pscreen = screen
     .label screen = 2
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+  // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
     lda #'a'
     ldy #0
     sta (pscreen),y
-  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc pscreen
     bne !+
     inc pscreen+1
   !:
-  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+  // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
     lda #'b'
     ldy #0
     sta (pscreen),y
     jmp breturn
-  //SEG14 main::@return
+  // main::@return
   breturn:
-  //SEG15 [8] return 
+  // [8] return 
     rts
 }
-//SEG16 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte*) main::screen#0 ← (byte*) 1024 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -156,56 +156,56 @@ Uplifting [main] best 65 combination zp ZP_WORD:2 [ main::screen#0 ]
 Uplifting [] best 65 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests optimization of constant pointers to pointers
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label pscreen = screen
     .label screen = 2
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+  // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
     lda #'a'
     ldy #0
     sta (pscreen),y
-  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc pscreen
     bne !+
     inc pscreen+1
   !:
-  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+  // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
     lda #'b'
     ldy #0
     sta (pscreen),y
     jmp breturn
-  //SEG14 main::@return
+  // main::@return
   breturn:
-  //SEG15 [8] return 
+  // [8] return 
     rts
 }
-//SEG16 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -242,44 +242,44 @@ zp ZP_WORD:2 [ main::screen#0 ]
 FINAL ASSEMBLER
 Score: 50
 
-//SEG0 File Comments
+// File Comments
 // Tests optimization of constant pointers to pointers
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label pscreen = screen
     .label screen = 2
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+  // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
     lda #'a'
     ldy #0
     sta (pscreen),y
-  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc pscreen
     bne !+
     inc pscreen+1
   !:
-  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+  // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
     lda #'b'
     ldy #0
     sta (pscreen),y
-  //SEG14 main::@return
-  //SEG15 [8] return 
+  // main::@return
+  // [8] return 
     rts
 }
-//SEG16 File Data
+// File Data
 

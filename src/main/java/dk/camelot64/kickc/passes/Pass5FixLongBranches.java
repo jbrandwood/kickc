@@ -63,7 +63,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
          //getLog().append("ASM");
          //getLog().append(getProgram().getAsm().toString(false, true));
 
-         writeOutputFile(fileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false, false), null));
+         writeOutputFile(fileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
 
          // Copy Resource Files
          for(Path asmResourceFile : getProgram().getAsmResourceFiles()) {

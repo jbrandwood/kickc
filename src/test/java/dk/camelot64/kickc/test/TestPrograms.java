@@ -2585,7 +2585,7 @@ public class TestPrograms {
 
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
-      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false),program ));
+      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false),program ));
       success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, null));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
@@ -2597,7 +2597,7 @@ public class TestPrograms {
    }
 
    private void compileAsm(String fileName, Program program) throws IOException {
-      writeBinFile(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false), program ));
+      writeBinFile(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false), program ));
       for(Path asmResourceFile : program.getAsmResourceFiles()) {
          File asmFile = getBinFile(fileName, ".asm");
          String asmFolder = asmFile.getParent();

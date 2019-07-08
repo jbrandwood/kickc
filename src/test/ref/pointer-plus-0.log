@@ -229,104 +229,104 @@ Allocated zp ZP_WORD:8 [ first::return#1 ]
 Allocated zp ZP_WORD:10 [ main::$2 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests pointer plus 0 elimination
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
     .label _0 = 6
     .label _2 = $a
-  //SEG11 [5] call first 
-  //SEG12 [14] phi from main to first [phi:main->first]
+  // [5] call first 
+  // [14] phi from main to first [phi:main->first]
   first_from_main:
-  //SEG13 [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta first.return_2
     lda #>msg1
     sta first.return_2+1
     jsr first
-  //SEG14 [6] (byte*) first::return#0 ← (byte*) first::return#2 -- pbuz1=pbuz2 
+  // [6] (byte*) first::return#0 ← (byte*) first::return#2 -- pbuz1=pbuz2 
     lda first.return_2
     sta first.return
     lda first.return_2+1
     sta first.return+1
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] (byte*~) main::$0 ← (byte*) first::return#0 -- pbuz1=pbuz2 
+  // [7] (byte*~) main::$0 ← (byte*) first::return#0 -- pbuz1=pbuz2 
     lda first.return
     sta _0
     lda first.return+1
     sta _0+1
-  //SEG17 [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
+  // [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_0),y
     sta SCREEN
-  //SEG18 [9] call first 
-  //SEG19 [14] phi from main::@1 to first [phi:main::@1->first]
+  // [9] call first 
+  // [14] phi from main::@1 to first [phi:main::@1->first]
   first_from_b1:
-  //SEG20 [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta first.return_2
     lda #>msg2
     sta first.return_2+1
     jsr first
-  //SEG21 [10] (byte*) first::return#1 ← (byte*) first::return#2 -- pbuz1=pbuz2 
+  // [10] (byte*) first::return#1 ← (byte*) first::return#2 -- pbuz1=pbuz2 
     lda first.return_2
     sta first.return_1
     lda first.return_2+1
     sta first.return_1+1
     jmp b2
-  //SEG22 main::@2
+  // main::@2
   b2:
-  //SEG23 [11] (byte*~) main::$2 ← (byte*) first::return#1 -- pbuz1=pbuz2 
+  // [11] (byte*~) main::$2 ← (byte*) first::return#1 -- pbuz1=pbuz2 
     lda first.return_1
     sta _2
     lda first.return_1+1
     sta _2+1
-  //SEG24 [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
+  // [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_2),y
     sta SCREEN+1
     jmp breturn
-  //SEG25 main::@return
+  // main::@return
   breturn:
-  //SEG26 [13] return 
+  // [13] return 
     rts
 }
-//SEG27 first
+// first
 first: {
     .label return = 4
     .label return_1 = 8
     .label return_2 = 2
     jmp breturn
-  //SEG28 first::@return
+  // first::@return
   breturn:
-  //SEG29 [15] return 
+  // [15] return 
     rts
 }
-//SEG30 File Data
+// File Data
   msg1: .text "hello world!@"
   msg2: .text "goodbye sky?@"
 
@@ -357,86 +357,86 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ first::ret
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ first::return#2 first::return#0 first::return#1 main::$0 ] ] with [ zp ZP_WORD:10 [ main::$2 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests pointer plus 0 elimination
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
     .label _0 = 2
     .label _2 = 2
-  //SEG11 [5] call first 
-  //SEG12 [14] phi from main to first [phi:main->first]
+  // [5] call first 
+  // [14] phi from main to first [phi:main->first]
   first_from_main:
-  //SEG13 [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta first.return
     lda #>msg1
     sta first.return+1
     jsr first
-  //SEG14 [6] (byte*) first::return#0 ← (byte*) first::return#2
+  // [6] (byte*) first::return#0 ← (byte*) first::return#2
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] (byte*~) main::$0 ← (byte*) first::return#0
-  //SEG17 [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
+  // [7] (byte*~) main::$0 ← (byte*) first::return#0
+  // [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_0),y
     sta SCREEN
-  //SEG18 [9] call first 
-  //SEG19 [14] phi from main::@1 to first [phi:main::@1->first]
+  // [9] call first 
+  // [14] phi from main::@1 to first [phi:main::@1->first]
   first_from_b1:
-  //SEG20 [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta first.return
     lda #>msg2
     sta first.return+1
     jsr first
-  //SEG21 [10] (byte*) first::return#1 ← (byte*) first::return#2
+  // [10] (byte*) first::return#1 ← (byte*) first::return#2
     jmp b2
-  //SEG22 main::@2
+  // main::@2
   b2:
-  //SEG23 [11] (byte*~) main::$2 ← (byte*) first::return#1
-  //SEG24 [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
+  // [11] (byte*~) main::$2 ← (byte*) first::return#1
+  // [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_2),y
     sta SCREEN+1
     jmp breturn
-  //SEG25 main::@return
+  // main::@return
   breturn:
-  //SEG26 [13] return 
+  // [13] return 
     rts
 }
-//SEG27 first
+// first
 first: {
     .label return = 2
     jmp breturn
-  //SEG28 first::@return
+  // first::@return
   breturn:
-  //SEG29 [15] return 
+  // [15] return 
     rts
 }
-//SEG30 File Data
+// File Data
   msg1: .text "hello world!@"
   msg2: .text "goodbye sky?@"
 
@@ -497,67 +497,67 @@ zp ZP_WORD:2 [ first::return#2 first::return#0 first::return#1 main::$0 main::$2
 FINAL ASSEMBLER
 Score: 66
 
-//SEG0 File Comments
+// File Comments
 // Tests pointer plus 0 elimination
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label SCREEN = $400
     .label _0 = 2
     .label _2 = 2
-  //SEG11 [5] call first 
-  //SEG12 [14] phi from main to first [phi:main->first]
-  //SEG13 [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
+  // [5] call first 
+  // [14] phi from main to first [phi:main->first]
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg1#0 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta first.return
     lda #>msg1
     sta first.return+1
     jsr first
-  //SEG14 [6] (byte*) first::return#0 ← (byte*) first::return#2
-  //SEG15 main::@1
-  //SEG16 [7] (byte*~) main::$0 ← (byte*) first::return#0
-  //SEG17 [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
+  // [6] (byte*) first::return#0 ← (byte*) first::return#2
+  // main::@1
+  // [7] (byte*~) main::$0 ← (byte*) first::return#0
+  // [8] *((const byte*) main::SCREEN#0) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_0),y
     sta SCREEN
-  //SEG18 [9] call first 
-  //SEG19 [14] phi from main::@1 to first [phi:main::@1->first]
-  //SEG20 [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+  // [9] call first 
+  // [14] phi from main::@1 to first [phi:main::@1->first]
+  // [14] phi (byte*) first::return#2 = (const byte[]) msg2#0 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta first.return
     lda #>msg2
     sta first.return+1
     jsr first
-  //SEG21 [10] (byte*) first::return#1 ← (byte*) first::return#2
-  //SEG22 main::@2
-  //SEG23 [11] (byte*~) main::$2 ← (byte*) first::return#1
-  //SEG24 [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
+  // [10] (byte*) first::return#1 ← (byte*) first::return#2
+  // main::@2
+  // [11] (byte*~) main::$2 ← (byte*) first::return#1
+  // [12] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (_2),y
     sta SCREEN+1
-  //SEG25 main::@return
-  //SEG26 [13] return 
+  // main::@return
+  // [13] return 
     rts
 }
-//SEG27 first
+// first
 first: {
     .label return = 2
-  //SEG28 first::@return
-  //SEG29 [15] return 
+  // first::@return
+  // [15] return 
     rts
 }
-//SEG30 File Data
+// File Data
   msg1: .text "hello world!@"
   msg2: .text "goodbye sky?@"
 

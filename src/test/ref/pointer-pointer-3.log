@@ -197,93 +197,93 @@ Allocated zp ZP_WORD:2 [ setscreen::val#2 ]
 Allocated zp ZP_WORD:4 [ screen#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests pointer to pointer in a more complex setup
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+// [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
   sta screen+1
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 [5] call setscreen 
-  //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
+  // [5] call setscreen 
+  // [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG17 [7] call setscreen 
-  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  // [7] call setscreen 
+  // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp breturn
-  //SEG22 main::@return
+  // main::@return
   breturn:
-  //SEG23 [9] return 
+  // [9] return 
     rts
 }
-//SEG24 setscreen
+// setscreen
 // setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+  // [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
     sta screen
     lda val+1
     sta screen+1
     jmp breturn
-  //SEG26 setscreen::@return
+  // setscreen::@return
   breturn:
-  //SEG27 [12] return 
+  // [12] return 
     rts
 }
-//SEG28 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte*) screen#0 ← (byte*) 1024 [ screen#0 ] (  [ screen#0 ] ) always clobbers reg byte a 
@@ -303,93 +303,93 @@ Uplifting [] best 112 combination zp ZP_WORD:4 [ screen#0 ]
 Uplifting [main] best 112 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests pointer to pointer in a more complex setup
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+// [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
   sta screen+1
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 [5] call setscreen 
-  //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
+  // [5] call setscreen 
+  // [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG17 [7] call setscreen 
-  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  // [7] call setscreen 
+  // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp breturn
-  //SEG22 main::@return
+  // main::@return
   breturn:
-  //SEG23 [9] return 
+  // [9] return 
     rts
 }
-//SEG24 setscreen
+// setscreen
 // setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+  // [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
     sta screen
     lda val+1
     sta screen+1
     jmp breturn
-  //SEG26 setscreen::@return
+  // setscreen::@return
   breturn:
-  //SEG27 [12] return 
+  // [12] return 
     rts
 }
-//SEG28 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -442,75 +442,75 @@ zp ZP_WORD:4 [ screen#0 ]
 FINAL ASSEMBLER
 Score: 100
 
-//SEG0 File Comments
+// File Comments
 // Tests pointer to pointer in a more complex setup
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+// [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
   sta screen+1
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG6 @1
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
   jsr main
   rts
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
-//SEG10 @end
-//SEG11 main
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG12 [5] call setscreen 
-  //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
-  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+  // [5] call setscreen 
+  // [10] phi from main to setscreen [phi:main->setscreen]
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
-  //SEG15 main::@1
-  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // main::@1
+  // [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG17 [7] call setscreen 
-  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+  // [7] call setscreen 
+  // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
-  //SEG20 main::@2
-  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+  // main::@2
+  // [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG22 main::@return
-  //SEG23 [9] return 
+  // main::@return
+  // [9] return 
     rts
 }
-//SEG24 setscreen
+// setscreen
 // setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+  // [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
     sta screen
     lda val+1
     sta screen+1
-  //SEG26 setscreen::@return
-  //SEG27 [12] return 
+  // setscreen::@return
+  // [12] return 
     rts
 }
-//SEG28 File Data
+// File Data
 

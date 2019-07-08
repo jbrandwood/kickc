@@ -314,14 +314,14 @@ Complete equivalence classes
 Allocated zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -332,113 +332,113 @@ INITIAL ASM
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
   .label framedone = 2
-//SEG3 @begin
+// @begin
 bbegin:
   jmp b1
-//SEG4 @1
+// @1
 b1:
-//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+// [1] (bool) framedone#11 ← false -- vboz1=vboc1 
   lda #0
   sta framedone
-//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+// [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-//SEG7 @2
+// @2
 b2:
-//SEG8 [3] call main 
+// [3] call main 
   jsr main
-//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+// [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG22 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG23 main::@2
+  // main::@2
   b2:
-  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+  // [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs b1_from_b2
     jmp b3
-  //SEG25 main::@3
+  // main::@3
   b3:
-  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+  // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
     jmp b1_from_b3
 }
-//SEG27 irq
+// irq
 irq: {
-  //SEG28 entry interrupt(KERNEL_MIN)
-  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // entry interrupt(KERNEL_MIN)
+  // [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  // [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
     bcc b1_from_irq
     jmp b2
-  //SEG32 irq::@2
+  // irq::@2
   b2:
-  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+  // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
-  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG36 irq::@1
+  // irq::@1
   b1:
-  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  // [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
-  //SEG38 irq::@return
+  // irq::@return
   breturn:
-  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
+  // [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (bool) framedone#11 ← false [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
@@ -464,14 +464,14 @@ Uplifting [main] best 1994 combination
 Uplifting [irq] best 1994 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -482,113 +482,113 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
   .label framedone = 2
-//SEG3 @begin
+// @begin
 bbegin:
   jmp b1
-//SEG4 @1
+// @1
 b1:
-//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+// [1] (bool) framedone#11 ← false -- vboz1=vboc1 
   lda #0
   sta framedone
-//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+// [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-//SEG7 @2
+// @2
 b2:
-//SEG8 [3] call main 
+// [3] call main 
   jsr main
-//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+// [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG22 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG23 main::@2
+  // main::@2
   b2:
-  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+  // [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs b1_from_b2
     jmp b3
-  //SEG25 main::@3
+  // main::@3
   b3:
-  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+  // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
     jmp b1_from_b3
 }
-//SEG27 irq
+// irq
 irq: {
-  //SEG28 entry interrupt(KERNEL_MIN)
-  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // entry interrupt(KERNEL_MIN)
+  // [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  // [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
     bcc b1_from_irq
     jmp b2
-  //SEG32 irq::@2
+  // irq::@2
   b2:
-  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+  // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
-  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG36 irq::@1
+  // irq::@1
   b1:
-  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  // [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
-  //SEG38 irq::@return
+  // irq::@return
   breturn:
-  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
+  // [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -674,14 +674,14 @@ zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
 FINAL ASSEMBLER
 Score: 1025
 
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -692,88 +692,88 @@ Score: 1025
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
   .label framedone = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 @1
-//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+// @1
+// [1] (bool) framedone#11 ← false -- vboz1=vboc1 
   lda #0
   sta framedone
-//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
-//SEG7 @2
-//SEG8 [3] call main 
+// [2] phi from @1 to @2 [phi:@1->@2]
+// @2
+// [3] call main 
   jsr main
   rts
-//SEG9 [4] phi from @2 to @end [phi:@2->@end]
-//SEG10 @end
-//SEG11 main
+// [4] phi from @2 to @end [phi:@2->@end]
+// @end
+// main
 main: {
-  //SEG12 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  // [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
-  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
-  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG22 main::@1
-  //SEG23 main::@2
+  // [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // main::@1
+  // main::@2
   b2:
-  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+  // [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs b2
-  //SEG25 main::@3
-  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+  // main::@3
+  // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
     jmp b2
 }
-//SEG27 irq
+// irq
 irq: {
-  //SEG28 entry interrupt(KERNEL_MIN)
-  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // entry interrupt(KERNEL_MIN)
+  // [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  // [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
     bcc b1
-  //SEG32 irq::@2
-  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+  // irq::@2
+  // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
-  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
-  //SEG36 irq::@1
+  // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  // irq::@1
   b1:
-  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  // [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG38 irq::@return
-  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
+  // irq::@return
+  // [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
-//SEG40 File Data
+// File Data
 

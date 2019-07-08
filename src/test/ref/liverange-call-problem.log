@@ -300,125 +300,125 @@ Allocated zp ZP_WORD:2 [ w2#10 w2#11 ]
 Allocated zp ZP_WORD:4 [ w1#11 w1#12 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
-  //SEG11 [5] call incw1 
-  //SEG12 [18] phi from main to incw1 [phi:main->incw1]
+  // [5] call incw1 
+  // [18] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-  //SEG13 [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+  // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
     lda #0
     sta w1
     lda #0
     sta w1+1
     jsr incw1
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] call incw2 
-  //SEG17 [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
+  // [7] call incw2 
+  // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from_b1:
-  //SEG18 [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+  // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
     lda #0
     sta w2
     lda #0
     sta w2+1
     jsr incw2
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 [9] call incw1 
-  //SEG22 [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
+  // [9] call incw1 
+  // [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
   incw1_from_b2:
-  //SEG23 [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
+  // [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
-  //SEG24 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  //SEG25 main::@3
+  // main::@3
   b3:
-  //SEG26 [11] call incw2 
-  //SEG27 [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
+  // [11] call incw2 
+  // [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
   incw2_from_b3:
-  //SEG28 [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
+  // [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
     jmp b4
-  //SEG29 main::@4
+  // main::@4
   b4:
-  //SEG30 [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
+  // [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
     lda w1
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  // [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
     sta SCREEN+2*SIZEOF_WORD
     lda w2+1
     sta SCREEN+2*SIZEOF_WORD+1
     jmp breturn
-  //SEG32 main::@return
+  // main::@return
   breturn:
-  //SEG33 [14] return 
+  // [14] return 
     rts
 }
-//SEG34 incw2
+// incw2
 incw2: {
-  //SEG35 [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
+  // [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
     inc w2
     bne !+
     inc w2+1
   !:
     jmp breturn
-  //SEG36 incw2::@return
+  // incw2::@return
   breturn:
-  //SEG37 [17] return 
+  // [17] return 
     rts
 }
-//SEG38 incw1
+// incw1
 incw1: {
-  //SEG39 [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
+  // [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
     inc w1
     bne !+
     inc w1+1
   !:
     jmp breturn
-  //SEG40 incw1::@return
+  // incw1::@return
   breturn:
-  //SEG41 [20] return 
+  // [20] return 
     rts
 }
-//SEG42 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const word*) main::SCREEN#0) ← (word) w1#12 [ w2#11 ] ( main:2 [ w2#11 ] ) always clobbers reg byte a 
@@ -438,125 +438,125 @@ Uplifting [incw1] best 147 combination
 Uplifting [incw2] best 147 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
-  //SEG11 [5] call incw1 
-  //SEG12 [18] phi from main to incw1 [phi:main->incw1]
+  // [5] call incw1 
+  // [18] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-  //SEG13 [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+  // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
     lda #0
     sta w1
     lda #0
     sta w1+1
     jsr incw1
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] call incw2 
-  //SEG17 [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
+  // [7] call incw2 
+  // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from_b1:
-  //SEG18 [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+  // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
     lda #0
     sta w2
     lda #0
     sta w2+1
     jsr incw2
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 [9] call incw1 
-  //SEG22 [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
+  // [9] call incw1 
+  // [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
   incw1_from_b2:
-  //SEG23 [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
+  // [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
-  //SEG24 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  //SEG25 main::@3
+  // main::@3
   b3:
-  //SEG26 [11] call incw2 
-  //SEG27 [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
+  // [11] call incw2 
+  // [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
   incw2_from_b3:
-  //SEG28 [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
+  // [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
     jmp b4
-  //SEG29 main::@4
+  // main::@4
   b4:
-  //SEG30 [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
+  // [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
     lda w1
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  // [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
     sta SCREEN+2*SIZEOF_WORD
     lda w2+1
     sta SCREEN+2*SIZEOF_WORD+1
     jmp breturn
-  //SEG32 main::@return
+  // main::@return
   breturn:
-  //SEG33 [14] return 
+  // [14] return 
     rts
 }
-//SEG34 incw2
+// incw2
 incw2: {
-  //SEG35 [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
+  // [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
     inc w2
     bne !+
     inc w2+1
   !:
     jmp breturn
-  //SEG36 incw2::@return
+  // incw2::@return
   breturn:
-  //SEG37 [17] return 
+  // [17] return 
     rts
 }
-//SEG38 incw1
+// incw1
 incw1: {
-  //SEG39 [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
+  // [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
     inc w1
     bne !+
     inc w1+1
   !:
     jmp breturn
-  //SEG40 incw1::@return
+  // incw1::@return
   breturn:
-  //SEG41 [20] return 
+  // [20] return 
     rts
 }
-//SEG42 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -630,91 +630,91 @@ zp ZP_WORD:4 [ w1#11 w1#12 ]
 FINAL ASSEMBLER
 Score: 110
 
-//SEG0 File Comments
+// File Comments
 // Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label SCREEN = $400
-  //SEG11 [5] call incw1 
-  //SEG12 [18] phi from main to incw1 [phi:main->incw1]
-  //SEG13 [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+  // [5] call incw1 
+  // [18] phi from main to incw1 [phi:main->incw1]
+  // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
     lda #0
     sta w1
     sta w1+1
     jsr incw1
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  //SEG16 [7] call incw2 
-  //SEG17 [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
-  //SEG18 [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [7] call incw2 
+  // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
+  // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
     lda #0
     sta w2
     sta w2+1
     jsr incw2
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG20 main::@2
-  //SEG21 [9] call incw1 
-  //SEG22 [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
-  //SEG23 [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // main::@2
+  // [9] call incw1 
+  // [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
+  // [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
-  //SEG24 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG25 main::@3
-  //SEG26 [11] call incw2 
-  //SEG27 [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
-  //SEG28 [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
+  // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // main::@3
+  // [11] call incw2 
+  // [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
+  // [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
-  //SEG29 main::@4
-  //SEG30 [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
+  // main::@4
+  // [12] *((const word*) main::SCREEN#0) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
     lda w1
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  // [13] *((const word*) main::SCREEN#0+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
     sta SCREEN+2*SIZEOF_WORD
     lda w2+1
     sta SCREEN+2*SIZEOF_WORD+1
-  //SEG32 main::@return
-  //SEG33 [14] return 
+  // main::@return
+  // [14] return 
     rts
 }
-//SEG34 incw2
+// incw2
 incw2: {
-  //SEG35 [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
+  // [16] (word) w2#11 ← ++ (word) w2#10 -- vwuz1=_inc_vwuz1 
     inc w2
     bne !+
     inc w2+1
   !:
-  //SEG36 incw2::@return
-  //SEG37 [17] return 
+  // incw2::@return
+  // [17] return 
     rts
 }
-//SEG38 incw1
+// incw1
 incw1: {
-  //SEG39 [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
+  // [19] (word) w1#12 ← ++ (word) w1#11 -- vwuz1=_inc_vwuz1 
     inc w1
     bne !+
     inc w1+1
   !:
-  //SEG40 incw1::@return
-  //SEG41 [20] return 
+  // incw1::@return
+  // [20] return 
     rts
 }
-//SEG42 File Data
+// File Data
 

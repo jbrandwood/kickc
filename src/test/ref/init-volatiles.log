@@ -140,61 +140,61 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label x = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+// [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   b1_from_main:
   b1_from_b1:
-  //SEG13 [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+  // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  // main::@1
   b1:
-  //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+  // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1_from_b1
     jmp b2
-  //SEG17 main::@2
+  // main::@2
   b2:
-  //SEG18 [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+  // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp breturn
-  //SEG19 main::@return
+  // main::@return
   breturn:
-  //SEG20 [9] return 
+  // [9] return 
     rts
 }
-//SEG21 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) x#0 ← (byte) $c [ x#0 ] (  [ x#0 ] ) always clobbers reg byte a 
@@ -212,61 +212,61 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
 Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label x = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+// [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
-  //SEG12 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   b1_from_main:
   b1_from_b1:
-  //SEG13 [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+  // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  // main::@1
   b1:
-  //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+  // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1_from_b1
     jmp b2
-  //SEG17 main::@2
+  // main::@2
   b2:
-  //SEG18 [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+  // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp breturn
-  //SEG19 main::@return
+  // main::@return
   breturn:
-  //SEG20 [9] return 
+  // [9] return 
     rts
 }
-//SEG21 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -310,46 +310,46 @@ zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
 FINAL ASSEMBLER
 Score: 153
 
-//SEG0 File Comments
+// File Comments
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label x = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+// [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG6 @1
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
   jsr main
   rts
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
-//SEG10 @end
-//SEG11 main
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG12 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  //SEG13 [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
+  // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+  // main::@1
   b1:
-  //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+  // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1
-  //SEG17 main::@2
-  //SEG18 [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+  // main::@2
+  // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta x
-  //SEG19 main::@return
-  //SEG20 [9] return 
+  // main::@return
+  // [9] return 
     rts
 }
-//SEG21 File Data
+// File Data
 

@@ -280,130 +280,130 @@ Allocated zp ZP_BYTE:16 [ sub2::return#1 ]
 Allocated zp ZP_BYTE:17 [ sub1::return#1 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Demonstrates a procedure reserving addresses on zeropage
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label SCREEN = $400
     .label _0 = $b
     .label _2 = $e
     .label i = 8
-  //SEG10 [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG11 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+  // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta sub1.i
-  //SEG15 [7] call sub1 
+  // [7] call sub1 
     jsr sub1
-  //SEG16 [8] (byte) sub1::return#0 ← (byte) sub1::return#1 -- vbuz1=vbuz2 
+  // [8] (byte) sub1::return#0 ← (byte) sub1::return#1 -- vbuz1=vbuz2 
     lda sub1.return_1
     sta sub1.return
     jmp b2
-  //SEG17 main::@2
+  // main::@2
   b2:
-  //SEG18 [9] (byte~) main::$0 ← (byte) sub1::return#0 -- vbuz1=vbuz2 
+  // [9] (byte~) main::$0 ← (byte) sub1::return#0 -- vbuz1=vbuz2 
     lda sub1.return
     sta _0
-  //SEG19 [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _0
     ldy i
     sta SCREEN,y
-  //SEG20 [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+  // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta sub2.i
-  //SEG21 [12] call sub2 
+  // [12] call sub2 
     jsr sub2
-  //SEG22 [13] (byte) sub2::return#0 ← (byte) sub2::return#1 -- vbuz1=vbuz2 
+  // [13] (byte) sub2::return#0 ← (byte) sub2::return#1 -- vbuz1=vbuz2 
     lda sub2.return_1
     sta sub2.return
     jmp b3
-  //SEG23 main::@3
+  // main::@3
   b3:
-  //SEG24 [14] (byte~) main::$2 ← (byte) sub2::return#0 -- vbuz1=vbuz2 
+  // [14] (byte~) main::$2 ← (byte) sub2::return#0 -- vbuz1=vbuz2 
     lda sub2.return
     sta _2
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+  // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _2
     ldy i
     sta SCREEN+$28,y
-  //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp i
     bne b1_from_b3
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [18] return 
+  // [18] return 
     rts
 }
-//SEG30 sub2
+// sub2
 // sub2(byte zeropage($c) i)
 sub2: {
     .label _0 = $f
     .label i = $c
     .label return = $d
     .label return_1 = $10
-  //SEG31 [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz2 
+  // [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz2 
     lda i
     asl
     sta _0
-  //SEG32 [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz3 
+  // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda _0
     clc
     adc i
     sta return_1
     jmp breturn
-  //SEG33 sub2::@return
+  // sub2::@return
   breturn:
-  //SEG34 [21] return 
+  // [21] return 
     rts
 }
-//SEG35 sub1
+// sub1
 // sub1(byte zeropage(9) i)
 sub1: {
     .label i = 9
     .label return = $a
     .label return_1 = $11
-  //SEG36 [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuz1=vbuz2_plus_vbuz2 
+  // [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuz1=vbuz2_plus_vbuz2 
     lda i
     asl
     sta return_1
     jmp breturn
-  //SEG37 sub1::@return
+  // sub1::@return
   breturn:
-  //SEG38 [23] return 
+  // [23] return 
     rts
 }
-//SEG39 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i#0 ← (byte) 0 [ main::i#0 ] ( main:2 [ main::i#0 ] ) always clobbers reg byte a 
@@ -447,105 +447,105 @@ Attempting to uplift remaining variables inzp ZP_BYTE:8 [ main::i#2 main::i#0 ma
 Uplifting [main] best 640 combination zp ZP_BYTE:8 [ main::i#2 main::i#0 main::i#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Demonstrates a procedure reserving addresses on zeropage
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label SCREEN = $400
     .label i = 8
-  //SEG10 [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG11 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
+  // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
     lda i
-  //SEG15 [7] call sub1 
+  // [7] call sub1 
     jsr sub1
-  //SEG16 [8] (byte) sub1::return#0 ← (byte) sub1::return#1
+  // [8] (byte) sub1::return#0 ← (byte) sub1::return#1
     jmp b2
-  //SEG17 main::@2
+  // main::@2
   b2:
-  //SEG18 [9] (byte~) main::$0 ← (byte) sub1::return#0
-  //SEG19 [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+  // [9] (byte~) main::$0 ← (byte) sub1::return#0
+  // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta SCREEN,y
-  //SEG20 [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
+  // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
     ldx i
-  //SEG21 [12] call sub2 
+  // [12] call sub2 
     jsr sub2
-  //SEG22 [13] (byte) sub2::return#0 ← (byte) sub2::return#1
+  // [13] (byte) sub2::return#0 ← (byte) sub2::return#1
     jmp b3
-  //SEG23 main::@3
+  // main::@3
   b3:
-  //SEG24 [14] (byte~) main::$2 ← (byte) sub2::return#0
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+  // [14] (byte~) main::$2 ← (byte) sub2::return#0
+  // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta SCREEN+$28,y
-  //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp i
     bne b1_from_b3
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [18] return 
+  // [18] return 
     rts
 }
-//SEG30 sub2
+// sub2
 // sub2(byte register(X) i)
 sub2: {
-  //SEG31 [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuaa=vbuxx_plus_vbuxx 
+  // [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuaa=vbuxx_plus_vbuxx 
     txa
     asl
-  //SEG32 [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
+  // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
     stx $ff
     clc
     adc $ff
     jmp breturn
-  //SEG33 sub2::@return
+  // sub2::@return
   breturn:
-  //SEG34 [21] return 
+  // [21] return 
     rts
 }
-//SEG35 sub1
+// sub1
 // sub1(byte register(A) i)
 sub1: {
-  //SEG36 [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuaa=vbuaa_plus_vbuaa 
+  // [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuaa=vbuaa_plus_vbuaa 
     asl
     jmp breturn
-  //SEG37 sub1::@return
+  // sub1::@return
   breturn:
-  //SEG38 [23] return 
+  // [23] return 
     rts
 }
-//SEG39 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -625,82 +625,82 @@ reg byte a [ sub1::return#1 ]
 FINAL ASSEMBLER
 Score: 502
 
-//SEG0 File Comments
+// File Comments
 // Demonstrates a procedure reserving addresses on zeropage
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label SCREEN = $400
     .label i = 8
-  //SEG10 [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG11 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
-  //SEG13 main::@1
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // main::@1
   b1:
-  //SEG14 [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
+  // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
     lda i
-  //SEG15 [7] call sub1 
+  // [7] call sub1 
     jsr sub1
-  //SEG16 [8] (byte) sub1::return#0 ← (byte) sub1::return#1
-  //SEG17 main::@2
-  //SEG18 [9] (byte~) main::$0 ← (byte) sub1::return#0
-  //SEG19 [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+  // [8] (byte) sub1::return#0 ← (byte) sub1::return#1
+  // main::@2
+  // [9] (byte~) main::$0 ← (byte) sub1::return#0
+  // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta SCREEN,y
-  //SEG20 [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
+  // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
     ldx i
-  //SEG21 [12] call sub2 
+  // [12] call sub2 
     jsr sub2
-  //SEG22 [13] (byte) sub2::return#0 ← (byte) sub2::return#1
-  //SEG23 main::@3
-  //SEG24 [14] (byte~) main::$2 ← (byte) sub2::return#0
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+  // [13] (byte) sub2::return#0 ← (byte) sub2::return#1
+  // main::@3
+  // [14] (byte~) main::$2 ← (byte) sub2::return#0
+  // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy i
     sta SCREEN+$28,y
-  //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp i
     bne b1
-  //SEG28 main::@return
-  //SEG29 [18] return 
+  // main::@return
+  // [18] return 
     rts
 }
-//SEG30 sub2
+// sub2
 // sub2(byte register(X) i)
 sub2: {
-  //SEG31 [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuaa=vbuxx_plus_vbuxx 
+  // [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuaa=vbuxx_plus_vbuxx 
     txa
     asl
-  //SEG32 [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
+  // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
     stx $ff
     clc
     adc $ff
-  //SEG33 sub2::@return
-  //SEG34 [21] return 
+  // sub2::@return
+  // [21] return 
     rts
 }
-//SEG35 sub1
+// sub1
 // sub1(byte register(A) i)
 sub1: {
-  //SEG36 [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuaa=vbuaa_plus_vbuaa 
+  // [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuaa=vbuaa_plus_vbuaa 
     asl
-  //SEG37 sub1::@return
-  //SEG38 [23] return 
+  // sub1::@return
+  // [23] return 
     rts
 }
-//SEG39 File Data
+// File Data
 

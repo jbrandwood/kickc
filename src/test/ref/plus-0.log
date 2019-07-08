@@ -352,67 +352,67 @@ Allocated zp ZP_WORD:6 [ fill::$5 ]
 Allocated zp ZP_WORD:8 [ fill::$7 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests elimination of plus 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call fill 
-  //SEG12 [9] phi from main to fill [phi:main->fill]
+  // [5] call fill 
+  // [9] phi from main to fill [phi:main->fill]
   fill_from_main:
-  //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
     lda #'a'
     sta fill.ch
-  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
     sta fill.screen+1
     jsr fill
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] call fill 
-  //SEG18 [9] phi from main::@1 to fill [phi:main::@1->fill]
+  // [7] call fill 
+  // [9] phi from main::@1 to fill [phi:main::@1->fill]
   fill_from_b1:
-  //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
     lda #'b'
     sta fill.ch
-  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
     sta fill.screen+1
     jsr fill
     jmp breturn
-  //SEG21 main::@return
+  // main::@return
   breturn:
-  //SEG22 [8] return 
+  // [8] return 
     rts
 }
-//SEG23 fill
+// fill
 // fill(byte* zeropage(2) screen, byte zeropage(4) ch)
 fill: {
     .label i = 5
@@ -420,29 +420,29 @@ fill: {
     .label ch = 4
     .label _5 = 6
     .label _7 = 8
-  //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
+  // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
   b1_from_fill:
-  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
+  // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG26 [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+  // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   b1_from_b3:
-  //SEG27 [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+  // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     jmp b1
-  //SEG28 fill::@1
+  // fill::@1
   b1:
     jmp b2
-  //SEG29 fill::@2
+  // fill::@2
   b2:
-  //SEG30 [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+  // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ch
     ldy i
     sta (screen),y
     jmp b2_1
-  //SEG31 fill::@2_1
+  // fill::@2_1
   b2_1:
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -450,14 +450,14 @@ fill: {
     lda #0
     adc screen+1
     sta _5+1
-  //SEG33 [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+  // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ch
     ldy i
     sta (_5),y
     jmp b2_2
-  //SEG34 fill::@2_2
+  // fill::@2_2
   b2_2:
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -465,26 +465,26 @@ fill: {
     lda #0
     adc screen+1
     sta _7+1
-  //SEG36 [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+  // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ch
     ldy i
     sta (_7),y
     jmp b3
-  //SEG37 fill::@3
+  // fill::@3
   b3:
-  //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
+  // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp i
     bne b1_from_b3
     jmp breturn
-  //SEG40 fill::@return
+  // fill::@return
   breturn:
-  //SEG41 [18] return 
+  // [18] return 
     rts
 }
-//SEG42 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ) always clobbers reg byte a 
@@ -516,91 +516,91 @@ Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ fill::$5 ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ fill::$7 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests elimination of plus 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call fill 
-  //SEG12 [9] phi from main to fill [phi:main->fill]
+  // [5] call fill 
+  // [9] phi from main to fill [phi:main->fill]
   fill_from_main:
-  //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
+  // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
     sta fill.screen+1
     jsr fill
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] call fill 
-  //SEG18 [9] phi from main::@1 to fill [phi:main::@1->fill]
+  // [7] call fill 
+  // [9] phi from main::@1 to fill [phi:main::@1->fill]
   fill_from_b1:
-  //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
+  // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
     sta fill.screen+1
     jsr fill
     jmp breturn
-  //SEG21 main::@return
+  // main::@return
   breturn:
-  //SEG22 [8] return 
+  // [8] return 
     rts
 }
-//SEG23 fill
+// fill
 // fill(byte* zeropage(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
     .label _5 = 4
     .label _7 = 6
-  //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
+  // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
   b1_from_fill:
-  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+  // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  //SEG26 [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+  // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   b1_from_b3:
-  //SEG27 [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+  // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     jmp b1
-  //SEG28 fill::@1
+  // fill::@1
   b1:
     jmp b2
-  //SEG29 fill::@2
+  // fill::@2
   b2:
-  //SEG30 [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (screen),y
     jmp b2_1
-  //SEG31 fill::@2_1
+  // fill::@2_1
   b2_1:
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -608,13 +608,13 @@ fill: {
     lda #0
     adc screen+1
     sta _5+1
-  //SEG33 [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_5),y
     jmp b2_2
-  //SEG34 fill::@2_2
+  // fill::@2_2
   b2_2:
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -622,24 +622,24 @@ fill: {
     lda #0
     adc screen+1
     sta _7+1
-  //SEG36 [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_7),y
     jmp b3
-  //SEG37 fill::@3
+  // fill::@3
   b3:
-  //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
+  // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+  // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b1_from_b3
     jmp breturn
-  //SEG40 fill::@return
+  // fill::@return
   breturn:
-  //SEG41 [18] return 
+  // [18] return 
     rts
 }
-//SEG42 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -717,67 +717,67 @@ zp ZP_WORD:6 [ fill::$7 ]
 FINAL ASSEMBLER
 Score: 733
 
-//SEG0 File Comments
+// File Comments
 // Tests elimination of plus 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG11 [5] call fill 
-  //SEG12 [9] phi from main to fill [phi:main->fill]
-  //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
+  // [5] call fill 
+  // [9] phi from main to fill [phi:main->fill]
+  // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
     sta fill.screen+1
     jsr fill
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG16 main::@1
-  //SEG17 [7] call fill 
-  //SEG18 [9] phi from main::@1 to fill [phi:main::@1->fill]
-  //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [7] call fill 
+  // [9] phi from main::@1 to fill [phi:main::@1->fill]
+  // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
     sta fill.screen+1
     jsr fill
-  //SEG21 main::@return
-  //SEG22 [8] return 
+  // main::@return
+  // [8] return 
     rts
 }
-//SEG23 fill
+// fill
 // fill(byte* zeropage(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
     .label _5 = 4
     .label _7 = 6
-  //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
-  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+  // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
+  // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG26 [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
-  //SEG27 [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
-  //SEG28 fill::@1
-  //SEG29 fill::@2
+  // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+  // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+  // fill::@1
+  // fill::@2
   b2:
-  //SEG30 [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (screen),y
-  //SEG31 fill::@2_1
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // fill::@2_1
+  // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -785,11 +785,11 @@ fill: {
     lda #0
     adc screen+1
     sta _5+1
-  //SEG33 [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_5),y
-  //SEG34 fill::@2_2
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  // fill::@2_2
+  // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -797,18 +797,18 @@ fill: {
     lda #0
     adc screen+1
     sta _7+1
-  //SEG36 [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+  // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_7),y
-  //SEG37 fill::@3
-  //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
+  // fill::@3
+  // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+  // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b2
-  //SEG40 fill::@return
-  //SEG41 [18] return 
+  // fill::@return
+  // [18] return 
     rts
 }
-//SEG42 File Data
+// File Data
 

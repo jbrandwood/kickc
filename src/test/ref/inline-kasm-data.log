@@ -183,70 +183,70 @@ Allocated zp ZP_WORD:5 [ main::cols#2 main::cols#1 ]
 Allocated zp ZP_BYTE:7 [ main::sin#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Example of inline kickasm data
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label sintab = $1000
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
     .label sin = 7
     .label screen = 3
     .label cols = 5
     .label i = 2
-  //SEG12 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG13 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
-  //SEG14 [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG16 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG17 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG18 [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+  // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp b1
-  //SEG20 main::@1
+  // main::@1
   b1:
-  //SEG21 [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+  // [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda sintab,y
     sta sin
-  //SEG22 [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuz2=vbuc1 
+  // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'*'
     ldy sin
     sta (screen),y
-  //SEG23 [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -254,11 +254,11 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG24 [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuz2=vbuc1 
+  // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #1
     ldy sin
     sta (cols),y
-  //SEG25 [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cols
@@ -266,19 +266,19 @@ main: {
     bcc !+
     inc cols+1
   !:
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp i
     bne b1_from_b1
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [13] return 
+  // [13] return 
     rts
 }
-//SEG30 File Data
+// File Data
 .pc = sintab "sintab"
   .fill 25, 20 + 20*sin(toRadians(i*360/25))
 
@@ -309,64 +309,64 @@ Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::screen#2 main::screen#1 ]
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::cols#2 main::cols#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Example of inline kickasm data
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label sintab = $1000
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG10 @end
+// @end
 bend:
-//SEG11 main
+// main
 main: {
     .label screen = 2
     .label cols = 4
-  //SEG12 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG13 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
-  //SEG14 [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG16 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG17 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG18 [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+  // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp b1
-  //SEG20 main::@1
+  // main::@1
   b1:
-  //SEG21 [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+  // [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
-  //SEG22 [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+  // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (screen),y
-  //SEG23 [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -374,10 +374,10 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG24 [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
+  // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #1
     sta (cols),y
-  //SEG25 [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cols
@@ -385,18 +385,18 @@ main: {
     bcc !+
     inc cols+1
   !:
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne b1_from_b1
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [13] return 
+  // [13] return 
     rts
 }
-//SEG30 File Data
+// File Data
 .pc = sintab "sintab"
   .fill 25, 20 + 20*sin(toRadians(i*360/25))
 
@@ -456,51 +456,51 @@ reg byte y [ main::sin#0 ]
 FINAL ASSEMBLER
 Score: 3406
 
-//SEG0 File Comments
+// File Comments
 // Example of inline kickasm data
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label sintab = $1000
-//SEG3 @begin
-//SEG4 kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG6 @1
-//SEG7 [2] call main 
-//SEG8 [4] phi from @1 to main [phi:@1->main]
-//SEG9 [3] phi from @1 to @end [phi:@1->@end]
-//SEG10 @end
-//SEG11 main
+// @begin
+// kickasm(location (const byte*) sintab#0) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label screen = 2
     .label cols = 4
-  //SEG12 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG13 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
-  //SEG14 [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
     ldx #0
-  //SEG16 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG17 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG18 [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
-  //SEG20 main::@1
+  // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+  // main::@1
   b1:
-  //SEG21 [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+  // [6] (byte) main::sin#0 ← *((const byte*) sintab#0 + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
-  //SEG22 [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+  // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (screen),y
-  //SEG23 [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -508,10 +508,10 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG24 [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
+  // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #1
     sta (cols),y
-  //SEG25 [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc cols
@@ -519,16 +519,16 @@ main: {
     bcc !+
     inc cols+1
   !:
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne b1
-  //SEG28 main::@return
-  //SEG29 [13] return 
+  // main::@return
+  // [13] return 
     rts
 }
-//SEG30 File Data
+// File Data
 .pc = sintab "sintab"
   .fill 25, 20 + 20*sin(toRadians(i*360/25))
 

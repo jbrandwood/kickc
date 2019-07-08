@@ -161,81 +161,81 @@ Allocated zp ZP_BYTE:2 [ sub::ch#2 ]
 Allocated zp ZP_WORD:3 [ main::screen#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests (non-)optimization of constant pointers to pointers
 // The two examples of &screen is not detected as identical leading to ASM that could be optimized more
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label screen = 3
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] call sub 
-  //SEG12 [9] phi from main to sub [phi:main->sub]
+  // [5] call sub 
+  // [9] phi from main to sub [phi:main->sub]
   sub_from_main:
-  //SEG13 [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuz1=vbuc1 
     lda #'a'
     sta sub.ch
     jsr sub
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] call sub 
-  //SEG17 [9] phi from main::@1 to sub [phi:main::@1->sub]
+  // [7] call sub 
+  // [9] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from_b1:
-  //SEG18 [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuz1=vbuc1 
     lda #'b'
     sta sub.ch
     jsr sub
     jmp breturn
-  //SEG19 main::@return
+  // main::@return
   breturn:
-  //SEG20 [8] return 
+  // [8] return 
     rts
 }
-//SEG21 sub
+// sub
 // sub(byte zeropage(2) ch)
 sub: {
     .label ch = 2
-  //SEG22 [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuz1 
+  // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuz1 
     lda ch
     ldy #0
     sta (main.screen),y
-  //SEG23 [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc main.screen
     bne !+
     inc main.screen+1
   !:
     jmp breturn
-  //SEG24 sub::@return
+  // sub::@return
   breturn:
-  //SEG25 [12] return 
+  // [12] return 
     rts
 }
-//SEG26 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte*) main::screen#0 ← (byte*) 1024 [ main::screen#0 ] ( main:2 [ main::screen#0 ] ) always clobbers reg byte a 
@@ -254,77 +254,77 @@ Uplifting [] best 81 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::screen#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests (non-)optimization of constant pointers to pointers
 // The two examples of &screen is not detected as identical leading to ASM that could be optimized more
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label screen = 2
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] call sub 
-  //SEG12 [9] phi from main to sub [phi:main->sub]
+  // [5] call sub 
+  // [9] phi from main to sub [phi:main->sub]
   sub_from_main:
-  //SEG13 [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+  // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
-  //SEG16 [7] call sub 
-  //SEG17 [9] phi from main::@1 to sub [phi:main::@1->sub]
+  // [7] call sub 
+  // [9] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from_b1:
-  //SEG18 [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+  // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
     jmp breturn
-  //SEG19 main::@return
+  // main::@return
   breturn:
-  //SEG20 [8] return 
+  // [8] return 
     rts
 }
-//SEG21 sub
+// sub
 // sub(byte register(A) ch)
 sub: {
-  //SEG22 [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuaa 
+  // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuaa 
     ldy #0
     sta (main.screen),y
-  //SEG23 [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc main.screen
     bne !+
     inc main.screen+1
   !:
     jmp breturn
-  //SEG24 sub::@return
+  // sub::@return
   breturn:
-  //SEG25 [12] return 
+  // [12] return 
     rts
 }
-//SEG26 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -373,58 +373,58 @@ zp ZP_WORD:2 [ main::screen#0 ]
 FINAL ASSEMBLER
 Score: 60
 
-//SEG0 File Comments
+// File Comments
 // Tests (non-)optimization of constant pointers to pointers
 // The two examples of &screen is not detected as identical leading to ASM that could be optimized more
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label screen = 2
-  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG11 [5] call sub 
-  //SEG12 [9] phi from main to sub [phi:main->sub]
-  //SEG13 [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+  // [5] call sub 
+  // [9] phi from main to sub [phi:main->sub]
+  // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  //SEG16 [7] call sub 
-  //SEG17 [9] phi from main::@1 to sub [phi:main::@1->sub]
-  //SEG18 [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [7] call sub 
+  // [9] phi from main::@1 to sub [phi:main::@1->sub]
+  // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
-  //SEG19 main::@return
-  //SEG20 [8] return 
+  // main::@return
+  // [8] return 
     rts
 }
-//SEG21 sub
+// sub
 // sub(byte register(A) ch)
 sub: {
-  //SEG22 [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuaa 
+  // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref__deref_pptc1=vbuaa 
     ldy #0
     sta (main.screen),y
-  //SEG23 [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+  // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
     inc main.screen
     bne !+
     inc main.screen+1
   !:
-  //SEG24 sub::@return
-  //SEG25 [12] return 
+  // sub::@return
+  // [12] return 
     rts
 }
-//SEG26 File Data
+// File Data
 

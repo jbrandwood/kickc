@@ -658,13 +658,13 @@ Allocated zp ZP_BYTE:21 [ print_byte_at::$2 ]
 Allocated zp ZP_DWORD:22 [ clock::return#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Setup and run a simple CIA-timer
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
   // CIA #2 Timer A Control Register
@@ -678,35 +678,35 @@ INITIAL ASM
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SCREEN = $400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call clock_start 
+  // [5] call clock_start 
     jsr clock_start
-  //SEG12 [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+  // [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
   b1_from_main:
   b1_from_b2:
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [7] call clock 
+  // [7] call clock 
     jsr clock
-  //SEG15 [8] (dword) clock::return#2 ← (dword) clock::return#0 -- vduz1=vduz2 
+  // [8] (dword) clock::return#2 ← (dword) clock::return#0 -- vduz1=vduz2 
     lda clock.return
     sta clock.return_2
     lda clock.return+1
@@ -716,9 +716,9 @@ main: {
     lda clock.return+3
     sta clock.return_2+3
     jmp b2
-  //SEG16 main::@2
+  // main::@2
   b2:
-  //SEG17 [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2 -- vduz1=vduz2 
+  // [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2 -- vduz1=vduz2 
     lda clock.return_2
     sta print_dword_at.dw
     lda clock.return_2+1
@@ -727,81 +727,81 @@ main: {
     sta print_dword_at.dw+2
     lda clock.return_2+3
     sta print_dword_at.dw+3
-  //SEG18 [10] call print_dword_at 
+  // [10] call print_dword_at 
     jsr print_dword_at
     jmp b1_from_b2
 }
-//SEG19 print_dword_at
+// print_dword_at
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage($10) dw)
 print_dword_at: {
     .label dw = $10
-  //SEG20 [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
+  // [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
     lda dw+2
     sta print_word_at.w
     lda dw+3
     sta print_word_at.w+1
-  //SEG21 [12] call print_word_at 
-  //SEG22 [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
+  // [12] call print_word_at 
+  // [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
   print_word_at_from_print_dword_at:
-  //SEG23 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta print_word_at.at
     lda #>SCREEN
     sta print_word_at.at+1
-  //SEG24 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
     jsr print_word_at
     jmp b1
-  //SEG25 print_dword_at::@1
+  // print_dword_at::@1
   b1:
-  //SEG26 [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
+  // [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
     lda dw
     sta print_word_at.w
     lda dw+1
     sta print_word_at.w+1
-  //SEG27 [14] call print_word_at 
-  //SEG28 [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
+  // [14] call print_word_at 
+  // [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
   print_word_at_from_b1:
-  //SEG29 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta print_word_at.at
     lda #>SCREEN+4
     sta print_word_at.at+1
-  //SEG30 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
     jsr print_word_at
     jmp breturn
-  //SEG31 print_dword_at::@return
+  // print_dword_at::@return
   breturn:
-  //SEG32 [15] return 
+  // [15] return 
     rts
 }
-//SEG33 print_word_at
+// print_word_at
 // Print a word as HEX at a specific position
 // print_word_at(word zeropage(2) w, byte* zeropage(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
-  //SEG34 [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
+  // [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
     lda w+1
     sta print_byte_at.b
-  //SEG35 [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2 -- pbuz1=pbuz2 
+  // [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2 -- pbuz1=pbuz2 
     lda at
     sta print_byte_at.at
     lda at+1
     sta print_byte_at.at+1
-  //SEG36 [19] call print_byte_at 
-  //SEG37 [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
+  // [19] call print_byte_at 
+  // [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
   print_byte_at_from_print_word_at:
-  //SEG38 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
-  //SEG39 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
     jsr print_byte_at
     jmp b1
-  //SEG40 print_word_at::@1
+  // print_word_at::@1
   b1:
-  //SEG41 [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
+  // [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
     lda w
     sta print_byte_at.b
-  //SEG42 [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz2_plus_2 
+  // [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz2_plus_2 
     lda at
     clc
     adc #2
@@ -809,19 +809,19 @@ print_word_at: {
     lda at+1
     adc #0
     sta print_byte_at.at+1
-  //SEG43 [22] call print_byte_at 
-  //SEG44 [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
+  // [22] call print_byte_at 
+  // [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
   print_byte_at_from_b1:
-  //SEG45 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
-  //SEG46 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
     jsr print_byte_at
     jmp breturn
-  //SEG47 print_word_at::@return
+  // print_word_at::@return
   breturn:
-  //SEG48 [23] return 
+  // [23] return 
     rts
 }
-//SEG49 print_byte_at
+// print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage(6) b, byte* zeropage(7) at)
 print_byte_at: {
@@ -829,36 +829,36 @@ print_byte_at: {
     .label _2 = $15
     .label b = 6
     .label at = 7
-  //SEG50 [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+  // [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
     sta _0
-  //SEG51 [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+  // [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _0
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG52 [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
+  // [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG53 [28] call print_char_at 
-  //SEG54 [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  // [28] call print_char_at 
+  // [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
-  //SEG55 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG56 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp b1
-  //SEG57 print_byte_at::@1
+  // print_byte_at::@1
   b1:
-  //SEG58 [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+  // [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and b
     sta _2
-  //SEG59 [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+  // [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda at
     clc
     adc #1
@@ -866,45 +866,45 @@ print_byte_at: {
     lda at+1
     adc #0
     sta print_char_at.at+1
-  //SEG60 [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+  // [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
     lda print_hextab,y
     sta print_char_at.ch
-  //SEG61 [32] call print_char_at 
-  //SEG62 [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  // [32] call print_char_at 
+  // [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG63 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG64 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp breturn
-  //SEG65 print_byte_at::@return
+  // print_byte_at::@return
   breturn:
-  //SEG66 [33] return 
+  // [33] return 
     rts
 }
-//SEG67 print_char_at
+// print_char_at
 // Print a single char
 // print_char_at(byte zeropage(9) ch, byte* zeropage($a) at)
 print_char_at: {
     .label ch = 9
     .label at = $a
-  //SEG68 [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuz2 
+  // [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuz2 
     lda ch
     ldy #0
     sta (at),y
     jmp breturn
-  //SEG69 print_char_at::@return
+  // print_char_at::@return
   breturn:
-  //SEG70 [36] return 
+  // [36] return 
     rts
 }
-//SEG71 clock
+// clock
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $16
     .label return_2 = $c
-  //SEG72 [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
+  // [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -919,23 +919,23 @@ clock: {
     sbc CIA2_TIMER_AB+3
     sta return+3
     jmp breturn
-  //SEG73 clock::@return
+  // clock::@return
   breturn:
-  //SEG74 [38] return 
+  // [38] return 
     rts
 }
-//SEG75 clock_start
+// clock_start
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-  //SEG76 [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
+  // [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #CIA_TIMER_CONTROL_CONTINUOUS
     sta CIA2_TIMER_A_CONTROL
-  //SEG77 [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG78 [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+  // [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -944,19 +944,19 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-  //SEG79 [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG80 [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
+  // [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
     jmp breturn
-  //SEG81 clock_start::@return
+  // clock_start::@return
   breturn:
-  //SEG82 [44] return 
+  // [44] return 
     rts
 }
-//SEG83 File Data
+// File Data
   print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -1041,13 +1041,13 @@ Allocated (was zp ZP_WORD:10) zp ZP_WORD:7 [ print_char_at::at#2 print_char_at::
 Allocated (was zp ZP_DWORD:12) zp ZP_DWORD:9 [ clock::return#2 print_dword_at::dw#0 clock::return#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Setup and run a simple CIA-timer
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
   // CIA #2 Timer A Control Register
@@ -1061,110 +1061,110 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SCREEN = $400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call clock_start 
+  // [5] call clock_start 
     jsr clock_start
-  //SEG12 [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+  // [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
   b1_from_main:
   b1_from_b2:
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [7] call clock 
+  // [7] call clock 
     jsr clock
-  //SEG15 [8] (dword) clock::return#2 ← (dword) clock::return#0
+  // [8] (dword) clock::return#2 ← (dword) clock::return#0
     jmp b2
-  //SEG16 main::@2
+  // main::@2
   b2:
-  //SEG17 [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2
-  //SEG18 [10] call print_dword_at 
+  // [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2
+  // [10] call print_dword_at 
     jsr print_dword_at
     jmp b1_from_b2
 }
-//SEG19 print_dword_at
+// print_dword_at
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage(9) dw)
 print_dword_at: {
     .label dw = 9
-  //SEG20 [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
+  // [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
     lda dw+2
     sta print_word_at.w
     lda dw+3
     sta print_word_at.w+1
-  //SEG21 [12] call print_word_at 
-  //SEG22 [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
+  // [12] call print_word_at 
+  // [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
   print_word_at_from_print_dword_at:
-  //SEG23 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta print_word_at.at
     lda #>SCREEN
     sta print_word_at.at+1
-  //SEG24 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
     jsr print_word_at
     jmp b1
-  //SEG25 print_dword_at::@1
+  // print_dword_at::@1
   b1:
-  //SEG26 [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
+  // [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
     lda dw
     sta print_word_at.w
     lda dw+1
     sta print_word_at.w+1
-  //SEG27 [14] call print_word_at 
-  //SEG28 [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
+  // [14] call print_word_at 
+  // [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
   print_word_at_from_b1:
-  //SEG29 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta print_word_at.at
     lda #>SCREEN+4
     sta print_word_at.at+1
-  //SEG30 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
     jsr print_word_at
     jmp breturn
-  //SEG31 print_dword_at::@return
+  // print_dword_at::@return
   breturn:
-  //SEG32 [15] return 
+  // [15] return 
     rts
 }
-//SEG33 print_word_at
+// print_word_at
 // Print a word as HEX at a specific position
 // print_word_at(word zeropage(2) w, byte* zeropage(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
-  //SEG34 [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
+  // [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
     lda w+1
     sta print_byte_at.b
-  //SEG35 [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2
-  //SEG36 [19] call print_byte_at 
-  //SEG37 [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
+  // [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2
+  // [19] call print_byte_at 
+  // [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
   print_byte_at_from_print_word_at:
-  //SEG38 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
-  //SEG39 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
     jsr print_byte_at
     jmp b1
-  //SEG40 print_word_at::@1
+  // print_word_at::@1
   b1:
-  //SEG41 [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
+  // [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
     lda w
     sta print_byte_at.b
-  //SEG42 [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_2 
+  // [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_2 
     lda print_byte_at.at
     clc
     adc #2
@@ -1172,52 +1172,52 @@ print_word_at: {
     bcc !+
     inc print_byte_at.at+1
   !:
-  //SEG43 [22] call print_byte_at 
-  //SEG44 [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
+  // [22] call print_byte_at 
+  // [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
   print_byte_at_from_b1:
-  //SEG45 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
-  //SEG46 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
     jsr print_byte_at
     jmp breturn
-  //SEG47 print_word_at::@return
+  // print_word_at::@return
   breturn:
-  //SEG48 [23] return 
+  // [23] return 
     rts
 }
-//SEG49 print_byte_at
+// print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
 print_byte_at: {
     .label b = 6
     .label at = 4
-  //SEG50 [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+  // [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
-  //SEG51 [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+  // [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-  //SEG52 [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
+  // [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG53 [28] call print_char_at 
-  //SEG54 [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  // [28] call print_char_at 
+  // [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
-  //SEG55 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG56 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp b1
-  //SEG57 print_byte_at::@1
+  // print_byte_at::@1
   b1:
-  //SEG58 [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+  // [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and b
     tay
-  //SEG59 [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+  // [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda at
     clc
     adc #1
@@ -1225,41 +1225,41 @@ print_byte_at: {
     lda at+1
     adc #0
     sta print_char_at.at+1
-  //SEG60 [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+  // [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-  //SEG61 [32] call print_char_at 
-  //SEG62 [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  // [32] call print_char_at 
+  // [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
   print_char_at_from_b1:
-  //SEG63 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG64 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp breturn
-  //SEG65 print_byte_at::@return
+  // print_byte_at::@return
   breturn:
-  //SEG66 [33] return 
+  // [33] return 
     rts
 }
-//SEG67 print_char_at
+// print_char_at
 // Print a single char
 // print_char_at(byte register(X) ch, byte* zeropage(7) at)
 print_char_at: {
     .label at = 7
-  //SEG68 [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+  // [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
     jmp breturn
-  //SEG69 print_char_at::@return
+  // print_char_at::@return
   breturn:
-  //SEG70 [36] return 
+  // [36] return 
     rts
 }
-//SEG71 clock
+// clock
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = 9
-  //SEG72 [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
+  // [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -1274,23 +1274,23 @@ clock: {
     sbc CIA2_TIMER_AB+3
     sta return+3
     jmp breturn
-  //SEG73 clock::@return
+  // clock::@return
   breturn:
-  //SEG74 [38] return 
+  // [38] return 
     rts
 }
-//SEG75 clock_start
+// clock_start
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-  //SEG76 [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
+  // [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #CIA_TIMER_CONTROL_CONTINUOUS
     sta CIA2_TIMER_A_CONTROL
-  //SEG77 [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG78 [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+  // [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -1299,19 +1299,19 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-  //SEG79 [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG80 [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
+  // [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
     jmp breturn
-  //SEG81 clock_start::@return
+  // clock_start::@return
   breturn:
-  //SEG82 [44] return 
+  // [44] return 
     rts
 }
-//SEG83 File Data
+// File Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -1445,13 +1445,13 @@ reg byte y [ print_byte_at::$2 ]
 FINAL ASSEMBLER
 Score: 455
 
-//SEG0 File Comments
+// File Comments
 // Setup and run a simple CIA-timer
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
   // CIA #2 Timer A Control Register
@@ -1465,87 +1465,87 @@ Score: 455
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SCREEN = $400
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG11 [5] call clock_start 
+  // [5] call clock_start 
     jsr clock_start
-  //SEG12 [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
-  //SEG13 main::@1
+  // [6] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+  // main::@1
   b1:
-  //SEG14 [7] call clock 
+  // [7] call clock 
     jsr clock
-  //SEG15 [8] (dword) clock::return#2 ← (dword) clock::return#0
-  //SEG16 main::@2
-  //SEG17 [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2
-  //SEG18 [10] call print_dword_at 
+  // [8] (dword) clock::return#2 ← (dword) clock::return#0
+  // main::@2
+  // [9] (dword) print_dword_at::dw#0 ← (dword) clock::return#2
+  // [10] call print_dword_at 
     jsr print_dword_at
     jmp b1
 }
-//SEG19 print_dword_at
+// print_dword_at
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage(9) dw)
 print_dword_at: {
     .label dw = 9
-  //SEG20 [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
+  // [11] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 -- vwuz1=_hi_vduz2 
     lda dw+2
     sta print_word_at.w
     lda dw+3
     sta print_word_at.w+1
-  //SEG21 [12] call print_word_at 
-  //SEG22 [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
-  //SEG23 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
+  // [12] call print_word_at 
+  // [16] phi from print_dword_at to print_word_at [phi:print_dword_at->print_word_at]
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0 [phi:print_dword_at->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta print_word_at.at
     lda #>SCREEN
     sta print_word_at.at+1
-  //SEG24 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
     jsr print_word_at
-  //SEG25 print_dword_at::@1
-  //SEG26 [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
+  // print_dword_at::@1
+  // [13] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
     lda dw
     sta print_word_at.w
     lda dw+1
     sta print_word_at.w+1
-  //SEG27 [14] call print_word_at 
-  //SEG28 [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
-  //SEG29 [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
+  // [14] call print_word_at 
+  // [16] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
+  // [16] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN#0+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta print_word_at.at
     lda #>SCREEN+4
     sta print_word_at.at+1
-  //SEG30 [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
+  // [16] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
     jsr print_word_at
-  //SEG31 print_dword_at::@return
-  //SEG32 [15] return 
+  // print_dword_at::@return
+  // [15] return 
     rts
 }
-//SEG33 print_word_at
+// print_word_at
 // Print a word as HEX at a specific position
 // print_word_at(word zeropage(2) w, byte* zeropage(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
-  //SEG34 [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
+  // [17] (byte) print_byte_at::b#0 ← > (word) print_word_at::w#2 -- vbuz1=_hi_vwuz2 
     lda w+1
     sta print_byte_at.b
-  //SEG35 [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2
-  //SEG36 [19] call print_byte_at 
-  //SEG37 [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
-  //SEG38 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
-  //SEG39 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
+  // [18] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2
+  // [19] call print_byte_at 
+  // [24] phi from print_word_at to print_byte_at [phi:print_word_at->print_byte_at]
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-  //SEG40 print_word_at::@1
-  //SEG41 [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
+  // print_word_at::@1
+  // [20] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
     lda w
     sta print_byte_at.b
-  //SEG42 [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_2 
+  // [21] (byte*) print_byte_at::at#1 ← (byte*) print_word_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_2 
     lda print_byte_at.at
     clc
     adc #2
@@ -1553,46 +1553,46 @@ print_word_at: {
     bcc !+
     inc print_byte_at.at+1
   !:
-  //SEG43 [22] call print_byte_at 
-  //SEG44 [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
-  //SEG45 [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
-  //SEG46 [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
+  // [22] call print_byte_at 
+  // [24] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
+  // [24] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
+  // [24] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-  //SEG47 print_word_at::@return
-  //SEG48 [23] return 
+  // print_word_at::@return
+  // [23] return 
     rts
 }
-//SEG49 print_byte_at
+// print_byte_at
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
 print_byte_at: {
     .label b = 6
     .label at = 4
-  //SEG50 [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+  // [25] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
-  //SEG51 [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+  // [26] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-  //SEG52 [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
+  // [27] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
     lda at
     sta print_char_at.at
     lda at+1
     sta print_char_at.at+1
-  //SEG53 [28] call print_char_at 
-  //SEG54 [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
-  //SEG55 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
-  //SEG56 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
+  // [28] call print_char_at 
+  // [34] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-  //SEG57 print_byte_at::@1
-  //SEG58 [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+  // print_byte_at::@1
+  // [29] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and b
     tay
-  //SEG59 [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+  // [30] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda at
     clc
     adc #1
@@ -1600,36 +1600,36 @@ print_byte_at: {
     lda at+1
     adc #0
     sta print_char_at.at+1
-  //SEG60 [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+  // [31] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-  //SEG61 [32] call print_char_at 
-  //SEG62 [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  //SEG63 [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
-  //SEG64 [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
+  // [32] call print_char_at 
+  // [34] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
+  // [34] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
+  // [34] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-  //SEG65 print_byte_at::@return
-  //SEG66 [33] return 
+  // print_byte_at::@return
+  // [33] return 
     rts
 }
-//SEG67 print_char_at
+// print_char_at
 // Print a single char
 // print_char_at(byte register(X) ch, byte* zeropage(7) at)
 print_char_at: {
     .label at = 7
-  //SEG68 [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+  // [35] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
-  //SEG69 print_char_at::@return
-  //SEG70 [36] return 
+  // print_char_at::@return
+  // [36] return 
     rts
 }
-//SEG71 clock
+// clock
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = 9
-  //SEG72 [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
+  // [37] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB#0) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -1643,22 +1643,22 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta return+3
-  //SEG73 clock::@return
-  //SEG74 [38] return 
+  // clock::@return
+  // [38] return 
     rts
 }
-//SEG75 clock_start
+// clock_start
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-  //SEG76 [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
+  // [39] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #CIA_TIMER_CONTROL_CONTINUOUS
     sta CIA2_TIMER_A_CONTROL
-  //SEG77 [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [40] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG78 [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+  // [41] *((const dword*) CIA2_TIMER_AB#0) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -1667,16 +1667,16 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-  //SEG79 [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
+  // [42] *((const byte*) CIA2_TIMER_B_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-  //SEG80 [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
+  // [43] *((const byte*) CIA2_TIMER_A_CONTROL#0) ← (const byte) CIA_TIMER_CONTROL_START#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
-  //SEG81 clock_start::@return
-  //SEG82 [44] return 
+  // clock_start::@return
+  // [44] return 
     rts
 }
-//SEG83 File Data
+// File Data
   print_hextab: .text "0123456789abcdef"
 

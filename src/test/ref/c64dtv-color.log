@@ -329,13 +329,13 @@ Allocated zp ZP_BYTE:2 [ main::r#2 main::r#1 ]
 Allocated zp ZP_BYTE:3 [ main::c#2 main::c#1 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   // Feature enables or disables the extra C64 DTV features
@@ -348,59 +348,59 @@ INITIAL ASM
   .const DTV_BADLINE_OFF = $20
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label r = 2
     .label c = 3
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG12 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  // [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne b1
     jmp b2
-  //SEG15 main::@2
+  // main::@2
   b2:
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BGCOL
-  //SEG17 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG18 [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #$31
     sta r
     jmp b3
-  //SEG19 [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+  // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   b3_from_b3:
-  //SEG20 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+  // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp b3
-  //SEG21 main::@3
+  // main::@3
   b3:
-  //SEG22 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -426,44 +426,44 @@ main: {
     nop
     nop
     nop
-  //SEG23 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuz1=_inc_vbuz1 
+  // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuz1=_inc_vbuz1 
     inc r
-  //SEG25 [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
+  // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
     lda r
     cmp #0
     bne b3_from_b3
-  //SEG26 [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  //SEG27 [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
+  // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta c
     jmp b4
   // Rotate palette
-  //SEG28 [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+  // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   b4_from_b4:
-  //SEG29 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+  // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     jmp b4
-  //SEG30 main::@4
+  // main::@4
   b4:
-  //SEG31 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  // [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy c
     lda palette,y
     sta DTV_PALETTE,y
-  //SEG32 [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+  // [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx c
     inc palette,x
-  //SEG33 [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
+  // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG34 [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
+  // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp c
     bne b4_from_b4
     jmp b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
-//SEG35 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -488,13 +488,13 @@ Uplifting [main] best 11689 combination reg byte x [ main::c#2 main::c#1 ] reg b
 Uplifting [] best 11689 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   // Feature enables or disables the extra C64 DTV features
@@ -507,56 +507,56 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const DTV_BADLINE_OFF = $20
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG12 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  // [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne b1
     jmp b2
-  //SEG15 main::@2
+  // main::@2
   b2:
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BGCOL
-  //SEG17 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG18 [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+  // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
     jmp b3
-  //SEG19 [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+  // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   b3_from_b3:
-  //SEG20 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+  // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp b3
-  //SEG21 main::@3
+  // main::@3
   b3:
-  //SEG22 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -582,39 +582,39 @@ main: {
     nop
     nop
     nop
-  //SEG23 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
+  // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG25 [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+  // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b3_from_b3
-  //SEG26 [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  //SEG27 [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
+  // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b4
   // Rotate palette
-  //SEG28 [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+  // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   b4_from_b4:
-  //SEG29 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+  // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     jmp b4
-  //SEG30 main::@4
+  // main::@4
   b4:
-  //SEG31 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  // [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
-  //SEG32 [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+  // [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
-  //SEG33 [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+  // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG34 [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+  // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b4_from_b4
     jmp b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
-//SEG35 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -689,13 +689,13 @@ reg byte x [ main::c#2 main::c#1 ]
 FINAL ASSEMBLER
 Score: 10174
 
-//SEG0 File Comments
+// File Comments
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   // Feature enables or disables the extra C64 DTV features
@@ -708,41 +708,41 @@ Score: 10174
   .const DTV_BADLINE_OFF = $20
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG12 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  // [7] if(*((const byte*) RASTER#0)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne b1
-  //SEG15 main::@2
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // main::@2
+  // [8] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BGCOL
-  //SEG17 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG18 [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
-  //SEG19 [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-  //SEG20 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
-  //SEG21 main::@3
+  // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+  // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+  // main::@3
   b3:
-  //SEG22 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -768,33 +768,33 @@ main: {
     nop
     nop
     nop
-  //SEG23 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
+  // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG25 [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+  // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b3
-  //SEG26 [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  //SEG27 [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
+  // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
   // Rotate palette
-  //SEG28 [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
-  //SEG29 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
-  //SEG30 main::@4
+  // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+  // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+  // main::@4
   b4:
-  //SEG31 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  // [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
-  //SEG32 [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+  // [16] *((const byte[$10]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[$10]) main::palette#0 + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
-  //SEG33 [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+  // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG34 [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+  // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b4
     jmp b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
-//SEG35 File Data
+// File Data
 

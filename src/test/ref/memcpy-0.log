@@ -525,13 +525,13 @@ Allocated zp ZP_WORD:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 Allocated zp ZP_WORD:12 [ memcpy::src_end#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // RAM in $A000, $E000 CHAR ROM in $D000
@@ -544,97 +544,97 @@ INITIAL ASM
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-  //SEG11 [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+  // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
-  //SEG12 main::toD0181
+  // main::toD0181
   toD0181:
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG15 [7] call memcpy 
-  //SEG16 [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+  // [7] call memcpy 
+  // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
   memcpy_from_b1:
-  //SEG17 [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+  // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta memcpy.num
     lda #>$400
     sta memcpy.num+1
-  //SEG18 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta memcpy.destination
     lda #>SCREEN_COPY
     sta memcpy.destination+1
-  //SEG19 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta memcpy.source
     lda #>SCREEN
     sta memcpy.source+1
     jsr memcpy
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG22 [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-  //SEG23 [10] call memcpy 
-  //SEG24 [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+  // [10] call memcpy 
+  // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from_b2:
-  //SEG25 [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+  // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta memcpy.num
     lda #>$800
     sta memcpy.num+1
-  //SEG26 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta memcpy.destination
     lda #>CHARSET
     sta memcpy.destination+1
-  //SEG27 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta memcpy.source
     lda #>CHARGEN
     sta memcpy.source+1
     jsr memcpy
     jmp b3
-  //SEG28 main::@3
+  // main::@3
   b3:
-  //SEG29 [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
+  // [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
-  //SEG30 asm { cli  }
+  // asm { cli  }
     cli
     jmp breturn
-  //SEG31 main::@return
+  // main::@return
   breturn:
-  //SEG32 [13] return 
+  // [13] return 
     rts
 }
-//SEG33 memcpy
+// memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zeropage(4) destination, void* zeropage(2) source, word zeropage(6) num)
@@ -645,7 +645,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-  //SEG34 [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz3 
+  // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz3 
     lda source
     clc
     adc num
@@ -653,25 +653,25 @@ memcpy: {
     lda source+1
     adc num+1
     sta src_end+1
-  //SEG35 [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
+  // [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
     lda source
     sta src
     lda source+1
     sta src+1
-  //SEG36 [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
+  // [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
     lda destination
     sta dst
     lda destination+1
     sta dst+1
-  //SEG37 [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+  // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   b1_from_memcpy:
   b1_from_b2:
-  //SEG38 [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-  //SEG39 [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+  // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+  // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp b1
-  //SEG40 memcpy::@1
+  // memcpy::@1
   b1:
-  //SEG41 [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+  // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda src+1
     cmp src_end+1
     bne b2
@@ -679,30 +679,30 @@ memcpy: {
     cmp src_end
     bne b2
     jmp breturn
-  //SEG42 memcpy::@return
+  // memcpy::@return
   breturn:
-  //SEG43 [20] return 
+  // [20] return 
     rts
-  //SEG44 memcpy::@2
+  // memcpy::@2
   b2:
-  //SEG45 [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+  // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-  //SEG46 [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+  // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-  //SEG47 [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+  // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc src
     bne !+
     inc src+1
   !:
     jmp b1_from_b2
 }
-//SEG48 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -733,13 +733,13 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ memcpy::de
 Coalescing zero page register with common assignment [ zp ZP_WORD:6 [ memcpy::num#2 ] ] with [ zp ZP_WORD:12 [ memcpy::src_end#0 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // RAM in $A000, $E000 CHAR ROM in $D000
@@ -752,97 +752,97 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-  //SEG11 [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+  // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
-  //SEG12 main::toD0181
+  // main::toD0181
   toD0181:
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG15 [7] call memcpy 
-  //SEG16 [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+  // [7] call memcpy 
+  // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
   memcpy_from_b1:
-  //SEG17 [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+  // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta memcpy.num
     lda #>$400
     sta memcpy.num+1
-  //SEG18 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta memcpy.destination
     lda #>SCREEN_COPY
     sta memcpy.destination+1
-  //SEG19 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta memcpy.source
     lda #>SCREEN
     sta memcpy.source+1
     jsr memcpy
     jmp b2
-  //SEG20 main::@2
+  // main::@2
   b2:
-  //SEG21 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG22 [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-  //SEG23 [10] call memcpy 
-  //SEG24 [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+  // [10] call memcpy 
+  // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from_b2:
-  //SEG25 [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+  // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta memcpy.num
     lda #>$800
     sta memcpy.num+1
-  //SEG26 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta memcpy.destination
     lda #>CHARSET
     sta memcpy.destination+1
-  //SEG27 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta memcpy.source
     lda #>CHARGEN
     sta memcpy.source+1
     jsr memcpy
     jmp b3
-  //SEG28 main::@3
+  // main::@3
   b3:
-  //SEG29 [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
+  // [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
-  //SEG30 asm { cli  }
+  // asm { cli  }
     cli
     jmp breturn
-  //SEG31 main::@return
+  // main::@return
   breturn:
-  //SEG32 [13] return 
+  // [13] return 
     rts
 }
-//SEG33 memcpy
+// memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zeropage(4) destination, void* zeropage(2) source, word zeropage(6) num)
@@ -853,7 +853,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-  //SEG34 [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+  // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda src_end
     clc
     adc source
@@ -861,17 +861,17 @@ memcpy: {
     lda src_end+1
     adc source+1
     sta src_end+1
-  //SEG35 [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-  //SEG36 [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
-  //SEG37 [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+  // [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+  // [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+  // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   b1_from_memcpy:
   b1_from_b2:
-  //SEG38 [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-  //SEG39 [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+  // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+  // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp b1
-  //SEG40 memcpy::@1
+  // memcpy::@1
   b1:
-  //SEG41 [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+  // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda src+1
     cmp src_end+1
     bne b2
@@ -879,30 +879,30 @@ memcpy: {
     cmp src_end
     bne b2
     jmp breturn
-  //SEG42 memcpy::@return
+  // memcpy::@return
   breturn:
-  //SEG43 [20] return 
+  // [20] return 
     rts
-  //SEG44 memcpy::@2
+  // memcpy::@2
   b2:
-  //SEG45 [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+  // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-  //SEG46 [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+  // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-  //SEG47 [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+  // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc src
     bne !+
     inc src+1
   !:
     jmp b1_from_b2
 }
-//SEG48 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -1011,13 +1011,13 @@ zp ZP_WORD:6 [ memcpy::num#2 memcpy::src_end#0 ]
 FINAL ASSEMBLER
 Score: 711
 
-//SEG0 File Comments
+// File Comments
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // RAM in $A000, $E000 CHAR ROM in $D000
@@ -1030,75 +1030,75 @@ Score: 711
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-  //SEG11 [5] phi from main to main::toD0181 [phi:main->main::toD0181]
-  //SEG12 main::toD0181
-  //SEG13 main::@1
-  //SEG14 [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+  // main::toD0181
+  // main::@1
+  // [6] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG15 [7] call memcpy 
-  //SEG16 [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
-  //SEG17 [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+  // [7] call memcpy 
+  // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+  // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta memcpy.num
     lda #>$400
     sta memcpy.num+1
-  //SEG18 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) SCREEN_COPY#0 [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta memcpy.destination
     lda #>SCREEN_COPY
     sta memcpy.destination+1
-  //SEG19 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) SCREEN#0 [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta memcpy.source
     lda #>SCREEN
     sta memcpy.source+1
     jsr memcpy
-  //SEG20 main::@2
-  //SEG21 asm { sei  }
+  // main::@2
+  // asm { sei  }
     sei
-  //SEG22 [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-  //SEG23 [10] call memcpy 
-  //SEG24 [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-  //SEG25 [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+  // [10] call memcpy 
+  // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+  // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta memcpy.num
     lda #>$800
     sta memcpy.num+1
-  //SEG26 [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::destination#2 = (void*)(const byte*) CHARSET#0 [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta memcpy.destination
     lda #>CHARSET
     sta memcpy.destination+1
-  //SEG27 [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+  // [14] phi (void*) memcpy::source#2 = (void*)(const byte*) CHARGEN#0 [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta memcpy.source
     lda #>CHARGEN
     sta memcpy.source+1
     jsr memcpy
-  //SEG28 main::@3
-  //SEG29 [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
+  // main::@3
+  // [11] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_BASIC_KERNEL_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
-  //SEG30 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG31 main::@return
-  //SEG32 [13] return 
+  // main::@return
+  // [13] return 
     rts
 }
-//SEG33 memcpy
+// memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zeropage(4) destination, void* zeropage(2) source, word zeropage(6) num)
@@ -1109,7 +1109,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-  //SEG34 [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+  // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda src_end
     clc
     adc source
@@ -1117,40 +1117,40 @@ memcpy: {
     lda src_end+1
     adc source+1
     sta src_end+1
-  //SEG35 [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-  //SEG36 [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
-  //SEG37 [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  //SEG38 [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-  //SEG39 [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-  //SEG40 memcpy::@1
+  // [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+  // [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+  // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+  // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+  // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+  // memcpy::@1
   b1:
-  //SEG41 [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+  // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda src+1
     cmp src_end+1
     bne b2
     lda src
     cmp src_end
     bne b2
-  //SEG42 memcpy::@return
-  //SEG43 [20] return 
+  // memcpy::@return
+  // [20] return 
     rts
-  //SEG44 memcpy::@2
+  // memcpy::@2
   b2:
-  //SEG45 [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+  // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     sta (dst),y
-  //SEG46 [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+  // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-  //SEG47 [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+  // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc src
     bne !+
     inc src+1
   !:
     jmp b1
 }
-//SEG48 File Data
+// File Data
 

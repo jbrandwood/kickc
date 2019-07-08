@@ -209,94 +209,94 @@ Allocated zp ZP_BYTE:3 [ main::idx#2 main::idx#1 ]
 Allocated zp ZP_BYTE:4 [ main::j#2 main::j#4 main::j#1 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests statement sequence locality of if(cond) { stmt1; } else { stmt2; }
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label screen = $400
     .label idx = 3
     .label i = 2
     .label j = 4
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
-  //SEG13 [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG15 [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+  // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  //SEG17 main::@1
+  // main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+  // [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #5+1
     bcc b4
     jmp b3
-  //SEG19 main::@3
+  // main::@3
   b3:
-  //SEG20 [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuz1=vbuz2_plus_vbuz2 
+  // [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuz1=vbuz2_plus_vbuz2 
     lda i
     asl
     sta j
-  //SEG21 [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
+  // [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
   b2_from_b3:
   b2_from_b4:
-  //SEG22 [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
+  // [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
     jmp b2
-  //SEG23 main::@2
+  // main::@2
   b2:
-  //SEG24 [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+  // [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda j
     ldy idx
     sta screen,y
-  //SEG25 [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
+  // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
     inc idx
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp i
     bne b1_from_b2
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [13] return 
+  // [13] return 
     rts
-  //SEG30 main::@4
+  // main::@4
   b4:
-  //SEG31 [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuz1=vbuz2 
+  // [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuz1=vbuz2 
     lda i
     sta j
     jmp b2_from_b4
 }
-//SEG32 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 [ main::i#3 main::idx#2 main::j#1 ] ( main:2 [ main::i#3 main::idx#2 main::j#1 ] ) always clobbers reg byte a 
@@ -315,83 +315,83 @@ Uplifting [main] best 478 combination reg byte a [ main::j#2 main::j#4 main::j#1
 Uplifting [] best 478 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests statement sequence locality of if(cond) { stmt1; } else { stmt2; }
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label screen = $400
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG15 [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+  // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
-  //SEG17 main::@1
+  // main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+  // [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #5+1
     bcc b4
     jmp b3
-  //SEG19 main::@3
+  // main::@3
   b3:
-  //SEG20 [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuaa=vbuyy_plus_vbuyy 
+  // [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuaa=vbuyy_plus_vbuyy 
     tya
     asl
-  //SEG21 [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
+  // [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
   b2_from_b3:
   b2_from_b4:
-  //SEG22 [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
+  // [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
     jmp b2
-  //SEG23 main::@2
+  // main::@2
   b2:
-  //SEG24 [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  // [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x
-  //SEG25 [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+  // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuyy=_inc_vbuyy 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG27 [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1_from_b2
     jmp breturn
-  //SEG28 main::@return
+  // main::@return
   breturn:
-  //SEG29 [13] return 
+  // [13] return 
     rts
-  //SEG30 main::@4
+  // main::@4
   b4:
-  //SEG31 [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuaa=vbuyy 
+  // [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuaa=vbuyy 
     tya
     jmp b2_from_b4
 }
-//SEG32 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -455,61 +455,61 @@ reg byte a [ main::j#2 main::j#4 main::j#1 ]
 FINAL ASSEMBLER
 Score: 316
 
-//SEG0 File Comments
+// File Comments
 // Tests statement sequence locality of if(cond) { stmt1; } else { stmt2; }
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label screen = $400
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+  // [5] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #0
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG15 [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG17 main::@1
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+  // main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+  // [6] if((byte) main::i#3<(byte) 5+(byte) 1) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #5+1
     bcc b4
-  //SEG19 main::@3
-  //SEG20 [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuaa=vbuyy_plus_vbuyy 
+  // main::@3
+  // [7] (byte) main::j#1 ← (byte) main::i#3 + (byte) main::i#3 -- vbuaa=vbuyy_plus_vbuyy 
     tya
     asl
-  //SEG21 [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
-  //SEG22 [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
-  //SEG23 main::@2
+  // [8] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
+  // [8] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@3/main::@4->main::@2#0] -- register_copy 
+  // main::@2
   b2:
-  //SEG24 [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  // [9] *((const byte*) main::screen#0 + (byte) main::idx#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x
-  //SEG25 [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+  // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuyy=_inc_vbuyy 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG27 [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1
-  //SEG28 main::@return
-  //SEG29 [13] return 
+  // main::@return
+  // [13] return 
     rts
-  //SEG30 main::@4
+  // main::@4
   b4:
-  //SEG31 [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuaa=vbuyy 
+  // [14] (byte~) main::j#4 ← (byte) main::i#3 -- vbuaa=vbuyy 
     tya
     jmp b2
 }
-//SEG32 File Data
+// File Data
 

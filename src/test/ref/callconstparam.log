@@ -253,106 +253,106 @@ Allocated zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ]
 Allocated zp ZP_WORD:4 [ screen#10 screen#14 screen#11 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Multiple calls with different (constant?) parameters should yield different values at runtime
 // Currently the same constant parameter is passed on every call.
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen = 4
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call line 
-  //SEG12 [9] phi from main to line [phi:main->line]
+  // [5] call line 
+  // [9] phi from main to line [phi:main->line]
   line_from_main:
-  //SEG13 [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG14 [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuz1=vbuc1 
+  // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuz1=vbuc1 
     lda #1
     sta line.x
     jsr line
-  //SEG16 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG17 main::@1
+  // main::@1
   b1:
-  //SEG18 [7] call line 
-  //SEG19 [9] phi from main::@1 to line [phi:main::@1->line]
+  // [7] call line 
+  // [9] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
-  //SEG20 [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
-  //SEG21 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG22 [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuz1=vbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
+  // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuz1=vbuc1 
     lda #3
     sta line.x
     jsr line
     jmp breturn
-  //SEG23 main::@return
+  // main::@return
   breturn:
-  //SEG24 [8] return 
+  // [8] return 
     rts
 }
-//SEG25 line
+// line
 // line(byte zeropage(2) x1)
 line: {
     .label x = 3
     .label x1 = 2
-  //SEG26 [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
+  // [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
   b1_from_line:
   b1_from_b1:
-  //SEG27 [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
-  //SEG28 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
+  // [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
+  // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
     jmp b1
-  //SEG29 line::@1
+  // line::@1
   b1:
-  //SEG30 [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuz2 
+  // [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuz2 
     lda x
     ldy #0
     sta (screen),y
-  //SEG31 [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
+  // [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG32 [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
+  // [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG33 [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuz1_lt_vbuz2_then_la1 
+  // [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuz1_lt_vbuz2_then_la1 
     lda x
     cmp x1
     bcc b1_from_b1
     jmp breturn
-  //SEG34 line::@return
+  // line::@return
   breturn:
-  //SEG35 [15] return 
+  // [15] return 
     rts
 }
-//SEG36 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) always clobbers reg byte y 
@@ -376,102 +376,102 @@ Uplifting [line] best 426 combination zp ZP_BYTE:2 [ line::x1#3 ]
 Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ screen#10 screen#14 screen#11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Multiple calls with different (constant?) parameters should yield different values at runtime
 // Currently the same constant parameter is passed on every call.
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen = 3
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [5] call line 
-  //SEG12 [9] phi from main to line [phi:main->line]
+  // [5] call line 
+  // [9] phi from main to line [phi:main->line]
   line_from_main:
-  //SEG13 [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG14 [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
+  // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
-  //SEG16 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG17 main::@1
+  // main::@1
   b1:
-  //SEG18 [7] call line 
-  //SEG19 [9] phi from main::@1 to line [phi:main::@1->line]
+  // [7] call line 
+  // [9] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
-  //SEG20 [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
-  //SEG21 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG22 [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
+  // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
     jmp breturn
-  //SEG23 main::@return
+  // main::@return
   breturn:
-  //SEG24 [8] return 
+  // [8] return 
     rts
 }
-//SEG25 line
+// line
 // line(byte zeropage(2) x1)
 line: {
     .label x1 = 2
-  //SEG26 [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
+  // [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
   b1_from_line:
   b1_from_b1:
-  //SEG27 [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
-  //SEG28 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
+  // [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
+  // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
     jmp b1
-  //SEG29 line::@1
+  // line::@1
   b1:
-  //SEG30 [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
+  // [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG31 [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
+  // [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG32 [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
+  // [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuxx_lt_vbuz1_then_la1 
+  // [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuxx_lt_vbuz1_then_la1 
     cpx x1
     bcc b1_from_b1
     jmp breturn
-  //SEG34 line::@return
+  // line::@return
   breturn:
-  //SEG35 [15] return 
+  // [15] return 
     rts
 }
-//SEG36 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -533,79 +533,79 @@ zp ZP_WORD:3 [ screen#10 screen#14 screen#11 ]
 FINAL ASSEMBLER
 Score: 348
 
-//SEG0 File Comments
+// File Comments
 // Multiple calls with different (constant?) parameters should yield different values at runtime
 // Currently the same constant parameter is passed on every call.
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label screen = 3
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG11 [5] call line 
-  //SEG12 [9] phi from main to line [phi:main->line]
-  //SEG13 [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  // [5] call line 
+  // [9] phi from main to line [phi:main->line]
+  // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG14 [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG15 [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
+  // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
-  //SEG16 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG17 main::@1
-  //SEG18 [7] call line 
-  //SEG19 [9] phi from main::@1 to line [phi:main::@1->line]
-  //SEG20 [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [7] call line 
+  // [9] phi from main::@1 to line [phi:main::@1->line]
+  // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
-  //SEG21 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG22 [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
+  // [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
+  // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
-  //SEG23 main::@return
-  //SEG24 [8] return 
+  // main::@return
+  // [8] return 
     rts
 }
-//SEG25 line
+// line
 // line(byte zeropage(2) x1)
 line: {
     .label x1 = 2
-  //SEG26 [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
-  //SEG27 [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
-  //SEG28 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
-  //SEG29 line::@1
+  // [10] phi from line line::@1 to line::@1 [phi:line/line::@1->line::@1]
+  // [10] phi (byte*) screen#10 = (byte*) screen#14 [phi:line/line::@1->line::@1#0] -- register_copy 
+  // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
+  // line::@1
   b1:
-  //SEG30 [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
+  // [11] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG31 [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
+  // [12] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG32 [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
+  // [13] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuxx_lt_vbuz1_then_la1 
+  // [14] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 -- vbuxx_lt_vbuz1_then_la1 
     cpx x1
     bcc b1
-  //SEG34 line::@return
-  //SEG35 [15] return 
+  // line::@return
+  // [15] return 
     rts
 }
-//SEG36 File Data
+// File Data
 

@@ -251,102 +251,102 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
+// [2] call main 
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG16 main::@2
+  // main::@2
   b2:
-  //SEG17 [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
-  //SEG18 main::@3
+  // main::@3
   b3:
-  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b3
 }
-//SEG20 irq
+// irq
 irq: {
-  //SEG21 entry interrupt(KERNEL_MIN)
-  //SEG22 asm { lda$dc0d  }
+  // entry interrupt(KERNEL_MIN)
+  // asm { lda$dc0d  }
     lda $dc0d
-  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+  // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda col
     cmp #0
     bne b1
     jmp b2
-  //SEG25 irq::@2
+  // irq::@2
   b2:
-  //SEG26 [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+  // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda col
     clc
     adc #2
     sta col
-  //SEG27 [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
+  // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
   breturn_from_b1:
   breturn_from_b2:
-  //SEG28 [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
+  // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG29 irq::@return
+  // irq::@return
   breturn:
-  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
+  // [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG31 irq::@1
+  // irq::@1
   b1:
-  //SEG32 [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+  // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
     jmp breturn_from_b1
 }
-//SEG33 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
@@ -371,102 +371,102 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#14 col#0 col#1 col
 Uplifting [] best 1834 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
+// [2] call main 
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
-  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG15 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG16 main::@2
+  // main::@2
   b2:
-  //SEG17 [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
-  //SEG18 main::@3
+  // main::@3
   b3:
-  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b3
 }
-//SEG20 irq
+// irq
 irq: {
-  //SEG21 entry interrupt(KERNEL_MIN)
-  //SEG22 asm { lda$dc0d  }
+  // entry interrupt(KERNEL_MIN)
+  // asm { lda$dc0d  }
     lda $dc0d
-  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+  // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda col
     cmp #0
     bne b1
     jmp b2
-  //SEG25 irq::@2
+  // irq::@2
   b2:
-  //SEG26 [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+  // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda col
     clc
     adc #2
     sta col
-  //SEG27 [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
+  // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
   breturn_from_b1:
   breturn_from_b2:
-  //SEG28 [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
+  // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG29 irq::@return
+  // irq::@return
   breturn:
-  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
+  // [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG31 irq::@1
+  // irq::@1
   b1:
-  //SEG32 [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+  // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
     jmp breturn_from_b1
 }
-//SEG33 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -539,79 +539,79 @@ zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
 FINAL ASSEMBLER
 Score: 895
 
-//SEG0 File Comments
+// File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+// [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG6 @1
-//SEG7 [2] call main 
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
   jsr main
   rts
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
-  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG15 main::@1
-  //SEG16 main::@2
+  // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // main::@1
+  // main::@2
   b2:
-  //SEG17 [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b2
-  //SEG18 main::@3
-  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+  // main::@3
+  // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b2
 }
-//SEG20 irq
+// irq
 irq: {
-  //SEG21 entry interrupt(KERNEL_MIN)
-  //SEG22 asm { lda$dc0d  }
+  // entry interrupt(KERNEL_MIN)
+  // asm { lda$dc0d  }
     lda $dc0d
-  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+  // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda col
     cmp #0
     bne b1
-  //SEG25 irq::@2
-  //SEG26 [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+  // irq::@2
+  // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     clc
     adc #2
     sta col
-  //SEG27 [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
-  //SEG28 [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
-  //SEG29 irq::@return
-  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
+  // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
+  // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
+  // irq::@return
+  // [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG31 irq::@1
+  // irq::@1
   b1:
-  //SEG32 [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+  // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
     jmp $ea81
 }
-//SEG33 File Data
+// File Data
 

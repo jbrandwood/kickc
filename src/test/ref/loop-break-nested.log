@@ -213,87 +213,87 @@ Allocated zp ZP_WORD:2 [ main::line#2 main::line#1 ]
 Allocated zp ZP_BYTE:4 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests break statement in a simple loop
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label i = 4
     .label line = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta line
     lda #>$400
     sta line+1
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  // [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (line),y
     cmp #'a'
     bne b2_from_b1
     jmp breturn
-  //SEG15 main::@return
+  // main::@return
   breturn:
-  //SEG16 [7] return 
+  // [7] return 
     rts
-  //SEG17 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  //SEG18 [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+  // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b2
-  //SEG19 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  // [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG20 [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+  // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  //SEG21 main::@2
+  // main::@2
   b2:
-  //SEG22 [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
+  // [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
     ldy i
     lda (line),y
     cmp #'a'
     beq b4
     jmp b3
-  //SEG23 main::@3
+  // main::@3
   b3:
-  //SEG24 [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuz2=vbuc1 
+  // [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'a'
     ldy i
     sta (line),y
-  //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG26 [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp i
     bne b2_from_b3
     jmp b4
-  //SEG27 main::@4
+  // main::@4
   b4:
-  //SEG28 [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc line
@@ -301,7 +301,7 @@ main: {
     bcc !+
     inc line+1
   !:
-  //SEG29 [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
+  // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
     lda line+1
     cmp #>$400+$28*$19
     bcc !+
@@ -310,12 +310,12 @@ main: {
     cmp #<$400+$28*$19
     bcs breturn
   !:
-  //SEG30 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG31 [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG32 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a reg byte y 
@@ -340,82 +340,82 @@ Uplifting [main] best 4528 combination reg byte y [ main::i#2 main::i#1 ] zp ZP_
 Uplifting [] best 4528 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests break statement in a simple loop
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label line = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta line
     lda #>$400
     sta line+1
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  // [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (line),y
     cmp #'a'
     bne b2_from_b1
     jmp breturn
-  //SEG15 main::@return
+  // main::@return
   breturn:
-  //SEG16 [7] return 
+  // [7] return 
     rts
-  //SEG17 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  //SEG18 [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+  // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b2
-  //SEG19 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  // [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG20 [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+  // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  //SEG21 main::@2
+  // main::@2
   b2:
-  //SEG22 [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
+  // [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
     lda (line),y
     cmp #'a'
     beq b4
     jmp b3
-  //SEG23 main::@3
+  // main::@3
   b3:
-  //SEG24 [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
+  // [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'a'
     sta (line),y
-  //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG26 [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b2_from_b3
     jmp b4
-  //SEG27 main::@4
+  // main::@4
   b4:
-  //SEG28 [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc line
@@ -423,7 +423,7 @@ main: {
     bcc !+
     inc line+1
   !:
-  //SEG29 [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
+  // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
     lda line+1
     cmp #>$400+$28*$19
     bcc !+
@@ -432,12 +432,12 @@ main: {
     cmp #<$400+$28*$19
     bcs breturn
   !:
-  //SEG30 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG31 [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG32 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -494,64 +494,64 @@ reg byte y [ main::i#2 main::i#1 ]
 FINAL ASSEMBLER
 Score: 3256
 
-//SEG0 File Comments
+// File Comments
 // Tests break statement in a simple loop
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label line = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  // [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta line
     lda #>$400
     sta line+1
-  //SEG13 main::@1
+  // main::@1
   b1:
-  //SEG14 [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  // [6] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (line),y
     cmp #'a'
     bne b3
-  //SEG15 main::@return
+  // main::@return
   breturn:
-  //SEG16 [7] return 
+  // [7] return 
     rts
-  //SEG17 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b3:
-  //SEG18 [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+  // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG19 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG20 [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG21 main::@2
+  // [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
+  // main::@2
   b2:
-  //SEG22 [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
+  // [9] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@4 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
     lda (line),y
     cmp #'a'
     beq b4
-  //SEG23 main::@3
-  //SEG24 [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
+  // main::@3
+  // [10] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'a'
     sta (line),y
-  //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+  // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG26 [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+  // [12] if((byte) main::i#1!=(byte) $28) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b2
-  //SEG27 main::@4
+  // main::@4
   b4:
-  //SEG28 [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+  // [13] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc line
@@ -559,7 +559,7 @@ main: {
     bcc !+
     inc line+1
   !:
-  //SEG29 [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
+  // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
     lda line+1
     cmp #>$400+$28*$19
     bcc !+
@@ -568,9 +568,9 @@ main: {
     cmp #<$400+$28*$19
     bcs breturn
   !:
-  //SEG30 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG31 [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG32 File Data
+// File Data
 

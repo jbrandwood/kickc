@@ -260,7 +260,7 @@ public class AsmSegment {
          if(line instanceof AsmScopeEnd) {
             printState.decIndent();
          }
-         if(printState.getLineIdx()) {
+         if(printState.getAsmLineNumber()) {
             out.append("[" + line.getIndex() + "]");
          }
          out.append(printState.getIndent());
@@ -300,7 +300,7 @@ public class AsmSegment {
 
    @Override
    public String toString() {
-      return toString(new AsmProgram.AsmPrintState(true, false), null);
+      return toString(new AsmProgram.AsmPrintState(true), null);
    }
 
    public void setSource(String source) {

@@ -139,6 +139,7 @@ public class AsmProgram {
 
    /**
     * Add inlines kick assembler code
+    *
     * @param kickAsmCode The kickassembler code
     */
    public void addInlinedKickAsm(String kickAsmCode, Long bytes, Long cycles) {
@@ -147,6 +148,7 @@ public class AsmProgram {
 
    /**
     * Add data array initialized with inline kick assembler code
+    *
     * @param label Name of the data
     * @param bytes The number of bytes (from array definition)
     * @param kickAsmCode Kick Assembler code to initialize the data
@@ -207,11 +209,12 @@ public class AsmProgram {
 
    @Override
    public String toString() {
-      return toString(new AsmPrintState(false, false), null);
+      return toString(new AsmPrintState(false), null);
    }
 
    /**
     * Set the index of the next line
+    *
     * @param nextIndex The index of the next line
     */
    public void setNextLineIndex(int nextIndex) {
@@ -220,13 +223,14 @@ public class AsmProgram {
 
    /**
     * Get ASM segment by line index
+    *
     * @param idx The index of the line to get the segment for
     * @return The segment with the line that has the passed index. Null if not found
     */
    public AsmSegment getAsmSegment(int idx) {
       for(AsmSegment segment : segments) {
          for(AsmLine asmLine : segment.getLines()) {
-            if(asmLine.getIndex()==idx) {
+            if(asmLine.getIndex() == idx) {
                return segment;
             }
          }
@@ -244,23 +248,20 @@ public class AsmProgram {
       // Output segment ID in the ICL-comment
       private boolean sourceSegmentIdInfo;
       // Output ASM line numbers
-      private boolean lineIdx;
+      private boolean asmLineNumber;
       // Current indent - used during printing
       private String indent;
 
-      public AsmPrintState(boolean sourceFileInfo, boolean sourceCodeInfo, boolean sourceIclInfo, boolean lineIdx) {
+      public AsmPrintState(boolean sourceFileInfo, boolean sourceCodeInfo, boolean sourceIclInfo, boolean asmLineNumber) {
          this.sourceFileInfo = sourceFileInfo;
          this.sourceCodeInfo = sourceCodeInfo;
          this.sourceIclInfo = sourceIclInfo;
-         this.lineIdx = lineIdx;
+         this.asmLineNumber = asmLineNumber;
          this.indent = "";
       }
 
-      public AsmPrintState(boolean sourceIclInfo, boolean lineIdx) {
-         this.sourceIclInfo = sourceIclInfo;
-         this.sourceSegmentIdInfo = sourceIclInfo;
-         this.lineIdx = lineIdx;
-         this.indent = "";
+      public AsmPrintState(boolean sourceIclInfo) {
+         this(false, false, sourceIclInfo, false);
       }
 
       public boolean isSourceCodeInfo() {
@@ -291,6 +292,18 @@ public class AsmProgram {
          this.sourceSegmentIdInfo = sourceSegmentIdInfo;
       }
 
+      public void setSourceIclInfo(boolean sourceIclInfo) {
+         this.sourceIclInfo = sourceIclInfo;
+      }
+
+      public boolean isAsmLineNumber() {
+         return asmLineNumber;
+      }
+
+      public void setAsmLineNumber(boolean asmLineNumber) {
+         this.asmLineNumber = asmLineNumber;
+      }
+
       public void incIndent() {
          this.indent = this.indent + "  ";
       }
@@ -305,8 +318,8 @@ public class AsmProgram {
          return indent;
       }
 
-      public boolean getLineIdx() {
-         return lineIdx;
+      public boolean getAsmLineNumber() {
+         return asmLineNumber;
       }
    }
 

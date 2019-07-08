@@ -162,72 +162,72 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$2 ]
 
 INITIAL ASM
-//SEG0 File Comments
-//SEG1 Basic Upstart
+// File Comments
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label fibs = $1100
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label _2 = 3
     .label i = 2
-  //SEG10 [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG11 [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG13 [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
+  // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
     ldy i
     lda fibs,y
     clc
     adc fibs+1,y
     sta _2
-  //SEG18 [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+  // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _2
     ldy i
     sta fibs+2,y
-  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG20 [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$f
     bcc b1_from_b1
     jmp breturn
-  //SEG21 main::@return
+  // main::@return
   breturn:
-  //SEG22 [11] return 
+  // [11] return 
     rts
 }
-//SEG23 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte[$f]) fibs#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -248,64 +248,64 @@ Uplifting [main] best 365 combination reg byte x [ main::i#2 main::i#1 ] reg byt
 Uplifting [] best 365 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
-//SEG1 Basic Upstart
+// File Comments
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label fibs = $1100
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
-  //SEG10 [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG11 [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG13 [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+  // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
-  //SEG18 [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
-  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG20 [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
     bcc b1_from_b1
     jmp breturn
-  //SEG21 main::@return
+  // main::@return
   breturn:
-  //SEG22 [11] return 
+  // [11] return 
     rts
 }
-//SEG23 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -352,48 +352,48 @@ reg byte a [ main::$2 ]
 FINAL ASSEMBLER
 Score: 263
 
-//SEG0 File Comments
-//SEG1 Basic Upstart
+// File Comments
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label fibs = $1100
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
-  //SEG10 [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG11 [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG13 [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG16 main::@1
+  // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  // main::@1
   b1:
-  //SEG17 [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+  // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
-  //SEG18 [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
-  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG20 [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
     bcc b1
-  //SEG21 main::@return
-  //SEG22 [11] return 
+  // main::@return
+  // [11] return 
     rts
 }
-//SEG23 File Data
+// File Data
 

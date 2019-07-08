@@ -262,13 +262,13 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -289,84 +289,84 @@ INITIAL ASM
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  // [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
     jmp b1
-  //SEG19 main::@1
+  // main::@1
   b1:
-  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-//SEG21 irq
+// irq
 // Interrupt Routine
 irq: {
-  //SEG22 entry interrupt(HARDWARE_CLOBBER)
+  // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
     sty regy+1
-  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  //SEG26 irq::@return
+  // irq::@return
   breturn:
-  //SEG27 [17] return  - exit interrupt(HARDWARE_CLOBBER)
+  // [17] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -375,7 +375,7 @@ irq: {
     ldy #00
     rti
 }
-//SEG28 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -407,13 +407,13 @@ Removing interrupt register storage regy: in SEG27 [17] return  - exit interrupt
 Removing interrupt register storage ldy #00 in SEG27 [17] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -434,87 +434,87 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  // [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
     jmp b1
-  //SEG19 main::@1
+  // main::@1
   b1:
-  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-//SEG21 irq
+// irq
 // Interrupt Routine
 irq: {
-  //SEG22 entry interrupt(HARDWARE_CLOBBER)
+  // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
-  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  //SEG26 irq::@return
+  // irq::@return
   breturn:
-  //SEG27 [17] return  - exit interrupt(HARDWARE_CLOBBER)
+  // [17] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
     rti
 }
-//SEG28 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -581,13 +581,13 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 FINAL ASSEMBLER
 Score: 212
 
-//SEG0 File Comments
+// File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -608,74 +608,74 @@ Score: 212
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG10 asm { sei  }
+  // asm { sei  }
     sei
-  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  // [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-  //SEG15 [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) RASTER#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  // [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG18 asm { cli  }
+  // asm { cli  }
     cli
-  //SEG19 main::@1
+  // main::@1
   b1:
-  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b1
 }
-//SEG21 irq
+// irq
 // Interrupt Routine
 irq: {
-  //SEG22 entry interrupt(HARDWARE_CLOBBER)
+  // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
-  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  // [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  // [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG26 irq::@return
-  //SEG27 [17] return  - exit interrupt(HARDWARE_CLOBBER)
+  // irq::@return
+  // [17] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
     rti
 }
-//SEG28 File Data
+// File Data
 

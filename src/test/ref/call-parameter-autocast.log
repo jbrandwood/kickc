@@ -260,106 +260,106 @@ Allocated zp ZP_WORD:3 [ print::w#3 ]
 Allocated zp ZP_BYTE:5 [ print::$0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Test auto-casting of call-parameters
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const w = $1234
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
+  // [5] call print 
+  // [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
     sta print.w
     lda #>$1234
     sta print.w+1
-  //SEG14 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
+  // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
     sta idx
     jsr print
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] call print 
-  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
+  // [7] call print 
+  // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG19 [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
     sta print.w
     lda #>w
     sta print.w+1
-  //SEG20 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
-  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG22 main::@2
+  // main::@2
   b2:
-  //SEG23 [9] call print 
-  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
+  // [9] call print 
+  // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG25 [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
     sta print.w
     lda #>$12*$100+$34
     sta print.w+1
-  //SEG26 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     jmp breturn
-  //SEG27 main::@return
+  // main::@return
   breturn:
-  //SEG28 [10] return 
+  // [10] return 
     rts
 }
-//SEG29 print
+// print
 // print(word zeropage(3) w)
 print: {
     .label _0 = 5
     .label w = 3
-  //SEG30 [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+  // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda idx
     asl
     sta _0
-  //SEG31 [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuz1=vwuz2 
+  // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy _0
     lda w
     sta SCREEN,y
     lda w+1
     sta SCREEN+1,y
-  //SEG32 [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+  // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  //SEG33 print::@return
+  // print::@return
   breturn:
-  //SEG34 [15] return 
+  // [15] return 
     rts
 }
-//SEG35 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::w#3 print::$0 ] ( main:2::print:5 [ idx#12 print::w#3 print::$0 ] main:2::print:7 [ idx#12 print::w#3 print::$0 ] main:2::print:9 [ idx#12 print::w#3 print::$0 ] ) always clobbers reg byte a 
@@ -382,102 +382,102 @@ Uplifting [main] best 110 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ print::w#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Test auto-casting of call-parameters
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const w = $1234
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
+  // [5] call print 
+  // [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
     sta print.w
     lda #>$1234
     sta print.w+1
-  //SEG14 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
+  // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
     ldx #0
     jsr print
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
+  // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG16 main::@1
+  // main::@1
   b1:
-  //SEG17 [7] call print 
-  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
+  // [7] call print 
+  // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG19 [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
     sta print.w
     lda #>w
     sta print.w+1
-  //SEG20 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
-  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG22 main::@2
+  // main::@2
   b2:
-  //SEG23 [9] call print 
-  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
+  // [9] call print 
+  // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG25 [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
+  // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
     sta print.w
     lda #>$12*$100+$34
     sta print.w+1
-  //SEG26 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     jmp breturn
-  //SEG27 main::@return
+  // main::@return
   breturn:
-  //SEG28 [10] return 
+  // [10] return 
     rts
 }
-//SEG29 print
+// print
 // print(word zeropage(2) w)
 print: {
     .label w = 2
-  //SEG30 [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+  // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  //SEG31 [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
+  // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda w
     sta SCREEN,y
     lda w+1
     sta SCREEN+1,y
-  //SEG32 [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+  // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
     jmp breturn
-  //SEG33 print::@return
+  // print::@return
   breturn:
-  //SEG34 [15] return 
+  // [15] return 
     rts
 }
-//SEG35 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -538,78 +538,78 @@ reg byte a [ print::$0 ]
 FINAL ASSEMBLER
 Score: 86
 
-//SEG0 File Comments
+// File Comments
 // Test auto-casting of call-parameters
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .const w = $1234
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
-  //SEG13 [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
+  // [5] call print 
+  // [11] phi from main to print [phi:main->print]
+  // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
     sta print.w
     lda #>$1234
     sta print.w+1
-  //SEG14 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
+  // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
     ldx #0
     jsr print
-  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG16 main::@1
-  //SEG17 [7] call print 
-  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
-  //SEG19 [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
+  // [6] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [7] call print 
+  // [11] phi from main::@1 to print [phi:main::@1->print]
+  // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
     sta print.w
     lda #>w
     sta print.w+1
-  //SEG20 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
-  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG22 main::@2
-  //SEG23 [9] call print 
-  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
-  //SEG25 [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
+  // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // main::@2
+  // [9] call print 
+  // [11] phi from main::@2 to print [phi:main::@2->print]
+  // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
     sta print.w
     lda #>$12*$100+$34
     sta print.w+1
-  //SEG26 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+  // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
-  //SEG27 main::@return
-  //SEG28 [10] return 
+  // main::@return
+  // [10] return 
     rts
 }
-//SEG29 print
+// print
 // print(word zeropage(2) w)
 print: {
     .label w = 2
-  //SEG30 [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+  // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  //SEG31 [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
+  // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda w
     sta SCREEN,y
     lda w+1
     sta SCREEN+1,y
-  //SEG32 [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+  // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 print::@return
-  //SEG34 [15] return 
+  // print::@return
+  // [15] return 
     rts
 }
-//SEG35 File Data
+// File Data
 

@@ -184,75 +184,75 @@ Allocated zp ZP_BYTE:2 [ A#0 ]
 Allocated zp ZP_BYTE:3 [ sub::D#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests that constants are identified early
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
   .label A = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+// [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta A
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
+// [2] call main 
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const B = 'b'
     .label addrA = A
-  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+  // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda A
     sta SCREEN
-  //SEG12 [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-  //SEG13 [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+  // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda addrA
     sta SCREEN+2
-  //SEG14 [7] call sub 
+  // [7] call sub 
     jsr sub
     jmp breturn
-  //SEG15 main::@return
+  // main::@return
   breturn:
-  //SEG16 [8] return 
+  // [8] return 
     rts
 }
-//SEG17 sub
+// sub
 sub: {
     .const C = 'c'
     .label D = 3
-  //SEG18 [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
-  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
+  // [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy A
     iny
     sty D
-  //SEG20 [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuz1 
+  // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuz1 
     lda D
     sta SCREEN+4
     jmp breturn
-  //SEG21 sub::@return
+  // sub::@return
   breturn:
-  //SEG22 [12] return 
+  // [12] return 
     rts
 }
-//SEG23 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) A#0 ← (byte) 'a' [ A#0 ] (  [ A#0 ] ) always clobbers reg byte a 
@@ -275,72 +275,72 @@ Attempting to uplift remaining variables inzp ZP_BYTE:2 [ A#0 ]
 Uplifting [] best 77 combination zp ZP_BYTE:2 [ A#0 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests that constants are identified early
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
   .label A = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+// [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta A
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG6 @1
+// @1
 b1:
-//SEG7 [2] call main 
+// [2] call main 
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .const B = 'b'
     .label addrA = A
-  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+  // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda A
     sta SCREEN
-  //SEG12 [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-  //SEG13 [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+  // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda addrA
     sta SCREEN+2
-  //SEG14 [7] call sub 
+  // [7] call sub 
     jsr sub
     jmp breturn
-  //SEG15 main::@return
+  // main::@return
   breturn:
-  //SEG16 [8] return 
+  // [8] return 
     rts
 }
-//SEG17 sub
+// sub
 sub: {
     .const C = 'c'
-  //SEG18 [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
-  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+  // [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx A
     inx
-  //SEG20 [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+  // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
     stx SCREEN+4
     jmp breturn
-  //SEG21 sub::@return
+  // sub::@return
   breturn:
-  //SEG22 [12] return 
+  // [12] return 
     rts
 }
-//SEG23 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -387,61 +387,61 @@ reg byte x [ sub::D#0 ]
 FINAL ASSEMBLER
 Score: 71
 
-//SEG0 File Comments
+// File Comments
 // Tests that constants are identified early
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
   .label A = 2
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+// [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta A
-//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG6 @1
-//SEG7 [2] call main 
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
   jsr main
   rts
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .const B = 'b'
     .label addrA = A
-  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+  // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda A
     sta SCREEN
-  //SEG12 [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+  // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-  //SEG13 [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+  // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda addrA
     sta SCREEN+2
-  //SEG14 [7] call sub 
+  // [7] call sub 
     jsr sub
-  //SEG15 main::@return
-  //SEG16 [8] return 
+  // main::@return
+  // [8] return 
     rts
 }
-//SEG17 sub
+// sub
 sub: {
     .const C = 'c'
-  //SEG18 [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+  // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
-  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+  // [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx A
     inx
-  //SEG20 [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+  // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
     stx SCREEN+4
-  //SEG21 sub::@return
-  //SEG22 [12] return 
+  // sub::@return
+  // [12] return 
     rts
 }
-//SEG23 File Data
+// File Data
 

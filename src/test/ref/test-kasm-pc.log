@@ -131,56 +131,56 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Test inline KickAssembler code with PC location specification
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label TABLE = $2000
-//SEG3 @begin
+// @begin
 bbegin:
   jmp b1
-//SEG4 @1
+// @1
 b1:
-//SEG5 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label BORDERCOL = $d020
     .label i = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG14 main::@2
+  // main::@2
   b2:
-  //SEG15 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+  // [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy i
     lda TABLE,y
     sta BORDERCOL
-  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG18 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG19 File Data
+// File Data
 .pc = TABLE "TABLE"
   .byte 1, 2, 3
 
@@ -199,53 +199,53 @@ Uplifting [main] best 2814 combination reg byte x [ main::i#2 main::i#1 ]
 Uplifting [] best 2814 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Test inline KickAssembler code with PC location specification
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label TABLE = $2000
-//SEG3 @begin
+// @begin
 bbegin:
   jmp b1
-//SEG4 @1
+// @1
 b1:
-//SEG5 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label BORDERCOL = $d020
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG14 main::@2
+  // main::@2
   b2:
-  //SEG15 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+  // [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda TABLE,x
     sta BORDERCOL
-  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG18 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG19 File Data
+// File Data
 .pc = TABLE "TABLE"
   .byte 1, 2, 3
 
@@ -293,40 +293,40 @@ reg byte x [ main::i#2 main::i#1 ]
 FINAL ASSEMBLER
 Score: 2715
 
-//SEG0 File Comments
+// File Comments
 // Test inline KickAssembler code with PC location specification
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label TABLE = $2000
-//SEG3 @begin
-//SEG4 @1
-//SEG5 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// @begin
+// @1
+// kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label BORDERCOL = $d020
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 main::@1
-  //SEG14 main::@2
+  // main::@1
+  // main::@2
   b2:
-  //SEG15 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+  // [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda TABLE,x
     sta BORDERCOL
-  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG18 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b2
 }
-//SEG19 File Data
+// File Data
 .pc = TABLE "TABLE"
   .byte 1, 2, 3
 

@@ -282,35 +282,35 @@ Allocated zp ZP_WORD:9 [ main::w#0 ]
 Allocated zp ZP_BYTE:11 [ main::b#0 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Test simple void pointer - void pointer function
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
   .label idx = 4
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label d = 5
     .label w = 9
     .label b = $b
-  //SEG10 [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+  // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta d
     lda #>$12345678
@@ -319,80 +319,80 @@ main: {
     sta d+2
     lda #>$12345678>>$10
     sta d+3
-  //SEG11 [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+  // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta w
     lda #>$1234
     sta w+1
-  //SEG12 [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+  // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta b
-  //SEG13 [7] call print 
-  //SEG14 [13] phi from main to print [phi:main->print]
+  // [7] call print 
+  // [13] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG15 [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+  // [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
-  //SEG16 [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
+  // [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta print.ptr
     lda #>b
     sta print.ptr+1
     jsr print
-  //SEG17 [8] phi from main to main::@1 [phi:main->main::@1]
+  // [8] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG18 main::@1
+  // main::@1
   b1:
-  //SEG19 [9] call print 
-  //SEG20 [13] phi from main::@1 to print [phi:main::@1->print]
+  // [9] call print 
+  // [13] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG21 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
-  //SEG22 [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta print.ptr
     lda #>w
     sta print.ptr+1
     jsr print
-  //SEG23 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG24 main::@2
+  // main::@2
   b2:
-  //SEG25 [11] call print 
-  //SEG26 [13] phi from main::@2 to print [phi:main::@2->print]
+  // [11] call print 
+  // [13] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG27 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
-  //SEG28 [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta print.ptr
     lda #>d
     sta print.ptr+1
     jsr print
     jmp breturn
-  //SEG29 main::@return
+  // main::@return
   breturn:
-  //SEG30 [12] return 
+  // [12] return 
     rts
 }
-//SEG31 print
+// print
 // print(void* zeropage(2) ptr)
 print: {
     .label ptr = 2
-  //SEG32 [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+  // [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx idx
     ldy #0
     lda (ptr),y
     sta SCREEN,x
-  //SEG33 [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+  // [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  //SEG34 print::@return
+  // print::@return
   breturn:
-  //SEG35 [16] return 
+  // [16] return 
     rts
 }
-//SEG36 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (dword) main::d#0 ← (dword) $12345678 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -426,34 +426,34 @@ Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ main::w#0 ]
 Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:10 [ main::b#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Test simple void pointer - void pointer function
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
+// [2] call main 
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+// @end
 bend:
-//SEG9 main
+// main
 main: {
     .label d = 4
     .label w = 8
     .label b = $a
-  //SEG10 [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+  // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta d
     lda #>$12345678
@@ -462,78 +462,78 @@ main: {
     sta d+2
     lda #>$12345678>>$10
     sta d+3
-  //SEG11 [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+  // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta w
     lda #>$1234
     sta w+1
-  //SEG12 [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+  // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta b
-  //SEG13 [7] call print 
-  //SEG14 [13] phi from main to print [phi:main->print]
+  // [7] call print 
+  // [13] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG15 [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+  // [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG16 [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
+  // [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta print.ptr
     lda #>b
     sta print.ptr+1
     jsr print
-  //SEG17 [8] phi from main to main::@1 [phi:main->main::@1]
+  // [8] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG18 main::@1
+  // main::@1
   b1:
-  //SEG19 [9] call print 
-  //SEG20 [13] phi from main::@1 to print [phi:main::@1->print]
+  // [9] call print 
+  // [13] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG21 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
-  //SEG22 [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta print.ptr
     lda #>w
     sta print.ptr+1
     jsr print
-  //SEG23 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG24 main::@2
+  // main::@2
   b2:
-  //SEG25 [11] call print 
-  //SEG26 [13] phi from main::@2 to print [phi:main::@2->print]
+  // [11] call print 
+  // [13] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG27 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
-  //SEG28 [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta print.ptr
     lda #>d
     sta print.ptr+1
     jsr print
     jmp breturn
-  //SEG29 main::@return
+  // main::@return
   breturn:
-  //SEG30 [12] return 
+  // [12] return 
     rts
 }
-//SEG31 print
+// print
 // print(void* zeropage(2) ptr)
 print: {
     .label ptr = 2
-  //SEG32 [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+  // [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
-  //SEG33 [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+  // [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
     jmp breturn
-  //SEG34 print::@return
+  // print::@return
   breturn:
-  //SEG35 [16] return 
+  // [16] return 
     rts
 }
-//SEG36 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -598,26 +598,26 @@ zp ZP_BYTE:10 [ main::b#0 ]
 FINAL ASSEMBLER
 Score: 111
 
-//SEG0 File Comments
+// File Comments
 // Test simple void pointer - void pointer function
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+// Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label d = 4
     .label w = 8
     .label b = $a
-  //SEG10 [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+  // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta d
     lda #>$12345678
@@ -626,63 +626,63 @@ main: {
     sta d+2
     lda #>$12345678>>$10
     sta d+3
-  //SEG11 [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+  // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta w
     lda #>$1234
     sta w+1
-  //SEG12 [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+  // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta b
-  //SEG13 [7] call print 
-  //SEG14 [13] phi from main to print [phi:main->print]
-  //SEG15 [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+  // [7] call print 
+  // [13] phi from main to print [phi:main->print]
+  // [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG16 [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
+  // [13] phi (void*) print::ptr#3 = (void*)&(byte) main::b#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta print.ptr
     lda #>b
     sta print.ptr+1
     jsr print
-  //SEG17 [8] phi from main to main::@1 [phi:main->main::@1]
-  //SEG18 main::@1
-  //SEG19 [9] call print 
-  //SEG20 [13] phi from main::@1 to print [phi:main::@1->print]
-  //SEG21 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
-  //SEG22 [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
+  // [8] phi from main to main::@1 [phi:main->main::@1]
+  // main::@1
+  // [9] call print 
+  // [13] phi from main::@1 to print [phi:main::@1->print]
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(word) main::w#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta print.ptr
     lda #>w
     sta print.ptr+1
     jsr print
-  //SEG23 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG24 main::@2
-  //SEG25 [11] call print 
-  //SEG26 [13] phi from main::@2 to print [phi:main::@2->print]
-  //SEG27 [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
-  //SEG28 [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
+  // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  // main::@2
+  // [11] call print 
+  // [13] phi from main::@2 to print [phi:main::@2->print]
+  // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+  // [13] phi (void*) print::ptr#3 = (void*)&(dword) main::d#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta print.ptr
     lda #>d
     sta print.ptr+1
     jsr print
-  //SEG29 main::@return
-  //SEG30 [12] return 
+  // main::@return
+  // [12] return 
     rts
 }
-//SEG31 print
+// print
 // print(void* zeropage(2) ptr)
 print: {
     .label ptr = 2
-  //SEG32 [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+  // [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
-  //SEG33 [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+  // [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG34 print::@return
-  //SEG35 [16] return 
+  // print::@return
+  // [16] return 
     rts
 }
-//SEG36 File Data
+// File Data
 

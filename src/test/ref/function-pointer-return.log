@@ -289,114 +289,114 @@ Allocated zp ZP_BYTE:5 [ main::$0 ]
 Allocated zp ZP_BYTE:6 [ main::$4 ]
 
 INITIAL ASM
-//SEG0 File Comments
+// File Comments
 // Tests creating and assigning pointers to non-args return with function value
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
     .label _0 = 5
     .label _4 = 6
     .label i = 2
     .label f = 3
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG14 main::@2
+  // main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+  // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _0
-  //SEG17 [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
+  // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
     beq b3_from_b2
-  //SEG18 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
-  //SEG19 [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  //SEG20 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  //SEG21 main::@3
+  // main::@3
   b3:
-  //SEG22 [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  //SEG23 [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
     jmp b4
-  //SEG24 main::@4
+  // main::@4
   b4:
-  //SEG25 [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuz1=_byte_pprz2 
+  // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuz1=_byte_pprz2 
     lda f
     sta _4
-  //SEG26 [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+  // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda _4
     sta SCREEN
-  //SEG27 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG28 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG29 fn2
+// fn2
 fn2: {
     .label BGCOL = $d021
-  //SEG30 [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-  //SEG31 fn2::@return
+  // fn2::@return
   breturn:
-  //SEG32 [14] return 
+  // [14] return 
     rts
 }
-//SEG33 fn1
+// fn1
 fn1: {
     .label BORDERCOL = $d020
-  //SEG34 [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  //SEG35 fn1::@return
+  // fn1::@return
   breturn:
-  //SEG36 [16] return 
+  // [16] return 
     rts
 }
-//SEG37 File Data
+// File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 [ main::i#1 main::$4 ] ( main:2 [ main::i#1 main::$4 ] ) always clobbers reg byte a 
@@ -421,106 +421,106 @@ Uplifting [] best 617 combination
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::f#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+// File Comments
 // Tests creating and assigning pointers to non-args return with function value
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
+// Global Constants & labels
+// @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+// [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+// @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+// [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+// @end
 bend:
-//SEG10 main
+// main
 main: {
     .label SCREEN = $400
     .label f = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG13 main::@1
+  // main::@1
   b1:
     jmp b2
-  //SEG14 main::@2
+  // main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+  // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG17 [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+  // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG18 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
-  //SEG19 [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  //SEG20 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
     jmp b3
-  //SEG21 main::@3
+  // main::@3
   b3:
-  //SEG22 [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  //SEG23 [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
     jmp b4
-  //SEG24 main::@4
+  // main::@4
   b4:
-  //SEG25 [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
+  // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda f
-  //SEG26 [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+  // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  //SEG27 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG28 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
 }
-//SEG29 fn2
+// fn2
 fn2: {
     .label BGCOL = $d021
-  //SEG30 [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-  //SEG31 fn2::@return
+  // fn2::@return
   breturn:
-  //SEG32 [14] return 
+  // [14] return 
     rts
 }
-//SEG33 fn1
+// fn1
 fn1: {
     .label BORDERCOL = $d020
-  //SEG34 [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-  //SEG35 fn1::@return
+  // fn1::@return
   breturn:
-  //SEG36 [16] return 
+  // [16] return 
     rts
 }
-//SEG37 File Data
+// File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -593,81 +593,81 @@ reg byte a [ main::$4 ]
 FINAL ASSEMBLER
 Score: 479
 
-//SEG0 File Comments
+// File Comments
 // Tests creating and assigning pointers to non-args return with function value
-//SEG1 Basic Upstart
+// Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+// Global Constants & labels
+// @begin
+// [1] phi from @begin to @1 [phi:@begin->@1]
+// @1
+// [2] call main 
+// [4] phi from @1 to main [phi:@1->main]
+// [3] phi from @1 to @end [phi:@1->@end]
+// @end
+// main
 main: {
     .label SCREEN = $400
     .label f = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  // [5] phi from main to main::@1 [phi:main->main::@1]
+  // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 main::@1
-  //SEG14 main::@2
+  // main::@1
+  // main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+  // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG17 [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+  // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3
-  //SEG18 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  //SEG19 [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+  // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
     jmp b4
-  //SEG20 [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG21 main::@3
+  // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  // main::@3
   b3:
-  //SEG22 [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  //SEG23 [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+  // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  // [10] phi (byte()*) main::f#3 = &(byte()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
-  //SEG24 main::@4
+  // main::@4
   b4:
-  //SEG25 [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
+  // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda f
-  //SEG26 [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+  // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  //SEG27 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG28 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b2
 }
-//SEG29 fn2
+// fn2
 fn2: {
     .label BGCOL = $d021
-  //SEG30 [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG31 fn2::@return
-  //SEG32 [14] return 
+  // fn2::@return
+  // [14] return 
     rts
 }
-//SEG33 fn1
+// fn1
 fn1: {
     .label BORDERCOL = $d020
-  //SEG34 [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG35 fn1::@return
-  //SEG36 [16] return 
+  // fn1::@return
+  // [16] return 
     rts
 }
-//SEG37 File Data
+// File Data
 

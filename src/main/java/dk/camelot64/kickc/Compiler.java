@@ -483,7 +483,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
       getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
@@ -531,7 +531,7 @@ public class Compiler {
       new Pass4InterruptClobberFix(program).fix();
 
       getLog().append("\nASSEMBLER BEFORE OPTIMIZATION");
-      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       getLog().append("ASSEMBLER OPTIMIZATIONS");
       List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();
@@ -569,7 +569,7 @@ public class Compiler {
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");
-      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
    }
 

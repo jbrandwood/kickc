@@ -1429,7 +1429,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return lValue;
    }
 
-   private LValue copyLValue(LValue lValue) {
+   private static LValue copyLValue(LValue lValue) {
       if(lValue instanceof VariableRef) {
          return new VariableRef(((VariableRef) lValue).getFullName());
       } else if(lValue instanceof LvalueIntermediate) {
@@ -1929,7 +1929,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             List<PrePostModifier> modifiers,
             StatementSource source) {
          for(PrePostModifier mod : modifiers) {
-            Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child, source, Comment.NO_COMMENTS);
+
+            Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, copyLValue((LValue) mod.child), source, Comment.NO_COMMENTS);
             parser.sequence.addStatement(stmt);
             if(parser.program.getLog().isVerboseParse()) {
                parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, false));

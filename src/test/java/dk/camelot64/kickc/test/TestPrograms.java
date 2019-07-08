@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScreenShowSpiralBuckets() throws IOException, URISyntaxException {
+      compileAndCompare("screen-show-spiral-buckets", log());
+   }
+
+   @Test
    public void testScreenShowSpiral() throws IOException, URISyntaxException {
       compileAndCompare("screen-show-spiral");
    }

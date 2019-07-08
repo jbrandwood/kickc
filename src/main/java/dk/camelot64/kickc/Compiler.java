@@ -242,6 +242,7 @@ public class Compiler {
 
    private void pass2AssertSSA() {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
+      //assertions.add(new Pass2AssertNoLValueObjectEquality(program));
       assertions.add(new Pass2AssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));

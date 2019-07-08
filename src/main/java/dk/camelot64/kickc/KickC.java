@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
@@ -96,6 +97,16 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-fragment" }, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
    private String fragment = null;
 
+   @CommandLine.Option(names = {"-S", "-Sc" }, description = "Interleave comments with C source code in the generated ASM.")
+   private boolean interleaveSourceCode = false;
+
+   @CommandLine.Option(names = {"-Sl" }, description = "Interleave comments with C source file name and line number in the generated ASM.")
+   private boolean interleaveSourceFile = false;
+
+   @CommandLine.Option(names = {"-Si" }, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
+   private boolean interleaveIclFile = false;
+
+
    /** Program Exit Code signaling a compile error. */
    public static final int COMPILE_ERROR = 1;
 
@@ -180,7 +191,7 @@ public class KickC implements Callable<Void> {
          System.out.println("Writing asm file " + asmPath);
          FileOutputStream asmOutputStream = new FileOutputStream(asmPath.toFile());
          OutputStreamWriter asmWriter = new OutputStreamWriter(asmOutputStream);
-         String asmCodeString = program.getAsm().toString(false);
+         String asmCodeString = program.getAsm().toString(new AsmProgram.AsmPrintState(interleaveSourceFile, interleaveSourceCode, interleaveIclFile, false), program);
          asmWriter.write(asmCodeString);
          asmWriter.close();
          asmOutputStream.close();

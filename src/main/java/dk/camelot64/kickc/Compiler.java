@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -482,7 +483,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append(program.getAsm().toString());
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
       getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
@@ -530,7 +531,7 @@ public class Compiler {
       new Pass4InterruptClobberFix(program).fix();
 
       getLog().append("\nASSEMBLER BEFORE OPTIMIZATION");
-      getLog().append(program.getAsm().toString());
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
 
       getLog().append("ASSEMBLER OPTIMIZATIONS");
       List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();
@@ -568,7 +569,7 @@ public class Compiler {
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");
-      getLog().append(program.getAsm().toString());
+      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true, false), program));
 
    }
 

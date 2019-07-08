@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.model.PhiTransitions;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
@@ -77,6 +80,7 @@ public class AsmSegment {
 
    /**
     * Add a new line just after another line
+    *
     * @param line The line to look for. If it is not found an Exception is thrown
     * @param add The line to add
     */
@@ -89,7 +93,7 @@ public class AsmSegment {
             return;
          }
       }
-      throw new NoSuchElementException("Item not found "+line);
+      throw new NoSuchElementException("Item not found " + line);
    }
 
    public int getIndex() {
@@ -163,7 +167,7 @@ public class AsmSegment {
     * @return The registers clobbered
     */
    public AsmClobber getClobber() {
-      if(clobberOverwrite!=null) {
+      if(clobberOverwrite != null) {
          return clobberOverwrite;
       }
       AsmClobber clobber = new AsmClobber();
@@ -180,6 +184,7 @@ public class AsmSegment {
 
    /**
     * Get ASM line by index
+    *
     * @param idx The index of the line to get
     * @return The line with the passed index. Null if not found inside the segment.
     */
@@ -192,11 +197,48 @@ public class AsmSegment {
       return null;
    }
 
-
-   public String toString(AsmProgram.AsmPrintState printState) {
+   public String toString(AsmProgram.AsmPrintState printState, Program program) {
       StringBuffer out = new StringBuffer();
-      if(printState.isComments()) {
-         out.append(printState.getIndent()).append("//SEG").append(getIndex());
+      if(printState.isSourceFileInfo()) {
+         if(this.statementIdx != null && program != null) {
+            Statement statement = program.getGraph().getStatementByIndex(this.statementIdx);
+            if(statement != null) {
+               StatementSource source = statement.getSource();
+               if(source != null) {
+                  if(source.getFile() != null || source.getLineNumber() != null) {
+                     out.append(printState.getIndent()).append("// ");
+                     if(source.getFile() != null)
+                        out.append(source.getFile());
+                     out.append(":");
+                     if(source.getLineNumber() != null)
+                        out.append(source.getLineNumber());
+                     out.append("\n");
+                  }
+               }
+            }
+         }
+      }
+      if(printState.isSourceCodeInfo()) {
+         if(this.statementIdx != null && program != null) {
+            Statement statement = program.getGraph().getStatementByIndex(this.statementIdx);
+            if(statement != null) {
+               StatementSource source = statement.getSource();
+               if(source != null) {
+                  if(source.getCode() != null) {
+                     out.append(printState.getIndent()).append("// ");
+                     if(source.getCode() != null)
+                        out.append(source.getCode().replace("\n", "\n" + printState.getIndent() + "// "));
+                     out.append("\n");
+                  }
+               }
+            }
+         }
+      }
+      if(printState.isSourceIclInfo()) {
+         out.append(printState.getIndent()).append("//");
+         if(printState.isSourceSegmentIdInfo()) {
+            out.append("SEG").append(getIndex());
+         }
          if(source != null) {
             out.append(" ").append(source.replace('\r', ' ').replace('\n', ' '));
          }
@@ -219,7 +261,7 @@ public class AsmSegment {
             printState.decIndent();
          }
          if(printState.getLineIdx()) {
-            out.append("["+line.getIndex()+"]");
+            out.append("[" + line.getIndex() + "]");
          }
          out.append(printState.getIndent());
          if(shouldIndentAsm(line)) {
@@ -227,7 +269,7 @@ public class AsmSegment {
          }
          if(line instanceof AsmComment) {
             // Peek forward to find the comment indent
-            for(int j=i;j<lines.size();j++) {
+            for(int j = i; j < lines.size(); j++) {
                AsmLine peek = lines.get(j);
                if(peek instanceof AsmScopeBegin) {
                   break;
@@ -248,6 +290,7 @@ public class AsmSegment {
    /**
     * Should this ASM line be indented a few spaces.
     * Instructions, variables and similar ASM is indented slightly more than other ASM.
+    *
     * @param line The line to examine
     * @return true if the line is an instruction or similar.
     */
@@ -257,7 +300,7 @@ public class AsmSegment {
 
    @Override
    public String toString() {
-      return toString(new AsmProgram.AsmPrintState(true, false));
+      return toString(new AsmProgram.AsmPrintState(true, false), null);
    }
 
    public void setSource(String source) {

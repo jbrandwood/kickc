@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.fragment.AsmFormat;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
@@ -196,26 +197,17 @@ public class AsmProgram {
       return clobber;
    }
 
-   public String toString(boolean comments) {
-      return toString(new AsmPrintState(comments, false));
-   }
-
-   public String toString(boolean comments, boolean lineIdx) {
-      return toString(new AsmPrintState(comments, lineIdx));
-   }
-
-
-   public String toString(AsmPrintState printState) {
+   public String toString(AsmPrintState printState, Program program) {
       StringBuilder out = new StringBuilder();
       for(AsmSegment segment : segments) {
-         out.append(segment.toString(printState));
+         out.append(segment.toString(printState, program));
       }
       return out.toString();
    }
 
    @Override
    public String toString() {
-      return toString(true);
+      return toString(new AsmPrintState(false, false), null);
    }
 
    /**
@@ -242,19 +234,61 @@ public class AsmProgram {
       return null;
    }
 
-   static class AsmPrintState {
-      boolean comments;
-      boolean lineIdx;
-      String indent;
+   public static class AsmPrintState {
+      // Output comments with information about the file/line number in the source file
+      private boolean sourceFileInfo;
+      // Output comments with C-source from the source file
+      private boolean sourceCodeInfo;
+      // Output comments with ICL-code and the ASM fragment name
+      private boolean sourceIclInfo;
+      // Output segment ID in the ICL-comment
+      private boolean sourceSegmentIdInfo;
+      // Output ASM line numbers
+      private boolean lineIdx;
+      // Current indent - used during printing
+      private String indent;
 
-      public AsmPrintState(boolean comments, boolean lineIdx) {
-         this.comments = comments;
+      public AsmPrintState(boolean sourceFileInfo, boolean sourceCodeInfo, boolean sourceIclInfo, boolean lineIdx) {
+         this.sourceFileInfo = sourceFileInfo;
+         this.sourceCodeInfo = sourceCodeInfo;
+         this.sourceIclInfo = sourceIclInfo;
          this.lineIdx = lineIdx;
          this.indent = "";
       }
 
-      public boolean isComments() {
-         return comments;
+      public AsmPrintState(boolean sourceIclInfo, boolean lineIdx) {
+         this.sourceIclInfo = sourceIclInfo;
+         this.sourceSegmentIdInfo = sourceIclInfo;
+         this.lineIdx = lineIdx;
+         this.indent = "";
+      }
+
+      public boolean isSourceCodeInfo() {
+         return sourceCodeInfo;
+      }
+
+      public void setSourceCodeInfo(boolean sourceCodeInfo) {
+         this.sourceCodeInfo = sourceCodeInfo;
+      }
+
+      public boolean isSourceFileInfo() {
+         return sourceFileInfo;
+      }
+
+      public void setSourceFileInfo(boolean sourceFileInfo) {
+         this.sourceFileInfo = sourceFileInfo;
+      }
+
+      public boolean isSourceIclInfo() {
+         return sourceIclInfo;
+      }
+
+      public boolean isSourceSegmentIdInfo() {
+         return sourceSegmentIdInfo;
+      }
+
+      public void setSourceSegmentIdInfo(boolean sourceSegmentIdInfo) {
+         this.sourceSegmentIdInfo = sourceSegmentIdInfo;
       }
 
       public void incIndent() {

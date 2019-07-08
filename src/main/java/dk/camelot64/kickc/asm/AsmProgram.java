@@ -252,7 +252,9 @@ public class AsmProgram {
       // Current indent - used during printing
       private String indent;
       // The current value of code info. Set/get during printing to avoid duplicate source code info comment lines.
-      private String currentCode;
+      private String currentCodeInfo;
+      // The current value of file info. Set/get during printing to avoid duplicate source code info comment lines.
+      private String currentFileInfo;
 
       public AsmPrintState(boolean sourceFileInfo, boolean sourceCodeInfo, boolean sourceIclInfo, boolean asmLineNumber) {
          this.sourceFileInfo = sourceFileInfo;
@@ -324,12 +326,20 @@ public class AsmProgram {
          return asmLineNumber;
       }
 
-      public String getCurrentCode() {
-         return currentCode;
+      public String getCurrentCodeInfo() {
+         return currentCodeInfo;
       }
 
-      public void setCurrentCode(String currentCode) {
-         this.currentCode = currentCode;
+      public void setCurrentCodeInfo(String currentCodeInfo) {
+         this.currentCodeInfo = currentCodeInfo;
+      }
+
+      public String getCurrentFileInfo() {
+         return currentFileInfo;
+      }
+
+      public void setCurrentFileInfo(String currentFileInfo) {
+         this.currentFileInfo = currentFileInfo;
       }
    }
 

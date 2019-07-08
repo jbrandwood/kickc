@@ -206,13 +206,18 @@ public class AsmSegment {
                StatementSource source = statement.getSource();
                if(source != null) {
                   if(source.getFile() != null || source.getLineNumber() != null) {
-                     out.append(printState.getIndent()).append("  // ");
+                     String fileInfo = "";
                      if(source.getFile() != null)
-                        out.append(source.getFile());
-                     out.append(":");
+                        fileInfo += source.getFile();
+                     fileInfo += ":";
                      if(source.getLineNumber() != null)
-                        out.append(source.getLineNumber());
-                     out.append("\n");
+                        fileInfo += source.getLineNumber();
+                     if(!fileInfo.equals(printState.getCurrentFileInfo())) {
+                        out.append(printState.getIndent()).append("  // ").append(fileInfo).append("\n");
+                        printState.setCurrentFileInfo(fileInfo);
+                     }
+                  } else {
+                     printState.setCurrentFileInfo(null);
                   }
                }
             }
@@ -225,15 +230,15 @@ public class AsmSegment {
                StatementSource source = statement.getSource();
                if(source != null) {
                   if(source.getCode() != null) {
-                     if(!source.getCode().equals(printState.getCurrentCode())) {
-                        printState.setCurrentCode(source.getCode());
+                     if(!source.getCode().equals(printState.getCurrentCodeInfo())) {
+                        printState.setCurrentCodeInfo(source.getCode());
                         out.append(printState.getIndent()).append("  // ");
                         if(source.getCode() != null)
                            out.append(source.getCode().replace("\n", "\n" + printState.getIndent() + "  // "));
                         out.append("\n");
                      }
                   } else {
-                     printState.setCurrentCode(null);
+                     printState.setCurrentCodeInfo(null);
                   }
                }
             }

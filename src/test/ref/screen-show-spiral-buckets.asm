@@ -14,7 +14,7 @@
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // The number of buckets in our bucket sort
-µ  .const NUM_BUCKETS = $100
+  .const NUM_BUCKETS = $100
   .const NUM_SQUARES = $30
   .label heap_head = $15
   .label SQUARES = $17

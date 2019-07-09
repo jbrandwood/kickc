@@ -100,6 +100,7 @@ const word*[NUM_BUCKETS] BUCKETS; // = malloc(NUM_BUCKETS*sizeof(word*));
 // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
 const byte[NUM_BUCKETS] BUCKET_IDX; // = malloc(NUM_BUCKETS*sizeof(byte));
 
+// Initialize buckets containing indices of chars on the screen with specific distances to the center.
 void init_buckets() {
     // Init bucket sizes to 0
     for(byte i:0..NUM_BUCKETS-1) BUCKET_SIZES[i]=0;
@@ -119,15 +120,14 @@ void init_buckets() {
     for(word i:0..999) {
         byte distance = *dist;
         word* bucket = BUCKETS[distance];
-        byte idx = BUCKET_IDX[distance];
-        bucket[idx] = dist-SCREEN_DIST;
+        bucket[BUCKET_IDX[distance]] = dist-SCREEN_DIST;
         BUCKET_IDX[distance]++;
         *dist++;
     }
 }
 
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
-// Utilizes symmetry around the  center
+// Utilizes symmetry around the center
 void init_angle_screen(byte* screen) {
     byte* screen_topline = screen+40*12;
     byte *screen_bottomline = screen+40*12;
@@ -149,6 +149,7 @@ void init_angle_screen(byte* screen) {
 
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
+// Utilizes symmetry around the center
 void init_dist_screen(byte* screen) {
     NUM_SQUARES = 0x30;
     init_squares();

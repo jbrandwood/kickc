@@ -116,14 +116,13 @@ main: {
     dec BORDERCOL
     jmp b2
 }
-// = malloc(NUM_BUCKETS*sizeof(byte));
+// Initialize buckets containing indices of chars on the screen with specific distances to the center.
 init_buckets: {
     .label _5 = $d
-    .label _9 = $3a
+    .label _9 = $39
     .label dist = 3
     .label i1 = 5
-    .label distance = $37
-    .label bucket = $38
+    .label bucket = $37
     .label dist_3 = 7
     .label i4 = 9
     .label dist_5 = 7
@@ -197,15 +196,14 @@ init_buckets: {
   b5:
     ldy #0
     lda (dist_5),y
-    sta distance
+    tax
+    txa
     asl
     tay
     lda BUCKETS,y
     sta bucket
     lda BUCKETS+1,y
     sta bucket+1
-    ldy distance
-    ldx BUCKET_IDX,y
     lda dist_5
     sec
     sbc #<SCREEN_DIST
@@ -213,7 +211,7 @@ init_buckets: {
     lda dist_5+1
     sbc #>SCREEN_DIST
     sta _9+1
-    txa
+    lda BUCKET_IDX,x
     asl
     tay
     lda _9
@@ -221,7 +219,6 @@ init_buckets: {
     iny
     lda _9+1
     sta (bucket),y
-    ldx distance
     inc BUCKET_IDX,x
     inc dist_3
     bne !+
@@ -259,13 +256,13 @@ malloc: {
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
-// Utilizes symmetry around the  center
+// Utilizes symmetry around the center
 init_angle_screen: {
     .label _10 = $1a
-    .label xw = $3c
-    .label yw = $3e
+    .label xw = $3b
+    .label yw = $3d
     .label angle_w = $1a
-    .label ang_w = $40
+    .label ang_w = $3f
     .label x = $14
     .label xb = $15
     .label screen_topline = $12
@@ -352,7 +349,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($3c) x, signed word zeropage($3e) y)
+// atan2_16(signed word zeropage($3b) x, signed word zeropage($3d) y)
 atan2_16: {
     .label _2 = $16
     .label _7 = $18
@@ -362,8 +359,8 @@ atan2_16: {
     .label xd = $1e
     .label yd = $1c
     .label return = $1a
-    .label x = $3c
-    .label y = $3e
+    .label x = $3b
+    .label y = $3d
     lda y+1
     bmi !b1+
     jmp b1
@@ -540,10 +537,11 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
+// Utilizes symmetry around the center
 init_dist_screen: {
-    .label yds = $41
-    .label xds = $43
-    .label ds = $43
+    .label yds = $40
+    .label xds = $42
+    .label ds = $42
     .label x = $25
     .label xb = $26
     .label screen_topline = $21
@@ -638,12 +636,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($43) val)
+// sqrt(word zeropage($42) val)
 sqrt: {
     .label _1 = $27
     .label _3 = $27
     .label found = $27
-    .label val = $43
+    .label val = $42
     lda SQUARES
     sta bsearch16u.items
     lda SQUARES+1
@@ -666,14 +664,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($43) key, word* zeropage($27) items, byte register(X) num)
+// bsearch16u(word zeropage($42) key, word* zeropage($27) items, byte register(X) num)
 bsearch16u: {
     .label _2 = $27
-    .label pivot = $45
-    .label result = $47
+    .label pivot = $44
+    .label result = $46
     .label return = $27
     .label items = $27
-    .label key = $43
+    .label key = $42
     ldx #NUM_SQUARES
   b3:
     cpx #0
@@ -749,8 +747,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $43
-    .label return_2 = $41
+    .label return = $42
+    .label return_2 = $40
     asl
     tay
     lda (SQUARES),y

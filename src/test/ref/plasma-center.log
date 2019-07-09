@@ -8,7 +8,7 @@ Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) atan2_16::shift
-Identified constant variable (byte*) HEAP_START
+Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$5 ← call toD018 (byte*) SCREEN1 (byte*) CHARSET 
 Inlined call (byte~) main::$7 ← call toD018 (byte*) SCREEN2 (byte*) CHARSET 
@@ -94,14 +94,15 @@ CONTROL FLOW GRAPH SSA
   (byte) BLACK#0 ← (number) 0
   to:@4
 @4: scope:[]  from @begin
-  (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
-  (byte*) heap_head#0 ← (byte*) HEAP_START#0
+  (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
+  (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
   to:@11
 malloc: scope:[malloc]  from @39 @45 init_squares
   (word) malloc::size#3 ← phi( @39/(word) malloc::size#1 @45/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
   (byte*) heap_head#12 ← phi( @39/(byte*) heap_head#23 @45/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
-  (byte*) malloc::mem#0 ← (byte*) heap_head#12
-  (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3
+  (byte*~) malloc::$0 ← (byte*) heap_head#12 - (word) malloc::size#3
+  (byte*) malloc::mem#0 ← (byte*~) malloc::$0
+  (byte*) heap_head#1 ← (byte*) malloc::mem#0
   (void*) malloc::return#0 ← ((void*)) (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
@@ -1415,8 +1416,8 @@ SYMBOL TABLE SSA
 (byte) CORDIC_ITERATIONS_16#0
 (byte*) D018
 (byte*) D018#0
-(byte*) HEAP_START
-(byte*) HEAP_START#0
+(byte*) HEAP_TOP
+(byte*) HEAP_TOP#0
 (byte) NUM_SQUARES
 (byte) NUM_SQUARES#0
 (byte) NUM_SQUARES#1
@@ -2302,6 +2303,7 @@ SYMBOL TABLE SSA
 (byte) make_plasma_charset::s#5
 (byte) make_plasma_charset::s#6
 (void*()) malloc((word) malloc::size)
+(byte*~) malloc::$0
 (label) malloc::@return
 (byte*) malloc::mem
 (byte*) malloc::mem#0
@@ -2750,7 +2752,7 @@ Successful SSA optimization PassNAddArrayNumberTypeConversions
 Inlining cast (byte*) D018#0 ← (byte*)(number) $d018
 Inlining cast (byte*) COLS#0 ← (byte*)(number) $d800
 Inlining cast (byte) BLACK#0 ← (unumber)(number) 0
-Inlining cast (byte*) HEAP_START#0 ← (byte*)(number) $c000
+Inlining cast (byte*) HEAP_TOP#0 ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (signed word~) bsearch16u::$8 ← (signed word)(word) bsearch16u::key#1
 Inlining cast (signed word~) bsearch16u::$9 ← (signed word)*((word*) bsearch16u::pivot#0)
@@ -2797,7 +2799,7 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 49152
+Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -3034,16 +3036,17 @@ Inferred type updated to byte in (unumber~) make_plasma_charset::$4 ← (byte~) 
 Inferred type updated to word in (unumber~) make_plasma_charset::$8 ← (word) make_plasma_charset::c#3 * (byte) 8
 Inferred type updated to word in (unumber~) make_plasma_charset::$9 ← (word~) make_plasma_charset::$8 + (byte) make_plasma_charset::i#2
 Inferred type updated to byte in (unumber~) make_plasma_charset::$11 ← (word) make_plasma_charset::c#4 & (byte) 7
-Inversing boolean not [27] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [26] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#0 == (signed byte) 0
-Inversing boolean not [34] (bool~) bsearch16u::$14 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [33] (bool~) bsearch16u::$13 ← (signed word) bsearch16u::result#1 > (signed byte) 0
-Inversing boolean not [150] (bool~) atan2_16::$18 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [149] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [159] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [158] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [170] (bool~) atan2_16::$20 ← (byte) 0 == (byte) atan2_16::shift#4 from [169] (bool~) atan2_16::$25 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [194] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [193] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
-Inversing boolean not [524] (bool~) make_plasma_charset::$6 ← (byte~) make_plasma_charset::$4 <= (byte) make_plasma_charset::s#1 from [523] (bool~) make_plasma_charset::$5 ← (byte~) make_plasma_charset::$4 > (byte) make_plasma_charset::s#1
-Inversing boolean not [542] (bool~) make_plasma_charset::$13 ← (byte~) make_plasma_charset::$11 != (byte) 0 from [541] (bool~) make_plasma_charset::$12 ← (byte~) make_plasma_charset::$11 == (byte) 0
+Inversing boolean not [28] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [27] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#0 == (signed byte) 0
+Inversing boolean not [35] (bool~) bsearch16u::$14 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [34] (bool~) bsearch16u::$13 ← (signed word) bsearch16u::result#1 > (signed byte) 0
+Inversing boolean not [151] (bool~) atan2_16::$18 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [150] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [160] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [159] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [171] (bool~) atan2_16::$20 ← (byte) 0 == (byte) atan2_16::shift#4 from [170] (bool~) atan2_16::$25 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [195] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [194] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [525] (bool~) make_plasma_charset::$6 ← (byte~) make_plasma_charset::$4 <= (byte) make_plasma_charset::s#1 from [524] (bool~) make_plasma_charset::$5 ← (byte~) make_plasma_charset::$4 > (byte) make_plasma_charset::s#1
+Inversing boolean not [543] (bool~) make_plasma_charset::$13 ← (byte~) make_plasma_charset::$11 != (byte) 0 from [542] (bool~) make_plasma_charset::$12 ← (byte~) make_plasma_charset::$11 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) HEAP_START#0 = (byte*) heap_head#0 (byte*) heap_head#44 (byte*) heap_head#40 (byte*) heap_head#36 (byte*) heap_head#31 (byte*) heap_head#23 
+Alias (byte*) HEAP_TOP#0 = (byte*) heap_head#0 (byte*) heap_head#44 (byte*) heap_head#40 (byte*) heap_head#36 (byte*) heap_head#31 (byte*) heap_head#23 
+Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#5 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#13 (byte*) heap_head#2 
 Alias (byte) bsearch16u::num#3 = (byte) bsearch16u::num#4 (byte) bsearch16u::num#8 (byte) bsearch16u::num#6 
@@ -3433,46 +3436,46 @@ Identical Phi Values (word*) SQUARES#9 (word*) SQUARES#18
 Identical Phi Values (signed word) atan2_16::x#4 (signed word) atan2_16::x#17
 Identical Phi Values (signed word) atan2_16::y#4 (signed word) atan2_16::y#19
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) bsearch16u::$5 [16] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@7
-Simple Condition (bool~) bsearch16u::$12 [28] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@9
-Simple Condition (bool~) bsearch16u::$0 [31] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
-Simple Condition (bool~) bsearch16u::$14 [35] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
-Simple Condition (bool~) memset::$2 [65] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@1
-Simple Condition (bool~) init_squares::$5 [95] if((byte) init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1
-Simple Condition (bool~) atan2_16::$0 [128] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [137] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$18 [151] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
-Simple Condition (bool~) atan2_16::$11 [160] if((signed word) atan2_16::x#17>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$19 [163] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
-Simple Condition (bool~) atan2_16::$20 [171] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
-Simple Condition (bool~) atan2_16::$21 [174] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
-Simple Condition (bool~) atan2_16::$22 [191] if((byte) atan2_16::i#1!=rangelast(0,atan2_16::$16)) goto atan2_16::@15
-Simple Condition (bool~) atan2_16::$14 [195] if((signed word) atan2_16::y#19>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) print_cls::$1 [224] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) doplasma::$3 [360] if((byte) doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2
-Simple Condition (bool~) doplasma::$4 [367] if((byte) doplasma::y#1!=rangelast(0,$19)) goto doplasma::@1
-Simple Condition (bool~) init_angle_screen::$15 [416] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
-Simple Condition (bool~) init_angle_screen::$16 [422] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
-Simple Condition (bool~) init_dist_screen::$3 [438] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
-Simple Condition (bool~) init_dist_screen::$11 [459] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@6
-Simple Condition (bool~) init_dist_screen::$20 [489] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
-Simple Condition (bool~) init_dist_screen::$21 [495] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
-Simple Condition (bool~) make_plasma_charset::$6 [525] if((byte~) make_plasma_charset::$4<=(byte) make_plasma_charset::s#3) goto make_plasma_charset::@4
-Simple Condition (bool~) make_plasma_charset::$7 [529] if((byte) make_plasma_charset::ii#1<(byte) 8) goto make_plasma_charset::@3
-Simple Condition (bool~) make_plasma_charset::$10 [538] if((byte) make_plasma_charset::i#1<(byte) 8) goto make_plasma_charset::@2
-Simple Condition (bool~) make_plasma_charset::$13 [543] if((byte~) make_plasma_charset::$11!=(byte) 0) goto make_plasma_charset::@9
-Simple Condition (bool~) make_plasma_charset::$15 [547] if((word) make_plasma_charset::c#1<(word) $100) goto make_plasma_charset::@1
+Simple Condition (bool~) bsearch16u::$5 [17] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@7
+Simple Condition (bool~) bsearch16u::$12 [29] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@9
+Simple Condition (bool~) bsearch16u::$0 [32] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
+Simple Condition (bool~) bsearch16u::$14 [36] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
+Simple Condition (bool~) memset::$2 [66] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@1
+Simple Condition (bool~) init_squares::$5 [96] if((byte) init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1
+Simple Condition (bool~) atan2_16::$0 [129] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [138] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$18 [152] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
+Simple Condition (bool~) atan2_16::$11 [161] if((signed word) atan2_16::x#17>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$19 [164] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
+Simple Condition (bool~) atan2_16::$20 [172] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
+Simple Condition (bool~) atan2_16::$21 [175] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
+Simple Condition (bool~) atan2_16::$22 [192] if((byte) atan2_16::i#1!=rangelast(0,atan2_16::$16)) goto atan2_16::@15
+Simple Condition (bool~) atan2_16::$14 [196] if((signed word) atan2_16::y#19>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) print_cls::$1 [225] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
+Simple Condition (bool~) doplasma::$3 [361] if((byte) doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2
+Simple Condition (bool~) doplasma::$4 [368] if((byte) doplasma::y#1!=rangelast(0,$19)) goto doplasma::@1
+Simple Condition (bool~) init_angle_screen::$15 [417] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
+Simple Condition (bool~) init_angle_screen::$16 [423] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
+Simple Condition (bool~) init_dist_screen::$3 [439] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
+Simple Condition (bool~) init_dist_screen::$11 [460] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@6
+Simple Condition (bool~) init_dist_screen::$20 [490] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
+Simple Condition (bool~) init_dist_screen::$21 [496] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
+Simple Condition (bool~) make_plasma_charset::$6 [526] if((byte~) make_plasma_charset::$4<=(byte) make_plasma_charset::s#3) goto make_plasma_charset::@4
+Simple Condition (bool~) make_plasma_charset::$7 [530] if((byte) make_plasma_charset::ii#1<(byte) 8) goto make_plasma_charset::@3
+Simple Condition (bool~) make_plasma_charset::$10 [539] if((byte) make_plasma_charset::i#1<(byte) 8) goto make_plasma_charset::@2
+Simple Condition (bool~) make_plasma_charset::$13 [544] if((byte~) make_plasma_charset::$11!=(byte) 0) goto make_plasma_charset::@9
+Simple Condition (bool~) make_plasma_charset::$15 [548] if((word) make_plasma_charset::c#1<(word) $100) goto make_plasma_charset::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [191] if((byte) atan2_16::i#1==rangelast(0,atan2_16::$16)) goto atan2_16::@17
+Negating conditional jump and destination [192] if((byte) atan2_16::i#1==rangelast(0,atan2_16::$16)) goto atan2_16::@17
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [44] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [51] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [502] (byte[8]) make_plasma_charset::bittab#0 ← { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+Constant right-side identified [45] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [52] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [503] (byte[8]) make_plasma_charset::bittab#0 ← { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) D018#0 = (byte*) 53272
 Constant (const byte*) COLS#0 = (byte*) 55296
 Constant (const byte) BLACK#0 = 0
-Constant (const byte*) HEAP_START#0 = (byte*) 49152
+Constant (const byte*) HEAP_TOP#0 = (byte*) 40960
 Constant (const byte) bsearch16u::$17 = 1*SIZEOF_WORD
 Constant (const byte) bsearch16u::$18 = 1*SIZEOF_WORD
 Constant (const byte) NUM_SQUARES#0 = $ff
@@ -3527,25 +3530,25 @@ Constant (const byte*) doplasma::screen#1 = SCREEN2#0
 Constant (const byte*) main::toD0182_screen#0 = SCREEN2#0
 Constant (const byte*) main::toD0182_gfx#0 = CHARSET#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)COLS#0 in [278] (void*) memset::str#0 ← (void*)(const byte*) COLS#0
-Constant value identified (word)main::toD0181_screen#0 in [295] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [299] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (word)main::toD0182_screen#0 in [318] (word~) main::toD0182_$0#0 ← (word)(const byte*) main::toD0182_screen#0
-Constant value identified (word)main::toD0182_gfx#0 in [322] (word~) main::toD0182_$4#0 ← (word)(const byte*) main::toD0182_gfx#0
+Constant value identified (void*)COLS#0 in [279] (void*) memset::str#0 ← (void*)(const byte*) COLS#0
+Constant value identified (word)main::toD0181_screen#0 in [296] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [300] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::toD0182_screen#0 in [319] (word~) main::toD0182_$0#0 ← (word)(const byte*) main::toD0182_screen#0
+Constant value identified (word)main::toD0182_gfx#0 in [323] (word~) main::toD0182_$4#0 ← (word)(const byte*) main::toD0182_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [285] if(true) goto main::@2
+if() condition always true - replacing block destination [286] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [358] doplasma::x#1 ← ++ doplasma::x#2 to ++
-Resolved ranged comparison value [360] if(doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2 to (number) $28
-Resolved ranged next value [365] doplasma::y#1 ← ++ doplasma::y#4 to ++
-Resolved ranged comparison value [367] if(doplasma::y#1!=rangelast(0,$19)) goto doplasma::@1 to (number) $1a
-Resolved ranged next value [420] init_angle_screen::y#1 ← ++ init_angle_screen::y#4 to ++
-Resolved ranged comparison value [422] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
-Resolved ranged next value [493] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
-Resolved ranged comparison value [495] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
-Rewriting conditional comparison [416] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
-Rewriting conditional comparison [489] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
-De-inlining pointer[w] to *(pointer+w)   [535] *((byte*) make_plasma_charset::charset#6 + (word~) make_plasma_charset::$9) ← (byte) make_plasma_charset::b#3
+Resolved ranged next value [359] doplasma::x#1 ← ++ doplasma::x#2 to ++
+Resolved ranged comparison value [361] if(doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2 to (number) $28
+Resolved ranged next value [366] doplasma::y#1 ← ++ doplasma::y#4 to ++
+Resolved ranged comparison value [368] if(doplasma::y#1!=rangelast(0,$19)) goto doplasma::@1 to (number) $1a
+Resolved ranged next value [421] init_angle_screen::y#1 ← ++ init_angle_screen::y#4 to ++
+Resolved ranged comparison value [423] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
+Resolved ranged next value [494] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
+Resolved ranged comparison value [496] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
+Rewriting conditional comparison [417] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
+Rewriting conditional comparison [490] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
+De-inlining pointer[w] to *(pointer+w)   [536] *((byte*) make_plasma_charset::charset#6 + (word~) make_plasma_charset::$9) ← (byte) make_plasma_charset::b#3
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Eliminating unused variable (void*) memset::return#2 and assignment [130] (void*) memset::return#2 ← (void*) memset::str#0
 Eliminating unused variable - keeping the phi block (byte*) heap_head#51
@@ -3953,7 +3956,8 @@ Coalesced [342] init_squares::squares#4 ← init_squares::squares#0
 Coalesced [352] init_squares::sqr#3 ← init_squares::sqr#1
 Coalesced [353] init_squares::squares#3 ← init_squares::squares#1
 Coalesced [354] init_squares::i#3 ← init_squares::i#1
-Coalesced down to 45 phi equivalence classes
+Not coalescing [357] heap_head#1 ← malloc::mem#0
+Coalesced down to 46 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @11
 Culled Empty Block (label) @14
@@ -4556,9 +4560,9 @@ init_squares::@return: scope:[init_squares]  from init_squares::@1
   to:@return
 malloc: scope:[malloc]  from @1 @3 init_squares
   [255] (word) malloc::size#3 ← phi( @1/(word) $3e8 @3/(word) $3e8 init_squares/(const byte) NUM_SQUARES#3*(const byte) SIZEOF_WORD )
-  [255] (byte*) heap_head#12 ← phi( @1/(const byte*) HEAP_START#0 @3/(byte*) heap_head#1 init_squares/(byte*) heap_head#1 )
-  [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12
-  [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3
+  [255] (byte*) heap_head#12 ← phi( @1/(const byte*) HEAP_TOP#0 @3/(byte*) heap_head#1 init_squares/(byte*) heap_head#1 )
+  [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3
+  [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
   [258] return 
@@ -4572,7 +4576,7 @@ VARIABLE REGISTER WEIGHTS
 (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16
 (byte) CORDIC_ITERATIONS_16
 (byte*) D018
-(byte*) HEAP_START
+(byte*) HEAP_TOP
 (byte) NUM_SQUARES
 (byte*) SCREEN1
 (byte*) SCREEN2
@@ -4693,7 +4697,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) doplasma::y#4 22.444444444444443
 (byte*) heap_head
 (byte*) heap_head#1 0.6000000000000001
-(byte*) heap_head#12 4.0
+(byte*) heap_head#12 6.0
 (void()) init_angle_screen((byte*) init_angle_screen::screen)
 (word~) init_angle_screen::$10 202.0
 (byte~) init_angle_screen::$12 202.0
@@ -4833,10 +4837,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) make_plasma_charset::s#0 56.22222222222223
 (void*()) malloc((word) malloc::size)
 (byte*) malloc::mem
-(byte*) malloc::mem#0 0.3333333333333333
+(byte*) malloc::mem#0 0.6666666666666666
 (void*) malloc::return
 (word) malloc::size
-(word) malloc::size#3 1.0
+(word) malloc::size#3 2.0
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
@@ -5210,8 +5214,8 @@ INITIAL ASM
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label print_line_cursor = $400
@@ -5251,10 +5255,10 @@ malloc_from_b1:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_START#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   jmp b3
@@ -7011,18 +7015,18 @@ init_squares: {
 malloc: {
     .label mem = $99
     .label size = $40
-    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 -- pbuz1=pbuz2 
+    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 -- pbuz1=pbuz2_minus_vwuz3 
     lda heap_head
+    sec
+    sbc size
     sta mem
     lda heap_head+1
+    sbc size+1
     sta mem+1
-    // [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 -- pbuz1=pbuz1_plus_vwuz2 
-    lda heap_head
-    clc
-    adc size
+    // [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     jmp breturn
     // malloc::@return
@@ -7198,8 +7202,8 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:61 [ i
 Statement [248] (word*) init_squares::squares#1 ← (word*) init_squares::squares#2 + (const byte) SIZEOF_WORD [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ) always clobbers reg byte a 
 Statement [249] (byte~) init_squares::$3 ← (byte) init_squares::i#2 << (byte) 1 [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ) always clobbers reg byte a 
 Statement [251] (word) init_squares::sqr#1 ← (word) init_squares::sqr#2 + (byte~) init_squares::$4 [ SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ) always clobbers reg byte a 
-Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 [ malloc::mem#0 heap_head#12 malloc::size#3 ] ( malloc:2 [ malloc::mem#0 heap_head#12 malloc::size#3 ] malloc:4 [ malloc::mem#0 heap_head#12 malloc::size#3 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#12 malloc::size#3 ] ) always clobbers reg byte a 
-Statement [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
+Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 [ malloc::mem#0 ] ( malloc:2 [ malloc::mem#0 ] malloc:4 [ malloc::mem#0 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 ] ) always clobbers reg byte a 
+Statement [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [3] (void*) SCREEN_DIST#0 ← (void*)(byte*) malloc::mem#0 [ SCREEN_DIST#0 heap_head#1 ] (  [ SCREEN_DIST#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [5] (void*) SCREEN_ANGLE#0 ← (void*)(byte*) malloc::mem#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 heap_head#1 ] (  [ SCREEN_DIST#0 SCREEN_ANGLE#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [9] (byte*) init_dist_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 heap_head#1 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 heap_head#1 ] ) always clobbers reg byte a 
@@ -7324,8 +7328,8 @@ Statement [247] *((word*) init_squares::squares#2) ← (word) init_squares::sqr#
 Statement [248] (word*) init_squares::squares#1 ← (word*) init_squares::squares#2 + (const byte) SIZEOF_WORD [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ) always clobbers reg byte a 
 Statement [249] (byte~) init_squares::$3 ← (byte) init_squares::i#2 << (byte) 1 [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ) always clobbers reg byte a 
 Statement [251] (word) init_squares::sqr#1 ← (word) init_squares::sqr#2 + (byte~) init_squares::$4 [ SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ) always clobbers reg byte a 
-Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 [ malloc::mem#0 heap_head#12 malloc::size#3 ] ( malloc:2 [ malloc::mem#0 heap_head#12 malloc::size#3 ] malloc:4 [ malloc::mem#0 heap_head#12 malloc::size#3 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#12 malloc::size#3 ] ) always clobbers reg byte a 
-Statement [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
+Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 [ malloc::mem#0 ] ( malloc:2 [ malloc::mem#0 ] malloc:4 [ malloc::mem#0 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 ] ) always clobbers reg byte a 
+Statement [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [3] (void*) SCREEN_DIST#0 ← (void*)(byte*) malloc::mem#0 [ SCREEN_DIST#0 heap_head#1 ] (  [ SCREEN_DIST#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [5] (void*) SCREEN_ANGLE#0 ← (void*)(byte*) malloc::mem#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 heap_head#1 ] (  [ SCREEN_DIST#0 SCREEN_ANGLE#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [9] (byte*) init_dist_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 heap_head#1 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 heap_head#1 ] ) always clobbers reg byte a 
@@ -7449,8 +7453,8 @@ Statement [247] *((word*) init_squares::squares#2) ← (word) init_squares::sqr#
 Statement [248] (word*) init_squares::squares#1 ← (word*) init_squares::squares#2 + (const byte) SIZEOF_WORD [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 ] ) always clobbers reg byte a 
 Statement [249] (byte~) init_squares::$3 ← (byte) init_squares::i#2 << (byte) 1 [ SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::sqr#2 init_squares::i#2 init_squares::squares#1 init_squares::$3 ] ) always clobbers reg byte a 
 Statement [251] (word) init_squares::sqr#1 ← (word) init_squares::sqr#2 + (byte~) init_squares::$4 [ SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ( main:7::init_dist_screen:10::init_squares:171 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 SQUARES#1 init_squares::i#2 init_squares::sqr#1 init_squares::squares#1 ] ) always clobbers reg byte a 
-Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 [ malloc::mem#0 heap_head#12 malloc::size#3 ] ( malloc:2 [ malloc::mem#0 heap_head#12 malloc::size#3 ] malloc:4 [ malloc::mem#0 heap_head#12 malloc::size#3 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#12 malloc::size#3 ] ) always clobbers reg byte a 
-Statement [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
+Statement [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 [ malloc::mem#0 ] ( malloc:2 [ malloc::mem#0 ] malloc:4 [ malloc::mem#0 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 ] ) always clobbers reg byte a 
+Statement [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] main:7::init_dist_screen:10::init_squares:171::malloc:243 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_dist_screen::screen#0 malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ] : zp ZP_BYTE:3 , 
 Potential registers zp ZP_WORD:4 [ doplasma::angle#4 doplasma::angle#0 doplasma::angle#1 ] : zp ZP_WORD:4 , 
@@ -7563,10 +7567,10 @@ Uplift Scope [init_dist_screen] 707: zp ZP_BYTE:52 [ init_dist_screen::xd#0 init
 Uplift Scope [sqr] 338: zp ZP_BYTE:56 [ sqr::val#2 sqr::val#0 sqr::val#1 ] 202: zp ZP_WORD:119 [ sqr::return#3 ] 28.5: zp ZP_WORD:147 [ sqr::return#0 ] 22: zp ZP_WORD:114 [ sqr::return#2 ] 4: zp ZP_BYTE:146 [ sqr::$0 ] 
 Uplift Scope [sqrt] 202: zp ZP_BYTE:127 [ sqrt::return#2 ] 103: zp ZP_WORD:125 [ sqrt::val#0 ] 34.33: zp ZP_BYTE:139 [ sqrt::return#0 ] 4: zp ZP_WORD:133 [ sqrt::found#0 ] 4: zp ZP_WORD:135 [ sqrt::$3 ] 2: zp ZP_WORD:137 [ sqrt::$1 ] 
 Uplift Scope [init_squares] 25.17: zp ZP_WORD:59 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ] 22: zp ZP_BYTE:61 [ init_squares::i#2 init_squares::i#1 ] 22: zp ZP_BYTE:151 [ init_squares::$3 ] 22: zp ZP_BYTE:152 [ init_squares::$4 ] 13.93: zp ZP_WORD:57 [ init_squares::sqr#2 init_squares::sqr#1 ] 
-Uplift Scope [] 16.42: zp ZP_WORD:16 [ print_char_cursor#49 print_char_cursor#18 print_char_cursor#1 ] 15.53: zp ZP_BYTE:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ] 15.29: zp ZP_BYTE:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ] 4.6: zp ZP_WORD:62 [ heap_head#12 heap_head#1 ] 0.05: zp ZP_WORD:68 [ SCREEN_ANGLE#0 ] 0.05: zp ZP_WORD:66 [ SCREEN_DIST#0 ] 0.03: zp ZP_WORD:149 [ SQUARES#1 ] 
+Uplift Scope [] 16.42: zp ZP_WORD:16 [ print_char_cursor#49 print_char_cursor#18 print_char_cursor#1 ] 15.53: zp ZP_BYTE:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ] 15.29: zp ZP_BYTE:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ] 6.6: zp ZP_WORD:62 [ heap_head#12 heap_head#1 ] 0.05: zp ZP_WORD:68 [ SCREEN_ANGLE#0 ] 0.05: zp ZP_WORD:66 [ SCREEN_DIST#0 ] 0.03: zp ZP_WORD:149 [ SQUARES#1 ] 
 Uplift Scope [memset] 33: zp ZP_WORD:12 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_cls] 33: zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplift Scope [malloc] 1: zp ZP_WORD:64 [ malloc::size#3 ] 0.33: zp ZP_WORD:153 [ malloc::mem#0 ] 
+Uplift Scope [malloc] 2: zp ZP_WORD:64 [ malloc::size#3 ] 0.67: zp ZP_WORD:153 [ malloc::mem#0 ] 
 Uplift Scope [print_char] 
 Uplift Scope [sid_rnd_init] 
 Uplift Scope [main] 
@@ -7633,6 +7637,7 @@ Uplifting [] best 1342544 combination zp ZP_BYTE:2 [ sin_offset_x#10 sin_offset_
 Coalescing zero page register with common assignment [ zp ZP_WORD:24 [ init_angle_screen::screen_bottomline#5 init_angle_screen::screen_bottomline#0 init_angle_screen::screen_bottomline#1 ] ] with [ zp ZP_WORD:70 [ init_angle_screen::screen#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:35 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 ] ] with [ zp ZP_WORD:37 [ atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:53 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] ] with [ zp ZP_WORD:131 [ bsearch16u::return#3 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:64 [ malloc::size#3 ] ] with [ zp ZP_WORD:153 [ malloc::mem#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:82 [ make_plasma_charset::$8 ] ] with [ zp ZP_WORD:84 [ make_plasma_charset::$9 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:92 [ init_angle_screen::xw#0 ] ] with [ zp ZP_WORD:97 [ atan2_16::x#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:95 [ init_angle_screen::yw#0 ] ] with [ zp ZP_WORD:99 [ atan2_16::y#0 ] ] - score: 1
@@ -7642,9 +7647,9 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:119 [ sqr::ret
 Coalescing zero page register with common assignment [ zp ZP_WORD:119 [ sqr::return#3 init_dist_screen::xds#0 ] ] with [ zp ZP_WORD:147 [ sqr::return#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:123 [ init_dist_screen::ds#0 ] ] with [ zp ZP_WORD:125 [ sqrt::val#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:133 [ sqrt::found#0 ] ] with [ zp ZP_WORD:135 [ sqrt::$3 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:149 [ SQUARES#1 ] ] with [ zp ZP_WORD:153 [ malloc::mem#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:35 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 ] ] with [ zp ZP_WORD:101 [ atan2_16::return#2 init_angle_screen::angle_w#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:53 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 ] ] with [ zp ZP_WORD:133 [ sqrt::found#0 sqrt::$3 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:64 [ malloc::size#3 malloc::mem#0 ] ] with [ zp ZP_WORD:149 [ SQUARES#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:82 [ make_plasma_charset::$8 make_plasma_charset::$9 ] ] with [ zp ZP_WORD:86 [ make_plasma_charset::$16 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:119 [ sqr::return#3 init_dist_screen::xds#0 sqr::return#0 ] ] with [ zp ZP_WORD:123 [ init_dist_screen::ds#0 sqrt::val#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:35 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::return#2 init_angle_screen::angle_w#0 ] ] with [ zp ZP_WORD:105 [ init_angle_screen::$10 ] ] - score: 1
@@ -7674,7 +7679,7 @@ Allocated (was zp ZP_WORD:53) zp ZP_WORD:44 [ bsearch16u::return#1 bsearch16u::r
 Allocated (was zp ZP_WORD:57) zp ZP_WORD:46 [ init_squares::sqr#2 init_squares::sqr#1 ]
 Allocated (was zp ZP_WORD:59) zp ZP_WORD:48 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ]
 Allocated (was zp ZP_WORD:62) zp ZP_WORD:50 [ heap_head#12 heap_head#1 ]
-Allocated (was zp ZP_WORD:64) zp ZP_WORD:52 [ malloc::size#3 ]
+Allocated (was zp ZP_WORD:64) zp ZP_WORD:52 [ malloc::size#3 malloc::mem#0 SQUARES#1 ]
 Allocated (was zp ZP_WORD:66) zp ZP_WORD:54 [ SCREEN_DIST#0 ]
 Allocated (was zp ZP_WORD:68) zp ZP_WORD:56 [ SCREEN_ANGLE#0 ]
 Allocated (was zp ZP_WORD:72) zp ZP_WORD:58 [ doplasma::sin_x#0 ]
@@ -7689,7 +7694,6 @@ Allocated (was zp ZP_WORD:114) zp ZP_WORD:71 [ sqr::return#2 init_dist_screen::y
 Allocated (was zp ZP_WORD:119) zp ZP_WORD:73 [ sqr::return#3 init_dist_screen::xds#0 sqr::return#0 init_dist_screen::ds#0 sqrt::val#0 bsearch16u::key#0 ]
 Allocated (was zp ZP_WORD:142) zp ZP_WORD:75 [ bsearch16u::pivot#0 ]
 Allocated (was zp ZP_WORD:144) zp ZP_WORD:77 [ bsearch16u::result#0 ]
-Allocated (was zp ZP_WORD:149) zp ZP_WORD:79 [ SQUARES#1 malloc::mem#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -7705,8 +7709,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label print_line_cursor = $400
@@ -7723,7 +7727,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
   .label heap_head = $32
-  .label SQUARES = $4f
+  .label SQUARES = $34
   .label print_char_cursor = $f
   // Screen containing distance to center
   .label SCREEN_DIST = $36
@@ -7746,10 +7750,10 @@ malloc_from_b1:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_START#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   jmp b3
@@ -9340,20 +9344,20 @@ init_squares: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zeropage($34) size)
 malloc: {
-    .label mem = $4f
+    .label mem = $34
     .label size = $34
-    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 -- pbuz1=pbuz2 
+    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 -- pbuz1=pbuz2_minus_vwuz1 
     lda heap_head
+    sec
+    sbc mem
     sta mem
     lda heap_head+1
+    sbc mem+1
     sta mem+1
-    // [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 -- pbuz1=pbuz1_plus_vwuz2 
-    lda heap_head
-    clc
-    adc size
+    // [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     jmp breturn
     // malloc::@return
@@ -9695,8 +9699,8 @@ FINAL SYMBOL TABLE
 (const byte) CORDIC_ITERATIONS_16#0 CORDIC_ITERATIONS_16 = (byte) $f
 (byte*) D018
 (const byte*) D018#0 D018 = (byte*) 53272
-(byte*) HEAP_START
-(const byte*) HEAP_START#0 HEAP_START = (byte*) 49152
+(byte*) HEAP_TOP
+(const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
 (byte*) SCREEN1
@@ -9721,7 +9725,7 @@ FINAL SYMBOL TABLE
  }}
 (const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
 (word*) SQUARES
-(void*) SQUARES#1 SQUARES zp ZP_WORD:79 0.03225806451612903
+(void*) SQUARES#1 SQUARES zp ZP_WORD:52 0.03225806451612903
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 (signed word~) atan2_16::$2 $2 zp ZP_WORD:27 4.0
 (byte~) atan2_16::$23 reg byte a 2002.0
@@ -9865,7 +9869,7 @@ FINAL SYMBOL TABLE
 (byte) doplasma::y#4 y zp ZP_BYTE:10 22.444444444444443
 (byte*) heap_head
 (byte*) heap_head#1 heap_head zp ZP_WORD:50 0.6000000000000001
-(byte*) heap_head#12 heap_head zp ZP_WORD:50 4.0
+(byte*) heap_head#12 heap_head zp ZP_WORD:50 6.0
 (void()) init_angle_screen((byte*) init_angle_screen::screen)
 (word~) init_angle_screen::$10 $10 zp ZP_WORD:31 202.0
 (byte~) init_angle_screen::$12 reg byte a 202.0
@@ -10052,10 +10056,10 @@ FINAL SYMBOL TABLE
 (void*()) malloc((word) malloc::size)
 (label) malloc::@return
 (byte*) malloc::mem
-(byte*) malloc::mem#0 mem zp ZP_WORD:79 0.3333333333333333
+(byte*) malloc::mem#0 mem zp ZP_WORD:52 0.6666666666666666
 (void*) malloc::return
 (word) malloc::size
-(word) malloc::size#3 size zp ZP_WORD:52 1.0
+(word) malloc::size#3 size zp ZP_WORD:52 2.0
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
 (label) memset::@return
@@ -10167,7 +10171,7 @@ zp ZP_WORD:46 [ init_squares::sqr#2 init_squares::sqr#1 ]
 zp ZP_WORD:48 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ]
 reg byte x [ init_squares::i#2 init_squares::i#1 ]
 zp ZP_WORD:50 [ heap_head#12 heap_head#1 ]
-zp ZP_WORD:52 [ malloc::size#3 ]
+zp ZP_WORD:52 [ malloc::size#3 malloc::mem#0 SQUARES#1 ]
 zp ZP_WORD:54 [ SCREEN_DIST#0 ]
 zp ZP_WORD:56 [ SCREEN_ANGLE#0 ]
 zp ZP_WORD:58 [ doplasma::sin_x#0 ]
@@ -10204,7 +10208,6 @@ reg byte a [ bsearch16u::$16 ]
 zp ZP_WORD:75 [ bsearch16u::pivot#0 ]
 zp ZP_WORD:77 [ bsearch16u::result#0 ]
 reg byte a [ sqr::$0 ]
-zp ZP_WORD:79 [ SQUARES#1 malloc::mem#0 ]
 reg byte a [ init_squares::$3 ]
 reg byte a [ init_squares::$4 ]
 
@@ -10225,8 +10228,8 @@ Score: 1206726
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label print_line_cursor = $400
@@ -10243,7 +10246,7 @@ Score: 1206726
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
   .label heap_head = $32
-  .label SQUARES = $4f
+  .label SQUARES = $34
   .label print_char_cursor = $f
   // Screen containing distance to center
   .label SCREEN_DIST = $36
@@ -10263,10 +10266,10 @@ bbegin:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_START#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [255] phi (byte*) heap_head#12 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   // @3
@@ -11776,22 +11779,22 @@ init_squares: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zeropage($34) size)
 malloc: {
-    .label mem = $4f
+    .label mem = $34
     .label size = $34
-    // mem = heap_head
-    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 -- pbuz1=pbuz2 
+    // mem = heap_head-size
+    // [256] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3 -- pbuz1=pbuz2_minus_vwuz1 
     lda heap_head
+    sec
+    sbc mem
     sta mem
     lda heap_head+1
+    sbc mem+1
     sta mem+1
-    // heap_head+= size
-    // [257] (byte*) heap_head#1 ← (byte*) heap_head#12 + (word) malloc::size#3 -- pbuz1=pbuz1_plus_vwuz2 
-    lda heap_head
-    clc
-    adc size
+    // heap_head = mem
+    // [257] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     // malloc::@return
     // }

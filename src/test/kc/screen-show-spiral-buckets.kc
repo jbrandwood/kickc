@@ -5,7 +5,6 @@ import "stdlib"
 import "sqr"
 import "atan2"
 
-
 // Screen containing distance to center
 const byte* SCREEN_DIST = malloc(1000);
 // Screen containing angle to center
@@ -49,18 +48,39 @@ void main() {
     */
 }
 
+// The number of buckets in our bucket sort
+const byte NUM_BUCKETS = 0x30;
+
 // Array containing the bucket size for each of the 256 buckets
-const byte* BUCKET_SIZES = malloc(0x80);
+const byte[] BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
+//const word*[] BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
 
 void init_buckets() {
     // Init bucket sizes to 0
-    for(byte i:0..0x7f) BUCKET_SIZES[i]=0;
+    for(byte i:0..NUM_BUCKETS-1) BUCKET_SIZES[i]=0;
     // first find bucket sizes - by counting number of chars with each distance value
     byte* dist = SCREEN_DIST;
-    for( word i:0..999 ) {
-        BUCKET_SIZES[*dist]++;
-        dist++;
+    for( word i:0..999) {
+        BUCKET_SIZES[*dist++]++;
     }
+    /*
+    // Allocate the buckets
+    for( byte i:0..NUM_BUCKETS-1) {
+        BUCKETS[i] = malloc(BUCKET_SIZES[i]*sizeof(byte*));
+    }
+    // Iterate all distances and fill the buckets with indices into the screens
+    const byte[] BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
+    for(byte i:0..NUM_BUCKETS-1) BUCKET_IDX[i]=0;
+    dist = SCREEN_DIST;
+    for(word i:0..999) {
+        byte distance = *dist++;
+        word* bucket = BUCKETS[distance];
+        byte idx = BUCKET_IDX[distance];
+        bucket[idx] = dist-SCREEN_DIST;
+        BUCKET_IDX[distance]++;
+    }
+    */
+
 }
 
 

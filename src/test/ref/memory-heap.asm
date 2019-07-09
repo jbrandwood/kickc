@@ -2,16 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label heap_head = 2
 main: {
     .label screen = $400
     .label buf1 = 4
     .label buf2 = 6
-    lda #<HEAP_START
+    lda #<HEAP_TOP
     sta heap_head
-    lda #>HEAP_START
+    lda #>HEAP_TOP
     sta heap_head+1
     jsr malloc
     lda malloc.mem
@@ -50,15 +50,15 @@ free: {
 malloc: {
     .label mem = 6
     lda heap_head
+    sec
+    sbc #<$64
     sta mem
     lda heap_head+1
+    sbc #>$64
     sta mem+1
-    lda #$64
-    clc
-    adc heap_head
+    lda mem
     sta heap_head
-    bcc !+
-    inc heap_head+1
-  !:
+    lda mem+1
+    sta heap_head+1
     rts
 }

@@ -1948,21 +1948,27 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
       @Override
       public Void visitExprPostMod(KickCParser.ExprPostModContext ctx) {
+         // First handle the ++/-- modifier
          RValue child = (RValue) mainParser.visit(ctx.expr());
          String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
          Operator operator = Operators.getUnary(op);
          PrePostModifier modifier = new PrePostModifier(child, operator);
          postMods.add(modifier);
+         // First visit sub-expressions in case they have ++/-- themselves
+         this.visit(ctx.expr());
          return null;
       }
 
       @Override
       public Void visitExprPreMod(KickCParser.ExprPreModContext ctx) {
+         // First handle the ++/-- modifier
          RValue child = (RValue) mainParser.visit(ctx.expr());
          String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
          Operator operator = Operators.getUnary(op);
          PrePostModifier modifier = new PrePostModifier(child, operator);
          preMods.add(modifier);
+         // Then visit sub-expressions in case they have ++/--
+         this.visit(ctx.expr());
          return null;
       }
 

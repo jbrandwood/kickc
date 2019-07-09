@@ -8,8 +8,8 @@
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label print_line_cursor = $400
@@ -26,7 +26,7 @@
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
   .label heap_head = $32
-  .label SQUARES = $4f
+  .label SQUARES = $34
   .label print_char_cursor = $f
   // Screen containing distance to center
   .label SCREEN_DIST = $36
@@ -39,9 +39,9 @@ bbegin:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  lda #<HEAP_START
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   lda malloc.mem
@@ -913,18 +913,18 @@ init_squares: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zeropage($34) size)
 malloc: {
-    .label mem = $4f
+    .label mem = $34
     .label size = $34
     lda heap_head
+    sec
+    sbc mem
     sta mem
     lda heap_head+1
+    sbc mem+1
     sta mem+1
-    lda heap_head
-    clc
-    adc size
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     rts
 }

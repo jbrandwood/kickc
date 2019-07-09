@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInnerIncrementProblem() throws IOException, URISyntaxException {
+      compileAndCompare("inner-increment-problem", log());
+   }
+
+   @Test
    public void testFillSquare() throws IOException, URISyntaxException {
       compileAndCompare("fill-square");
    }

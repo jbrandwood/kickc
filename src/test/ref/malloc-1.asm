@@ -3,8 +3,8 @@
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label WORDS = malloc.return
 bbegin:
   jsr malloc
@@ -39,6 +39,8 @@ main: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = $200
+    .label mem = HEAP_TOP-size
+    .label return = mem
     rts
 }

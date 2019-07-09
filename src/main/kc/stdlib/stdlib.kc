@@ -1,22 +1,23 @@
 // Implementation of functions found int C stdlib.h / stdlib.c
 
-// Start of the heap used by malloc()
-unsigned char* HEAP_START = 0xc000;
+// Top of the heap used by malloc()
+unsigned char* HEAP_TOP = 0xa000;
 
-// Head of the heap. Moved forward for each malloc()
-unsigned char* heap_head = HEAP_START;
+// Head of the heap. Moved backward each malloc()
+unsigned char* heap_head = HEAP_TOP;
 
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 void* malloc(unsigned int size) {
-    unsigned char* mem = heap_head;
-    heap_head+= size;
+    unsigned char* mem = heap_head-size;
+    heap_head = mem;
     return mem;
 }
 
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 void free(void* ptr) {
+    // TODO: So far no support for freeing stuff
 }
 
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.

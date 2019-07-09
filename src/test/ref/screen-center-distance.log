@@ -6,7 +6,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer increment (word*) init_squares::squares ← ++ (word*) init_squares::squares
 Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUARES
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
-Identified constant variable (byte*) HEAP_START
+Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) main::BASE_SCREEN
 Identified constant variable (byte*) main::BASE_CHARSET
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -65,14 +65,15 @@ Culled Empty Block (label) init_dist_screen::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
-  (byte*) heap_head#0 ← (byte*) HEAP_START#0
+  (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
+  (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
   to:@3
 malloc: scope:[malloc]  from init_squares
   (word) malloc::size#1 ← phi( init_squares/(word) malloc::size#0 )
   (byte*) heap_head#10 ← phi( init_squares/(byte*) heap_head#19 )
-  (byte*) malloc::mem#0 ← (byte*) heap_head#10
-  (byte*) heap_head#1 ← (byte*) heap_head#10 + (word) malloc::size#1
+  (byte*~) malloc::$0 ← (byte*) heap_head#10 - (word) malloc::size#1
+  (byte*) malloc::mem#0 ← (byte*~) malloc::$0
+  (byte*) heap_head#1 ← (byte*) malloc::mem#0
   (void*) malloc::return#0 ← ((void*)) (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
@@ -830,8 +831,8 @@ SYMBOL TABLE SSA
 (byte*) D018#0
 (byte[]) FONT_HEX_PROTO
 (byte[]) FONT_HEX_PROTO#0
-(byte*) HEAP_START
-(byte*) HEAP_START#0
+(byte*) HEAP_TOP
+(byte*) HEAP_TOP#0
 (byte) NUM_SQUARES
 (byte) NUM_SQUARES#0
 (byte) NUM_SQUARES#1
@@ -1368,6 +1369,7 @@ SYMBOL TABLE SSA
 (byte*) main::toD0182_screen#0
 (byte*) main::toD0182_screen#1
 (void*()) malloc((word) malloc::size)
+(byte*~) malloc::$0
 (label) malloc::@return
 (byte*) malloc::mem
 (byte*) malloc::mem#0
@@ -1583,7 +1585,7 @@ Adding number conversion cast (unumber) $28 in (byte*) init_dist_screen::screen_
 Successful SSA optimization PassNAddNumberTypeConversions
 Adding number conversion cast (byte) to elements in (byte[]) FONT_HEX_PROTO#0 ← { (byte)(number) 2, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 1, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 1, (byte)(number) 6, (byte)(number) 3, (byte)(number) 4, (byte)(number) 6, (byte)(number) 5, (byte)(number) 2, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 2, (byte)(number) 5, (byte)(number) 3, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 7, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 2, (byte)(number) 5, (byte)(number) 4, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 7, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 4 }
 Successful SSA optimization PassNAddArrayNumberTypeConversions
-Inlining cast (byte*) HEAP_START#0 ← (byte*)(number) $c000
+Inlining cast (byte*) HEAP_TOP#0 ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (signed word~) bsearch16u::$8 ← (signed word)(word) bsearch16u::key#1
 Inlining cast (signed word~) bsearch16u::$9 ← (signed word)*((word*) bsearch16u::pivot#0)
@@ -1618,7 +1620,7 @@ Inlining cast (byte) NUM_SQUARES#3 ← (unumber)(number) $30
 Inlining cast (byte) init_dist_screen::x#0 ← (unumber)(number) 0
 Inlining cast (byte) init_dist_screen::xb#0 ← (unumber)(number) $27
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 49152
+Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -1852,10 +1854,11 @@ Inferred type updated to byte in (unumber~) init_dist_screen::$15 ← (byte~) in
 Inferred type updated to byte in (unumber~) init_dist_screen::$12 ← (byte) $27 - (byte) init_dist_screen::x2#2
 Inferred type updated to byte in (unumber~) init_dist_screen::$13 ← (byte~) init_dist_screen::$12
 Inferred type updated to byte for (unumber~) init_dist_screen::$16
-Inversing boolean not [24] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [23] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#0 == (signed byte) 0
-Inversing boolean not [31] (bool~) bsearch16u::$14 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [30] (bool~) bsearch16u::$13 ← (signed word) bsearch16u::result#1 > (signed byte) 0
+Inversing boolean not [25] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [24] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#0 == (signed byte) 0
+Inversing boolean not [32] (bool~) bsearch16u::$14 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [31] (bool~) bsearch16u::$13 ← (signed word) bsearch16u::result#1 > (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) HEAP_START#0 = (byte*) heap_head#0 (byte*) heap_head#43 (byte*) heap_head#38 (byte*) heap_head#34 (byte*) heap_head#30 (byte*) heap_head#29 (byte*) heap_head#25 
+Alias (byte*) HEAP_TOP#0 = (byte*) heap_head#0 (byte*) heap_head#43 (byte*) heap_head#38 (byte*) heap_head#34 (byte*) heap_head#30 (byte*) heap_head#29 (byte*) heap_head#25 
+Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#3 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#11 (byte*) heap_head#2 
 Alias (byte) bsearch16u::num#3 = (byte) bsearch16u::num#4 (byte) bsearch16u::num#8 (byte) bsearch16u::num#6 
@@ -2025,7 +2028,7 @@ Identical Phi Values (byte) init_font_hex::c#2 (byte) init_font_hex::c#5
 Identical Phi Values (dword) print_dword_at::dw#1 (dword) print_dword_at::dw#0
 Identical Phi Values (byte*) print_dword_at::at#1 (byte*) print_dword_at::at#0
 Identical Phi Values (byte) NUM_SQUARES#14 (byte) NUM_SQUARES#0
-Identical Phi Values (byte*) heap_head#21 (byte*) HEAP_START#0
+Identical Phi Values (byte*) heap_head#21 (byte*) HEAP_TOP#0
 Identical Phi Values (word*) SQUARES#21 (word*) SQUARES#0
 Identical Phi Values (byte) NUM_SQUARES#1 (byte) NUM_SQUARES#11
 Identical Phi Values (byte*) heap_head#14 (byte*) heap_head#17
@@ -2048,27 +2051,27 @@ Identical Phi Values (word*) SQUARES#16 (word*) SQUARES#12
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (word*) SQUARES#9 (word*) SQUARES#18
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [162] (byte~) clock_start::$2 ← (byte) CIA_TIMER_CONTROL_STOP#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
-Identified duplicate assignment right side [169] (byte~) clock_start::$6 ← (byte) CIA_TIMER_CONTROL_START#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
+Identified duplicate assignment right side [163] (byte~) clock_start::$2 ← (byte) CIA_TIMER_CONTROL_STOP#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
+Identified duplicate assignment right side [170] (byte~) clock_start::$6 ← (byte) CIA_TIMER_CONTROL_START#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) bsearch16u::$5 [13] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@7
-Simple Condition (bool~) bsearch16u::$12 [25] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@9
-Simple Condition (bool~) bsearch16u::$0 [28] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
-Simple Condition (bool~) bsearch16u::$14 [32] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
-Simple Condition (bool~) init_squares::$5 [77] if((byte) init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1
-Simple Condition (bool~) init_font_hex::$3 [134] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
-Simple Condition (bool~) init_font_hex::$4 [144] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
-Simple Condition (bool~) init_font_hex::$5 [149] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
-Simple Condition (bool~) init_dist_screen::$3 [296] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
-Simple Condition (bool~) init_dist_screen::$11 [317] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@6
-Simple Condition (bool~) init_dist_screen::$20 [347] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
-Simple Condition (bool~) init_dist_screen::$21 [353] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
+Simple Condition (bool~) bsearch16u::$5 [14] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@7
+Simple Condition (bool~) bsearch16u::$12 [26] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@9
+Simple Condition (bool~) bsearch16u::$0 [29] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
+Simple Condition (bool~) bsearch16u::$14 [33] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
+Simple Condition (bool~) init_squares::$5 [78] if((byte) init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1
+Simple Condition (bool~) init_font_hex::$3 [135] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
+Simple Condition (bool~) init_font_hex::$4 [145] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
+Simple Condition (bool~) init_font_hex::$5 [150] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
+Simple Condition (bool~) init_dist_screen::$3 [297] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
+Simple Condition (bool~) init_dist_screen::$11 [318] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@6
+Simple Condition (bool~) init_dist_screen::$20 [348] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
+Simple Condition (bool~) init_dist_screen::$21 [354] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [41] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [48] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [152] (byte[]) FONT_HEX_PROTO#0 ← { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
+Constant right-side identified [42] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [49] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [153] (byte[]) FONT_HEX_PROTO#0 ← { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) HEAP_START#0 = (byte*) 49152
+Constant (const byte*) HEAP_TOP#0 = (byte*) 40960
 Constant (const byte) bsearch16u::$17 = 1*SIZEOF_WORD
 Constant (const byte) bsearch16u::$18 = 1*SIZEOF_WORD
 Constant (const byte) NUM_SQUARES#0 = $ff
@@ -2100,7 +2103,6 @@ Constant (const byte) init_dist_screen::y#0 = 0
 Constant (const byte) init_dist_screen::x#0 = 0
 Constant (const byte) init_dist_screen::xb#0 = $27
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) malloc::mem#0 = HEAP_START#0
 Constant (const byte*) init_font_hex::proto_hi#0 = FONT_HEX_PROTO#0
 Constant (const byte*) init_font_hex::proto_lo#0 = FONT_HEX_PROTO#0
 Constant (const byte*) init_font_hex::charset#1 = CHARSET#0
@@ -2111,37 +2113,34 @@ Constant (const byte*) print_dword_at::at#0 = main::BASE_SCREEN#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_word_at::at#0 = print_dword_at::at#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)malloc::mem#0 in [5] (void*) malloc::return#0 ← (void*)(const byte*) malloc::mem#0
-Constant value identified (word)main::toD0181_screen#0 in [224] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [228] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (word)main::BASE_SCREEN#0 in [262] (word~) main::toD0182_$0#0 ← (word)(const byte*) main::BASE_SCREEN#0
-Constant value identified (word)main::BASE_CHARSET#0 in [266] (word~) main::toD0182_$4#0 ← (word)(const byte*) main::BASE_CHARSET#0
+Constant value identified (word)main::toD0181_screen#0 in [225] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [229] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::BASE_SCREEN#0 in [263] (word~) main::toD0182_$0#0 ← (word)(const byte*) main::BASE_SCREEN#0
+Constant value identified (word)main::BASE_CHARSET#0 in [267] (word~) main::toD0182_$4#0 ← (word)(const byte*) main::BASE_CHARSET#0
 Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [132] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
-Resolved ranged comparison value [134] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
-Resolved ranged next value [142] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
-Resolved ranged comparison value [144] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
-Resolved ranged next value [147] init_font_hex::c#1 ← ++ init_font_hex::c#5 to ++
-Resolved ranged comparison value [149] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
-Resolved ranged next value [351] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
-Resolved ranged comparison value [353] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
-Rewriting conditional comparison [347] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
-Simplifying expression containing zero init_font_hex::charset#2 in [123] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
-Simplifying expression containing zero CIA_TIMER_CONTROL_CONTINUOUS#0 in [159] (byte~) clock_start::$0 ← (const byte) CIA_TIMER_CONTROL_STOP#0 | (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0
-Simplifying expression containing zero clock_start::$0 in [160] (byte~) clock_start::$1 ← (byte~) clock_start::$0 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0
-Simplifying expression containing zero CIA_TIMER_CONTROL_START#0 in [166] (byte~) clock_start::$4 ← (const byte) CIA_TIMER_CONTROL_START#0 | (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0
-Simplifying expression containing zero clock_start::$6 in [170] (byte~) clock_start::$7 ← (byte~) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0
+Resolved ranged next value [133] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
+Resolved ranged comparison value [135] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
+Resolved ranged next value [143] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
+Resolved ranged comparison value [145] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
+Resolved ranged next value [148] init_font_hex::c#1 ← ++ init_font_hex::c#5 to ++
+Resolved ranged comparison value [150] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
+Resolved ranged next value [352] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
+Resolved ranged comparison value [354] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
+Rewriting conditional comparison [348] if((byte) init_dist_screen::x#1<=(byte) $13) goto init_dist_screen::@5
+Simplifying expression containing zero init_font_hex::charset#2 in [124] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
+Simplifying expression containing zero CIA_TIMER_CONTROL_CONTINUOUS#0 in [160] (byte~) clock_start::$0 ← (const byte) CIA_TIMER_CONTROL_STOP#0 | (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0
+Simplifying expression containing zero clock_start::$0 in [161] (byte~) clock_start::$1 ← (byte~) clock_start::$0 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0
+Simplifying expression containing zero CIA_TIMER_CONTROL_START#0 in [167] (byte~) clock_start::$4 ← (const byte) CIA_TIMER_CONTROL_START#0 | (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0
+Simplifying expression containing zero clock_start::$6 in [171] (byte~) clock_start::$7 ← (byte~) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [67] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
+Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [68] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
 Eliminating unused variable - keeping the phi block (byte*) heap_head#46
 Eliminating unused constant (const byte) NUM_SQUARES#0
 Eliminating unused constant (const word*) SQUARES#0
 Eliminating unused constant (const byte) CIA_TIMER_CONTROL_STOP#0
 Eliminating unused constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte*) heap_head#1 and assignment [0] (byte*) heap_head#1 ← (const byte*) HEAP_START#0 + (word) malloc::size#0
-Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (word) malloc::size#0 and assignment [21] (word) malloc::size#0 ← (const byte) NUM_SQUARES#3 * (const byte) SIZEOF_WORD
+Eliminating unused variable (byte*) heap_head#1 and assignment [1] (byte*) heap_head#1 ← (byte*) malloc::mem#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 5 in if((byte) init_font_hex::i#1!=(number) 5) goto init_font_hex::@3
 Adding number conversion cast (unumber) $10 in if((byte) init_font_hex::c1#1!=(number) $10) goto init_font_hex::@2
@@ -2176,12 +2175,13 @@ Identical Phi Values (byte) init_font_hex::c#5 (byte) init_font_hex::c#6
 Identical Phi Values (word*) SQUARES#18 (word*) SQUARES#1
 Identical Phi Values (byte) NUM_SQUARES#35 (const byte) NUM_SQUARES#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [26] (byte~) init_squares::$2 ← (const byte) NUM_SQUARES#3 - (byte) 1
-Constant right-side identified [53] (byte) init_font_hex::idx#1 ← ++ (const byte) init_font_hex::idx#0
-Constant right-side identified [100] (byte*) print_word_at::at#1 ← (const byte*) print_dword_at::at#0 + (byte) 4
-Constant right-side identified [147] (byte*) init_dist_screen::screen_bottomline#0 ← (const byte*) init_dist_screen::screen#0 + (word)(number) $28*(number) $18
+Constant right-side identified [22] (word) malloc::size#0 ← (const byte) NUM_SQUARES#3 * (const byte) SIZEOF_WORD
+Constant right-side identified [28] (byte~) init_squares::$2 ← (const byte) NUM_SQUARES#3 - (byte) 1
+Constant right-side identified [55] (byte) init_font_hex::idx#1 ← ++ (const byte) init_font_hex::idx#0
+Constant right-side identified [102] (byte*) print_word_at::at#1 ← (const byte*) print_dword_at::at#0 + (byte) 4
+Constant right-side identified [149] (byte*) init_dist_screen::screen_bottomline#0 ← (const byte*) init_dist_screen::screen#0 + (word)(number) $28*(number) $18
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void*) malloc::return#0 = (void*)malloc::mem#0
+Constant (const word) malloc::size#0 = NUM_SQUARES#3*SIZEOF_WORD
 Constant (const byte) init_squares::$2 = NUM_SQUARES#3-1
 Constant (const byte) bsearch16u::num#2 = NUM_SQUARES#3
 Constant (const byte) init_font_hex::idx#1 = ++init_font_hex::idx#0
@@ -2194,15 +2194,9 @@ Constant (const word) main::toD0182_$0#0 = (word)main::BASE_SCREEN#0
 Constant (const word) main::toD0182_$4#0 = (word)main::BASE_CHARSET#0
 Constant (const byte*) init_dist_screen::screen_bottomline#0 = init_dist_screen::screen#0+(word)$28*$18
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) malloc::return#2 = malloc::return#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) init_squares::$1 = malloc::return#2
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word*)init_squares::$1 in [24] (word*) SQUARES#1 ← (word*)(const void*) init_squares::$1
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [33] init_squares::i#1 ← ++ init_squares::i#2 to ++
-Resolved ranged comparison value [34] if(init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1 to (const byte) init_squares::$2+(number) 1
-Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 in [79] (byte~) clock_start::$3 ← (const byte) clock_start::$1 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
+Resolved ranged next value [35] init_squares::i#1 ← ++ init_squares::i#2 to ++
+Resolved ranged comparison value [36] if(init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1 to (const byte) init_squares::$2+(number) 1
+Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 in [81] (byte~) clock_start::$3 ← (const byte) clock_start::$1 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) init_squares::$2+1 in if((byte) init_squares::i#1!=(const byte) init_squares::$2+(number) 1) goto init_squares::@1
 Adding number conversion cast (unumber) 1 in if((byte) init_squares::i#1!=(unumber)(const byte) init_squares::$2+(number) 1) goto init_squares::@1
@@ -2212,13 +2206,14 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [73] (byte~) clock_start::$5 ← (const byte) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
-Constant right-side identified [104] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
-Constant right-side identified [107] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
-Constant right-side identified [120] (word~) main::toD0182_$1#0 ← (const word) main::toD0182_$0#0 & (word) $3fff
-Constant right-side identified [123] (byte~) main::toD0182_$5#0 ← > (const word) main::toD0182_$4#0
+Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) HEAP_TOP#0 - (const word) malloc::size#0
+Constant right-side identified [77] (byte~) clock_start::$5 ← (const byte) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
+Constant right-side identified [108] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
+Constant right-side identified [111] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
+Constant right-side identified [124] (word~) main::toD0182_$1#0 ← (const word) main::toD0182_$0#0 & (word) $3fff
+Constant right-side identified [127] (byte~) main::toD0182_$5#0 ← > (const word) main::toD0182_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) SQUARES#1 = (word*)init_squares::$1
+Constant (const byte*) malloc::mem#0 = HEAP_TOP#0-malloc::size#0
 Constant (const byte) clock_start::$3 = CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Constant (const byte) clock_start::$5 = clock_start::$6|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Constant (const word) main::toD0181_$1#0 = main::toD0181_$0#0&$3fff
@@ -2226,28 +2221,38 @@ Constant (const byte) main::toD0181_$5#0 = >main::toD0181_$4#0
 Constant (const word) main::toD0182_$1#0 = main::toD0182_$0#0&$3fff
 Constant (const byte) main::toD0182_$5#0 = >main::toD0182_$4#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word*) init_squares::squares#0 = SQUARES#1
-Constant (const word*) bsearch16u::items#1 = SQUARES#1
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [99] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
-Constant right-side identified [101] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
-Constant right-side identified [113] (word~) main::toD0182_$2#0 ← (const word) main::toD0182_$1#0 * (byte) 4
-Constant right-side identified [115] (byte~) main::toD0182_$6#0 ← (const byte) main::toD0182_$5#0 / (byte) 4
+Constant value identified (void*)malloc::mem#0 in [1] (void*) malloc::return#0 ← (void*)(const byte*) malloc::mem#0
+Successful SSA optimization Pass2ConstantValues
+Constant right-side identified [105] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
+Constant right-side identified [107] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
+Constant right-side identified [119] (word~) main::toD0182_$2#0 ← (const word) main::toD0182_$1#0 * (byte) 4
+Constant right-side identified [121] (byte~) main::toD0182_$6#0 ← (const byte) main::toD0182_$5#0 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void*) malloc::return#0 = (void*)malloc::mem#0
 Constant (const word) main::toD0181_$2#0 = main::toD0181_$1#0*4
 Constant (const byte) main::toD0181_$6#0 = main::toD0181_$5#0/4
 Constant (const word) main::toD0182_$2#0 = main::toD0182_$1#0*4
 Constant (const byte) main::toD0182_$6#0 = main::toD0182_$5#0/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [99] (byte~) main::toD0181_$3#0 ← > (const word) main::toD0181_$2#0
-Constant right-side identified [100] (byte~) main::toD0181_$7#0 ← (const byte) main::toD0181_$6#0 & (byte) $f
-Constant right-side identified [111] (byte~) main::toD0182_$3#0 ← > (const word) main::toD0182_$2#0
-Constant right-side identified [112] (byte~) main::toD0182_$7#0 ← (const byte) main::toD0182_$6#0 & (byte) $f
+Constant (const void*) malloc::return#2 = malloc::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const void*) init_squares::$1 = malloc::return#2
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (word*)init_squares::$1 in [24] (word*) SQUARES#1 ← (word*)(const void*) init_squares::$1
+Successful SSA optimization Pass2ConstantValues
+Constant right-side identified [102] (byte~) main::toD0181_$3#0 ← > (const word) main::toD0181_$2#0
+Constant right-side identified [103] (byte~) main::toD0181_$7#0 ← (const byte) main::toD0181_$6#0 & (byte) $f
+Constant right-side identified [114] (byte~) main::toD0182_$3#0 ← > (const word) main::toD0182_$2#0
+Constant right-side identified [115] (byte~) main::toD0182_$7#0 ← (const byte) main::toD0182_$6#0 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word*) SQUARES#1 = (word*)init_squares::$1
 Constant (const byte) main::toD0181_$3#0 = >main::toD0181_$2#0
 Constant (const byte) main::toD0181_$7#0 = main::toD0181_$6#0&$f
 Constant (const byte) main::toD0182_$3#0 = >main::toD0182_$2#0
 Constant (const byte) main::toD0182_$7#0 = main::toD0182_$6#0&$f
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const word*) init_squares::squares#0 = SQUARES#1
+Constant (const word*) bsearch16u::items#1 = SQUARES#1
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [99] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$3#0 | (const byte) main::toD0181_$7#0
 Constant right-side identified [109] (byte) main::toD0182_return#0 ← (const byte) main::toD0182_$3#0 | (const byte) main::toD0182_$7#0
@@ -2329,7 +2334,6 @@ Constant inlined main::toD0181_$6#0 = >(word)(const byte*) CHARSET#0/(byte) 4
 Constant inlined main::toD0181_$2#0 = (word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
 Constant inlined main::toD0181_$4#0 = (word)(const byte*) CHARSET#0
 Constant inlined main::toD0182_$1#0 = (word)(const byte*) main::BASE_SCREEN#0&(word) $3fff
-Constant inlined malloc::mem#0 = (const byte*) HEAP_START#0
 Constant inlined init_font_hex::c#0 = (byte) 0
 Constant inlined init_squares::$1 = (const void*) malloc::return#0
 Constant inlined print_word_at::at#1 = (const byte*) main::BASE_SCREEN#0+(byte) 4
@@ -2812,7 +2816,7 @@ VARIABLE REGISTER WEIGHTS
 (dword) CLOCKS_PER_INIT
 (byte*) D018
 (byte[]) FONT_HEX_PROTO
-(byte*) HEAP_START
+(byte*) HEAP_TOP
 (byte) NUM_SQUARES
 (byte*) SCREEN
 (word*) SQUARES
@@ -3205,8 +3209,8 @@ INITIAL ASM
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label D018 = $d018
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
@@ -4109,7 +4113,9 @@ init_squares: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = NUM_SQUARES*SIZEOF_WORD
+    .label mem = HEAP_TOP-size
+    .label return = mem
     jmp breturn
     // malloc::@return
   breturn:
@@ -4711,8 +4717,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label D018 = $d018
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
@@ -5495,7 +5501,9 @@ init_squares: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = NUM_SQUARES*SIZEOF_WORD
+    .label mem = HEAP_TOP-size
+    .label return = mem
     jmp breturn
     // malloc::@return
   breturn:
@@ -5897,8 +5905,8 @@ FINAL SYMBOL TABLE
 (const byte*) D018#0 D018 = (byte*) 53272
 (byte[]) FONT_HEX_PROTO
 (const byte[]) FONT_HEX_PROTO#0 FONT_HEX_PROTO = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
-(byte*) HEAP_START
-(const byte*) HEAP_START#0 HEAP_START = (byte*) 49152
+(byte*) HEAP_TOP
+(const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
 (byte*) SCREEN
@@ -6090,9 +6098,11 @@ FINAL SYMBOL TABLE
 (void*()) malloc((word) malloc::size)
 (label) malloc::@return
 (byte*) malloc::mem
+(const byte*) malloc::mem#0 mem = (const byte*) HEAP_TOP#0-(const word) malloc::size#0
 (void*) malloc::return
-(const void*) malloc::return#0 return = (void*)(const byte*) HEAP_START#0
+(const void*) malloc::return#0 return = (void*)(const byte*) malloc::mem#0
 (word) malloc::size
+(const word) malloc::size#0 size = (const byte) NUM_SQUARES#3*(const byte) SIZEOF_WORD
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0 reg byte a 4.0
 (byte~) print_byte_at::$2 reg byte y 2.0
@@ -6217,8 +6227,8 @@ Score: 203337
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label D018 = $d018
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
@@ -6954,7 +6964,9 @@ init_squares: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = NUM_SQUARES*SIZEOF_WORD
+    .label mem = HEAP_TOP-size
+    .label return = mem
     // malloc::@return
     // [131] return 
     rts

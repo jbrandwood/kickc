@@ -4,13 +4,16 @@
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  .const SIZEOF_BYTE = 1
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
+  // The number of buckets in our bucket sort
+  .const NUM_BUCKETS = $30
   .const NUM_SQUARES = $30
   .label heap_head = $24
-  .label SQUARES = $37
+  .label SQUARES = $26
   // Screen containing distance to center
   .label SCREEN_DIST = 2
   // Screen containing angle to center
@@ -22,9 +25,9 @@ bbegin:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  lda #<HEAP_START
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   lda malloc.mem
@@ -40,7 +43,7 @@ bbegin:
   sta SCREEN_ANGLE
   lda malloc.mem+1
   sta SCREEN_ANGLE+1
-  lda #$80
+  lda #NUM_BUCKETS*SIZEOF_BYTE
   sta malloc.size
   lda #0
   sta malloc.size+1
@@ -61,6 +64,7 @@ main: {
     jsr init_buckets
     rts
 }
+//const word*[] BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
 init_buckets: {
     .label dist = 2
     .label i1 = 4
@@ -70,7 +74,7 @@ init_buckets: {
     lda #0
     sta (BUCKET_SIZES),y
     iny
-    cpy #$80
+    cpy #NUM_BUCKETS-1+1
     bne b1
   // first find bucket sizes - by counting number of chars with each distance value
     sta i1
@@ -661,18 +665,18 @@ init_squares: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zeropage($26) size)
 malloc: {
-    .label mem = $37
+    .label mem = $26
     .label size = $26
     lda heap_head
+    sec
+    sbc mem
     sta mem
     lda heap_head+1
+    sbc mem+1
     sta mem+1
-    lda heap_head
-    clc
-    adc size
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     rts
 }

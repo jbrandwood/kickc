@@ -13,8 +13,8 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -79,9 +79,9 @@
   .label SCREEN_COPY = $2b
   .label SCREEN_DIST = $2d
 bbegin:
-  lda #<HEAP_START
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   lda malloc.mem
@@ -943,15 +943,15 @@ atan2_16: {
 malloc: {
     .label mem = $2d
     lda heap_head
+    sec
+    sbc #<$3e8
     sta mem
     lda heap_head+1
+    sbc #>$3e8
     sta mem+1
-    clc
-    lda heap_head
-    adc #<$3e8
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc #>$3e8
+    lda mem+1
     sta heap_head+1
     rts
 }

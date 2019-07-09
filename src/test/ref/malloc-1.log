@@ -2,7 +2,7 @@ Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + 
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) main::w ← ++ (word*) main::w
-Identified constant variable (byte*) HEAP_START
+Identified constant variable (byte*) HEAP_TOP
 Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
@@ -10,14 +10,15 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
-  (byte*) heap_head#0 ← (byte*) HEAP_START#0
+  (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
+  (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
   to:@3
 malloc: scope:[malloc]  from @3
   (word) malloc::size#1 ← phi( @3/(word) malloc::size#0 )
   (byte*) heap_head#4 ← phi( @3/(byte*) heap_head#7 )
-  (byte*) malloc::mem#0 ← (byte*) heap_head#4
-  (byte*) heap_head#1 ← (byte*) heap_head#4 + (word) malloc::size#1
+  (byte*~) malloc::$0 ← (byte*) heap_head#4 - (word) malloc::size#1
+  (byte*) malloc::mem#0 ← (byte*~) malloc::$0
+  (byte*) heap_head#1 ← (byte*) malloc::mem#0
   (void*) malloc::return#0 ← ((void*)) (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
@@ -73,8 +74,8 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) HEAP_START
-(byte*) HEAP_START#0
+(byte*) HEAP_TOP
+(byte*) HEAP_TOP#0
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) WORDS
 (word*) WORDS#0
@@ -102,6 +103,7 @@ SYMBOL TABLE SSA
 (word*) main::w#1
 (word*) main::w#2
 (void*()) malloc((word) malloc::size)
+(byte*~) malloc::$0
 (label) malloc::@return
 (byte*) malloc::mem
 (byte*) malloc::mem#0
@@ -117,43 +119,38 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $200 in (word) malloc::size#0 ← (number) $200
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) HEAP_START#0 ← (byte*)(number) $c000
+Inlining cast (byte*) HEAP_TOP#0 ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (word) malloc::size#0 ← (unumber)(number) $200
 Inlining cast (word*) WORDS#0 ← (word*)(void*~) $0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 49152
+Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast $200
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) HEAP_START#0 = (byte*) heap_head#0 (byte*) heap_head#7 
+Alias (byte*) HEAP_TOP#0 = (byte*) heap_head#0 (byte*) heap_head#7 
+Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#3 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#5 (byte*) heap_head#2 
 Alias (void*) malloc::return#2 = (void*) malloc::return#4 
 Alias (byte*) heap_head#3 = (byte*) heap_head#6 
 Alias (word*) WORDS#0 = (word*) WORDS#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) heap_head#4 (byte*) HEAP_START#0
+Identical Phi Values (byte*) heap_head#4 (byte*) HEAP_TOP#0
 Identical Phi Values (word) malloc::size#1 (word) malloc::size#0
 Identical Phi Values (byte*) heap_head#3 (byte*) heap_head#1
 Identical Phi Values (word*) WORDS#1 (word*) WORDS#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [26] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) main::$0 [27] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) HEAP_START#0 = (byte*) 49152
+Constant (const byte*) HEAP_TOP#0 = (byte*) 40960
 Constant (const word) malloc::size#0 = $200
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) malloc::mem#0 = HEAP_START#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)malloc::mem#0 in [5] (void*) malloc::return#0 ← (void*)(const byte*) malloc::mem#0
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [24] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [26] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
-Eliminating unused variable (byte*) heap_head#1 and assignment [0] (byte*) heap_head#1 ← (const byte*) HEAP_START#0 + (const word) malloc::size#0
-Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const word) malloc::size#0
+Resolved ranged next value [25] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [27] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
+Eliminating unused variable (byte*) heap_head#1 and assignment [1] (byte*) heap_head#1 ← (byte*) malloc::mem#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -161,6 +158,12 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) HEAP_TOP#0 - (const word) malloc::size#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) malloc::mem#0 = HEAP_TOP#0-malloc::size#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (void*)malloc::mem#0 in [1] (void*) malloc::return#0 ← (void*)(const byte*) malloc::mem#0
+Successful SSA optimization Pass2ConstantValues
 Constant (const void*) malloc::return#0 = (void*)malloc::mem#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) malloc::return#2 = malloc::return#0
@@ -178,7 +181,6 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const word*) main::w#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined malloc::return#2 = (const void*) malloc::return#0
-Constant inlined malloc::mem#0 = (const byte*) HEAP_START#0
 Constant inlined $0 = (const void*) malloc::return#0
 Constant inlined main::w#0 = (const word*) WORDS#0
 Successful SSA optimization Pass2ConstantInlining
@@ -247,7 +249,7 @@ malloc::@return: scope:[malloc]  from malloc
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) HEAP_START
+(byte*) HEAP_TOP
 (word*) WORDS
 (byte*) heap_head
 (void()) main()
@@ -280,8 +282,8 @@ INITIAL ASM
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
 bbegin:
@@ -361,7 +363,9 @@ main: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = $200
+    .label mem = HEAP_TOP-size
+    .label return = mem
     jmp breturn
     // malloc::@return
   breturn:
@@ -399,8 +403,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
 bbegin:
@@ -477,7 +481,9 @@ main: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = $200
+    .label mem = HEAP_TOP-size
+    .label return = mem
     jmp breturn
     // malloc::@return
   breturn:
@@ -519,8 +525,8 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte*) HEAP_START
-(const byte*) HEAP_START#0 HEAP_START = (byte*) 49152
+(byte*) HEAP_TOP
+(const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
 (word*) WORDS
 (const word*) WORDS#0 WORDS = (word*)(const void*) malloc::return#0
@@ -537,9 +543,11 @@ FINAL SYMBOL TABLE
 (void*()) malloc((word) malloc::size)
 (label) malloc::@return
 (byte*) malloc::mem
+(const byte*) malloc::mem#0 mem = (const byte*) HEAP_TOP#0-(const word) malloc::size#0
 (void*) malloc::return
-(const void*) malloc::return#0 return = (void*)(const byte*) HEAP_START#0
+(const void*) malloc::return#0 return = (void*)(const byte*) malloc::mem#0
 (word) malloc::size
+(const word) malloc::size#0 size = (word) $200
 
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_WORD:2 [ main::w#2 main::w#1 ]
@@ -556,8 +564,8 @@ Score: 590
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
 bbegin:
@@ -623,7 +631,9 @@ main: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = $200
+    .label mem = HEAP_TOP-size
+    .label return = mem
     // malloc::@return
     // [14] return 
     rts

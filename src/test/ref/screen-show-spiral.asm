@@ -3,8 +3,8 @@
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Screen containing angle to center
@@ -13,7 +13,7 @@
   .const FILL_CHAR = '@'
   .const NUM_SQUARES = $30
   .label heap_head = $2c
-  .label SQUARES = $41
+  .label SQUARES = $2e
   // Screen containing distance to center
   .label SCREEN_DIST = $30
   // Screen containing angle to center
@@ -23,9 +23,9 @@ bbegin:
   sta malloc.size
   lda #>$3e8
   sta malloc.size+1
-  lda #<HEAP_START
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   lda malloc.mem
@@ -721,18 +721,18 @@ init_squares: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zeropage($2e) size)
 malloc: {
-    .label mem = $41
+    .label mem = $2e
     .label size = $2e
     lda heap_head
+    sec
+    sbc mem
     sta mem
     lda heap_head+1
+    sbc mem+1
     sta mem+1
-    lda heap_head
-    clc
-    adc size
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc size+1
+    lda mem+1
     sta heap_head+1
     rts
 }

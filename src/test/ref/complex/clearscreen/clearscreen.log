@@ -111,7 +111,7 @@ Rewriting struct pointer member access *((struct ProcessingSprite*) processChars
 Rewriting struct pointer member access *((struct ProcessingSprite*) processChars::processing).y
 Warning! Adding boolean cast to non-boolean condition (byte~) processChars::$11
 Warning! Adding boolean cast to non-boolean sub-expression (byte) atan2_16::shift
-Identified constant variable (byte*) HEAP_START
+Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @1
@@ -166,14 +166,15 @@ Adding versioned struct unwinding for (struct ProcessingChar) getCharToProcess::
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
-  (byte*) heap_head#0 ← (byte*) HEAP_START#0
+  (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
+  (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
   to:@6
 malloc: scope:[malloc]  from @17 @28
   (word) malloc::size#2 ← phi( @17/(word) malloc::size#0 @28/(word) malloc::size#1 )
   (byte*) heap_head#5 ← phi( @17/(byte*) heap_head#9 @28/(byte*) heap_head#3 )
-  (byte*) malloc::mem#0 ← (byte*) heap_head#5
-  (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) malloc::size#2
+  (byte*~) malloc::$0 ← (byte*) heap_head#5 - (word) malloc::size#2
+  (byte*) malloc::mem#0 ← (byte*~) malloc::$0
+  (byte*) heap_head#1 ← (byte*) malloc::mem#0
   (void*) malloc::return#0 ← ((void*)) (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
@@ -1333,8 +1334,8 @@ SYMBOL TABLE SSA
 (bool) DEBUG#0
 (void()**) HARDWARE_IRQ
 (void()**) HARDWARE_IRQ#0
-(byte*) HEAP_START
-(byte*) HEAP_START#0
+(byte*) HEAP_TOP
+(byte*) HEAP_TOP#0
 (byte*) IRQ_ENABLE
 (byte*) IRQ_ENABLE#0
 (byte) IRQ_RASTER
@@ -1977,6 +1978,7 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (byte*) main::src#1
 (byte*) main::src#2
 (void*()) malloc((word) malloc::size)
+(byte*~) malloc::$0
 (label) malloc::@return
 (byte*) malloc::mem
 (byte*) malloc::mem#0
@@ -2434,7 +2436,7 @@ Adding number conversion cast (unumber) $80 in *((byte*) VIC_CONTROL#0) ← *((b
 Adding number conversion cast (unumber) $30 in (byte) RASTER_IRQ_TOP#0 ← (number) $30
 Adding number conversion cast (unumber) $ff in (byte) RASTER_IRQ_MIDDLE#0 ← (number) $ff
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) HEAP_START#0 ← (byte*)(number) $c000
+Inlining cast (byte*) HEAP_TOP#0 ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (byte) CORDIC_ITERATIONS_16#0 ← (unumber)(number) $f
 Inlining cast (word) atan2_16::angle#0 ← (unumber)(number) 0
@@ -2519,7 +2521,7 @@ Inlining cast *((byte*) SPRITES_EXPAND_Y#0) ← (unumber)(number) 0
 Inlining cast (byte) RASTER_IRQ_TOP#0 ← (unumber)(number) $30
 Inlining cast (byte) RASTER_IRQ_MIDDLE#0 ← (unumber)(number) $ff
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 49152
+Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast $f
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -2800,19 +2802,20 @@ Inferred type updated to byte in (unumber~) init_angle_screen::$11 ← > (word~)
 Inferred type updated to byte in (unumber~) init_angle_screen::$13 ← (byte) $80 + (byte) init_angle_screen::ang_w#0
 Inferred type updated to byte in (unumber~) init_angle_screen::$14 ← (byte) $80 - (byte) init_angle_screen::ang_w#0
 Inferred type updated to byte in (unumber~) initSprites::$0 ← (byte) NUM_PROCESSING#0 * (byte) $40
-Inversing boolean not [37] (bool~) atan2_16::$18 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [36] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [46] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [45] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [57] (bool~) atan2_16::$20 ← (byte) 0 == (byte) atan2_16::shift#4 from [56] (bool~) atan2_16::$25 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [81] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [80] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
-Inversing boolean not [211] (bool~) main::$11 ← (byte) main::center_dist#0 != (byte) NOT_FOUND#0 from [210] (bool~) main::$10 ← (byte) main::center_dist#0 == (byte) NOT_FOUND#0
-Inversing boolean not [237] (bool~) getCharToProcess::$3 ← *((byte*) getCharToProcess::screen_line#2 + (byte) getCharToProcess::x#2) == (byte) ' ' from [236] (bool~) getCharToProcess::$2 ← *((byte*) getCharToProcess::screen_line#2 + (byte) getCharToProcess::x#2) != (byte) ' '
-Inversing boolean not [246] (bool~) getCharToProcess::$5 ← (byte) getCharToProcess::dist#0 >= (byte) getCharToProcess::closest_dist#2 from [245] (bool~) getCharToProcess::$4 ← (byte) getCharToProcess::dist#0 < (byte) getCharToProcess::closest_dist#2
-Inversing boolean not [260] (bool~) getCharToProcess::$1 ← (byte) getCharToProcess::closest_dist#3 == (byte) NOT_FOUND#0 from [259] (bool~) getCharToProcess::$0 ← (byte) getCharToProcess::closest_dist#3 != (byte) NOT_FOUND#0
-Inversing boolean not [288] (bool~) startProcessing::$26 ← *((byte*) startProcessing::$41 + (byte~) startProcessing::$30) != (const byte) STATUS_FREE from [287] (bool~) startProcessing::$25 ← *((byte*) startProcessing::$41 + (byte~) startProcessing::$30) == (const byte) STATUS_FREE
-Inversing boolean not [395] (bool~) processChars::$5 ← *((byte*) processChars::$41) == (const byte) STATUS_FREE from [394] (bool~) processChars::$4 ← *((byte*) processChars::$41) != (const byte) STATUS_FREE
-Inversing boolean not [404] (bool~) processChars::$7 ← *((byte*) processChars::$42) != (const byte) STATUS_NEW from [403] (bool~) processChars::$6 ← *((byte*) processChars::$42) == (const byte) STATUS_NEW
+Inversing boolean not [38] (bool~) atan2_16::$18 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [37] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [47] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [46] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [58] (bool~) atan2_16::$20 ← (byte) 0 == (byte) atan2_16::shift#4 from [57] (bool~) atan2_16::$25 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [82] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [81] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [212] (bool~) main::$11 ← (byte) main::center_dist#0 != (byte) NOT_FOUND#0 from [211] (bool~) main::$10 ← (byte) main::center_dist#0 == (byte) NOT_FOUND#0
+Inversing boolean not [238] (bool~) getCharToProcess::$3 ← *((byte*) getCharToProcess::screen_line#2 + (byte) getCharToProcess::x#2) == (byte) ' ' from [237] (bool~) getCharToProcess::$2 ← *((byte*) getCharToProcess::screen_line#2 + (byte) getCharToProcess::x#2) != (byte) ' '
+Inversing boolean not [247] (bool~) getCharToProcess::$5 ← (byte) getCharToProcess::dist#0 >= (byte) getCharToProcess::closest_dist#2 from [246] (bool~) getCharToProcess::$4 ← (byte) getCharToProcess::dist#0 < (byte) getCharToProcess::closest_dist#2
+Inversing boolean not [261] (bool~) getCharToProcess::$1 ← (byte) getCharToProcess::closest_dist#3 == (byte) NOT_FOUND#0 from [260] (bool~) getCharToProcess::$0 ← (byte) getCharToProcess::closest_dist#3 != (byte) NOT_FOUND#0
+Inversing boolean not [289] (bool~) startProcessing::$26 ← *((byte*) startProcessing::$41 + (byte~) startProcessing::$30) != (const byte) STATUS_FREE from [288] (bool~) startProcessing::$25 ← *((byte*) startProcessing::$41 + (byte~) startProcessing::$30) == (const byte) STATUS_FREE
+Inversing boolean not [396] (bool~) processChars::$5 ← *((byte*) processChars::$41) == (const byte) STATUS_FREE from [395] (bool~) processChars::$4 ← *((byte*) processChars::$41) != (const byte) STATUS_FREE
+Inversing boolean not [405] (bool~) processChars::$7 ← *((byte*) processChars::$42) != (const byte) STATUS_NEW from [404] (bool~) processChars::$6 ← *((byte*) processChars::$42) == (const byte) STATUS_NEW
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) HEAP_START#0 = (byte*) heap_head#0 (byte*) heap_head#11 (byte*) heap_head#10 (byte*) heap_head#9 
+Alias (byte*) HEAP_TOP#0 = (byte*) heap_head#0 (byte*) heap_head#11 (byte*) heap_head#10 (byte*) heap_head#9 
+Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#4 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#6 (byte*) heap_head#2 
 Alias (signed word) atan2_16::y#1 = (signed word) atan2_16::y#2 (signed word~) atan2_16::$3 (signed word) atan2_16::y#3 
@@ -3064,62 +3067,62 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (signed word) atan2_16::x#4 (signed word) atan2_16::x#17
 Identical Phi Values (signed word) atan2_16::y#4 (signed word) atan2_16::y#19
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [440] (byte~) processChars::$17 ← (byte) processChars::i#10 * (byte) 2
+Identified duplicate assignment right side [441] (byte~) processChars::$17 ← (byte) processChars::i#10 * (byte) 2
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) atan2_16::$0 [15] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [24] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$18 [38] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
-Simple Condition (bool~) atan2_16::$11 [47] if((signed word) atan2_16::x#17>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$19 [50] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
-Simple Condition (bool~) atan2_16::$20 [58] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
-Simple Condition (bool~) atan2_16::$21 [61] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
-Simple Condition (bool~) atan2_16::$22 [78] if((byte) atan2_16::i#1!=rangelast(0,atan2_16::$16)) goto atan2_16::@15
-Simple Condition (bool~) atan2_16::$14 [82] if((signed word) atan2_16::y#19>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) main::$6 [163] if((byte*) main::src#1!=(byte*~) main::$5) goto main::@1
-Simple Condition (bool~) main::$8 [189] if((byte) main::i#1!=rangelast(0,main::$7)) goto main::@3
-Simple Condition (bool~) main::$11 [212] if((byte) main::center_dist#0!=(byte) NOT_FOUND#0) goto main::@6
-Simple Condition (bool~) getCharToProcess::$3 [238] if(*((byte*) getCharToProcess::screen_line#4 + (byte) getCharToProcess::x#2)==(byte) ' ') goto getCharToProcess::@5
-Simple Condition (bool~) getCharToProcess::$6 [242] if((byte) getCharToProcess::x#1!=rangelast(0,$27)) goto getCharToProcess::@4
-Simple Condition (bool~) getCharToProcess::$5 [247] if((byte) getCharToProcess::dist#0>=(byte) getCharToProcess::closest_dist#2) goto getCharToProcess::@5
-Simple Condition (bool~) getCharToProcess::$7 [257] if((byte) getCharToProcess::y#1!=rangelast(0,$18)) goto getCharToProcess::@3
-Simple Condition (bool~) getCharToProcess::$1 [261] if((byte) getCharToProcess::return_dist#1==(byte) NOT_FOUND#0) goto getCharToProcess::@1
-Simple Condition (bool~) startProcessing::$26 [289] if(*((byte*) startProcessing::$41 + (byte~) startProcessing::$30)!=(const byte) STATUS_FREE) goto startProcessing::@3
-Simple Condition (bool~) startProcessing::$27 [293] if((byte) startProcessing::i#1!=rangelast(0,startProcessing::$24)) goto startProcessing::@2
-Simple Condition (bool~) startProcessing::$28 [298] if((byte) startProcessing::freeIdx#2==(byte) $ff) goto startProcessing::@1
-Simple Condition (bool~) startProcessing::$29 [328] if((byte) startProcessing::i1#1!=rangelast(0,7)) goto startProcessing::@9
-Simple Condition (bool~) processChars::$5 [396] if(*((byte*) processChars::$41)==(const byte) STATUS_FREE) goto processChars::@3
-Simple Condition (bool~) processChars::$34 [400] if((byte) processChars::i#1!=rangelast(0,processChars::$1)) goto processChars::@2
-Simple Condition (bool~) processChars::$7 [405] if(*((byte*) processChars::$42)!=(const byte) STATUS_NEW) goto processChars::@4
-Simple Condition (bool~) processChars::$66 [412] if((byte) 0!=(byte~) processChars::$11) goto processChars::@5
-Simple Condition (bool~) init_angle_screen::$15 [537] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
-Simple Condition (bool~) init_angle_screen::$16 [543] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
-Simple Condition (bool~) initSprites::$2 [552] if((byte*) initSprites::sp#1<(byte*~) initSprites::$1) goto initSprites::@1
-Simple Condition (bool~) initSprites::$3 [558] if((byte) initSprites::i#1!=rangelast(0,7)) goto initSprites::@3
-Simple Condition (bool~) setupRasterIrq::$0 [569] if((word) setupRasterIrq::raster#0<(word) $100) goto setupRasterIrq::@1
-Simple Condition (bool~) irqTop::$2 [593] if((byte) irqTop::i#1!=rangelast(0,4)) goto irqTop::@3
-Simple Condition (bool~) irqTop::$3 [600] if((byte) irqTop::i1#1!=rangelast(0,7)) goto irqTop::@5
-Simple Condition (bool~) irqBottom::$4 [615] if((byte) irqBottom::i#1!=rangelast(0,4)) goto irqBottom::@5
+Simple Condition (bool~) atan2_16::$0 [16] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [25] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$18 [39] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
+Simple Condition (bool~) atan2_16::$11 [48] if((signed word) atan2_16::x#17>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$19 [51] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
+Simple Condition (bool~) atan2_16::$20 [59] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
+Simple Condition (bool~) atan2_16::$21 [62] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
+Simple Condition (bool~) atan2_16::$22 [79] if((byte) atan2_16::i#1!=rangelast(0,atan2_16::$16)) goto atan2_16::@15
+Simple Condition (bool~) atan2_16::$14 [83] if((signed word) atan2_16::y#19>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) main::$6 [164] if((byte*) main::src#1!=(byte*~) main::$5) goto main::@1
+Simple Condition (bool~) main::$8 [190] if((byte) main::i#1!=rangelast(0,main::$7)) goto main::@3
+Simple Condition (bool~) main::$11 [213] if((byte) main::center_dist#0!=(byte) NOT_FOUND#0) goto main::@6
+Simple Condition (bool~) getCharToProcess::$3 [239] if(*((byte*) getCharToProcess::screen_line#4 + (byte) getCharToProcess::x#2)==(byte) ' ') goto getCharToProcess::@5
+Simple Condition (bool~) getCharToProcess::$6 [243] if((byte) getCharToProcess::x#1!=rangelast(0,$27)) goto getCharToProcess::@4
+Simple Condition (bool~) getCharToProcess::$5 [248] if((byte) getCharToProcess::dist#0>=(byte) getCharToProcess::closest_dist#2) goto getCharToProcess::@5
+Simple Condition (bool~) getCharToProcess::$7 [258] if((byte) getCharToProcess::y#1!=rangelast(0,$18)) goto getCharToProcess::@3
+Simple Condition (bool~) getCharToProcess::$1 [262] if((byte) getCharToProcess::return_dist#1==(byte) NOT_FOUND#0) goto getCharToProcess::@1
+Simple Condition (bool~) startProcessing::$26 [290] if(*((byte*) startProcessing::$41 + (byte~) startProcessing::$30)!=(const byte) STATUS_FREE) goto startProcessing::@3
+Simple Condition (bool~) startProcessing::$27 [294] if((byte) startProcessing::i#1!=rangelast(0,startProcessing::$24)) goto startProcessing::@2
+Simple Condition (bool~) startProcessing::$28 [299] if((byte) startProcessing::freeIdx#2==(byte) $ff) goto startProcessing::@1
+Simple Condition (bool~) startProcessing::$29 [329] if((byte) startProcessing::i1#1!=rangelast(0,7)) goto startProcessing::@9
+Simple Condition (bool~) processChars::$5 [397] if(*((byte*) processChars::$41)==(const byte) STATUS_FREE) goto processChars::@3
+Simple Condition (bool~) processChars::$34 [401] if((byte) processChars::i#1!=rangelast(0,processChars::$1)) goto processChars::@2
+Simple Condition (bool~) processChars::$7 [406] if(*((byte*) processChars::$42)!=(const byte) STATUS_NEW) goto processChars::@4
+Simple Condition (bool~) processChars::$66 [413] if((byte) 0!=(byte~) processChars::$11) goto processChars::@5
+Simple Condition (bool~) init_angle_screen::$15 [538] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
+Simple Condition (bool~) init_angle_screen::$16 [544] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
+Simple Condition (bool~) initSprites::$2 [553] if((byte*) initSprites::sp#1<(byte*~) initSprites::$1) goto initSprites::@1
+Simple Condition (bool~) initSprites::$3 [559] if((byte) initSprites::i#1!=rangelast(0,7)) goto initSprites::@3
+Simple Condition (bool~) setupRasterIrq::$0 [570] if((word) setupRasterIrq::raster#0<(word) $100) goto setupRasterIrq::@1
+Simple Condition (bool~) irqTop::$2 [594] if((byte) irqTop::i#1!=rangelast(0,4)) goto irqTop::@3
+Simple Condition (bool~) irqTop::$3 [601] if((byte) irqTop::i1#1!=rangelast(0,7)) goto irqTop::@5
+Simple Condition (bool~) irqBottom::$4 [616] if((byte) irqBottom::i#1!=rangelast(0,4)) goto irqBottom::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting || if()-condition to two if()s [452] (bool~) processChars::$24 ← (bool~) processChars::$22 || (bool~) processChars::$23
+Rewriting || if()-condition to two if()s [453] (bool~) processChars::$24 ← (bool~) processChars::$22 || (bool~) processChars::$23
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s [449] (bool~) processChars::$22 ← (bool~) processChars::$20 || (bool~) processChars::$21
+Rewriting || if()-condition to two if()s [450] (bool~) processChars::$22 ← (bool~) processChars::$20 || (bool~) processChars::$21
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s [446] (bool~) processChars::$20 ← (bool~) processChars::$18 || (bool~) processChars::$19
+Rewriting || if()-condition to two if()s [447] (bool~) processChars::$20 ← (bool~) processChars::$18 || (bool~) processChars::$19
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [489] (bool~) processChars::$0 ← ! (bool) DEBUG#0
+Rewriting ! if()-condition to reversed if() [490] (bool~) processChars::$0 ← ! (bool) DEBUG#0
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [583] (bool~) irqTop::$0 ← ! (bool) DEBUG#0
+Rewriting ! if()-condition to reversed if() [584] (bool~) irqTop::$0 ← ! (bool) DEBUG#0
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [606] (bool~) irqBottom::$0 ← ! (bool) DEBUG#0
+Rewriting ! if()-condition to reversed if() [607] (bool~) irqBottom::$0 ← ! (bool) DEBUG#0
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [609] (bool~) irqBottom::$2 ← ! (bool) DEBUG#0
+Rewriting ! if()-condition to reversed if() [610] (bool~) irqBottom::$2 ← ! (bool) DEBUG#0
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Negating conditional jump and destination [78] if((byte) atan2_16::i#1==rangelast(0,atan2_16::$16)) goto atan2_16::@17
-Constant right-side identified [193] (void()*) setupRasterIrq::irqRoutine#0 ← & interrupt(HARDWARE_ALL)(void()) irqTop()
-Constant right-side identified [586] (void()*~) irqTop::$1 ← & interrupt(HARDWARE_ALL)(void()) irqBottom()
-Constant right-side identified [619] (void()*~) irqBottom::$3 ← & interrupt(HARDWARE_ALL)(void()) irqTop()
+Negating conditional jump and destination [79] if((byte) atan2_16::i#1==rangelast(0,atan2_16::$16)) goto atan2_16::@17
+Constant right-side identified [194] (void()*) setupRasterIrq::irqRoutine#0 ← & interrupt(HARDWARE_ALL)(void()) irqTop()
+Constant right-side identified [587] (void()*~) irqTop::$1 ← & interrupt(HARDWARE_ALL)(void()) irqBottom()
+Constant right-side identified [620] (void()*~) irqBottom::$3 ← & interrupt(HARDWARE_ALL)(void()) irqTop()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) HEAP_START#0 = (byte*) 49152
+Constant (const byte*) HEAP_TOP#0 = (byte*) 40960
 Constant (const byte) CORDIC_ITERATIONS_16#0 = $f
 Constant (const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
@@ -3202,75 +3205,75 @@ Constant (const word) setupRasterIrq::raster#0 = RASTER_IRQ_TOP#0
 Constant (const byte) getCharToProcess::closest_dist#0 = NOT_FOUND#0
 Constant (const byte*) initSprites::sp#0 = SPRITE_DATA#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified { fill( NUM_PROCESSING#0, 0) } in [150] (struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 ← { fill( NUM_PROCESSING#0, 0) }
-Constant value identified (word)BORDER_YPOS_BOTTOM#0 in [380] (word~) $10 ← (word)(const byte) BORDER_YPOS_BOTTOM#0
+Constant value identified { fill( NUM_PROCESSING#0, 0) } in [151] (struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 ← { fill( NUM_PROCESSING#0, 0) }
+Constant value identified (word)BORDER_YPOS_BOTTOM#0 in [381] (word~) $10 ← (word)(const byte) BORDER_YPOS_BOTTOM#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [219] if(true) goto main::@5
-if() condition always true - replacing block destination [224] if(true) goto main::@11
-if() condition always false - eliminating [490] if((const bool) DEBUG#0) goto processChars::@16
-if() condition always true - replacing block destination [569] if((const word) setupRasterIrq::raster#0<(word) $100) goto setupRasterIrq::@1
-if() condition always false - eliminating [584] if((const bool) DEBUG#0) goto irqTop::@2
-if() condition always false - eliminating [607] if((const bool) DEBUG#0) goto irqBottom::@3
-if() condition always false - eliminating [610] if((const bool) DEBUG#0) goto irqBottom::@4
+if() condition always true - replacing block destination [220] if(true) goto main::@5
+if() condition always true - replacing block destination [225] if(true) goto main::@11
+if() condition always false - eliminating [491] if((const bool) DEBUG#0) goto processChars::@16
+if() condition always true - replacing block destination [570] if((const word) setupRasterIrq::raster#0<(word) $100) goto setupRasterIrq::@1
+if() condition always false - eliminating [585] if((const bool) DEBUG#0) goto irqTop::@2
+if() condition always false - eliminating [608] if((const bool) DEBUG#0) goto irqBottom::@3
+if() condition always false - eliminating [611] if((const bool) DEBUG#0) goto irqBottom::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [240] getCharToProcess::x#1 ← ++ getCharToProcess::x#2 to ++
-Resolved ranged comparison value [242] if(getCharToProcess::x#1!=rangelast(0,$27)) goto getCharToProcess::@4 to (number) $28
-Resolved ranged next value [255] getCharToProcess::y#1 ← ++ getCharToProcess::y#2 to ++
-Resolved ranged comparison value [257] if(getCharToProcess::y#1!=rangelast(0,$18)) goto getCharToProcess::@3 to (number) $19
-Resolved ranged next value [326] startProcessing::i1#1 ← ++ startProcessing::i1#2 to ++
-Resolved ranged comparison value [328] if(startProcessing::i1#1!=rangelast(0,7)) goto startProcessing::@9 to (number) 8
-Resolved ranged next value [541] init_angle_screen::y#1 ← ++ init_angle_screen::y#4 to ++
-Resolved ranged comparison value [543] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
-Resolved ranged next value [556] initSprites::i#1 ← ++ initSprites::i#2 to ++
-Resolved ranged comparison value [558] if(initSprites::i#1!=rangelast(0,7)) goto initSprites::@3 to (number) 8
-Resolved ranged next value [591] irqTop::i#1 ← ++ irqTop::i#2 to ++
-Resolved ranged comparison value [593] if(irqTop::i#1!=rangelast(0,4)) goto irqTop::@3 to (number) 5
-Resolved ranged next value [598] irqTop::i1#1 ← ++ irqTop::i1#2 to ++
-Resolved ranged comparison value [600] if(irqTop::i1#1!=rangelast(0,7)) goto irqTop::@5 to (number) 8
-Resolved ranged next value [613] irqBottom::i#1 ← ++ irqBottom::i#2 to ++
-Resolved ranged comparison value [615] if(irqBottom::i#1!=rangelast(0,4)) goto irqBottom::@5 to (number) 5
-Rewriting conditional comparison [537] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
-Converting *(pointer+n) to pointer[n] [272] *((byte*~) getCharToProcess::$11) ← (byte) ' '  -- *(getCharToProcess::$10 + getCharToProcess::return_x#1)
-Converting *(pointer+n) to pointer[n] [391] (byte) processChars::bitmask#0 ← (byte) 1 << *((byte*) processChars::$40)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
-Converting *(pointer+n) to pointer[n] [396] if(*((byte*) processChars::$41)==(const byte) STATUS_FREE) goto processChars::@3  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
-Converting *(pointer+n) to pointer[n] [405] if(*((byte*) processChars::$42)!=(const byte) STATUS_NEW) goto processChars::@4  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
-Converting *(pointer+n) to pointer[n] [408] (word) processChars::xpos#0 ← *((word*) processChars::$43) >> (byte) 4  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
-Converting *(pointer+n) to pointer[n] [415] *(*((byte**) processChars::$44)) ← (byte) ' '  -- *((byte**)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR)
-Converting *(pointer+n) to pointer[n] [419] *((const byte*) SPRITES_COLS#0 + *((byte*) processChars::$46)) ← *((byte*) processChars::$45)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_COL)
-Converting *(pointer+n) to pointer[n] [419] *((const byte*) SPRITES_COLS#0 + *((byte*) processChars::$46)) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
-Converting *(pointer+n) to pointer[n] [422] (byte*~) processChars::$9 ← (byte*~) processChars::$8 + *((byte*) processChars::$47)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
-Converting *(pointer+n) to pointer[n] [424] *((byte*~) processChars::$9) ← *((byte*) processChars::$48)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_PTR)
-Converting *(pointer+n) to pointer[n] [424] *((byte*~) processChars::$9) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR)  -- *(processChars::$8 + *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID))
-Converting *(pointer+n) to pointer[n] [426] *((byte*) processChars::$49) ← (const byte) STATUS_PROCESSING  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
-Converting *(pointer+n) to pointer[n] [437] (word~) processChars::$15 ← *((word*) processChars::$50) >> (byte) 4  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
-Converting *(pointer+n) to pointer[n] [443] (bool~) processChars::$18 ← *((word*) processChars::$51) < (word) XPOS_LEFTMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
-Converting *(pointer+n) to pointer[n] [445] (bool~) processChars::$19 ← *((word*) processChars::$52) > (word) XPOS_RIGHTMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
-Converting *(pointer+n) to pointer[n] [448] (bool~) processChars::$21 ← *((word*) processChars::$53) < (word) YPOS_TOPMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
-Converting *(pointer+n) to pointer[n] [451] (bool~) processChars::$23 ← *((word*) processChars::$54) > (word) YPOS_BOTTOMMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
-Converting *(pointer+n) to pointer[n] [456] *((byte*) processChars::$55) ← (const byte) STATUS_FREE  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
-Converting *(pointer+n) to pointer[n] [468] *((word*) processChars::$57) ← *((word*) processChars::$56) + *((const word[$28]) VXSIN#0 + (byte~) processChars::$38)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
-Converting *(pointer+n) to pointer[n] [468] *((word*) processChars::$57) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) + *((const word[$28]) VXSIN#0 + (byte~) processChars::$38)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
-Converting *(pointer+n) to pointer[n] [472] *((word*) processChars::$60) ← *((word*) processChars::$58) + *((word*) processChars::$59)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
-Converting *(pointer+n) to pointer[n] [472] *((word*) processChars::$60) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*) processChars::$59)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
-Converting *(pointer+n) to pointer[n] [472] *((word*) processChars::$60) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
-Converting *(pointer+n) to pointer[n] [481] *((word*) processChars::$62) ← *((word*) processChars::$61) + *((const word[$19]) VYSIN#0 + (byte~) processChars::$39)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
-Converting *(pointer+n) to pointer[n] [481] *((word*) processChars::$62) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY) + *((const word[$19]) VYSIN#0 + (byte~) processChars::$39)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
-Converting *(pointer+n) to pointer[n] [485] *((word*) processChars::$65) ← *((word*) processChars::$63) + *((word*) processChars::$64)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
-Converting *(pointer+n) to pointer[n] [485] *((word*) processChars::$65) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) + *((word*) processChars::$64)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
-Converting *(pointer+n) to pointer[n] [485] *((word*) processChars::$65) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
+Resolved ranged next value [241] getCharToProcess::x#1 ← ++ getCharToProcess::x#2 to ++
+Resolved ranged comparison value [243] if(getCharToProcess::x#1!=rangelast(0,$27)) goto getCharToProcess::@4 to (number) $28
+Resolved ranged next value [256] getCharToProcess::y#1 ← ++ getCharToProcess::y#2 to ++
+Resolved ranged comparison value [258] if(getCharToProcess::y#1!=rangelast(0,$18)) goto getCharToProcess::@3 to (number) $19
+Resolved ranged next value [327] startProcessing::i1#1 ← ++ startProcessing::i1#2 to ++
+Resolved ranged comparison value [329] if(startProcessing::i1#1!=rangelast(0,7)) goto startProcessing::@9 to (number) 8
+Resolved ranged next value [542] init_angle_screen::y#1 ← ++ init_angle_screen::y#4 to ++
+Resolved ranged comparison value [544] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
+Resolved ranged next value [557] initSprites::i#1 ← ++ initSprites::i#2 to ++
+Resolved ranged comparison value [559] if(initSprites::i#1!=rangelast(0,7)) goto initSprites::@3 to (number) 8
+Resolved ranged next value [592] irqTop::i#1 ← ++ irqTop::i#2 to ++
+Resolved ranged comparison value [594] if(irqTop::i#1!=rangelast(0,4)) goto irqTop::@3 to (number) 5
+Resolved ranged next value [599] irqTop::i1#1 ← ++ irqTop::i1#2 to ++
+Resolved ranged comparison value [601] if(irqTop::i1#1!=rangelast(0,7)) goto irqTop::@5 to (number) 8
+Resolved ranged next value [614] irqBottom::i#1 ← ++ irqBottom::i#2 to ++
+Resolved ranged comparison value [616] if(irqBottom::i#1!=rangelast(0,4)) goto irqBottom::@5 to (number) 5
+Rewriting conditional comparison [538] if((byte) init_angle_screen::x#1<=(byte) $13) goto init_angle_screen::@2
+Converting *(pointer+n) to pointer[n] [273] *((byte*~) getCharToProcess::$11) ← (byte) ' '  -- *(getCharToProcess::$10 + getCharToProcess::return_x#1)
+Converting *(pointer+n) to pointer[n] [392] (byte) processChars::bitmask#0 ← (byte) 1 << *((byte*) processChars::$40)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
+Converting *(pointer+n) to pointer[n] [397] if(*((byte*) processChars::$41)==(const byte) STATUS_FREE) goto processChars::@3  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
+Converting *(pointer+n) to pointer[n] [406] if(*((byte*) processChars::$42)!=(const byte) STATUS_NEW) goto processChars::@4  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
+Converting *(pointer+n) to pointer[n] [409] (word) processChars::xpos#0 ← *((word*) processChars::$43) >> (byte) 4  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
+Converting *(pointer+n) to pointer[n] [416] *(*((byte**) processChars::$44)) ← (byte) ' '  -- *((byte**)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR)
+Converting *(pointer+n) to pointer[n] [420] *((const byte*) SPRITES_COLS#0 + *((byte*) processChars::$46)) ← *((byte*) processChars::$45)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_COL)
+Converting *(pointer+n) to pointer[n] [420] *((const byte*) SPRITES_COLS#0 + *((byte*) processChars::$46)) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
+Converting *(pointer+n) to pointer[n] [423] (byte*~) processChars::$9 ← (byte*~) processChars::$8 + *((byte*) processChars::$47)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID)
+Converting *(pointer+n) to pointer[n] [425] *((byte*~) processChars::$9) ← *((byte*) processChars::$48)  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_PTR)
+Converting *(pointer+n) to pointer[n] [425] *((byte*~) processChars::$9) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR)  -- *(processChars::$8 + *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_ID))
+Converting *(pointer+n) to pointer[n] [427] *((byte*) processChars::$49) ← (const byte) STATUS_PROCESSING  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
+Converting *(pointer+n) to pointer[n] [438] (word~) processChars::$15 ← *((word*) processChars::$50) >> (byte) 4  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
+Converting *(pointer+n) to pointer[n] [444] (bool~) processChars::$18 ← *((word*) processChars::$51) < (word) XPOS_LEFTMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
+Converting *(pointer+n) to pointer[n] [446] (bool~) processChars::$19 ← *((word*) processChars::$52) > (word) XPOS_RIGHTMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
+Converting *(pointer+n) to pointer[n] [449] (bool~) processChars::$21 ← *((word*) processChars::$53) < (word) YPOS_TOPMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
+Converting *(pointer+n) to pointer[n] [452] (bool~) processChars::$23 ← *((word*) processChars::$54) > (word) YPOS_BOTTOMMOST#0  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
+Converting *(pointer+n) to pointer[n] [457] *((byte*) processChars::$55) ← (const byte) STATUS_FREE  -- *((byte*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)
+Converting *(pointer+n) to pointer[n] [469] *((word*) processChars::$57) ← *((word*) processChars::$56) + *((const word[$28]) VXSIN#0 + (byte~) processChars::$38)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
+Converting *(pointer+n) to pointer[n] [469] *((word*) processChars::$57) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) + *((const word[$28]) VXSIN#0 + (byte~) processChars::$38)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
+Converting *(pointer+n) to pointer[n] [473] *((word*) processChars::$60) ← *((word*) processChars::$58) + *((word*) processChars::$59)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
+Converting *(pointer+n) to pointer[n] [473] *((word*) processChars::$60) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*) processChars::$59)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VX)
+Converting *(pointer+n) to pointer[n] [473] *((word*) processChars::$60) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_X)
+Converting *(pointer+n) to pointer[n] [482] *((word*) processChars::$62) ← *((word*) processChars::$61) + *((const word[$19]) VYSIN#0 + (byte~) processChars::$39)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
+Converting *(pointer+n) to pointer[n] [482] *((word*) processChars::$62) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY) + *((const word[$19]) VYSIN#0 + (byte~) processChars::$39)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
+Converting *(pointer+n) to pointer[n] [486] *((word*) processChars::$65) ← *((word*) processChars::$63) + *((word*) processChars::$64)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
+Converting *(pointer+n) to pointer[n] [486] *((word*) processChars::$65) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) + *((word*) processChars::$64)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_VY)
+Converting *(pointer+n) to pointer[n] [486] *((word*) processChars::$65) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY)  -- *((word*)processChars::processing#0 + OFFSET_STRUCT_PROCESSINGSPRITE_Y)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (word*)PROCESSING#0 in [169] (word*) main::$17 ← (word*)(struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)PROCESSING#0 in [349] (word*) startProcessing::$32 ← (word*)(struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [407] (word*) processChars::$43 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [408] (word) processChars::xpos#0 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) >> (byte) 4
-Simplifying expression containing zero (word*)processChars::processing#0 in [442] (word*) processChars::$51 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [443] (bool~) processChars::$18 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) < (word) XPOS_LEFTMOST#0
-Simplifying expression containing zero (word*)processChars::processing#0 in [444] (word*) processChars::$52 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [445] (bool~) processChars::$19 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) > (word) XPOS_RIGHTMOST#0
-Simplifying expression containing zero (word*)processChars::processing#0 in [469] (word*) processChars::$58 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [471] (word*) processChars::$60 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
-Simplifying expression containing zero (word*)processChars::processing#0 in [472] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)
-Simplifying expression containing zero (word*)processChars::processing#0 in [472] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) ← *((word*)(struct ProcessingSprite*) processChars::processing#0) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)
+Simplifying expression containing zero (word*)PROCESSING#0 in [170] (word*) main::$17 ← (word*)(struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)PROCESSING#0 in [350] (word*) startProcessing::$32 ← (word*)(struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [408] (word*) processChars::$43 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [409] (word) processChars::xpos#0 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) >> (byte) 4
+Simplifying expression containing zero (word*)processChars::processing#0 in [443] (word*) processChars::$51 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [444] (bool~) processChars::$18 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) < (word) XPOS_LEFTMOST#0
+Simplifying expression containing zero (word*)processChars::processing#0 in [445] (word*) processChars::$52 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [446] (bool~) processChars::$19 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) > (word) XPOS_RIGHTMOST#0
+Simplifying expression containing zero (word*)processChars::processing#0 in [470] (word*) processChars::$58 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [472] (word*) processChars::$60 ← (word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X
+Simplifying expression containing zero (word*)processChars::processing#0 in [473] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)
+Simplifying expression containing zero (word*)processChars::processing#0 in [473] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_X) ← *((word*)(struct ProcessingSprite*) processChars::processing#0) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) startProcessing::center_dist#0 and assignment [97] (byte) startProcessing::center_dist#0 ← (byte) main::center_dist#0
 Eliminating unused variable (struct ProcessingChar) getCharToProcess::return#0 and assignment [119] (struct ProcessingChar) getCharToProcess::return#0 ← struct-unwound {(byte) getCharToProcess::return_x#1, (byte) getCharToProcess::return_y#1, (byte) getCharToProcess::return_dist#1}
@@ -3793,11 +3796,12 @@ Coalesced [316] atan2_16::xd#11 ← atan2_16::xd#1
 Coalesced [317] atan2_16::yd#11 ← atan2_16::yd#1
 Not coalescing [318] atan2_16::xi#13 ← atan2_16::x#0
 Not coalescing [319] atan2_16::yi#16 ← atan2_16::y#0
+Not coalescing [322] heap_head#1 ← malloc::mem#0
 Coalesced [375] processChars::numActive#17 ← processChars::numActive#1
 Coalesced [381] processChars::i#13 ← processChars::i#1
 Coalesced [382] processChars::numActive#15 ← processChars::numActive#3
 Coalesced (already) [387] processChars::numActive#16 ← processChars::numActive#10
-Coalesced down to 36 phi equivalence classes
+Coalesced down to 37 phi equivalence classes
 Culled Empty Block (label) @6
 Culled Empty Block (label) @13
 Culled Empty Block (label) @20
@@ -4330,9 +4334,9 @@ atan2_16::@1: scope:[atan2_16]  from atan2_16
   [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0
   to:atan2_16::@3
 malloc: scope:[malloc]  from @1 @3
-  [243] (byte*) heap_head#5 ← phi( @1/(const byte*) HEAP_START#0 @3/(byte*) heap_head#1 )
-  [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5
-  [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8
+  [243] (byte*) heap_head#5 ← phi( @1/(const byte*) HEAP_TOP#0 @3/(byte*) heap_head#1 )
+  [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8
+  [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
   [246] return 
@@ -4465,7 +4469,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) CORDIC_ITERATIONS_16
 (bool) DEBUG
 (void()**) HARDWARE_IRQ
-(byte*) HEAP_START
+(byte*) HEAP_TOP
 (byte*) IRQ_ENABLE
 (byte) IRQ_RASTER
 (byte*) IRQ_STATUS
@@ -4620,7 +4624,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) getCharToProcess::y#7 80.2
 (byte*) heap_head
 (byte*) heap_head#1 1.0
-(byte*) heap_head#5 3.0
+(byte*) heap_head#5 4.0
 (void()) initSprites()
 (byte) initSprites::i
 (byte) initSprites::i#1 16.5
@@ -4693,7 +4697,7 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (byte*) main::src#2 16.5
 (void*()) malloc((word) malloc::size)
 (byte*) malloc::mem
-(byte*) malloc::mem#0 0.4
+(byte*) malloc::mem#0 0.8
 (void*) malloc::return
 (word) malloc::size
 (void()) processChars()
@@ -5211,8 +5215,8 @@ INITIAL ASM
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -5286,10 +5290,10 @@ b1:
   // [2] call malloc 
   // [243] phi from @1 to malloc [phi:@1->malloc]
 malloc_from_b1:
-  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_START#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   jmp b3
@@ -6921,18 +6925,18 @@ atan2_16: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = $9e
-    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 -- pbuz1=pbuz2 
+    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
     lda heap_head
+    sec
+    sbc #<$3e8
     sta mem
     lda heap_head+1
+    sbc #>$3e8
     sta mem+1
-    // [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8 -- pbuz1=pbuz1_plus_vwuc1 
-    clc
-    lda heap_head
-    adc #<$3e8
+    // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc #>$3e8
+    lda mem+1
     sta heap_head+1
     jmp breturn
     // malloc::@return
@@ -7626,8 +7630,8 @@ Statement [238] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >>
 Statement [239] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [241] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
 Statement [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ) always clobbers reg byte a 
-Statement [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 [ malloc::mem#0 heap_head#5 ] ( malloc:2 [ malloc::mem#0 heap_head#5 ] malloc:4 [ malloc::mem#0 heap_head#5 ] ) always clobbers reg byte a 
-Statement [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
+Statement [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 [ malloc::mem#0 ] ( malloc:2 [ malloc::mem#0 ] malloc:4 [ malloc::mem#0 ] ) always clobbers reg byte a 
+Statement [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [250] *((const byte*) RASTER#0) ← (const byte) RASTER_IRQ_TOP#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [251] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irqTop() [ ] (  [ ] ) always clobbers reg byte a 
 Statement [252] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
@@ -7834,8 +7838,8 @@ Statement [238] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >>
 Statement [239] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [241] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
 Statement [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ( main:7::init_angle_screen:10::atan2_16:180 [ SCREEN_COPY#0 SCREEN_DIST#0 init_angle_screen::y#4 init_angle_screen::screen_bottomline#5 init_angle_screen::screen_topline#5 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ) always clobbers reg byte a 
-Statement [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 [ malloc::mem#0 heap_head#5 ] ( malloc:2 [ malloc::mem#0 heap_head#5 ] malloc:4 [ malloc::mem#0 heap_head#5 ] ) always clobbers reg byte a 
-Statement [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
+Statement [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 [ malloc::mem#0 ] ( malloc:2 [ malloc::mem#0 ] malloc:4 [ malloc::mem#0 ] ) always clobbers reg byte a 
+Statement [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 [ malloc::mem#0 heap_head#1 ] ( malloc:2 [ malloc::mem#0 heap_head#1 ] malloc:4 [ malloc::mem#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [250] *((const byte*) RASTER#0) ← (const byte) RASTER_IRQ_TOP#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [251] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irqTop() [ ] (  [ ] ) always clobbers reg byte a 
 Statement [252] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
@@ -8022,8 +8026,8 @@ Uplift Scope [init_angle_screen] 202: zp ZP_BYTE:135 [ init_angle_screen::$2 ] 2
 Uplift Scope [processChars] 33.73: zp ZP_BYTE:51 [ processChars::numActive#10 processChars::numActive#3 processChars::numActive#1 ] 22: zp ZP_BYTE:160 [ processChars::$67 ] 22: zp ZP_BYTE:161 [ processChars::$68 ] 22: zp ZP_BYTE:162 [ processChars::$69 ] 22: zp ZP_BYTE:163 [ processChars::$70 ] 22: zp ZP_BYTE:164 [ processChars::$37 ] 22: zp ZP_BYTE:170 [ processChars::$11 ] 22: zp ZP_BYTE:171 [ processChars::$12 ] 22: zp ZP_BYTE:173 [ processChars::$14 ] 22: zp ZP_BYTE:179 [ processChars::$26 ] 22: zp ZP_BYTE:180 [ processChars::xchar#0 ] 22: zp ZP_BYTE:181 [ processChars::$38 ] 22: zp ZP_BYTE:182 [ processChars::$30 ] 22: zp ZP_BYTE:183 [ processChars::ychar#0 ] 22: zp ZP_BYTE:184 [ processChars::$39 ] 22: zp ZP_BYTE:185 [ processChars::$33 ] 17.9: zp ZP_BYTE:50 [ processChars::i#10 processChars::i#1 ] 11: zp ZP_WORD:174 [ processChars::$15 ] 11: zp ZP_WORD:177 [ processChars::$25 ] 6.6: zp ZP_BYTE:172 [ processChars::$17 ] 2.75: zp ZP_BYTE:176 [ processChars::ypos#0 ] 2.2: zp ZP_BYTE:167 [ processChars::bitmask#0 ] 2.06: zp ZP_WORD:168 [ processChars::xpos#0 ] 0.31: zp ZP_WORD:165 [ processChars::processing#0 ] 
 Uplift Scope [main] 27.5: zp ZP_WORD:2 [ main::src#2 main::src#1 ] 26.67: zp ZP_WORD:4 [ main::dst#2 main::dst#1 main::dst#0 ] 22: zp ZP_BYTE:58 [ main::$26 ] 22: zp ZP_BYTE:59 [ main::$27 ] 22: zp ZP_BYTE:60 [ main::$28 ] 22: zp ZP_BYTE:61 [ main::$29 ] 22: zp ZP_BYTE:68 [ main::center_dist#0 ] 20.17: zp ZP_BYTE:6 [ main::i#2 main::i#1 ] 12.22: zp ZP_BYTE:62 [ main::$16 ] 5.5: zp ZP_BYTE:66 [ main::center_x#0 ] 5.5: zp ZP_BYTE:67 [ main::center_y#0 ] 
 Uplift Scope [initSprites] 33: zp ZP_WORD:24 [ initSprites::sp#2 initSprites::sp#1 ] 33: zp ZP_BYTE:26 [ initSprites::i#2 initSprites::i#1 ] 
-Uplift Scope [] 4: zp ZP_WORD:48 [ heap_head#5 heap_head#1 ] 0.03: zp ZP_WORD:54 [ SCREEN_DIST#0 ] 0.03: zp ZP_WORD:52 [ SCREEN_COPY#0 ] 
-Uplift Scope [malloc] 0.4: zp ZP_WORD:158 [ malloc::mem#0 ] 
+Uplift Scope [] 5: zp ZP_WORD:48 [ heap_head#5 heap_head#1 ] 0.03: zp ZP_WORD:54 [ SCREEN_DIST#0 ] 0.03: zp ZP_WORD:52 [ SCREEN_COPY#0 ] 
+Uplift Scope [malloc] 0.8: zp ZP_WORD:158 [ malloc::mem#0 ] 
 Uplift Scope [ProcessingChar] 
 Uplift Scope [ProcessingSprite] 
 Uplift Scope [ProcessingSprite::$0] 
@@ -8256,8 +8260,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -8331,10 +8335,10 @@ b1:
   // [2] call malloc 
   // [243] phi from @1 to malloc [phi:@1->malloc]
 malloc_from_b1:
-  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_START#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   jmp b3
@@ -9767,18 +9771,18 @@ atan2_16: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = $2d
-    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 -- pbuz1=pbuz2 
+    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
     lda heap_head
+    sec
+    sbc #<$3e8
     sta mem
     lda heap_head+1
+    sbc #>$3e8
     sta mem+1
-    // [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8 -- pbuz1=pbuz1_plus_vwuc1 
-    clc
-    lda heap_head
-    adc #<$3e8
+    // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc #>$3e8
+    lda mem+1
     sta heap_head+1
     jmp breturn
     // malloc::@return
@@ -10564,8 +10568,8 @@ FINAL SYMBOL TABLE
 (bool) DEBUG
 (void()**) HARDWARE_IRQ
 (const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = (void()**) 65534
-(byte*) HEAP_START
-(const byte*) HEAP_START#0 HEAP_START = (byte*) 49152
+(byte*) HEAP_TOP
+(const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (byte*) IRQ_ENABLE
 (const byte*) IRQ_ENABLE#0 IRQ_ENABLE = (byte*) 53274
 (byte) IRQ_RASTER
@@ -10805,7 +10809,7 @@ FINAL SYMBOL TABLE
 (byte) getCharToProcess::y#7 y zp ZP_BYTE:16 80.2
 (byte*) heap_head
 (byte*) heap_head#1 heap_head zp ZP_WORD:39 1.0
-(byte*) heap_head#5 heap_head zp ZP_WORD:39 3.0
+(byte*) heap_head#5 heap_head zp ZP_WORD:39 4.0
 (void()) initSprites()
 (label) initSprites::@1
 (label) initSprites::@2
@@ -10903,7 +10907,7 @@ interrupt(HARDWARE_ALL)(void()) irqTop()
 (void*()) malloc((word) malloc::size)
 (label) malloc::@return
 (byte*) malloc::mem
-(byte*) malloc::mem#0 mem zp ZP_WORD:45 0.4
+(byte*) malloc::mem#0 mem zp ZP_WORD:45 0.8
 (void*) malloc::return
 (word) malloc::size
 (void()) processChars()
@@ -11168,8 +11172,8 @@ Score: 1113582
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -11240,10 +11244,10 @@ bbegin:
   // malloc(1000)
   // [2] call malloc 
   // [243] phi from @1 to malloc [phi:@1->malloc]
-  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_START#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
-  lda #<HEAP_START
+  // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
+  lda #<HEAP_TOP
   sta heap_head
-  lda #>HEAP_START
+  lda #>HEAP_TOP
   sta heap_head+1
   jsr malloc
   // @3
@@ -12646,20 +12650,20 @@ atan2_16: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = $2d
-    // mem = heap_head
-    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 -- pbuz1=pbuz2 
+    // mem = heap_head-size
+    // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
     lda heap_head
+    sec
+    sbc #<$3e8
     sta mem
     lda heap_head+1
+    sbc #>$3e8
     sta mem+1
-    // heap_head+= size
-    // [245] (byte*) heap_head#1 ← (byte*) heap_head#5 + (word) $3e8 -- pbuz1=pbuz1_plus_vwuc1 
-    clc
-    lda heap_head
-    adc #<$3e8
+    // heap_head = mem
+    // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
+    lda mem
     sta heap_head
-    lda heap_head+1
-    adc #>$3e8
+    lda mem+1
     sta heap_head+1
     // malloc::@return
     // }

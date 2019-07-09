@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Start of the heap used by malloc()
-  .label HEAP_START = $c000
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .label D018 = $d018
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
@@ -426,7 +426,9 @@ init_squares: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = HEAP_START
+    .const size = NUM_SQUARES*SIZEOF_WORD
+    .label mem = HEAP_TOP-size
+    .label return = mem
     rts
 }
 // Reset & start the processor clock time. The value can be read using clock().

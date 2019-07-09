@@ -1,14 +1,15 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 
+import "c64"
 import "stdlib"
 import "sqr"
 import "atan2"
 
 // Screen containing distance to center
-const byte* SCREEN_DIST = malloc(1000);
+const byte[1000] SCREEN_DIST; // = malloc(1000);
 // Screen containing angle to center
-const byte* SCREEN_ANGLE = malloc(1000);
+const byte[1000] SCREEN_ANGLE; // = malloc(1000);
 // Screen containing angle to center
 const byte* SCREEN_FILL = 0x0400;
 
@@ -19,6 +20,43 @@ void main() {
     init_dist_screen(SCREEN_DIST);
     init_angle_screen(SCREEN_ANGLE);
     init_buckets();
+
+    // Test buckets by animating them
+    byte bucket_idx = 0;
+    while(true) {
+        do { } while (*RASTER!=0xfe);
+        do { } while (*RASTER!=0xff);
+        (*BORDERCOL)++;
+        {
+            // First clear the current bucket
+            byte bucket_size = BUCKET_SIZES[bucket_idx];
+            if(bucket_size>0) {
+                word* bucket = BUCKETS[bucket_idx];
+                for( byte i=0;i<bucket_size;i++) {
+                    byte* sc = SCREEN_FILL+bucket[i];
+                    *sc = ' ';
+                }
+            }
+        }
+        // Increase bucket index
+        bucket_idx++;
+        if(bucket_idx==NUM_BUCKETS) {
+            bucket_idx = 0;
+        }
+        {
+            // Plot char in the bucket
+            byte bucket_size = BUCKET_SIZES[bucket_idx];
+            if(bucket_size>0) {
+                word* bucket = BUCKETS[bucket_idx];
+                for( byte i=0;i<bucket_size;i++) {
+                    byte* sc = SCREEN_FILL+bucket[i];
+                    *sc = '*';
+                }
+            }
+        }
+        (*BORDERCOL)--;
+    }
+
 /*
     while(true) {
         // Find the minimum dist/angle that is not already filled
@@ -51,9 +89,16 @@ void main() {
 // The number of buckets in our bucket sort
 const byte NUM_BUCKETS = 0x30;
 
-// Array containing the bucket size for each of the 256 buckets
-const byte[] BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
-//const word*[] BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
+// Array containing the bucket size for each of the distance buckets
+const byte[NUM_BUCKETS] BUCKET_SIZES; // = malloc(NUM_BUCKETS*sizeof(byte));
+
+// Buckets containing screen indices for each distance from the center.
+// BUCKETS[dist] is an array of words containing screen indices.
+// The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
+const word*[NUM_BUCKETS] BUCKETS; // = malloc(NUM_BUCKETS*sizeof(word*));
+
+// Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
+const byte[NUM_BUCKETS] BUCKET_IDX; // = malloc(NUM_BUCKETS*sizeof(byte));
 
 void init_buckets() {
     // Init bucket sizes to 0
@@ -61,28 +106,25 @@ void init_buckets() {
     // first find bucket sizes - by counting number of chars with each distance value
     byte* dist = SCREEN_DIST;
     for( word i:0..999) {
-        BUCKET_SIZES[*dist++]++;
+        BUCKET_SIZES[*dist]++;
+        dist++;
     }
-    /*
     // Allocate the buckets
     for( byte i:0..NUM_BUCKETS-1) {
         BUCKETS[i] = malloc(BUCKET_SIZES[i]*sizeof(byte*));
     }
     // Iterate all distances and fill the buckets with indices into the screens
-    const byte[] BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
     for(byte i:0..NUM_BUCKETS-1) BUCKET_IDX[i]=0;
     dist = SCREEN_DIST;
     for(word i:0..999) {
-        byte distance = *dist++;
+        byte distance = *dist;
         word* bucket = BUCKETS[distance];
         byte idx = BUCKET_IDX[distance];
         bucket[idx] = dist-SCREEN_DIST;
         BUCKET_IDX[distance]++;
+        *dist++;
     }
-    */
-
 }
-
 
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center

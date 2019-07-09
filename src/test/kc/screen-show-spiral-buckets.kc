@@ -11,93 +11,63 @@ const byte[1000] SCREEN_DIST; // = malloc(1000);
 // Screen containing angle to center
 const byte[1000] SCREEN_ANGLE; // = malloc(1000);
 // Screen containing angle to center
-const byte[1000] SCREEN_MIX; // = malloc(1000);
-// Screen containing angle to center
 const byte* SCREEN_FILL = 0x0400;
 
 // Char to fill with
-const byte FILL_CHAR = '@';
+const byte FILL_CHAR = '*';
 
 void main() {
+    asm { sei }
     init_dist_screen(SCREEN_DIST);
     init_angle_screen(SCREEN_ANGLE);
-   {
-        byte* dist = SCREEN_DIST;
-        byte* angle = SCREEN_ANGLE;
-        byte* mix = SCREEN_MIX;
-        for( word i:0..999)
-            *mix++ = (*dist++)*4 + (*angle++)/2;
-   }
+    init_buckets(SCREEN_DIST);
 
-    init_buckets(SCREEN_MIX);
-
-    // Test buckets by animating them
+    // Animate a spiral walking through the buckets one at a time
     byte bucket_idx = 0;
     while(true) {
-        do { } while (*RASTER!=0xfe);
         do { } while (*RASTER!=0xff);
         (*BORDERCOL)++;
-        {
-            // First clear the current bucket
-            byte bucket_size = BUCKET_SIZES[bucket_idx];
-            if(bucket_size>0) {
-                word* bucket = BUCKETS[(word)bucket_idx];
-                for( byte i=0;i<bucket_size;i++) {
-                    byte* sc = SCREEN_FILL+bucket[i];
-                    *sc = ' ';
+        word[] bucket = BUCKETS[bucket_idx];
+        byte bucket_size = BUCKET_SIZES[bucket_idx];
+        if(bucket_size>0) {
+            // Find the minimum unfilled angle in the current bucket
+            byte min_angle = 0xff;
+            word min_offset = 0xffff;
+            for( byte i=0;i<bucket_size;i++) {
+                word offset = bucket[i];
+                byte* fill = SCREEN_FILL+offset;
+                if(*fill!=FILL_CHAR) {
+                    byte* angle = SCREEN_ANGLE+offset;
+                    if(*angle<=min_angle) {
+                        min_angle = *angle;
+                        min_offset = offset;
+                    }
                 }
+            }
+            // Fill it if found
+            if(min_offset!=0xffff) {
+                // Found something to fill!
+                byte* fill = SCREEN_FILL+min_offset;
+                *fill = FILL_CHAR;
+                (*BORDERCOL)--;
+                continue;
             }
         }
-        // Increase bucket index
+        // Nothing found - Move to next bucket!
         bucket_idx++;
-        //if(bucket_idx==NUM_BUCKETS) {
-        //    bucket_idx = 0;
-        //}
-        {
-            // Plot char in the bucket
-            byte bucket_size = BUCKET_SIZES[bucket_idx];
-            if(bucket_size>0) {
-                word* bucket = BUCKETS[(word)bucket_idx];
-                for( byte i=0;i<bucket_size;i++) {
-                    byte* sc = SCREEN_FILL+bucket[i];
-                    *sc = '*';
-                }
-            }
+        if(bucket_idx==NUM_BUCKETS) {
+            // All buckets complete - exit loop!
+            (*BORDERCOL)--;
+            break;
         }
         (*BORDERCOL)--;
     }
-
-/*
-    while(true) {
-        // Find the minimum dist/angle that is not already filled
-        byte* dist = SCREEN_DIST;
-        byte* angle = SCREEN_ANGLE;
-        byte* fill = SCREEN_FILL;
-        word min_dist_angle = 0xffff;
-        byte* min_fill = SCREEN_FILL;
-        do {
-            if(*fill!=FILL_CHAR) {
-                word dist_angle = { *dist, *angle };
-                if(dist_angle<min_dist_angle) {
-                    min_fill = fill;
-                    min_dist_angle = dist_angle;
-                }
-            }
-            dist++;
-            angle++;
-            fill++;
-        } while (fill<SCREEN_FILL+1000);
-        // Break if not found (means we are done)
-        if(min_dist_angle==0xffff)
-            break;
-        // Fill the found location
-        *min_fill = FILL_CHAR;
-    }
-    */
+    while(true)
+        (*(COLS+999))++;
 }
 
 // The number of buckets in our bucket sort
-const word NUM_BUCKETS = 0x100;
+const byte NUM_BUCKETS = 0x30;
 
 // Array containing the bucket size for each of the distance buckets
 const byte[NUM_BUCKETS] BUCKET_SIZES; // = malloc(NUM_BUCKETS*sizeof(byte));

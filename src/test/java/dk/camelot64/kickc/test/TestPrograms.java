@@ -38,7 +38,7 @@ public class TestPrograms {
 
    @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
-      compileAndCompare("inner-increment-problem", log());
+      compileAndCompare("inner-increment-problem");
    }
 
    @Test
@@ -53,7 +53,7 @@ public class TestPrograms {
 
    @Test
    public void testScreenShowSpiralBuckets() throws IOException, URISyntaxException {
-      compileAndCompare("screen-show-spiral-buckets", log());
+      compileAndCompare("screen-show-spiral-buckets");
    }
 
    @Test

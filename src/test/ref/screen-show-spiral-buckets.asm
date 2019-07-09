@@ -6,6 +6,8 @@
   .const SIZEOF_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
+  // Color Ram
+  .label COLS = $d800
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -13,220 +15,174 @@
   // = malloc(1000);
   // Screen containing angle to center
   .label SCREEN_FILL = $400
+  // Char to fill with
+  .const FILL_CHAR = '*'
   // The number of buckets in our bucket sort
-  .const NUM_BUCKETS = $100
+  .const NUM_BUCKETS = $30
   .const NUM_SQUARES = $30
-  .label heap_head = $15
-  .label SQUARES = $17
+  .label heap_head = $12
+  .label SQUARES = $14
 main: {
-    .label _3 = $37
-    .label _11 = $39
-    .label _16 = $3e
-    .label _19 = $39
-    .label _21 = $3e
-    .label mix = 6
-    .label dist = 2
-    .label angle = 4
-    .label i = 8
-    .label bucket_size = $38
-    .label bucket_idx = $a
-    .label bucket_size1 = $3d
-    .label bucket = $39
-    .label sc = $3b
-    .label bucket1 = $3e
-    .label sc1 = $40
-    .label _23 = $39
-    .label _24 = $3e
+    .label bucket = $34
+    .label bucket_size = $36
+    .label bucket_idx = 2
+    .label offset = 6
+    .label fill = $37
+    .label angle = $39
+    .label min_angle = 3
+    .label fill1 = 6
+    .label min_offset = 6
+    .label min_offset_5 = 4
+    .label min_offset_7 = 4
+    sei
     jsr init_dist_screen
     jsr init_angle_screen
-    lda #<0
-    sta i
-    sta i+1
-    lda #<SCREEN_MIX
-    sta mix
-    lda #>SCREEN_MIX
-    sta mix+1
-    lda #<SCREEN_ANGLE
-    sta angle
-    lda #>SCREEN_ANGLE
-    sta angle+1
-    lda #<SCREEN_DIST
-    sta dist
-    lda #>SCREEN_DIST
-    sta dist+1
-  b1:
-    ldy #0
-    lda (dist),y
-    asl
-    asl
-    sta _3
-    lda (angle),y
-    lsr
-    clc
-    adc _3
-    sta (mix),y
-    inc mix
-    bne !+
-    inc mix+1
-  !:
-    inc dist
-    bne !+
-    inc dist+1
-  !:
-    inc angle
-    bne !+
-    inc angle+1
-  !:
-    inc i
-    bne !+
-    inc i+1
-  !:
-    lda i+1
-    cmp #>$3e8
-    bne b1
-    lda i
-    cmp #<$3e8
-    bne b1
     jsr init_buckets
     lda #0
     sta bucket_idx
-  b4:
-    lda #$fe
-    cmp RASTER
-    bne b4
-  b5:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b5
+    bne b2
     inc BORDERCOL
-    // First clear the current bucket
+    lda bucket_idx
+    asl
+    tay
+    lda BUCKETS,y
+    sta bucket
+    lda BUCKETS+1,y
+    sta bucket+1
     ldy bucket_idx
     lda BUCKET_SIZES,y
     sta bucket_size
     cmp #0
-    beq b8
-    tya
-    sta _11
-    lda #0
-    sta _11+1
-    asl _19
-    rol _19+1
-    clc
-    lda _23
-    adc #<BUCKETS
-    sta _23
-    lda _23+1
-    adc #>BUCKETS
-    sta _23+1
-    ldy #0
-    lda (bucket),y
-    pha
-    iny
-    lda (bucket),y
-    sta bucket+1
-    pla
-    sta bucket
+    beq b4
+    lda #<$ffff
+    sta min_offset_5
+    lda #>$ffff
+    sta min_offset_5+1
+    lda #$ff
+    sta min_angle
     ldx #0
-  b9:
+  b5:
     txa
     asl
     tay
-    clc
-    lda #<SCREEN_FILL
-    adc (bucket),y
-    sta sc
+    lda (bucket),y
+    sta offset
     iny
-    lda #>SCREEN_FILL
-    adc (bucket),y
-    sta sc+1
-    lda #' '
+    lda (bucket),y
+    sta offset+1
+    lda offset
+    clc
+    adc #<SCREEN_FILL
+    sta fill
+    lda offset+1
+    adc #>SCREEN_FILL
+    sta fill+1
+    lda #FILL_CHAR
     ldy #0
-    sta (sc),y
+    cmp (fill),y
+    beq b18
+    lda offset
+    clc
+    adc #<SCREEN_ANGLE
+    sta angle
+    lda offset+1
+    adc #>SCREEN_ANGLE
+    sta angle+1
+    lda (angle),y
+    cmp min_angle
+    beq !+
+    bcs b17
+  !:
+    ldy #0
+    lda (angle),y
+    sta min_angle
+  b6:
     inx
     cpx bucket_size
-    bcc b9
-  b8:
+    bcc b16
+    lda min_offset
+    cmp #<$ffff
+    bne !+
+    lda min_offset+1
+    cmp #>$ffff
+    beq b4
+  !:
+    clc
+    lda fill1
+    adc #<SCREEN_FILL
+    sta fill1
+    lda fill1+1
+    adc #>SCREEN_FILL
+    sta fill1+1
+    lda #FILL_CHAR
+    ldy #0
+    sta (fill1),y
+    dec BORDERCOL
+    jmp b2
+  b4:
     inc bucket_idx
-    // Plot char in the bucket
-    ldy bucket_idx
-    lda BUCKET_SIZES,y
-    sta bucket_size1
-    cmp #0
-    beq b11
-    tya
-    sta _16
-    lda #0
-    sta _16+1
-    asl _21
-    rol _21+1
-    clc
-    lda _24
-    adc #<BUCKETS
-    sta _24
-    lda _24+1
-    adc #>BUCKETS
-    sta _24+1
-    ldy #0
-    lda (bucket1),y
-    pha
-    iny
-    lda (bucket1),y
-    sta bucket1+1
-    pla
-    sta bucket1
-    ldx #0
-  b12:
-    txa
-    asl
-    tay
-    clc
-    lda #<SCREEN_FILL
-    adc (bucket1),y
-    sta sc1
-    iny
-    lda #>SCREEN_FILL
-    adc (bucket1),y
-    sta sc1+1
-    lda #'*'
-    ldy #0
-    sta (sc1),y
-    inx
-    cpx bucket_size1
-    bcc b12
+    lda #NUM_BUCKETS
+    cmp bucket_idx
+    bne b11
+    dec BORDERCOL
+  b13:
+    inc COLS+$3e7
+    jmp b13
   b11:
     dec BORDERCOL
-    jmp b4
+    jmp b2
+  b16:
+    lda min_offset
+    sta min_offset_7
+    lda min_offset+1
+    sta min_offset_7+1
+    jmp b5
+  b17:
+    lda min_offset_5
+    sta min_offset
+    lda min_offset_5+1
+    sta min_offset+1
+    jmp b6
+  b18:
+    lda min_offset_5
+    sta min_offset
+    lda min_offset_5+1
+    sta min_offset+1
+    jmp b6
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 init_buckets: {
-    .label _5 = $17
-    .label _9 = $44
-    .label _10 = $46
-    .label _12 = $42
-    .label _13 = $44
-    .label dist = $b
-    .label i1 = $d
-    .label i2 = $f
-    .label bucket = $44
-    .label dist_3 = $11
-    .label i4 = $13
-    .label dist_5 = $11
-    .label _15 = $17
-    .label _16 = $42
-    .label _17 = $44
+    .label _5 = $14
+    .label _9 = $3d
+    .label _10 = $3f
+    .label _12 = $3b
+    .label _13 = $3d
+    .label dist = 8
+    .label i1 = $a
+    .label i2 = $c
+    .label bucket = $3d
+    .label dist_3 = $e
+    .label i4 = $10
+    .label dist_5 = $e
+    .label _15 = $14
+    .label _16 = $3b
+    .label _17 = $3d
     ldx #0
   // Init bucket sizes to 0
   b1:
     lda #0
     sta BUCKET_SIZES,x
     inx
-    cpx #0
+    cpx #NUM_BUCKETS-1+1
     bne b1
     sta i1
     sta i1+1
-    lda #<SCREEN_MIX
+    lda #<SCREEN_DIST
     sta dist
-    lda #>SCREEN_MIX
+    lda #>SCREEN_DIST
     sta dist+1
   b2:
     ldy #0
@@ -302,13 +258,13 @@ init_buckets: {
     lda #0
     sta BUCKET_IDX,x
     inx
-    cpx #0
+    cpx #NUM_BUCKETS-1+1
     bne b4
     sta i4
     sta i4+1
-    lda #<SCREEN_MIX
+    lda #<SCREEN_DIST
     sta dist_5
-    lda #>SCREEN_MIX
+    lda #>SCREEN_DIST
     sta dist_5+1
   b5:
     ldy #0
@@ -336,10 +292,10 @@ init_buckets: {
     sta bucket
     lda dist_5
     sec
-    sbc #<SCREEN_MIX
+    sbc #<SCREEN_DIST
     sta _10
     lda dist_5+1
-    sbc #>SCREEN_MIX
+    sbc #>SCREEN_DIST
     sta _10+1
     lda BUCKET_IDX,x
     asl
@@ -368,10 +324,10 @@ init_buckets: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($17) size)
+// malloc(word zeropage($14) size)
 malloc: {
-    .label mem = $17
-    .label size = $17
+    .label mem = $14
+    .label size = $14
     lda heap_head
     sec
     sbc mem
@@ -388,16 +344,16 @@ malloc: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the center
 init_angle_screen: {
-    .label _10 = $24
-    .label xw = $48
-    .label yw = $4a
-    .label angle_w = $24
-    .label ang_w = $4c
-    .label x = $1e
-    .label xb = $1f
-    .label screen_topline = $1c
-    .label screen_bottomline = $1a
-    .label y = $19
+    .label _10 = $21
+    .label xw = $41
+    .label yw = $43
+    .label angle_w = $21
+    .label ang_w = $45
+    .label x = $1b
+    .label xb = $1c
+    .label screen_topline = $19
+    .label screen_bottomline = $17
+    .label y = $16
     lda #<SCREEN_ANGLE+$28*$c
     sta screen_topline
     lda #>SCREEN_ANGLE+$28*$c
@@ -479,18 +435,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($48) x, signed word zeropage($4a) y)
+// atan2_16(signed word zeropage($41) x, signed word zeropage($43) y)
 atan2_16: {
-    .label _2 = $20
-    .label _7 = $22
-    .label yi = $20
-    .label xi = $22
-    .label angle = $24
-    .label xd = $28
-    .label yd = $26
-    .label return = $24
-    .label x = $48
-    .label y = $4a
+    .label _2 = $1d
+    .label _7 = $1f
+    .label yi = $1d
+    .label xi = $1f
+    .label angle = $21
+    .label xd = $25
+    .label yd = $23
+    .label return = $21
+    .label x = $41
+    .label y = $43
     lda y+1
     bmi !b1+
     jmp b1
@@ -669,14 +625,14 @@ atan2_16: {
 // The actual value stored is distance*2 to increase precision
 // Utilizes symmetry around the center
 init_dist_screen: {
-    .label yds = $4d
-    .label xds = $4f
-    .label ds = $4f
-    .label x = $2f
-    .label xb = $30
-    .label screen_topline = $2b
-    .label screen_bottomline = $2d
-    .label y = $2a
+    .label yds = $46
+    .label xds = $48
+    .label ds = $48
+    .label x = $2c
+    .label xb = $2d
+    .label screen_topline = $28
+    .label screen_bottomline = $2a
+    .label y = $27
     jsr init_squares
     lda #<SCREEN_DIST+$28*$18
     sta screen_bottomline
@@ -766,12 +722,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($4f) val)
+// sqrt(word zeropage($48) val)
 sqrt: {
-    .label _1 = $31
-    .label _3 = $31
-    .label found = $31
-    .label val = $4f
+    .label _1 = $2e
+    .label _3 = $2e
+    .label found = $2e
+    .label val = $48
     lda SQUARES
     sta bsearch16u.items
     lda SQUARES+1
@@ -794,14 +750,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($4f) key, word* zeropage($31) items, byte register(X) num)
+// bsearch16u(word zeropage($48) key, word* zeropage($2e) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $31
-    .label pivot = $51
-    .label result = $53
-    .label return = $31
-    .label items = $31
-    .label key = $4f
+    .label _2 = $2e
+    .label pivot = $4a
+    .label result = $4c
+    .label return = $2e
+    .label items = $2e
+    .label key = $48
     ldx #NUM_SQUARES
   b3:
     cpx #0
@@ -877,8 +833,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $4f
-    .label return_2 = $4d
+    .label return = $48
+    .label return_2 = $46
     asl
     tay
     lda (SQUARES),y
@@ -891,8 +847,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $35
-    .label sqr = $33
+    .label squares = $32
+    .label sqr = $30
     lda #NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
     lda #0
@@ -949,9 +905,6 @@ CORDIC_ATAN2_ANGLES_16:
   // = malloc(1000);
   // Screen containing angle to center
   SCREEN_ANGLE: .fill $3e8, 0
-  // = malloc(1000);
-  // Screen containing angle to center
-  SCREEN_MIX: .fill $3e8, 0
   // Array containing the bucket size for each of the distance buckets
   BUCKET_SIZES: .fill NUM_BUCKETS, 0
   // Buckets containing screen indices for each distance from the center.

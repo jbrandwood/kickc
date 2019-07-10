@@ -75,10 +75,11 @@ main: {
     lda #toD0181_return
     sta D018
     jsr init_irq
-    lda #$80
+    lda #<$80
     sta idx_y
-    lda #0
+    lda #>$80
     sta idx_y+1
+    lda #<0
     sta idx_x
     sta idx_x+1
   b2:
@@ -150,9 +151,9 @@ main: {
     lda (sin_y),y
     stx sin_y
     sta sin_y+1
-    lda #$64
+    lda #<$64
     sta mul16s.a
-    lda #0
+    lda #>$64
     sta mul16s.a+1
     jsr mul16s
     asl _14
@@ -191,7 +192,7 @@ main: {
     lda idx_x
     cmp #<$200
     bne b3
-    lda #0
+    lda #<0
     sta idx_x
     sta idx_x+1
   b3:
@@ -205,7 +206,7 @@ main: {
     lda idx_y
     cmp #<$200
     bne b4
-    lda #0
+    lda #<0
     sta idx_y
     sta idx_y+1
   b4:
@@ -503,7 +504,7 @@ sin16s_gen2: {
     .label x = $1e
     .label i = $24
     jsr div32u16u
-    lda #0
+    lda #<0
     sta i
     sta i+1
     lda #<SINUS
@@ -801,7 +802,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #0
+    lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

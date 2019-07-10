@@ -15,9 +15,9 @@ main: {
     sta y
   b1:
     ldx y
-    lda #mul8u.b
+    lda #<mul8u.b
     sta mul8u.mb
-    lda #0
+    lda #>mul8u.b
     sta mul8u.mb+1
     jsr mul8u
     ldy #0
@@ -27,9 +27,9 @@ main: {
     lda z1+1
     sta (screen),y
     ldx y
-    lda #mul8u.b
+    lda #<mul8u.b
     sta mul8u.mb
-    lda #0
+    lda #>mul8u.b
     sta mul8u.mb+1
     jsr mul8u
     ldy #SIZEOF_WORD
@@ -58,7 +58,7 @@ mul8u: {
     .label mb = 7
     .label res = 5
     .label return = 5
-    lda #0
+    lda #<0
     sta res
     sta res+1
   b1:

@@ -27,7 +27,7 @@ main: {
     sta utoa16w.dst
     lda #>$400
     sta utoa16w.dst+1
-    lda #0
+    lda #<0
     sta utoa16w.value
     sta utoa16w.value+1
     jsr utoa16w

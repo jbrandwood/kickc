@@ -58,27 +58,27 @@ bbegin:
   sta SCREEN_ANGLE
   lda malloc.mem+1
   sta SCREEN_ANGLE+1
-  lda #NUM_BUCKETS*SIZEOF_BYTE
+  lda #<NUM_BUCKETS*SIZEOF_BYTE
   sta malloc.size
-  lda #0
+  lda #>NUM_BUCKETS*SIZEOF_BYTE
   sta malloc.size+1
   jsr malloc
   lda malloc.mem
   sta BUCKET_SIZES
   lda malloc.mem+1
   sta BUCKET_SIZES+1
-  lda #NUM_BUCKETS*SIZEOF_POINTER
+  lda #<NUM_BUCKETS*SIZEOF_POINTER
   sta malloc.size
-  lda #0
+  lda #>NUM_BUCKETS*SIZEOF_POINTER
   sta malloc.size+1
   jsr malloc
   lda malloc.mem
   sta BUCKETS
   lda malloc.mem+1
   sta BUCKETS+1
-  lda #NUM_BUCKETS*SIZEOF_BYTE
+  lda #<NUM_BUCKETS*SIZEOF_BYTE
   sta malloc.size
-  lda #0
+  lda #>NUM_BUCKETS*SIZEOF_BYTE
   sta malloc.size+1
   jsr malloc
   lda malloc.mem
@@ -566,7 +566,7 @@ atan2_16: {
     sbc x+1
     sta _7+1
   b6:
-    lda #0
+    lda #<0
     sta angle
     sta angle+1
     tax
@@ -945,9 +945,9 @@ sqr: {
 init_squares: {
     .label squares = $32
     .label sqr = $30
-    lda #NUM_SQUARES*SIZEOF_WORD
+    lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
-    lda #0
+    lda #>NUM_SQUARES*SIZEOF_WORD
     sta malloc.size+1
     jsr malloc
     lda SQUARES

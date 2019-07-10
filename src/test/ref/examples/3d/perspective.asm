@@ -238,9 +238,9 @@ mulf_init: {
     .label val = $e
     .label sqr = $a
     .label add = $c
-    lda #1
+    lda #<1
     sta add
-    lda #0
+    lda #>1
     sta add+1
     tay
     sta sqr

@@ -297,7 +297,7 @@ atan2_16: {
     sbc x+1
     sta _7+1
   b6:
-    lda #0
+    lda #<0
     sta angle
     sta angle+1
     tax
@@ -675,9 +675,9 @@ sqr: {
 init_squares: {
     .label squares = $2a
     .label sqr = $28
-    lda #NUM_SQUARES*SIZEOF_WORD
+    lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
-    lda #0
+    lda #>NUM_SQUARES*SIZEOF_WORD
     sta malloc.size+1
     jsr malloc
     lda SQUARES

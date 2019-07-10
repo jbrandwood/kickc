@@ -164,11 +164,11 @@ init: {
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
     jsr plexInit
-    lda #$20
+    lda #<$20
     sta xp
-    lda #0
+    lda #>$20
     sta xp+1
-    tax
+    ldx #0
   b1:
     lda #SPRITE/$40
     sta PLEX_PTR,x

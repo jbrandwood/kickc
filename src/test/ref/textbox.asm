@@ -24,7 +24,7 @@ main: {
     lda #>text2
     sta textbox.text+1
     jsr textbox
-    lda #0
+    lda #<0
     sta wait
     sta wait+1
   b2:

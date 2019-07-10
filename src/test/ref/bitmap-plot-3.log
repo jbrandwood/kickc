@@ -470,7 +470,7 @@ sgn_u16: scope:[sgn_u16]  from bitmap_line::@14 bitmap_line::@15
   if((bool~) sgn_u16::$2) goto sgn_u16::@1
   to:sgn_u16::@3
 sgn_u16::@1: scope:[sgn_u16]  from sgn_u16
-  (word) sgn_u16::return#2 ← (number) $ffff
+  (word) sgn_u16::return#2 ← (number) -1
   to:sgn_u16::@return
 sgn_u16::@3: scope:[sgn_u16]  from sgn_u16
   (word) sgn_u16::return#3 ← (number) 1
@@ -1166,7 +1166,7 @@ Adding number conversion cast (unumber) 0 in (bool~) abs_u16::$3 ← (number) 0 
 Adding number conversion cast (unumber) $80 in (number~) sgn_u16::$1 ← (byte~) sgn_u16::$0 & (number) $80
 Adding number conversion cast (unumber) sgn_u16::$1 in (number~) sgn_u16::$1 ← (byte~) sgn_u16::$0 & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) sgn_u16::$2 ← (number) 0 != (unumber~) sgn_u16::$1
-Adding number conversion cast (unumber) $ffff in (word) sgn_u16::return#2 ← (number) $ffff
+Adding number conversion cast (unumber) -1 in (word) sgn_u16::return#2 ← (number) -1
 Adding number conversion cast (unumber) 1 in (word) sgn_u16::return#3 ← (number) 1
 Adding number conversion cast (unumber) $40 in (byte*~) $0 ← (byte[$180]) SINTAB#0 + (number) $40
 Adding number conversion cast (unumber) 3 in (number~) main::$4 ← (byte~) main::$3 | (number) 3
@@ -1210,7 +1210,7 @@ Inlining cast (byte) memset::c#1 ← (unumber)(number) 0
 Inlining cast (byte~) bitmap_line::$12 ← (byte)(word) bitmap_line::y#3
 Inlining cast (byte~) bitmap_line::$9 ← (byte)(word) bitmap_line::y#6
 Inlining cast (byte~) bitmap_line::$18 ← (byte)(word) bitmap_line::y#7
-Inlining cast (word) sgn_u16::return#2 ← (unumber)(number) $ffff
+Inlining cast (word) sgn_u16::return#2 ← (unumber)(number) -1
 Inlining cast (word) sgn_u16::return#3 ← (unumber)(number) 1
 Inlining cast (byte*) BITMAP#0 ← (byte*)(number) $2000
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
@@ -1248,7 +1248,7 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
-Simplifying constant integer cast $ffff
+Simplifying constant integer cast -1
 Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 1024
@@ -1289,7 +1289,7 @@ Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $ffff
+Finalized unsigned number type (byte) -1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 3
@@ -1546,7 +1546,7 @@ Constant (const byte) bitmap_init::y#0 = 0
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
-Constant (const word) sgn_u16::return#2 = $ffff
+Constant (const word) sgn_u16::return#2 = -1
 Constant (const word) sgn_u16::return#3 = 1
 Constant (const byte*) BITMAP#0 = (byte*) 8192
 Constant (const byte*) SCREEN#0 = (byte*) 1024
@@ -1677,7 +1677,7 @@ Constant inlined main::a#0 = (byte) 0
 Constant inlined main::$18 = (const byte*) SCREEN#0+(word) $3e7
 Constant inlined sgn_u16::return#3 = (byte) 1
 Constant inlined main::i#0 = (byte) 0
-Constant inlined sgn_u16::return#2 = (word) $ffff
+Constant inlined sgn_u16::return#2 = (byte) -1
 Constant inlined memset::str#1 = (void*)(const byte*) BITMAP#0
 Constant inlined memset::str#0 = (void*)(const byte*) SCREEN#0
 Constant inlined bitmap_gfx#1 = (const byte*) BITMAP#0
@@ -2000,7 +2000,7 @@ sgn_u16::@1: scope:[sgn_u16]  from sgn_u16
   [80] phi()
   to:sgn_u16::@return
 sgn_u16::@return: scope:[sgn_u16]  from sgn_u16 sgn_u16::@1
-  [81] (word) sgn_u16::return#4 ← phi( sgn_u16::@1/(word) $ffff sgn_u16/(byte) 1 )
+  [81] (word) sgn_u16::return#4 ← phi( sgn_u16::@1/(byte) -1 sgn_u16/(byte) 1 )
   [82] return 
   to:@return
 abs_u16: scope:[abs_u16]  from bitmap_line bitmap_line::@10
@@ -2948,9 +2948,9 @@ sgn_u16: {
     // [81] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
   breturn_from_sgn_u16:
     // [81] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
-    lda #1
+    lda #<1
     sta return_4
-    lda #0
+    lda #>1
     sta return_4+1
     jmp breturn
     // [80] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
@@ -2960,10 +2960,10 @@ sgn_u16: {
   b1:
     // [81] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
   breturn_from_b1:
-    // [81] phi (word) sgn_u16::return#4 = (word) $ffff [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vwuc1 
-    lda #<$ffff
+    // [81] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
+    lda #<-1
     sta return_4
-    lda #>$ffff
+    lda #>-1
     sta return_4+1
     jmp breturn
     // sgn_u16::@return
@@ -4060,9 +4060,9 @@ sgn_u16: {
     // [81] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
   breturn_from_sgn_u16:
     // [81] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
-    lda #1
+    lda #<1
     sta return
-    lda #0
+    lda #>1
     sta return+1
     jmp breturn
     // [80] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
@@ -4072,10 +4072,10 @@ sgn_u16: {
   b1:
     // [81] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
   breturn_from_b1:
-    // [81] phi (word) sgn_u16::return#4 = (word) $ffff [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vwuc1 
-    lda #<$ffff
+    // [81] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
+    lda #<-1
     sta return
-    lda #>$ffff
+    lda #>-1
     sta return+1
     jmp breturn
     // sgn_u16::@return
@@ -5230,19 +5230,19 @@ sgn_u16: {
     bne b1
     // [81] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
     // [81] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
-    lda #1
+    lda #<1
     sta return
-    lda #0
+    lda #>1
     sta return+1
     rts
     // [80] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
     // sgn_u16::@1
   b1:
     // [81] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
-    // [81] phi (word) sgn_u16::return#4 = (word) $ffff [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vwuc1 
-    lda #<$ffff
+    // [81] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
+    lda #<-1
     sta return
-    lda #>$ffff
+    lda #>-1
     sta return+1
     // sgn_u16::@return
     // }

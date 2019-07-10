@@ -289,15 +289,15 @@ sgn_u16: {
     and #$80
     cmp #0
     bne b1
-    lda #1
+    lda #<1
     sta return
-    lda #0
+    lda #>1
     sta return+1
     rts
   b1:
-    lda #<$ffff
+    lda #<-1
     sta return
-    lda #>$ffff
+    lda #>-1
     sta return+1
     rts
 }

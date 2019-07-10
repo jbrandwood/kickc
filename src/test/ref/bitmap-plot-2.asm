@@ -82,10 +82,11 @@ main: {
     jsr init_irq
     lda #$20
     sta r_add
-    lda #$80
+    lda #<$80
     sta idx_y
-    lda #0
+    lda #>$80
     sta idx_y+1
+    lda #<0
     sta r
     sta r+1
     sta idx_x
@@ -198,7 +199,7 @@ main: {
     cmp #<$200
     bcc b3
   !:
-    lda #0
+    lda #<0
     sta idx_x
     sta idx_x+1
   b3:
@@ -217,7 +218,7 @@ main: {
     cmp #<$200
     bcc b4
   !:
-    lda #0
+    lda #<0
     sta idx_y
     sta idx_y+1
   b4:
@@ -540,7 +541,7 @@ sin16s_gen2: {
     .label x = $1f
     .label i = $25
     jsr div32u16u
-    lda #0
+    lda #<0
     sta i
     sta i+1
     lda #<SINUS
@@ -838,7 +839,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #0
+    lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

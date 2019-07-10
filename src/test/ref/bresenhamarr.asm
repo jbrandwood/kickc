@@ -17,7 +17,7 @@ main: {
     ldx #y1/2
     lda #x0
     sta x
-    lda #0
+    lda #<0
     sta idx
     sta idx+1
   b1:

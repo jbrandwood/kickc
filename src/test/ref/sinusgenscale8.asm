@@ -86,14 +86,14 @@ sin8u_table: {
     lda #>$400
     sta print_line_cursor+1
     jsr print_ln
-    lda #0
+    lda #<0
     sta i
     sta i+1
     lda #<main.sintab
     sta sintab
     lda #>main.sintab
     sta sintab+1
-    lda #0
+    lda #<0
     sta x
     sta x+1
   // u[4.12]
@@ -328,9 +328,9 @@ mul8su: {
     .label m = $11
     tya
     tax
-    lda #b
+    lda #<b
     sta mul8u.mb
-    lda #0
+    lda #>b
     sta mul8u.mb+1
     jsr mul8u
     cpy #0
@@ -348,7 +348,7 @@ mul8u: {
     .label mb = $13
     .label res = $11
     .label return = $11
-    lda #0
+    lda #<0
     sta res
     sta res+1
   b1:

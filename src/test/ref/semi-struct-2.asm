@@ -728,10 +728,11 @@ mul8u: {
     .label mb = $12
     .label res = $10
     .label return = $10
-    lda #SIZEOF_ENTRY
+    lda #<SIZEOF_ENTRY
     sta mb
-    lda #0
+    lda #>SIZEOF_ENTRY
     sta mb+1
+    lda #<0
     sta res
     sta res+1
   b1:

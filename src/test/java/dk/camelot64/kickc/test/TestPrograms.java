@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProblemNegativeWordConst() throws IOException, URISyntaxException {
+      compileAndCompare("problem-negative-word-const");
+   }
+
+   @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
       compileAndCompare("inner-increment-problem");
    }

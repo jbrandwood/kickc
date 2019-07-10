@@ -301,7 +301,7 @@ mul8u: {
     .label mb = $e
     .label res = $c
     .label return = $c
-    lda #0
+    lda #<0
     sta res
     sta res+1
   b1:
@@ -436,7 +436,7 @@ muls8s: {
     bne b3
     rts
   b5:
-    lda #0
+    lda #<0
     sta return
     sta return+1
     rts
@@ -619,7 +619,7 @@ muls8u: {
     bne b2
     rts
   b3:
-    lda #0
+    lda #<0
     sta return
     sta return+1
     rts
@@ -781,7 +781,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #0
+    lda #<0
     sta sqr
     sta sqr+1
     tax

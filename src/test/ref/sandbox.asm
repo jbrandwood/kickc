@@ -473,9 +473,9 @@ utoa: {
     sta (dst),y
     rts
   b8:
-    lda #$a
+    lda #<$a
     sta append.sub
-    lda #0
+    lda #>$a
     sta append.sub+1
     jsr append
     inc dst
@@ -484,9 +484,9 @@ utoa: {
   !:
     jmp b4
   b7:
-    lda #$64
+    lda #<$64
     sta append.sub
-    lda #0
+    lda #>$64
     sta append.sub+1
     jsr append
     inc dst

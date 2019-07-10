@@ -59,7 +59,7 @@ main: {
     lda #1
     sta vy
     sta vx
-    lda #0
+    lda #>1
     sta vx+1
     sta y
     sta x

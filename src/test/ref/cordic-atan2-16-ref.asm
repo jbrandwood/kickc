@@ -29,7 +29,7 @@ main: {
     sta screen
     lda #>SCREEN
     sta screen+1
-    lda #0
+    lda #<0
     sta diff_sum
     sta diff_sum+1
     lda #<SCREEN_REF
@@ -198,7 +198,7 @@ atan2_16: {
     sbc x+1
     sta _7+1
   b6:
-    lda #0
+    lda #<0
     sta angle
     sta angle+1
     tax

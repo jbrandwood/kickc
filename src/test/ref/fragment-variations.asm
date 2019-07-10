@@ -8,9 +8,9 @@ main: {
     .label screen = $400
     .label _0 = 2
     .label _1 = 2
-    lda #$a
+    lda #<$a
     sta mul16u.a
-    lda #0
+    lda #>$a
     sta mul16u.a+1
     lda #$a
     sta mul16u.mb

@@ -38,7 +38,7 @@ main: {
     sta lin16u_gen.lintab
     lda #>lintab3
     sta lin16u_gen.lintab+1
-    lda #0
+    lda #<0
     sta lin16u_gen.min
     sta lin16u_gen.min+1
     lda #<$6488
@@ -76,7 +76,7 @@ main: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    lda #0
+    lda #<0
     sta print_word.w
     sta print_word.w+1
     jsr print_word
@@ -309,10 +309,11 @@ lin16u_gen: {
     lda ampl+1
     sbc min+1
     sta ampl+1
-    lda #$14-1
+    lda #<$14-1
     sta divr16u.divisor
-    lda #0
+    lda #>$14-1
     sta divr16u.divisor+1
+    lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u
@@ -320,10 +321,11 @@ lin16u_gen: {
     sta stepi
     lda divr16u.return+1
     sta stepi+1
-    lda #$14-1
+    lda #<$14-1
     sta divr16u.divisor
-    lda #0
+    lda #>$14-1
     sta divr16u.divisor+1
+    lda #<0
     sta divr16u.dividend
     sta divr16u.dividend+1
     jsr divr16u
@@ -342,7 +344,7 @@ lin16u_gen: {
     sta val+2
     lda min+1
     sta val+3
-    lda #0
+    lda #<0
     sta i
     sta i+1
   b1:

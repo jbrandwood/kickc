@@ -108,7 +108,7 @@ atan2_16: {
     sbc x+1
     sta _7+1
   b6:
-    lda #0
+    lda #<0
     sta angle
     sta angle+1
     tax

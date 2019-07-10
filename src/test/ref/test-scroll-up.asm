@@ -17,7 +17,7 @@ scrollup3: {
     .label _3 = $d
     .label _4 = $f
     .label l2_4 = 4
-    lda #0
+    lda #<0
     sta l2
     sta l2+1
   b1:
@@ -111,7 +111,7 @@ scrollup1: {
     .label line = $b
     .label _5 = $13
     .label _6 = $11
-    lda #0
+    lda #<0
     sta line
     sta line+1
   b1:

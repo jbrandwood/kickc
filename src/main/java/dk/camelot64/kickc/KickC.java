@@ -10,7 +10,10 @@ import kickass.KickAssembler;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,19 +34,19 @@ import java.util.concurrent.Callable;
 )
 public class KickC implements Callable<Void> {
 
-   @CommandLine.Parameters(index = "0", arity="0..1", description = "The KickC source file to compile.")
+   @CommandLine.Parameters(index = "0", arity = "0..1", description = "The KickC source file to compile.")
    private Path kcFile = null;
 
-   @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
+   @CommandLine.Option(names = {"-I", "-libdir"}, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
 
-   @CommandLine.Option(names = {"-F", "-fragmentdir" }, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
+   @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
    private Path fragmentDir = null;
 
    @CommandLine.Option(names = {"-o"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
 
-   @CommandLine.Option(names = {"-odir" }, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")
+   @CommandLine.Option(names = {"-odir"}, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")
    private Path outputDir = null;
 
    @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a .prg file.")
@@ -52,58 +55,61 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-e"}, description = "Execute the assembled prg file using VICE. Implicitly assembles the output.")
    private boolean execute = false;
 
-   @CommandLine.Option(names = {"-Ouplift" }, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
+   @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
+   private boolean debug = false;
+
+   @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
-   @CommandLine.Option(names = {"-Ocoalesce" }, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time..")
+   @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time..")
    private boolean optimizeZeroPageCoalesce = false;
 
-   @CommandLine.Option(names = {"-v" }, description = "Verbose output describing the compilation process")
-   private boolean verbose= false;
+   @CommandLine.Option(names = {"-v"}, description = "Verbose output describing the compilation process")
+   private boolean verbose = false;
 
-   @CommandLine.Option(names = {"-vparse" }, description = "Verbosity Option. File Parsing.")
+   @CommandLine.Option(names = {"-vparse"}, description = "Verbosity Option. File Parsing.")
    private boolean verboseParse = false;
 
-   @CommandLine.Option(names = {"-vcreate" }, description = "Verbosity Option. Creation of the Single Static Assignment Control Flow Graph.")
+   @CommandLine.Option(names = {"-vcreate"}, description = "Verbosity Option. Creation of the Single Static Assignment Control Flow Graph.")
    private boolean verboseCreateSsa = false;
 
-   @CommandLine.Option(names = {"-voptimize" }, description = "Verbosity Option. Control Flow Graph Optimization.")
+   @CommandLine.Option(names = {"-voptimize"}, description = "Verbosity Option. Control Flow Graph Optimization.")
    private boolean verboseSSAOptimize = false;
 
-   @CommandLine.Option(names = {"-vnonoptimize" }, description = "Verbosity Option. Choices not to optimize.")
+   @CommandLine.Option(names = {"-vnonoptimize"}, description = "Verbosity Option. Choices not to optimize.")
    private boolean verboseNonOptimization = false;
 
-   @CommandLine.Option(names = {"-vsequence" }, description = "Verbosity Option. Sequence Plan.")
+   @CommandLine.Option(names = {"-vsequence"}, description = "Verbosity Option. Sequence Plan.")
    private boolean verboseSequencePlan = false;
 
-   @CommandLine.Option(names = {"-vloop" }, description = "Verbosity Option. Loop Analysis.")
+   @CommandLine.Option(names = {"-vloop"}, description = "Verbosity Option. Loop Analysis.")
    private boolean verboseLoopAnalysis = false;
 
-   @CommandLine.Option(names = {"-vliverange" }, description = "Verbosity Option. Variable Live Range Analysis.")
+   @CommandLine.Option(names = {"-vliverange"}, description = "Verbosity Option. Variable Live Range Analysis.")
    private boolean verboseLiveRanges = false;
 
-   @CommandLine.Option(names = {"-vuplift" }, description = "Verbosity Option. Variable Register Uplift Combination Optimization.")
+   @CommandLine.Option(names = {"-vuplift"}, description = "Verbosity Option. Variable Register Uplift Combination Optimization.")
    private boolean verboseUplift = false;
 
-   @CommandLine.Option(names = {"-vunroll" }, description = "Verbosity Option. Loop Unrolling.")
+   @CommandLine.Option(names = {"-vunroll"}, description = "Verbosity Option. Loop Unrolling.")
    private boolean verboseLoopUnroll = false;
 
-   @CommandLine.Option(names = {"-vfragment" }, description = "Verbosity Option. Synthesis of Assembler fragments.")
-   private boolean verboseFragments= false;
+   @CommandLine.Option(names = {"-vfragment"}, description = "Verbosity Option. Synthesis of Assembler fragments.")
+   private boolean verboseFragments = false;
 
-   @CommandLine.Option(names = {"-vasmoptimize" }, description = "Verbosity Option. Assembler optimization.")
+   @CommandLine.Option(names = {"-vasmoptimize"}, description = "Verbosity Option. Assembler optimization.")
    private boolean verboseAsmOptimize = false;
 
-   @CommandLine.Option(names = {"-fragment" }, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
+   @CommandLine.Option(names = {"-fragment"}, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
    private String fragment = null;
 
-   @CommandLine.Option(names = {"-S", "-Sc" }, description = "Interleave comments with C source code in the generated ASM.")
+   @CommandLine.Option(names = {"-S", "-Sc"}, description = "Interleave comments with C source code in the generated ASM.")
    private boolean interleaveSourceCode = false;
 
-   @CommandLine.Option(names = {"-Sl" }, description = "Interleave comments with C source file name and line number in the generated ASM.")
+   @CommandLine.Option(names = {"-Sl"}, description = "Interleave comments with C source file name and line number in the generated ASM.")
    private boolean interleaveSourceFile = false;
 
-   @CommandLine.Option(names = {"-Si" }, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
+   @CommandLine.Option(names = {"-Si"}, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
    private boolean interleaveIclFile = false;
 
 
@@ -128,13 +134,13 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      if(fragmentDir!= null) {
-         AsmFragmentTemplateSynthesizer.initialize(fragmentDir.toString()+"/");
+      if(fragmentDir != null) {
+         AsmFragmentTemplateSynthesizer.initialize(fragmentDir.toString() + "/");
       } else {
          AsmFragmentTemplateSynthesizer.initialize("fragment/");
       }
 
-      if(fragment!=null) {
+      if(fragment != null) {
          configVerbosity(compiler);
          if(verbose) {
             compiler.getLog().setVerboseFragmentLog(true);
@@ -146,7 +152,7 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      if(kcFile!=null) {
+      if(kcFile != null) {
 
          configVerbosity(compiler);
 
@@ -211,16 +217,24 @@ public class KickC implements Callable<Void> {
 
          // Assemble the asm-file if instructed
          Path prgPath = outputDir.resolve(fileBaseName + ".prg");
-         if(assemble || execute) {
+         if(assemble || execute || debug) {
             Path kasmLogPath = outputDir.resolve(fileBaseName + ".klog");
             System.out.println("Assembling to " + prgPath.toString());
             ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
+            String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
+            if(verbose) {
+               System.out.print("Assembling command: java -jar kickassembler-5.7.jar ");
+               for(String cmd : assembleCommand) {
+                  System.out.print(cmd + " ");
+               }
+               System.out.println();
+            }
             System.setOut(new PrintStream(kasmLogOutputStream));
             int kasmResult = -1;
             try {
-               kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
-            } catch (Throwable e) {
-               throw new CompileError("KickAssembling file failed! " , e);
+               kasmResult = KickAssembler.main2(assembleCommand);
+            } catch(Throwable e) {
+               throw new CompileError("KickAssembling file failed! ", e);
             } finally {
                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             }
@@ -230,10 +244,27 @@ public class KickC implements Callable<Void> {
             }
          }
 
+         // Debug the prg-file if instructed
+         if(debug) {
+            System.out.println("Debugging " + prgPath);
+            Path viceSymbolsPath = outputDir.resolve(fileBaseName + ".vs");
+            String debugCommand = "C64Debugger " + "-symbols " + viceSymbolsPath + " -wait 2500" + " -prg " + prgPath.toString();
+            if(verbose) {
+               System.out.println("Debugging command: " + debugCommand);
+            }
+            Process process = Runtime.getRuntime().exec(debugCommand);
+            process.waitFor();
+         }
+
          // Execute the prg-file if instructed
          if(execute) {
             System.out.println("Executing " + prgPath);
-            Process process = Runtime.getRuntime().exec("x64 " + prgPath.toString());
+            Path viceSymbolsPath = outputDir.resolve(fileBaseName + ".vs");
+            String executeCommand = "x64 " + "-moncommands " + viceSymbolsPath + " " + prgPath.toString();
+            if(verbose) {
+               System.out.println("Executing command:  " + executeCommand);
+            }
+            Process process = Runtime.getRuntime().exec(executeCommand);
             process.waitFor();
          }
 
@@ -295,6 +326,7 @@ public class KickC implements Callable<Void> {
 
    /**
     * Get the current version of KickC
+    *
     * @return The name and version (eg "KickC 0.5")
     */
    private String getVersion() {

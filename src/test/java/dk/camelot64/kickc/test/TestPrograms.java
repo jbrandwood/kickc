@@ -137,6 +137,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBitmapPlot3() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plot-3");
+   }
+
+   @Test
    public void testBitmapPlot2() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-plot-2");
    }

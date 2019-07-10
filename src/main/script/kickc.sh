@@ -19,5 +19,5 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   *) export PARAM="$PARAM $1"; shift;;
 esac; done
 
-echo java -jar $KICKC_JAR -I $KICKC_STDLIB_HOME -F $KICKC_FRAGMENT_HOME $PARAM
-java -jar $KICKC_JAR -I $KICKC_STDLIB_HOME -F $KICKC_FRAGMENT_HOME $PARAM
+echo java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STDLIB_HOME
+java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STDLIB_HOME

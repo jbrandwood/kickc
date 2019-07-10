@@ -1,4 +1,4 @@
-// Simple Singlecolor Bitmap Routines
+// Simple single-color (320x200) bitmap routines
 import "string"
 
 // The adddress of the bitmap screen (used for colors)
@@ -48,3 +48,59 @@ void bitmap_plot(word x, byte y) {
     plotter += ( x & $fff8 );
     *plotter |= bitmap_plot_bit[<x];
 }
+
+// Draw a line on the bitmap using bresenhams algorithm
+void bitmap_line(word x1, word y1, word x2, word y2) {
+    word x = x1;
+    word y = y1;
+    word dx = abs_u16(x2-x1);
+    word dy = abs_u16(y2-y1);
+    word sx = sgn_u16(x2-x1);
+    word sy = sgn_u16(y2-y1);
+    if(dx > dy) {
+        // X is the driver
+        word e = dy/2;
+        do  {
+            bitmap_plot(x,(byte)y);
+            x += sx;
+            e += dy;
+            if(dx < e) {
+                y += sy;
+                e -= dx;
+            }
+        } while (x != x2);
+    } else {
+        // Y is the driver
+        word e = dx/2;
+        do  {
+            bitmap_plot(x,(byte)y);
+            y += sy;
+            e += dx;
+            if(dy<e) {
+                x += sx;
+                e -= dy;
+            }
+        } while (y != y2);
+    }
+    bitmap_plot(x,(byte)y);
+}
+
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+word abs_u16(word w) {
+    if(>w&0x80) {
+        return -w;
+    } else {
+        return w;
+    }
+}
+
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+word sgn_u16(word w) {
+    if(>w&0x80) {
+        return 0xffff;
+    } else {
+        return 1;
+    }
+}
+

@@ -3,6 +3,8 @@ Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*
 Fixing pointer addition (signed word*~) render_sine::$0 ← (signed word[$200]) sin + (word) render_sine::sin_idx
 Fixing pointer addition (signed word*~) render_sine::$3 ← (signed word[$200]) sin2 + (word) render_sine::sin_idx
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition (number~) abs_u16::$1
+Warning! Adding boolean cast to non-boolean condition (number~) sgn_u16::$1
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) BITMAP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -47,6 +49,9 @@ Culled Empty Block (label) @27
 Culled Empty Block (label) bitmap_init::@8
 Culled Empty Block (label) @29
 Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@1
 Culled Empty Block (label) main::vicSelectGfxBank1_@return
 Culled Empty Block (label) main::toD0181_@1
@@ -54,9 +59,9 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @32
+Culled Empty Block (label) @35
 Culled Empty Block (label) render_sine::@4
-Culled Empty Block (label) @33
+Culled Empty Block (label) @36
 Culled Empty Block (label) wrap_y::@4
 Culled Empty Block (label) wrap_y::@3
 Culled Empty Block (label) wrap_y::@5
@@ -581,7 +586,7 @@ memset::@return: scope:[memset]  from memset::@2
   (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
-  to:@31
+  to:@34
 bitmap_init: scope:[bitmap_init]  from main::@8
   (byte*) bitmap_init::screen#1 ← phi( main::@8/(byte*) bitmap_init::screen#0 )
   (byte*) bitmap_init::gfx#1 ← phi( main::@8/(byte*) bitmap_init::gfx#0 )
@@ -706,7 +711,7 @@ bitmap_plot: scope:[bitmap_plot]  from render_sine::@5 render_sine::@7
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
-@31: scope:[]  from @28
+@34: scope:[]  from @28
   (word) rem16u#30 ← phi( @28/(word) rem16u#32 )
   (byte*) bitmap_screen#20 ← phi( @28/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#21 ← phi( @28/(byte*) bitmap_gfx#0 )
@@ -718,11 +723,11 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   	  .word sin(toRadians([i*360]/512))*320
     }
  }}
-  to:@34
-main: scope:[main]  from @34
-  (word) rem16u#42 ← phi( @34/(word) rem16u#25 )
-  (byte*) bitmap_screen#33 ← phi( @34/(byte*) bitmap_screen#14 )
-  (byte*) bitmap_gfx#34 ← phi( @34/(byte*) bitmap_gfx#15 )
+  to:@37
+main: scope:[main]  from @37
+  (word) rem16u#42 ← phi( @37/(word) rem16u#25 )
+  (byte*) bitmap_screen#33 ← phi( @37/(byte*) bitmap_screen#14 )
+  (byte*) bitmap_gfx#34 ← phi( @37/(byte*) bitmap_gfx#15 )
   asm { sei  }
   *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
   *((byte*) PROCPORT#0) ← (byte) PROCPORT_RAM_IO#0
@@ -960,28 +965,28 @@ wrap_y::@return: scope:[wrap_y]  from wrap_y::@9
   (byte) wrap_y::return#3 ← (byte) wrap_y::return#6
   return 
   to:@return
-@34: scope:[]  from @31
-  (word) rem16u#25 ← phi( @31/(word) rem16u#30 )
-  (byte*) bitmap_screen#14 ← phi( @31/(byte*) bitmap_screen#20 )
-  (byte*) bitmap_gfx#15 ← phi( @31/(byte*) bitmap_gfx#21 )
+@37: scope:[]  from @34
+  (word) rem16u#25 ← phi( @34/(word) rem16u#30 )
+  (byte*) bitmap_screen#14 ← phi( @34/(byte*) bitmap_screen#20 )
+  (byte*) bitmap_gfx#15 ← phi( @34/(byte*) bitmap_gfx#21 )
   call main 
-  to:@35
-@35: scope:[]  from @34
-  (word) rem16u#19 ← phi( @34/(word) rem16u#9 )
-  (byte*) bitmap_screen#10 ← phi( @34/(byte*) bitmap_screen#4 )
-  (byte*) bitmap_gfx#10 ← phi( @34/(byte*) bitmap_gfx#4 )
+  to:@38
+@38: scope:[]  from @37
+  (word) rem16u#19 ← phi( @37/(word) rem16u#9 )
+  (byte*) bitmap_screen#10 ← phi( @37/(byte*) bitmap_screen#4 )
+  (byte*) bitmap_gfx#10 ← phi( @37/(byte*) bitmap_gfx#4 )
   (byte*) bitmap_gfx#5 ← (byte*) bitmap_gfx#10
   (byte*) bitmap_screen#5 ← (byte*) bitmap_screen#10
   (word) rem16u#10 ← (word) rem16u#19
   to:@end
-@end: scope:[]  from @35
+@end: scope:[]  from @38
 
 SYMBOL TABLE SSA
 (label) @17
 (label) @28
-(label) @31
 (label) @34
-(label) @35
+(label) @37
+(label) @38
 (label) @6
 (label) @begin
 (label) @end
@@ -2761,9 +2766,9 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @17
 Adding NOP phi() at start of @28
-Adding NOP phi() at start of @31
 Adding NOP phi() at start of @34
-Adding NOP phi() at start of @35
+Adding NOP phi() at start of @37
+Adding NOP phi() at start of @38
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001_@return
@@ -2865,8 +2870,8 @@ Coalesced down to 30 phi equivalence classes
 Culled Empty Block (label) @6
 Culled Empty Block (label) @17
 Culled Empty Block (label) @28
-Culled Empty Block (label) @31
-Culled Empty Block (label) @35
+Culled Empty Block (label) @34
+Culled Empty Block (label) @38
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@return
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@12
@@ -2891,7 +2896,7 @@ Culled Empty Block (label) bitmap_init::@4
 Culled Empty Block (label) bitmap_init::@11
 Culled Empty Block (label) bitmap_init::@12
 Culled Empty Block (label) bitmap_init::@9
-Renumbering block @34 to @1
+Renumbering block @37 to @1
 Renumbering block div32u16u::@2 to div32u16u::@1
 Renumbering block div32u16u::@3 to div32u16u::@2
 Renumbering block mul16u::@4 to mul16u::@3

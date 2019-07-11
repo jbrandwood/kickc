@@ -247,7 +247,7 @@ memset: {
     lda str+1
     adc #>$3e8
     sta end+1
-  b1:
+  b2:
     txa
     ldy #0
     sta (dst),y
@@ -257,10 +257,10 @@ memset: {
   !:
     lda dst+1
     cmp end+1
-    bne b1
+    bne b2
     lda dst
     cmp end
-    bne b1
+    bne b2
     rts
 }
 init_sprites: {

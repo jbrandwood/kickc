@@ -429,34 +429,38 @@ init_irq: {
 bitmap_clear: {
     .const col = WHITE*$10
     ldx #col
-    lda #<$3e8
-    sta memset.num
-    lda #>$3e8
-    sta memset.num+1
     lda #<SCREEN
     sta memset.str
     lda #>SCREEN
     sta memset.str+1
+    lda #<$3e8
+    sta memset.num
+    lda #>$3e8
+    sta memset.num+1
     jsr memset
     ldx #0
-    lda #<$1f40
-    sta memset.num
-    lda #>$1f40
-    sta memset.num+1
     lda #<BITMAP
     sta memset.str
     lda #>BITMAP
     sta memset.str+1
+    lda #<$1f40
+    sta memset.num
+    lda #>$1f40
+    sta memset.num+1
     jsr memset
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($19) str, byte register(X) c, word zeropage($1b) num)
+// memset(void* zeropage($1b) str, byte register(X) c, word zeropage($19) num)
 memset: {
-    .label end = $1b
-    .label dst = $19
-    .label str = $19
-    .label num = $1b
+    .label end = $19
+    .label dst = $1b
+    .label num = $19
+    .label str = $1b
+    lda num
+    beq breturn
+    lda num+1
+    beq breturn
     lda end
     clc
     adc str
@@ -464,7 +468,7 @@ memset: {
     lda end+1
     adc str+1
     sta end+1
-  b1:
+  b2:
     txa
     ldy #0
     sta (dst),y
@@ -474,10 +478,11 @@ memset: {
   !:
     lda dst+1
     cmp end+1
-    bne b1
+    bne b2
     lda dst
     cmp end
-    bne b1
+    bne b2
+  breturn:
     rts
 }
 // Initialize bitmap plotting tables

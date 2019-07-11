@@ -6,11 +6,16 @@ Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUAR
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) atan2_16::shift
 Identified constant variable (byte*) HEAP_TOP
-Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
+Culled Empty Block (label) @3
+Culled Empty Block (label) malloc::@1
+Culled Empty Block (label) @5
+Culled Empty Block (label) @6
+Culled Empty Block (label) @7
 Culled Empty Block (label) bsearch16u::@11
 Culled Empty Block (label) bsearch16u::@12
 Culled Empty Block (label) bsearch16u::@14
@@ -19,9 +24,9 @@ Culled Empty Block (label) bsearch16u::@17
 Culled Empty Block (label) bsearch16u::@4
 Culled Empty Block (label) bsearch16u::@5
 Culled Empty Block (label) init_squares::@2
-Culled Empty Block (label) @4
+Culled Empty Block (label) @9
 Culled Empty Block (label) sqr::@1
-Culled Empty Block (label) @5
+Culled Empty Block (label) @10
 Culled Empty Block (label) sqrt::@1
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
@@ -35,7 +40,7 @@ Culled Empty Block (label) atan2_16::@23
 Culled Empty Block (label) atan2_16::@31
 Culled Empty Block (label) atan2_16::@32
 Culled Empty Block (label) atan2_16::@14
-Culled Empty Block (label) @7
+Culled Empty Block (label) @12
 Culled Empty Block (label) main::@14
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@15
@@ -44,9 +49,9 @@ Culled Empty Block (label) main::@10
 Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@16
-Culled Empty Block (label) @9
+Culled Empty Block (label) @14
 Culled Empty Block (label) init_angle_screen::@4
-Culled Empty Block (label) @10
+Culled Empty Block (label) @15
 Culled Empty Block (label) init_dist_screen::@13
 Culled Empty Block (label) init_dist_screen::@14
 Culled Empty Block (label) init_dist_screen::@9
@@ -55,12 +60,14 @@ Culled Empty Block (label) init_dist_screen::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  to:@4
+@4: scope:[]  from @begin
   (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
   (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
-  to:@3
-malloc: scope:[malloc]  from @12 @8 init_squares
-  (word) malloc::size#3 ← phi( @12/(word) malloc::size#2 @8/(word) malloc::size#1 init_squares/(word) malloc::size#0 )
-  (byte*) heap_head#12 ← phi( @12/(byte*) heap_head#5 @8/(byte*) heap_head#23 init_squares/(byte*) heap_head#24 )
+  to:@8
+malloc: scope:[malloc]  from @13 @17 init_squares
+  (word) malloc::size#3 ← phi( @13/(word) malloc::size#1 @17/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
+  (byte*) heap_head#12 ← phi( @13/(byte*) heap_head#23 @17/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
   (byte*~) malloc::$0 ← (byte*) heap_head#12 - (word) malloc::size#3
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
   (byte*) heap_head#1 ← (byte*) malloc::mem#0
@@ -155,11 +162,11 @@ bsearch16u::@3: scope:[bsearch16u]  from bsearch16u::@1 bsearch16u::@2
   (word*~) bsearch16u::$4 ← phi( bsearch16u::@1/(word*~) bsearch16u::$3 bsearch16u::@2/(word*~) bsearch16u::$2 )
   (word*) bsearch16u::return#2 ← (word*~) bsearch16u::$4
   to:bsearch16u::@return
-@3: scope:[]  from @begin
-  (byte*) heap_head#37 ← phi( @begin/(byte*) heap_head#0 )
+@8: scope:[]  from @4
+  (byte*) heap_head#37 ← phi( @4/(byte*) heap_head#0 )
   (byte) NUM_SQUARES#0 ← (number) $ff
   (word*) SQUARES#0 ← (word*) 0
-  to:@6
+  to:@11
 init_squares: scope:[init_squares]  from init_dist_screen
   (byte*) heap_head#24 ← phi( init_dist_screen/(byte*) heap_head#29 )
   (byte) NUM_SQUARES#6 ← phi( init_dist_screen/(byte) NUM_SQUARES#3 )
@@ -239,15 +246,15 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (byte) sqrt::return#1 ← (byte) sqrt::return#3
   return 
   to:@return
-@6: scope:[]  from @3
-  (word*) SQUARES#45 ← phi( @3/(word*) SQUARES#0 )
-  (byte) NUM_SQUARES#34 ← phi( @3/(byte) NUM_SQUARES#0 )
-  (byte*) heap_head#32 ← phi( @3/(byte*) heap_head#37 )
+@11: scope:[]  from @8
+  (word*) SQUARES#45 ← phi( @8/(word*) SQUARES#0 )
+  (byte) NUM_SQUARES#34 ← phi( @8/(byte) NUM_SQUARES#0 )
+  (byte*) heap_head#32 ← phi( @8/(byte*) heap_head#37 )
   (byte) CORDIC_ITERATIONS_16#0 ← (number) $f
   (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-  to:@8
+  to:@13
 atan2_16: scope:[atan2_16]  from init_angle_screen::@2
   (signed word) atan2_16::x#9 ← phi( init_angle_screen::@2/(signed word) atan2_16::x#0 )
   (signed word) atan2_16::y#1 ← phi( init_angle_screen::@2/(signed word) atan2_16::y#0 )
@@ -458,41 +465,41 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@8: scope:[]  from @6
-  (word*) SQUARES#42 ← phi( @6/(word*) SQUARES#45 )
-  (byte) NUM_SQUARES#31 ← phi( @6/(byte) NUM_SQUARES#34 )
-  (byte*) heap_head#23 ← phi( @6/(byte*) heap_head#32 )
+@13: scope:[]  from @11
+  (word*) SQUARES#42 ← phi( @11/(word*) SQUARES#45 )
+  (byte) NUM_SQUARES#31 ← phi( @11/(byte) NUM_SQUARES#34 )
+  (byte*) heap_head#23 ← phi( @11/(byte*) heap_head#32 )
   (word) malloc::size#1 ← (number) $3e8
   call malloc 
   (void*) malloc::return#3 ← (void*) malloc::return#1
-  to:@12
-@12: scope:[]  from @8
-  (word*) SQUARES#36 ← phi( @8/(word*) SQUARES#42 )
-  (byte) NUM_SQUARES#25 ← phi( @8/(byte) NUM_SQUARES#31 )
-  (byte*) heap_head#16 ← phi( @8/(byte*) heap_head#2 )
-  (void*) malloc::return#7 ← phi( @8/(void*) malloc::return#3 )
+  to:@17
+@17: scope:[]  from @13
+  (word*) SQUARES#36 ← phi( @13/(word*) SQUARES#42 )
+  (byte) NUM_SQUARES#25 ← phi( @13/(byte) NUM_SQUARES#31 )
+  (byte*) heap_head#16 ← phi( @13/(byte*) heap_head#2 )
+  (void*) malloc::return#7 ← phi( @13/(void*) malloc::return#3 )
   (void*~) $0 ← (void*) malloc::return#7
   (byte*) heap_head#5 ← (byte*) heap_head#16
   (byte*) SCREEN_DIST#0 ← ((byte*)) (void*~) $0
   (word) malloc::size#2 ← (number) $3e8
   call malloc 
   (void*) malloc::return#4 ← (void*) malloc::return#1
-  to:@13
-@13: scope:[]  from @12
-  (word*) SQUARES#35 ← phi( @12/(word*) SQUARES#36 )
-  (byte) NUM_SQUARES#24 ← phi( @12/(byte) NUM_SQUARES#25 )
-  (byte*) heap_head#17 ← phi( @12/(byte*) heap_head#2 )
-  (void*) malloc::return#8 ← phi( @12/(void*) malloc::return#4 )
+  to:@18
+@18: scope:[]  from @17
+  (word*) SQUARES#35 ← phi( @17/(word*) SQUARES#36 )
+  (byte) NUM_SQUARES#24 ← phi( @17/(byte) NUM_SQUARES#25 )
+  (byte*) heap_head#17 ← phi( @17/(byte*) heap_head#2 )
+  (void*) malloc::return#8 ← phi( @17/(void*) malloc::return#4 )
   (void*~) $1 ← (void*) malloc::return#8
   (byte*) heap_head#6 ← (byte*) heap_head#17
   (byte*) SCREEN_ANGLE#0 ← ((byte*)) (void*~) $1
   (byte*) SCREEN_FILL#0 ← ((byte*)) (number) $400
   (byte) FILL_CHAR#0 ← (byte) '@'
-  to:@11
-main: scope:[main]  from @11
-  (word*) SQUARES#21 ← phi( @11/(word*) SQUARES#26 )
-  (byte*) heap_head#26 ← phi( @11/(byte*) heap_head#31 )
-  (byte) NUM_SQUARES#14 ← phi( @11/(byte) NUM_SQUARES#18 )
+  to:@16
+main: scope:[main]  from @16
+  (word*) SQUARES#21 ← phi( @16/(word*) SQUARES#26 )
+  (byte*) heap_head#26 ← phi( @16/(byte*) heap_head#31 )
+  (byte) NUM_SQUARES#14 ← phi( @16/(byte) NUM_SQUARES#18 )
   (byte*) init_dist_screen::screen#0 ← (byte*) SCREEN_DIST#0
   call init_dist_screen 
   to:main::@17
@@ -880,31 +887,32 @@ init_dist_screen::@return: scope:[init_dist_screen]  from init_dist_screen::@11
   (word*) SQUARES#6 ← (word*) SQUARES#15
   return 
   to:@return
-@11: scope:[]  from @13
-  (word*) SQUARES#26 ← phi( @13/(word*) SQUARES#35 )
-  (byte*) heap_head#31 ← phi( @13/(byte*) heap_head#6 )
-  (byte) NUM_SQUARES#18 ← phi( @13/(byte) NUM_SQUARES#24 )
+@16: scope:[]  from @18
+  (word*) SQUARES#26 ← phi( @18/(word*) SQUARES#35 )
+  (byte*) heap_head#31 ← phi( @18/(byte*) heap_head#6 )
+  (byte) NUM_SQUARES#18 ← phi( @18/(byte) NUM_SQUARES#24 )
   call main 
-  to:@14
-@14: scope:[]  from @11
-  (word*) SQUARES#16 ← phi( @11/(word*) SQUARES#4 )
-  (byte*) heap_head#22 ← phi( @11/(byte*) heap_head#8 )
-  (byte) NUM_SQUARES#12 ← phi( @11/(byte) NUM_SQUARES#2 )
+  to:@19
+@19: scope:[]  from @16
+  (word*) SQUARES#16 ← phi( @16/(word*) SQUARES#4 )
+  (byte*) heap_head#22 ← phi( @16/(byte*) heap_head#8 )
+  (byte) NUM_SQUARES#12 ← phi( @16/(byte) NUM_SQUARES#2 )
   (byte) NUM_SQUARES#5 ← (byte) NUM_SQUARES#12
   (byte*) heap_head#11 ← (byte*) heap_head#22
   (word*) SQUARES#7 ← (word*) SQUARES#16
   to:@end
-@end: scope:[]  from @14
+@end: scope:[]  from @19
 
 SYMBOL TABLE SSA
 (void*~) $0
 (void*~) $1
 (label) @11
-(label) @12
 (label) @13
-(label) @14
-(label) @3
-(label) @6
+(label) @16
+(label) @17
+(label) @18
+(label) @19
+(label) @4
 (label) @8
 (label) @begin
 (label) @end
@@ -2452,111 +2460,113 @@ Added new block during phi lifting init_angle_screen::@7(between init_angle_scre
 Added new block during phi lifting init_dist_screen::@19(between init_dist_screen::@11 and init_dist_screen::@1)
 Added new block during phi lifting init_dist_screen::@20(between init_dist_screen::@18 and init_dist_screen::@5)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @8
 Adding NOP phi() at start of @11
-Adding NOP phi() at start of @14
+Adding NOP phi() at start of @13
+Adding NOP phi() at start of @16
+Adding NOP phi() at start of @19
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@18
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of init_dist_screen
 CALL GRAPH
-Calls in [] to malloc:4 malloc:7 main:10 
-Calls in [main] to init_dist_screen:14 init_angle_screen:16 
-Calls in [init_angle_screen] to atan2_16:59 
-Calls in [init_dist_screen] to init_squares:155 sqr:167 sqr:178 sqrt:183 
-Calls in [sqrt] to bsearch16u:209 
-Calls in [init_squares] to malloc:249 
+Calls in [] to malloc:5 malloc:8 main:11 
+Calls in [main] to init_dist_screen:15 init_angle_screen:17 
+Calls in [init_angle_screen] to atan2_16:60 
+Calls in [init_dist_screen] to init_squares:156 sqr:168 sqr:179 sqrt:184 
+Calls in [sqrt] to bsearch16u:210 
+Calls in [init_squares] to malloc:250 
 
 Created 48 initial phi equivalence classes
-Coalesced [6] heap_head#52 ← heap_head#1
-Coalesced [21] main::dist#6 ← main::dist#0
-Coalesced [22] main::angle#6 ← main::angle#0
-Coalesced [27] main::min_dist_angle#9 ← main::dist_angle#0
-Not coalescing [28] main::min_fill#10 ← main::fill#2
-Coalesced [37] main::fill#6 ← main::fill#1
-Coalesced [38] main::dist#7 ← main::dist#1
-Coalesced [39] main::angle#7 ← main::angle#1
-Not coalescing [40] main::min_dist_angle#6 ← main::min_dist_angle#3
-Coalesced [41] main::min_fill#7 ← main::min_fill#2
-Not coalescing [42] main::min_dist_angle#8 ← main::min_dist_angle#2
-Coalesced (already) [43] main::min_fill#9 ← main::min_fill#5
-Not coalescing [44] main::min_dist_angle#7 ← main::min_dist_angle#2
-Coalesced (already) [45] main::min_fill#8 ← main::min_fill#5
-Coalesced [48] init_angle_screen::screen_bottomline#6 ← init_angle_screen::screen_bottomline#0
-Coalesced [49] init_angle_screen::screen_topline#6 ← init_angle_screen::screen_topline#0
-Coalesced [79] init_angle_screen::y#6 ← init_angle_screen::y#1
-Coalesced [80] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#1
-Coalesced [81] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#1
-Coalesced [82] init_angle_screen::x#4 ← init_angle_screen::x#1
-Coalesced [83] init_angle_screen::xb#4 ← init_angle_screen::xb#1
-Coalesced [86] atan2_16::yi#17 ← atan2_16::$2
-Coalesced [90] atan2_16::xi#14 ← atan2_16::$7
-Coalesced [92] atan2_16::yi#19 ← atan2_16::yi#0
-Coalesced [93] atan2_16::xi#16 ← atan2_16::xi#0
-Coalesced [96] atan2_16::angle#22 ← atan2_16::angle#12
-Coalesced [101] atan2_16::angle#27 ← atan2_16::angle#4
-Coalesced [105] atan2_16::return#5 ← atan2_16::angle#5
-Coalesced [108] atan2_16::return#6 ← atan2_16::angle#11
-Coalesced [109] atan2_16::angle#26 ← atan2_16::angle#1
-Not coalescing [110] atan2_16::shift#5 ← atan2_16::i#2
-Not coalescing [111] atan2_16::xd#10 ← atan2_16::xi#3
-Not coalescing [112] atan2_16::yd#10 ← atan2_16::yi#3
-Coalesced [118] atan2_16::yd#13 ← atan2_16::yd#2
-Coalesced [119] atan2_16::xd#13 ← atan2_16::xd#2
-Coalesced [126] atan2_16::yi#21 ← atan2_16::yi#2
-Coalesced [127] atan2_16::angle#25 ← atan2_16::angle#3
-Coalesced [128] atan2_16::xi#18 ← atan2_16::xi#2
-Coalesced [132] atan2_16::yi#18 ← atan2_16::yi#8
-Coalesced [133] atan2_16::xi#15 ← atan2_16::xi#8
-Coalesced [134] atan2_16::i#12 ← atan2_16::i#1
-Coalesced [135] atan2_16::angle#21 ← atan2_16::angle#13
-Coalesced (already) [136] atan2_16::angle#23 ← atan2_16::angle#13
-Coalesced [141] atan2_16::yi#20 ← atan2_16::yi#1
-Coalesced [142] atan2_16::angle#24 ← atan2_16::angle#2
-Coalesced [143] atan2_16::xi#17 ← atan2_16::xi#1
-Coalesced [144] atan2_16::yd#12 ← atan2_16::yd#3
-Coalesced [145] atan2_16::xd#12 ← atan2_16::xd#3
-Coalesced [149] atan2_16::shift#6 ← atan2_16::shift#1
-Coalesced [150] atan2_16::xd#11 ← atan2_16::xd#1
-Coalesced [151] atan2_16::yd#11 ← atan2_16::yd#1
-Not coalescing [152] atan2_16::xi#13 ← atan2_16::x#0
-Not coalescing [153] atan2_16::yi#16 ← atan2_16::y#0
-Coalesced [157] init_dist_screen::screen_topline#15 ← init_dist_screen::screen#0
-Coalesced [158] init_dist_screen::screen_bottomline#15 ← init_dist_screen::screen_bottomline#0
-Coalesced [163] init_dist_screen::yd#2 ← init_dist_screen::$5
-Coalesced [166] sqr::val#3 ← sqr::val#0
-Coalesced [174] init_dist_screen::xd#2 ← init_dist_screen::$13
-Coalesced [177] sqr::val#4 ← sqr::val#1
-Coalesced [198] init_dist_screen::y#14 ← init_dist_screen::y#1
-Coalesced [199] init_dist_screen::screen_topline#14 ← init_dist_screen::screen_topline#1
-Coalesced [200] init_dist_screen::screen_bottomline#14 ← init_dist_screen::screen_bottomline#1
-Coalesced [201] init_dist_screen::x#8 ← init_dist_screen::x#1
-Coalesced [202] init_dist_screen::xb#8 ← init_dist_screen::xb#1
-Coalesced [204] init_dist_screen::xd#1 ← init_dist_screen::$15
-Coalesced [206] init_dist_screen::yd#1 ← init_dist_screen::$7
-Coalesced [216] bsearch16u::items#10 ← bsearch16u::items#1
-Coalesced [221] bsearch16u::return#9 ← bsearch16u::$2
-Coalesced [223] bsearch16u::return#7 ← bsearch16u::return#2
-Coalesced [226] bsearch16u::return#8 ← bsearch16u::items#2
-Not coalescing [232] bsearch16u::return#6 ← bsearch16u::pivot#0
-Coalesced [236] bsearch16u::num#10 ← bsearch16u::num#1
-Coalesced [237] bsearch16u::items#12 ← bsearch16u::items#0
-Coalesced [240] bsearch16u::num#9 ← bsearch16u::num#0
-Coalesced [241] bsearch16u::items#11 ← bsearch16u::items#8
-Coalesced [242] bsearch16u::num#11 ← bsearch16u::num#3
-Coalesced (already) [243] bsearch16u::items#13 ← bsearch16u::items#2
-Coalesced (already) [248] heap_head#53 ← heap_head#1
-Coalesced [252] init_squares::squares#4 ← init_squares::squares#0
-Coalesced [262] init_squares::sqr#3 ← init_squares::sqr#1
-Coalesced [263] init_squares::squares#3 ← init_squares::squares#1
-Coalesced [264] init_squares::i#3 ← init_squares::i#1
-Not coalescing [267] heap_head#1 ← malloc::mem#0
+Coalesced [7] heap_head#52 ← heap_head#1
+Coalesced [22] main::dist#6 ← main::dist#0
+Coalesced [23] main::angle#6 ← main::angle#0
+Coalesced [28] main::min_dist_angle#9 ← main::dist_angle#0
+Not coalescing [29] main::min_fill#10 ← main::fill#2
+Coalesced [38] main::fill#6 ← main::fill#1
+Coalesced [39] main::dist#7 ← main::dist#1
+Coalesced [40] main::angle#7 ← main::angle#1
+Not coalescing [41] main::min_dist_angle#6 ← main::min_dist_angle#3
+Coalesced [42] main::min_fill#7 ← main::min_fill#2
+Not coalescing [43] main::min_dist_angle#8 ← main::min_dist_angle#2
+Coalesced (already) [44] main::min_fill#9 ← main::min_fill#5
+Not coalescing [45] main::min_dist_angle#7 ← main::min_dist_angle#2
+Coalesced (already) [46] main::min_fill#8 ← main::min_fill#5
+Coalesced [49] init_angle_screen::screen_bottomline#6 ← init_angle_screen::screen_bottomline#0
+Coalesced [50] init_angle_screen::screen_topline#6 ← init_angle_screen::screen_topline#0
+Coalesced [80] init_angle_screen::y#6 ← init_angle_screen::y#1
+Coalesced [81] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#1
+Coalesced [82] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#1
+Coalesced [83] init_angle_screen::x#4 ← init_angle_screen::x#1
+Coalesced [84] init_angle_screen::xb#4 ← init_angle_screen::xb#1
+Coalesced [87] atan2_16::yi#17 ← atan2_16::$2
+Coalesced [91] atan2_16::xi#14 ← atan2_16::$7
+Coalesced [93] atan2_16::yi#19 ← atan2_16::yi#0
+Coalesced [94] atan2_16::xi#16 ← atan2_16::xi#0
+Coalesced [97] atan2_16::angle#22 ← atan2_16::angle#12
+Coalesced [102] atan2_16::angle#27 ← atan2_16::angle#4
+Coalesced [106] atan2_16::return#5 ← atan2_16::angle#5
+Coalesced [109] atan2_16::return#6 ← atan2_16::angle#11
+Coalesced [110] atan2_16::angle#26 ← atan2_16::angle#1
+Not coalescing [111] atan2_16::shift#5 ← atan2_16::i#2
+Not coalescing [112] atan2_16::xd#10 ← atan2_16::xi#3
+Not coalescing [113] atan2_16::yd#10 ← atan2_16::yi#3
+Coalesced [119] atan2_16::yd#13 ← atan2_16::yd#2
+Coalesced [120] atan2_16::xd#13 ← atan2_16::xd#2
+Coalesced [127] atan2_16::yi#21 ← atan2_16::yi#2
+Coalesced [128] atan2_16::angle#25 ← atan2_16::angle#3
+Coalesced [129] atan2_16::xi#18 ← atan2_16::xi#2
+Coalesced [133] atan2_16::yi#18 ← atan2_16::yi#8
+Coalesced [134] atan2_16::xi#15 ← atan2_16::xi#8
+Coalesced [135] atan2_16::i#12 ← atan2_16::i#1
+Coalesced [136] atan2_16::angle#21 ← atan2_16::angle#13
+Coalesced (already) [137] atan2_16::angle#23 ← atan2_16::angle#13
+Coalesced [142] atan2_16::yi#20 ← atan2_16::yi#1
+Coalesced [143] atan2_16::angle#24 ← atan2_16::angle#2
+Coalesced [144] atan2_16::xi#17 ← atan2_16::xi#1
+Coalesced [145] atan2_16::yd#12 ← atan2_16::yd#3
+Coalesced [146] atan2_16::xd#12 ← atan2_16::xd#3
+Coalesced [150] atan2_16::shift#6 ← atan2_16::shift#1
+Coalesced [151] atan2_16::xd#11 ← atan2_16::xd#1
+Coalesced [152] atan2_16::yd#11 ← atan2_16::yd#1
+Not coalescing [153] atan2_16::xi#13 ← atan2_16::x#0
+Not coalescing [154] atan2_16::yi#16 ← atan2_16::y#0
+Coalesced [158] init_dist_screen::screen_topline#15 ← init_dist_screen::screen#0
+Coalesced [159] init_dist_screen::screen_bottomline#15 ← init_dist_screen::screen_bottomline#0
+Coalesced [164] init_dist_screen::yd#2 ← init_dist_screen::$5
+Coalesced [167] sqr::val#3 ← sqr::val#0
+Coalesced [175] init_dist_screen::xd#2 ← init_dist_screen::$13
+Coalesced [178] sqr::val#4 ← sqr::val#1
+Coalesced [199] init_dist_screen::y#14 ← init_dist_screen::y#1
+Coalesced [200] init_dist_screen::screen_topline#14 ← init_dist_screen::screen_topline#1
+Coalesced [201] init_dist_screen::screen_bottomline#14 ← init_dist_screen::screen_bottomline#1
+Coalesced [202] init_dist_screen::x#8 ← init_dist_screen::x#1
+Coalesced [203] init_dist_screen::xb#8 ← init_dist_screen::xb#1
+Coalesced [205] init_dist_screen::xd#1 ← init_dist_screen::$15
+Coalesced [207] init_dist_screen::yd#1 ← init_dist_screen::$7
+Coalesced [217] bsearch16u::items#10 ← bsearch16u::items#1
+Coalesced [222] bsearch16u::return#9 ← bsearch16u::$2
+Coalesced [224] bsearch16u::return#7 ← bsearch16u::return#2
+Coalesced [227] bsearch16u::return#8 ← bsearch16u::items#2
+Not coalescing [233] bsearch16u::return#6 ← bsearch16u::pivot#0
+Coalesced [237] bsearch16u::num#10 ← bsearch16u::num#1
+Coalesced [238] bsearch16u::items#12 ← bsearch16u::items#0
+Coalesced [241] bsearch16u::num#9 ← bsearch16u::num#0
+Coalesced [242] bsearch16u::items#11 ← bsearch16u::items#8
+Coalesced [243] bsearch16u::num#11 ← bsearch16u::num#3
+Coalesced (already) [244] bsearch16u::items#13 ← bsearch16u::items#2
+Coalesced (already) [249] heap_head#53 ← heap_head#1
+Coalesced [253] init_squares::squares#4 ← init_squares::squares#0
+Coalesced [263] init_squares::sqr#3 ← init_squares::sqr#1
+Coalesced [264] init_squares::squares#3 ← init_squares::squares#1
+Coalesced [265] init_squares::i#3 ← init_squares::i#1
+Not coalescing [268] heap_head#1 ← malloc::mem#0
 Coalesced down to 38 phi equivalence classes
-Culled Empty Block (label) @3
-Culled Empty Block (label) @6
-Culled Empty Block (label) @14
+Culled Empty Block (label) @4
+Culled Empty Block (label) @8
+Culled Empty Block (label) @11
+Culled Empty Block (label) @19
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) init_angle_screen::@6
@@ -2572,10 +2582,10 @@ Culled Empty Block (label) init_dist_screen::@20
 Culled Empty Block (label) bsearch16u::@1
 Culled Empty Block (label) bsearch16u::@18
 Culled Empty Block (label) init_squares::@4
-Renumbering block @8 to @1
-Renumbering block @11 to @2
-Renumbering block @12 to @3
-Renumbering block @13 to @4
+Renumbering block @13 to @1
+Renumbering block @16 to @2
+Renumbering block @17 to @3
+Renumbering block @18 to @4
 Renumbering block bsearch16u::@2 to bsearch16u::@1
 Renumbering block bsearch16u::@3 to bsearch16u::@2
 Renumbering block bsearch16u::@6 to bsearch16u::@3
@@ -3005,8 +3015,8 @@ init_squares::@return: scope:[init_squares]  from init_squares::@1
   [189] return 
   to:@return
 malloc: scope:[malloc]  from @1 @3 init_squares
-  [190] (word) malloc::size#3 ← phi( @3/(word) $3e8 @1/(word) $3e8 init_squares/(const byte) NUM_SQUARES#3*(const byte) SIZEOF_WORD )
-  [190] (byte*) heap_head#12 ← phi( @3/(byte*) heap_head#1 @1/(const byte*) HEAP_TOP#0 init_squares/(byte*) heap_head#1 )
+  [190] (word) malloc::size#3 ← phi( @1/(word) $3e8 @3/(word) $3e8 init_squares/(const byte) NUM_SQUARES#3*(const byte) SIZEOF_WORD )
+  [190] (byte*) heap_head#12 ← phi( @1/(const byte*) HEAP_TOP#0 @3/(byte*) heap_head#1 init_squares/(byte*) heap_head#1 )
   [191] (byte*) malloc::mem#0 ← (byte*) heap_head#12 - (word) malloc::size#3
   [192] (byte*) heap_head#1 ← (byte*) malloc::mem#0
   to:malloc::@return

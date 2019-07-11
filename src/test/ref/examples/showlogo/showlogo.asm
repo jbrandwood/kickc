@@ -31,24 +31,24 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta D016
     ldx #BLACK
-    lda #<$28*$19
-    sta memset.num
-    lda #>$28*$19
-    sta memset.num+1
     lda #<SCREEN
     sta memset.str
     lda #>SCREEN
     sta memset.str+1
-    jsr memset
-    ldx #WHITE|8
     lda #<$28*$19
     sta memset.num
     lda #>$28*$19
     sta memset.num+1
+    jsr memset
+    ldx #WHITE|8
     lda #<COLS
     sta memset.str
     lda #>COLS
     sta memset.str+1
+    lda #<$28*$19
+    sta memset.num
+    lda #>$28*$19
+    sta memset.num+1
     jsr memset
     ldx #0
   b1:
@@ -63,12 +63,16 @@ main: {
     jmp b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage(2) str, byte register(X) c, word zeropage(4) num)
+// memset(void* zeropage(4) str, byte register(X) c, word zeropage(2) num)
 memset: {
-    .label end = 4
-    .label dst = 2
-    .label str = 2
-    .label num = 4
+    .label end = 2
+    .label dst = 4
+    .label num = 2
+    .label str = 4
+    lda num
+    beq breturn
+    lda num+1
+    beq breturn
     lda end
     clc
     adc str
@@ -76,7 +80,7 @@ memset: {
     lda end+1
     adc str+1
     sta end+1
-  b1:
+  b2:
     txa
     ldy #0
     sta (dst),y
@@ -86,10 +90,11 @@ memset: {
   !:
     lda dst+1
     cmp end+1
-    bne b1
+    bne b2
     lda dst
     cmp end
-    bne b1
+    bne b2
+  breturn:
     rts
 }
 .pc = LOGO "LOGO"

@@ -187,7 +187,15 @@ public class AsmFragmentTemplateUsages {
    }
 
    public static void logTemplate(CompileLog log, AsmFragmentTemplate template, String indent) {
-      log.append(indent + (template.isFile() ? "*" : "") + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
+      String prefix = "";
+      if(template.isCache()) {
+         prefix = "cached ";
+      } else if(template.isFile()) {
+         prefix ="loaded ";
+      } else {
+         prefix ="synthesized ";
+      }
+      log.append(indent + prefix + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
       log.append(indent+ "  " + template.getBody().replace("\n", "\n"+indent+"  "));
    }
 

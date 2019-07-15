@@ -24,6 +24,8 @@ public class AsmFragmentTemplate {
 
    /** true if the fragment was loaded from disk. */
    private boolean file;
+   /** true if the fragment was loaded from the disk cache. */
+   private boolean cache;
    /** The fragment template signature name. */
    private String signature;
    /** The fragment template body */
@@ -40,10 +42,11 @@ public class AsmFragmentTemplate {
    /** The cycles consumed by the ASM of the fragment. */
    private Double cycles;
 
-   public AsmFragmentTemplate(String signature, String body) {
+   public AsmFragmentTemplate(String signature, String body, boolean cache) {
       this.signature = signature;
       this.body = body;
       this.file = true;
+      this.cache = cache;
    }
 
    AsmFragmentTemplate(String signature, String body, AsmFragmentTemplateSynthesisRule synthesis, AsmFragmentTemplate subFragment) {
@@ -52,6 +55,7 @@ public class AsmFragmentTemplate {
       this.synthesis = synthesis;
       this.subFragment = subFragment;
       this.file = false;
+      this.cache = false;
    }
 
    /**
@@ -157,6 +161,10 @@ public class AsmFragmentTemplate {
 
    public boolean isFile() {
       return file;
+   }
+
+   public boolean isCache() {
+      return cache;
    }
 
    public AsmFragmentTemplateSynthesisRule getSynthesis() {

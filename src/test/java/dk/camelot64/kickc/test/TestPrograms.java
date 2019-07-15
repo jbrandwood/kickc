@@ -4,7 +4,6 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
@@ -2501,16 +2500,15 @@ public class TestPrograms {
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), getFragmentCacheDir().toPath(), new CompileLog());
    }
 
    @AfterClass
    public static void tearDown() {
       CompileLog log = log();
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
-
-      printGCStats();
-
+      AsmFragmentTemplateSynthesizer.finalize(log);
+      //AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+      //printGCStats();
    }
 
    public static void printGCStats() {
@@ -2676,7 +2674,7 @@ public class TestPrograms {
     *
     * @param file The file to create a path for
     */
-   private void mkPath(File file) {
+   private static void mkPath(File file) {
       Path parent = file.toPath().getParent();
       File dir = parent.toFile();
       if(!dir.exists()) {
@@ -2685,7 +2683,7 @@ public class TestPrograms {
       }
    }
 
-   public File getBinDir() {
+   public static File getBinDir() {
       Path tempDir = ReferenceHelper.getTempDir();
       File binDir = new File(tempDir.toFile(), "bin");
       if(!binDir.exists()) {
@@ -2694,5 +2692,13 @@ public class TestPrograms {
       return binDir;
    }
 
+   public static File getFragmentCacheDir() {
+      Path tempDir = ReferenceHelper.getTempDir();
+      File binDir = new File(tempDir.toFile(), "cache");
+      if(!binDir.exists()) {
+         binDir.mkdir();
+      }
+      return binDir;
+   }
 
 }

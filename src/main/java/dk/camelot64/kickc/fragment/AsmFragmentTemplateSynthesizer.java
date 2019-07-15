@@ -4,10 +4,8 @@ import dk.camelot64.kickc.CompileLog;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -23,30 +21,45 @@ import java.util.*;
  */
 public class AsmFragmentTemplateSynthesizer {
 
+   /** Name of the file holding the fragment cache. */
+   public static final String FRAGMENT_CACHE_FILE = "fragment-cache.asm";
+
    /** The static instance. */
    static AsmFragmentTemplateSynthesizer SYNTHESIZER = null;
 
    /** Initialize the fragment template synthesizer. */
-   public static void initialize(String folder) {
-      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(folder);
+   public static void initialize(Path fragmentFolder, Path cacheFolder, CompileLog log) {
+      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(fragmentFolder, cacheFolder, log);
+   }
+
+   /** Finalize the fragment template synthesizer. */
+   public static void finalize(CompileLog log) {
+      SYNTHESIZER.saveBestFragmentCache(log);
    }
 
    /** Create synthesizer. */
-   private AsmFragmentTemplateSynthesizer(String fragmentFolder) {
+   private AsmFragmentTemplateSynthesizer(Path fragmentFolder, Path cacheFolder, CompileLog log) {
       this.fragmentFolder = fragmentFolder;
-      this.bestFragmentCache = new LinkedHashMap<>();
+      this.cacheFolder = cacheFolder;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
+      this.bestFragmentCache = loadBestFragmentCache(cacheFolder, log);
+      if(this.bestFragmentCache == null)
+         this.bestFragmentCache = new LinkedHashMap<>();
+
    }
 
    /** The folder containing fragment files. */
-   private String fragmentFolder;
+   private Path fragmentFolder;
+
+   /** The folder containing cached fragment files. */
+   private Path cacheFolder;
 
    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
    private Map<String, AsmFragmentTemplate> bestFragmentCache;
 
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
-   private AsmFragmentTemplate UNKNOWN = new AsmFragmentTemplate("UNKNOWN", null);
+   private AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", null, false);
 
    /**
     * Contains the synthesis for each fragment template signature.
@@ -59,6 +72,7 @@ public class AsmFragmentTemplateSynthesizer {
 
    /**
     * Get information about the size of the synthesizer data structures
+    *
     * @return the size
     */
    public static int getSize() {
@@ -89,20 +103,22 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    private AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
+      // Attempt to find in memory/disk cache
       AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature);
-      if(bestTemplate == UNKNOWN) {
+      if(bestTemplate == NO_SYNTHESIS) {
          if(log.isVerboseFragmentLog()) {
             log.append("Unknown fragment " + signature);
          }
          throw new UnknownFragmentException(signature);
       }
       if(bestTemplate == null) {
+         // Attempt to synthesize or load in main fragment folder
          Collection<AsmFragmentTemplate> candidates = getBestTemplates(signature, log);
          if(candidates.size() == 0) {
             if(log.isVerboseFragmentLog()) {
                log.append("Unknown fragment " + signature);
             }
-            bestFragmentCache.put(signature, UNKNOWN);
+            bestFragmentCache.put(signature, NO_SYNTHESIS);
             throw new UnknownFragmentException(signature);
          }
          double minScore = Double.MAX_VALUE;
@@ -124,6 +140,82 @@ public class AsmFragmentTemplateSynthesizer {
       // Count usages
       AsmFragmentTemplateUsages.incUsage(bestTemplate);
       return bestTemplate;
+   }
+
+   /**
+    * Attempt to load a fragment cache containing all best synthesized fragments
+    *
+    * @param cacheFolder Folder containing the cache
+    * @param log The compile log
+    * @return The map with all best fragments from the cache file. null if the cache file is not found.
+    */
+   private Map<String, AsmFragmentTemplate> loadBestFragmentCache(Path cacheFolder, CompileLog log) {
+      if(cacheFolder == null) {
+         return null;
+      }
+      try {
+         File cacheFile = cacheFolder.resolve(FRAGMENT_CACHE_FILE).toFile();
+         if(!cacheFile.exists()) {
+            return null;
+         }
+         LinkedHashMap<String, AsmFragmentTemplate> bestFragmentCache = new LinkedHashMap<>();
+         BufferedReader fragmentCacheReader = new BufferedReader(new FileReader(cacheFile));
+         String cacheLine = fragmentCacheReader.readLine();
+         StringBuilder body = null;
+         String signature = null;
+         while(cacheLine != null) {
+            // Determine if the line is a new fragment or the continuation of the current fragment body
+            if(cacheLine.startsWith("//FRAGMENT ")) {
+               // New fragment - first put the current one into the cache
+               if(signature != null) {
+                  CharStream fragmentCharStream = CharStreams.fromString(body.toString());
+                  AsmFragmentTemplate template = new AsmFragmentTemplate(signature, fixNewlines(fragmentCharStream.toString()), true);
+                  bestFragmentCache.put(signature, template);
+               }
+               body = new StringBuilder();
+               signature = cacheLine.substring(11);
+            } else {
+               // Continuation of body
+               body.append(cacheLine).append("\n");
+            }
+            cacheLine = fragmentCacheReader.readLine();
+         }
+         if(log.isVerboseFragmentLog())
+            log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath());
+         return bestFragmentCache;
+      } catch(IOException e) {
+         throw new RuntimeException("Error loading fragment cache file " + fragmentFolder, e);
+      } catch(StringIndexOutOfBoundsException e) {
+         throw new RuntimeException("Problem reading fragment file " + fragmentFolder, e);
+      }
+   }
+
+   /**
+    * Attempt to save fragment cache containing all best synthesized fragments
+    *
+    * @param log The compile log
+    */
+   public void saveBestFragmentCache(CompileLog log) {
+      if(this.cacheFolder == null) {
+         return;
+      }
+      File cacheFile = this.cacheFolder.resolve(FRAGMENT_CACHE_FILE).toFile();
+      try {
+         PrintStream fragmentFilePrint = new PrintStream(cacheFile);
+         for(String signature : this.bestFragmentCache.keySet()) {
+            AsmFragmentTemplate fragmentTemplate = this.bestFragmentCache.get(signature);
+            fragmentFilePrint.println("//FRAGMENT " + signature);
+            if(fragmentTemplate.getBody()!=null)
+               fragmentFilePrint.println(fragmentTemplate.getBody());
+         }
+         fragmentFilePrint.close();
+         if(log.isVerboseFragmentLog())
+            log.append("Saved cached fragments " + this.bestFragmentCache.size() + " to " + cacheFile.getPath());
+      } catch(IOException e) {
+         throw new RuntimeException("Error saving fragment cache file " + cacheFile, e);
+      } catch(StringIndexOutOfBoundsException e) {
+         throw new RuntimeException("Problem saving fragment file " + cacheFile, e);
+      }
    }
 
    /**
@@ -375,9 +467,6 @@ public class AsmFragmentTemplateSynthesizer {
       return synthesisGraph.get(signature);
    }
 
-   /** Number of synthesis created
-   private long synthesisCount = 0;
-
    /**
     * Get (or create) the synthesis used to synthesize a fragment template.
     * If the synthesis does not already exist in the synthesis graph it is created - along with any sub-synthesis recursively usable for creating it.
@@ -504,13 +593,14 @@ public class AsmFragmentTemplateSynthesizer {
     * @return The fragment template from a file. null if the template is not found as a file.
     */
    private AsmFragmentTemplate loadFragmentTemplate(String signature, CompileLog log) {
+      if(fragmentFolder == null) {
+         return null;
+      }
       try {
-         File fragmentFile = new File(fragmentFolder + signature + ".asm");
-         //System.out.println("looking for "+fragmentFile);
+         File fragmentFile = this.fragmentFolder.resolve(signature + ".asm").toFile();
          if(!fragmentFile.exists()) {
             return null;
          }
-         //System.out.println("found "+fragmentFile);
          InputStream fragmentStream = new FileInputStream(fragmentFile);
          String body;
          if(fragmentStream.available() == 0) {
@@ -520,7 +610,7 @@ public class AsmFragmentTemplateSynthesizer {
             body = fixNewlines(fragmentCharStream.toString());
 
          }
-         return new AsmFragmentTemplate(signature, body);
+         return new AsmFragmentTemplate(signature, body, false);
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment file " + signature, e);
       } catch(StringIndexOutOfBoundsException e) {
@@ -545,7 +635,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    File[] allFragmentFiles() {
-      return new File(fragmentFolder).listFiles((dir, name) -> name.endsWith(".asm"));
+      return fragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
 
    }
 

@@ -61,8 +61,11 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
-   @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time..")
+   @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
+
+   @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
+   private boolean optimizeFragmentCache = false;
 
    @CommandLine.Option(names = {"-v"}, description = "Verbose output describing the compilation process")
    private boolean verbose = false;
@@ -134,14 +137,24 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      if(fragmentDir != null) {
-         AsmFragmentTemplateSynthesizer.initialize(fragmentDir.toString() + "/");
-      } else {
-         AsmFragmentTemplateSynthesizer.initialize("fragment/");
+      if(fragmentDir == null) {
+         fragmentDir = new File("fragment/").toPath();
       }
 
+      Path fragmentCacheDir = null;
+      if(optimizeFragmentCache) {
+         if(outputDir != null) {
+            fragmentCacheDir = outputDir;
+         } else {
+            fragmentCacheDir = new File(".").toPath();
+         }
+      }
+
+      configVerbosity(compiler);
+
+      AsmFragmentTemplateSynthesizer.initialize(fragmentDir, fragmentCacheDir, compiler.getLog());
+
       if(fragment != null) {
-         configVerbosity(compiler);
          if(verbose) {
             compiler.getLog().setVerboseFragmentLog(true);
          }
@@ -153,8 +166,6 @@ public class KickC implements Callable<Void> {
       }
 
       if(kcFile != null) {
-
-         configVerbosity(compiler);
 
          String fileBaseName = getFileBaseName(kcFile);
 
@@ -182,7 +193,6 @@ public class KickC implements Callable<Void> {
             compiler.setEnableZeroPageCoalasce(true);
          }
 
-
          System.out.println("Compiling " + kcFile);
          Program program = null;
          try {
@@ -201,6 +211,8 @@ public class KickC implements Callable<Void> {
          asmWriter.write(asmCodeString);
          asmWriter.close();
          asmOutputStream.close();
+
+         AsmFragmentTemplateSynthesizer.finalize(compiler.getLog());
 
          // Copy Resource Files (if out-dir is different from in-dir)
          if(!kcFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
@@ -269,6 +281,8 @@ public class KickC implements Callable<Void> {
          }
 
       }
+
+
 
       return null;
    }

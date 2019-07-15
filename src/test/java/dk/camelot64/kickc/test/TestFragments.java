@@ -9,6 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class TestFragments {
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), null, new CompileLog());
    }
 
    @AfterClass
@@ -181,8 +182,8 @@ public class TestFragments {
     * @param signature The fragment signature
     */
    private void testFragmentExists(String signature) {
-      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
       CompileLog log = new CompileLog();
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), null, log);
       log.setSysOut(true);
       //log.setVerboseFragmentLog(true);
       List<AsmFragmentTemplate> templates =
@@ -199,8 +200,8 @@ public class TestFragments {
 
 
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
-      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
       CompileLog log = new CompileLog();
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), null, log);
       List<String> sigs = new ArrayList<>(signatures);
 
       // Always test max 1000 signatures
@@ -224,7 +225,16 @@ public class TestFragments {
          }
 
          for(AsmFragmentTemplate template : templates) {
-            log.append((template.isFile() ? "*" : "") + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
+            String prefix = "";
+            if(template.isCache()) {
+               prefix = "cached ";
+            } else if(template.isFile()) {
+               prefix ="loaded ";
+            } else {
+               prefix ="synthesized ";
+            }
+
+            log.append(prefix + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
             log.append("  " + template.getBody().replace("\n", "\n  "));
          }
       }

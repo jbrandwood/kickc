@@ -158,6 +158,12 @@ public class AsmFragmentInstanceSpecFactory {
          signature.append(((ConstantInteger) rValue2).getValue());
       } else if(
             rValue2 instanceof ConstantInteger &&
+                  ((((ConstantInteger) rValue2).getValue()) % 8 == 0)  &&
+                  operator != null &&
+                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
+         signature.append(((ConstantInteger) rValue2).getValue());
+      } else if(
+            rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 0 &&
                   operator != null &&
                   (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {

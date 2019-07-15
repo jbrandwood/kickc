@@ -39,15 +39,10 @@ main: {
     sta _2
     lda #0
     sta _2+1
-    ldy #8
-    cpy #0
-    beq !e+
-  !:
-    asl _3
-    rol _3+1
-    dey
-    bne !-
-  !e:
+    lda _3
+    sta _3+1
+    lda #0
+    sta _3
     lda TIMELO
     sta _4
     lda #0
@@ -97,15 +92,10 @@ main: {
     sta _11
     lda #0
     sta _11+1
-    ldy #8
-    cpy #0
-    beq !e+
-  !:
-    asl _12
-    rol _12+1
-    dey
-    bne !-
-  !e:
+    lda _12
+    sta _12+1
+    lda #0
+    sta _12
     lda TIMELO
     sta _13
     lda #0
@@ -612,19 +602,9 @@ div10: {
     lda val_2+1
     adc val_1+1
     sta val_2+1
-    ldy #8
-    lda val_2
     sta _4
-    lda val_2+1
+    lda #0
     sta _4+1
-    cpy #0
-    beq !e+
-  !:
-    lsr _4+1
-    ror _4
-    dey
-    bne !-
-  !e:
     lda val_3
     clc
     adc val_2

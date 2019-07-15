@@ -35,6 +35,18 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /*
+   @Test
+   public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
+      compileAndCompare("problem-inline-struct-return");
+   }
+   */
+
+   @Test
+   public void testSplines() throws IOException, URISyntaxException {
+      compileAndCompare("complex/splines/splines");
+   }
+
    @Test
    public void testProblemNegativeWordConst() throws IOException, URISyntaxException {
       compileAndCompare("problem-negative-word-const");

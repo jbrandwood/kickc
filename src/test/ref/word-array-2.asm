@@ -21,15 +21,10 @@ main: {
     sta _2
     lda #0
     sta _2+1
-    ldy #8
-    cpy #0
-    beq !e+
-  !:
-    asl _3
-    rol _3+1
-    dey
-    bne !-
-  !e:
+    lda _3
+    sta _3+1
+    lda #0
+    sta _3
     txa
     clc
     adc _4

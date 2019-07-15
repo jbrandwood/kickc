@@ -1,0 +1,132 @@
+ // Quadratic Spline Library for the C64
+ // Implements an iterative algorithm using only addition for calculating quadratic splines
+ //
+ // A quadratic spline is a curve defined by 3 points: P0, P1 and P2.
+ // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
+ //
+ // The general formula for the quadratic spline is as follows:
+ // A = P2 - 2*P1 + P0
+ // B = 2*P1 - 2*P0
+ // C = P0
+ // P(t) = A*t*t + B*t + C
+ // for 0 <= t <= 1
+ //
+ // This library implements a iterative algorithm using multiplications in the initialization and only additions for calculating each point on the spline.
+ // The iterative algorithm is based on the following:
+ // P(t+Dt) = P(t) + A*Dt*Dt + 2*A*t*Dt + B*Dt
+ //
+ // init:
+ //   N = 16 (number of plots)
+ //   Dt = 1/N
+ //   P = C
+ //   I = A*Dt*Dt + B*Dt
+ //   J = 2*A*Dt*Dt
+ // loop(N times):
+ //   plot(P)
+ //   P = P + I
+ //   I = I + J
+
+ // NOTE: When N=16 then Dt[0.16] = $0.1000 Dt^2[0.16] = $0.0100
+ // NOTE: When N=8 then Dt[0.16] = $0.2000 Dt^2[0.16] = $0.0400
+
+import "time"
+import "print"
+import "bitmap2"
+import "c64"
+
+// Vector that is part of a spline
+struct SplineVector16 {
+    // x-position s[16.0]
+    signed int x;
+    // y-position s[16.0]
+    signed int y;
+};
+
+// Vector that is part of a spline
+struct SplineVector32 {
+    // x-position s[16.16]
+    signed long x;
+    // y-position s[16.16]
+    signed long y;
+};
+
+const char* SCREEN = 0x0400;
+const char* BITMAP_SCREEN = 0x5c00;
+const char* BITMAP_GRAPHICS = 0x6000;
+
+void main() {
+
+    bitmap_init(BITMAP_GRAPHICS, BITMAP_SCREEN);
+    bitmap_clear(BLACK, WHITE);
+    vicSelectGfxBank(BITMAP_SCREEN);
+    *D018 = toD018(BITMAP_SCREEN, BITMAP_GRAPHICS);
+    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+
+    struct SplineVector16 p0 = { 50, 50 };
+    struct SplineVector16 p1a = { 100, 50 };
+    struct SplineVector16 p1b = { 50, 100};
+    struct SplineVector16 p2 = { 100, 100 };
+    struct SplineVector16 p3a = { 150, 100 };
+    struct SplineVector16 p3b = { 100, 150 };
+    struct SplineVector16 p4 = { 150, 150 };
+
+    clock_start();
+
+    splinePlot(p0, p1a, p2);
+    splinePlot(p2, p3a, p4);
+    splinePlot(p2, p1b, p0);
+    splinePlot(p4, p3b, p2);
+
+    clock_t cyclecount = clock()-CLOCKS_PER_INIT;
+
+    print_dword_at(cyclecount, SCREEN);
+
+    //vicSelectGfxBank(SCREEN);
+    //*D018 = toD018(SCREEN, 0x1000);
+    //*D011 = VIC_DEN|VIC_RSEL|3;
+
+}
+
+void splinePlot(struct SplineVector16 p0, struct SplineVector16 p1, struct SplineVector16 p2) {
+
+
+   // A = P2 - 2*P1 + P0
+    struct SplineVector16 a = { p2.x - p1.x*2 + p0.x, p2.y - p1.y*2 + p0.y};
+    // B = 2*P1 - 2*P0
+    struct SplineVector16 b = { p1.x*2 - p0.x*2, p1.y*2 - p0.y*2 };
+
+    //   I = A*Dt*Dt + B*Dt
+    struct SplineVector32 i = { (signed long)a.x*0x100 + (signed long)b.x*0x100*0x10, (signed long)a.y*0x100 + (signed long)b.y*0x100*0x10 };
+    //   J = 2*A*Dt*Dt
+    struct SplineVector32 j = { (signed long)a.x*0x100*2, (signed long)a.y*0x100*2 };
+    struct SplineVector32 p = { (signed long)p0.x*0x10000, (signed long)p0.y*0x10000 };
+
+    for( char n: 0..16) {
+        bitmap_plot( > p.x, < > p.y);
+        // p = p + i;
+        p = { p.x+i.x, p.y+i.y };
+        // i = i + j;
+        i = { i.x+j.x, i.y+j.y };
+    }
+
+}
+
+
+
+// Print a spline vector
+void print_spline16(struct SplineVector16 p) {
+    print_char('(');
+    print_sword(p.x);
+    print_char(',');
+    print_sword(p.y);
+    print_char(')');
+}
+
+// Print a spline vector
+void print_spline32(struct SplineVector32 p) {
+    print_char('(');
+    print_sdword(p.x);
+    print_char(',');
+    print_sdword(p.y);
+    print_char(')');
+}

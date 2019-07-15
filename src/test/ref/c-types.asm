@@ -85,7 +85,13 @@ print_ln: {
 print_sdword: {
     .label dw = 4
     lda dw+3
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_dword
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -105,8 +111,17 @@ print_sdword: {
     eor #$ff
     adc #0
     sta dw+3
-  b1:
-    jsr print_dword
+    jmp b2
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
     rts
 }
 // Print a dword as HEX
@@ -152,17 +167,6 @@ print_byte: {
     axs #0
     lda print_hextab,x
     jsr print_char
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
     rts
 }
 // Print a zero-terminated string

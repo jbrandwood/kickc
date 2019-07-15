@@ -280,20 +280,11 @@ main: {
     sta _2
     lda #0
     sta _2+1
-    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz2_rol_vbuc1 
-    ldy #8
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz2_rol_8 
     lda _2
-    sta _3
-    lda _2+1
     sta _3+1
-    cpy #0
-    beq !e+
-  !:
-    asl _3
-    rol _3+1
-    dey
-    bne !-
-  !e:
+    lda #0
+    sta _3
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz2_plus_vbuz3 
     lda i
     clc
@@ -351,16 +342,16 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word~) main::$1 ← (word)(byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] (word~) main::$2 ← (word)(byte) main::i#2 [ main::i#2 main::$1 main::$2 ] ( main:2 [ main::i#2 main::$1 main::$2 ] ) always clobbers reg byte a 
-Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
 Statement [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
 Statement [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
 Statement [12] *((word*~) main::$9) ← (word~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] (word~) main::$1 ← (word)(byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Statement [7] (word~) main::$2 ← (word)(byte) main::i#2 [ main::i#2 main::$1 main::$2 ] ( main:2 [ main::i#2 main::$1 main::$2 ] ) always clobbers reg byte a 
-Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a reg byte y 
+Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
 Statement [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
 Statement [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
@@ -378,8 +369,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 22: zp ZP_WORD:5 [ main::$2 ] 22: zp ZP_WORD:7 [ main::$3 ] 22: zp ZP_WORD:11 [ main::$6 ] 22: zp ZP_WORD:13 [ main::$9 ] 20.62: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 7.33: zp ZP_WORD:9 [ main::$4 ] 5.5: zp ZP_WORD:3 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1482 combination zp ZP_WORD:5 [ main::$2 ] zp ZP_WORD:7 [ main::$3 ] zp ZP_WORD:11 [ main::$6 ] zp ZP_WORD:13 [ main::$9 ] reg byte x [ main::i#2 main::i#1 ] zp ZP_WORD:9 [ main::$4 ] zp ZP_WORD:3 [ main::$1 ] 
-Uplifting [] best 1482 combination 
+Uplifting [main] best 1262 combination zp ZP_WORD:5 [ main::$2 ] zp ZP_WORD:7 [ main::$3 ] zp ZP_WORD:11 [ main::$6 ] zp ZP_WORD:13 [ main::$9 ] reg byte x [ main::i#2 main::i#1 ] zp ZP_WORD:9 [ main::$4 ] zp ZP_WORD:3 [ main::$1 ] 
+Uplifting [] best 1262 combination 
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ main::$1 ] ] with [ zp ZP_WORD:11 [ main::$6 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ main::$2 ] ] with [ zp ZP_WORD:7 [ main::$3 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ main::$1 main::$6 ] ] with [ zp ZP_WORD:13 [ main::$9 ] ] - score: 1
@@ -442,16 +433,11 @@ main: {
     sta _2
     lda #0
     sta _2+1
-    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
-    ldy #8
-    cpy #0
-    beq !e+
-  !:
-    asl _3
-    rol _3+1
-    dey
-    bne !-
-  !e:
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_8 
+    lda _3
+    sta _3+1
+    lda #0
+    sta _3
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
@@ -556,7 +542,7 @@ zp ZP_WORD:4 [ main::$2 main::$3 main::$4 ]
 
 
 FINAL ASSEMBLER
-Score: 1192
+Score: 1092
 
   // File Comments
 // Tests a word-array with 128+ elements
@@ -601,16 +587,11 @@ main: {
     lda #0
     sta _2+1
     // ((word)i)*0x100
-    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_vbuc1 
-    ldy #8
-    cpy #0
-    beq !e+
-  !:
-    asl _3
-    rol _3+1
-    dey
-    bne !-
-  !e:
+    // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_8 
+    lda _3
+    sta _3+1
+    lda #0
+    sta _3
     // ((word)i)*0x100+i
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa

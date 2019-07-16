@@ -37,6 +37,13 @@ public class TestPrograms {
 
    /*
    @Test
+   public void testProblemStructPointerParam() throws IOException, URISyntaxException {
+      compileAndCompare("problem-struct-pointer-param");
+   }
+   */
+
+   /*
+   @Test
    public void testProblemArrayStructParam() throws IOException, URISyntaxException {
       compileAndCompare("problem-array-struct-param");
    }

@@ -37,10 +37,18 @@ public class TestPrograms {
 
    /*
    @Test
+   public void testProblemArrayStructInit() throws IOException, URISyntaxException {
+      compileAndCompare("problem-array-struct-init");
+   }
+   */
+
+   /*
+   @Test
    public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
       compileAndCompare("problem-inline-struct-return");
    }
    */
+
 
    @Test
    public void testSplines() throws IOException, URISyntaxException {

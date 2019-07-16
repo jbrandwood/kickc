@@ -1225,5 +1225,5 @@ bitmap_init: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  // True type letter a
+  // True type letter c
   letter_c: .fill 9*$15, 0

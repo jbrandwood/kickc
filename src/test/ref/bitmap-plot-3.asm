@@ -108,6 +108,18 @@ bitmap_line: {
     sbc y1+1
     sta abs_u16.w+1
     jsr abs_u16
+    lda dx
+    bne b1
+    lda dx+1
+    bne b1
+    lda dy
+    bne !+
+    lda dy+1
+    bne !b4+
+    jmp b4
+  !b4:
+  !:
+  b1:
     lda x2
     sec
     sbc x1
@@ -130,11 +142,11 @@ bitmap_line: {
     jsr sgn_u16
     lda dy+1
     cmp dx+1
-    bcc b1
+    bcc b2
     bne !+
     lda dy
     cmp dx
-    bcc b1
+    bcc b2
   !:
     lda dx+1
     lsr
@@ -142,7 +154,7 @@ bitmap_line: {
     lda dx
     ror
     sta e
-  b4:
+  b6:
     lda y
     tax
     jsr bitmap_plot
@@ -164,9 +176,9 @@ bitmap_line: {
     bne !+
     lda e
     cmp dy
-    beq b5
+    beq b7
   !:
-    bcc b5
+    bcc b7
     lda x
     clc
     adc sx
@@ -181,26 +193,26 @@ bitmap_line: {
     lda e+1
     sbc dy+1
     sta e+1
-  b5:
+  b7:
     lda y+1
     cmp y2+1
-    bne b4
+    bne b6
     lda y
     cmp y2
-    bne b4
-  b2:
+    bne b6
+  b3:
     lda y
     tax
     jsr bitmap_plot
     rts
-  b1:
+  b2:
     lda dy+1
     lsr
     sta e1+1
     lda dy
     ror
     sta e1
-  b7:
+  b9:
     lda y
     tax
     jsr bitmap_plot
@@ -222,9 +234,9 @@ bitmap_line: {
     bne !+
     lda e1
     cmp dx
-    beq b8
+    beq b10
   !:
-    bcc b8
+    bcc b10
     lda y
     clc
     adc sy
@@ -239,14 +251,19 @@ bitmap_line: {
     lda e1+1
     sbc dx+1
     sta e1+1
-  b8:
+  b10:
     lda x+1
     cmp x2+1
-    bne b7
+    bne b9
     lda x
     cmp x2
-    bne b7
-    jmp b2
+    bne b9
+    jmp b3
+  b4:
+    lda y1
+    tax
+    jsr bitmap_plot
+    rts
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(8) x, byte register(X) y)

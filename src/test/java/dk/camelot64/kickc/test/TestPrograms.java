@@ -44,7 +44,7 @@ public class TestPrograms {
 
    @Test
    public void testSplines() throws IOException, URISyntaxException {
-      compileAndCompare("complex/splines/splines");
+      compileAndCompare("complex/splines/simple-splines");
    }
 
    @Test
@@ -408,6 +408,16 @@ public class TestPrograms {
    @Test
    public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
+   }
+
+   @Test
+   public void testStruct9() throws IOException, URISyntaxException {
+      compileAndCompare("struct-9");
+   }
+
+   @Test
+   public void testStruct8() throws IOException, URISyntaxException {
+      compileAndCompare("struct-8");
    }
 
    @Test

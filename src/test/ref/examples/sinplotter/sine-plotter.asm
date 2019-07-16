@@ -120,19 +120,12 @@ render_sine: {
     lda (sin2_val),y
     stx sin2_val
     sta sin2_val+1
-    lda #$a
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    clc
     lda wrap_y.y
-    adc $fe
+    clc
+    adc #<$a
     sta wrap_y.y
     lda wrap_y.y+1
-    adc $ff
+    adc #>$a
     sta wrap_y.y+1
     jsr wrap_y
     tax

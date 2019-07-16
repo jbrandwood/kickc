@@ -25,19 +25,12 @@ main: {
     lda #>-$3ff
     sta a+1
   b1:
-    lda #-7
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    clc
     lda a
-    adc $fe
+    clc
+    adc #<-7
     sta a
     lda a+1
-    adc $ff
+    adc #>-7
     sta a+1
     clc
     lda b

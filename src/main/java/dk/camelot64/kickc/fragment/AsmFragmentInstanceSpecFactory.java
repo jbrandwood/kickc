@@ -286,6 +286,8 @@ public class AsmFragmentInstanceSpecFactory {
                      val = new ConstantBinary(new ConstantInteger(0xffL, SymbolType.BYTE), Operators.BOOL_AND, val);
                   } else if(toType.getSizeBytes() == 2) {
                      val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
+                  } else if(toType.getSizeBytes() == 4) {
+                     val = new ConstantBinary(new ConstantInteger(0xffffffffL, SymbolType.DWORD), Operators.BOOL_AND, val);
                   } else {
                      throw new InternalError("Not implemented " + toType);
                   }

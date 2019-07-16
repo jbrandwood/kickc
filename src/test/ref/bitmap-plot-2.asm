@@ -165,19 +165,12 @@ main: {
     cmp #$80
     ror _17+1
     ror _17
-    lda #$64
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    clc
     lda y
-    adc $fe
+    clc
+    adc #<$64
     sta y
     lda y+1
-    adc $ff
+    adc #>$64
     sta y+1
     lda y
     tax

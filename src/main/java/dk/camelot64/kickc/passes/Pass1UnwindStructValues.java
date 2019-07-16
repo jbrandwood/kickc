@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** Convert all struct values that are not used as pointers (address-of used or declared volatile) into variables representing each member */
 public class Pass1UnwindStructValues extends Pass1Base {
 
+
    public Pass1UnwindStructValues(Program program) {
       super(program);
    }
@@ -271,6 +272,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean modified = false;
 
       StructUnwinding.StructMemberUnwinding memberUnwinding = getStructMemberUnwinding(assignment.getlValue(), structType, structUnwinding, assignment, stmtIt, currentBlock);
+      if(memberUnwinding==POSTPONE_UNWINDING) {
+         return true;
+      }
+
       if(memberUnwinding == null) {
          throw new CompileError("Cannot unwind struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
@@ -324,7 +329,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
          if(sourceType.equals(structType)) {
             // Copying a struct - unwind to assigning each member!
             StructUnwinding.StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding((LValue) assignment.getrValue2(), structType, structUnwinding, assignment, stmtIt, currentBlock);
-            if(sourceMemberUnwinding != null) {
+            if(sourceMemberUnwinding==POSTPONE_UNWINDING)
+               modified = true;
+            if(sourceMemberUnwinding != null && sourceMemberUnwinding!=POSTPONE_UNWINDING) {
                List<RValue> membersUnwound = new ArrayList<>();
                stmtIt.previous();
                for(String memberName : memberUnwinding.getMemberNames()) {
@@ -355,6 +362,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private StructUnwinding.StructMemberUnwinding getStructMemberUnwinding(LValue lValue, SymbolTypeStruct lValueType, StructUnwinding structUnwinding, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if(lValue instanceof VariableRef) {
          return structUnwinding.getVariableUnwinding((VariableRef) lValue);
+      } else if(lValue instanceof StructMemberRef && ((StructMemberRef) lValue).getStruct() instanceof VariableRef) {
+         return POSTPONE_UNWINDING;
       } else if(lValue instanceof PointerDereferenceSimple) {
          return new StructMemberUnwindingPointerDerefSimple((PointerDereferenceSimple) lValue, lValueType.getStructDefinition(getScope()), stmtIt, currentBlock, currentStmt);
       } else if(lValue instanceof PointerDereferenceIndexed) {
@@ -364,6 +373,18 @@ public class Pass1UnwindStructValues extends Pass1Base {
       }
    }
 
+   /** Singleton signalling that unwinding should be postponed. */
+   public static final StructUnwinding.StructMemberUnwinding POSTPONE_UNWINDING = new StructUnwinding.StructMemberUnwinding() {
+      @Override
+      public List<String> getMemberNames() {
+         return null;
+      }
+
+      @Override
+      public LValue getMemberUnwinding(String memberName) {
+         return null;
+      }
+   };
 
    /** Unwinding for a simple pointer deref to a struct. */
    private class StructMemberUnwindingPointerDerefSimple implements StructUnwinding.StructMemberUnwinding {

@@ -14,6 +14,3 @@ rol {z1}+1
 rol $ff
 rol {z1}
 rol {z1}+1
-rol $ff
-rol {z1}
-rol {z1}+1

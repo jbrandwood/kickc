@@ -504,8 +504,6 @@ main: {
 bitmap_plot_spline_8seg: {
     .label current_x = 3
     .label current_y = 5
-    .label to_x = $24
-    .label to_y = $26
     .label n = 7
     lda SPLINE_8SEG
     sta current_x
@@ -523,46 +521,40 @@ bitmap_plot_spline_8seg: {
     asl
     tax
     lda SPLINE_8SEG,x
-    sta to_x
-    lda SPLINE_8SEG+1,x
-    sta to_x+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta to_y
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta to_y+1
-    lda to_x
     sta bitmap_line.x2
-    lda to_x+1
+    lda SPLINE_8SEG+1,x
     sta bitmap_line.x2+1
-    lda to_y
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
     sta bitmap_line.y2
-    lda to_y+1
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
     sta bitmap_line.y2+1
     jsr bitmap_line
+    lda n
+    asl
+    asl
+    tax
+    lda SPLINE_8SEG,x
+    sta current_x
+    lda SPLINE_8SEG+1,x
+    sta current_x+1
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    sta current_y
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    sta current_y+1
     inc n
     lda #9
     cmp n
-    bne b3
+    bne b1
     rts
-  b3:
-    lda to_x
-    sta current_x
-    lda to_x+1
-    sta current_x+1
-    lda to_y
-    sta current_y
-    lda to_y+1
-    sta current_y+1
-    jmp b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
 // bitmap_line(word zeropage(3) x1, word zeropage(5) y1, word zeropage(8) x2, word zeropage($a) y2)
 bitmap_line: {
     .label x = 3
     .label y = 5
-    .label dx = $28
+    .label dx = $24
     .label dy = $14
-    .label sx = $2a
+    .label sx = $26
     .label sy = $12
     .label e1 = $e
     .label e = $c
@@ -750,8 +742,8 @@ bitmap_line: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(3) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $2e
-    .label plotter = $2c
+    .label _1 = $2a
+    .label plotter = $28
     .label x = 3
     lda bitmap_plot_yhi,x
     sta plotter+1
@@ -827,10 +819,10 @@ abs_u16: {
 // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
 // spline_8segB(signed word zeropage(3) p0_x, signed word zeropage(5) p0_y, signed word zeropage($16) p1_x, signed word zeropage($18) p1_y, signed word zeropage($20) p2_x, signed word zeropage($22) p2_y)
 spline_8segB: {
-    .label _0 = $30
-    .label _1 = $30
-    .label _3 = $32
-    .label _4 = $32
+    .label _0 = $2c
+    .label _1 = $2c
+    .label _3 = $2e
+    .label _4 = $2e
     .label _6 = $16
     .label _8 = $18
     .label _10 = $16
@@ -839,18 +831,18 @@ spline_8segB: {
     .label _19 = 3
     .label _20 = 5
     .label _21 = 5
-    .label _22 = $34
-    .label _23 = $34
-    .label _24 = $36
-    .label _25 = $36
-    .label a_x = $30
-    .label a_y = $32
+    .label _22 = $30
+    .label _23 = $30
+    .label _24 = $32
+    .label _25 = $32
+    .label a_x = $2c
+    .label a_y = $2e
     .label b_x = $16
     .label b_y = $18
     .label i_x = $16
     .label i_y = $18
-    .label j_x = $30
-    .label j_y = $32
+    .label j_x = $2c
+    .label j_y = $2e
     .label p_x = 3
     .label p_y = 5
     .label p0_x = 3
@@ -1184,7 +1176,7 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $38
+    .label _7 = $34
     .label yoffs = $1e
     ldx #0
     lda #$80

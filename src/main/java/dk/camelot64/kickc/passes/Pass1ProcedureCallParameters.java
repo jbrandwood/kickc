@@ -55,6 +55,9 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       Procedure procedure = getScope().getProcedure(procedureRef);
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
+      if(parameterDecls.size()!=parameterValues.size()) {
+         throw new CompileError("Wrong number of parameters in call "+origCall.toString(program, false)+" expected "+procedure.toString(program), origCall);
+      }
       for(int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);

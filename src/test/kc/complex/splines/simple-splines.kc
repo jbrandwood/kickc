@@ -18,7 +18,7 @@ struct Segment {
     struct SplineVector16 via;
 };
 
-// True type letter a
+// True type letter c
 struct Segment[21] letter_c;
 
 void main() {
@@ -53,20 +53,16 @@ void main() {
 
     struct SplineVector16 current = {0,0};
     for( byte i: 0..sizeof(letter_c)/sizeof(struct Segment)) {
-    //for( byte i: 0..7) {
         struct Segment segment = letter_c[i];
         if(segment.type==MOVE_TO) {
             current = segment.to;
         } else if(segment.type==SPLINE_TO) {
-            struct SplineVector16 to = segment.to;
-            struct SplineVector16 via = segment.via;
-            spline_8segB(current, via, to);
+            spline_8segB(current, segment.via, segment.to);
             bitmap_plot_spline_8seg();
-            current = to;
+            current = segment.to;
         } else {
-            struct SplineVector16 to = segment.to;
-            bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)to.x, (unsigned int)to.y);
-            current = to;
+            bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)segment.to.x, (unsigned int)segment.to.y);
+            current = segment.to;
         }
     }
 
@@ -77,15 +73,8 @@ void main() {
 void bitmap_plot_spline_8seg() {
     struct SplineVector16 current = SPLINE_8SEG[0];
     for(char n:1..8) {
-        struct SplineVector16 to = SPLINE_8SEG[n];
-            bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)to.x, (unsigned int)to.y);
-            //bitmap_plot((unsigned int)current.x, (unsigned char)current.y);
-            current = to;
-    }
-}
-
-void bitmap_plot_spline_16seg() {
-    for( char n:0..16) {
-        bitmap_plot((unsigned int)SPLINE_16SEG[n].x, <SPLINE_16SEG[n].y);
+        bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y);
+        //bitmap_plot((unsigned int)current.x, (unsigned char)current.y);
+        current = SPLINE_8SEG[n];
     }
 }

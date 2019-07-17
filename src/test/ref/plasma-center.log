@@ -3,6 +3,7 @@ Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot +
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) init_squares::squares ← ++ (word*) init_squares::squares
 Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUARES
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
@@ -32,10 +33,12 @@ Culled Empty Block (label) bsearch16u::@16
 Culled Empty Block (label) bsearch16u::@17
 Culled Empty Block (label) bsearch16u::@4
 Culled Empty Block (label) bsearch16u::@5
-Culled Empty Block (label) init_squares::@2
+Culled Empty Block (label) @12
 Culled Empty Block (label) @13
+Culled Empty Block (label) init_squares::@2
+Culled Empty Block (label) @15
 Culled Empty Block (label) sqr::@1
-Culled Empty Block (label) @14
+Culled Empty Block (label) @16
 Culled Empty Block (label) sqrt::@1
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
@@ -49,9 +52,7 @@ Culled Empty Block (label) atan2_16::@23
 Culled Empty Block (label) atan2_16::@31
 Culled Empty Block (label) atan2_16::@32
 Culled Empty Block (label) atan2_16::@14
-Culled Empty Block (label) @16
 Culled Empty Block (label) @18
-Culled Empty Block (label) @19
 Culled Empty Block (label) @20
 Culled Empty Block (label) @21
 Culled Empty Block (label) @22
@@ -70,7 +71,9 @@ Culled Empty Block (label) @34
 Culled Empty Block (label) @35
 Culled Empty Block (label) @36
 Culled Empty Block (label) @37
+Culled Empty Block (label) @38
 Culled Empty Block (label) @39
+Culled Empty Block (label) @41
 Culled Empty Block (label) sid_rnd::@1
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::toD0182_@1
@@ -78,15 +81,15 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @42
+Culled Empty Block (label) @44
 Culled Empty Block (label) init_angle_screen::@4
-Culled Empty Block (label) @43
+Culled Empty Block (label) @45
 Culled Empty Block (label) init_dist_screen::@13
 Culled Empty Block (label) init_dist_screen::@14
 Culled Empty Block (label) init_dist_screen::@9
 Culled Empty Block (label) init_dist_screen::@10
 Culled Empty Block (label) init_dist_screen::@12
-Culled Empty Block (label) @44
+Culled Empty Block (label) @46
 Culled Empty Block (label) make_plasma_charset::@10
 
 CONTROL FLOW GRAPH SSA
@@ -134,10 +137,10 @@ memset::@return: scope:[memset]  from memset::@1
 @8: scope:[]  from @begin
   (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
   (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
-  to:@12
-malloc: scope:[malloc]  from @40 @46 init_squares
-  (word) malloc::size#3 ← phi( @40/(word) malloc::size#1 @46/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
-  (byte*) heap_head#12 ← phi( @40/(byte*) heap_head#23 @46/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
+  to:@14
+malloc: scope:[malloc]  from @42 @48 init_squares
+  (word) malloc::size#3 ← phi( @42/(word) malloc::size#1 @48/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
+  (byte*) heap_head#12 ← phi( @42/(byte*) heap_head#23 @48/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
   (byte*~) malloc::$0 ← (byte*) heap_head#12 - (word) malloc::size#3
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
   (byte*) heap_head#1 ← (byte*) malloc::mem#0
@@ -232,11 +235,11 @@ bsearch16u::@3: scope:[bsearch16u]  from bsearch16u::@1 bsearch16u::@2
   (word*~) bsearch16u::$4 ← phi( bsearch16u::@1/(word*~) bsearch16u::$3 bsearch16u::@2/(word*~) bsearch16u::$2 )
   (word*) bsearch16u::return#2 ← (word*~) bsearch16u::$4
   to:bsearch16u::@return
-@12: scope:[]  from @8
+@14: scope:[]  from @8
   (byte*) heap_head#44 ← phi( @8/(byte*) heap_head#0 )
   (byte) NUM_SQUARES#0 ← (number) $ff
   (word*) SQUARES#0 ← (word*) 0
-  to:@15
+  to:@17
 init_squares: scope:[init_squares]  from init_dist_screen
   (byte*) heap_head#24 ← phi( init_dist_screen/(byte*) heap_head#28 )
   (byte) NUM_SQUARES#6 ← phi( init_dist_screen/(byte) NUM_SQUARES#3 )
@@ -316,15 +319,15 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (byte) sqrt::return#1 ← (byte) sqrt::return#3
   return 
   to:@return
-@15: scope:[]  from @12
-  (word*) SQUARES#49 ← phi( @12/(word*) SQUARES#0 )
-  (byte) NUM_SQUARES#42 ← phi( @12/(byte) NUM_SQUARES#0 )
-  (byte*) heap_head#40 ← phi( @12/(byte*) heap_head#44 )
+@17: scope:[]  from @14
+  (word*) SQUARES#49 ← phi( @14/(word*) SQUARES#0 )
+  (byte) NUM_SQUARES#42 ← phi( @14/(byte) NUM_SQUARES#0 )
+  (byte*) heap_head#40 ← phi( @14/(byte*) heap_head#44 )
   (byte) CORDIC_ITERATIONS_16#0 ← (number) $f
   (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-  to:@17
+  to:@19
 atan2_16: scope:[atan2_16]  from init_angle_screen::@2
   (signed word) atan2_16::x#9 ← phi( init_angle_screen::@2/(signed word) atan2_16::x#0 )
   (signed word) atan2_16::y#1 ← phi( init_angle_screen::@2/(signed word) atan2_16::y#0 )
@@ -535,14 +538,14 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@17: scope:[]  from @15
-  (word*) SQUARES#47 ← phi( @15/(word*) SQUARES#49 )
-  (byte) NUM_SQUARES#38 ← phi( @15/(byte) NUM_SQUARES#42 )
-  (byte*) heap_head#36 ← phi( @15/(byte*) heap_head#40 )
+@19: scope:[]  from @17
+  (word*) SQUARES#47 ← phi( @17/(word*) SQUARES#49 )
+  (byte) NUM_SQUARES#38 ← phi( @17/(byte) NUM_SQUARES#42 )
+  (byte*) heap_head#36 ← phi( @17/(byte*) heap_head#40 )
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@38
+  to:@40
 print_char: scope:[print_char]  from make_plasma_charset::@8
   (byte*) print_char_cursor#11 ← phi( make_plasma_charset::@8/(byte*) print_char_cursor#20 )
   (byte) print_char::ch#1 ← phi( make_plasma_charset::@8/(byte) print_char::ch#0 )
@@ -579,18 +582,18 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#13
   return 
   to:@return
-@38: scope:[]  from @17
-  (byte*) print_screen#14 ← phi( @17/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#43 ← phi( @17/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#38 ← phi( @17/(byte*) print_line_cursor#0 )
-  (word*) SQUARES#45 ← phi( @17/(word*) SQUARES#47 )
-  (byte) NUM_SQUARES#35 ← phi( @17/(byte) NUM_SQUARES#38 )
-  (byte*) heap_head#31 ← phi( @17/(byte*) heap_head#36 )
+@40: scope:[]  from @19
+  (byte*) print_screen#14 ← phi( @19/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#43 ← phi( @19/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#38 ← phi( @19/(byte*) print_line_cursor#0 )
+  (word*) SQUARES#45 ← phi( @19/(word*) SQUARES#47 )
+  (byte) NUM_SQUARES#35 ← phi( @19/(byte) NUM_SQUARES#38 )
+  (byte*) heap_head#31 ← phi( @19/(byte*) heap_head#36 )
   (word*) SID_VOICE3_FREQ#0 ← ((word*)) (number) $d40e
   (byte*) SID_VOICE3_CONTROL#0 ← ((byte*)) (number) $d412
   (byte) SID_CONTROL_NOISE#0 ← (number) $80
   (byte*) SID_VOICE3_OSC#0 ← ((byte*)) (number) $d41b
-  to:@40
+  to:@42
 sid_rnd_init: scope:[sid_rnd_init]  from make_plasma_charset
   *((word*) SID_VOICE3_FREQ#0) ← (number) $ffff
   *((byte*) SID_VOICE3_CONTROL#0) ← (byte) SID_CONTROL_NOISE#0
@@ -606,59 +609,59 @@ sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
   return 
   to:@return
-@40: scope:[]  from @38
-  (byte*) print_screen#13 ← phi( @38/(byte*) print_screen#14 )
-  (byte*) print_char_cursor#39 ← phi( @38/(byte*) print_char_cursor#43 )
-  (byte*) print_line_cursor#34 ← phi( @38/(byte*) print_line_cursor#38 )
-  (word*) SQUARES#43 ← phi( @38/(word*) SQUARES#45 )
-  (byte) NUM_SQUARES#32 ← phi( @38/(byte) NUM_SQUARES#35 )
-  (byte*) heap_head#23 ← phi( @38/(byte*) heap_head#31 )
+@42: scope:[]  from @40
+  (byte*) print_screen#13 ← phi( @40/(byte*) print_screen#14 )
+  (byte*) print_char_cursor#39 ← phi( @40/(byte*) print_char_cursor#43 )
+  (byte*) print_line_cursor#34 ← phi( @40/(byte*) print_line_cursor#38 )
+  (word*) SQUARES#43 ← phi( @40/(word*) SQUARES#45 )
+  (byte) NUM_SQUARES#32 ← phi( @40/(byte) NUM_SQUARES#35 )
+  (byte*) heap_head#23 ← phi( @40/(byte*) heap_head#31 )
   (byte[$200]) SINTABLE#0 ← kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
   (word) malloc::size#1 ← (number) $3e8
   call malloc 
   (void*) malloc::return#3 ← (void*) malloc::return#1
-  to:@46
-@46: scope:[]  from @40
-  (byte*) print_screen#12 ← phi( @40/(byte*) print_screen#13 )
-  (byte*) print_char_cursor#36 ← phi( @40/(byte*) print_char_cursor#39 )
-  (byte*) print_line_cursor#31 ← phi( @40/(byte*) print_line_cursor#34 )
-  (word*) SQUARES#39 ← phi( @40/(word*) SQUARES#43 )
-  (byte) NUM_SQUARES#28 ← phi( @40/(byte) NUM_SQUARES#32 )
-  (byte*) heap_head#16 ← phi( @40/(byte*) heap_head#2 )
-  (void*) malloc::return#7 ← phi( @40/(void*) malloc::return#3 )
+  to:@48
+@48: scope:[]  from @42
+  (byte*) print_screen#12 ← phi( @42/(byte*) print_screen#13 )
+  (byte*) print_char_cursor#36 ← phi( @42/(byte*) print_char_cursor#39 )
+  (byte*) print_line_cursor#31 ← phi( @42/(byte*) print_line_cursor#34 )
+  (word*) SQUARES#39 ← phi( @42/(word*) SQUARES#43 )
+  (byte) NUM_SQUARES#28 ← phi( @42/(byte) NUM_SQUARES#32 )
+  (byte*) heap_head#16 ← phi( @42/(byte*) heap_head#2 )
+  (void*) malloc::return#7 ← phi( @42/(void*) malloc::return#3 )
   (void*~) $0 ← (void*) malloc::return#7
   (byte*) heap_head#5 ← (byte*) heap_head#16
   (byte*) SCREEN_DIST#0 ← ((byte*)) (void*~) $0
   (word) malloc::size#2 ← (number) $3e8
   call malloc 
   (void*) malloc::return#4 ← (void*) malloc::return#1
-  to:@47
-@47: scope:[]  from @46
-  (byte*) print_screen#11 ← phi( @46/(byte*) print_screen#12 )
-  (byte*) print_char_cursor#34 ← phi( @46/(byte*) print_char_cursor#36 )
-  (byte*) print_line_cursor#28 ← phi( @46/(byte*) print_line_cursor#31 )
-  (word*) SQUARES#36 ← phi( @46/(word*) SQUARES#39 )
-  (byte) NUM_SQUARES#25 ← phi( @46/(byte) NUM_SQUARES#28 )
-  (byte*) heap_head#17 ← phi( @46/(byte*) heap_head#2 )
-  (void*) malloc::return#8 ← phi( @46/(void*) malloc::return#4 )
+  to:@49
+@49: scope:[]  from @48
+  (byte*) print_screen#11 ← phi( @48/(byte*) print_screen#12 )
+  (byte*) print_char_cursor#34 ← phi( @48/(byte*) print_char_cursor#36 )
+  (byte*) print_line_cursor#28 ← phi( @48/(byte*) print_line_cursor#31 )
+  (word*) SQUARES#36 ← phi( @48/(word*) SQUARES#39 )
+  (byte) NUM_SQUARES#25 ← phi( @48/(byte) NUM_SQUARES#28 )
+  (byte*) heap_head#17 ← phi( @48/(byte*) heap_head#2 )
+  (void*) malloc::return#8 ← phi( @48/(void*) malloc::return#4 )
   (void*~) $1 ← (void*) malloc::return#8
   (byte*) heap_head#6 ← (byte*) heap_head#17
   (byte*) SCREEN_ANGLE#0 ← ((byte*)) (void*~) $1
   (byte*) CHARSET#0 ← ((byte*)) (number) $2000
   (byte*) SCREEN1#0 ← ((byte*)) (number) $2800
   (byte*) SCREEN2#0 ← ((byte*)) (number) $2c00
-  to:@41
-main: scope:[main]  from @45
-  (byte) sin_offset_y#30 ← phi( @45/(byte) sin_offset_y#18 )
-  (byte) sin_offset_x#30 ← phi( @45/(byte) sin_offset_x#18 )
-  (byte*) print_screen#8 ← phi( @45/(byte*) print_screen#9 )
-  (byte*) print_char_cursor#32 ← phi( @45/(byte*) print_char_cursor#25 )
-  (byte*) print_line_cursor#26 ← phi( @45/(byte*) print_line_cursor#18 )
-  (word*) SQUARES#21 ← phi( @45/(word*) SQUARES#25 )
-  (byte*) heap_head#26 ← phi( @45/(byte*) heap_head#30 )
-  (byte) NUM_SQUARES#14 ← phi( @45/(byte) NUM_SQUARES#17 )
+  to:@43
+main: scope:[main]  from @47
+  (byte) sin_offset_y#30 ← phi( @47/(byte) sin_offset_y#18 )
+  (byte) sin_offset_x#30 ← phi( @47/(byte) sin_offset_x#18 )
+  (byte*) print_screen#8 ← phi( @47/(byte*) print_screen#9 )
+  (byte*) print_char_cursor#32 ← phi( @47/(byte*) print_char_cursor#25 )
+  (byte*) print_line_cursor#26 ← phi( @47/(byte*) print_line_cursor#18 )
+  (word*) SQUARES#21 ← phi( @47/(word*) SQUARES#25 )
+  (byte*) heap_head#26 ← phi( @47/(byte*) heap_head#30 )
+  (byte) NUM_SQUARES#14 ← phi( @47/(byte) NUM_SQUARES#17 )
   (byte*) init_dist_screen::screen#0 ← (byte*) SCREEN_DIST#0
   call init_dist_screen 
   to:main::@9
@@ -868,16 +871,16 @@ main::@return: scope:[main]  from main::@1
   (byte) sin_offset_y#2 ← (byte) sin_offset_y#9
   return 
   to:@return
-@41: scope:[]  from @47
-  (byte*) print_screen#10 ← phi( @47/(byte*) print_screen#11 )
-  (byte*) print_char_cursor#31 ← phi( @47/(byte*) print_char_cursor#34 )
-  (byte*) print_line_cursor#25 ← phi( @47/(byte*) print_line_cursor#28 )
-  (word*) SQUARES#33 ← phi( @47/(word*) SQUARES#36 )
-  (byte*) heap_head#35 ← phi( @47/(byte*) heap_head#6 )
-  (byte) NUM_SQUARES#22 ← phi( @47/(byte) NUM_SQUARES#25 )
+@43: scope:[]  from @49
+  (byte*) print_screen#10 ← phi( @49/(byte*) print_screen#11 )
+  (byte*) print_char_cursor#31 ← phi( @49/(byte*) print_char_cursor#34 )
+  (byte*) print_line_cursor#25 ← phi( @49/(byte*) print_line_cursor#28 )
+  (word*) SQUARES#33 ← phi( @49/(word*) SQUARES#36 )
+  (byte*) heap_head#35 ← phi( @49/(byte*) heap_head#6 )
+  (byte) NUM_SQUARES#22 ← phi( @49/(byte) NUM_SQUARES#25 )
   (byte) sin_offset_x#3 ← (number) 0
   (byte) sin_offset_y#3 ← (number) 0
-  to:@45
+  to:@47
 doplasma: scope:[doplasma]  from main::@2 main::@7
   (byte*) doplasma::screen#6 ← phi( main::@2/(byte*) doplasma::screen#0 main::@7/(byte*) doplasma::screen#1 )
   (byte) sin_offset_y#10 ← phi( main::@2/(byte) sin_offset_y#14 main::@7/(byte) sin_offset_y#15 )
@@ -1369,25 +1372,25 @@ make_plasma_charset::@return: scope:[make_plasma_charset]  from make_plasma_char
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#18
   return 
   to:@return
-@45: scope:[]  from @41
-  (byte*) print_screen#9 ← phi( @41/(byte*) print_screen#10 )
-  (byte) sin_offset_y#18 ← phi( @41/(byte) sin_offset_y#3 )
-  (byte) sin_offset_x#18 ← phi( @41/(byte) sin_offset_x#3 )
-  (byte*) print_char_cursor#25 ← phi( @41/(byte*) print_char_cursor#31 )
-  (byte*) print_line_cursor#18 ← phi( @41/(byte*) print_line_cursor#25 )
-  (word*) SQUARES#25 ← phi( @41/(word*) SQUARES#33 )
-  (byte*) heap_head#30 ← phi( @41/(byte*) heap_head#35 )
-  (byte) NUM_SQUARES#17 ← phi( @41/(byte) NUM_SQUARES#22 )
+@47: scope:[]  from @43
+  (byte*) print_screen#9 ← phi( @43/(byte*) print_screen#10 )
+  (byte) sin_offset_y#18 ← phi( @43/(byte) sin_offset_y#3 )
+  (byte) sin_offset_x#18 ← phi( @43/(byte) sin_offset_x#3 )
+  (byte*) print_char_cursor#25 ← phi( @43/(byte*) print_char_cursor#31 )
+  (byte*) print_line_cursor#18 ← phi( @43/(byte*) print_line_cursor#25 )
+  (word*) SQUARES#25 ← phi( @43/(word*) SQUARES#33 )
+  (byte*) heap_head#30 ← phi( @43/(byte*) heap_head#35 )
+  (byte) NUM_SQUARES#17 ← phi( @43/(byte) NUM_SQUARES#22 )
   call main 
-  to:@48
-@48: scope:[]  from @45
-  (byte) sin_offset_y#13 ← phi( @45/(byte) sin_offset_y#2 )
-  (byte) sin_offset_x#13 ← phi( @45/(byte) sin_offset_x#2 )
-  (byte*) print_char_cursor#19 ← phi( @45/(byte*) print_char_cursor#6 )
-  (byte*) print_line_cursor#13 ← phi( @45/(byte*) print_line_cursor#4 )
-  (word*) SQUARES#16 ← phi( @45/(word*) SQUARES#4 )
-  (byte*) heap_head#22 ← phi( @45/(byte*) heap_head#8 )
-  (byte) NUM_SQUARES#12 ← phi( @45/(byte) NUM_SQUARES#2 )
+  to:@50
+@50: scope:[]  from @47
+  (byte) sin_offset_y#13 ← phi( @47/(byte) sin_offset_y#2 )
+  (byte) sin_offset_x#13 ← phi( @47/(byte) sin_offset_x#2 )
+  (byte*) print_char_cursor#19 ← phi( @47/(byte*) print_char_cursor#6 )
+  (byte*) print_line_cursor#13 ← phi( @47/(byte*) print_line_cursor#4 )
+  (word*) SQUARES#16 ← phi( @47/(word*) SQUARES#4 )
+  (byte*) heap_head#22 ← phi( @47/(byte*) heap_head#8 )
+  (byte) NUM_SQUARES#12 ← phi( @47/(byte) NUM_SQUARES#2 )
   (byte) NUM_SQUARES#5 ← (byte) NUM_SQUARES#12
   (byte*) heap_head#11 ← (byte*) heap_head#22
   (word*) SQUARES#7 ← (word*) SQUARES#16
@@ -1396,21 +1399,21 @@ make_plasma_charset::@return: scope:[make_plasma_charset]  from make_plasma_char
   (byte) sin_offset_x#6 ← (byte) sin_offset_x#13
   (byte) sin_offset_y#6 ← (byte) sin_offset_y#13
   to:@end
-@end: scope:[]  from @48
+@end: scope:[]  from @50
 
 SYMBOL TABLE SSA
 (void*~) $0
 (void*~) $1
-(label) @12
-(label) @15
+(label) @14
 (label) @17
-(label) @38
+(label) @19
 (label) @40
-(label) @41
-(label) @45
-(label) @46
+(label) @42
+(label) @43
 (label) @47
 (label) @48
+(label) @49
+(label) @50
 (label) @8
 (label) @begin
 (label) @end
@@ -1477,6 +1480,10 @@ SYMBOL TABLE SSA
 (byte) NUM_SQUARES#7
 (byte) NUM_SQUARES#8
 (byte) NUM_SQUARES#9
+(const byte) RADIX::BINARY = (byte) 0
+(const byte) RADIX::DECIMAL = (byte) 2
+(const byte) RADIX::HEXADECIMAL = (byte) 3
+(const byte) RADIX::OCTAL = (byte) 1
 (byte*) SCREEN1
 (byte*) SCREEN1#0
 (byte*) SCREEN2
@@ -3851,14 +3858,14 @@ Added new block during phi lifting make_plasma_charset::@18(between make_plasma_
 Added new block during phi lifting make_plasma_charset::@19(between make_plasma_charset::@7 and make_plasma_charset::@9)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @8
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @17
-Adding NOP phi() at start of @38
+Adding NOP phi() at start of @19
 Adding NOP phi() at start of @40
-Adding NOP phi() at start of @41
-Adding NOP phi() at start of @45
-Adding NOP phi() at start of @48
+Adding NOP phi() at start of @42
+Adding NOP phi() at start of @43
+Adding NOP phi() at start of @47
+Adding NOP phi() at start of @50
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@10
 Adding NOP phi() at start of main::@11
@@ -3986,12 +3993,12 @@ Coalesced [355] init_squares::i#3 ← init_squares::i#1
 Not coalescing [358] heap_head#1 ← malloc::mem#0
 Coalesced down to 46 phi equivalence classes
 Culled Empty Block (label) @8
-Culled Empty Block (label) @12
-Culled Empty Block (label) @15
+Culled Empty Block (label) @14
 Culled Empty Block (label) @17
-Culled Empty Block (label) @38
-Culled Empty Block (label) @41
-Culled Empty Block (label) @48
+Culled Empty Block (label) @19
+Culled Empty Block (label) @40
+Culled Empty Block (label) @43
+Culled Empty Block (label) @50
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::toD0181_@return
@@ -4024,10 +4031,10 @@ Culled Empty Block (label) init_dist_screen::@20
 Culled Empty Block (label) bsearch16u::@1
 Culled Empty Block (label) bsearch16u::@18
 Culled Empty Block (label) init_squares::@4
-Renumbering block @40 to @1
-Renumbering block @45 to @2
-Renumbering block @46 to @3
-Renumbering block @47 to @4
+Renumbering block @42 to @1
+Renumbering block @47 to @2
+Renumbering block @48 to @3
+Renumbering block @49 to @4
 Renumbering block memset::@4 to memset::@1
 Renumbering block bsearch16u::@2 to bsearch16u::@1
 Renumbering block bsearch16u::@3 to bsearch16u::@2
@@ -7600,6 +7607,7 @@ Uplift Scope [] 16.42: zp ZP_WORD:16 [ print_char_cursor#49 print_char_cursor#18
 Uplift Scope [memset] 33: zp ZP_WORD:12 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_cls] 33: zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [malloc] 2: zp ZP_WORD:64 [ malloc::size#3 ] 0.67: zp ZP_WORD:153 [ malloc::mem#0 ] 
+Uplift Scope [RADIX] 
 Uplift Scope [print_char] 
 Uplift Scope [sid_rnd_init] 
 Uplift Scope [main] 
@@ -7622,6 +7630,7 @@ Uplifting [] best 1343814 combination zp ZP_WORD:16 [ print_char_cursor#49 print
 Uplifting [memset] best 1343814 combination zp ZP_WORD:12 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [print_cls] best 1343814 combination zp ZP_WORD:21 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplifting [malloc] best 1343814 combination zp ZP_WORD:64 [ malloc::size#3 ] zp ZP_WORD:153 [ malloc::mem#0 ] 
+Uplifting [RADIX] best 1343814 combination 
 Uplifting [print_char] best 1343814 combination 
 Uplifting [sid_rnd_init] best 1343814 combination 
 Uplifting [main] best 1343814 combination 
@@ -9732,6 +9741,10 @@ FINAL SYMBOL TABLE
 (const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
+(const byte) RADIX::BINARY BINARY = (byte) 0
+(const byte) RADIX::DECIMAL DECIMAL = (byte) 2
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (byte) 3
+(const byte) RADIX::OCTAL OCTAL = (byte) 1
 (byte*) SCREEN1
 (const byte*) SCREEN1#0 SCREEN1 = (byte*) 10240
 (byte*) SCREEN2
@@ -11637,7 +11650,7 @@ bsearch16u: {
     lda #0
     adc items+1
     sta pivot+1
-    // result = (signed word)key-(signed word)*pivot
+    // result = (signed int)key-(signed int)*pivot
     // [230] (signed word) bsearch16u::result#0 ← (signed word)(word) bsearch16u::key#0 - (signed word)*((word*) bsearch16u::pivot#0) -- vwsz1=vwsz2_minus__deref_pwsz3 
     sec
     lda key

@@ -1,5 +1,4 @@
 // Implementation of functions found int C stdlib.h / stdlib.c
-
 import "string"
 
 // Top of the heap used by malloc()
@@ -36,10 +35,10 @@ void *calloc(size_t nitems, size_t size) {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-word* bsearch16u(word key, word* items, byte num) {
+unsigned int* bsearch16u(unsigned int key, unsigned int* items, char num) {
 	while (num > 0) {
 		word* pivot = items + (num >> 1);
-		signed word result = (signed word)key-(signed word)*pivot;
+		signed int result = (signed int)key-(signed int)*pivot;
 		if (result == 0)
 			return pivot;
 		if (result > 0) {
@@ -50,4 +49,99 @@ word* bsearch16u(word key, word* items, byte num) {
 	}
 	// not found - return closest lower value
     return *items<=key?items:items-1;
+}
+
+// The different supported radix
+enum RADIX { BINARY, OCTAL, DECIMAL, HEXADECIMAL };
+
+// Awaits fix https://gitlab.com/camelot/kickc/issues/230
+// Information about a radix
+//struct RadixInfo {
+//    // Maximal number of digits needed to represent the number in the radix
+//    char max_digits;
+//    // Pointer to array containing the 1-value for each digit. The size of the array is max_digits-1.
+//    unsigned int* digit_values;
+//};
+
+// Values of binary digits
+unsigned int[] RADIX_BINARY_VALUES = { 0b1000000000000000, 0b0100000000000000, 0b0010000000000000, 0b0001000000000000, 0b0000100000000000, 0b0000010000000000, 0b0000001000000000, 0b0000000100000000, 0b0000000010000000, 0b0000000001000000, 0b0000000000100000, 0b0000000000010000, 0b0000000000001000, 0b0000000000000100, 0b0000000000000010 };
+// Information about the hexadecimal radix
+// struct RadixInfo RADIXINFO_BINARY = { 16, RADIX_BINARY_VALUES };
+// Values of octal digits
+unsigned int[] RADIX_OCTAL_VALUES = { 0x8000, 0x1000, 0x200, 0x40, 0x8 };
+// Information about the octal radix
+// struct RadixInfo RADIXINFO_OCTAL = { 6, RADIX_OCTAL_VALUES };
+// Values of decimal digits
+unsigned int[] RADIX_DECIMAL_VALUES = { 10000, 1000, 100, 10 };
+// Information about the decimal radix
+// struct RadixInfo RADIXINFO_DECIMAL = { 5, RADIX_DECIMAL_VALUES };
+// Values of hexadecimal digits
+unsigned int[] RADIX_HEXADECIMAL_VALUES = { 0x1000, 0x100, 0x10 };
+// Information about the hexadecimal radix
+// struct RadixInfo RADIXINFO_HEXADECIMAL = { 4, RADIX_HEXADECIMAL_VALUES };
+
+// Awaits fix https://gitlab.com/camelot/kickc/issues/223
+// Information about each radix. Can be retrieved using RADIXINFOS[radix]
+// struct RadixInfo[] RADIXINFOS = { RADIXINFO_OCTAL, RADIXINFO_OCTAL, RADIXINFO_DECIMAL, RADIXINFO_HEXADECIMAL };
+
+// The digits used for numbers
+char[] DIGITS = "0123456789abcdef"z;
+
+// Converts unsigned number value to a string representing it in RADIX format.
+// If the leading digits are zero they are not included in the string.
+// - value : The number to be converted to RADIX
+// - buffer : receives the string representing the number and zero-termination.
+// - radix : The radix to convert the number to (from the enum RADIX)
+void utoa(unsigned int value, char* buffer, enum RADIX radix){
+    // struct RadixInfo info = RADIXINFOS[radix] ;
+    char max_digits;
+    unsigned int* digit_values;
+    if(radix==DECIMAL) {
+        //info = RADIXINFO_DECIMAL;
+        max_digits = 5;
+        digit_values = RADIX_DECIMAL_VALUES;
+    } else if(radix==HEXADECIMAL) {
+        //info = RADIXINFO_HEXADECIMAL;
+        max_digits = 4;
+        digit_values = RADIX_HEXADECIMAL_VALUES;
+    } else if(radix==OCTAL) {
+        //info = RADIXINFO_OCTAL;
+        max_digits = 6;
+        digit_values = RADIX_OCTAL_VALUES;
+    } else if(radix==BINARY) {
+        //info = RADIXINFO_BINARY;
+        max_digits = 16;
+        digit_values = RADIX_BINARY_VALUES;
+    } else {
+        // Unknown radix
+        *buffer++ = 'n';
+        *buffer++ = 'a';
+        *buffer = 0;
+        return;
+    }
+    byte started = 0;
+    for( char digit=0; digit<max_digits-1; digit++ ) {
+        unsigned int digit_value = digit_values[digit];
+        if (started || value >= digit_value){
+            value = utoa_append(buffer++, value, digit_value);
+            started = 1;
+        }
+    }
+    *buffer++ = DIGITS[(char)value];
+    *buffer = 0;
+}
+
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+unsigned int utoa_append(char *buffer, unsigned int value, unsigned int sub){
+    char digit = 0;
+    while (value >= sub){ digit++; value -= sub; }
+    *buffer = DIGITS[digit];
+    return value;
 }

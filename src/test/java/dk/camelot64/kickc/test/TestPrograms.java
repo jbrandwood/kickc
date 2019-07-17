@@ -35,6 +35,11 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testProblemPointerInsideStructSizeofRewriting() throws IOException, URISyntaxException {
+      compileAndCompare("problem-pointer-inside-struct-sizeof-rewriting");
+   }
+
    /*
    @Test
    public void testProblemStructPointerParam() throws IOException, URISyntaxException {

@@ -1,0 +1,569 @@
+Fixing pointer array-indexing *((word*) main::SCREEN + (byte) main::digit)
+Created struct value member variable (word*) main::info_values
+Converted struct value to member variables (struct RadixInfo) main::info
+Adding struct value list initializer (word*) main::info_values ← (word[]) RADIX_DECIMAL_VALUES
+Replacing struct member reference (struct RadixInfo) main::info.values with member variable reference (word*) main::info_values
+Culled Empty Block (label) main::@4
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (word[]) RADIX_DECIMAL_VALUES#0 ← { (number) $2710, (number) $3e8, (number) $64, (number) $a }
+  to:@1
+main: scope:[main]  from @1
+  (word*) main::SCREEN#0 ← ((word*)) (number) $400
+  (byte) main::radix#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::radix#4 ← phi( main/(byte) main::radix#0 main::@3/(byte) main::radix#1 )
+  (word*) main::info_values#0 ← (word[]) RADIX_DECIMAL_VALUES#0
+  (byte) main::digit#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte) main::radix#3 ← phi( main::@1/(byte) main::radix#4 main::@2/(byte) main::radix#3 )
+  (byte) main::digit#2 ← phi( main::@1/(byte) main::digit#0 main::@2/(byte) main::digit#1 )
+  (word*) main::info_values#1 ← phi( main::@1/(word*) main::info_values#0 main::@2/(word*) main::info_values#1 )
+  (word) main::digit_value#0 ← *((word*) main::info_values#1 + (byte) main::digit#2)
+  (byte~) main::$2 ← (byte) main::digit#2 * (const byte) SIZEOF_WORD
+  *((word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0
+  (byte) main::digit#1 ← (byte) main::digit#2 + rangenext(0,4)
+  (bool~) main::$0 ← (byte) main::digit#1 != rangelast(0,4)
+  if((bool~) main::$0) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) main::radix#2 ← phi( main::@2/(byte) main::radix#3 )
+  (byte) main::radix#1 ← (byte) main::radix#2 + rangenext(0,1)
+  (bool~) main::$1 ← (byte) main::radix#1 != rangelast(0,1)
+  if((bool~) main::$1) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(word[]) RADIX_DECIMAL_VALUES
+(word[]) RADIX_DECIMAL_VALUES#0
+(word*) RadixInfo::values
+(const byte) SIZEOF_WORD = (byte) 2
+(void()) main()
+(bool~) main::$0
+(bool~) main::$1
+(byte~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(word*) main::SCREEN
+(word*) main::SCREEN#0
+(byte) main::digit
+(byte) main::digit#0
+(byte) main::digit#1
+(byte) main::digit#2
+(word) main::digit_value
+(word) main::digit_value#0
+(word*) main::info_values
+(word*) main::info_values#0
+(word*) main::info_values#1
+(byte) main::radix
+(byte) main::radix#0
+(byte) main::radix#1
+(byte) main::radix#2
+(byte) main::radix#3
+(byte) main::radix#4
+
+Adding number conversion cast (word) to elements in (word[]) RADIX_DECIMAL_VALUES#0 ← { (word)(number) $2710, (word)(number) $3e8, (word)(number) $64, (word)(number) $a }
+Successful SSA optimization PassNAddArrayNumberTypeConversions
+Inlining cast (word*) main::SCREEN#0 ← (word*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast $2710
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast $64
+Simplifying constant integer cast $a
+Simplifying constant pointer cast (word*) 1024
+Successful SSA optimization PassNCastSimplification
+Alias (byte) main::radix#2 = (byte) main::radix#3 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (word*) main::info_values#1
+Self Phi Eliminated (byte) main::radix#2
+Successful SSA optimization Pass2SelfPhiElimination
+Identical Phi Values (word*) main::info_values#1 (word*) main::info_values#0
+Identical Phi Values (byte) main::radix#2 (byte) main::radix#4
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$0 [12] if((byte) main::digit#1!=rangelast(0,4)) goto main::@2
+Simple Condition (bool~) main::$1 [16] if((byte) main::radix#1!=rangelast(0,1)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [0] (word[]) RADIX_DECIMAL_VALUES#0 ← { (word) $2710, (word) $3e8, (word) $64, (word) $a }
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word[]) RADIX_DECIMAL_VALUES#0 = { $2710, $3e8, $64, $a }
+Constant (const word*) main::SCREEN#0 = (word*) 1024
+Constant (const byte) main::radix#0 = 0
+Constant (const byte) main::digit#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const word*) main::info_values#0 = RADIX_DECIMAL_VALUES#0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [10] main::digit#1 ← ++ main::digit#2 to ++
+Resolved ranged comparison value [12] if(main::digit#1!=rangelast(0,4)) goto main::@2 to (number) 5
+Resolved ranged next value [14] main::radix#1 ← ++ main::radix#4 to ++
+Resolved ranged comparison value [16] if(main::radix#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Adding number conversion cast (unumber) 5 in if((byte) main::digit#1!=(number) 5) goto main::@2
+Adding number conversion cast (unumber) 2 in if((byte) main::radix#1!=(number) 2) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 5
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Rewriting multiplication to use shift [3] (byte~) main::$2 ← (byte) main::digit#2 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) main::radix#0
+Inlining constant with var siblings (const byte) main::digit#0
+Constant inlined main::info_values#0 = (const word[]) RADIX_DECIMAL_VALUES#0
+Constant inlined main::radix#0 = (byte) 0
+Constant inlined main::digit#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Eliminating unused constant (const byte) SIZEOF_WORD
+Successful SSA optimization PassNEliminateUnusedVars
+Added new block during phi lifting main::@5(between main::@3 and main::@1)
+Added new block during phi lifting main::@6(between main::@2 and main::@2)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 2 initial phi equivalence classes
+Coalesced [16] main::radix#5 ← main::radix#1
+Coalesced [17] main::digit#3 ← main::digit#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::radix#4 ← phi( main/(byte) 0 main::@3/(byte) main::radix#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  [6] (byte) main::digit#2 ← phi( main::@1/(byte) 0 main::@2/(byte) main::digit#1 )
+  [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2)
+  [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1
+  [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0
+  [10] (byte) main::digit#1 ← ++ (byte) main::digit#2
+  [11] if((byte) main::digit#1!=(byte) 5) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [12] (byte) main::radix#1 ← ++ (byte) main::radix#4
+  [13] if((byte) main::radix#1!=(byte) 2) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [14] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(word[]) RADIX_DECIMAL_VALUES
+(word*) RadixInfo::values
+(void()) main()
+(byte~) main::$2 202.0
+(word*) main::SCREEN
+(byte) main::digit
+(byte) main::digit#1 151.5
+(byte) main::digit#2 101.0
+(word) main::digit_value
+(word) main::digit_value#0 101.0
+(word*) main::info_values
+(byte) main::radix
+(byte) main::radix#1 16.5
+(byte) main::radix#4 3.142857142857143
+
+Initial phi equivalence classes
+[ main::radix#4 main::radix#1 ]
+[ main::digit#2 main::digit#1 ]
+Added variable main::digit_value#0 to zero page equivalence class [ main::digit_value#0 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::radix#4 main::radix#1 ]
+[ main::digit#2 main::digit#1 ]
+[ main::digit_value#0 ]
+[ main::$2 ]
+Allocated zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ]
+Allocated zp ZP_BYTE:3 [ main::digit#2 main::digit#1 ]
+Allocated zp ZP_WORD:4 [ main::digit_value#0 ]
+Allocated zp ZP_BYTE:6 [ main::$2 ]
+
+INITIAL ASM
+  // File Comments
+// Illustrates a problem with pointer sizeof()-rewriting for pointers inside structs
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label _2 = 6
+    .label digit_value = 4
+    .label digit = 3
+    .label radix = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::radix#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta radix
+    jmp b1
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::radix#4 = (byte) main::radix#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [6] phi (byte) main::digit#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta digit
+    jmp b2
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+    // [6] phi (byte) main::digit#2 = (byte) main::digit#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2) -- vwuz1=pwuc1_derefidx_vbuz2 
+    ldy digit
+    lda RADIX_DECIMAL_VALUES,y
+    sta digit_value
+    lda RADIX_DECIMAL_VALUES+1,y
+    sta digit_value+1
+    // [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda digit
+    asl
+    sta _2
+    // [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0 -- pwuc1_derefidx_vbuz1=vwuz2 
+    ldy _2
+    lda digit_value
+    sta SCREEN,y
+    lda digit_value+1
+    sta SCREEN+1,y
+    // [10] (byte) main::digit#1 ← ++ (byte) main::digit#2 -- vbuz1=_inc_vbuz1 
+    inc digit
+    // [11] if((byte) main::digit#1!=(byte) 5) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+    lda #5
+    cmp digit
+    bne b2_from_b2
+    jmp b3
+    // main::@3
+  b3:
+    // [12] (byte) main::radix#1 ← ++ (byte) main::radix#4 -- vbuz1=_inc_vbuz1 
+    inc radix
+    // [13] if((byte) main::radix#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #2
+    cmp radix
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // File Data
+  RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2) [ main::radix#4 main::digit#2 main::digit_value#0 ] ( main:2 [ main::radix#4 main::digit#2 main::digit_value#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::digit#2 main::digit#1 ]
+Statement [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1 [ main::radix#4 main::digit#2 main::digit_value#0 main::$2 ] ( main:2 [ main::radix#4 main::digit#2 main::digit_value#0 main::$2 ] ) always clobbers reg byte a 
+Statement [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0 [ main::radix#4 main::digit#2 ] ( main:2 [ main::radix#4 main::digit#2 ] ) always clobbers reg byte a 
+Statement [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2) [ main::radix#4 main::digit#2 main::digit_value#0 ] ( main:2 [ main::radix#4 main::digit#2 main::digit_value#0 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1 [ main::radix#4 main::digit#2 main::digit_value#0 main::$2 ] ( main:2 [ main::radix#4 main::digit#2 main::digit_value#0 main::$2 ] ) always clobbers reg byte a 
+Statement [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0 [ main::radix#4 main::digit#2 ] ( main:2 [ main::radix#4 main::digit#2 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::digit#2 main::digit#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:4 [ main::digit_value#0 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_BYTE:6 [ main::$2 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 252.5: zp ZP_BYTE:3 [ main::digit#2 main::digit#1 ] 202: zp ZP_BYTE:6 [ main::$2 ] 101: zp ZP_WORD:4 [ main::digit_value#0 ] 19.64: zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ] 
+Uplift Scope [RadixInfo] 
+Uplift Scope [] 
+
+Uplifting [main] best 5733 combination reg byte x [ main::digit#2 main::digit#1 ] reg byte a [ main::$2 ] zp ZP_WORD:4 [ main::digit_value#0 ] zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ] 
+Uplifting [RadixInfo] best 5733 combination 
+Uplifting [] best 5733 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::radix#4 main::radix#1 ]
+Uplifting [main] best 5733 combination zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ] 
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ main::digit_value#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Illustrates a problem with pointer sizeof()-rewriting for pointers inside structs
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label digit_value = 3
+    .label radix = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::radix#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta radix
+    jmp b1
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::radix#4 = (byte) main::radix#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [6] phi (byte) main::digit#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b2
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+    // [6] phi (byte) main::digit#2 = (byte) main::digit#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2) -- vwuz1=pwuc1_derefidx_vbuxx 
+    lda RADIX_DECIMAL_VALUES,x
+    sta digit_value
+    lda RADIX_DECIMAL_VALUES+1,x
+    sta digit_value+1
+    // [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0 -- pwuc1_derefidx_vbuaa=vwuz1 
+    tay
+    lda digit_value
+    sta SCREEN,y
+    lda digit_value+1
+    sta SCREEN+1,y
+    // [10] (byte) main::digit#1 ← ++ (byte) main::digit#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [11] if((byte) main::digit#1!=(byte) 5) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #5
+    bne b2_from_b2
+    jmp b3
+    // main::@3
+  b3:
+    // [12] (byte) main::radix#1 ← ++ (byte) main::radix#4 -- vbuz1=_inc_vbuz1 
+    inc radix
+    // [13] if((byte) main::radix#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #2
+    cmp radix
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // File Data
+  RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b2_from_b2 with b2
+Replacing label b1_from_b3 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b3:
+Removing instruction b2_from_b1:
+Removing instruction b2_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(word[]) RADIX_DECIMAL_VALUES
+(const word[]) RADIX_DECIMAL_VALUES#0 RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
+(word*) RadixInfo::values
+(void()) main()
+(byte~) main::$2 reg byte a 202.0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(word*) main::SCREEN
+(const word*) main::SCREEN#0 SCREEN = (word*) 1024
+(byte) main::digit
+(byte) main::digit#1 reg byte x 151.5
+(byte) main::digit#2 reg byte x 101.0
+(word) main::digit_value
+(word) main::digit_value#0 digit_value zp ZP_WORD:3 101.0
+(word*) main::info_values
+(byte) main::radix
+(byte) main::radix#1 radix zp ZP_BYTE:2 16.5
+(byte) main::radix#4 radix zp ZP_BYTE:2 3.142857142857143
+
+zp ZP_BYTE:2 [ main::radix#4 main::radix#1 ]
+reg byte x [ main::digit#2 main::digit#1 ]
+zp ZP_WORD:3 [ main::digit_value#0 ]
+reg byte a [ main::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 4731
+
+  // File Comments
+// Illustrates a problem with pointer sizeof()-rewriting for pointers inside structs
+  // Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label SCREEN = $400
+    .label digit_value = 3
+    .label radix = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::radix#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta radix
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi (byte) main::radix#4 = (byte) main::radix#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // main::@1
+  b1:
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [6] phi (byte) main::digit#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+    // [6] phi (byte) main::digit#2 = (byte) main::digit#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // main::@2
+  b2:
+    // digit_value = info.values[digit]
+    // [7] (word) main::digit_value#0 ← *((const word[]) RADIX_DECIMAL_VALUES#0 + (byte) main::digit#2) -- vwuz1=pwuc1_derefidx_vbuxx 
+    lda RADIX_DECIMAL_VALUES,x
+    sta digit_value
+    lda RADIX_DECIMAL_VALUES+1,x
+    sta digit_value+1
+    // SCREEN[digit] = digit_value
+    // [8] (byte~) main::$2 ← (byte) main::digit#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [9] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word) main::digit_value#0 -- pwuc1_derefidx_vbuaa=vwuz1 
+    tay
+    lda digit_value
+    sta SCREEN,y
+    lda digit_value+1
+    sta SCREEN+1,y
+    // for( char digit: 0..4 )
+    // [10] (byte) main::digit#1 ← ++ (byte) main::digit#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [11] if((byte) main::digit#1!=(byte) 5) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #5
+    bne b2
+    // main::@3
+    // for( byte radix: 0..1)
+    // [12] (byte) main::radix#1 ← ++ (byte) main::radix#4 -- vbuz1=_inc_vbuz1 
+    inc radix
+    // [13] if((byte) main::radix#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #2
+    cmp radix
+    bne b1
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // File Data
+  RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
+

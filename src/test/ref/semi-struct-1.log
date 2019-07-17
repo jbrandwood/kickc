@@ -1,3 +1,10 @@
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte*~) init_points::$1 ← call getPoint (byte) init_points::i 
 Inlined call (byte*~) init_points::$2 ← call pointXpos (byte*) init_points::point 
 Inlined call (byte*~) init_points::$3 ← call pointYpos (byte*) init_points::point 
@@ -6,10 +13,6 @@ Inlined call (byte*~) print_points::$3 ← call pointXpos (byte*) print_points::
 Inlined call (byte*~) print_points::$6 ← call pointYpos (byte*) print_points::point 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) print_str::@4
-Culled Empty Block (label) print_str::@3
-Culled Empty Block (label) print_str::@5
-Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
@@ -19,23 +22,40 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @12
 Culled Empty Block (label) @13
+Culled Empty Block (label) @14
+Culled Empty Block (label) print_str::@4
+Culled Empty Block (label) print_str::@3
+Culled Empty Block (label) print_str::@5
+Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) @19
 Culled Empty Block (label) @20
+Culled Empty Block (label) @21
 Culled Empty Block (label) @22
 Culled Empty Block (label) @23
 Culled Empty Block (label) @24
 Culled Empty Block (label) @25
+Culled Empty Block (label) @26
+Culled Empty Block (label) @27
+Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
+Culled Empty Block (label) @34
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
+Culled Empty Block (label) @38
+Culled Empty Block (label) @39
 Culled Empty Block (label) init_points::getPoint1_@1
 Culled Empty Block (label) init_points::pointXpos1_@1
 Culled Empty Block (label) init_points::pointYpos1_@1
 Culled Empty Block (label) init_points::@2
-Culled Empty Block (label) @26
+Culled Empty Block (label) @40
 Culled Empty Block (label) print_points::getPoint1_@1
 Culled Empty Block (label) print_points::pointXpos1_@1
 Culled Empty Block (label) print_points::pointYpos1_@1
@@ -43,10 +63,12 @@ Culled Empty Block (label) print_points::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  to:@12
+@12: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@14
+  to:@28
 print_str: scope:[print_str]  from print_points::@7
   (byte*) print_char_cursor#48 ← phi( print_points::@7/(byte*) print_char_cursor#15 )
   (byte*) print_str::str#4 ← phi( print_points::@7/(byte*) print_str::str#1 )
@@ -92,12 +114,12 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#24
   return 
   to:@return
-@14: scope:[]  from @begin
-  (byte*) print_screen#9 ← phi( @begin/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#53 ← phi( @begin/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#29 ← phi( @begin/(byte*) print_line_cursor#0 )
+@28: scope:[]  from @12
+  (byte*) print_screen#9 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#53 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#29 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $1
-  to:@21
+  to:@35
 print_byte: scope:[print_byte]  from print_points::@4 print_points::@5
   (byte*) print_char_cursor#42 ← phi( print_points::@4/(byte*) print_char_cursor#45 print_points::@5/(byte*) print_char_cursor#46 )
   (byte) print_byte::b#2 ← phi( print_points::@4/(byte) print_byte::b#0 print_points::@5/(byte) print_byte::b#1 )
@@ -158,19 +180,19 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#11 ← (byte*) print_char_cursor#30
   return 
   to:@return
-@21: scope:[]  from @14
-  (byte*) print_screen#8 ← phi( @14/(byte*) print_screen#9 )
-  (byte*) print_char_cursor#52 ← phi( @14/(byte*) print_char_cursor#53 )
-  (byte*) print_line_cursor#28 ← phi( @14/(byte*) print_line_cursor#29 )
+@35: scope:[]  from @28
+  (byte*) print_screen#8 ← phi( @28/(byte*) print_screen#9 )
+  (byte*) print_char_cursor#52 ← phi( @28/(byte*) print_char_cursor#53 )
+  (byte*) print_line_cursor#28 ← phi( @28/(byte*) print_line_cursor#29 )
   (byte) SIZEOF_POINT#0 ← (number) 2
   (byte) NUM_POINTS#0 ← (number) 4
   (byte~) $0 ← (byte) NUM_POINTS#0 * (byte) SIZEOF_POINT#0
   (byte[$0]) points#0 ← { fill( $0, 0) }
-  to:@27
-main: scope:[main]  from @27
-  (byte*) print_screen#6 ← phi( @27/(byte*) print_screen#7 )
-  (byte*) print_char_cursor#49 ← phi( @27/(byte*) print_char_cursor#47 )
-  (byte*) print_line_cursor#26 ← phi( @27/(byte*) print_line_cursor#25 )
+  to:@41
+main: scope:[main]  from @41
+  (byte*) print_screen#6 ← phi( @41/(byte*) print_screen#7 )
+  (byte*) print_char_cursor#49 ← phi( @41/(byte*) print_char_cursor#47 )
+  (byte*) print_line_cursor#26 ← phi( @41/(byte*) print_line_cursor#25 )
   call init_points 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -417,31 +439,36 @@ print_points::@return: scope:[print_points]  from print_points::@10
   (byte*) print_char_cursor#19 ← (byte*) print_char_cursor#38
   return 
   to:@return
-@27: scope:[]  from @21
-  (byte*) print_screen#7 ← phi( @21/(byte*) print_screen#8 )
-  (byte*) print_char_cursor#47 ← phi( @21/(byte*) print_char_cursor#52 )
-  (byte*) print_line_cursor#25 ← phi( @21/(byte*) print_line_cursor#28 )
+@41: scope:[]  from @35
+  (byte*) print_screen#7 ← phi( @35/(byte*) print_screen#8 )
+  (byte*) print_char_cursor#47 ← phi( @35/(byte*) print_char_cursor#52 )
+  (byte*) print_line_cursor#25 ← phi( @35/(byte*) print_line_cursor#28 )
   call main 
-  to:@28
-@28: scope:[]  from @27
-  (byte*) print_char_cursor#39 ← phi( @27/(byte*) print_char_cursor#13 )
-  (byte*) print_line_cursor#20 ← phi( @27/(byte*) print_line_cursor#6 )
+  to:@42
+@42: scope:[]  from @41
+  (byte*) print_char_cursor#39 ← phi( @41/(byte*) print_char_cursor#13 )
+  (byte*) print_line_cursor#20 ← phi( @41/(byte*) print_line_cursor#6 )
   (byte*) print_line_cursor#10 ← (byte*) print_line_cursor#20
   (byte*) print_char_cursor#20 ← (byte*) print_char_cursor#39
   to:@end
-@end: scope:[]  from @28
+@end: scope:[]  from @42
 
 SYMBOL TABLE SSA
 (byte~) $0
 (const string) $1 = (string) "0123456789abcdef"
-(label) @14
-(label) @21
-(label) @27
+(label) @12
 (label) @28
+(label) @35
+(label) @41
+(label) @42
 (label) @begin
 (label) @end
 (byte) NUM_POINTS
 (byte) NUM_POINTS#0
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte) SIZEOF_POINT
 (byte) SIZEOF_POINT#0
 (void()) init_points()
@@ -1005,10 +1032,11 @@ Added new block during phi lifting print_cls::@3(between print_cls::@1 and print
 Added new block during phi lifting init_points::@6(between init_points::@5 and init_points::@1)
 Added new block during phi lifting print_points::@11(between print_points::@10 and print_points::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @14
-Adding NOP phi() at start of @21
-Adding NOP phi() at start of @27
+Adding NOP phi() at start of @12
 Adding NOP phi() at start of @28
+Adding NOP phi() at start of @35
+Adding NOP phi() at start of @41
+Adding NOP phi() at start of @42
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -1036,35 +1064,36 @@ Adding NOP phi() at start of init_points::pointXpos1_@return
 Adding NOP phi() at start of init_points::pointYpos1
 Adding NOP phi() at start of init_points::pointYpos1_@return
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init_points:8 print_points:10 
-Calls in [print_points] to print_cls:14 print_byte:26 print_str:28 print_byte:35 print_ln:37 
-Calls in [print_byte] to print_char:56 print_char:61 
+Calls in [] to main:5 
+Calls in [main] to init_points:9 print_points:11 
+Calls in [print_points] to print_cls:15 print_byte:27 print_str:29 print_byte:36 print_ln:38 
+Calls in [print_byte] to print_char:57 print_char:62 
 
 Created 13 initial phi equivalence classes
-Coalesced [24] print_byte::b#4 ← print_byte::b#0
-Coalesced [25] print_char_cursor#62 ← print_char_cursor#45
-Coalesced [33] print_byte::b#5 ← print_byte::b#1
-Coalesced [34] print_char_cursor#63 ← print_char_cursor#2
-Coalesced [41] print_points::i#16 ← print_points::i#1
-Not coalescing [42] print_char_cursor#66 ← print_line_cursor#1
-Coalesced [43] print_line_cursor#43 ← print_line_cursor#1
-Coalesced [44] print_line_cursor#41 ← print_line_cursor#24
-Coalesced (already) [50] print_line_cursor#42 ← print_line_cursor#1
-Coalesced [54] print_char::ch#3 ← print_char::ch#0
-Coalesced [55] print_char_cursor#64 ← print_char_cursor#42
-Coalesced [59] print_char::ch#4 ← print_char::ch#1
-Coalesced [60] print_char_cursor#65 ← print_char_cursor#29
-Coalesced (already) [68] print_char_cursor#60 ← print_char_cursor#29
-Coalesced [75] print_str::str#5 ← print_str::str#0
-Coalesced [76] print_char_cursor#61 ← print_char_cursor#1
-Coalesced [84] print_cls::sc#3 ← print_cls::sc#1
-Coalesced [102] init_points::i#12 ← init_points::i#1
-Coalesced [103] init_points::pos#13 ← init_points::pos#2
+Coalesced [25] print_byte::b#4 ← print_byte::b#0
+Coalesced [26] print_char_cursor#62 ← print_char_cursor#45
+Coalesced [34] print_byte::b#5 ← print_byte::b#1
+Coalesced [35] print_char_cursor#63 ← print_char_cursor#2
+Coalesced [42] print_points::i#16 ← print_points::i#1
+Not coalescing [43] print_char_cursor#66 ← print_line_cursor#1
+Coalesced [44] print_line_cursor#43 ← print_line_cursor#1
+Coalesced [45] print_line_cursor#41 ← print_line_cursor#24
+Coalesced (already) [51] print_line_cursor#42 ← print_line_cursor#1
+Coalesced [55] print_char::ch#3 ← print_char::ch#0
+Coalesced [56] print_char_cursor#64 ← print_char_cursor#42
+Coalesced [60] print_char::ch#4 ← print_char::ch#1
+Coalesced [61] print_char_cursor#65 ← print_char_cursor#29
+Coalesced (already) [69] print_char_cursor#60 ← print_char_cursor#29
+Coalesced [76] print_str::str#5 ← print_str::str#0
+Coalesced [77] print_char_cursor#61 ← print_char_cursor#1
+Coalesced [85] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [103] init_points::i#12 ← init_points::i#1
+Coalesced [104] init_points::pos#13 ← init_points::pos#2
 Coalesced down to 9 phi equivalence classes
-Culled Empty Block (label) @14
-Culled Empty Block (label) @21
+Culled Empty Block (label) @12
 Culled Empty Block (label) @28
+Culled Empty Block (label) @35
+Culled Empty Block (label) @42
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) print_points::@6
 Culled Empty Block (label) print_points::getPoint1_@return
@@ -1082,7 +1111,7 @@ Culled Empty Block (label) init_points::@3
 Culled Empty Block (label) init_points::pointXpos1_@return
 Culled Empty Block (label) init_points::pointYpos1_@return
 Culled Empty Block (label) init_points::@6
-Renumbering block @27 to @1
+Renumbering block @41 to @1
 Renumbering block init_points::@4 to init_points::@2
 Renumbering block init_points::@5 to init_points::@3
 Renumbering block print_points::@4 to print_points::@2
@@ -1937,6 +1966,7 @@ Uplift Scope [print_byte] 50.5: zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 p
 Uplift Scope [print_cls] 33: zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [print_points] 13.54: zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] 11: zp ZP_BYTE:15 [ print_points::getPoint1_$0#0 ] 3.14: zp ZP_WORD:16 [ print_points::point#0 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [main] 
 
@@ -1947,6 +1977,7 @@ Uplifting [print_byte] best 14310 combination reg byte x [ print_byte::b#2 print
 Uplifting [print_cls] best 14310 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplifting [print_points] best 14260 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] reg byte y [ print_points::getPoint1_$0#0 ] zp ZP_WORD:16 [ print_points::point#0 ] 
 Uplifting [print_char] best 14251 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [RADIX] best 14251 combination 
 Uplifting [print_ln] best 14251 combination 
 Uplifting [main] best 14251 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ]
@@ -2511,6 +2542,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) NUM_POINTS
 (const byte) NUM_POINTS#0 NUM_POINTS = (byte) 4
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte) SIZEOF_POINT
 (const byte) SIZEOF_POINT#0 SIZEOF_POINT = (byte) 2
 (void()) init_points()

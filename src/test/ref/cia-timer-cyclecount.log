@@ -1,3 +1,10 @@
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
@@ -18,12 +25,26 @@ Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) @19
+Culled Empty Block (label) @20
 Culled Empty Block (label) @21
 Culled Empty Block (label) @22
 Culled Empty Block (label) @23
 Culled Empty Block (label) @24
 Culled Empty Block (label) @25
 Culled Empty Block (label) @26
+Culled Empty Block (label) @27
+Culled Empty Block (label) @28
+Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
+Culled Empty Block (label) @35
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
+Culled Empty Block (label) @38
+Culled Empty Block (label) @39
+Culled Empty Block (label) @40
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -42,7 +63,7 @@ CONTROL FLOW GRAPH SSA
   to:@4
 @4: scope:[]  from @begin
   (dword) CLOCKS_PER_INIT#0 ← (number) $12
-  to:@20
+  to:@34
 clock: scope:[clock]  from main::@7
   (number~) clock::$0 ← (number) $ffffffff - *((dword*) CIA2_TIMER_AB#0)
   (dword) clock::return#0 ← (number~) clock::$0
@@ -114,9 +135,9 @@ print_dword_at::@2: scope:[print_dword_at]  from print_dword_at::@1
 print_dword_at::@return: scope:[print_dword_at]  from print_dword_at::@2
   return 
   to:@return
-@20: scope:[]  from @4
-  (byte[]) print_hextab#0 ← (const string) $0
-  to:@27
+@34: scope:[]  from @4
+  (byte[]) print_hextab#0 ← (const string) $1
+  to:@41
 print_byte_at: scope:[print_byte_at]  from print_word_at print_word_at::@1
   (byte*) print_byte_at::at#2 ← phi( print_word_at/(byte*) print_byte_at::at#0 print_word_at::@1/(byte*) print_byte_at::at#1 )
   (byte) print_byte_at::b#2 ← phi( print_word_at/(byte) print_byte_at::b#0 print_word_at::@1/(byte) print_byte_at::b#1 )
@@ -147,10 +168,10 @@ print_char_at: scope:[print_char_at]  from print_byte_at print_byte_at::@1
 print_char_at::@return: scope:[print_char_at]  from print_char_at
   return 
   to:@return
-@27: scope:[]  from @20
+@41: scope:[]  from @34
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  to:@28
-main: scope:[main]  from @28
+  to:@42
+main: scope:[main]  from @42
   to:main::@1
 main::@1: scope:[main]  from main main::@9
   if(true) goto main::@2
@@ -177,20 +198,20 @@ main::@9: scope:[main]  from main::@8
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@28: scope:[]  from @27
+@42: scope:[]  from @41
   call main 
-  to:@29
-@29: scope:[]  from @28
+  to:@43
+@43: scope:[]  from @42
   to:@end
-@end: scope:[]  from @29
+@end: scope:[]  from @43
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"
-(label) @20
-(label) @27
-(label) @28
-(label) @29
+(const string) $1 = (string) "0123456789abcdef"
+(label) @34
 (label) @4
+(label) @41
+(label) @42
+(label) @43
 (label) @begin
 (label) @end
 (dword*) CIA2_TIMER_AB
@@ -211,6 +232,10 @@ SYMBOL TABLE SSA
 (byte) CIA_TIMER_CONTROL_STOP#0
 (dword) CLOCKS_PER_INIT
 (dword) CLOCKS_PER_INIT#0
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte*) SCREEN
 (byte*) SCREEN#0
 (dword()) clock()
@@ -399,7 +424,7 @@ Constant (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0 = 0
 Constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0 = 0
 Constant (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 = $40
 Constant (const dword) CLOCKS_PER_INIT#0 = $12
-Constant (const byte[]) print_hextab#0 = $0
+Constant (const byte[]) print_hextab#0 = $1
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_dword_at::at#0 = SCREEN#0
@@ -440,17 +465,17 @@ Constant inlined clock_start::$1 = (const byte) CIA_TIMER_CONTROL_CONTINUOUS#0
 Constant inlined print_dword_at::at#0 = (const byte*) SCREEN#0
 Constant inlined print_word_at::at#1 = (const byte*) SCREEN#0+(byte) 4
 Constant inlined print_word_at::at#0 = (const byte*) SCREEN#0
-Constant inlined $0 = (const byte[]) print_hextab#0
 Constant inlined clock_start::$5 = (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Constant inlined clock_start::$6 = (const byte) CIA_TIMER_CONTROL_START#0
+Constant inlined $1 = (const byte[]) print_hextab#0
 Constant inlined clock_start::$3 = (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @20
-Adding NOP phi() at start of @27
-Adding NOP phi() at start of @28
-Adding NOP phi() at start of @29
+Adding NOP phi() at start of @34
+Adding NOP phi() at start of @41
+Adding NOP phi() at start of @42
+Adding NOP phi() at start of @43
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -479,15 +504,15 @@ Coalesced [51] print_char_at::ch#4 ← print_char_at::ch#1
 Coalesced [52] print_char_at::at#4 ← print_char_at::at#1
 Coalesced down to 6 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @20
-Culled Empty Block (label) @27
-Culled Empty Block (label) @29
+Culled Empty Block (label) @34
+Culled Empty Block (label) @41
+Culled Empty Block (label) @43
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) print_dword_at::@2
 Culled Empty Block (label) print_word_at::@2
 Culled Empty Block (label) print_byte_at::@2
-Renumbering block @28 to @1
+Renumbering block @42 to @1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@7 to main::@2
 Renumbering block main::@8 to main::@3
@@ -1093,6 +1118,7 @@ Uplift Scope [print_byte_at] 9.33: zp ZP_WORD:7 [ print_byte_at::at#2 print_byte
 Uplift Scope [print_word_at] 10: zp ZP_WORD:2 [ print_word_at::w#2 print_word_at::w#0 print_word_at::w#1 ] 0.8: zp ZP_WORD:4 [ print_word_at::at#2 ] 
 Uplift Scope [print_dword_at] 5: zp ZP_DWORD:24 [ print_dword_at::dw#0 ] 
 Uplift Scope [clock_start] 
+Uplift Scope [RADIX] 
 Uplift Scope [] 
 
 Uplifting [main] best 1746 combination zp ZP_DWORD:16 [ main::$1 ] zp ZP_DWORD:20 [ main::cyclecount#0 ] 
@@ -1102,6 +1128,7 @@ Uplifting [print_byte_at] best 1731 combination zp ZP_WORD:7 [ print_byte_at::at
 Uplifting [print_word_at] best 1731 combination zp ZP_WORD:2 [ print_word_at::w#2 print_word_at::w#0 print_word_at::w#1 ] zp ZP_WORD:4 [ print_word_at::at#2 ] 
 Uplifting [print_dword_at] best 1731 combination zp ZP_DWORD:24 [ print_dword_at::dw#0 ] 
 Uplifting [clock_start] best 1731 combination 
+Uplifting [RADIX] best 1731 combination 
 Uplifting [] best 1731 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ print_byte_at::b#2 print_byte_at::b#0 print_byte_at::b#1 ]
 Uplifting [print_byte_at] best 1731 combination zp ZP_BYTE:6 [ print_byte_at::b#2 print_byte_at::b#0 print_byte_at::b#1 ] 
@@ -1481,6 +1508,10 @@ FINAL SYMBOL TABLE
 (byte) CIA_TIMER_CONTROL_STOP
 (dword) CLOCKS_PER_INIT
 (const dword) CLOCKS_PER_INIT#0 CLOCKS_PER_INIT = (byte) $12
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (dword()) clock()

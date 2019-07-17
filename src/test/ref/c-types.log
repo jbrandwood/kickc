@@ -1,3 +1,10 @@
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte) testChar::u
 Identified constant variable (byte) testChar::n
 Identified constant variable (signed byte) testChar::s
@@ -12,28 +19,27 @@ Identified constant variable (signed dword) testLong::n
 Identified constant variable (signed dword) testLong::s
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) print_str::@4
-Culled Empty Block (label) print_str::@3
-Culled Empty Block (label) print_str::@5
-Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
-Culled Empty Block (label) print_sword::@4
 Culled Empty Block (label) @6
-Culled Empty Block (label) print_sbyte::@4
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @12
 Culled Empty Block (label) @13
-Culled Empty Block (label) print_sdword::@4
+Culled Empty Block (label) @14
+Culled Empty Block (label) print_str::@4
+Culled Empty Block (label) print_str::@3
+Culled Empty Block (label) print_str::@5
+Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
+Culled Empty Block (label) print_sword::@4
 Culled Empty Block (label) @18
+Culled Empty Block (label) print_sbyte::@4
 Culled Empty Block (label) @19
 Culled Empty Block (label) @20
 Culled Empty Block (label) @21
@@ -41,13 +47,29 @@ Culled Empty Block (label) @22
 Culled Empty Block (label) @23
 Culled Empty Block (label) @24
 Culled Empty Block (label) @25
+Culled Empty Block (label) @26
+Culled Empty Block (label) @27
+Culled Empty Block (label) print_sdword::@4
+Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
+Culled Empty Block (label) @34
+Culled Empty Block (label) @35
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
+Culled Empty Block (label) @38
+Culled Empty Block (label) @39
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  to:@12
+@12: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@14
+  to:@28
 print_str: scope:[print_str]  from testChar testInt testLong testShort
   (byte*) print_char_cursor#156 ← phi( testChar/(byte*) print_char_cursor#151 testInt/(byte*) print_char_cursor#153 testLong/(byte*) print_char_cursor#154 testShort/(byte*) print_char_cursor#152 )
   (byte*) print_str::str#7 ← phi( testChar/(byte*) print_str::str#1 testInt/(byte*) print_str::str#3 testLong/(byte*) print_str::str#4 testShort/(byte*) print_str::str#2 )
@@ -279,12 +301,12 @@ print_sdword::@return: scope:[print_sdword]  from print_sdword::@7
   (byte*) print_char_cursor#22 ← (byte*) print_char_cursor#90
   return 
   to:@return
-@14: scope:[]  from @begin
-  (byte*) print_screen#6 ← phi( @begin/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#160 ← phi( @begin/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#50 ← phi( @begin/(byte*) print_line_cursor#0 )
+@28: scope:[]  from @12
+  (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#160 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#50 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $0
-  to:@26
+  to:@40
 print_byte: scope:[print_byte]  from print_sbyte::@2 print_word print_word::@1 testChar::@1 testChar::@3
   (byte*) print_char_cursor#149 ← phi( print_sbyte::@2/(byte*) print_char_cursor#143 print_word/(byte*) print_char_cursor#144 print_word::@1/(byte*) print_char_cursor#13 testChar::@1/(byte*) print_char_cursor#36 testChar::@3/(byte*) print_char_cursor#38 )
   (byte) print_byte::b#5 ← phi( print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 testChar::@1/(byte) print_byte::b#3 testChar::@3/(byte) print_byte::b#4 )
@@ -345,10 +367,10 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#29 ← (byte*) print_char_cursor#96
   return 
   to:@return
-main: scope:[main]  from @26
-  (byte*) print_char_cursor#150 ← phi( @26/(byte*) print_char_cursor#155 )
-  (byte*) print_line_cursor#40 ← phi( @26/(byte*) print_line_cursor#45 )
-  (byte*) print_screen#4 ← phi( @26/(byte*) print_screen#5 )
+main: scope:[main]  from @40
+  (byte*) print_char_cursor#150 ← phi( @40/(byte*) print_char_cursor#155 )
+  (byte*) print_line_cursor#40 ← phi( @40/(byte*) print_line_cursor#45 )
+  (byte*) print_screen#4 ← phi( @40/(byte*) print_screen#5 )
   call print_cls 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -644,27 +666,32 @@ testLong::@return: scope:[testLong]  from testLong::@7
   (byte*) print_line_cursor#18 ← (byte*) print_line_cursor#37
   return 
   to:@return
-@26: scope:[]  from @14
-  (byte*) print_screen#5 ← phi( @14/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#155 ← phi( @14/(byte*) print_char_cursor#160 )
-  (byte*) print_line_cursor#45 ← phi( @14/(byte*) print_line_cursor#50 )
+@40: scope:[]  from @28
+  (byte*) print_screen#5 ← phi( @28/(byte*) print_screen#6 )
+  (byte*) print_char_cursor#155 ← phi( @28/(byte*) print_char_cursor#160 )
+  (byte*) print_line_cursor#45 ← phi( @28/(byte*) print_line_cursor#50 )
   call main 
-  to:@27
-@27: scope:[]  from @26
-  (byte*) print_char_cursor#135 ← phi( @26/(byte*) print_char_cursor#35 )
-  (byte*) print_line_cursor#38 ← phi( @26/(byte*) print_line_cursor#10 )
+  to:@41
+@41: scope:[]  from @40
+  (byte*) print_char_cursor#135 ← phi( @40/(byte*) print_char_cursor#35 )
+  (byte*) print_line_cursor#38 ← phi( @40/(byte*) print_line_cursor#10 )
   (byte*) print_line_cursor#19 ← (byte*) print_line_cursor#38
   (byte*) print_char_cursor#68 ← (byte*) print_char_cursor#135
   to:@end
-@end: scope:[]  from @27
+@end: scope:[]  from @41
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "0123456789abcdef"
-(label) @14
-(label) @26
-(label) @27
+(label) @12
+(label) @28
+(label) @40
+(label) @41
 (label) @begin
 (label) @end
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -1535,9 +1562,10 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @14
-Adding NOP phi() at start of @26
-Adding NOP phi() at start of @27
+Adding NOP phi() at start of @12
+Adding NOP phi() at start of @28
+Adding NOP phi() at start of @40
+Adding NOP phi() at start of @41
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -1570,75 +1598,76 @@ Adding NOP phi() at start of print_sbyte::@7
 Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@2
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to print_cls:7 testChar:9 testShort:11 testInt:13 testLong:15 
-Calls in [testLong] to print_str:19 print_dword:21 print_char:23 print_sdword:25 print_char:27 print_sdword:29 print_ln:31 
-Calls in [print_sdword] to print_char:45 print_dword:51 print_char:55 
-Calls in [print_dword] to print_word:66 print_word:70 
-Calls in [print_word] to print_byte:77 print_byte:81 
-Calls in [print_byte] to print_char:89 print_char:94 
-Calls in [testInt] to print_str:109 print_word:111 print_char:113 print_sword:115 print_char:117 print_sword:119 print_ln:121 
-Calls in [print_sword] to print_char:127 print_word:133 print_char:137 
-Calls in [testShort] to print_str:141 print_word:143 print_char:145 print_sword:147 print_char:149 print_sword:151 print_ln:153 
-Calls in [testChar] to print_str:157 print_byte:159 print_char:161 print_byte:163 print_char:165 print_sbyte:167 print_ln:169 
-Calls in [print_sbyte] to print_char:174 print_byte:177 
+Calls in [] to main:4 
+Calls in [main] to print_cls:8 testChar:10 testShort:12 testInt:14 testLong:16 
+Calls in [testLong] to print_str:20 print_dword:22 print_char:24 print_sdword:26 print_char:28 print_sdword:30 print_ln:32 
+Calls in [print_sdword] to print_char:46 print_dword:52 print_char:56 
+Calls in [print_dword] to print_word:67 print_word:71 
+Calls in [print_word] to print_byte:78 print_byte:82 
+Calls in [print_byte] to print_char:90 print_char:95 
+Calls in [testInt] to print_str:110 print_word:112 print_char:114 print_sword:116 print_char:118 print_sword:120 print_ln:122 
+Calls in [print_sword] to print_char:128 print_word:134 print_char:138 
+Calls in [testShort] to print_str:142 print_word:144 print_char:146 print_sword:148 print_char:150 print_sword:152 print_ln:154 
+Calls in [testChar] to print_str:158 print_byte:160 print_char:162 print_byte:164 print_char:166 print_sbyte:168 print_ln:170 
+Calls in [print_sbyte] to print_char:175 print_byte:178 
 
 Created 19 initial phi equivalence classes
-Not coalescing [18] print_char_cursor#162 ← print_line_cursor#1
-Coalesced [20] print_char_cursor#172 ← print_char_cursor#136
-Coalesced [22] print_char_cursor#189 ← print_char_cursor#26
-Coalesced (already) [26] print_char_cursor#190 ← print_char_cursor#26
-Coalesced [30] print_line_cursor#72 ← print_line_cursor#1
-Coalesced [35] print_line_cursor#74 ← print_line_cursor#39
-Coalesced (already) [41] print_line_cursor#75 ← print_line_cursor#1
-Coalesced (already) [44] print_char_cursor#182 ← print_char_cursor#26
-Coalesced [46] print_sdword::dw#10 ← print_sdword::dw#3
-Coalesced [49] print_dword::dw#4 ← print_dword::dw#0
-Coalesced [50] print_char_cursor#171 ← print_char_cursor#26
-Coalesced (already) [54] print_char_cursor#181 ← print_char_cursor#26
-Coalesced [57] print_sdword::dw#9 ← print_sdword::dw#0
-Coalesced [64] print_word::w#7 ← print_word::w#1
-Coalesced [65] print_char_cursor#166 ← print_char_cursor#145
-Coalesced [68] print_word::w#8 ← print_word::w#2
-Coalesced (already) [69] print_char_cursor#167 ← print_char_cursor#26
-Coalesced [75] print_byte::b#7 ← print_byte::b#1
-Coalesced [76] print_char_cursor#174 ← print_char_cursor#144
-Coalesced [79] print_byte::b#8 ← print_byte::b#2
-Coalesced (already) [80] print_char_cursor#175 ← print_char_cursor#26
-Coalesced [87] print_char::ch#17 ← print_char::ch#6
-Coalesced (already) [88] print_char_cursor#178 ← print_char_cursor#149
-Coalesced [92] print_char::ch#18 ← print_char::ch#7
-Coalesced (already) [93] print_char_cursor#179 ← print_char_cursor#26
-Coalesced [98] print_str::str#8 ← print_str::str#7
-Coalesced [99] print_char_cursor#164 ← print_char_cursor#156
-Coalesced [106] print_str::str#9 ← print_str::str#0
-Coalesced [107] print_char_cursor#165 ← print_char_cursor#1
-Not coalescing [108] print_char_cursor#161 ← print_line_cursor#1
-Coalesced (already) [110] print_char_cursor#169 ← print_char_cursor#136
-Coalesced (already) [112] print_char_cursor#187 ← print_char_cursor#26
-Coalesced (already) [116] print_char_cursor#188 ← print_char_cursor#26
-Coalesced (already) [120] print_line_cursor#71 ← print_line_cursor#1
-Coalesced (already) [126] print_char_cursor#184 ← print_char_cursor#26
-Coalesced [128] print_sword::w#12 ← print_sword::w#10
-Coalesced [131] print_word::w#9 ← print_word::w#0
-Coalesced (already) [132] print_char_cursor#168 ← print_char_cursor#26
-Coalesced (already) [136] print_char_cursor#183 ← print_char_cursor#26
-Coalesced [139] print_sword::w#11 ← print_sword::w#0
-Not coalescing [140] print_char_cursor#163 ← print_line_cursor#1
-Coalesced (already) [142] print_char_cursor#170 ← print_char_cursor#136
-Coalesced (already) [144] print_char_cursor#191 ← print_char_cursor#26
-Coalesced (already) [148] print_char_cursor#192 ← print_char_cursor#26
-Coalesced (already) [152] print_line_cursor#73 ← print_line_cursor#1
-Coalesced (already) [158] print_char_cursor#176 ← print_char_cursor#136
-Coalesced (already) [160] print_char_cursor#185 ← print_char_cursor#26
-Coalesced (already) [162] print_char_cursor#177 ← print_char_cursor#26
-Coalesced (already) [164] print_char_cursor#186 ← print_char_cursor#26
-Coalesced (already) [173] print_char_cursor#180 ← print_char_cursor#26
-Coalesced (already) [176] print_char_cursor#173 ← print_char_cursor#26
-Coalesced [187] print_cls::sc#3 ← print_cls::sc#1
+Not coalescing [19] print_char_cursor#162 ← print_line_cursor#1
+Coalesced [21] print_char_cursor#172 ← print_char_cursor#136
+Coalesced [23] print_char_cursor#189 ← print_char_cursor#26
+Coalesced (already) [27] print_char_cursor#190 ← print_char_cursor#26
+Coalesced [31] print_line_cursor#72 ← print_line_cursor#1
+Coalesced [36] print_line_cursor#74 ← print_line_cursor#39
+Coalesced (already) [42] print_line_cursor#75 ← print_line_cursor#1
+Coalesced (already) [45] print_char_cursor#182 ← print_char_cursor#26
+Coalesced [47] print_sdword::dw#10 ← print_sdword::dw#3
+Coalesced [50] print_dword::dw#4 ← print_dword::dw#0
+Coalesced [51] print_char_cursor#171 ← print_char_cursor#26
+Coalesced (already) [55] print_char_cursor#181 ← print_char_cursor#26
+Coalesced [58] print_sdword::dw#9 ← print_sdword::dw#0
+Coalesced [65] print_word::w#7 ← print_word::w#1
+Coalesced [66] print_char_cursor#166 ← print_char_cursor#145
+Coalesced [69] print_word::w#8 ← print_word::w#2
+Coalesced (already) [70] print_char_cursor#167 ← print_char_cursor#26
+Coalesced [76] print_byte::b#7 ← print_byte::b#1
+Coalesced [77] print_char_cursor#174 ← print_char_cursor#144
+Coalesced [80] print_byte::b#8 ← print_byte::b#2
+Coalesced (already) [81] print_char_cursor#175 ← print_char_cursor#26
+Coalesced [88] print_char::ch#17 ← print_char::ch#6
+Coalesced (already) [89] print_char_cursor#178 ← print_char_cursor#149
+Coalesced [93] print_char::ch#18 ← print_char::ch#7
+Coalesced (already) [94] print_char_cursor#179 ← print_char_cursor#26
+Coalesced [99] print_str::str#8 ← print_str::str#7
+Coalesced [100] print_char_cursor#164 ← print_char_cursor#156
+Coalesced [107] print_str::str#9 ← print_str::str#0
+Coalesced [108] print_char_cursor#165 ← print_char_cursor#1
+Not coalescing [109] print_char_cursor#161 ← print_line_cursor#1
+Coalesced (already) [111] print_char_cursor#169 ← print_char_cursor#136
+Coalesced (already) [113] print_char_cursor#187 ← print_char_cursor#26
+Coalesced (already) [117] print_char_cursor#188 ← print_char_cursor#26
+Coalesced (already) [121] print_line_cursor#71 ← print_line_cursor#1
+Coalesced (already) [127] print_char_cursor#184 ← print_char_cursor#26
+Coalesced [129] print_sword::w#12 ← print_sword::w#10
+Coalesced [132] print_word::w#9 ← print_word::w#0
+Coalesced (already) [133] print_char_cursor#168 ← print_char_cursor#26
+Coalesced (already) [137] print_char_cursor#183 ← print_char_cursor#26
+Coalesced [140] print_sword::w#11 ← print_sword::w#0
+Not coalescing [141] print_char_cursor#163 ← print_line_cursor#1
+Coalesced (already) [143] print_char_cursor#170 ← print_char_cursor#136
+Coalesced (already) [145] print_char_cursor#191 ← print_char_cursor#26
+Coalesced (already) [149] print_char_cursor#192 ← print_char_cursor#26
+Coalesced (already) [153] print_line_cursor#73 ← print_line_cursor#1
+Coalesced (already) [159] print_char_cursor#176 ← print_char_cursor#136
+Coalesced (already) [161] print_char_cursor#185 ← print_char_cursor#26
+Coalesced (already) [163] print_char_cursor#177 ← print_char_cursor#26
+Coalesced (already) [165] print_char_cursor#186 ← print_char_cursor#26
+Coalesced (already) [174] print_char_cursor#180 ← print_char_cursor#26
+Coalesced (already) [177] print_char_cursor#173 ← print_char_cursor#26
+Coalesced [188] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 10 phi equivalence classes
-Culled Empty Block (label) @14
-Culled Empty Block (label) @27
+Culled Empty Block (label) @12
+Culled Empty Block (label) @28
+Culled Empty Block (label) @41
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) testLong::@7
 Culled Empty Block (label) print_ln::@2
@@ -1657,7 +1686,7 @@ Culled Empty Block (label) print_sbyte::@5
 Culled Empty Block (label) print_sbyte::@7
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) print_cls::@3
-Renumbering block @26 to @1
+Renumbering block @40 to @1
 Renumbering block print_sword::@5 to print_sword::@4
 Renumbering block print_sdword::@5 to print_sdword::@4
 Adding NOP phi() at start of @begin
@@ -3143,6 +3172,7 @@ Uplift Scope [print_char] 14: zp ZP_BYTE:8 [ print_char::ch#16 print_char::ch#6 
 Uplift Scope [print_sword] 9: zp ZP_WORD:20 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 ] 
 Uplift Scope [print_sdword] 9: zp ZP_DWORD:4 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 ] 
 Uplift Scope [print_dword] 6: zp ZP_DWORD:9 [ print_dword::dw#2 print_dword::dw#0 ] 
+Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [print_sbyte] 
 Uplift Scope [main] 
@@ -3160,6 +3190,7 @@ Uplifting [print_char] best 2591 combination reg byte a [ print_char::ch#16 prin
 Uplifting [print_sword] best 2591 combination zp ZP_WORD:20 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 ] 
 Uplifting [print_sdword] best 2591 combination zp ZP_DWORD:4 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 ] 
 Uplifting [print_dword] best 2591 combination zp ZP_DWORD:9 [ print_dword::dw#2 print_dword::dw#0 ] 
+Uplifting [RADIX] best 2591 combination 
 Uplifting [print_ln] best 2591 combination 
 Uplifting [print_sbyte] best 2591 combination 
 Uplifting [main] best 2591 combination 
@@ -4311,6 +4342,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (void()) main()
 (label) main::@1
 (label) main::@2

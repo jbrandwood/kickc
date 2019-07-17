@@ -1,20 +1,26 @@
 import "print"
 import "string"
 import "time"
+import "division"
+import "c64"
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint16_t;
 
+const char* SCREEN = 0x0400;
+
 const uint16_t COUNT = 16384;           /* Up to what number? */
 const uint8_t SQRT_COUNT = 128;         /* Sqrt of COUNT */
-
 uint8_t* sieve = 0x1000;
 
 void main (void) {
+    //Show lower case font
+    *D018 = toD018(SCREEN, 0x1800);
+    print_cls();
     print_str("Sieve benchmark - calculating primes");
     print_ln();
     print_str("between 2 and ");
-    print_word(COUNT);
+    print_word_decimal(COUNT);
     print_ln();
 
     // Fill sieve with zeros
@@ -40,14 +46,18 @@ void main (void) {
     }
 
     clock_t cyclecount = clock()-CLOCKS_PER_INIT;
+    unsigned int sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100));
 
-    print_str("Cycles used: ");
-    print_dword(cyclecount);
+    print_str("100ths seconds used: ");
+    print_word_decimal(sec100s);
+    print_str(" cycles: ");
+    print_dword_decimal(cyclecount);
     print_ln();
-    for (i = 2; i < 1024; ++i)
+    for (i = 2; i < 1300; ++i)
         if (!sieve[i]) {
-            print_word(i);
+            print_word_decimal(i);
             print_char(' ');
         }
-
+    print_str("...");
+    while(true) { (*(SCREEN+999))++; }
 }

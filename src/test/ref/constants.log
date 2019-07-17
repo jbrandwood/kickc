@@ -1,11 +1,14 @@
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte) test_bytes::bb
 Identified constant variable (signed byte) test_sbytes::bb
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) print_str::@4
-Culled Empty Block (label) print_str::@3
-Culled Empty Block (label) print_str::@5
-Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
@@ -15,28 +18,47 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @12
 Culled Empty Block (label) @13
 Culled Empty Block (label) @14
+Culled Empty Block (label) print_str::@4
+Culled Empty Block (label) print_str::@3
+Culled Empty Block (label) print_str::@5
+Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) @19
 Culled Empty Block (label) @20
+Culled Empty Block (label) @21
 Culled Empty Block (label) @22
 Culled Empty Block (label) @23
-Culled Empty Block (label) assert_byte::@4
 Culled Empty Block (label) @24
 Culled Empty Block (label) @25
+Culled Empty Block (label) @26
+Culled Empty Block (label) @27
+Culled Empty Block (label) @28
+Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
+Culled Empty Block (label) @34
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
+Culled Empty Block (label) assert_byte::@4
+Culled Empty Block (label) @38
+Culled Empty Block (label) @39
 Culled Empty Block (label) assert_sbyte::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  to:@12
+@12: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@21
+  to:@35
 print_str: scope:[print_str]  from assert_byte assert_byte::@1 assert_byte::@3 assert_byte::@5 assert_sbyte assert_sbyte::@1 assert_sbyte::@3 assert_sbyte::@5
   (byte*) print_char_cursor#80 ← phi( assert_byte/(byte*) print_char_cursor#70 assert_byte::@1/(byte*) print_char_cursor#71 assert_byte::@3/(byte*) print_char_cursor#72 assert_byte::@5/(byte*) print_char_cursor#15 assert_sbyte/(byte*) print_char_cursor#75 assert_sbyte::@1/(byte*) print_char_cursor#76 assert_sbyte::@3/(byte*) print_char_cursor#77 assert_sbyte::@5/(byte*) print_char_cursor#27 )
   (byte*) print_str::str#11 ← phi( assert_byte/(byte*) print_str::str#1 assert_byte::@1/(byte*) print_str::str#3 assert_byte::@3/(byte*) print_str::str#4 assert_byte::@5/(byte*) print_str::str#2 assert_sbyte/(byte*) print_str::str#5 assert_sbyte::@1/(byte*) print_str::str#7 assert_sbyte::@3/(byte*) print_str::str#8 assert_sbyte::@5/(byte*) print_str::str#6 )
@@ -107,18 +129,18 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#6 ← (byte*) print_char_cursor#38
   return 
   to:@return
-@21: scope:[]  from @begin
-  (byte*) print_screen#6 ← phi( @begin/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#81 ← phi( @begin/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#58 ← phi( @begin/(byte*) print_line_cursor#0 )
+@35: scope:[]  from @12
+  (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#81 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#58 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte*) BGCOL#0 ← ((byte*)) (number) $d021
   (byte) GREEN#0 ← (number) 5
   (byte) RED#0 ← (number) 2
-  to:@26
-main: scope:[main]  from @26
-  (byte*) print_char_cursor#68 ← phi( @26/(byte*) print_char_cursor#79 )
-  (byte*) print_line_cursor#48 ← phi( @26/(byte*) print_line_cursor#53 )
-  (byte*) print_screen#4 ← phi( @26/(byte*) print_screen#5 )
+  to:@40
+main: scope:[main]  from @40
+  (byte*) print_char_cursor#68 ← phi( @40/(byte*) print_char_cursor#79 )
+  (byte*) print_line_cursor#48 ← phi( @40/(byte*) print_line_cursor#53 )
+  (byte*) print_screen#4 ← phi( @40/(byte*) print_screen#5 )
   call print_cls 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -406,30 +428,35 @@ assert_sbyte::@return: scope:[assert_sbyte]  from assert_sbyte::@9
   (byte*) print_line_cursor#22 ← (byte*) print_line_cursor#45
   return 
   to:@return
-@26: scope:[]  from @21
-  (byte*) print_screen#5 ← phi( @21/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#79 ← phi( @21/(byte*) print_char_cursor#81 )
-  (byte*) print_line_cursor#53 ← phi( @21/(byte*) print_line_cursor#58 )
+@40: scope:[]  from @35
+  (byte*) print_screen#5 ← phi( @35/(byte*) print_screen#6 )
+  (byte*) print_char_cursor#79 ← phi( @35/(byte*) print_char_cursor#81 )
+  (byte*) print_line_cursor#53 ← phi( @35/(byte*) print_line_cursor#58 )
   call main 
-  to:@27
-@27: scope:[]  from @26
-  (byte*) print_char_cursor#65 ← phi( @26/(byte*) print_char_cursor#10 )
-  (byte*) print_line_cursor#46 ← phi( @26/(byte*) print_line_cursor#8 )
+  to:@41
+@41: scope:[]  from @40
+  (byte*) print_char_cursor#65 ← phi( @40/(byte*) print_char_cursor#10 )
+  (byte*) print_line_cursor#46 ← phi( @40/(byte*) print_line_cursor#8 )
   (byte*) print_line_cursor#23 ← (byte*) print_line_cursor#46
   (byte*) print_char_cursor#33 ← (byte*) print_char_cursor#65
   to:@end
-@end: scope:[]  from @27
+@end: scope:[]  from @41
 
 SYMBOL TABLE SSA
-(label) @21
-(label) @26
-(label) @27
+(label) @12
+(label) @35
+(label) @40
+(label) @41
 (label) @begin
 (label) @end
 (byte*) BGCOL
 (byte*) BGCOL#0
 (byte) GREEN
 (byte) GREEN#0
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte) RED
 (byte) RED#0
 (void()) assert_byte((byte*) assert_byte::msg , (byte) assert_byte::b , (byte) assert_byte::c)
@@ -1111,9 +1138,10 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @21
-Adding NOP phi() at start of @26
-Adding NOP phi() at start of @27
+Adding NOP phi() at start of @12
+Adding NOP phi() at start of @35
+Adding NOP phi() at start of @40
+Adding NOP phi() at start of @41
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -1136,40 +1164,41 @@ Adding NOP phi() at start of assert_byte::@7
 Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@2
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to print_cls:7 test_bytes:9 test_sbytes:11 
-Calls in [test_sbytes] to assert_sbyte:15 assert_sbyte:17 assert_sbyte:19 assert_sbyte:21 assert_sbyte:23 
-Calls in [assert_sbyte] to print_str:30 print_str:32 print_str:35 print_ln:38 print_str:43 
-Calls in [test_bytes] to assert_byte:65 assert_byte:68 assert_byte:71 
-Calls in [assert_byte] to print_str:78 print_str:80 print_str:83 print_ln:86 print_str:91 
+Calls in [] to main:4 
+Calls in [main] to print_cls:8 test_bytes:10 test_sbytes:12 
+Calls in [test_sbytes] to assert_sbyte:16 assert_sbyte:18 assert_sbyte:20 assert_sbyte:22 assert_sbyte:24 
+Calls in [assert_sbyte] to print_str:31 print_str:33 print_str:36 print_ln:39 print_str:44 
+Calls in [test_bytes] to assert_byte:66 assert_byte:69 assert_byte:72 
+Calls in [assert_byte] to print_str:79 print_str:81 print_str:84 print_ln:87 print_str:92 
 
 Created 15 initial phi equivalence classes
-Coalesced [28] print_str::str#13 ← print_str::str#5
-Not coalescing [29] print_char_cursor#86 ← print_line_cursor#1
-Coalesced [31] print_char_cursor#89 ← print_char_cursor#2
-Coalesced (already) [34] print_char_cursor#88 ← print_char_cursor#2
-Coalesced [37] print_line_cursor#70 ← print_line_cursor#1
-Coalesced (already) [42] print_char_cursor#87 ← print_char_cursor#2
-Coalesced [46] print_str::str#14 ← print_str::str#11
-Coalesced (already) [47] print_char_cursor#90 ← print_char_cursor#80
-Coalesced [54] print_str::str#15 ← print_str::str#0
-Coalesced [55] print_char_cursor#91 ← print_char_cursor#1
-Coalesced [57] print_line_cursor#71 ← print_line_cursor#47
-Coalesced (already) [63] print_line_cursor#72 ← print_line_cursor#1
-Not coalescing [66] print_char_cursor#92 ← print_line_cursor#1
-Coalesced [67] print_line_cursor#73 ← print_line_cursor#1
-Not coalescing [69] print_char_cursor#93 ← print_line_cursor#1
-Coalesced (already) [70] print_line_cursor#74 ← print_line_cursor#1
-Coalesced [76] print_str::str#12 ← print_str::str#1
-Coalesced [77] print_char_cursor#82 ← print_char_cursor#70
-Coalesced (already) [79] print_char_cursor#85 ← print_char_cursor#2
-Coalesced (already) [82] print_char_cursor#84 ← print_char_cursor#2
-Coalesced (already) [85] print_line_cursor#69 ← print_line_cursor#50
-Coalesced (already) [90] print_char_cursor#83 ← print_char_cursor#2
-Coalesced [100] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [29] print_str::str#13 ← print_str::str#5
+Not coalescing [30] print_char_cursor#86 ← print_line_cursor#1
+Coalesced [32] print_char_cursor#89 ← print_char_cursor#2
+Coalesced (already) [35] print_char_cursor#88 ← print_char_cursor#2
+Coalesced [38] print_line_cursor#70 ← print_line_cursor#1
+Coalesced (already) [43] print_char_cursor#87 ← print_char_cursor#2
+Coalesced [47] print_str::str#14 ← print_str::str#11
+Coalesced (already) [48] print_char_cursor#90 ← print_char_cursor#80
+Coalesced [55] print_str::str#15 ← print_str::str#0
+Coalesced [56] print_char_cursor#91 ← print_char_cursor#1
+Coalesced [58] print_line_cursor#71 ← print_line_cursor#47
+Coalesced (already) [64] print_line_cursor#72 ← print_line_cursor#1
+Not coalescing [67] print_char_cursor#92 ← print_line_cursor#1
+Coalesced [68] print_line_cursor#73 ← print_line_cursor#1
+Not coalescing [70] print_char_cursor#93 ← print_line_cursor#1
+Coalesced (already) [71] print_line_cursor#74 ← print_line_cursor#1
+Coalesced [77] print_str::str#12 ← print_str::str#1
+Coalesced [78] print_char_cursor#82 ← print_char_cursor#70
+Coalesced (already) [80] print_char_cursor#85 ← print_char_cursor#2
+Coalesced (already) [83] print_char_cursor#84 ← print_char_cursor#2
+Coalesced (already) [86] print_line_cursor#69 ← print_line_cursor#50
+Coalesced (already) [91] print_char_cursor#83 ← print_char_cursor#2
+Coalesced [101] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 10 phi equivalence classes
-Culled Empty Block (label) @21
-Culled Empty Block (label) @27
+Culled Empty Block (label) @12
+Culled Empty Block (label) @35
+Culled Empty Block (label) @41
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) test_sbytes::@5
 Culled Empty Block (label) assert_sbyte::@8
@@ -1183,7 +1212,7 @@ Culled Empty Block (label) assert_byte::@9
 Culled Empty Block (label) assert_byte::@7
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) print_cls::@3
-Renumbering block @26 to @1
+Renumbering block @40 to @1
 Renumbering block assert_byte::@5 to assert_byte::@4
 Renumbering block assert_byte::@6 to assert_byte::@5
 Renumbering block assert_sbyte::@5 to assert_sbyte::@4
@@ -2076,6 +2105,7 @@ Uplift Scope [print_str] 45.5: zp ZP_WORD:8 [ print_str::str#10 print_str::str#1
 Uplift Scope [print_cls] 33: zp ZP_WORD:16 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [assert_byte] 2: zp ZP_WORD:12 [ assert_byte::msg#3 ] 0.4: zp ZP_BYTE:14 [ assert_byte::b#3 ] 0.4: zp ZP_BYTE:15 [ assert_byte::c#3 ] 
 Uplift Scope [assert_sbyte] 2: zp ZP_WORD:2 [ assert_sbyte::msg#5 ] 0.33: zp ZP_BYTE:4 [ assert_sbyte::b#5 ] 0.33: zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
+Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [main] 
 Uplift Scope [test_bytes] 
@@ -2086,6 +2116,7 @@ Uplifting [print_str] best 2199 combination zp ZP_WORD:8 [ print_str::str#10 pri
 Uplifting [print_cls] best 2199 combination zp ZP_WORD:16 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplifting [assert_byte] best 2187 combination zp ZP_WORD:12 [ assert_byte::msg#3 ] reg byte x [ assert_byte::b#3 ] zp ZP_BYTE:15 [ assert_byte::c#3 ] 
 Uplifting [assert_sbyte] best 2169 combination zp ZP_WORD:2 [ assert_sbyte::msg#5 ] reg byte x [ assert_sbyte::b#5 ] zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
+Uplifting [RADIX] best 2169 combination 
 Uplifting [print_ln] best 2169 combination 
 Uplifting [main] best 2169 combination 
 Uplifting [test_bytes] best 2169 combination 
@@ -2767,6 +2798,10 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL#0 BGCOL = (byte*) 53281
 (byte) GREEN
 (const byte) GREEN#0 GREEN = (byte) 5
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte) RED
 (const byte) RED#0 RED = (byte) 2
 (void()) assert_byte((byte*) assert_byte::msg , (byte) assert_byte::b , (byte) assert_byte::c)

@@ -1,6 +1,13 @@
 Resolved forward reference mulf_sqr1 to (byte[$200]) mulf_sqr1
 Resolved forward reference mulf_sqr2 to (byte[$200]) mulf_sqr2
 Resolved forward reference PERSP_Z to (signed byte[$100]) PERSP_Z
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (signed byte*) xr
 Identified constant variable (signed byte*) yr
 Identified constant variable (signed byte*) zr
@@ -10,42 +17,56 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
-Culled Empty Block (label) print_str::@4
-Culled Empty Block (label) print_str::@3
-Culled Empty Block (label) print_str::@5
-Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
-Culled Empty Block (label) print_sbyte::@4
 Culled Empty Block (label) @11
 Culled Empty Block (label) @12
 Culled Empty Block (label) @13
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
-Culled Empty Block (label) @16
 Culled Empty Block (label) @17
+Culled Empty Block (label) @18
+Culled Empty Block (label) print_str::@4
+Culled Empty Block (label) print_str::@3
+Culled Empty Block (label) print_str::@5
+Culled Empty Block (label) print_str::@6
 Culled Empty Block (label) @19
 Culled Empty Block (label) @20
 Culled Empty Block (label) @21
 Culled Empty Block (label) @22
+Culled Empty Block (label) print_sbyte::@4
 Culled Empty Block (label) @23
 Culled Empty Block (label) @24
+Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
+Culled Empty Block (label) @28
+Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
+Culled Empty Block (label) @33
+Culled Empty Block (label) @34
+Culled Empty Block (label) @35
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
+Culled Empty Block (label) @38
+Culled Empty Block (label) @40
+Culled Empty Block (label) @41
 Culled Empty Block (label) mulf_init::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
-@4: scope:[]  from @begin
+  to:@16
+@16: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@18
+  to:@32
 print_str: scope:[print_str]  from do_perspective do_perspective::@11 do_perspective::@2 do_perspective::@4 do_perspective::@6 do_perspective::@9
   (byte*) print_char_cursor#74 ← phi( do_perspective/(byte*) print_char_cursor#71 do_perspective::@11/(byte*) print_char_cursor#28 do_perspective::@2/(byte*) print_char_cursor#20 do_perspective::@4/(byte*) print_char_cursor#22 do_perspective::@6/(byte*) print_char_cursor#24 do_perspective::@9/(byte*) print_char_cursor#26 )
   (byte*) print_str::str#9 ← phi( do_perspective/(byte*) print_str::str#1 do_perspective::@11/(byte*) print_str::str#6 do_perspective::@2/(byte*) print_str::str#2 do_perspective::@4/(byte*) print_str::str#3 do_perspective::@6/(byte*) print_str::str#4 do_perspective::@9/(byte*) print_str::str#5 )
@@ -137,12 +158,12 @@ print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@7
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#40
   return 
   to:@return
-@18: scope:[]  from @4
-  (byte*) print_screen#9 ← phi( @4/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#79 ← phi( @4/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#30 ← phi( @4/(byte*) print_line_cursor#0 )
+@32: scope:[]  from @16
+  (byte*) print_screen#9 ← phi( @16/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#79 ← phi( @16/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#30 ← phi( @16/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $0
-  to:@25
+  to:@39
 print_byte: scope:[print_byte]  from do_perspective::@10 do_perspective::@8 print_sbyte::@2
   (byte*) print_char_cursor#69 ← phi( do_perspective::@10/(byte*) print_char_cursor#27 do_perspective::@8/(byte*) print_char_cursor#72 print_sbyte::@2/(byte*) print_char_cursor#68 )
   (byte) print_byte::b#3 ← phi( do_perspective::@10/(byte) print_byte::b#2 do_perspective::@8/(byte) print_byte::b#1 print_sbyte::@2/(byte) print_byte::b#0 )
@@ -203,20 +224,20 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#46
   return 
   to:@return
-@25: scope:[]  from @18
-  (byte*) print_screen#8 ← phi( @18/(byte*) print_screen#9 )
-  (byte*) print_char_cursor#78 ← phi( @18/(byte*) print_char_cursor#79 )
-  (byte*) print_line_cursor#29 ← phi( @18/(byte*) print_line_cursor#30 )
+@39: scope:[]  from @32
+  (byte*) print_screen#8 ← phi( @32/(byte*) print_screen#9 )
+  (byte*) print_char_cursor#78 ← phi( @32/(byte*) print_char_cursor#79 )
+  (byte*) print_line_cursor#29 ← phi( @32/(byte*) print_line_cursor#30 )
   (signed byte*) xr#0 ← ((signed byte*)) (number) $f0
   (signed byte*) yr#0 ← ((signed byte*)) (number) $f1
   (signed byte*) zr#0 ← ((signed byte*)) (number) $f2
   (word*) psp1#0 ← ((word*)) (number) $f3
   (word*) psp2#0 ← ((word*)) (number) $f5
-  to:@28
-main: scope:[main]  from @29
-  (byte*) print_char_cursor#76 ← phi( @29/(byte*) print_char_cursor#73 )
-  (byte*) print_line_cursor#25 ← phi( @29/(byte*) print_line_cursor#24 )
-  (byte*) print_screen#5 ← phi( @29/(byte*) print_screen#6 )
+  to:@42
+main: scope:[main]  from @43
+  (byte*) print_char_cursor#76 ← phi( @43/(byte*) print_char_cursor#73 )
+  (byte*) print_line_cursor#25 ← phi( @43/(byte*) print_line_cursor#24 )
+  (byte*) print_screen#5 ← phi( @43/(byte*) print_screen#6 )
   asm { sei  }
   call mulf_init 
   to:main::@1
@@ -394,13 +415,13 @@ perspective: scope:[perspective]  from do_perspective::@7
 perspective::@return: scope:[perspective]  from perspective
   return 
   to:@return
-@28: scope:[]  from @25
-  (byte*) print_screen#7 ← phi( @25/(byte*) print_screen#8 )
-  (byte*) print_char_cursor#77 ← phi( @25/(byte*) print_char_cursor#78 )
-  (byte*) print_line_cursor#27 ← phi( @25/(byte*) print_line_cursor#29 )
+@42: scope:[]  from @39
+  (byte*) print_screen#7 ← phi( @39/(byte*) print_screen#8 )
+  (byte*) print_char_cursor#77 ← phi( @39/(byte*) print_char_cursor#78 )
+  (byte*) print_line_cursor#27 ← phi( @39/(byte*) print_line_cursor#29 )
   (byte[$200]) mulf_sqr1#0 ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr2#0 ← { fill( $200, 0) }
-  to:@29
+  to:@43
 mulf_init: scope:[mulf_init]  from main
   (signed word) mulf_init::sqr#0 ← (number) 0
   (signed word) mulf_init::add#0 ← (number) 1
@@ -439,10 +460,10 @@ mulf_init::@1: scope:[mulf_init]  from mulf_init mulf_init::@1
 mulf_init::@return: scope:[mulf_init]  from mulf_init::@1
   return 
   to:@return
-@29: scope:[]  from @28
-  (byte*) print_screen#6 ← phi( @28/(byte*) print_screen#7 )
-  (byte*) print_char_cursor#73 ← phi( @28/(byte*) print_char_cursor#77 )
-  (byte*) print_line_cursor#24 ← phi( @28/(byte*) print_line_cursor#27 )
+@43: scope:[]  from @42
+  (byte*) print_screen#6 ← phi( @42/(byte*) print_screen#7 )
+  (byte*) print_char_cursor#73 ← phi( @42/(byte*) print_char_cursor#77 )
+  (byte*) print_line_cursor#24 ← phi( @42/(byte*) print_line_cursor#27 )
   (signed byte[$100]) PERSP_Z#0 ← kickasm {{ {
     .var d = 256.0	
     .var z0 = 5.0	
@@ -456,27 +477,31 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@1
 	}
  }}
   call main 
-  to:@30
-@30: scope:[]  from @29
-  (byte*) print_char_cursor#63 ← phi( @29/(byte*) print_char_cursor#18 )
-  (byte*) print_line_cursor#20 ← phi( @29/(byte*) print_line_cursor#7 )
+  to:@44
+@44: scope:[]  from @43
+  (byte*) print_char_cursor#63 ← phi( @43/(byte*) print_char_cursor#18 )
+  (byte*) print_line_cursor#20 ← phi( @43/(byte*) print_line_cursor#7 )
   (byte*) print_line_cursor#10 ← (byte*) print_line_cursor#20
   (byte*) print_char_cursor#32 ← (byte*) print_char_cursor#63
   to:@end
-@end: scope:[]  from @30
+@end: scope:[]  from @44
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "0123456789abcdef"
-(label) @18
-(label) @25
-(label) @28
-(label) @29
-(label) @30
-(label) @4
+(label) @16
+(label) @32
+(label) @39
+(label) @42
+(label) @43
+(label) @44
 (label) @begin
 (label) @end
 (signed byte[$100]) PERSP_Z
 (signed byte[$100]) PERSP_Z#0
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (byte~) do_perspective::$11
 (byte~) do_perspective::$8
@@ -1129,12 +1154,12 @@ Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_l
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Added new block during phi lifting mulf_init::@3(between mulf_init::@1 and mulf_init::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @18
-Adding NOP phi() at start of @25
-Adding NOP phi() at start of @28
-Adding NOP phi() at start of @29
-Adding NOP phi() at start of @30
+Adding NOP phi() at start of @16
+Adding NOP phi() at start of @32
+Adding NOP phi() at start of @39
+Adding NOP phi() at start of @42
+Adding NOP phi() at start of @43
+Adding NOP phi() at start of @44
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
@@ -1187,11 +1212,11 @@ Coalesced [131] mulf_init::sqr#3 ← mulf_init::sqr#1
 Coalesced [132] mulf_init::i#3 ← mulf_init::i#1
 Coalesced [133] mulf_init::add#3 ← mulf_init::add#1
 Coalesced down to 10 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) @18
-Culled Empty Block (label) @25
-Culled Empty Block (label) @28
-Culled Empty Block (label) @30
+Culled Empty Block (label) @16
+Culled Empty Block (label) @32
+Culled Empty Block (label) @39
+Culled Empty Block (label) @42
+Culled Empty Block (label) @44
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) do_perspective::@13
 Culled Empty Block (label) print_ln::@2
@@ -1202,7 +1227,7 @@ Culled Empty Block (label) print_sbyte::@7
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) print_cls::@3
 Culled Empty Block (label) mulf_init::@3
-Renumbering block @29 to @1
+Renumbering block @43 to @1
 Renumbering block print_sbyte::@5 to print_sbyte::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -2340,6 +2365,7 @@ Uplift Scope [print_cls] 33: zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ]
 Uplift Scope [print_byte] 14.5: zp ZP_BYTE:6 [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] 4: zp ZP_BYTE:18 [ print_byte::$0 ] 4: zp ZP_BYTE:19 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:7 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
 Uplift Scope [print_sbyte] 9: zp ZP_BYTE:10 [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
+Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [main] 
 Uplift Scope [do_perspective] 
@@ -2353,6 +2379,7 @@ Uplifting [print_cls] best 4015 combination zp ZP_WORD:11 [ print_cls::sc#2 prin
 Uplifting [print_byte] best 3994 combination reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
 Uplifting [print_char] best 3979 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
 Uplifting [print_sbyte] best 3964 combination reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
+Uplifting [RADIX] best 3964 combination 
 Uplifting [print_ln] best 3964 combination 
 Uplifting [main] best 3964 combination 
 Uplifting [do_perspective] best 3964 combination 
@@ -3183,6 +3210,10 @@ FINAL SYMBOL TABLE
     }
 	}
  }}
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (label) do_perspective::@1
 (label) do_perspective::@10

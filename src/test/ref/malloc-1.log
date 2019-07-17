@@ -3,6 +3,7 @@ Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot +
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) main::w ← ++ (word*) main::w
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) HEAP_TOP
 Culled Empty Block (label) @1
@@ -14,6 +15,8 @@ Culled Empty Block (label) @6
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
+Culled Empty Block (label) @10
+Culled Empty Block (label) @11
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -22,10 +25,10 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
   (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
-  to:@10
-malloc: scope:[malloc]  from @10
-  (word) malloc::size#1 ← phi( @10/(word) malloc::size#0 )
-  (byte*) heap_head#4 ← phi( @10/(byte*) heap_head#7 )
+  to:@12
+malloc: scope:[malloc]  from @12
+  (word) malloc::size#1 ← phi( @12/(word) malloc::size#0 )
+  (byte*) heap_head#4 ← phi( @12/(byte*) heap_head#7 )
   (byte*~) malloc::$0 ← (byte*) heap_head#4 - (word) malloc::size#1
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
   (byte*) heap_head#1 ← (byte*) malloc::mem#0
@@ -38,21 +41,21 @@ malloc::@return: scope:[malloc]  from malloc
   (byte*) heap_head#2 ← (byte*) heap_head#5
   return 
   to:@return
-@10: scope:[]  from @4
+@12: scope:[]  from @4
   (byte*) heap_head#7 ← phi( @4/(byte*) heap_head#0 )
   (word) malloc::size#0 ← (number) $200
   call malloc 
   (void*) malloc::return#2 ← (void*) malloc::return#1
-  to:@12
-@12: scope:[]  from @10
-  (byte*) heap_head#6 ← phi( @10/(byte*) heap_head#2 )
-  (void*) malloc::return#4 ← phi( @10/(void*) malloc::return#2 )
+  to:@14
+@14: scope:[]  from @12
+  (byte*) heap_head#6 ← phi( @12/(byte*) heap_head#2 )
+  (void*) malloc::return#4 ← phi( @12/(void*) malloc::return#2 )
   (void*~) $0 ← (void*) malloc::return#4
   (byte*) heap_head#3 ← (byte*) heap_head#6
   (word*) WORDS#0 ← ((word*)) (void*~) $0
-  to:@11
-main: scope:[main]  from @11
-  (word*) WORDS#1 ← phi( @11/(word*) WORDS#2 )
+  to:@13
+main: scope:[main]  from @13
+  (word*) WORDS#1 ← phi( @13/(word*) WORDS#2 )
   (word*) main::w#0 ← (word*) WORDS#1
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -68,20 +71,20 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@11: scope:[]  from @12
-  (word*) WORDS#2 ← phi( @12/(word*) WORDS#0 )
+@13: scope:[]  from @14
+  (word*) WORDS#2 ← phi( @14/(word*) WORDS#0 )
   call main 
-  to:@13
-@13: scope:[]  from @11
+  to:@15
+@15: scope:[]  from @13
   to:@end
-@end: scope:[]  from @13
+@end: scope:[]  from @15
 
 SYMBOL TABLE SSA
 (void*~) $0
-(label) @10
-(label) @11
 (label) @12
 (label) @13
+(label) @14
+(label) @15
 (label) @4
 (label) @begin
 (label) @end
@@ -202,10 +205,10 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @10
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @11
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @13
+Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
@@ -217,11 +220,11 @@ Coalesced [16] main::i#3 ← main::i#1
 Coalesced [17] main::w#3 ← main::w#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @12
-Culled Empty Block (label) @13
+Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Culled Empty Block (label) main::@3
-Renumbering block @10 to @1
-Renumbering block @11 to @2
+Renumbering block @12 to @1
+Renumbering block @13 to @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

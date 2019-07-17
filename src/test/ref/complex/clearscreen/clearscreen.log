@@ -9,6 +9,7 @@ Fixing pointer increment (word*) init_squares::squares ← ++ (word*) init_squar
 Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUARES
 Fixing pointer addition (struct ProcessingSprite*~) processChars::$2 ← (struct ProcessingSprite[NUM_PROCESSING]) PROCESSING + (byte) processChars::i
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
@@ -127,6 +128,8 @@ Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
 Culled Empty Block (label) @12
+Culled Empty Block (label) @13
+Culled Empty Block (label) @14
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
 Culled Empty Block (label) atan2_16::@11
@@ -139,33 +142,33 @@ Culled Empty Block (label) atan2_16::@23
 Culled Empty Block (label) atan2_16::@31
 Culled Empty Block (label) atan2_16::@32
 Culled Empty Block (label) atan2_16::@14
-Culled Empty Block (label) @14
-Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) @19
+Culled Empty Block (label) @20
 Culled Empty Block (label) @21
-Culled Empty Block (label) @22
 Culled Empty Block (label) @23
+Culled Empty Block (label) @24
+Culled Empty Block (label) @25
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
 Culled Empty Block (label) main::@12
-Culled Empty Block (label) @25
+Culled Empty Block (label) @27
 Culled Empty Block (label) getCharToProcess::@6
 Culled Empty Block (label) getCharToProcess::@2
-Culled Empty Block (label) @26
+Culled Empty Block (label) @28
 Culled Empty Block (label) startProcessing::@6
 Culled Empty Block (label) startProcessing::@7
 Culled Empty Block (label) processChars::@10
 Culled Empty Block (label) processChars::@12
 Culled Empty Block (label) processChars::@1
-Culled Empty Block (label) @28
-Culled Empty Block (label) @29
-Culled Empty Block (label) init_angle_screen::@4
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
+Culled Empty Block (label) init_angle_screen::@4
+Culled Empty Block (label) @32
+Culled Empty Block (label) @33
 Culled Empty Block (label) setupRasterIrq::@4
 Unwinding list assignment { (byte) main::$9_x, (byte) main::$9_y, (byte) main::$9_dist } ← { (byte) getCharToProcess::return_x, (byte) getCharToProcess::return_y, (byte) getCharToProcess::return_dist }
 Unwinding list assignment { (byte) getCharToProcess::return_x#0, (byte) getCharToProcess::return_y#0, (byte) getCharToProcess::return_dist#0 } ← { (byte) getCharToProcess::return_x#2, (byte) getCharToProcess::return_y#2, (byte) getCharToProcess::return_dist#2 }
@@ -178,10 +181,10 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
   (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
-  to:@13
-malloc: scope:[malloc]  from @24 @35
-  (word) malloc::size#2 ← phi( @24/(word) malloc::size#0 @35/(word) malloc::size#1 )
-  (byte*) heap_head#5 ← phi( @24/(byte*) heap_head#9 @35/(byte*) heap_head#3 )
+  to:@15
+malloc: scope:[malloc]  from @26 @37
+  (word) malloc::size#2 ← phi( @26/(word) malloc::size#0 @37/(word) malloc::size#1 )
+  (byte*) heap_head#5 ← phi( @26/(byte*) heap_head#9 @37/(byte*) heap_head#3 )
   (byte*~) malloc::$0 ← (byte*) heap_head#5 - (word) malloc::size#2
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
   (byte*) heap_head#1 ← (byte*) malloc::mem#0
@@ -194,13 +197,13 @@ malloc::@return: scope:[malloc]  from malloc
   (byte*) heap_head#2 ← (byte*) heap_head#6
   return 
   to:@return
-@13: scope:[]  from @4
+@15: scope:[]  from @4
   (byte*) heap_head#11 ← phi( @4/(byte*) heap_head#0 )
   (byte) CORDIC_ITERATIONS_16#0 ← (number) $f
   (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-  to:@20
+  to:@22
 atan2_16: scope:[atan2_16]  from init_angle_screen::@2
   (signed word) atan2_16::x#9 ← phi( init_angle_screen::@2/(signed word) atan2_16::x#0 )
   (signed word) atan2_16::y#1 ← phi( init_angle_screen::@2/(signed word) atan2_16::y#0 )
@@ -411,8 +414,8 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@20: scope:[]  from @13
-  (byte*) heap_head#10 ← phi( @13/(byte*) heap_head#11 )
+@22: scope:[]  from @15
+  (byte*) heap_head#10 ← phi( @15/(byte*) heap_head#11 )
   (byte*) PROCPORT_DDR#0 ← ((byte*)) (number) 0
   (byte) PROCPORT_DDR_MEMORY_MASK#0 ← (number) 7
   (byte*) PROCPORT#0 ← ((byte*)) (number) 1
@@ -446,9 +449,9 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (byte) WHITE#0 ← (number) 1
   (byte) BLUE#0 ← (number) 6
   (byte) LIGHT_BLUE#0 ← (number) $e
-  to:@24
-@24: scope:[]  from @20
-  (byte*) heap_head#9 ← phi( @20/(byte*) heap_head#10 )
+  to:@26
+@26: scope:[]  from @22
+  (byte*) heap_head#9 ← phi( @22/(byte*) heap_head#10 )
   (bool) DEBUG#0 ← false
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte*) SPRITE_DATA#0 ← ((byte*)) (number) $2000
@@ -463,31 +466,31 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) malloc::size#0 ← (number) $3e8
   call malloc 
   (void*) malloc::return#2 ← (void*) malloc::return#1
-  to:@35
-@35: scope:[]  from @24
-  (byte*) heap_head#7 ← phi( @24/(byte*) heap_head#2 )
-  (void*) malloc::return#5 ← phi( @24/(void*) malloc::return#2 )
+  to:@37
+@37: scope:[]  from @26
+  (byte*) heap_head#7 ← phi( @26/(byte*) heap_head#2 )
+  (void*) malloc::return#5 ← phi( @26/(void*) malloc::return#2 )
   (void*~) $0 ← (void*) malloc::return#5
   (byte*) heap_head#3 ← (byte*) heap_head#7
   (byte*) SCREEN_COPY#0 ← ((byte*)) (void*~) $0
   (word) malloc::size#1 ← (number) $3e8
   call malloc 
   (void*) malloc::return#3 ← (void*) malloc::return#1
-  to:@36
-@36: scope:[]  from @35
-  (byte*) SCREEN_COPY#25 ← phi( @35/(byte*) SCREEN_COPY#0 )
-  (byte*) heap_head#8 ← phi( @35/(byte*) heap_head#2 )
-  (void*) malloc::return#6 ← phi( @35/(void*) malloc::return#3 )
+  to:@38
+@38: scope:[]  from @37
+  (byte*) SCREEN_COPY#25 ← phi( @37/(byte*) SCREEN_COPY#0 )
+  (byte*) heap_head#8 ← phi( @37/(byte*) heap_head#2 )
+  (void*) malloc::return#6 ← phi( @37/(void*) malloc::return#3 )
   (void*~) $1 ← (void*) malloc::return#6
   (byte*) heap_head#4 ← (byte*) heap_head#8
   (byte*) SCREEN_DIST#0 ← ((byte*)) (void*~) $1
   (byte) NUM_PROCESSING#0 ← (number) 8
   (byte) NOT_FOUND#0 ← (number) $ff
   (struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 ← { fill( NUM_PROCESSING#0, 0) }
-  to:@27
-main: scope:[main]  from @34
-  (byte*) SCREEN_COPY#4 ← phi( @34/(byte*) SCREEN_COPY#7 )
-  (byte*) SCREEN_DIST#1 ← phi( @34/(byte*) SCREEN_DIST#3 )
+  to:@29
+main: scope:[main]  from @36
+  (byte*) SCREEN_COPY#4 ← phi( @36/(byte*) SCREEN_COPY#7 )
+  (byte*) SCREEN_DIST#1 ← phi( @36/(byte*) SCREEN_DIST#3 )
   (byte*) init_angle_screen::screen#0 ← (byte*) SCREEN_DIST#1
   call init_angle_screen 
   to:main::@13
@@ -870,9 +873,9 @@ startProcessing::@10: scope:[startProcessing]  from startProcessing::@9
 startProcessing::@return: scope:[startProcessing]  from startProcessing::@10
   return 
   to:@return
-@27: scope:[]  from @36
-  (byte*) SCREEN_COPY#23 ← phi( @36/(byte*) SCREEN_COPY#25 )
-  (byte*) SCREEN_DIST#13 ← phi( @36/(byte*) SCREEN_DIST#0 )
+@29: scope:[]  from @38
+  (byte*) SCREEN_COPY#23 ← phi( @38/(byte*) SCREEN_COPY#25 )
+  (byte*) SCREEN_DIST#13 ← phi( @38/(byte*) SCREEN_DIST#0 )
   (number~) $2 ← (byte) BORDER_XPOS_LEFT#0 - (number) 8
   (word~) $3 ← ((word)) (number~) $2
   (word~) $4 ← (word~) $3 << (number) 4
@@ -887,7 +890,7 @@ startProcessing::@return: scope:[startProcessing]  from startProcessing::@10
   (word~) $10 ← ((word)) (byte) BORDER_YPOS_BOTTOM#0
   (word~) $11 ← (word~) $10 << (number) 4
   (word) YPOS_BOTTOMMOST#0 ← (word~) $11
-  to:@32
+  to:@34
 processChars: scope:[processChars]  from irqBottom::@1
   (byte) processChars::numActive#0 ← (number) 0
   (number~) processChars::$1 ← (byte) NUM_PROCESSING#0 - (number) 1
@@ -1196,11 +1199,11 @@ setupRasterIrq::@2: scope:[setupRasterIrq]  from setupRasterIrq::@1 setupRasterI
 setupRasterIrq::@return: scope:[setupRasterIrq]  from setupRasterIrq::@2
   return 
   to:@return
-@32: scope:[]  from @27
-  (byte*) SCREEN_COPY#20 ← phi( @27/(byte*) SCREEN_COPY#23 )
-  (byte*) SCREEN_DIST#10 ← phi( @27/(byte*) SCREEN_DIST#13 )
+@34: scope:[]  from @29
+  (byte*) SCREEN_COPY#20 ← phi( @29/(byte*) SCREEN_COPY#23 )
+  (byte*) SCREEN_DIST#10 ← phi( @29/(byte*) SCREEN_DIST#13 )
   (byte) RASTER_IRQ_TOP#0 ← (number) $30
-  to:@33
+  to:@35
 irqTop: scope:[irqTop]  from
   (bool~) irqTop::$0 ← ! (bool) DEBUG#0
   if((bool~) irqTop::$0) goto irqTop::@1
@@ -1238,11 +1241,11 @@ irqTop::@6: scope:[irqTop]  from irqTop::@5
 irqTop::@return: scope:[irqTop]  from irqTop::@1
   return 
   to:@return
-@33: scope:[]  from @32
-  (byte*) SCREEN_COPY#14 ← phi( @32/(byte*) SCREEN_COPY#20 )
-  (byte*) SCREEN_DIST#7 ← phi( @32/(byte*) SCREEN_DIST#10 )
+@35: scope:[]  from @34
+  (byte*) SCREEN_COPY#14 ← phi( @34/(byte*) SCREEN_COPY#20 )
+  (byte*) SCREEN_DIST#7 ← phi( @34/(byte*) SCREEN_DIST#10 )
   (byte) RASTER_IRQ_MIDDLE#0 ← (number) $ff
-  to:@34
+  to:@36
 irqBottom: scope:[irqBottom]  from
   (bool~) irqBottom::$0 ← ! (bool) DEBUG#0
   if((bool~) irqBottom::$0) goto irqBottom::@1
@@ -1280,14 +1283,14 @@ irqBottom::@4: scope:[irqBottom]  from irqBottom::@7
 irqBottom::@return: scope:[irqBottom]  from irqBottom::@2
   return 
   to:@return
-@34: scope:[]  from @33
-  (byte*) SCREEN_COPY#7 ← phi( @33/(byte*) SCREEN_COPY#14 )
-  (byte*) SCREEN_DIST#3 ← phi( @33/(byte*) SCREEN_DIST#7 )
+@36: scope:[]  from @35
+  (byte*) SCREEN_COPY#7 ← phi( @35/(byte*) SCREEN_COPY#14 )
+  (byte*) SCREEN_DIST#3 ← phi( @35/(byte*) SCREEN_DIST#7 )
   call main 
-  to:@37
-@37: scope:[]  from @34
+  to:@39
+@39: scope:[]  from @36
   to:@end
-@end: scope:[]  from @37
+@end: scope:[]  from @39
 
 SYMBOL TABLE SSA
 (void*~) $0
@@ -1302,16 +1305,16 @@ SYMBOL TABLE SSA
 (number~) $7
 (word~) $8
 (word~) $9
-(label) @13
-(label) @20
-(label) @24
-(label) @27
-(label) @32
-(label) @33
+(label) @15
+(label) @22
+(label) @26
+(label) @29
 (label) @34
 (label) @35
 (label) @36
 (label) @37
+(label) @38
+(label) @39
 (label) @4
 (label) @begin
 (label) @end
@@ -3701,14 +3704,14 @@ Added new block during phi lifting initSprites::@5(between initSprites::@1 and i
 Added new block during phi lifting initSprites::@6(between initSprites::@3 and initSprites::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @13
-Adding NOP phi() at start of @20
-Adding NOP phi() at start of @24
-Adding NOP phi() at start of @27
-Adding NOP phi() at start of @32
-Adding NOP phi() at start of @33
+Adding NOP phi() at start of @15
+Adding NOP phi() at start of @22
+Adding NOP phi() at start of @26
+Adding NOP phi() at start of @29
 Adding NOP phi() at start of @34
-Adding NOP phi() at start of @37
+Adding NOP phi() at start of @35
+Adding NOP phi() at start of @36
+Adding NOP phi() at start of @39
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@4
@@ -3819,12 +3822,12 @@ Coalesced [383] processChars::numActive#15 ← processChars::numActive#3
 Coalesced (already) [388] processChars::numActive#16 ← processChars::numActive#10
 Coalesced down to 37 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @13
-Culled Empty Block (label) @20
-Culled Empty Block (label) @27
-Culled Empty Block (label) @32
-Culled Empty Block (label) @33
-Culled Empty Block (label) @37
+Culled Empty Block (label) @15
+Culled Empty Block (label) @22
+Culled Empty Block (label) @29
+Culled Empty Block (label) @34
+Culled Empty Block (label) @35
+Culled Empty Block (label) @39
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@17
@@ -3849,10 +3852,10 @@ Culled Empty Block (label) irqBottom::@7
 Culled Empty Block (label) processChars::@15
 Culled Empty Block (label) processChars::@20
 Culled Empty Block (label) processChars::@21
-Renumbering block @24 to @1
-Renumbering block @34 to @2
-Renumbering block @35 to @3
-Renumbering block @36 to @4
+Renumbering block @26 to @1
+Renumbering block @36 to @2
+Renumbering block @37 to @3
+Renumbering block @38 to @4
 Renumbering block atan2_16::@13 to atan2_16::@9
 Renumbering block atan2_16::@15 to atan2_16::@10
 Renumbering block atan2_16::@16 to atan2_16::@11

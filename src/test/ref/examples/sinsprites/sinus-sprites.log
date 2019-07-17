@@ -1,3 +1,10 @@
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
+Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) gen_sintab::f_2pi
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
@@ -51,18 +58,32 @@ Culled Empty Block (label) @48
 Culled Empty Block (label) @49
 Culled Empty Block (label) @50
 Culled Empty Block (label) @51
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@4
+Culled Empty Block (label) @52
 Culled Empty Block (label) @53
 Culled Empty Block (label) @54
-Culled Empty Block (label) clear_screen::@2
+Culled Empty Block (label) @55
 Culled Empty Block (label) @56
+Culled Empty Block (label) @57
 Culled Empty Block (label) @58
-Culled Empty Block (label) place_sprites::@2
 Culled Empty Block (label) @59
-Culled Empty Block (label) gen_sprites::@2
 Culled Empty Block (label) @60
 Culled Empty Block (label) @61
+Culled Empty Block (label) @62
+Culled Empty Block (label) @63
+Culled Empty Block (label) @64
+Culled Empty Block (label) @65
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) @67
+Culled Empty Block (label) @68
+Culled Empty Block (label) clear_screen::@2
+Culled Empty Block (label) @70
+Culled Empty Block (label) @72
+Culled Empty Block (label) place_sprites::@2
+Culled Empty Block (label) @73
+Culled Empty Block (label) gen_sprites::@2
+Culled Empty Block (label) @74
+Culled Empty Block (label) @75
 Culled Empty Block (label) gen_sintab::@2
 
 CONTROL FLOW GRAPH SSA
@@ -83,7 +104,7 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   (byte*) memLo#0 ← ((byte*)) (number) $fe
   (byte*) memHi#0 ← ((byte*)) (number) $ff
-  to:@52
+  to:@66
 prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
   (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
@@ -178,19 +199,19 @@ sinFAC: scope:[sinFAC]  from gen_sintab::@18
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@52: scope:[]  from @4
+@66: scope:[]  from @4
   (byte) sinlen_x#0 ← (number) $dd
   (byte[$dd]) sintab_x#0 ← { fill( $dd, 0) }
   (byte) sinlen_y#0 ← (number) $c5
   (byte[$c5]) sintab_y#0 ← { fill( $c5, 0) }
   (byte*) sprites#0 ← ((byte*)) (number) $2000
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  to:@55
-main: scope:[main]  from @62
-  (byte) sin_idx_y#23 ← phi( @62/(byte) sin_idx_y#17 )
-  (byte) sin_idx_x#25 ← phi( @62/(byte) sin_idx_x#16 )
-  (byte) progress_idx#30 ← phi( @62/(byte) progress_idx#35 )
-  (byte*) progress_cursor#29 ← phi( @62/(byte*) progress_cursor#35 )
+  to:@69
+main: scope:[main]  from @76
+  (byte) sin_idx_y#23 ← phi( @76/(byte) sin_idx_y#17 )
+  (byte) sin_idx_x#25 ← phi( @76/(byte) sin_idx_x#16 )
+  (byte) progress_idx#30 ← phi( @76/(byte) progress_idx#35 )
+  (byte*) progress_cursor#29 ← phi( @76/(byte*) progress_cursor#35 )
   call init 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -336,10 +357,10 @@ clear_screen::@1: scope:[clear_screen]  from clear_screen clear_screen::@1
 clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   return 
   to:@return
-@55: scope:[]  from @52
+@69: scope:[]  from @66
   (byte*) progress_cursor#7 ← (byte*) SCREEN#0
   (byte) progress_idx#7 ← (number) 0
-  to:@57
+  to:@71
 progress_init: scope:[progress_init]  from init::@5 init::@7
   (byte*) progress_init::line#2 ← phi( init::@5/(byte*) progress_init::line#0 init::@7/(byte*) progress_init::line#1 )
   (byte*) progress_cursor#8 ← (byte*) progress_init::line#2
@@ -379,12 +400,12 @@ progress_inc::@return: scope:[progress_inc]  from progress_inc::@1
   (byte*) progress_cursor#11 ← (byte*) progress_cursor#25
   return 
   to:@return
-@57: scope:[]  from @55
-  (byte) progress_idx#39 ← phi( @55/(byte) progress_idx#7 )
-  (byte*) progress_cursor#39 ← phi( @55/(byte*) progress_cursor#7 )
+@71: scope:[]  from @69
+  (byte) progress_idx#39 ← phi( @69/(byte) progress_idx#7 )
+  (byte*) progress_cursor#39 ← phi( @69/(byte*) progress_cursor#7 )
   (byte) sin_idx_x#2 ← (number) 0
   (byte) sin_idx_y#2 ← (number) 0
-  to:@62
+  to:@76
 anim: scope:[anim]  from main::@3
   (byte) sin_idx_y#9 ← phi( main::@3/(byte) sin_idx_y#13 )
   (byte) sin_idx_x#9 ← phi( main::@3/(byte) sin_idx_x#13 )
@@ -921,32 +942,32 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@23
   (byte*) progress_cursor#13 ← (byte*) progress_cursor#27
   return 
   to:@return
-@62: scope:[]  from @57
-  (byte) sin_idx_y#17 ← phi( @57/(byte) sin_idx_y#2 )
-  (byte) sin_idx_x#16 ← phi( @57/(byte) sin_idx_x#2 )
-  (byte) progress_idx#35 ← phi( @57/(byte) progress_idx#39 )
-  (byte*) progress_cursor#35 ← phi( @57/(byte*) progress_cursor#39 )
+@76: scope:[]  from @71
+  (byte) sin_idx_y#17 ← phi( @71/(byte) sin_idx_y#2 )
+  (byte) sin_idx_x#16 ← phi( @71/(byte) sin_idx_x#2 )
+  (byte) progress_idx#35 ← phi( @71/(byte) progress_idx#39 )
+  (byte*) progress_cursor#35 ← phi( @71/(byte*) progress_cursor#39 )
   call main 
-  to:@63
-@63: scope:[]  from @62
-  (byte) sin_idx_y#12 ← phi( @62/(byte) sin_idx_y#1 )
-  (byte) sin_idx_x#12 ← phi( @62/(byte) sin_idx_x#1 )
-  (byte) progress_idx#29 ← phi( @62/(byte) progress_idx#1 )
-  (byte*) progress_cursor#28 ← phi( @62/(byte*) progress_cursor#1 )
+  to:@77
+@77: scope:[]  from @76
+  (byte) sin_idx_y#12 ← phi( @76/(byte) sin_idx_y#1 )
+  (byte) sin_idx_x#12 ← phi( @76/(byte) sin_idx_x#1 )
+  (byte) progress_idx#29 ← phi( @76/(byte) progress_idx#1 )
+  (byte*) progress_cursor#28 ← phi( @76/(byte*) progress_cursor#1 )
   (byte*) progress_cursor#14 ← (byte*) progress_cursor#28
   (byte) progress_idx#15 ← (byte) progress_idx#29
   (byte) sin_idx_x#6 ← (byte) sin_idx_x#12
   (byte) sin_idx_y#6 ← (byte) sin_idx_y#12
   to:@end
-@end: scope:[]  from @63
+@end: scope:[]  from @77
 
 SYMBOL TABLE SSA
 (label) @4
-(label) @52
-(label) @55
-(label) @57
-(label) @62
-(label) @63
+(label) @66
+(label) @69
+(label) @71
+(label) @76
+(label) @77
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
@@ -957,6 +978,10 @@ SYMBOL TABLE SSA
 (byte*) COLS#0
 (byte*) PROCPORT
 (byte*) PROCPORT#0
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte*) RASTER
 (byte*) RASTER#0
 (byte*) SCREEN
@@ -2506,11 +2531,11 @@ Added new block during phi lifting gen_chargen_sprite::@14(between gen_chargen_s
 Added new block during phi lifting gen_sintab::@24(between gen_sintab::@23 and gen_sintab::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @52
-Adding NOP phi() at start of @55
-Adding NOP phi() at start of @57
-Adding NOP phi() at start of @62
-Adding NOP phi() at start of @63
+Adding NOP phi() at start of @66
+Adding NOP phi() at start of @69
+Adding NOP phi() at start of @71
+Adding NOP phi() at start of @76
+Adding NOP phi() at start of @77
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
@@ -2623,10 +2648,10 @@ Coalesced [294] place_sprites::j2#4 ← place_sprites::j2#2
 Coalesced [295] place_sprites::col#3 ← place_sprites::col#1
 Coalesced down to 36 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @52
-Culled Empty Block (label) @55
-Culled Empty Block (label) @57
-Culled Empty Block (label) @63
+Culled Empty Block (label) @66
+Culled Empty Block (label) @69
+Culled Empty Block (label) @71
+Culled Empty Block (label) @77
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) anim::@10
@@ -2647,7 +2672,7 @@ Culled Empty Block (label) gen_chargen_sprite::@12
 Culled Empty Block (label) gen_chargen_sprite::@13
 Culled Empty Block (label) gen_chargen_sprite::@14
 Culled Empty Block (label) place_sprites::@3
-Renumbering block @62 to @1
+Renumbering block @76 to @1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block init::@4 to init::@3
@@ -5291,6 +5316,7 @@ Uplift Scope [setARGtoFAC]
 Uplift Scope [addMEMtoFAC] 
 Uplift Scope [subFACfromARG] 
 Uplift Scope [sinFAC] 
+Uplift Scope [RADIX] 
 Uplift Scope [main] 
 Uplift Scope [progress_init] 
 Uplift Scope [progress_inc] 
@@ -5316,6 +5342,7 @@ Uplifting [setARGtoFAC] best 1062797 combination
 Uplifting [addMEMtoFAC] best 1062797 combination 
 Uplifting [subFACfromARG] best 1062797 combination 
 Uplifting [sinFAC] best 1062797 combination 
+Uplifting [RADIX] best 1062797 combination 
 Uplifting [main] best 1062797 combination 
 Uplifting [progress_init] best 1062797 combination 
 Uplifting [progress_inc] best 1062797 combination 
@@ -7091,6 +7118,10 @@ FINAL SYMBOL TABLE
 (const byte*) COLS#0 COLS = (byte*) 55296
 (byte*) PROCPORT
 (const byte*) PROCPORT#0 PROCPORT = (byte*) 1
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte*) RASTER
 (const byte*) RASTER#0 RASTER = (byte*) 53266
 (byte*) SCREEN

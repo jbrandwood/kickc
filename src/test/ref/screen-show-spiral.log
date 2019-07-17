@@ -4,6 +4,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer increment (word*) init_squares::squares ← ++ (word*) init_squares::squares
 Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUARES
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
@@ -26,10 +27,12 @@ Culled Empty Block (label) bsearch16u::@4
 Culled Empty Block (label) bsearch16u::@5
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
-Culled Empty Block (label) init_squares::@2
+Culled Empty Block (label) @10
 Culled Empty Block (label) @11
+Culled Empty Block (label) init_squares::@2
+Culled Empty Block (label) @13
 Culled Empty Block (label) sqr::@1
-Culled Empty Block (label) @12
+Culled Empty Block (label) @14
 Culled Empty Block (label) sqrt::@1
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
@@ -43,7 +46,7 @@ Culled Empty Block (label) atan2_16::@23
 Culled Empty Block (label) atan2_16::@31
 Culled Empty Block (label) atan2_16::@32
 Culled Empty Block (label) atan2_16::@14
-Culled Empty Block (label) @14
+Culled Empty Block (label) @16
 Culled Empty Block (label) main::@14
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@15
@@ -52,9 +55,9 @@ Culled Empty Block (label) main::@10
 Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@16
-Culled Empty Block (label) @16
+Culled Empty Block (label) @18
 Culled Empty Block (label) init_angle_screen::@4
-Culled Empty Block (label) @17
+Culled Empty Block (label) @19
 Culled Empty Block (label) init_dist_screen::@13
 Culled Empty Block (label) init_dist_screen::@14
 Culled Empty Block (label) init_dist_screen::@9
@@ -67,10 +70,10 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
   (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
-  to:@10
-malloc: scope:[malloc]  from @15 @19 init_squares
-  (word) malloc::size#3 ← phi( @15/(word) malloc::size#1 @19/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
-  (byte*) heap_head#12 ← phi( @15/(byte*) heap_head#23 @19/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
+  to:@12
+malloc: scope:[malloc]  from @17 @21 init_squares
+  (word) malloc::size#3 ← phi( @17/(word) malloc::size#1 @21/(word) malloc::size#2 init_squares/(word) malloc::size#0 )
+  (byte*) heap_head#12 ← phi( @17/(byte*) heap_head#23 @21/(byte*) heap_head#5 init_squares/(byte*) heap_head#24 )
   (byte*~) malloc::$0 ← (byte*) heap_head#12 - (word) malloc::size#3
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
   (byte*) heap_head#1 ← (byte*) malloc::mem#0
@@ -165,11 +168,11 @@ bsearch16u::@3: scope:[bsearch16u]  from bsearch16u::@1 bsearch16u::@2
   (word*~) bsearch16u::$4 ← phi( bsearch16u::@1/(word*~) bsearch16u::$3 bsearch16u::@2/(word*~) bsearch16u::$2 )
   (word*) bsearch16u::return#2 ← (word*~) bsearch16u::$4
   to:bsearch16u::@return
-@10: scope:[]  from @4
+@12: scope:[]  from @4
   (byte*) heap_head#37 ← phi( @4/(byte*) heap_head#0 )
   (byte) NUM_SQUARES#0 ← (number) $ff
   (word*) SQUARES#0 ← (word*) 0
-  to:@13
+  to:@15
 init_squares: scope:[init_squares]  from init_dist_screen
   (byte*) heap_head#24 ← phi( init_dist_screen/(byte*) heap_head#29 )
   (byte) NUM_SQUARES#6 ← phi( init_dist_screen/(byte) NUM_SQUARES#3 )
@@ -249,15 +252,15 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (byte) sqrt::return#1 ← (byte) sqrt::return#3
   return 
   to:@return
-@13: scope:[]  from @10
-  (word*) SQUARES#45 ← phi( @10/(word*) SQUARES#0 )
-  (byte) NUM_SQUARES#34 ← phi( @10/(byte) NUM_SQUARES#0 )
-  (byte*) heap_head#32 ← phi( @10/(byte*) heap_head#37 )
+@15: scope:[]  from @12
+  (word*) SQUARES#45 ← phi( @12/(word*) SQUARES#0 )
+  (byte) NUM_SQUARES#34 ← phi( @12/(byte) NUM_SQUARES#0 )
+  (byte*) heap_head#32 ← phi( @12/(byte*) heap_head#37 )
   (byte) CORDIC_ITERATIONS_16#0 ← (number) $f
   (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-  to:@15
+  to:@17
 atan2_16: scope:[atan2_16]  from init_angle_screen::@2
   (signed word) atan2_16::x#9 ← phi( init_angle_screen::@2/(signed word) atan2_16::x#0 )
   (signed word) atan2_16::y#1 ← phi( init_angle_screen::@2/(signed word) atan2_16::y#0 )
@@ -468,41 +471,41 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@15: scope:[]  from @13
-  (word*) SQUARES#42 ← phi( @13/(word*) SQUARES#45 )
-  (byte) NUM_SQUARES#31 ← phi( @13/(byte) NUM_SQUARES#34 )
-  (byte*) heap_head#23 ← phi( @13/(byte*) heap_head#32 )
+@17: scope:[]  from @15
+  (word*) SQUARES#42 ← phi( @15/(word*) SQUARES#45 )
+  (byte) NUM_SQUARES#31 ← phi( @15/(byte) NUM_SQUARES#34 )
+  (byte*) heap_head#23 ← phi( @15/(byte*) heap_head#32 )
   (word) malloc::size#1 ← (number) $3e8
   call malloc 
   (void*) malloc::return#3 ← (void*) malloc::return#1
-  to:@19
-@19: scope:[]  from @15
-  (word*) SQUARES#36 ← phi( @15/(word*) SQUARES#42 )
-  (byte) NUM_SQUARES#25 ← phi( @15/(byte) NUM_SQUARES#31 )
-  (byte*) heap_head#16 ← phi( @15/(byte*) heap_head#2 )
-  (void*) malloc::return#7 ← phi( @15/(void*) malloc::return#3 )
+  to:@21
+@21: scope:[]  from @17
+  (word*) SQUARES#36 ← phi( @17/(word*) SQUARES#42 )
+  (byte) NUM_SQUARES#25 ← phi( @17/(byte) NUM_SQUARES#31 )
+  (byte*) heap_head#16 ← phi( @17/(byte*) heap_head#2 )
+  (void*) malloc::return#7 ← phi( @17/(void*) malloc::return#3 )
   (void*~) $0 ← (void*) malloc::return#7
   (byte*) heap_head#5 ← (byte*) heap_head#16
   (byte*) SCREEN_DIST#0 ← ((byte*)) (void*~) $0
   (word) malloc::size#2 ← (number) $3e8
   call malloc 
   (void*) malloc::return#4 ← (void*) malloc::return#1
-  to:@20
-@20: scope:[]  from @19
-  (word*) SQUARES#35 ← phi( @19/(word*) SQUARES#36 )
-  (byte) NUM_SQUARES#24 ← phi( @19/(byte) NUM_SQUARES#25 )
-  (byte*) heap_head#17 ← phi( @19/(byte*) heap_head#2 )
-  (void*) malloc::return#8 ← phi( @19/(void*) malloc::return#4 )
+  to:@22
+@22: scope:[]  from @21
+  (word*) SQUARES#35 ← phi( @21/(word*) SQUARES#36 )
+  (byte) NUM_SQUARES#24 ← phi( @21/(byte) NUM_SQUARES#25 )
+  (byte*) heap_head#17 ← phi( @21/(byte*) heap_head#2 )
+  (void*) malloc::return#8 ← phi( @21/(void*) malloc::return#4 )
   (void*~) $1 ← (void*) malloc::return#8
   (byte*) heap_head#6 ← (byte*) heap_head#17
   (byte*) SCREEN_ANGLE#0 ← ((byte*)) (void*~) $1
   (byte*) SCREEN_FILL#0 ← ((byte*)) (number) $400
   (byte) FILL_CHAR#0 ← (byte) '@'
-  to:@18
-main: scope:[main]  from @18
-  (word*) SQUARES#21 ← phi( @18/(word*) SQUARES#26 )
-  (byte*) heap_head#26 ← phi( @18/(byte*) heap_head#31 )
-  (byte) NUM_SQUARES#14 ← phi( @18/(byte) NUM_SQUARES#18 )
+  to:@20
+main: scope:[main]  from @20
+  (word*) SQUARES#21 ← phi( @20/(word*) SQUARES#26 )
+  (byte*) heap_head#26 ← phi( @20/(byte*) heap_head#31 )
+  (byte) NUM_SQUARES#14 ← phi( @20/(byte) NUM_SQUARES#18 )
   (byte*) init_dist_screen::screen#0 ← (byte*) SCREEN_DIST#0
   call init_dist_screen 
   to:main::@17
@@ -890,32 +893,32 @@ init_dist_screen::@return: scope:[init_dist_screen]  from init_dist_screen::@11
   (word*) SQUARES#6 ← (word*) SQUARES#15
   return 
   to:@return
-@18: scope:[]  from @20
-  (word*) SQUARES#26 ← phi( @20/(word*) SQUARES#35 )
-  (byte*) heap_head#31 ← phi( @20/(byte*) heap_head#6 )
-  (byte) NUM_SQUARES#18 ← phi( @20/(byte) NUM_SQUARES#24 )
+@20: scope:[]  from @22
+  (word*) SQUARES#26 ← phi( @22/(word*) SQUARES#35 )
+  (byte*) heap_head#31 ← phi( @22/(byte*) heap_head#6 )
+  (byte) NUM_SQUARES#18 ← phi( @22/(byte) NUM_SQUARES#24 )
   call main 
-  to:@21
-@21: scope:[]  from @18
-  (word*) SQUARES#16 ← phi( @18/(word*) SQUARES#4 )
-  (byte*) heap_head#22 ← phi( @18/(byte*) heap_head#8 )
-  (byte) NUM_SQUARES#12 ← phi( @18/(byte) NUM_SQUARES#2 )
+  to:@23
+@23: scope:[]  from @20
+  (word*) SQUARES#16 ← phi( @20/(word*) SQUARES#4 )
+  (byte*) heap_head#22 ← phi( @20/(byte*) heap_head#8 )
+  (byte) NUM_SQUARES#12 ← phi( @20/(byte) NUM_SQUARES#2 )
   (byte) NUM_SQUARES#5 ← (byte) NUM_SQUARES#12
   (byte*) heap_head#11 ← (byte*) heap_head#22
   (word*) SQUARES#7 ← (word*) SQUARES#16
   to:@end
-@end: scope:[]  from @21
+@end: scope:[]  from @23
 
 SYMBOL TABLE SSA
 (void*~) $0
 (void*~) $1
-(label) @10
-(label) @13
+(label) @12
 (label) @15
-(label) @18
-(label) @19
+(label) @17
 (label) @20
 (label) @21
+(label) @22
+(label) @23
 (label) @4
 (label) @begin
 (label) @end
@@ -969,10 +972,10 @@ SYMBOL TABLE SSA
 (byte) NUM_SQUARES#7
 (byte) NUM_SQUARES#8
 (byte) NUM_SQUARES#9
-(const byte) RADIX::BINARY = (byte) 0
-(const byte) RADIX::DECIMAL = (byte) 2
-(const byte) RADIX::HEXADECIMAL = (byte) 3
-(const byte) RADIX::OCTAL = (byte) 1
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte*) SCREEN_ANGLE
 (byte*) SCREEN_ANGLE#0
 (byte*) SCREEN_DIST
@@ -2468,11 +2471,11 @@ Added new block during phi lifting init_dist_screen::@19(between init_dist_scree
 Added new block during phi lifting init_dist_screen::@20(between init_dist_screen::@18 and init_dist_screen::@5)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @10
-Adding NOP phi() at start of @13
+Adding NOP phi() at start of @12
 Adding NOP phi() at start of @15
-Adding NOP phi() at start of @18
-Adding NOP phi() at start of @21
+Adding NOP phi() at start of @17
+Adding NOP phi() at start of @20
+Adding NOP phi() at start of @23
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@18
 Adding NOP phi() at start of main::@1
@@ -2571,9 +2574,9 @@ Coalesced [265] init_squares::i#3 ← init_squares::i#1
 Not coalescing [268] heap_head#1 ← malloc::mem#0
 Coalesced down to 38 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @10
-Culled Empty Block (label) @13
-Culled Empty Block (label) @21
+Culled Empty Block (label) @12
+Culled Empty Block (label) @15
+Culled Empty Block (label) @23
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) init_angle_screen::@6
@@ -2589,10 +2592,10 @@ Culled Empty Block (label) init_dist_screen::@20
 Culled Empty Block (label) bsearch16u::@1
 Culled Empty Block (label) bsearch16u::@18
 Culled Empty Block (label) init_squares::@4
-Renumbering block @15 to @1
-Renumbering block @18 to @2
-Renumbering block @19 to @3
-Renumbering block @20 to @4
+Renumbering block @17 to @1
+Renumbering block @20 to @2
+Renumbering block @21 to @3
+Renumbering block @22 to @4
 Renumbering block bsearch16u::@2 to bsearch16u::@1
 Renumbering block bsearch16u::@3 to bsearch16u::@2
 Renumbering block bsearch16u::@6 to bsearch16u::@3
@@ -6959,10 +6962,10 @@ FINAL SYMBOL TABLE
 (const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
-(const byte) RADIX::BINARY BINARY = (byte) 0
-(const byte) RADIX::DECIMAL DECIMAL = (byte) 2
-(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (byte) 3
-(const byte) RADIX::OCTAL OCTAL = (byte) 1
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte*) SCREEN_ANGLE
 (void*) SCREEN_ANGLE#0 SCREEN_ANGLE zp ZP_WORD:50 0.08695652173913043
 (byte*) SCREEN_DIST

@@ -4,6 +4,7 @@ Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + 
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
+Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
@@ -23,10 +24,12 @@ Culled Empty Block (label) @6
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
+Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @12
 Culled Empty Block (label) @13
 Culled Empty Block (label) @14
+Culled Empty Block (label) @15
+Culled Empty Block (label) @16
 Culled Empty Block (label) init_font_hex::@6
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
@@ -40,10 +43,8 @@ Culled Empty Block (label) atan2_16::@23
 Culled Empty Block (label) atan2_16::@31
 Culled Empty Block (label) atan2_16::@32
 Culled Empty Block (label) atan2_16::@14
-Culled Empty Block (label) @16
-Culled Empty Block (label) clock::@1
 Culled Empty Block (label) @18
-Culled Empty Block (label) @19
+Culled Empty Block (label) clock::@1
 Culled Empty Block (label) @20
 Culled Empty Block (label) @21
 Culled Empty Block (label) @22
@@ -57,21 +58,25 @@ Culled Empty Block (label) @29
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
+Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
 Culled Empty Block (label) @36
-Culled Empty Block (label) @37
 Culled Empty Block (label) @38
 Culled Empty Block (label) @39
+Culled Empty Block (label) @40
+Culled Empty Block (label) @41
+Culled Empty Block (label) @42
+Culled Empty Block (label) @43
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::toD0182_@1
-Culled Empty Block (label) @41
+Culled Empty Block (label) @45
 Culled Empty Block (label) init_angle_screen::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@10
-@10: scope:[]  from @begin
+  to:@12
+@12: scope:[]  from @begin
   (byte*) D018#0 ← ((byte*)) (number) $d018
   (dword*) CIA2_TIMER_AB#0 ← ((dword*)) (number) $dd04
   (byte*) CIA2_TIMER_A_CONTROL#0 ← ((byte*)) (number) $dd0e
@@ -81,7 +86,7 @@ CONTROL FLOW GRAPH SSA
   (byte) CIA_TIMER_CONTROL_CONTINUOUS#0 ← (number) 0
   (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES#0 ← (number) 0
   (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0 ← (number) $40
-  to:@15
+  to:@17
 init_font_hex: scope:[init_font_hex]  from main
   (byte*) init_font_hex::charset#6 ← phi( main/(byte*) init_font_hex::charset#1 )
   (byte*) init_font_hex::proto_hi#0 ← (byte[]) FONT_HEX_PROTO#0
@@ -151,13 +156,13 @@ init_font_hex::@5: scope:[init_font_hex]  from init_font_hex::@4
 init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
   return 
   to:@return
-@15: scope:[]  from @10
+@17: scope:[]  from @12
   (byte[]) FONT_HEX_PROTO#0 ← { (number) 2, (number) 5, (number) 5, (number) 5, (number) 2, (number) 6, (number) 2, (number) 2, (number) 2, (number) 7, (number) 6, (number) 1, (number) 2, (number) 4, (number) 7, (number) 6, (number) 1, (number) 2, (number) 1, (number) 6, (number) 5, (number) 5, (number) 7, (number) 1, (number) 1, (number) 7, (number) 4, (number) 6, (number) 1, (number) 6, (number) 3, (number) 4, (number) 6, (number) 5, (number) 2, (number) 7, (number) 1, (number) 1, (number) 1, (number) 1, (number) 2, (number) 5, (number) 2, (number) 5, (number) 2, (number) 2, (number) 5, (number) 3, (number) 1, (number) 1, (number) 2, (number) 5, (number) 7, (number) 5, (number) 5, (number) 6, (number) 5, (number) 6, (number) 5, (number) 6, (number) 2, (number) 5, (number) 4, (number) 5, (number) 2, (number) 6, (number) 5, (number) 5, (number) 5, (number) 6, (number) 7, (number) 4, (number) 6, (number) 4, (number) 7, (number) 7, (number) 4, (number) 6, (number) 4, (number) 4 }
   (byte) CORDIC_ITERATIONS_16#0 ← (number) $f
   (word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-  to:@17
+  to:@19
 atan2_16: scope:[atan2_16]  from init_angle_screen::@2
   (signed word) atan2_16::x#9 ← phi( init_angle_screen::@2/(signed word) atan2_16::x#0 )
   (signed word) atan2_16::y#1 ← phi( init_angle_screen::@2/(signed word) atan2_16::y#0 )
@@ -368,9 +373,9 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@17: scope:[]  from @15
+@19: scope:[]  from @17
   (dword) CLOCKS_PER_INIT#0 ← (number) $12
-  to:@33
+  to:@37
 clock: scope:[clock]  from main::@5
   (number~) clock::$0 ← (number) $ffffffff - *((dword*) CIA2_TIMER_AB#0)
   (dword) clock::return#0 ← (number~) clock::$0
@@ -442,9 +447,9 @@ print_dword_at::@2: scope:[print_dword_at]  from print_dword_at::@1
 print_dword_at::@return: scope:[print_dword_at]  from print_dword_at::@2
   return 
   to:@return
-@33: scope:[]  from @17
-  (byte[]) print_hextab#0 ← (const string) $0
-  to:@40
+@37: scope:[]  from @19
+  (byte[]) print_hextab#0 ← (const string) $1
+  to:@44
 print_byte_at: scope:[print_byte_at]  from print_word_at print_word_at::@1
   (byte*) print_byte_at::at#2 ← phi( print_word_at/(byte*) print_byte_at::at#0 print_word_at::@1/(byte*) print_byte_at::at#1 )
   (byte) print_byte_at::b#2 ← phi( print_word_at/(byte) print_byte_at::b#0 print_word_at::@1/(byte) print_byte_at::b#1 )
@@ -475,11 +480,11 @@ print_char_at: scope:[print_char_at]  from print_byte_at print_byte_at::@1
 print_char_at::@return: scope:[print_char_at]  from print_char_at
   return 
   to:@return
-@40: scope:[]  from @33
+@44: scope:[]  from @37
   (byte*) CHARSET#0 ← ((byte*)) (number) $2000
   (byte*) SCREEN#0 ← ((byte*)) (number) $2800
-  to:@42
-main: scope:[main]  from @42
+  to:@46
+main: scope:[main]  from @46
   (byte*) init_font_hex::charset#1 ← (byte*) CHARSET#0
   call init_font_hex 
   to:main::@3
@@ -632,22 +637,22 @@ init_angle_screen::@3: scope:[init_angle_screen]  from init_angle_screen::@5
 init_angle_screen::@return: scope:[init_angle_screen]  from init_angle_screen::@3
   return 
   to:@return
-@42: scope:[]  from @40
+@46: scope:[]  from @44
   call main 
-  to:@43
-@43: scope:[]  from @42
+  to:@47
+@47: scope:[]  from @46
   to:@end
-@end: scope:[]  from @43
+@end: scope:[]  from @47
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"
-(label) @10
-(label) @15
+(const string) $1 = (string) "0123456789abcdef"
+(label) @12
 (label) @17
-(label) @33
-(label) @40
-(label) @42
-(label) @43
+(label) @19
+(label) @37
+(label) @44
+(label) @46
+(label) @47
 (label) @begin
 (label) @end
 (byte*) CHARSET
@@ -678,10 +683,10 @@ SYMBOL TABLE SSA
 (byte*) D018#0
 (byte[]) FONT_HEX_PROTO
 (byte[]) FONT_HEX_PROTO#0
-(const byte) RADIX::BINARY = (byte) 0
-(const byte) RADIX::DECIMAL = (byte) 2
-(const byte) RADIX::HEXADECIMAL = (byte) 3
-(const byte) RADIX::OCTAL = (byte) 1
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (byte*) SCREEN
 (byte*) SCREEN#0
 (const byte) SIZEOF_WORD = (byte) 2
@@ -1697,7 +1702,7 @@ Constant (const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 = kickasm
 Constant (const word) atan2_16::angle#0 = 0
 Constant (const byte) atan2_16::i#0 = 0
 Constant (const dword) CLOCKS_PER_INIT#0 = $12
-Constant (const byte[]) print_hextab#0 = $0
+Constant (const byte[]) print_hextab#0 = $1
 Constant (const byte*) CHARSET#0 = (byte*) 8192
 Constant (const byte*) SCREEN#0 = (byte*) 10240
 Constant (const byte*) main::BASE_SCREEN#0 = (byte*) 1024
@@ -1875,10 +1880,10 @@ Constant inlined main::toD0181_gfx#0 = (const byte*) CHARSET#0
 Constant inlined init_font_hex::proto_hi#0 = (const byte[]) FONT_HEX_PROTO#0
 Constant inlined init_angle_screen::y#0 = (byte) 0
 Constant inlined init_angle_screen::x#0 = (byte) 0
-Constant inlined $0 = (const byte[]) print_hextab#0
 Constant inlined clock_start::$5 = (const byte) CIA_TIMER_CONTROL_START#0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Constant inlined atan2_16::angle#0 = (byte) 0
 Constant inlined clock_start::$6 = (const byte) CIA_TIMER_CONTROL_START#0
+Constant inlined $1 = (const byte[]) print_hextab#0
 Constant inlined init_angle_screen::screen_bottomline#0 = (const byte*) SCREEN#0+(word)(number) $28*(number) $c
 Constant inlined clock_start::$3 = (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A#0
 Constant inlined init_font_hex::charset#1 = (const byte*) CHARSET#0
@@ -1930,13 +1935,13 @@ Added new block during phi lifting atan2_16::@39(between atan2_16::@7 and atan2_
 Added new block during phi lifting init_angle_screen::@6(between init_angle_screen::@3 and init_angle_screen::@1)
 Added new block during phi lifting init_angle_screen::@7(between init_angle_screen::@5 and init_angle_screen::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @12
 Adding NOP phi() at start of @17
-Adding NOP phi() at start of @33
-Adding NOP phi() at start of @40
-Adding NOP phi() at start of @42
-Adding NOP phi() at start of @43
+Adding NOP phi() at start of @19
+Adding NOP phi() at start of @37
+Adding NOP phi() at start of @44
+Adding NOP phi() at start of @46
+Adding NOP phi() at start of @47
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -2018,12 +2023,12 @@ Coalesced [212] init_font_hex::c1#5 ← init_font_hex::c1#1
 Coalesced [213] init_font_hex::i#3 ← init_font_hex::i#1
 Coalesced [214] init_font_hex::idx#7 ← init_font_hex::idx#2
 Coalesced down to 28 phi equivalence classes
-Culled Empty Block (label) @10
-Culled Empty Block (label) @15
+Culled Empty Block (label) @12
 Culled Empty Block (label) @17
-Culled Empty Block (label) @33
-Culled Empty Block (label) @40
-Culled Empty Block (label) @43
+Culled Empty Block (label) @19
+Culled Empty Block (label) @37
+Culled Empty Block (label) @44
+Culled Empty Block (label) @47
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@7
@@ -2042,7 +2047,7 @@ Culled Empty Block (label) atan2_16::@37
 Culled Empty Block (label) init_font_hex::@7
 Culled Empty Block (label) init_font_hex::@8
 Culled Empty Block (label) init_font_hex::@9
-Renumbering block @42 to @1
+Renumbering block @46 to @1
 Renumbering block atan2_16::@13 to atan2_16::@9
 Renumbering block atan2_16::@15 to atan2_16::@10
 Renumbering block atan2_16::@16 to atan2_16::@11
@@ -5300,10 +5305,10 @@ FINAL SYMBOL TABLE
 (const byte*) D018#0 D018 = (byte*) 53272
 (byte[]) FONT_HEX_PROTO
 (const byte[]) FONT_HEX_PROTO#0 FONT_HEX_PROTO = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
-(const byte) RADIX::BINARY BINARY = (byte) 0
-(const byte) RADIX::DECIMAL DECIMAL = (byte) 2
-(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (byte) 3
-(const byte) RADIX::OCTAL OCTAL = (byte) 1
+(const byte) RADIX::BINARY BINARY = (number) 2
+(const byte) RADIX::DECIMAL DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL OCTAL = (number) 8
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 10240
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)

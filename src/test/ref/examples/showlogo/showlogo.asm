@@ -70,9 +70,10 @@ memset: {
     .label num = 2
     .label str = 4
     lda num
-    beq breturn
+    bne !+
     lda num+1
     beq breturn
+  !:
     lda end
     clc
     adc str

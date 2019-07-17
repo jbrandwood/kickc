@@ -25,13 +25,13 @@
   // Plasma screen 2
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
-  .label heap_head = $32
-  .label SQUARES = $34
+  .label heap_head = $30
+  .label SQUARES = $32
   .label print_char_cursor = $f
   // Screen containing distance to center
-  .label SCREEN_DIST = $36
+  .label SCREEN_DIST = $34
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $38
+  .label SCREEN_ANGLE = $36
   .label sin_offset_x = 2
   .label sin_offset_y = 3
 bbegin:
@@ -73,6 +73,11 @@ main: {
     sta init_angle_screen.screen+1
     jsr init_angle_screen
     jsr make_plasma_charset
+    ldx #BLACK
+    lda #<COLS
+    sta memset.str
+    lda #>COLS
+    sta memset.str+1
     jsr memset
     lda #0
     sta sin_offset_y
@@ -100,8 +105,8 @@ main: {
 doplasma: {
     .label angle = 4
     .label dist = 6
-    .label sin_x = $3a
-    .label sin_y = $3c
+    .label sin_x = $38
+    .label sin_y = $3a
     .label screen = 8
     .label y = $a
     lda SCREEN_ANGLE
@@ -181,17 +186,20 @@ doplasma: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage($b) str, byte register(X) c)
 memset: {
-    .const num = $3e8
-    .label str = COLS
-    .label end = str+num
+    .label end = $3c
     .label dst = $b
-    lda #<str
-    sta dst
-    lda #>str
-    sta dst+1
-  b1:
-    lda #BLACK
+    .label str = $b
+    lda str
+    clc
+    adc #<$3e8
+    sta end
+    lda str+1
+    adc #>$3e8
+    sta end+1
+  b2:
+    txa
     ldy #0
     sta (dst),y
     inc dst
@@ -199,11 +207,11 @@ memset: {
     inc dst+1
   !:
     lda dst+1
-    cmp #>end
-    bne b1
+    cmp end+1
+    bne b2
     lda dst
-    cmp #<end
-    bne b1
+    cmp end
+    bne b2
     rts
 }
 // Make a plasma-friendly charset where the chars are randomly filled
@@ -320,25 +328,12 @@ sid_rnd: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $12
+    ldx #' '
     lda #<print_line_cursor
-    sta sc
+    sta memset.str
     lda #>print_line_cursor
-    sta sc+1
-  b1:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    lda sc+1
-    cmp #>print_line_cursor+$3e8
-    bne b1
-    lda sc
-    cmp #<print_line_cursor+$3e8
-    bne b1
+    sta memset.str+1
+    jsr memset
     rts
 }
 // Initialize SID voice 3 for random number generation
@@ -353,19 +348,19 @@ sid_rnd_init: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage($15) screen)
+// init_angle_screen(byte* zeropage($13) screen)
 init_angle_screen: {
-    .label _10 = $1f
-    .label screen = $15
-    .label screen_topline = $17
-    .label screen_bottomline = $15
+    .label _10 = $1d
+    .label screen = $13
+    .label screen_topline = $15
+    .label screen_bottomline = $13
     .label xw = $42
     .label yw = $44
-    .label angle_w = $1f
+    .label angle_w = $1d
     .label ang_w = $46
-    .label x = $19
-    .label xb = $1a
-    .label y = $14
+    .label x = $17
+    .label xb = $18
+    .label y = $12
     lda screen
     clc
     adc #<$28*$c
@@ -455,14 +450,14 @@ init_angle_screen: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zeropage($42) x, signed word zeropage($44) y)
 atan2_16: {
-    .label _2 = $1b
-    .label _7 = $1d
-    .label yi = $1b
-    .label xi = $1d
-    .label angle = $1f
-    .label xd = $23
-    .label yd = $21
-    .label return = $1f
+    .label _2 = $19
+    .label _7 = $1b
+    .label yi = $19
+    .label xi = $1b
+    .label angle = $1d
+    .label xd = $21
+    .label yd = $1f
+    .label return = $1d
     .label x = $42
     .label y = $44
     lda y+1
@@ -641,17 +636,17 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage($26) screen)
+// init_dist_screen(byte* zeropage($24) screen)
 init_dist_screen: {
-    .label screen = $26
-    .label screen_bottomline = $28
+    .label screen = $24
+    .label screen_bottomline = $26
     .label yds = $47
     .label xds = $49
     .label ds = $49
-    .label x = $2a
-    .label xb = $2b
-    .label screen_topline = $26
-    .label y = $25
+    .label x = $28
+    .label xb = $29
+    .label screen_topline = $24
+    .label y = $23
     jsr init_squares
     lda screen
     clc
@@ -742,9 +737,9 @@ init_dist_screen: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($49) val)
 sqrt: {
-    .label _1 = $2c
-    .label _3 = $2c
-    .label found = $2c
+    .label _1 = $2a
+    .label _3 = $2a
+    .label found = $2a
     .label val = $49
     lda SQUARES
     sta bsearch16u.items
@@ -768,13 +763,13 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($49) key, word* zeropage($2c) items, byte register(X) num)
+// bsearch16u(word zeropage($49) key, word* zeropage($2a) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $2c
+    .label _2 = $2a
     .label pivot = $4b
     .label result = $4d
-    .label return = $2c
-    .label items = $2c
+    .label return = $2a
+    .label items = $2a
     .label key = $49
     ldx #NUM_SQUARES
   b3:
@@ -865,8 +860,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $30
-    .label sqr = $2e
+    .label squares = $2e
+    .label sqr = $2c
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
     lda #>NUM_SQUARES*SIZEOF_WORD
@@ -911,10 +906,10 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($34) size)
+// malloc(word zeropage($32) size)
 malloc: {
-    .label mem = $34
-    .label size = $34
+    .label mem = $32
+    .label size = $32
     lda heap_head
     sec
     sbc mem

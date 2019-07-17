@@ -209,9 +209,10 @@ memset: {
     .label num = 8
     .label str = $a
     lda num
-    beq breturn
+    bne !+
     lda num+1
     beq breturn
+  !:
     lda end
     clc
     adc str

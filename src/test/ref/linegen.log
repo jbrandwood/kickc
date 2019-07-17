@@ -19,6 +19,8 @@ Culled Empty Block (label) @7
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
+Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @11
 Culled Empty Block (label) @12
 Culled Empty Block (label) @13
@@ -140,6 +142,42 @@ divr16u::@return: scope:[divr16u]  from divr16u::@6
   (word) rem16u#2 ← (word) rem16u#11
   return 
   to:@return
+memset: scope:[memset]  from print_cls
+  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
+  (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
+  (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
+  (bool~) memset::$1 ← ! (bool~) memset::$0
+  if((bool~) memset::$1) goto memset::@1
+  to:memset::@2
+memset::@1: scope:[memset]  from memset memset::@4
+  (void*) memset::str#1 ← phi( memset/(void*) memset::str#3 memset::@4/(void*) memset::str#4 )
+  (void*) memset::return#0 ← (void*) memset::str#1
+  to:memset::@return
+memset::@2: scope:[memset]  from memset
+  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
+  (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
+  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
+  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
+  to:memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@4
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
+  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
+  *((byte*) memset::dst#2) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@4
+  to:memset::@1
+memset::@return: scope:[memset]  from memset::@1
+  (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
+  (void*) memset::return#1 ← (void*) memset::return#3
+  return 
+  to:@return
 @20: scope:[]  from @2
   (word) rem16u#27 ← phi( @2/(word) rem16u#0 )
   (byte*) print_screen#0 ← ((byte*)) (number) $400
@@ -216,7 +254,7 @@ print_word::@return: scope:[print_word]  from print_word::@2
   return 
   to:@return
 @36: scope:[]  from @20
-  (byte*) print_screen#9 ← phi( @20/(byte*) print_screen#0 )
+  (byte*) print_screen#8 ← phi( @20/(byte*) print_screen#0 )
   (byte*) print_char_cursor#88 ← phi( @20/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#31 ← phi( @20/(byte*) print_line_cursor#0 )
   (word) rem16u#26 ← phi( @20/(word) rem16u#27 )
@@ -258,26 +296,21 @@ print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
 print_cls: scope:[print_cls]  from main::@5
-  (byte*) print_screen#1 ← phi( main::@5/(byte*) print_screen#4 )
-  (byte*) print_cls::sc#0 ← (byte*) print_screen#1
+  (byte*) print_screen#1 ← phi( main::@5/(byte*) print_screen#3 )
+  (void*) memset::str#0 ← (void*)(byte*) print_screen#1
+  (byte) memset::c#0 ← (byte) ' '
+  (word) memset::num#0 ← (number) $3e8
+  call memset 
+  (void*) memset::return#2 ← (void*) memset::return#1
   to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  (byte*) print_screen#2 ← phi( print_cls/(byte*) print_screen#1 print_cls::@1/(byte*) print_screen#2 )
-  (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  *((byte*) print_cls::sc#2) ← (byte) ' '
-  (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (number) $3e8
-  (bool~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
-  if((bool~) print_cls::$1) goto print_cls::@1
-  to:print_cls::@2
-print_cls::@2: scope:[print_cls]  from print_cls::@1
-  (byte*) print_screen#3 ← phi( print_cls::@1/(byte*) print_screen#2 )
-  (byte*) print_line_cursor#3 ← (byte*) print_screen#3
+print_cls::@1: scope:[print_cls]  from print_cls
+  (byte*) print_screen#2 ← phi( print_cls/(byte*) print_screen#1 )
+  (byte*) print_line_cursor#3 ← (byte*) print_screen#2
   (byte*) print_char_cursor#13 ← (byte*) print_line_cursor#3
   to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@2
-  (byte*) print_char_cursor#52 ← phi( print_cls::@2/(byte*) print_char_cursor#13 )
-  (byte*) print_line_cursor#14 ← phi( print_cls::@2/(byte*) print_line_cursor#3 )
+print_cls::@return: scope:[print_cls]  from print_cls::@1
+  (byte*) print_char_cursor#52 ← phi( print_cls::@1/(byte*) print_char_cursor#13 )
+  (byte*) print_line_cursor#14 ← phi( print_cls::@1/(byte*) print_line_cursor#3 )
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#52
   return 
@@ -285,7 +318,7 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
 main: scope:[main]  from @45
   (byte*) print_char_cursor#90 ← phi( @45/(byte*) print_char_cursor#85 )
   (byte*) print_line_cursor#36 ← phi( @45/(byte*) print_line_cursor#26 )
-  (byte*) print_screen#7 ← phi( @45/(byte*) print_screen#8 )
+  (byte*) print_screen#6 ← phi( @45/(byte*) print_screen#7 )
   (word) rem16u#20 ← phi( @45/(word) rem16u#24 )
   (word[$14]) main::lintab1#0 ← { fill( $14, 0) }
   (word) lin16u_gen::min#0 ← (number) $22d
@@ -297,7 +330,7 @@ main: scope:[main]  from @45
 main::@3: scope:[main]  from main
   (byte*) print_char_cursor#89 ← phi( main/(byte*) print_char_cursor#90 )
   (byte*) print_line_cursor#32 ← phi( main/(byte*) print_line_cursor#36 )
-  (byte*) print_screen#6 ← phi( main/(byte*) print_screen#7 )
+  (byte*) print_screen#5 ← phi( main/(byte*) print_screen#6 )
   (word) rem16u#12 ← phi( main/(word) rem16u#9 )
   (word) rem16u#3 ← (word) rem16u#12
   (word[$14]) main::lintab2#0 ← { fill( $14, 0) }
@@ -310,7 +343,7 @@ main::@3: scope:[main]  from main
 main::@4: scope:[main]  from main::@3
   (byte*) print_char_cursor#87 ← phi( main::@3/(byte*) print_char_cursor#89 )
   (byte*) print_line_cursor#27 ← phi( main::@3/(byte*) print_line_cursor#32 )
-  (byte*) print_screen#5 ← phi( main::@3/(byte*) print_screen#6 )
+  (byte*) print_screen#4 ← phi( main::@3/(byte*) print_screen#5 )
   (word) rem16u#13 ← phi( main::@3/(word) rem16u#9 )
   (word) rem16u#4 ← (word) rem16u#13
   (word[$14]) main::lintab3#0 ← { fill( $14, 0) }
@@ -323,7 +356,7 @@ main::@4: scope:[main]  from main::@3
 main::@5: scope:[main]  from main::@4
   (byte*) print_char_cursor#82 ← phi( main::@4/(byte*) print_char_cursor#87 )
   (byte*) print_line_cursor#22 ← phi( main::@4/(byte*) print_line_cursor#27 )
-  (byte*) print_screen#4 ← phi( main::@4/(byte*) print_screen#5 )
+  (byte*) print_screen#3 ← phi( main::@4/(byte*) print_screen#4 )
   (word) rem16u#14 ← phi( main::@4/(word) rem16u#9 )
   (word) rem16u#5 ← (word) rem16u#14
   call print_cls 
@@ -613,7 +646,7 @@ lin16u_gen::@return: scope:[lin16u_gen]  from lin16u_gen::@1
   return 
   to:@return
 @45: scope:[]  from @36
-  (byte*) print_screen#8 ← phi( @36/(byte*) print_screen#9 )
+  (byte*) print_screen#7 ← phi( @36/(byte*) print_screen#8 )
   (byte*) print_char_cursor#85 ← phi( @36/(byte*) print_char_cursor#88 )
   (byte*) print_line_cursor#26 ← phi( @36/(byte*) print_line_cursor#31 )
   (word) rem16u#24 ← phi( @36/(word) rem16u#26 )
@@ -842,6 +875,43 @@ SYMBOL TABLE SSA
 (const string) main::str6 = (string) "   @"
 (const string) main::str7 = (string) " @"
 (const string) main::str8 = (string) " @"
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(bool~) memset::$0
+(bool~) memset::$1
+(byte*~) memset::$2
+(byte*~) memset::$3
+(bool~) memset::$4
+(label) memset::@1
+(label) memset::@2
+(label) memset::@4
+(label) memset::@return
+(byte) memset::c
+(byte) memset::c#0
+(byte) memset::c#1
+(byte) memset::c#2
+(byte) memset::c#3
+(byte*) memset::dst
+(byte*) memset::dst#0
+(byte*) memset::dst#1
+(byte*) memset::dst#2
+(byte*) memset::end
+(byte*) memset::end#0
+(byte*) memset::end#1
+(word) memset::num
+(word) memset::num#0
+(word) memset::num#1
+(word) memset::num#2
+(void*) memset::return
+(void*) memset::return#0
+(void*) memset::return#1
+(void*) memset::return#2
+(void*) memset::return#3
+(void*) memset::str
+(void*) memset::str#0
+(void*) memset::str#1
+(void*) memset::str#2
+(void*) memset::str#3
+(void*) memset::str#4
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -953,15 +1023,8 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#9
 (byte*) print_char_cursor#90
 (void()) print_cls()
-(byte*~) print_cls::$0
-(bool~) print_cls::$1
 (label) print_cls::@1
-(label) print_cls::@2
 (label) print_cls::@return
-(byte*) print_cls::sc
-(byte*) print_cls::sc#0
-(byte*) print_cls::sc#1
-(byte*) print_cls::sc#2
 (byte[]) print_hextab
 (byte[]) print_hextab#0
 (byte*) print_line_cursor
@@ -1030,7 +1093,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#6
 (byte*) print_screen#7
 (byte*) print_screen#8
-(byte*) print_screen#9
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -1134,11 +1196,12 @@ Adding number conversion cast (unumber) 1 in (word~) divr16u::$6 ← (word) divr
 Adding number conversion cast (unumber) 1 in (word~) divr16u::$7 ← (word) divr16u::quotient#3 << (number) 1
 Adding number conversion cast (unumber) 1 in (number~) divr16u::$5 ← (word) divr16u::rem#7 | (number) 1
 Adding number conversion cast (unumber) divr16u::$5 in (number~) divr16u::$5 ← (word) divr16u::rem#7 | (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#11 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#4 & (number) $f
 Adding number conversion cast (unumber) print_byte::$2 in (number~) print_byte::$2 ← (byte) print_byte::b#4 & (unumber)(number) $f
-Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) $22d in (word) lin16u_gen::min#0 ← (number) $22d
 Adding number conversion cast (unumber) $7461 in (word) lin16u_gen::max#0 ← (number) $7461
 Adding number conversion cast (unumber) $14 in (word) lin16u_gen::length#0 ← (number) $14
@@ -1166,7 +1229,10 @@ Adding number conversion cast (unumber) 0 in (word) lin16u_gen::i#0 ← (number)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) rem16u#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::quotient#0 ← (unumber)(number) 0
+Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
+Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
+Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (word) lin16u_gen::min#0 ← (unumber)(number) $22d
 Inlining cast (word) lin16u_gen::max#0 ← (unumber)(number) $7461
 Inlining cast (word) lin16u_gen::length#0 ← (unumber)(number) $14
@@ -1195,6 +1261,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
+Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
@@ -1235,6 +1302,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
@@ -1269,6 +1337,7 @@ Inferred type updated to word in (unumber~) lin16u_gen::$1 ← (word) lin16u_gen
 Inferred type updated to word in (unumber~) lin16u_gen::$3 ← (word) lin16u_gen::length#4 - (byte) 1
 Inversing boolean not [10] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [9] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
 Inversing boolean not [18] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [17] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+Inversing boolean not [40] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [39] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -1285,8 +1354,13 @@ Alias (word) divr16u::rem#2 = (word~) divr16u::$10
 Alias (word) divr16u::rem#11 = (word) divr16u::rem#9 
 Alias (word) divr16u::return#0 = (word) divr16u::quotient#5 (word) divr16u::quotient#8 (word) divr16u::return#4 (word) divr16u::return#1 
 Alias (word) rem16u#1 = (word) rem16u#11 (word) rem16u#2 
+Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
+Alias (void*) memset::str#2 = (void*) memset::str#3 
+Alias (word) memset::num#1 = (word) memset::num#2 
+Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte*) memset::end#0 = (byte*~) memset::$3 
 Alias (word) rem16u#0 = (word) rem16u#27 (word) rem16u#26 (word) rem16u#24 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#31 (byte*) print_char_cursor#88 (byte*) print_screen#9 (byte*) print_line_cursor#26 (byte*) print_char_cursor#85 (byte*) print_screen#8 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#31 (byte*) print_char_cursor#88 (byte*) print_screen#8 (byte*) print_line_cursor#26 (byte*) print_char_cursor#85 (byte*) print_screen#7 
 Alias (byte*) print_str::str#10 = (byte*) print_str::str#11 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#40 (byte*) print_char_cursor#78 (byte*) print_char_cursor#41 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#3 (byte*) print_line_cursor#13 (byte*) print_char_cursor#43 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -1299,8 +1373,8 @@ Alias (byte) print_byte::b#3 = (byte) print_byte::b#4
 Alias (byte*) print_char_cursor#47 = (byte*) print_char_cursor#8 
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#9 (byte*) print_char_cursor#48 (byte*) print_char_cursor#49 
 Alias (byte*) print_char_cursor#11 = (byte*) print_char_cursor#51 (byte*) print_char_cursor#12 
-Alias (byte*) print_line_cursor#14 = (byte*) print_screen#3 (byte*) print_screen#2 (byte*) print_line_cursor#3 (byte*) print_char_cursor#13 (byte*) print_char_cursor#52 (byte*) print_line_cursor#4 (byte*) print_char_cursor#14 
-Alias (byte*) print_screen#4 = (byte*) print_screen#6 (byte*) print_screen#7 (byte*) print_screen#5 
+Alias (byte*) print_line_cursor#14 = (byte*) print_screen#2 (byte*) print_screen#1 (byte*) print_line_cursor#3 (byte*) print_char_cursor#13 (byte*) print_char_cursor#52 (byte*) print_line_cursor#4 (byte*) print_char_cursor#14 
+Alias (byte*) print_screen#3 = (byte*) print_screen#5 (byte*) print_screen#6 (byte*) print_screen#4 
 Alias (byte*) print_line_cursor#22 = (byte*) print_line_cursor#32 (byte*) print_line_cursor#36 (byte*) print_line_cursor#27 
 Alias (byte*) print_char_cursor#82 = (byte*) print_char_cursor#89 (byte*) print_char_cursor#90 (byte*) print_char_cursor#87 
 Alias (word) rem16u#12 = (word) rem16u#3 
@@ -1363,23 +1437,30 @@ Alias (byte) divr16u::i#2 = (byte) divr16u::i#3 (byte) divr16u::i#5
 Alias (word) divr16u::dividend#0 = (word) divr16u::dividend#6 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (word) divr16u::divisor#2
+Self Phi Eliminated (byte) memset::c#1
+Self Phi Eliminated (byte*) memset::end#1
+Self Phi Eliminated (void*) memset::str#4
 Self Phi Eliminated (byte*) print_char_cursor#42
-Self Phi Eliminated (byte*) print_line_cursor#14
 Self Phi Eliminated (word) rem16u#15
 Self Phi Eliminated (dword) lin16u_gen::step#1
 Self Phi Eliminated (word) lin16u_gen::length#5
 Self Phi Eliminated (word) rem16u#18
 Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (word) divr16u::divisor#2 (word) divr16u::divisor#6
+Identical Phi Values (word) memset::num#1 (word) memset::num#0
+Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
+Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
+Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
 Identical Phi Values (byte*) print_char_cursor#42 (byte*) print_char_cursor#79
 Identical Phi Values (byte*) print_char_cursor#44 (byte*) print_char_cursor#10
 Identical Phi Values (byte*) print_char_cursor#45 (byte*) print_char_cursor#10
 Identical Phi Values (byte*) print_char_cursor#47 (byte*) print_char_cursor#11
 Identical Phi Values (byte*) print_char_cursor#10 (byte*) print_char_cursor#11
-Identical Phi Values (byte*) print_screen#1 (byte*) print_screen#4
-Identical Phi Values (byte*) print_line_cursor#14 (byte*) print_screen#1
+Identical Phi Values (byte*) print_line_cursor#14 (byte*) print_screen#3
 Identical Phi Values (word) rem16u#20 (word) rem16u#0
-Identical Phi Values (byte*) print_screen#4 (byte*) print_line_cursor#0
+Identical Phi Values (byte*) print_screen#3 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) print_line_cursor#22 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) print_char_cursor#82 (byte*) print_line_cursor#0
 Identical Phi Values (word) rem16u#12 (word) rem16u#18
@@ -1422,6 +1503,7 @@ Identical Phi Values (word) rem16u#10 (word) rem16u#15
 Identical Phi Values (byte*) print_line_cursor#10 (byte*) print_line_cursor#18
 Identical Phi Values (byte*) print_char_cursor#39 (byte*) print_char_cursor#37
 Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Identical Phi Values (byte*) print_char_cursor#79 (byte*) print_char_cursor#11
 Identical Phi Values (byte*) print_char_cursor#80 (byte*) print_char_cursor#2
 Identical Phi Values (byte*) print_char_cursor#83 (byte*) print_line_cursor#1
@@ -1430,21 +1512,24 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
 Simple Condition (bool~) divr16u::$11 [26] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) print_str::$0 [45] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [58] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
-Simple Condition (bool~) print_cls::$1 [108] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) main::$26 [212] if((byte) main::i#1<(byte) $14) goto main::@1
-Simple Condition (bool~) lin16u_gen::$7 [283] if((word) lin16u_gen::i#1<(word) lin16u_gen::length#3) goto lin16u_gen::@1
+Simple Condition (bool~) memset::$1 [41] if((word) memset::num#0<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [53] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
+Simple Condition (bool~) print_str::$0 [64] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [77] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
+Simple Condition (bool~) main::$26 [229] if((byte) main::i#1<(byte) $14) goto main::@1
+Simple Condition (bool~) lin16u_gen::$7 [300] if((word) lin16u_gen::i#1<(word) lin16u_gen::length#3) goto lin16u_gen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [117] (word[$14]) main::lintab1#0 ← { fill( $14, 0) }
-Constant right-side identified [125] (word[$14]) main::lintab2#0 ← { fill( $14, 0) }
-Constant right-side identified [133] (word[$14]) main::lintab3#0 ← { fill( $14, 0) }
+Constant right-side identified [134] (word[$14]) main::lintab1#0 ← { fill( $14, 0) }
+Constant right-side identified [142] (word[$14]) main::lintab2#0 ← { fill( $14, 0) }
+Constant right-side identified [150] (word[$14]) main::lintab3#0 ← { fill( $14, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte[]) print_hextab#0 = $0
+Constant (const byte) memset::c#0 = ' '
+Constant (const word) memset::num#0 = $3e8
 Constant (const word[$14]) main::lintab1#0 = { fill( $14, 0) }
 Constant (const word) lin16u_gen::min#0 = $22d
 Constant (const word) lin16u_gen::max#0 = $7461
@@ -1477,14 +1562,18 @@ Constant (const word) divr16u::rem#3 = 0
 Constant (const word) divr16u::dividend#2 = 0
 Constant (const word) lin16u_gen::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print_cls::sc#0 = print_line_cursor#0
 Constant (const word*) lin16u_gen::lintab#0 = main::lintab1#0
 Constant (const word*) lin16u_gen::lintab#1 = main::lintab2#0
 Constant (const word*) lin16u_gen::lintab#2 = main::lintab3#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (void*)print_line_cursor#0 in [121] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
+Successful SSA optimization Pass2ConstantValues
+if() condition always false - eliminating [41] if((const word) memset::num#0<=(byte) 0) goto memset::@1
+Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization Pass2ConstantStringConsolidation
 Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
+Eliminating unused variable (void*) memset::return#2 and assignment [58] (void*) memset::return#2 ← (void*) memset::str#0
 Eliminating unused variable - keeping the phi block (word) rem16u#22
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const word) rem16u#0
@@ -1495,18 +1584,27 @@ Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [51] (byte*~) print_cls::$0 ← (const byte*) print_line_cursor#0 + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) print_cls::$0 = print_line_cursor#0+$3e8
+Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [68] (byte~) main::$27 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [72] (byte~) main::$28 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [76] (byte~) main::$29 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
+Constant value identified (byte*)memset::str#0 in [18] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
+Constant value identified (byte*)memset::str#0 in [20] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [18] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Successful SSA optimization Pass2ConstantIdentification
+Rewriting multiplication to use shift [70] (byte~) main::$27 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [74] (byte~) main::$28 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [78] (byte~) main::$29 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
 Inlining constant with var siblings (const word) divr16u::rem#3
 Inlining constant with var siblings (const word) divr16u::dividend#2
+Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_str::str#2
 Inlining constant with var siblings (const byte*) print_str::str#3
@@ -1522,7 +1620,6 @@ Inlining constant with var siblings (const word) print_word::w#2
 Inlining constant with var siblings (const word) print_word::w#6
 Inlining constant with var siblings (const word) print_word::w#7
 Inlining constant with var siblings (const word) print_word::w#8
-Inlining constant with var siblings (const byte*) print_cls::sc#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const word) lin16u_gen::min#0
 Inlining constant with var siblings (const word) lin16u_gen::max#0
@@ -1543,7 +1640,6 @@ Constant inlined main::str5 = (const string) main::str1
 Constant inlined divr16u::rem#3 = (byte) 0
 Constant inlined main::str6 = (const string) main::str
 Constant inlined main::str7 = (const string) main::str1
-Constant inlined print_cls::$0 = (byte*) 1024+(word) $3e8
 Constant inlined divr16u::i#0 = (byte) 0
 Constant inlined main::str2 = (const string) main::str1
 Constant inlined main::str3 = (const string) main::str1
@@ -1551,6 +1647,7 @@ Constant inlined lin16u_gen::max#0 = (word) $7461
 Constant inlined lin16u_gen::max#2 = (word) $6488
 Constant inlined lin16u_gen::max#1 = (word) $f781
 Constant inlined $0 = (const byte[]) print_hextab#0
+Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined divr16u::quotient#0 = (byte) 0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined lin16u_gen::min#0 = (word) $22d
@@ -1558,7 +1655,6 @@ Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined print_word::w#1 = (word) $79cb
 Constant inlined print_word::w#0 = (word) $22d
 Constant inlined print_word::w#2 = (byte) 0
-Constant inlined print_cls::sc#0 = (byte*) 1024
 Constant inlined divr16u::dividend#2 = (byte) 0
 Constant inlined print_word::w#7 = (word) $f781
 Constant inlined print_word::w#6 = (word) $7461
@@ -1570,6 +1666,7 @@ Constant inlined lin16u_gen::length#0 = (byte) $14
 Constant inlined print_str::str#4 = (const string) main::str1
 Constant inlined print_str::str#3 = (const string) main::str1
 Constant inlined print_str::str#2 = (const string) main::str1
+Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined print_str::str#1 = (const string) main::str
 Constant inlined print_str::str#8 = (const string) main::str1
 Constant inlined main::str8 = (const string) main::str1
@@ -1585,8 +1682,8 @@ Constant inlined print_str::str#5 = (const string) main::str1
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) lin16u_gen::length#3 (byte) $14
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [92] (word) divr16u::divisor#0 ← (byte) $14 - (byte) 1
-Constant right-side identified [97] (word) divr16u::divisor#1 ← (byte) $14 - (byte) 1
+Constant right-side identified [94] (word) divr16u::divisor#0 ← (byte) $14 - (byte) 1
+Constant right-side identified [99] (word) divr16u::divisor#1 ← (byte) $14 - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::divisor#0 = $14-1
 Constant (const word) divr16u::divisor#1 = $14-1
@@ -1599,8 +1696,8 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting divr16u::@8(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
+Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
-Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Added new block during phi lifting main::@29(between main::@21 and main::@1)
 Added new block during phi lifting lin16u_gen::@5(between lin16u_gen::@1 and lin16u_gen::@1)
 Adding NOP phi() at start of @begin
@@ -1628,13 +1725,17 @@ Adding NOP phi() at start of print_ln::@2
 Adding NOP phi() at start of print_word::@2
 Adding NOP phi() at start of print_byte::@2
 Adding NOP phi() at start of print_cls
-Adding NOP phi() at start of print_cls::@2
+Adding NOP phi() at start of print_cls::@1
+Adding NOP phi() at start of memset
+Adding NOP phi() at start of memset::@2
+Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [] to main:5 
 Calls in [main] to lin16u_gen:9 lin16u_gen:11 lin16u_gen:13 print_cls:15 print_str:17 print_word:19 print_str:21 print_word:23 print_str:25 print_word:27 print_ln:29 print_byte:35 print_str:37 print_word:41 print_str:43 print_word:47 print_str:49 print_word:53 print_ln:55 print_str:59 print_word:61 print_str:63 print_word:65 print_str:67 print_word:69 print_ln:71 
 Calls in [print_word] to print_byte:87 print_byte:91 
 Calls in [print_byte] to print_char:99 print_char:104 
-Calls in [lin16u_gen] to divr16u:134 divr16u:139 
+Calls in [print_cls] to memset:123 
+Calls in [lin16u_gen] to divr16u:139 divr16u:144 
 
 Created 29 initial phi equivalence classes
 Coalesced [20] print_char_cursor#98 ← print_char_cursor#11
@@ -1667,26 +1768,26 @@ Coalesced [112] print_str::str#13 ← print_str::str#12
 Coalesced (already) [113] print_char_cursor#99 ← print_char_cursor#86
 Coalesced [120] print_str::str#14 ← print_str::str#0
 Coalesced [121] print_char_cursor#100 ← print_char_cursor#1
-Coalesced [129] print_cls::sc#3 ← print_cls::sc#1
-Coalesced [133] divr16u::dividend#9 ← divr16u::dividend#1
-Coalesced [138] divr16u::rem#12 ← divr16u::rem#4
-Coalesced [144] lin16u_gen::val#4 ← lin16u_gen::val#0
-Coalesced [145] lin16u_gen::lintab#9 ← lin16u_gen::lintab#5
-Coalesced [154] lin16u_gen::val#3 ← lin16u_gen::val#1
-Coalesced [155] lin16u_gen::lintab#8 ← lin16u_gen::lintab#3
-Coalesced [156] lin16u_gen::i#3 ← lin16u_gen::i#1
-Coalesced [158] divr16u::rem#13 ← divr16u::rem#10
-Coalesced [159] divr16u::dividend#10 ← divr16u::dividend#5
-Coalesced [166] divr16u::rem#16 ← divr16u::rem#1
-Coalesced [173] divr16u::rem#18 ← divr16u::rem#2
-Coalesced [174] divr16u::return#8 ← divr16u::quotient#2
-Coalesced [180] divr16u::rem#14 ← divr16u::rem#11
-Coalesced [181] divr16u::dividend#11 ← divr16u::dividend#0
-Coalesced [182] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [183] divr16u::i#7 ← divr16u::i#1
-Coalesced [184] divr16u::rem#17 ← divr16u::rem#6
-Coalesced [185] divr16u::return#7 ← divr16u::quotient#1
-Coalesced [186] divr16u::rem#15 ← divr16u::rem#0
+Coalesced [134] memset::dst#3 ← memset::dst#1
+Coalesced [138] divr16u::dividend#9 ← divr16u::dividend#1
+Coalesced [143] divr16u::rem#12 ← divr16u::rem#4
+Coalesced [149] lin16u_gen::val#4 ← lin16u_gen::val#0
+Coalesced [150] lin16u_gen::lintab#9 ← lin16u_gen::lintab#5
+Coalesced [159] lin16u_gen::val#3 ← lin16u_gen::val#1
+Coalesced [160] lin16u_gen::lintab#8 ← lin16u_gen::lintab#3
+Coalesced [161] lin16u_gen::i#3 ← lin16u_gen::i#1
+Coalesced [163] divr16u::rem#13 ← divr16u::rem#10
+Coalesced [164] divr16u::dividend#10 ← divr16u::dividend#5
+Coalesced [171] divr16u::rem#16 ← divr16u::rem#1
+Coalesced [178] divr16u::rem#18 ← divr16u::rem#2
+Coalesced [179] divr16u::return#8 ← divr16u::quotient#2
+Coalesced [185] divr16u::rem#14 ← divr16u::rem#11
+Coalesced [186] divr16u::dividend#11 ← divr16u::dividend#0
+Coalesced [187] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [188] divr16u::i#7 ← divr16u::i#1
+Coalesced [189] divr16u::rem#17 ← divr16u::rem#6
+Coalesced [190] divr16u::return#7 ← divr16u::quotient#1
+Coalesced [191] divr16u::rem#15 ← divr16u::rem#0
 Coalesced down to 18 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) @20
@@ -1699,13 +1800,16 @@ Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
-Culled Empty Block (label) print_cls::@2
-Culled Empty Block (label) print_cls::@3
+Culled Empty Block (label) print_cls::@1
+Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@1
+Culled Empty Block (label) memset::@6
 Culled Empty Block (label) lin16u_gen::@5
 Culled Empty Block (label) divr16u::@8
 Culled Empty Block (label) divr16u::@10
 Culled Empty Block (label) divr16u::@9
 Renumbering block @45 to @1
+Renumbering block memset::@4 to memset::@1
 Renumbering block main::@14 to main::@13
 Renumbering block main::@15 to main::@14
 Renumbering block main::@16 to main::@15
@@ -1747,6 +1851,7 @@ Adding NOP phi() at start of main::@24
 Adding NOP phi() at start of main::@25
 Adding NOP phi() at start of main::@26
 Adding NOP phi() at start of print_cls
+Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1940,89 +2045,96 @@ print_str::@2: scope:[print_str]  from print_str::@1
   to:print_str::@1
 print_cls: scope:[print_cls]  from main::@5
   [94] phi()
-  to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [95] (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) 1024 print_cls::@1/(byte*) print_cls::sc#1 )
-  [96] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [97] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1
+  [95] call memset 
   to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [99] return 
+print_cls::@return: scope:[print_cls]  from print_cls
+  [96] return 
+  to:@return
+memset: scope:[memset]  from print_cls
+  [97] phi()
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  [98] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
+  [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [100] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@1
+  [102] return 
   to:@return
 lin16u_gen: scope:[lin16u_gen]  from main main::@3 main::@4
-  [100] (word*) lin16u_gen::lintab#5 ← phi( main/(const word[$14]) main::lintab1#0 main::@3/(const word[$14]) main::lintab2#0 main::@4/(const word[$14]) main::lintab3#0 )
-  [100] (word) lin16u_gen::min#3 ← phi( main/(word) $22d main::@3/(word) $79cb main::@4/(byte) 0 )
-  [100] (word) lin16u_gen::max#3 ← phi( main/(word) $7461 main::@3/(word) $f781 main::@4/(word) $6488 )
-  [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3
-  [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
-  [103] call divr16u 
-  [104] (word) divr16u::return#2 ← (word) divr16u::return#0
+  [103] (word*) lin16u_gen::lintab#5 ← phi( main/(const word[$14]) main::lintab1#0 main::@3/(const word[$14]) main::lintab2#0 main::@4/(const word[$14]) main::lintab3#0 )
+  [103] (word) lin16u_gen::min#3 ← phi( main/(word) $22d main::@3/(word) $79cb main::@4/(byte) 0 )
+  [103] (word) lin16u_gen::max#3 ← phi( main/(word) $7461 main::@3/(word) $f781 main::@4/(word) $6488 )
+  [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3
+  [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
+  [106] call divr16u 
+  [107] (word) divr16u::return#2 ← (word) divr16u::return#0
   to:lin16u_gen::@2
 lin16u_gen::@2: scope:[lin16u_gen]  from lin16u_gen
-  [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2
-  [106] (word) divr16u::rem#4 ← (word) rem16u#1
-  [107] call divr16u 
-  [108] (word) divr16u::return#3 ← (word) divr16u::return#0
+  [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2
+  [109] (word) divr16u::rem#4 ← (word) rem16u#1
+  [110] call divr16u 
+  [111] (word) divr16u::return#3 ← (word) divr16u::return#0
   to:lin16u_gen::@3
 lin16u_gen::@3: scope:[lin16u_gen]  from lin16u_gen::@2
-  [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
-  [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0
-  [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0
+  [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
+  [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0
+  [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0
   to:lin16u_gen::@1
 lin16u_gen::@1: scope:[lin16u_gen]  from lin16u_gen::@1 lin16u_gen::@3
-  [112] (word) lin16u_gen::i#2 ← phi( lin16u_gen::@1/(word) lin16u_gen::i#1 lin16u_gen::@3/(byte) 0 )
-  [112] (word*) lin16u_gen::lintab#4 ← phi( lin16u_gen::@1/(word*) lin16u_gen::lintab#3 lin16u_gen::@3/(word*) lin16u_gen::lintab#5 )
-  [112] (dword) lin16u_gen::val#2 ← phi( lin16u_gen::@1/(dword) lin16u_gen::val#1 lin16u_gen::@3/(dword) lin16u_gen::val#0 )
-  [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2
-  [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5
-  [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0
-  [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD
-  [117] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2
-  [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1
+  [115] (word) lin16u_gen::i#2 ← phi( lin16u_gen::@1/(word) lin16u_gen::i#1 lin16u_gen::@3/(byte) 0 )
+  [115] (word*) lin16u_gen::lintab#4 ← phi( lin16u_gen::@1/(word*) lin16u_gen::lintab#3 lin16u_gen::@3/(word*) lin16u_gen::lintab#5 )
+  [115] (dword) lin16u_gen::val#2 ← phi( lin16u_gen::@1/(dword) lin16u_gen::val#1 lin16u_gen::@3/(dword) lin16u_gen::val#0 )
+  [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2
+  [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5
+  [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0
+  [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD
+  [120] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2
+  [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1
   to:lin16u_gen::@return
 lin16u_gen::@return: scope:[lin16u_gen]  from lin16u_gen::@1
-  [119] return 
+  [122] return 
   to:@return
 divr16u: scope:[divr16u]  from lin16u_gen lin16u_gen::@2
-  [120] (word) divr16u::divisor#6 ← phi( lin16u_gen/(byte) $14-(byte) 1 lin16u_gen::@2/(byte) $14-(byte) 1 )
-  [120] (word) divr16u::dividend#5 ← phi( lin16u_gen/(word) divr16u::dividend#1 lin16u_gen::@2/(byte) 0 )
-  [120] (word) divr16u::rem#10 ← phi( lin16u_gen/(byte) 0 lin16u_gen::@2/(word) divr16u::rem#4 )
+  [123] (word) divr16u::divisor#6 ← phi( lin16u_gen/(byte) $14-(byte) 1 lin16u_gen::@2/(byte) $14-(byte) 1 )
+  [123] (word) divr16u::dividend#5 ← phi( lin16u_gen/(word) divr16u::dividend#1 lin16u_gen::@2/(byte) 0 )
+  [123] (word) divr16u::rem#10 ← phi( lin16u_gen/(byte) 0 lin16u_gen::@2/(word) divr16u::rem#4 )
   to:divr16u::@1
 divr16u::@1: scope:[divr16u]  from divr16u divr16u::@3
-  [121] (byte) divr16u::i#2 ← phi( divr16u/(byte) 0 divr16u::@3/(byte) divr16u::i#1 )
-  [121] (word) divr16u::quotient#3 ← phi( divr16u/(byte) 0 divr16u::@3/(word) divr16u::return#0 )
-  [121] (word) divr16u::dividend#3 ← phi( divr16u/(word) divr16u::dividend#5 divr16u::@3/(word) divr16u::dividend#0 )
-  [121] (word) divr16u::rem#5 ← phi( divr16u/(word) divr16u::rem#10 divr16u::@3/(word) divr16u::rem#11 )
-  [122] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1
-  [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3
-  [124] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80
-  [125] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
+  [124] (byte) divr16u::i#2 ← phi( divr16u/(byte) 0 divr16u::@3/(byte) divr16u::i#1 )
+  [124] (word) divr16u::quotient#3 ← phi( divr16u/(byte) 0 divr16u::@3/(word) divr16u::return#0 )
+  [124] (word) divr16u::dividend#3 ← phi( divr16u/(word) divr16u::dividend#5 divr16u::@3/(word) divr16u::dividend#0 )
+  [124] (word) divr16u::rem#5 ← phi( divr16u/(word) divr16u::rem#10 divr16u::@3/(word) divr16u::rem#11 )
+  [125] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1
+  [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3
+  [127] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80
+  [128] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
   to:divr16u::@4
 divr16u::@4: scope:[divr16u]  from divr16u::@1
-  [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1
+  [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1
   to:divr16u::@2
 divr16u::@2: scope:[divr16u]  from divr16u::@1 divr16u::@4
-  [127] (word) divr16u::rem#6 ← phi( divr16u::@1/(word) divr16u::rem#0 divr16u::@4/(word) divr16u::rem#1 )
-  [128] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1
-  [129] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1
-  [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
+  [130] (word) divr16u::rem#6 ← phi( divr16u::@1/(word) divr16u::rem#0 divr16u::@4/(word) divr16u::rem#1 )
+  [131] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1
+  [132] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1
+  [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
   to:divr16u::@5
 divr16u::@5: scope:[divr16u]  from divr16u::@2
-  [131] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1
-  [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6
+  [134] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1
+  [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6
   to:divr16u::@3
 divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
-  [133] (word) divr16u::return#0 ← phi( divr16u::@2/(word) divr16u::quotient#1 divr16u::@5/(word) divr16u::quotient#2 )
-  [133] (word) divr16u::rem#11 ← phi( divr16u::@2/(word) divr16u::rem#6 divr16u::@5/(word) divr16u::rem#2 )
-  [134] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2
-  [135] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1
+  [136] (word) divr16u::return#0 ← phi( divr16u::@2/(word) divr16u::quotient#1 divr16u::@5/(word) divr16u::quotient#2 )
+  [136] (word) divr16u::rem#11 ← phi( divr16u::@2/(word) divr16u::rem#6 divr16u::@5/(word) divr16u::rem#2 )
+  [137] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2
+  [138] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1
   to:divr16u::@6
 divr16u::@6: scope:[divr16u]  from divr16u::@3
-  [136] (word) rem16u#1 ← (word) divr16u::rem#11
+  [139] (word) rem16u#1 ← (word) divr16u::rem#11
   to:divr16u::@return
 divr16u::@return: scope:[divr16u]  from divr16u::@6
-  [137] return 
+  [140] return 
   to:@return
 
 
@@ -2093,6 +2205,15 @@ VARIABLE REGISTER WEIGHTS
 (word[$14]) main::lintab1
 (word[$14]) main::lintab2
 (word[$14]) main::lintab3
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(byte) memset::c
+(byte*) memset::dst
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#2 16.5
+(byte*) memset::end
+(word) memset::num
+(void*) memset::return
+(void*) memset::str
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 4.0
 (byte~) print_byte::$2 4.0
@@ -2116,9 +2237,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#86 45.0
 (byte*~) print_char_cursor#95 4.0
 (void()) print_cls()
-(byte*) print_cls::sc
-(byte*) print_cls::sc#1 16.5
-(byte*) print_cls::sc#2 16.5
 (byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 8.225
@@ -2148,7 +2266,7 @@ Initial phi equivalence classes
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ]
 [ print_str::str#10 print_str::str#12 print_str::str#0 ]
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ lin16u_gen::max#3 ]
 [ lin16u_gen::min#3 ]
 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ]
@@ -2182,7 +2300,7 @@ Complete equivalence classes
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ]
 [ print_str::str#10 print_str::str#12 print_str::str#0 ]
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ lin16u_gen::max#3 ]
 [ lin16u_gen::min#3 ]
 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ]
@@ -2215,7 +2333,7 @@ Allocated zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_b
 Allocated zp ZP_BYTE:8 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 Allocated zp ZP_WORD:9 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ]
 Allocated zp ZP_WORD:11 [ print_str::str#10 print_str::str#12 print_str::str#0 ]
-Allocated zp ZP_WORD:13 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated zp ZP_WORD:13 [ memset::dst#2 memset::dst#1 ]
 Allocated zp ZP_WORD:15 [ lin16u_gen::max#3 ]
 Allocated zp ZP_WORD:17 [ lin16u_gen::min#3 ]
 Allocated zp ZP_DWORD:19 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ]
@@ -2278,19 +2396,19 @@ main: {
     .label _29 = $26
     .label i = 2
     // [5] call lin16u_gen 
-    // [100] phi from main to lin16u_gen [phi:main->lin16u_gen]
+    // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
   lin16u_gen_from_main:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta lin16u_gen.lintab
     lda #>lintab1
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$22d
     sta lin16u_gen.min
     lda #>$22d
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$7461
     sta lin16u_gen.max
     lda #>$7461
@@ -2302,19 +2420,19 @@ main: {
     // main::@3
   b3:
     // [7] call lin16u_gen 
-    // [100] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
+    // [103] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
   lin16u_gen_from_b3:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta lin16u_gen.lintab
     lda #>lintab2
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$79cb
     sta lin16u_gen.min
     lda #>$79cb
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$f781
     sta lin16u_gen.max
     lda #>$f781
@@ -2326,19 +2444,19 @@ main: {
     // main::@4
   b4:
     // [9] call lin16u_gen 
-    // [100] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
+    // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
   lin16u_gen_from_b4:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta lin16u_gen.lintab
     lda #>lintab3
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
     lda #<0
     sta lin16u_gen.min
     lda #>0
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$6488
     sta lin16u_gen.max
     lda #>$6488
@@ -2890,41 +3008,58 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $d
-    // [95] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    jmp b1
-    // [95] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [96] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [97] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1_from_b1
+    // [95] call memset 
+    // [97] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
     jmp breturn
     // print_cls::@return
   breturn:
-    // [99] return 
+    // [96] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = $d
+    // [98] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [98] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    jmp b1
+    // [98] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+  b1_from_b1:
+    // [98] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    jmp b1
+    // memset::@1
+  b1:
+    // [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // [100] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1_from_b1
+    lda dst
+    cmp #<end
+    bne b1_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [102] return 
     rts
 }
   // lin16u_gen
@@ -2943,7 +3078,7 @@ lin16u_gen: {
     .label i = $19
     .label max = $f
     .label min = $11
-    // [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz2_minus_vwuz3 
+    // [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz2_minus_vwuz3 
     lda max
     sec
     sbc min
@@ -2951,27 +3086,27 @@ lin16u_gen: {
     lda max+1
     sbc min+1
     sta ampl+1
-    // [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 -- vwuz1=vwuz2 
+    // [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 -- vwuz1=vwuz2 
     lda ampl
     sta divr16u.dividend
     lda ampl+1
     sta divr16u.dividend+1
-    // [103] call divr16u 
-    // [120] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
+    // [106] call divr16u 
+    // [123] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
   divr16u_from_lin16u_gen:
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
-    // [120] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.rem
     lda #>0
     sta divr16u.rem+1
     jsr divr16u
-    // [104] (word) divr16u::return#2 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
+    // [107] (word) divr16u::return#2 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
     lda divr16u.return
     sta divr16u.return_2
     lda divr16u.return+1
@@ -2979,32 +3114,32 @@ lin16u_gen: {
     jmp b2
     // lin16u_gen::@2
   b2:
-    // [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
+    // [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda divr16u.return_2
     sta stepi
     lda divr16u.return_2+1
     sta stepi+1
-    // [106] (word) divr16u::rem#4 ← (word) rem16u#1 -- vwuz1=vwuz2 
+    // [109] (word) divr16u::rem#4 ← (word) rem16u#1 -- vwuz1=vwuz2 
     lda rem16u
     sta divr16u.rem
     lda rem16u+1
     sta divr16u.rem+1
-    // [107] call divr16u 
-    // [120] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
+    // [110] call divr16u 
+    // [123] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
   divr16u_from_b2:
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.dividend
     lda #>0
     sta divr16u.dividend+1
-    // [120] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
     jsr divr16u
-    // [108] (word) divr16u::return#3 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
+    // [111] (word) divr16u::return#3 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
     lda divr16u.return
     sta divr16u.return_3
     lda divr16u.return+1
@@ -3012,12 +3147,12 @@ lin16u_gen: {
     jmp b3
     // lin16u_gen::@3
   b3:
-    // [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 -- vwuz1=vwuz2 
+    // [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 -- vwuz1=vwuz2 
     lda divr16u.return_3
     sta stepf
     lda divr16u.return_3+1
     sta stepf+1
-    // [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
+    // [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
     lda stepi
     sta step+2
     lda stepi+1
@@ -3026,7 +3161,7 @@ lin16u_gen: {
     sta step
     lda stepf+1
     sta step+1
-    // [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
+    // [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
     lda #<0
     sta val
     lda #>0
@@ -3035,37 +3170,37 @@ lin16u_gen: {
     sta val+2
     lda min+1
     sta val+3
-    // [112] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
+    // [115] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
   b1_from_b3:
-    // [112] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
+    // [115] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
     jmp b1
-    // [112] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
+    // [115] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
   b1_from_b1:
-    // [112] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
     jmp b1
     // lin16u_gen::@1
   b1:
-    // [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
+    // [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
     lda val+2
     sta _5
     lda val+3
     sta _5+1
-    // [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
+    // [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _5
     sta (lintab),y
     iny
     lda _5+1
     sta (lintab),y
-    // [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
+    // [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
     lda val
     clc
     adc step
@@ -3079,7 +3214,7 @@ lin16u_gen: {
     lda val+3
     adc step+3
     sta val+3
-    // [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc lintab
@@ -3087,12 +3222,12 @@ lin16u_gen: {
     bcc !+
     inc lintab+1
   !:
-    // [117] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
+    // [120] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-    // [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
+    // [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
     lda i+1
     cmp #>$14
     bcc b1_from_b1
@@ -3104,7 +3239,7 @@ lin16u_gen: {
     jmp breturn
     // lin16u_gen::@return
   breturn:
-    // [119] return 
+    // [122] return 
     rts
 }
   // divr16u
@@ -3124,63 +3259,63 @@ divr16u: {
     .label return_2 = $2b
     .label return_3 = $2f
     .label divisor = $1b
-    // [121] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
+    // [124] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
   b1_from_divr16u:
-    // [121] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuz1=vbuc1 
+    // [124] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-    // [121] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
+    // [124] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     lda #<0
     sta quotient
     lda #>0
     sta quotient+1
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
     jmp b1
-    // [121] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
+    // [124] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
   b1_from_b3:
-    // [121] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
-    // [121] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+    // [124] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
+    // [124] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     jmp b1
     // divr16u::@1
   b1:
-    // [122] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [125] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl rem
     rol rem+1
-    // [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuz1=_hi_vwuz2 
+    // [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuz1=_hi_vwuz2 
     lda dividend+1
     sta _1
-    // [124] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
+    // [127] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and _1
     sta _2
-    // [125] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuz1_eq_0_then_la1 
+    // [128] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuz1_eq_0_then_la1 
     lda _2
     cmp #0
     beq b2_from_b1
     jmp b4
     // divr16u::@4
   b4:
-    // [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
+    // [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora rem
     sta rem
-    // [127] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
+    // [130] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
-    // [127] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
+    // [130] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     jmp b2
     // divr16u::@2
   b2:
-    // [128] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [131] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl dividend
     rol dividend+1
-    // [129] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [132] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl quotient
     rol quotient+1
-    // [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
+    // [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda rem+1
     cmp divisor+1
     bcc b3_from_b2
@@ -3192,12 +3327,12 @@ divr16u: {
     jmp b5
     // divr16u::@5
   b5:
-    // [131] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
+    // [134] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc quotient
     bne !+
     inc quotient+1
   !:
-    // [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
+    // [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
     lda rem
     sec
     sbc divisor
@@ -3205,24 +3340,24 @@ divr16u: {
     lda rem+1
     sbc divisor+1
     sta rem+1
-    // [133] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
+    // [136] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
   b3_from_b2:
   b3_from_b5:
-    // [133] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-    // [133] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+    // [136] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
+    // [136] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     jmp b3
     // divr16u::@3
   b3:
-    // [134] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
+    // [137] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-    // [135] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [138] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp i
     bne b1_from_b3
     jmp b6
     // divr16u::@6
   b6:
-    // [136] (word) rem16u#1 ← (word) divr16u::rem#11 -- vwuz1=vwuz2 
+    // [139] (word) rem16u#1 ← (word) divr16u::rem#11 -- vwuz1=vwuz2 
     lda rem
     sta rem16u
     lda rem+1
@@ -3230,7 +3365,7 @@ divr16u: {
     jmp breturn
     // divr16u::@return
   breturn:
-    // [137] return 
+    // [140] return 
     rts
 }
   // File Data
@@ -3258,28 +3393,28 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ ma
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [89] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#10 ] ( main:2::print_str:13 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:17 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:21 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:31 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:36 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:41 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:50 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:54 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:58 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] ) always clobbers reg byte a reg byte y 
 Statement [91] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#10) [ print_char_cursor#2 print_str::str#10 ] ( main:2::print_str:13 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:17 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:21 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:31 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:36 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:41 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:50 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:54 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:58 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] ) always clobbers reg byte a reg byte y 
-Statement [96] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:11 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:11 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ) always clobbers reg byte a 
-Statement [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ) always clobbers reg byte a 
-Statement [104] (word) divr16u::return#2 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ) always clobbers reg byte a 
-Statement [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ) always clobbers reg byte a 
-Statement [106] (word) divr16u::rem#4 ← (word) rem16u#1 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ) always clobbers reg byte a 
-Statement [108] (word) divr16u::return#3 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ) always clobbers reg byte a 
-Statement [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ) always clobbers reg byte a 
-Statement [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ) always clobbers reg byte a 
-Statement [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:7 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:9 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ) always clobbers reg byte a 
-Statement [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ) always clobbers reg byte a 
-Statement [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ) always clobbers reg byte a 
-Statement [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ) always clobbers reg byte a 
-Statement [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ) always clobbers reg byte a 
-Statement [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
+Statement [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:11::memset:95 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:11::memset:95 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ) always clobbers reg byte a 
+Statement [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ) always clobbers reg byte a 
+Statement [107] (word) divr16u::return#2 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ) always clobbers reg byte a 
+Statement [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ) always clobbers reg byte a 
+Statement [109] (word) divr16u::rem#4 ← (word) rem16u#1 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ) always clobbers reg byte a 
+Statement [111] (word) divr16u::return#3 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ) always clobbers reg byte a 
+Statement [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ) always clobbers reg byte a 
+Statement [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ) always clobbers reg byte a 
+Statement [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:7 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:9 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ) always clobbers reg byte a 
+Statement [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ) always clobbers reg byte a 
+Statement [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ) always clobbers reg byte a 
+Statement [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ) always clobbers reg byte a 
+Statement [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ) always clobbers reg byte a 
+Statement [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:35 [ divr16u::i#2 divr16u::i#1 ]
-Statement [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
-Statement [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
-Statement [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
-Statement [136] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
+Statement [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
+Statement [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
+Statement [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
+Statement [139] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
 Statement [28] (byte*~) print_char_cursor#101 ← (byte*) print_line_cursor#1 [ main::i#10 print_byte::b#2 print_char_cursor#101 print_line_cursor#1 ] ( main:2 [ main::i#10 print_byte::b#2 print_char_cursor#101 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [32] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [33] (word) print_word::w#3 ← *((const word[$14]) main::lintab1#0 + (byte~) main::$27) [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ) always clobbers reg byte a 
@@ -3297,27 +3432,27 @@ Statement [79] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f [ p
 Statement [84] *((byte*) print_char_cursor#50) ← (byte) print_char::ch#2 [ print_char_cursor#50 ] ( main:2::print_byte:29::print_char:78 [ main::i#10 print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:15::print_byte:71::print_char:78 [ print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:19::print_byte:71::print_char:78 [ print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:23::print_byte:71::print_char:78 [ print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:34::print_byte:71::print_char:78 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:39::print_byte:71::print_char:78 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:44::print_byte:71::print_char:78 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:52::print_byte:71::print_char:78 [ print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:56::print_byte:71::print_char:78 [ print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:60::print_byte:71::print_char:78 [ print_line_cursor#1 print_word::w#10 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:15::print_byte:73::print_char:78 [ print_byte::b#3 print_char_cursor#50 ] main:2::print_word:19::print_byte:73::print_char:78 [ print_byte::b#3 print_char_cursor#50 ] main:2::print_word:23::print_byte:73::print_char:78 [ print_byte::b#3 print_char_cursor#50 ] main:2::print_word:34::print_byte:73::print_char:78 [ main::i#10 print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:39::print_byte:73::print_char:78 [ main::i#10 print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:44::print_byte:73::print_char:78 [ main::i#10 print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:52::print_byte:73::print_char:78 [ print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:56::print_byte:73::print_char:78 [ print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_word:60::print_byte:73::print_char:78 [ print_line_cursor#1 print_byte::b#3 print_char_cursor#50 ] main:2::print_byte:29::print_char:81 [ main::i#10 print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:15::print_byte:71::print_char:81 [ print_word::w#10 print_char_cursor#50 ] main:2::print_word:19::print_byte:71::print_char:81 [ print_word::w#10 print_char_cursor#50 ] main:2::print_word:23::print_byte:71::print_char:81 [ print_word::w#10 print_char_cursor#50 ] main:2::print_word:34::print_byte:71::print_char:81 [ main::i#10 print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:39::print_byte:71::print_char:81 [ main::i#10 print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:44::print_byte:71::print_char:81 [ main::i#10 print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:52::print_byte:71::print_char:81 [ print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:56::print_byte:71::print_char:81 [ print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:60::print_byte:71::print_char:81 [ print_line_cursor#1 print_word::w#10 print_char_cursor#50 ] main:2::print_word:15::print_byte:73::print_char:81 [ print_char_cursor#50 ] main:2::print_word:19::print_byte:73::print_char:81 [ print_char_cursor#50 ] main:2::print_word:23::print_byte:73::print_char:81 [ print_char_cursor#50 ] main:2::print_word:34::print_byte:73::print_char:81 [ main::i#10 print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:39::print_byte:73::print_char:81 [ main::i#10 print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:44::print_byte:73::print_char:81 [ main::i#10 print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:52::print_byte:73::print_char:81 [ print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:56::print_byte:73::print_char:81 [ print_line_cursor#1 print_char_cursor#50 ] main:2::print_word:60::print_byte:73::print_char:81 [ print_line_cursor#1 print_char_cursor#50 ] ) always clobbers reg byte y 
 Statement [89] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#10 ] ( main:2::print_str:13 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:17 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:21 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:31 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:36 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:41 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:50 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:54 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:58 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] ) always clobbers reg byte a reg byte y 
 Statement [91] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#10) [ print_char_cursor#2 print_str::str#10 ] ( main:2::print_str:13 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:17 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:21 [ print_char_cursor#2 print_str::str#10 ] main:2::print_str:31 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:36 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:41 [ main::i#10 print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:50 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:54 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] main:2::print_str:58 [ print_line_cursor#1 print_char_cursor#2 print_str::str#10 ] ) always clobbers reg byte a reg byte y 
-Statement [96] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:11 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:11 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ) always clobbers reg byte a 
-Statement [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ) always clobbers reg byte a 
-Statement [104] (word) divr16u::return#2 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ) always clobbers reg byte a 
-Statement [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ) always clobbers reg byte a 
-Statement [106] (word) divr16u::rem#4 ← (word) rem16u#1 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ) always clobbers reg byte a 
-Statement [108] (word) divr16u::return#3 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ) always clobbers reg byte a 
-Statement [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ) always clobbers reg byte a 
-Statement [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ) always clobbers reg byte a 
-Statement [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:7 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:9 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ) always clobbers reg byte a 
-Statement [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ) always clobbers reg byte a 
-Statement [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ) always clobbers reg byte a 
-Statement [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ) always clobbers reg byte a 
-Statement [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ) always clobbers reg byte a 
-Statement [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
-Statement [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
-Statement [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
-Statement [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
-Statement [136] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::lin16u_gen:5::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:103 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:5::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:107 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
+Statement [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:11::memset:95 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:11::memset:95 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::ampl#0 ] ) always clobbers reg byte a 
+Statement [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::dividend#1 ] ) always clobbers reg byte a 
+Statement [107] (word) divr16u::return#2 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#2 rem16u#1 ] ) always clobbers reg byte a 
+Statement [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 rem16u#1 ] ) always clobbers reg byte a 
+Statement [109] (word) divr16u::rem#4 ← (word) rem16u#1 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::rem#4 ] ) always clobbers reg byte a 
+Statement [111] (word) divr16u::return#3 ← (word) divr16u::return#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#3 ] ) always clobbers reg byte a 
+Statement [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 lin16u_gen::stepf#0 ] ) always clobbers reg byte a 
+Statement [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:7 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] main:2::lin16u_gen:9 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::step#0 ] ) always clobbers reg byte a 
+Statement [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ( main:2::lin16u_gen:5 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:7 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] main:2::lin16u_gen:9 [ lin16u_gen::lintab#5 lin16u_gen::step#0 lin16u_gen::val#0 ] ) always clobbers reg byte a 
+Statement [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::$5 ] ) always clobbers reg byte a 
+Statement [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#2 lin16u_gen::lintab#4 lin16u_gen::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::lintab#4 lin16u_gen::i#2 lin16u_gen::val#1 ] ) always clobbers reg byte a 
+Statement [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::i#2 lin16u_gen::val#1 lin16u_gen::lintab#3 ] ) always clobbers reg byte a 
+Statement [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:7 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] main:2::lin16u_gen:9 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#3 lin16u_gen::i#1 ] ) always clobbers reg byte a 
+Statement [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
+Statement [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
+Statement [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
+Statement [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
+Statement [139] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::lin16u_gen:5::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:106 [ lin16u_gen::min#3 lin16u_gen::lintab#5 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:5::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:7::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] main:2::lin16u_gen:9::divr16u:110 [ lin16u_gen::min#3 lin16u_gen::lintab#5 lin16u_gen::stepi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#10 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#21 print_line_cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_WORD:5 [ print_word::w#10 print_word::w#3 print_word::w#4 print_word::w#5 ] : zp ZP_WORD:5 , 
@@ -3325,7 +3460,7 @@ Potential registers zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b
 Potential registers zp ZP_BYTE:8 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:9 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ] : zp ZP_WORD:9 , 
 Potential registers zp ZP_WORD:11 [ print_str::str#10 print_str::str#12 print_str::str#0 ] : zp ZP_WORD:11 , 
-Potential registers zp ZP_WORD:13 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:13 , 
+Potential registers zp ZP_WORD:13 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:13 , 
 Potential registers zp ZP_WORD:15 [ lin16u_gen::max#3 ] : zp ZP_WORD:15 , 
 Potential registers zp ZP_WORD:17 [ lin16u_gen::min#3 ] : zp ZP_WORD:17 , 
 Potential registers zp ZP_DWORD:19 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ] : zp ZP_DWORD:19 , 
@@ -3359,26 +3494,28 @@ Uplift Scope [divr16u] 106.92: zp ZP_WORD:29 [ divr16u::rem#5 divr16u::rem#10 di
 Uplift Scope [lin16u_gen] 22: zp ZP_WORD:55 [ lin16u_gen::$5 ] 21.17: zp ZP_DWORD:19 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ] 20.9: zp ZP_WORD:25 [ lin16u_gen::i#2 lin16u_gen::i#1 ] 16.25: zp ZP_WORD:23 [ lin16u_gen::lintab#4 lin16u_gen::lintab#3 lin16u_gen::lintab#5 ] 4: zp ZP_WORD:41 [ lin16u_gen::ampl#0 ] 4: zp ZP_WORD:49 [ lin16u_gen::stepf#0 ] 2: zp ZP_WORD:15 [ lin16u_gen::max#3 ] 1.44: zp ZP_DWORD:51 [ lin16u_gen::step#0 ] 0.8: zp ZP_WORD:45 [ lin16u_gen::stepi#0 ] 0.36: zp ZP_WORD:17 [ lin16u_gen::min#3 ] 
 Uplift Scope [main] 22: zp ZP_BYTE:36 [ main::$27 ] 22: zp ZP_BYTE:37 [ main::$28 ] 22: zp ZP_BYTE:38 [ main::$29 ] 19.64: zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
 Uplift Scope [print_word] 78.33: zp ZP_WORD:5 [ print_word::w#10 print_word::w#3 print_word::w#4 print_word::w#5 ] 
-Uplift Scope [print_cls] 33: zp ZP_WORD:13 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:13 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_byte] 23.75: zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:39 [ print_byte::$0 ] 4: zp ZP_BYTE:40 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:8 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
+Uplift Scope [print_cls] 
 
-Uplifting [] best 16229 combination zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#21 print_line_cursor#1 ] zp ZP_WORD:9 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ] zp ZP_WORD:59 [ rem16u#1 ] 
-Uplifting [print_str] best 16229 combination zp ZP_WORD:11 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
-Uplifting [divr16u] best 16019 combination zp ZP_WORD:29 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:33 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:31 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#0 ] zp ZP_WORD:43 [ divr16u::return#2 ] zp ZP_WORD:47 [ divr16u::return#3 ] zp ZP_WORD:27 [ divr16u::divisor#6 ] 
-Uplifting [lin16u_gen] best 16019 combination zp ZP_WORD:55 [ lin16u_gen::$5 ] zp ZP_DWORD:19 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ] zp ZP_WORD:25 [ lin16u_gen::i#2 lin16u_gen::i#1 ] zp ZP_WORD:23 [ lin16u_gen::lintab#4 lin16u_gen::lintab#3 lin16u_gen::lintab#5 ] zp ZP_WORD:41 [ lin16u_gen::ampl#0 ] zp ZP_WORD:49 [ lin16u_gen::stepf#0 ] zp ZP_WORD:15 [ lin16u_gen::max#3 ] zp ZP_DWORD:51 [ lin16u_gen::step#0 ] zp ZP_WORD:45 [ lin16u_gen::stepi#0 ] zp ZP_WORD:17 [ lin16u_gen::min#3 ] 
-Uplifting [main] best 15749 combination reg byte a [ main::$27 ] reg byte a [ main::$28 ] reg byte a [ main::$29 ] reg byte x [ main::i#10 main::i#1 ] 
+Uplifting [] best 16244 combination zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#21 print_line_cursor#1 ] zp ZP_WORD:9 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ] zp ZP_WORD:59 [ rem16u#1 ] 
+Uplifting [print_str] best 16244 combination zp ZP_WORD:11 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
+Uplifting [divr16u] best 16034 combination zp ZP_WORD:29 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:33 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:31 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#0 ] zp ZP_WORD:43 [ divr16u::return#2 ] zp ZP_WORD:47 [ divr16u::return#3 ] zp ZP_WORD:27 [ divr16u::divisor#6 ] 
+Uplifting [lin16u_gen] best 16034 combination zp ZP_WORD:55 [ lin16u_gen::$5 ] zp ZP_DWORD:19 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ] zp ZP_WORD:25 [ lin16u_gen::i#2 lin16u_gen::i#1 ] zp ZP_WORD:23 [ lin16u_gen::lintab#4 lin16u_gen::lintab#3 lin16u_gen::lintab#5 ] zp ZP_WORD:41 [ lin16u_gen::ampl#0 ] zp ZP_WORD:49 [ lin16u_gen::stepf#0 ] zp ZP_WORD:15 [ lin16u_gen::max#3 ] zp ZP_DWORD:51 [ lin16u_gen::step#0 ] zp ZP_WORD:45 [ lin16u_gen::stepi#0 ] zp ZP_WORD:17 [ lin16u_gen::min#3 ] 
+Uplifting [main] best 15764 combination reg byte a [ main::$27 ] reg byte a [ main::$28 ] reg byte a [ main::$29 ] reg byte x [ main::i#10 main::i#1 ] 
 Limited combination testing to 100 combinations of 128 possible.
-Uplifting [print_word] best 15749 combination zp ZP_WORD:5 [ print_word::w#10 print_word::w#3 print_word::w#4 print_word::w#5 ] 
-Uplifting [print_cls] best 15749 combination zp ZP_WORD:13 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_byte] best 15741 combination zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_char] best 15732 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [RADIX] best 15732 combination 
-Uplifting [print_ln] best 15732 combination 
+Uplifting [print_word] best 15764 combination zp ZP_WORD:5 [ print_word::w#10 print_word::w#3 print_word::w#4 print_word::w#5 ] 
+Uplifting [memset] best 15764 combination zp ZP_WORD:13 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [print_byte] best 15756 combination zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_char] best 15747 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [RADIX] best 15747 combination 
+Uplifting [print_ln] best 15747 combination 
+Uplifting [print_cls] best 15747 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
-Uplifting [print_byte] best 15732 combination zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 
+Uplifting [print_byte] best 15747 combination zp ZP_BYTE:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:29 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ] with [ zp ZP_WORD:59 [ rem16u#1 ] ] - score: 2
 Coalescing zero page register with common assignment [ zp ZP_WORD:15 [ lin16u_gen::max#3 ] ] with [ zp ZP_WORD:41 [ lin16u_gen::ampl#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:33 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] ] with [ zp ZP_WORD:43 [ divr16u::return#2 ] ] - score: 1
@@ -3390,7 +3527,7 @@ Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_word::w#10 print_word::w#3 pri
 Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:6 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ]
 Allocated (was zp ZP_WORD:11) zp ZP_WORD:9 [ print_str::str#10 print_str::str#12 print_str::str#0 ]
-Allocated (was zp ZP_WORD:13) zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated (was zp ZP_WORD:13) zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ]
 Allocated (was zp ZP_WORD:15) zp ZP_WORD:13 [ lin16u_gen::max#3 lin16u_gen::ampl#0 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#0 ]
 Allocated (was zp ZP_WORD:17) zp ZP_WORD:15 [ lin16u_gen::min#3 ]
 Allocated (was zp ZP_DWORD:19) zp ZP_DWORD:17 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ]
@@ -3435,19 +3572,19 @@ bend:
   // main
 main: {
     // [5] call lin16u_gen 
-    // [100] phi from main to lin16u_gen [phi:main->lin16u_gen]
+    // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
   lin16u_gen_from_main:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta lin16u_gen.lintab
     lda #>lintab1
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$22d
     sta lin16u_gen.min
     lda #>$22d
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$7461
     sta lin16u_gen.max
     lda #>$7461
@@ -3459,19 +3596,19 @@ main: {
     // main::@3
   b3:
     // [7] call lin16u_gen 
-    // [100] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
+    // [103] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
   lin16u_gen_from_b3:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta lin16u_gen.lintab
     lda #>lintab2
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$79cb
     sta lin16u_gen.min
     lda #>$79cb
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$f781
     sta lin16u_gen.max
     lda #>$f781
@@ -3483,19 +3620,19 @@ main: {
     // main::@4
   b4:
     // [9] call lin16u_gen 
-    // [100] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
+    // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
   lin16u_gen_from_b4:
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta lin16u_gen.lintab
     lda #>lintab3
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
     lda #<0
     sta lin16u_gen.min
     lda #>0
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$6488
     sta lin16u_gen.max
     lda #>$6488
@@ -4033,41 +4170,58 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $b
-    // [95] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    jmp b1
-    // [95] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [96] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [97] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1_from_b1
+    // [95] call memset 
+    // [97] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
     jmp breturn
     // print_cls::@return
   breturn:
-    // [99] return 
+    // [96] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = $b
+    // [98] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [98] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    jmp b1
+    // [98] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+  b1_from_b1:
+    // [98] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    jmp b1
+    // memset::@1
+  b1:
+    // [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // [100] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1_from_b1
+    lda dst
+    cmp #<end
+    bne b1_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [102] return 
     rts
 }
   // lin16u_gen
@@ -4086,7 +4240,7 @@ lin16u_gen: {
     .label i = $17
     .label max = $d
     .label min = $f
-    // [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz1_minus_vwuz2 
+    // [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz1_minus_vwuz2 
     lda ampl
     sec
     sbc min
@@ -4094,53 +4248,53 @@ lin16u_gen: {
     lda ampl+1
     sbc min+1
     sta ampl+1
-    // [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
-    // [103] call divr16u 
-    // [120] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
+    // [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
+    // [106] call divr16u 
+    // [123] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
   divr16u_from_lin16u_gen:
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
-    // [120] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.rem
     lda #>0
     sta divr16u.rem+1
     jsr divr16u
-    // [104] (word) divr16u::return#2 ← (word) divr16u::return#0
+    // [107] (word) divr16u::return#2 ← (word) divr16u::return#0
     jmp b2
     // lin16u_gen::@2
   b2:
-    // [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
+    // [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda divr16u.return
     sta stepi
     lda divr16u.return+1
     sta stepi+1
-    // [106] (word) divr16u::rem#4 ← (word) rem16u#1
-    // [107] call divr16u 
-    // [120] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
+    // [109] (word) divr16u::rem#4 ← (word) rem16u#1
+    // [110] call divr16u 
+    // [123] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
   divr16u_from_b2:
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.dividend
     lda #>0
     sta divr16u.dividend+1
-    // [120] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
     jsr divr16u
-    // [108] (word) divr16u::return#3 ← (word) divr16u::return#0
+    // [111] (word) divr16u::return#3 ← (word) divr16u::return#0
     jmp b3
     // lin16u_gen::@3
   b3:
-    // [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
-    // [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
+    // [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
+    // [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
     lda stepi
     sta step+2
     lda stepi+1
@@ -4149,7 +4303,7 @@ lin16u_gen: {
     sta step
     lda stepf+1
     sta step+1
-    // [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
+    // [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
     lda #<0
     sta val
     lda #>0
@@ -4158,37 +4312,37 @@ lin16u_gen: {
     sta val+2
     lda min+1
     sta val+3
-    // [112] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
+    // [115] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
   b1_from_b3:
-    // [112] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
+    // [115] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
     jmp b1
-    // [112] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
+    // [115] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
   b1_from_b1:
-    // [112] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
     jmp b1
     // lin16u_gen::@1
   b1:
-    // [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
+    // [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
     lda val+2
     sta _5
     lda val+3
     sta _5+1
-    // [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
+    // [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _5
     sta (lintab),y
     iny
     lda _5+1
     sta (lintab),y
-    // [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
+    // [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
     lda val
     clc
     adc step
@@ -4202,7 +4356,7 @@ lin16u_gen: {
     lda val+3
     adc step+3
     sta val+3
-    // [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc lintab
@@ -4210,12 +4364,12 @@ lin16u_gen: {
     bcc !+
     inc lintab+1
   !:
-    // [117] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
+    // [120] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-    // [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
+    // [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
     lda i+1
     cmp #>$14
     bcc b1_from_b1
@@ -4227,7 +4381,7 @@ lin16u_gen: {
     jmp breturn
     // lin16u_gen::@return
   breturn:
-    // [119] return 
+    // [122] return 
     rts
 }
   // divr16u
@@ -4242,58 +4396,58 @@ divr16u: {
     .label quotient = $1d
     .label return = $1d
     .label divisor = $19
-    // [121] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
+    // [124] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
   b1_from_divr16u:
-    // [121] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
+    // [124] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [121] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
+    // [124] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     lda #<0
     sta quotient
     lda #>0
     sta quotient+1
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
     jmp b1
-    // [121] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
+    // [124] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
   b1_from_b3:
-    // [121] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
-    // [121] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+    // [124] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
+    // [124] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     jmp b1
     // divr16u::@1
   b1:
-    // [122] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [125] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl rem
     rol rem+1
-    // [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
+    // [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
     lda dividend+1
-    // [124] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
+    // [127] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
-    // [125] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
+    // [128] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2_from_b1
     jmp b4
     // divr16u::@4
   b4:
-    // [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
+    // [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora rem
     sta rem
-    // [127] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
+    // [130] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
-    // [127] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
+    // [130] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     jmp b2
     // divr16u::@2
   b2:
-    // [128] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [131] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl dividend
     rol dividend+1
-    // [129] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [132] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl quotient
     rol quotient+1
-    // [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
+    // [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda rem+1
     cmp divisor+1
     bcc b3_from_b2
@@ -4305,12 +4459,12 @@ divr16u: {
     jmp b5
     // divr16u::@5
   b5:
-    // [131] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
+    // [134] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc quotient
     bne !+
     inc quotient+1
   !:
-    // [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
+    // [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
     lda rem
     sec
     sbc divisor
@@ -4318,27 +4472,27 @@ divr16u: {
     lda rem+1
     sbc divisor+1
     sta rem+1
-    // [133] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
+    // [136] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
   b3_from_b2:
   b3_from_b5:
-    // [133] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-    // [133] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+    // [136] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
+    // [136] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     jmp b3
     // divr16u::@3
   b3:
-    // [134] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
+    // [137] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [135] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [138] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b1_from_b3
     jmp b6
     // divr16u::@6
   b6:
-    // [136] (word) rem16u#1 ← (word) divr16u::rem#11
+    // [139] (word) rem16u#1 ← (word) divr16u::rem#11
     jmp breturn
     // divr16u::@return
   breturn:
-    // [137] return 
+    // [140] return 
     rts
 }
   // File Data
@@ -4382,6 +4536,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp b1
+Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -4522,7 +4677,9 @@ Removing instruction print_char_from_b1:
 Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
-Removing instruction b1_from_print_cls:
+Removing instruction memset_from_print_cls:
+Removing instruction breturn:
+Removing instruction b1_from_memset:
 Removing instruction breturn:
 Removing instruction divr16u_from_lin16u_gen:
 Removing instruction b2:
@@ -4664,6 +4821,21 @@ FINAL SYMBOL TABLE
 (const word[$14]) main::lintab3#0 lintab3 = { fill( $14, 0) }
 (const string) main::str str = (string) "   @"
 (const string) main::str1 str1 = (string) " @"
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(label) memset::@1
+(label) memset::@return
+(byte) memset::c
+(const byte) memset::c#0 c = (byte) ' '
+(byte*) memset::dst
+(byte*) memset::dst#1 dst zp ZP_WORD:11 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:11 16.5
+(byte*) memset::end
+(const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
+(word) memset::num
+(const word) memset::num#0 num = (word) $3e8
+(void*) memset::return
+(void*) memset::str
+(const void*) memset::str#0 str = (void*)(byte*) 1024
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
 (byte~) print_byte::$2 reg byte a 4.0
@@ -4690,11 +4862,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#86 print_char_cursor zp ZP_WORD:7 45.0
 (byte*~) print_char_cursor#95 print_char_cursor zp ZP_WORD:7 4.0
 (void()) print_cls()
-(label) print_cls::@1
 (label) print_cls::@return
-(byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:11 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:11 16.5
 (byte[]) print_hextab
 (const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
@@ -4731,7 +4899,7 @@ zp ZP_BYTE:6 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 zp ZP_WORD:7 [ print_char_cursor#86 print_char_cursor#50 print_char_cursor#81 print_char_cursor#101 print_char_cursor#2 print_char_cursor#11 print_char_cursor#95 print_char_cursor#1 ]
 zp ZP_WORD:9 [ print_str::str#10 print_str::str#12 print_str::str#0 ]
-zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ]
 zp ZP_WORD:13 [ lin16u_gen::max#3 lin16u_gen::ampl#0 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#0 ]
 zp ZP_WORD:15 [ lin16u_gen::min#3 ]
 zp ZP_DWORD:17 [ lin16u_gen::val#2 lin16u_gen::val#1 lin16u_gen::val#0 ]
@@ -4754,7 +4922,7 @@ reg byte a [ divr16u::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 13511
+Score: 13523
 
   // File Comments
 // Linear table generator
@@ -4779,18 +4947,18 @@ Score: 13511
 main: {
     // lin16u_gen(557, 29793, lintab1, 20)
     // [5] call lin16u_gen 
-    // [100] phi from main to lin16u_gen [phi:main->lin16u_gen]
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab1#0 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta lin16u_gen.lintab
     lda #>lintab1
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $22d [phi:main->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$22d
     sta lin16u_gen.min
     lda #>$22d
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $7461 [phi:main->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$7461
     sta lin16u_gen.max
     lda #>$7461
@@ -4800,18 +4968,18 @@ main: {
     // main::@3
     // lin16u_gen(31179, 63361, lintab2, 20)
     // [7] call lin16u_gen 
-    // [100] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi from main::@3 to lin16u_gen [phi:main::@3->lin16u_gen]
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab2#0 [phi:main::@3->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta lin16u_gen.lintab
     lda #>lintab2
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (word) $79cb [phi:main::@3->lin16u_gen#1] -- vwuz1=vwuc1 
     lda #<$79cb
     sta lin16u_gen.min
     lda #>$79cb
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $f781 [phi:main::@3->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$f781
     sta lin16u_gen.max
     lda #>$f781
@@ -4821,17 +4989,17 @@ main: {
     // main::@4
     // lin16u_gen(0, $6488, lintab3, 20)
     // [9] call lin16u_gen 
-    // [100] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
-    // [100] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
+    // [103] phi (word*) lin16u_gen::lintab#5 = (const word[$14]) main::lintab3#0 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta lin16u_gen.lintab
     lda #>lintab3
     sta lin16u_gen.lintab+1
-    // [100] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
+    // [103] phi (word) lin16u_gen::min#3 = (byte) 0 [phi:main::@4->lin16u_gen#1] -- vwuz1=vbuc1 
     lda #<0
     sta lin16u_gen.min
     sta lin16u_gen.min+1
-    // [100] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
+    // [103] phi (word) lin16u_gen::max#3 = (word) $6488 [phi:main::@4->lin16u_gen#2] -- vwuz1=vwuc1 
     lda #<$6488
     sta lin16u_gen.max
     lda #>$6488
@@ -5294,38 +5462,54 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $b
-    // [95] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    // [95] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-    // [95] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    // print_cls::@1
-  b1:
-    // *sc = ' '
-    // [96] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for(byte* sc=print_screen; sc!=print_screen+1000; sc++)
-    // [97] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [98] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1
+    // memset(print_screen, ' ', 1000)
+    // [95] call memset 
+    // [97] phi from print_cls to memset [phi:print_cls->memset]
+    jsr memset
     // print_cls::@return
     // }
-    // [99] return 
+    // [96] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = $b
+    // [98] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [98] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    // [98] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+    // [98] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    // memset::@1
+  b1:
+    // *dst = c
+    // [99] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    // [100] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [101] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1
+    lda dst
+    cmp #<end
+    bne b1
+    // memset::@return
+    // }
+    // [102] return 
     rts
 }
   // lin16u_gen
@@ -5345,7 +5529,7 @@ lin16u_gen: {
     .label max = $d
     .label min = $f
     // ampl = max-min
-    // [101] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz1_minus_vwuz2 
+    // [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3 -- vwuz1=vwuz1_minus_vwuz2 
     lda ampl
     sec
     sbc min
@@ -5354,51 +5538,51 @@ lin16u_gen: {
     sbc min+1
     sta ampl+1
     // divr16u(ampl, length-1, 0)
-    // [102] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
-    // [103] call divr16u 
-    // [120] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
+    // [105] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
+    // [106] call divr16u 
+    // [123] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
-    // [120] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:lin16u_gen->divr16u#1] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (byte) 0 [phi:lin16u_gen->divr16u#2] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u
     // divr16u(ampl, length-1, 0)
-    // [104] (word) divr16u::return#2 ← (word) divr16u::return#0
+    // [107] (word) divr16u::return#2 ← (word) divr16u::return#0
     // lin16u_gen::@2
     // stepi = divr16u(ampl, length-1, 0)
-    // [105] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
+    // [108] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda divr16u.return
     sta stepi
     lda divr16u.return+1
     sta stepi+1
     // divr16u(0, length-1, rem16u)
-    // [106] (word) divr16u::rem#4 ← (word) rem16u#1
-    // [107] call divr16u 
-    // [120] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
-    // [120] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
+    // [109] (word) divr16u::rem#4 ← (word) rem16u#1
+    // [110] call divr16u 
+    // [123] phi from lin16u_gen::@2 to divr16u [phi:lin16u_gen::@2->divr16u]
+    // [123] phi (word) divr16u::divisor#6 = (byte) $14-(byte) 1 [phi:lin16u_gen::@2->divr16u#0] -- vwuz1=vbuc1 
     lda #<$14-1
     sta divr16u.divisor
     lda #>$14-1
     sta divr16u.divisor+1
-    // [120] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
+    // [123] phi (word) divr16u::dividend#5 = (byte) 0 [phi:lin16u_gen::@2->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
     sta divr16u.dividend
     sta divr16u.dividend+1
-    // [120] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
+    // [123] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@2->divr16u#2] -- register_copy 
     jsr divr16u
     // divr16u(0, length-1, rem16u)
-    // [108] (word) divr16u::return#3 ← (word) divr16u::return#0
+    // [111] (word) divr16u::return#3 ← (word) divr16u::return#0
     // lin16u_gen::@3
     // stepf = divr16u(0, length-1, rem16u)
-    // [109] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
+    // [112] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
     // step = { stepi, stepf }
-    // [110] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
+    // [113] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
     lda stepi
     sta step+2
     lda stepi+1
@@ -5408,7 +5592,7 @@ lin16u_gen: {
     lda stepf+1
     sta step+1
     // val = { min, 0 }
-    // [111] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
+    // [114] (dword) lin16u_gen::val#0 ← (word) lin16u_gen::min#3 dw= (word) 0 -- vduz1=vwuz2_dword_vwuc1 
     lda #<0
     sta val
     sta val+1
@@ -5416,27 +5600,27 @@ lin16u_gen: {
     sta val+2
     lda min+1
     sta val+3
-    // [112] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
-    // [112] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
+    // [115] phi from lin16u_gen::@3 to lin16u_gen::@1 [phi:lin16u_gen::@3->lin16u_gen::@1]
+    // [115] phi (word) lin16u_gen::i#2 = (byte) 0 [phi:lin16u_gen::@3->lin16u_gen::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta i
     sta i+1
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
-    // [112] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
-    // [112] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
-    // [112] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
-    // [112] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#5 [phi:lin16u_gen::@3->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#0 [phi:lin16u_gen::@3->lin16u_gen::@1#2] -- register_copy 
+    // [115] phi from lin16u_gen::@1 to lin16u_gen::@1 [phi:lin16u_gen::@1->lin16u_gen::@1]
+    // [115] phi (word) lin16u_gen::i#2 = (word) lin16u_gen::i#1 [phi:lin16u_gen::@1->lin16u_gen::@1#0] -- register_copy 
+    // [115] phi (word*) lin16u_gen::lintab#4 = (word*) lin16u_gen::lintab#3 [phi:lin16u_gen::@1->lin16u_gen::@1#1] -- register_copy 
+    // [115] phi (dword) lin16u_gen::val#2 = (dword) lin16u_gen::val#1 [phi:lin16u_gen::@1->lin16u_gen::@1#2] -- register_copy 
     // lin16u_gen::@1
   b1:
     // >val
-    // [113] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
+    // [116] (word~) lin16u_gen::$5 ← > (dword) lin16u_gen::val#2 -- vwuz1=_hi_vduz2 
     lda val+2
     sta _5
     lda val+3
     sta _5+1
     // *lintab = >val
-    // [114] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
+    // [117] *((word*) lin16u_gen::lintab#4) ← (word~) lin16u_gen::$5 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda _5
     sta (lintab),y
@@ -5444,7 +5628,7 @@ lin16u_gen: {
     lda _5+1
     sta (lintab),y
     // val = val + step
-    // [115] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
+    // [118] (dword) lin16u_gen::val#1 ← (dword) lin16u_gen::val#2 + (dword) lin16u_gen::step#0 -- vduz1=vduz1_plus_vduz2 
     lda val
     clc
     adc step
@@ -5459,7 +5643,7 @@ lin16u_gen: {
     adc step+3
     sta val+3
     // lintab++;
-    // [116] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [119] (word*) lin16u_gen::lintab#3 ← (word*) lin16u_gen::lintab#4 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD
     clc
     adc lintab
@@ -5468,12 +5652,12 @@ lin16u_gen: {
     inc lintab+1
   !:
     // for(word i=0; i<length; i++)
-    // [117] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
+    // [120] (word) lin16u_gen::i#1 ← ++ (word) lin16u_gen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-    // [118] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
+    // [121] if((word) lin16u_gen::i#1<(byte) $14) goto lin16u_gen::@1 -- vwuz1_lt_vbuc1_then_la1 
     lda i+1
     cmp #>$14
     bcc b1
@@ -5484,7 +5668,7 @@ lin16u_gen: {
   !:
     // lin16u_gen::@return
     // }
-    // [119] return 
+    // [122] return 
     rts
 }
   // divr16u
@@ -5499,56 +5683,56 @@ divr16u: {
     .label quotient = $1d
     .label return = $1d
     .label divisor = $19
-    // [121] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
-    // [121] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
+    // [124] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
+    // [124] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [121] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
+    // [124] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     txa
     sta quotient
     sta quotient+1
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
-    // [121] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
-    // [121] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
-    // [121] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
-    // [121] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-    // [121] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
+    // [124] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
+    // [124] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
+    // [124] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
+    // [124] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
+    // [124] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     // divr16u::@1
   b1:
     // rem = rem << 1
-    // [122] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [125] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl rem
     rol rem+1
     // >dividend
-    // [123] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
+    // [126] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
     lda dividend+1
     // >dividend & $80
-    // [124] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
+    // [127] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
     // if( (>dividend & $80) != 0 )
-    // [125] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
+    // [128] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     // divr16u::@4
     // rem = rem | 1
-    // [126] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
+    // [129] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora rem
     sta rem
-    // [127] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
-    // [127] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
+    // [130] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
+    // [130] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     // divr16u::@2
   b2:
     // dividend = dividend << 1
-    // [128] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [131] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl dividend
     rol dividend+1
     // quotient = quotient << 1
-    // [129] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [132] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl quotient
     rol quotient+1
     // if(rem>=divisor)
-    // [130] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
+    // [133] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda rem+1
     cmp divisor+1
     bcc b3
@@ -5559,13 +5743,13 @@ divr16u: {
   !:
     // divr16u::@5
     // quotient++;
-    // [131] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
+    // [134] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc quotient
     bne !+
     inc quotient+1
   !:
     // rem = rem - divisor
-    // [132] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
+    // [135] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 -- vwuz1=vwuz1_minus_vwuz2 
     lda rem
     sec
     sbc divisor
@@ -5573,23 +5757,23 @@ divr16u: {
     lda rem+1
     sbc divisor+1
     sta rem+1
-    // [133] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
-    // [133] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-    // [133] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+    // [136] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
+    // [136] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
+    // [136] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     // divr16u::@3
   b3:
     // for( byte i : 0..15)
-    // [134] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
+    // [137] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [135] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [138] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b1
     // divr16u::@6
     // rem16u = rem
-    // [136] (word) rem16u#1 ← (word) divr16u::rem#11
+    // [139] (word) rem16u#1 ← (word) divr16u::rem#11
     // divr16u::@return
     // }
-    // [137] return 
+    // [140] return 
     rts
 }
   // File Data

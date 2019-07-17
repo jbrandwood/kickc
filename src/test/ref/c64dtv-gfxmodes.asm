@@ -2292,24 +2292,33 @@ print_ln: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $6d
-    lda #<menu.SCREEN
-    sta sc
-    lda #>menu.SCREEN
-    sta sc+1
+    jsr memset
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = menu.SCREEN
+    .label end = str+num
+    .label dst = $6d
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
   b1:
-    lda #' '
+    lda #c
     ldy #0
-    sta (sc),y
-    inc sc
+    sta (dst),y
+    inc dst
     bne !+
-    inc sc+1
+    inc dst+1
   !:
-    lda sc+1
-    cmp #>menu.SCREEN+$3e8
+    lda dst+1
+    cmp #>end
     bne b1
-    lda sc
-    cmp #<menu.SCREEN+$3e8
+    lda dst
+    cmp #<end
     bne b1
     rts
 }

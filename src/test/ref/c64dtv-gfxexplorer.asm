@@ -1455,33 +1455,42 @@ print_ln: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label _0 = $7a
-    .label sc = $22
     lda print_set_screen.screen
-    sta sc
+    sta memset.str
     lda print_set_screen.screen+1
-    sta sc+1
-  b1:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    lda print_set_screen.screen
+    sta memset.str+1
+    jsr memset
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage($22) str)
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label end = $7a
+    .label dst = $22
+    .label str = $22
+    lda str
     clc
-    adc #<$3e8
-    sta _0
-    lda print_set_screen.screen+1
-    adc #>$3e8
-    sta _0+1
-    lda sc+1
-    cmp _0+1
-    bne b1
-    lda sc
-    cmp _0
-    bne b1
+    adc #<num
+    sta end
+    lda str+1
+    adc #>num
+    sta end+1
+  b2:
+    lda #c
+    ldy #0
+    sta (dst),y
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    lda dst+1
+    cmp end+1
+    bne b2
+    lda dst
+    cmp end
+    bne b2
     rts
 }
 // Set the screen to print on. Also resets current line/char cursor.

@@ -13,6 +13,8 @@ Inlined call (byte*~) print_points::$3 ← call pointXpos (byte*) print_points::
 Inlined call (byte*~) print_points::$6 ← call pointYpos (byte*) print_points::point 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
+Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
@@ -64,6 +66,42 @@ Culled Empty Block (label) print_points::@2
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@12
+memset: scope:[memset]  from print_cls
+  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
+  (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
+  (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
+  (bool~) memset::$1 ← ! (bool~) memset::$0
+  if((bool~) memset::$1) goto memset::@1
+  to:memset::@2
+memset::@1: scope:[memset]  from memset memset::@4
+  (void*) memset::str#1 ← phi( memset/(void*) memset::str#3 memset::@4/(void*) memset::str#4 )
+  (void*) memset::return#0 ← (void*) memset::str#1
+  to:memset::@return
+memset::@2: scope:[memset]  from memset
+  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
+  (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
+  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
+  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
+  to:memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@4
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
+  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
+  *((byte*) memset::dst#2) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@4
+  to:memset::@1
+memset::@return: scope:[memset]  from memset::@1
+  (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
+  (void*) memset::return#1 ← (void*) memset::return#3
+  return 
+  to:@return
 @12: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
@@ -115,7 +153,7 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
 @28: scope:[]  from @12
-  (byte*) print_screen#9 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_screen#8 ← phi( @12/(byte*) print_screen#0 )
   (byte*) print_char_cursor#53 ← phi( @12/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#29 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $1
@@ -156,32 +194,27 @@ print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
 print_cls: scope:[print_cls]  from print_points
-  (byte*) print_screen#1 ← phi( print_points/(byte*) print_screen#4 )
-  (byte*) print_cls::sc#0 ← (byte*) print_screen#1
+  (byte*) print_screen#1 ← phi( print_points/(byte*) print_screen#3 )
+  (void*) memset::str#0 ← (void*)(byte*) print_screen#1
+  (byte) memset::c#0 ← (byte) ' '
+  (word) memset::num#0 ← (number) $3e8
+  call memset 
+  (void*) memset::return#2 ← (void*) memset::return#1
   to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  (byte*) print_screen#2 ← phi( print_cls/(byte*) print_screen#1 print_cls::@1/(byte*) print_screen#2 )
-  (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  *((byte*) print_cls::sc#2) ← (byte) ' '
-  (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (number) $3e8
-  (bool~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
-  if((bool~) print_cls::$1) goto print_cls::@1
-  to:print_cls::@2
-print_cls::@2: scope:[print_cls]  from print_cls::@1
-  (byte*) print_screen#3 ← phi( print_cls::@1/(byte*) print_screen#2 )
-  (byte*) print_line_cursor#3 ← (byte*) print_screen#3
+print_cls::@1: scope:[print_cls]  from print_cls
+  (byte*) print_screen#2 ← phi( print_cls/(byte*) print_screen#1 )
+  (byte*) print_line_cursor#3 ← (byte*) print_screen#2
   (byte*) print_char_cursor#10 ← (byte*) print_line_cursor#3
   to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@2
-  (byte*) print_char_cursor#30 ← phi( print_cls::@2/(byte*) print_char_cursor#10 )
-  (byte*) print_line_cursor#14 ← phi( print_cls::@2/(byte*) print_line_cursor#3 )
+print_cls::@return: scope:[print_cls]  from print_cls::@1
+  (byte*) print_char_cursor#30 ← phi( print_cls::@1/(byte*) print_char_cursor#10 )
+  (byte*) print_line_cursor#14 ← phi( print_cls::@1/(byte*) print_line_cursor#3 )
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#11 ← (byte*) print_char_cursor#30
   return 
   to:@return
 @35: scope:[]  from @28
-  (byte*) print_screen#8 ← phi( @28/(byte*) print_screen#9 )
+  (byte*) print_screen#7 ← phi( @28/(byte*) print_screen#8 )
   (byte*) print_char_cursor#52 ← phi( @28/(byte*) print_char_cursor#53 )
   (byte*) print_line_cursor#28 ← phi( @28/(byte*) print_line_cursor#29 )
   (byte) SIZEOF_POINT#0 ← (number) 2
@@ -190,13 +223,13 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte[$0]) points#0 ← { fill( $0, 0) }
   to:@41
 main: scope:[main]  from @41
-  (byte*) print_screen#6 ← phi( @41/(byte*) print_screen#7 )
+  (byte*) print_screen#5 ← phi( @41/(byte*) print_screen#6 )
   (byte*) print_char_cursor#49 ← phi( @41/(byte*) print_char_cursor#47 )
   (byte*) print_line_cursor#26 ← phi( @41/(byte*) print_line_cursor#25 )
   call init_points 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) print_screen#5 ← phi( main/(byte*) print_screen#6 )
+  (byte*) print_screen#4 ← phi( main/(byte*) print_screen#5 )
   (byte*) print_char_cursor#43 ← phi( main/(byte*) print_char_cursor#49 )
   (byte*) print_line_cursor#22 ← phi( main/(byte*) print_line_cursor#26 )
   call print_points 
@@ -303,7 +336,7 @@ init_points::@return: scope:[init_points]  from init_points::@5
 print_points: scope:[print_points]  from main::@1
   (byte*) print_char_cursor#44 ← phi( main::@1/(byte*) print_char_cursor#43 )
   (byte*) print_line_cursor#23 ← phi( main::@1/(byte*) print_line_cursor#22 )
-  (byte*) print_screen#4 ← phi( main::@1/(byte*) print_screen#5 )
+  (byte*) print_screen#3 ← phi( main::@1/(byte*) print_screen#4 )
   call print_cls 
   to:print_points::@6
 print_points::@6: scope:[print_points]  from print_points
@@ -440,7 +473,7 @@ print_points::@return: scope:[print_points]  from print_points::@10
   return 
   to:@return
 @41: scope:[]  from @35
-  (byte*) print_screen#7 ← phi( @35/(byte*) print_screen#8 )
+  (byte*) print_screen#6 ← phi( @35/(byte*) print_screen#7 )
   (byte*) print_char_cursor#47 ← phi( @35/(byte*) print_char_cursor#52 )
   (byte*) print_line_cursor#25 ← phi( @35/(byte*) print_line_cursor#28 )
   call main 
@@ -560,6 +593,43 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(bool~) memset::$0
+(bool~) memset::$1
+(byte*~) memset::$2
+(byte*~) memset::$3
+(bool~) memset::$4
+(label) memset::@1
+(label) memset::@2
+(label) memset::@4
+(label) memset::@return
+(byte) memset::c
+(byte) memset::c#0
+(byte) memset::c#1
+(byte) memset::c#2
+(byte) memset::c#3
+(byte*) memset::dst
+(byte*) memset::dst#0
+(byte*) memset::dst#1
+(byte*) memset::dst#2
+(byte*) memset::end
+(byte*) memset::end#0
+(byte*) memset::end#1
+(word) memset::num
+(word) memset::num#0
+(word) memset::num#1
+(word) memset::num#2
+(void*) memset::return
+(void*) memset::return#0
+(void*) memset::return#1
+(void*) memset::return#2
+(void*) memset::return#3
+(void*) memset::str
+(void*) memset::str#0
+(void*) memset::str#1
+(void*) memset::str#2
+(void*) memset::str#3
+(void*) memset::str#4
 (byte[$0]) points
 (byte[$0]) points#0
 (void()) print_byte((byte) print_byte::b)
@@ -641,15 +711,8 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
 (void()) print_cls()
-(byte*~) print_cls::$0
-(bool~) print_cls::$1
 (label) print_cls::@1
-(label) print_cls::@2
 (label) print_cls::@return
-(byte*) print_cls::sc
-(byte*) print_cls::sc#0
-(byte*) print_cls::sc#1
-(byte*) print_cls::sc#2
 (byte[]) print_hextab
 (byte[]) print_hextab#0
 (byte*) print_line_cursor
@@ -793,7 +856,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#6
 (byte*) print_screen#7
 (byte*) print_screen#8
-(byte*) print_screen#9
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -806,11 +868,12 @@ SYMBOL TABLE SSA
 (byte*) print_str::str#3
 (byte*) print_str::str#4
 
+Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#11 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
 Adding number conversion cast (unumber) print_byte::$2 in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (unumber)(number) $f
-Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) 2 in (byte) SIZEOF_POINT#0 ← (number) 2
 Adding number conversion cast (unumber) 4 in (byte) NUM_POINTS#0 ← (number) 4
 Adding number conversion cast (unumber) $a in (byte) init_points::pos#0 ← (number) $a
@@ -825,7 +888,10 @@ Adding number conversion cast (unumber) print_points::$1 in (number~) print_poin
 Adding number conversion cast (unumber) 0 in (byte*~) print_points::pointXpos1_$0#0 ← (byte*) print_points::pointXpos1_point#1 + (number) 0
 Adding number conversion cast (unumber) 1 in (byte*~) print_points::pointYpos1_$0#0 ← (byte*) print_points::pointYpos1_point#1 + (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
+Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
+Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) SIZEOF_POINT#0 ← (unumber)(number) 2
 Inlining cast (byte) NUM_POINTS#0 ← (unumber)(number) 4
 Inlining cast (byte) init_points::pos#0 ← (unumber)(number) $a
@@ -834,6 +900,7 @@ Inlining cast (byte*~) init_points::pointYpos1_$1#0 ← (byte*)(byte*~) init_poi
 Inlining cast (byte*~) print_points::pointXpos1_$1#0 ← (byte*)(byte*~) print_points::pointXpos1_$0#0
 Inlining cast (byte*~) print_points::pointYpos1_$1#0 ← (byte*)(byte*~) print_points::pointYpos1_$0#0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
@@ -855,6 +922,7 @@ Simplifying constant integer cast (byte*~) print_points::pointXpos1_$0#0
 Simplifying constant integer cast 1
 Simplifying constant integer cast (byte*~) print_points::pointYpos1_$0#0
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
@@ -874,7 +942,14 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f
 Inferred type updated to byte in (unumber~) init_points::$0 ← (byte) NUM_POINTS#0 - (byte) 1
 Inferred type updated to byte in (unumber~) print_points::$1 ← (byte) NUM_POINTS#0 - (byte) 1
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#29 (byte*) print_char_cursor#53 (byte*) print_screen#9 (byte*) print_line_cursor#28 (byte*) print_char_cursor#52 (byte*) print_screen#8 (byte*) print_line_cursor#25 (byte*) print_char_cursor#47 (byte*) print_screen#7 
+Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
+Alias (void*) memset::str#2 = (void*) memset::str#3 
+Alias (word) memset::num#1 = (word) memset::num#2 
+Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#29 (byte*) print_char_cursor#53 (byte*) print_screen#8 (byte*) print_line_cursor#28 (byte*) print_char_cursor#52 (byte*) print_screen#7 (byte*) print_line_cursor#25 (byte*) print_char_cursor#47 (byte*) print_screen#6 
 Alias (byte*) print_str::str#2 = (byte*) print_str::str#3 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#21 (byte*) print_char_cursor#40 (byte*) print_char_cursor#22 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#3 (byte*) print_line_cursor#13 (byte*) print_char_cursor#24 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -882,10 +957,10 @@ Alias (byte) print_byte::b#2 = (byte) print_byte::b#3
 Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#5 
 Alias (byte*) print_char_cursor#26 = (byte*) print_char_cursor#6 (byte*) print_char_cursor#27 (byte*) print_char_cursor#7 
 Alias (byte*) print_char_cursor#29 = (byte*) print_char_cursor#8 (byte*) print_char_cursor#9 
-Alias (byte*) print_line_cursor#14 = (byte*) print_screen#3 (byte*) print_screen#2 (byte*) print_line_cursor#3 (byte*) print_char_cursor#10 (byte*) print_char_cursor#30 (byte*) print_line_cursor#4 (byte*) print_char_cursor#11 
+Alias (byte*) print_line_cursor#14 = (byte*) print_screen#2 (byte*) print_screen#1 (byte*) print_line_cursor#3 (byte*) print_char_cursor#10 (byte*) print_char_cursor#30 (byte*) print_line_cursor#4 (byte*) print_char_cursor#11 
 Alias (byte*) print_line_cursor#22 = (byte*) print_line_cursor#26 
 Alias (byte*) print_char_cursor#43 = (byte*) print_char_cursor#49 
-Alias (byte*) print_screen#5 = (byte*) print_screen#6 
+Alias (byte*) print_screen#4 = (byte*) print_screen#5 
 Alias (byte*) print_line_cursor#15 = (byte*) print_line_cursor#5 (byte*) print_line_cursor#16 (byte*) print_line_cursor#6 
 Alias (byte*) print_char_cursor#12 = (byte*) print_char_cursor#31 (byte*) print_char_cursor#32 (byte*) print_char_cursor#13 
 Alias (byte) init_points::i#10 = (byte) init_points::getPoint1_idx#0 (byte) init_points::i#2 (byte) init_points::getPoint1_idx#1 (byte) init_points::i#11 (byte) init_points::i#9 (byte) init_points::i#8 (byte) init_points::i#7 (byte) init_points::i#6 (byte) init_points::i#5 (byte) init_points::i#4 (byte) init_points::i#3 
@@ -910,9 +985,17 @@ Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#37 (byte*) print_
 Alias (byte*) print_line_cursor#10 = (byte*) print_line_cursor#20 
 Alias (byte*) print_char_cursor#20 = (byte*) print_char_cursor#39 
 Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte) memset::c#1
+Self Phi Eliminated (byte*) memset::end#1
+Self Phi Eliminated (void*) memset::str#4
 Self Phi Eliminated (byte*) print_char_cursor#23
-Self Phi Eliminated (byte*) print_line_cursor#14
 Successful SSA optimization Pass2SelfPhiElimination
+Identical Phi Values (word) memset::num#1 (word) memset::num#0
+Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
+Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
+Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
 Identical Phi Values (byte*) print_str::str#4 (byte*) print_str::str#1
 Identical Phi Values (byte*) print_char_cursor#48 (byte*) print_char_cursor#15
 Identical Phi Values (byte*) print_line_cursor#21 (byte*) print_line_cursor#24
@@ -920,14 +1003,13 @@ Identical Phi Values (byte*) print_char_cursor#41 (byte*) print_char_cursor#17
 Identical Phi Values (byte*) print_char_cursor#23 (byte*) print_char_cursor#41
 Identical Phi Values (byte*) print_char_cursor#25 (byte*) print_char_cursor#29
 Identical Phi Values (byte*) print_char_cursor#26 (byte*) print_char_cursor#29
-Identical Phi Values (byte*) print_screen#1 (byte*) print_screen#4
-Identical Phi Values (byte*) print_line_cursor#14 (byte*) print_screen#1
+Identical Phi Values (byte*) print_line_cursor#14 (byte*) print_screen#3
 Identical Phi Values (byte*) print_line_cursor#22 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) print_char_cursor#43 (byte*) print_line_cursor#0
-Identical Phi Values (byte*) print_screen#5 (byte*) print_line_cursor#0
+Identical Phi Values (byte*) print_screen#4 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) print_line_cursor#15 (byte*) print_line_cursor#18
 Identical Phi Values (byte*) print_char_cursor#12 (byte*) print_char_cursor#18
-Identical Phi Values (byte*) print_screen#4 (byte*) print_screen#5
+Identical Phi Values (byte*) print_screen#3 (byte*) print_screen#4
 Identical Phi Values (byte*) print_line_cursor#23 (byte*) print_line_cursor#22
 Identical Phi Values (byte*) print_char_cursor#44 (byte*) print_char_cursor#43
 Identical Phi Values (byte*) print_line_cursor#17 (byte*) print_line_cursor#14
@@ -940,14 +1022,19 @@ Identical Phi Values (byte*) print_char_cursor#18 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_line_cursor#10 (byte*) print_line_cursor#15
 Identical Phi Values (byte*) print_char_cursor#20 (byte*) print_char_cursor#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_str::$0 [6] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [19] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
-Simple Condition (bool~) print_cls::$1 [55] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) init_points::$4 [117] if((byte) init_points::i#1!=rangelast(0,init_points::$0)) goto init_points::@1
-Simple Condition (bool~) print_points::$9 [173] if((byte) print_points::i#1!=rangelast(0,print_points::$1)) goto print_points::@1
+Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [15] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
+Simple Condition (bool~) print_str::$0 [25] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [38] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
+Simple Condition (bool~) init_points::$4 [134] if((byte) init_points::i#1!=rangelast(0,init_points::$0)) goto init_points::@1
+Simple Condition (bool~) print_points::$9 [190] if((byte) print_points::i#1!=rangelast(0,print_points::$1)) goto print_points::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte[]) print_hextab#0 = $1
+Constant (const byte) memset::c#0 = ' '
+Constant (const word) memset::num#0 = $3e8
 Constant (const byte) SIZEOF_POINT#0 = 2
 Constant (const byte) NUM_POINTS#0 = 4
 Constant (const byte) init_points::pos#0 = $a
@@ -955,41 +1042,45 @@ Constant (const byte) init_points::i#0 = 0
 Constant (const byte) print_points::i#0 = 0
 Constant (const byte*) print_str::str#1 = print_points::str
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print_cls::sc#0 = print_line_cursor#0
-Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [102] *((byte*) init_points::pointXpos1_return#0) ← (byte) init_points::pos#10  -- *(init_points::getPoint1_return#0 + 0)
-Converting *(pointer+n) to pointer[n] [113] *((byte*) init_points::pointYpos1_return#0) ← (byte) init_points::pos#1  -- *(init_points::getPoint1_return#0 + 1)
-Converting *(pointer+n) to pointer[n] [146] (byte) print_byte::b#0 ← *((byte*) print_points::pointXpos1_return#0)  -- *(print_points::point#0 + 0)
-Converting *(pointer+n) to pointer[n] [163] (byte) print_byte::b#1 ← *((byte*) print_points::pointYpos1_return#0)  -- *(print_points::point#0 + 1)
+Constant value identified (void*)print_line_cursor#0 in [68] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
+Successful SSA optimization Pass2ConstantValues
+if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
+Successful SSA optimization Pass2ConstantIfs
+Converting *(pointer+n) to pointer[n] [119] *((byte*) init_points::pointXpos1_return#0) ← (byte) init_points::pos#10  -- *(init_points::getPoint1_return#0 + 0)
+Converting *(pointer+n) to pointer[n] [130] *((byte*) init_points::pointYpos1_return#0) ← (byte) init_points::pos#1  -- *(init_points::getPoint1_return#0 + 1)
+Converting *(pointer+n) to pointer[n] [163] (byte) print_byte::b#0 ← *((byte*) print_points::pointXpos1_return#0)  -- *(print_points::point#0 + 0)
+Converting *(pointer+n) to pointer[n] [180] (byte) print_byte::b#1 ← *((byte*) print_points::pointYpos1_return#0)  -- *(print_points::point#0 + 1)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero init_points::getPoint1_return#0 in [95] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 0
-Simplifying expression containing zero init_points::getPoint1_return#0 in [102] *((byte*) init_points::getPoint1_return#0 + (byte) 0) ← (byte) init_points::pos#10
-Simplifying expression containing zero print_points::point#0 in [139] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0 + (byte) 0
-Simplifying expression containing zero print_points::point#0 in [146] (byte) print_byte::b#0 ← *((byte*) print_points::point#0 + (byte) 0)
+Simplifying expression containing zero init_points::getPoint1_return#0 in [112] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 0
+Simplifying expression containing zero init_points::getPoint1_return#0 in [119] *((byte*) init_points::getPoint1_return#0 + (byte) 0) ← (byte) init_points::pos#10
+Simplifying expression containing zero print_points::point#0 in [156] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0 + (byte) 0
+Simplifying expression containing zero print_points::point#0 in [163] (byte) print_byte::b#0 ← *((byte*) print_points::point#0 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*) init_points::pointXpos1_return#0 and assignment [37] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0
-Eliminating unused variable (byte*) init_points::pointYpos1_return#0 and assignment [40] (byte*) init_points::pointYpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 1
-Eliminating unused variable (byte*) print_points::pointXpos1_return#0 and assignment [51] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0
-Eliminating unused variable (byte*) print_points::pointYpos1_return#0 and assignment [55] (byte*) print_points::pointYpos1_return#0 ← (byte*) print_points::point#0 + (byte) 1
+Eliminating unused variable (void*) memset::return#2 and assignment [32] (void*) memset::return#2 ← (void*) memset::str#0
+Eliminating unused variable (byte*) init_points::pointXpos1_return#0 and assignment [43] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0
+Eliminating unused variable (byte*) init_points::pointYpos1_return#0 and assignment [46] (byte*) init_points::pointYpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 1
+Eliminating unused variable (byte*) print_points::pointXpos1_return#0 and assignment [57] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0
+Eliminating unused variable (byte*) print_points::pointYpos1_return#0 and assignment [61] (byte*) print_points::pointYpos1_return#0 ← (byte*) print_points::point#0 + (byte) 1
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [25] (byte*~) print_cls::$0 ← (const byte*) print_line_cursor#0 + (word) $3e8
-Constant right-side identified [28] (byte~) $0 ← (const byte) NUM_POINTS#0 * (const byte) SIZEOF_POINT#0
-Constant right-side identified [33] (byte~) init_points::$0 ← (const byte) NUM_POINTS#0 - (byte) 1
-Constant right-side identified [45] (byte~) print_points::$1 ← (const byte) NUM_POINTS#0 - (byte) 1
+Constant right-side identified [33] (byte~) $0 ← (const byte) NUM_POINTS#0 * (const byte) SIZEOF_POINT#0
+Constant right-side identified [38] (byte~) init_points::$0 ← (const byte) NUM_POINTS#0 - (byte) 1
+Constant right-side identified [50] (byte~) print_points::$1 ← (const byte) NUM_POINTS#0 - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) print_cls::$0 = print_line_cursor#0+$3e8
+Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Constant (const byte) $0 = NUM_POINTS#0*SIZEOF_POINT#0
 Constant (const byte) init_points::$0 = NUM_POINTS#0-1
 Constant (const byte) print_points::$1 = NUM_POINTS#0-1
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified { fill( $0, 0) } in [29] (byte[$0]) points#0 ← { fill( $0, 0) }
+Constant value identified (byte*)memset::str#0 in [0] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
+Constant value identified (byte*)memset::str#0 in [2] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
+Constant value identified { fill( $0, 0) } in [34] (byte[$0]) points#0 ← { fill( $0, 0) }
 Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [41] init_points::i#1 ← ++ init_points::i#10 to ++
-Resolved ranged comparison value [42] if(init_points::i#1!=rangelast(0,init_points::$0)) goto init_points::@1 to (const byte) init_points::$0+(number) 1
-Resolved ranged next value [55] print_points::i#1 ← ++ print_points::i#10 to ++
-Resolved ranged comparison value [56] if(print_points::i#1!=rangelast(0,print_points::$1)) goto print_points::@1 to (const byte) print_points::$1+(number) 1
-Converting *(pointer+n) to pointer[n] [37] *((byte*) init_points::getPoint1_return#0) ← (byte) init_points::pos#10  -- *(points#0 + init_points::getPoint1_$0#0)
-Converting *(pointer+n) to pointer[n] [49] (byte) print_byte::b#0 ← *((byte*) print_points::point#0)  -- *(points#0 + print_points::getPoint1_$0#0)
+Resolved ranged next value [46] init_points::i#1 ← ++ init_points::i#10 to ++
+Resolved ranged comparison value [47] if(init_points::i#1!=rangelast(0,init_points::$0)) goto init_points::@1 to (const byte) init_points::$0+(number) 1
+Resolved ranged next value [60] print_points::i#1 ← ++ print_points::i#10 to ++
+Resolved ranged comparison value [61] if(print_points::i#1!=rangelast(0,print_points::$1)) goto print_points::@1 to (const byte) print_points::$1+(number) 1
+Converting *(pointer+n) to pointer[n] [42] *((byte*) init_points::getPoint1_return#0) ← (byte) init_points::pos#10  -- *(points#0 + init_points::getPoint1_$0#0)
+Converting *(pointer+n) to pointer[n] [54] (byte) print_byte::b#0 ← *((byte*) print_points::point#0)  -- *(points#0 + print_points::getPoint1_$0#0)
 Successful SSA optimization Pass2InlineDerefIdx
 Adding number conversion cast (unumber) init_points::$0+1 in if((byte) init_points::i#1!=(const byte) init_points::$0+(number) 1) goto init_points::@1
 Adding number conversion cast (unumber) 1 in if((byte) init_points::i#1!=(unumber)(const byte) init_points::$0+(number) 1) goto init_points::@1
@@ -1004,31 +1095,37 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const byte[$0]) points#0 = { fill( $0, 0) }
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [31] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 * (const byte) SIZEOF_POINT#0
-Rewriting multiplication to use shift [42] (byte~) print_points::getPoint1_$0#0 ← (byte) print_points::i#10 * (const byte) SIZEOF_POINT#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Successful SSA optimization Pass2ConstantIdentification
+Rewriting multiplication to use shift [33] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 * (const byte) SIZEOF_POINT#0
+Rewriting multiplication to use shift [44] (byte~) print_points::getPoint1_$0#0 ← (byte) print_points::i#10 * (const byte) SIZEOF_POINT#0
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte*) print_str::str#1
-Inlining constant with var siblings (const byte*) print_cls::sc#0
 Inlining constant with var siblings (const byte) init_points::pos#0
 Inlining constant with var siblings (const byte) init_points::i#0
 Inlining constant with var siblings (const byte) print_points::i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined init_points::$0 = (const byte) NUM_POINTS#0-(byte) 1
 Constant inlined init_points::i#0 = (byte) 0
+Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined print_points::$1 = (const byte) NUM_POINTS#0-(byte) 1
 Constant inlined print_points::i#0 = (byte) 0
-Constant inlined print_cls::$0 = (byte*) 1024+(word) $3e8
 Constant inlined print_line_cursor#0 = (byte*) 1024
+Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined print_str::str#1 = (const string) print_points::str
-Constant inlined print_cls::sc#0 = (byte*) 1024
 Constant inlined $0 = (const byte) NUM_POINTS#0*(const byte) SIZEOF_POINT#0
 Constant inlined $1 = (const byte[]) print_hextab#0
 Constant inlined init_points::pos#0 = (byte) $a
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
-Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Added new block during phi lifting init_points::@6(between init_points::@5 and init_points::@1)
 Added new block during phi lifting print_points::@11(between print_points::@10 and print_points::@1)
 Adding NOP phi() at start of @begin
@@ -1055,7 +1152,10 @@ Adding NOP phi() at start of print_points::@9
 Adding NOP phi() at start of print_ln::@2
 Adding NOP phi() at start of print_byte::@2
 Adding NOP phi() at start of print_cls
-Adding NOP phi() at start of print_cls::@2
+Adding NOP phi() at start of print_cls::@1
+Adding NOP phi() at start of memset
+Adding NOP phi() at start of memset::@2
+Adding NOP phi() at start of memset::@1
 Adding NOP phi() at start of init_points
 Adding NOP phi() at start of init_points::getPoint1_@return
 Adding NOP phi() at start of init_points::@3
@@ -1068,6 +1168,7 @@ Calls in [] to main:5
 Calls in [main] to init_points:9 print_points:11 
 Calls in [print_points] to print_cls:15 print_byte:27 print_str:29 print_byte:36 print_ln:38 
 Calls in [print_byte] to print_char:57 print_char:62 
+Calls in [print_cls] to memset:79 
 
 Created 13 initial phi equivalence classes
 Coalesced [25] print_byte::b#4 ← print_byte::b#0
@@ -1086,9 +1187,9 @@ Coalesced [61] print_char_cursor#65 ← print_char_cursor#29
 Coalesced (already) [69] print_char_cursor#60 ← print_char_cursor#29
 Coalesced [76] print_str::str#5 ← print_str::str#0
 Coalesced [77] print_char_cursor#61 ← print_char_cursor#1
-Coalesced [85] print_cls::sc#3 ← print_cls::sc#1
-Coalesced [103] init_points::i#12 ← init_points::i#1
-Coalesced [104] init_points::pos#13 ← init_points::pos#2
+Coalesced [90] memset::dst#3 ← memset::dst#1
+Coalesced [108] init_points::i#12 ← init_points::i#1
+Coalesced [109] init_points::pos#13 ← init_points::pos#2
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @28
@@ -1104,14 +1205,17 @@ Culled Empty Block (label) print_points::pointYpos1_@return
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_byte::@2
-Culled Empty Block (label) print_cls::@2
-Culled Empty Block (label) print_cls::@3
+Culled Empty Block (label) print_cls::@1
+Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@1
+Culled Empty Block (label) memset::@6
 Culled Empty Block (label) init_points::getPoint1_@return
 Culled Empty Block (label) init_points::@3
 Culled Empty Block (label) init_points::pointXpos1_@return
 Culled Empty Block (label) init_points::pointYpos1_@return
 Culled Empty Block (label) init_points::@6
 Renumbering block @41 to @1
+Renumbering block memset::@4 to memset::@1
 Renumbering block init_points::@4 to init_points::@2
 Renumbering block init_points::@5 to init_points::@3
 Renumbering block print_points::@4 to print_points::@2
@@ -1133,6 +1237,7 @@ Adding NOP phi() at start of print_points::@5
 Adding NOP phi() at start of print_ln
 Adding NOP phi() at start of print_str
 Adding NOP phi() at start of print_cls
+Adding NOP phi() at start of memset
 Adding NOP phi() at start of init_points
 Adding NOP phi() at start of init_points::pointXpos1
 Adding NOP phi() at start of init_points::pointYpos1
@@ -1256,45 +1361,52 @@ print_str::@2: scope:[print_str]  from print_str::@1
   to:print_str::@1
 print_cls: scope:[print_cls]  from print_points
   [52] phi()
-  to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [53] (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) 1024 print_cls::@1/(byte*) print_cls::sc#1 )
-  [54] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [55] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1
+  [53] call memset 
   to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [57] return 
+print_cls::@return: scope:[print_cls]  from print_cls
+  [54] return 
+  to:@return
+memset: scope:[memset]  from print_cls
+  [55] phi()
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  [56] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
+  [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [58] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@1
+  [60] return 
   to:@return
 init_points: scope:[init_points]  from main
-  [58] phi()
+  [61] phi()
   to:init_points::@1
 init_points::@1: scope:[init_points]  from init_points init_points::@3
-  [59] (byte) init_points::pos#10 ← phi( init_points/(byte) $a init_points::@3/(byte) init_points::pos#2 )
-  [59] (byte) init_points::i#10 ← phi( init_points/(byte) 0 init_points::@3/(byte) init_points::i#1 )
+  [62] (byte) init_points::pos#10 ← phi( init_points/(byte) $a init_points::@3/(byte) init_points::pos#2 )
+  [62] (byte) init_points::i#10 ← phi( init_points/(byte) 0 init_points::@3/(byte) init_points::i#1 )
   to:init_points::getPoint1
 init_points::getPoint1: scope:[init_points]  from init_points::@1
-  [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1
-  [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0
+  [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1
+  [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0
   to:init_points::pointXpos1
 init_points::pointXpos1: scope:[init_points]  from init_points::getPoint1
-  [62] phi()
+  [65] phi()
   to:init_points::@2
 init_points::@2: scope:[init_points]  from init_points::pointXpos1
-  [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10
-  [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a
+  [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10
+  [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a
   to:init_points::pointYpos1
 init_points::pointYpos1: scope:[init_points]  from init_points::@2
-  [65] phi()
+  [68] phi()
   to:init_points::@3
 init_points::@3: scope:[init_points]  from init_points::pointYpos1
-  [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1
-  [67] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a
-  [68] (byte) init_points::i#1 ← ++ (byte) init_points::i#10
-  [69] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1
+  [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1
+  [70] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a
+  [71] (byte) init_points::i#1 ← ++ (byte) init_points::i#10
+  [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1
   to:init_points::@return
 init_points::@return: scope:[init_points]  from init_points::@3
-  [70] return 
+  [73] return 
   to:@return
 
 
@@ -1325,6 +1437,15 @@ VARIABLE REGISTER WEIGHTS
 (byte) init_points::pos#10 6.6000000000000005
 (byte) init_points::pos#2 7.333333333333333
 (void()) main()
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(byte) memset::c
+(byte*) memset::dst
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#2 16.5
+(byte*) memset::end
+(word) memset::num
+(void*) memset::return
+(void*) memset::str
 (byte[NUM_POINTS#0*SIZEOF_POINT#0]) points
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 4.0
@@ -1347,9 +1468,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#45 4.4
 (byte*~) print_char_cursor#66 22.0
 (void()) print_cls()
-(byte*) print_cls::sc
-(byte*) print_cls::sc#1 16.5
-(byte*) print_cls::sc#2 16.5
 (byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 46.42857142857143
@@ -1388,7 +1506,7 @@ Initial phi equivalence classes
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 [ print_str::str#2 print_str::str#0 ]
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ init_points::i#10 init_points::i#1 ]
 [ init_points::pos#10 init_points::pos#2 ]
 Added variable print_points::getPoint1_$0#0 to zero page equivalence class [ print_points::getPoint1_$0#0 ]
@@ -1405,7 +1523,7 @@ Complete equivalence classes
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 [ print_str::str#2 print_str::str#0 ]
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ init_points::i#10 init_points::i#1 ]
 [ init_points::pos#10 init_points::pos#2 ]
 [ print_points::getPoint1_$0#0 ]
@@ -1421,7 +1539,7 @@ Allocated zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 Allocated zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 Allocated zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ]
-Allocated zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ]
 Allocated zp ZP_BYTE:13 [ init_points::i#10 init_points::i#1 ]
 Allocated zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ]
 Allocated zp ZP_BYTE:15 [ print_points::getPoint1_$0#0 ]
@@ -1472,7 +1590,7 @@ bend:
 // Initialize some points and print them
 main: {
     // [5] call init_points 
-    // [58] phi from main to init_points [phi:main->init_points]
+    // [61] phi from main to init_points [phi:main->init_points]
   init_points_from_main:
     jsr init_points
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -1768,41 +1886,58 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $b
-    // [53] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    jmp b1
-    // [53] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [54] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [55] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1_from_b1
+    // [53] call memset 
+    // [55] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
     jmp breturn
     // print_cls::@return
   breturn:
-    // [57] return 
+    // [54] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = $b
+    // [56] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [56] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    jmp b1
+    // [56] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+  b1_from_b1:
+    // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    jmp b1
+    // memset::@1
+  b1:
+    // [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // [58] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1_from_b1
+    lda dst
+    cmp #<end
+    bne b1_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [60] return 
     rts
 }
   // init_points
@@ -1814,30 +1949,30 @@ init_points: {
     .label pos_2 = $e
     .label i = $d
     .label pos_10 = $e
-    // [59] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
+    // [62] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
   b1_from_init_points:
-    // [59] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
+    // [62] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a
     sta pos_10
-    // [59] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuz1=vbuc1 
+    // [62] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-    // [59] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
+    // [62] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
   b1_from_b3:
-    // [59] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
-    // [59] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
+    // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
+    // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
     jmp b1
     // init_points::@1
   b1:
     jmp getPoint1
     // init_points::getPoint1
   getPoint1:
-    // [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
     sta getPoint1__0
-    // [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuz2 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuz2 
     lda getPoint1__0
     clc
     adc #<points
@@ -1845,7 +1980,7 @@ init_points: {
     lda #>points
     adc #0
     sta getPoint1_return+1
-    // [62] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
+    // [65] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
   pointXpos1_from_getPoint1:
     jmp pointXpos1
     // init_points::pointXpos1
@@ -1853,15 +1988,15 @@ init_points: {
     jmp b2
     // init_points::@2
   b2:
-    // [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda pos_10
     ldy getPoint1__0
     sta points,y
-    // [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuz1=vbuz2_plus_vbuc1 
+    // [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuz1=vbuz2_plus_vbuc1 
     lax pos_10
     axs #-[$a]
     stx pos
-    // [65] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
+    // [68] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
   pointYpos1_from_b2:
     jmp pointYpos1
     // init_points::pointYpos1
@@ -1869,24 +2004,24 @@ init_points: {
     jmp b3
     // init_points::@3
   b3:
-    // [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuz2 
+    // [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuz2 
     lda pos
     ldy #1
     sta (getPoint1_return),y
-    // [67] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuz2_plus_vbuc1 
+    // [70] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuz2_plus_vbuc1 
     lax pos
     axs #-[$a]
     stx pos_2
-    // [68] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuz1=_inc_vbuz1 
+    // [71] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuz1=_inc_vbuz1 
     inc i
-    // [69] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_POINTS-1+1
     cmp i
     bne b1_from_b3
     jmp breturn
     // init_points::@return
   breturn:
-    // [70] return 
+    // [73] return 
     rts
 }
   // File Data
@@ -1911,16 +2046,16 @@ Statement [42] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#2 [ pri
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [47] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::print_points:7::print_str:18 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::print_points:7::print_str:18 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [54] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_points:7::print_cls:10 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_points:7::print_cls:10 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ) always clobbers reg byte a 
+Statement [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:13 [ init_points::i#10 init_points::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ]
-Statement [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ init_points::getPoint1_$0#0 ]
-Statement [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
-Statement [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
-Statement [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
+Statement [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
+Statement [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:13 [ init_points::i#10 init_points::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:23 [ init_points::pos#1 ]
 Statement [12] (byte~) print_points::getPoint1_$0#0 ← (byte) print_points::i#10 << (byte) 1 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0#0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0#0 ] ) always clobbers reg byte a 
@@ -1934,20 +2069,20 @@ Statement [37] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [42] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#2 [ print_char_cursor#28 ] ( main:2::print_points:7::print_byte:16::print_char:36 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_byte::b#2 print_char_cursor#28 ] main:2::print_points:7::print_byte:21::print_char:36 [ print_points::i#10 print_line_cursor#24 print_byte::b#2 print_char_cursor#28 ] main:2::print_points:7::print_byte:16::print_char:39 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_char_cursor#28 ] main:2::print_points:7::print_byte:21::print_char:39 [ print_points::i#10 print_line_cursor#24 print_char_cursor#28 ] ) always clobbers reg byte y 
 Statement [47] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::print_points:7::print_str:18 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::print_points:7::print_str:18 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [54] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_points:7::print_cls:10 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_points:7::print_cls:10 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ) always clobbers reg byte a 
-Statement [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
-Statement [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
-Statement [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
-Statement [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
+Statement [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 ] ) always clobbers reg byte a 
+Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0#0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
+Statement [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
 Potential registers zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:5 , reg byte x , 
 Potential registers zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] : zp ZP_WORD:7 , 
 Potential registers zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] : zp ZP_WORD:9 , 
-Potential registers zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:11 , 
+Potential registers zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:11 , 
 Potential registers zp ZP_BYTE:13 [ init_points::i#10 init_points::i#1 ] : zp ZP_BYTE:13 , reg byte x , 
 Potential registers zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] : zp ZP_BYTE:14 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:15 [ print_points::getPoint1_$0#0 ] : zp ZP_BYTE:15 , reg byte x , reg byte y , 
@@ -1963,30 +2098,32 @@ Uplift Scope [] 251.43: zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24
 Uplift Scope [print_str] 303: zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] 
 Uplift Scope [init_points] 20.17: zp ZP_BYTE:13 [ init_points::i#10 init_points::i#1 ] 13.93: zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] 11: zp ZP_BYTE:20 [ init_points::getPoint1_$0#0 ] 11: zp ZP_BYTE:23 [ init_points::pos#1 ] 4.4: zp ZP_WORD:21 [ init_points::getPoint1_return#0 ] 
 Uplift Scope [print_byte] 50.5: zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:18 [ print_byte::$0 ] 4: zp ZP_BYTE:19 [ print_byte::$2 ] 
-Uplift Scope [print_cls] 33: zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_points] 13.54: zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] 11: zp ZP_BYTE:15 [ print_points::getPoint1_$0#0 ] 3.14: zp ZP_WORD:16 [ print_points::point#0 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
+Uplift Scope [print_cls] 
 Uplift Scope [main] 
 
-Uplifting [] best 14562 combination zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
-Uplifting [print_str] best 14562 combination zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] 
-Uplifting [init_points] best 14362 combination reg byte x [ init_points::i#10 init_points::i#1 ] zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] reg byte y [ init_points::getPoint1_$0#0 ] reg byte a [ init_points::pos#1 ] zp ZP_WORD:21 [ init_points::getPoint1_return#0 ] 
-Uplifting [print_byte] best 14310 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_cls] best 14310 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_points] best 14260 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] reg byte y [ print_points::getPoint1_$0#0 ] zp ZP_WORD:16 [ print_points::point#0 ] 
-Uplifting [print_char] best 14251 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [RADIX] best 14251 combination 
-Uplifting [print_ln] best 14251 combination 
-Uplifting [main] best 14251 combination 
+Uplifting [] best 14577 combination zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
+Uplifting [print_str] best 14577 combination zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] 
+Uplifting [init_points] best 14377 combination reg byte x [ init_points::i#10 init_points::i#1 ] zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] reg byte y [ init_points::getPoint1_$0#0 ] reg byte a [ init_points::pos#1 ] zp ZP_WORD:21 [ init_points::getPoint1_return#0 ] 
+Uplifting [print_byte] best 14325 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [memset] best 14325 combination zp ZP_WORD:11 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [print_points] best 14275 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] reg byte y [ print_points::getPoint1_$0#0 ] zp ZP_WORD:16 [ print_points::point#0 ] 
+Uplifting [print_char] best 14266 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [RADIX] best 14266 combination 
+Uplifting [print_ln] best 14266 combination 
+Uplifting [print_cls] best 14266 combination 
+Uplifting [main] best 14266 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ]
-Uplifting [init_points] best 14251 combination zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] 
+Uplifting [init_points] best 14266 combination zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ]
-Uplifting [print_points] best 14251 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] 
+Uplifting [print_points] best 14266 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] 
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ print_str::str#2 print_str::str#0 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ]
 Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:11 [ init_points::pos#10 init_points::pos#2 ]
 Allocated (was zp ZP_WORD:16) zp ZP_WORD:12 [ print_points::point#0 ]
 Allocated (was zp ZP_WORD:21) zp ZP_WORD:14 [ init_points::getPoint1_return#0 ]
@@ -2031,7 +2168,7 @@ bend:
 // Initialize some points and print them
 main: {
     // [5] call init_points 
-    // [58] phi from main to init_points [phi:main->init_points]
+    // [61] phi from main to init_points [phi:main->init_points]
   init_points_from_main:
     jsr init_points
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -2314,41 +2451,58 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 9
-    // [53] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    jmp b1
-    // [53] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [54] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [55] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1_from_b1
+    // [53] call memset 
+    // [55] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
     jmp breturn
     // print_cls::@return
   breturn:
-    // [57] return 
+    // [54] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = 9
+    // [56] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [56] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    jmp b1
+    // [56] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+  b1_from_b1:
+    // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    jmp b1
+    // memset::@1
+  b1:
+    // [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // [58] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1_from_b1
+    lda dst
+    cmp #<end
+    bne b1_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [60] return 
     rts
 }
   // init_points
@@ -2356,29 +2510,29 @@ print_cls: {
 init_points: {
     .label getPoint1_return = $e
     .label pos = $b
-    // [59] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
+    // [62] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
   b1_from_init_points:
-    // [59] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
+    // [62] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a
     sta pos
-    // [59] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuxx=vbuc1 
+    // [62] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-    // [59] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
+    // [62] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
   b1_from_b3:
-    // [59] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
-    // [59] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
+    // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
+    // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
     jmp b1
     // init_points::@1
   b1:
     jmp getPoint1
     // init_points::getPoint1
   getPoint1:
-    // [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuyy=vbuxx_rol_1 
+    // [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
-    // [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -2386,7 +2540,7 @@ init_points: {
     lda #>points
     adc #0
     sta getPoint1_return+1
-    // [62] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
+    // [65] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
   pointXpos1_from_getPoint1:
     jmp pointXpos1
     // init_points::pointXpos1
@@ -2394,14 +2548,14 @@ init_points: {
     jmp b2
     // init_points::@2
   b2:
-    // [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda pos
     sta points,y
-    // [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuaa=vbuz1_plus_vbuc1 
+    // [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuaa=vbuz1_plus_vbuc1 
     lda #$a
     clc
     adc pos
-    // [65] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
+    // [68] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
   pointYpos1_from_b2:
     jmp pointYpos1
     // init_points::pointYpos1
@@ -2409,22 +2563,22 @@ init_points: {
     jmp b3
     // init_points::@3
   b3:
-    // [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuaa 
+    // [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuaa 
     ldy #1
     sta (getPoint1_return),y
-    // [67] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuaa_plus_vbuc1 
+    // [70] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuaa_plus_vbuc1 
     clc
     adc #$a
     sta pos
-    // [68] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuxx=_inc_vbuxx 
+    // [71] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuxx=_inc_vbuxx 
     inx
-    // [69] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_POINTS-1+1
     bne b1_from_b3
     jmp breturn
     // init_points::@return
   breturn:
-    // [70] return 
+    // [73] return 
     rts
 }
   // File Data
@@ -2453,6 +2607,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp b1
+Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -2520,7 +2675,9 @@ Removing instruction breturn:
 Removing instruction b1_from_print_str:
 Removing instruction breturn:
 Removing instruction b1_from_b2:
-Removing instruction b1_from_print_cls:
+Removing instruction memset_from_print_cls:
+Removing instruction breturn:
+Removing instruction b1_from_memset:
 Removing instruction breturn:
 Removing instruction b1_from_init_points:
 Removing instruction b2:
@@ -2581,6 +2738,21 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(label) memset::@1
+(label) memset::@return
+(byte) memset::c
+(const byte) memset::c#0 c = (byte) ' '
+(byte*) memset::dst
+(byte*) memset::dst#1 dst zp ZP_WORD:9 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:9 16.5
+(byte*) memset::end
+(const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
+(word) memset::num
+(const word) memset::num#0 num = (word) $3e8
+(void*) memset::return
+(void*) memset::str
+(const void*) memset::str#0 str = (void*)(byte*) 1024
 (byte[NUM_POINTS#0*SIZEOF_POINT#0]) points
 (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 points = { fill( NUM_POINTS#0*SIZEOF_POINT#0, 0) }
 (void()) print_byte((byte) print_byte::b)
@@ -2607,11 +2779,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#45 print_char_cursor zp ZP_WORD:5 4.4
 (byte*~) print_char_cursor#66 print_char_cursor zp ZP_WORD:5 22.0
 (void()) print_cls()
-(label) print_cls::@1
 (label) print_cls::@return
-(byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:9 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:9 16.5
 (byte[]) print_hextab
 (const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
@@ -2667,7 +2835,7 @@ reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 zp ZP_WORD:5 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 zp ZP_WORD:7 [ print_str::str#2 print_str::str#0 ]
-zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ]
 reg byte x [ init_points::i#10 init_points::i#1 ]
 zp ZP_BYTE:11 [ init_points::pos#10 init_points::pos#2 ]
 reg byte y [ print_points::getPoint1_$0#0 ]
@@ -2680,7 +2848,7 @@ reg byte a [ init_points::pos#1 ]
 
 
 FINAL ASSEMBLER
-Score: 12221
+Score: 12233
 
   // File Comments
 // Implementing a semi-struct without the struct keyword by using pointer math and inline functions
@@ -2713,7 +2881,7 @@ Score: 12221
 main: {
     // init_points()
     // [5] call init_points 
-    // [58] phi from main to init_points [phi:main->init_points]
+    // [61] phi from main to init_points [phi:main->init_points]
     jsr init_points
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -2966,38 +3134,54 @@ print_str: {
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 9
-    // [53] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta sc
-    lda #>$400
-    sta sc+1
-    // [53] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-    // [53] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    // print_cls::@1
-  b1:
-    // *sc = ' '
-    // [54] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for(byte* sc=print_screen; sc!=print_screen+1000; sc++)
-    // [55] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [56] if((byte*) print_cls::sc#1!=(byte*) 1024+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>$400+$3e8
-    bne b1
-    lda sc
-    cmp #<$400+$3e8
-    bne b1
+    // memset(print_screen, ' ', 1000)
+    // [53] call memset 
+    // [55] phi from print_cls to memset [phi:print_cls->memset]
+    jsr memset
     // print_cls::@return
     // }
-    // [57] return 
+    // [54] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = $400
+    .label end = str+num
+    .label dst = 9
+    // [56] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [56] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+    // [56] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+    // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+    // memset::@1
+  b1:
+    // *dst = c
+    // [57] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    // [58] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // [59] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b1
+    lda dst
+    cmp #<end
+    bne b1
+    // memset::@return
+    // }
+    // [60] return 
     rts
 }
   // init_points
@@ -3005,25 +3189,25 @@ print_cls: {
 init_points: {
     .label getPoint1_return = $e
     .label pos = $b
-    // [59] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
-    // [59] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
+    // [62] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
+    // [62] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a
     sta pos
-    // [59] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuxx=vbuc1 
+    // [62] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    // [59] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
-    // [59] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
-    // [59] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
+    // [62] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
+    // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
+    // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
     // init_points::@1
   b1:
     // init_points::getPoint1
     // idx*SIZEOF_POINT
-    // [60] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuyy=vbuxx_rol_1 
+    // [63] (byte~) init_points::getPoint1_$0#0 ← (byte) init_points::i#10 << (byte) 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
     // points+idx*SIZEOF_POINT
-    // [61] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -3031,39 +3215,39 @@ init_points: {
     lda #>points
     adc #0
     sta getPoint1_return+1
-    // [62] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
+    // [65] phi from init_points::getPoint1 to init_points::pointXpos1 [phi:init_points::getPoint1->init_points::pointXpos1]
     // init_points::pointXpos1
     // init_points::@2
     // *pointXpos(point) = pos
-    // [63] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [66] *((const byte[NUM_POINTS#0*SIZEOF_POINT#0]) points#0 + (byte~) init_points::getPoint1_$0#0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda pos
     sta points,y
     // pos +=10
-    // [64] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuaa=vbuz1_plus_vbuc1 
+    // [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuaa=vbuz1_plus_vbuc1 
     lda #$a
     clc
     adc pos
-    // [65] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
+    // [68] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
     // init_points::pointYpos1
     // init_points::@3
     // *pointYpos(point) = pos
-    // [66] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuaa 
+    // [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuaa 
     ldy #1
     sta (getPoint1_return),y
     // pos +=10
-    // [67] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuaa_plus_vbuc1 
+    // [70] (byte) init_points::pos#2 ← (byte) init_points::pos#1 + (byte) $a -- vbuz1=vbuaa_plus_vbuc1 
     clc
     adc #$a
     sta pos
     // for(byte i: 0..NUM_POINTS-1)
-    // [68] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuxx=_inc_vbuxx 
+    // [71] (byte) init_points::i#1 ← ++ (byte) init_points::i#10 -- vbuxx=_inc_vbuxx 
     inx
-    // [69] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS#0-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_POINTS-1+1
     bne b1
     // init_points::@return
     // }
-    // [70] return 
+    // [73] return 
     rts
 }
   // File Data

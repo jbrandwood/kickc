@@ -421,9 +421,10 @@ memset: {
     .label num = $18
     .label str = $1a
     lda num
-    beq breturn
+    bne !+
     lda num+1
     beq breturn
+  !:
     lda end
     clc
     adc str

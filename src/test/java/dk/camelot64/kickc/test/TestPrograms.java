@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSieve() throws IOException, URISyntaxException {
+      compileAndCompare("sieve");
+   }
+
+   @Test
    public void testProblemPointerInsideStructSizeofRewriting() throws IOException, URISyntaxException {
       compileAndCompare("problem-pointer-inside-struct-sizeof-rewriting");
    }

@@ -9,12 +9,27 @@
   .label SPRITES_ENABLE = $d015
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // CIA #2 Timer A+B Value (32-bit)
+  .label CIA2_TIMER_AB = $dd04
+  // CIA #2 Timer A Control Register
+  .label CIA2_TIMER_A_CONTROL = $dd0e
+  // CIA #2 Timer B Control Register
+  .label CIA2_TIMER_B_CONTROL = $dd0f
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
+  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const GREEN = 5
   .const LIGHT_BLUE = $e
+  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  .const CLOCKS_PER_INIT = $12
   .label SCREEN = $400
   // A single sprite
   .label SPRITE = $3000
-  .label SIN = COS+$40
+  .label COS = SIN+$40
 // sin(x) = cos(x+PI/2)
 main: {
     sei
@@ -23,20 +38,22 @@ main: {
     rts
 }
 anim: {
-    .label _4 = 5
-    .label _6 = 5
-    .label _9 = 5
-    .label _10 = 5
-    .label _11 = 5
-    .label _12 = 5
-    .label x = $13
-    .label y = $14
-    .label xr = $15
-    .label yr = $17
-    .label xpos = $19
+    .label _5 = $c
+    .label _7 = $c
+    .label _10 = $c
+    .label _11 = $c
+    .label _12 = $c
+    .label _13 = $c
+    .label _28 = $22
+    .label x = $1a
+    .label y = $1b
+    .label xr = $1c
+    .label yr = $1e
+    .label xpos = $20
     .label sprite_msb = 4
     .label i = 3
     .label angle = 2
+    .label cyclecount = $22
     lda #0
     sta angle
   b2:
@@ -44,6 +61,7 @@ anim: {
     cmp RASTER
     bne b2
     inc BORDERCOL
+    jsr clock_start
     lda #0
     sta sprite_msb
     sta i
@@ -59,18 +77,18 @@ anim: {
     jsr mulf8u_prepare
     ldy x
     jsr mulf8s_prepared
-    lda _4
+    lda _5
     asl
     sta xr
-    lda _4+1
+    lda _5+1
     rol
     sta xr+1
     ldy y
     jsr mulf8s_prepared
-    lda _6
+    lda _7
     asl
     sta yr
-    lda _6+1
+    lda _7+1
     rol
     sta yr+1
     ldy angle
@@ -78,26 +96,26 @@ anim: {
     jsr mulf8u_prepare
     ldy y
     jsr mulf8s_prepared
-    asl _10
-    rol _10+1
+    asl _11
+    rol _11+1
     lda xr
     sec
-    sbc _10
+    sbc _11
     sta xr
     lda xr+1
-    sbc _10+1
+    sbc _11+1
     sta xr+1
     ldy x
     jsr mulf8s_prepared
-    asl _12
-    rol _12+1
+    asl _13
+    rol _13+1
     // signed fixed[8.8]
     lda yr
     clc
-    adc _12
+    adc _13
     sta yr
     lda yr+1
-    adc _12+1
+    adc _13+1
     sta yr+1
     lda xr+1
     tax
@@ -138,16 +156,134 @@ anim: {
     lda sprite_msb
     sta SPRITES_XMSB
     inc angle
+    jsr clock
+    lda cyclecount
+    sec
+    sbc #<CLOCKS_PER_INIT
+    sta cyclecount
+    lda cyclecount+1
+    sbc #>CLOCKS_PER_INIT
+    sta cyclecount+1
+    lda cyclecount+2
+    sbc #<CLOCKS_PER_INIT>>$10
+    sta cyclecount+2
+    lda cyclecount+3
+    sbc #>CLOCKS_PER_INIT>>$10
+    sta cyclecount+3
+    jsr print_dword_at
     lda #LIGHT_BLUE
     sta BORDERCOL
     jmp b2
+}
+// Print a dword as HEX at a specific position
+// print_dword_at(dword zeropage($22) dw)
+print_dword_at: {
+    .label dw = $22
+    lda dw+2
+    sta print_word_at.w
+    lda dw+3
+    sta print_word_at.w+1
+    lda #<SCREEN
+    sta print_word_at.at
+    lda #>SCREEN
+    sta print_word_at.at+1
+    jsr print_word_at
+    lda dw
+    sta print_word_at.w
+    lda dw+1
+    sta print_word_at.w+1
+    lda #<SCREEN+4
+    sta print_word_at.at
+    lda #>SCREEN+4
+    sta print_word_at.at+1
+    jsr print_word_at
+    rts
+}
+// Print a word as HEX at a specific position
+// print_word_at(word zeropage(5) w, byte* zeropage(7) at)
+print_word_at: {
+    .label w = 5
+    .label at = 7
+    lda w+1
+    sta print_byte_at.b
+    jsr print_byte_at
+    lda w
+    sta print_byte_at.b
+    lda print_byte_at.at
+    clc
+    adc #2
+    sta print_byte_at.at
+    bcc !+
+    inc print_byte_at.at+1
+  !:
+    jsr print_byte_at
+    rts
+}
+// Print a byte as HEX at a specific position
+// print_byte_at(byte zeropage(9) b, byte* zeropage(7) at)
+print_byte_at: {
+    .label b = 9
+    .label at = 7
+    lda b
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    ldx print_hextab,y
+    lda at
+    sta print_char_at.at
+    lda at+1
+    sta print_char_at.at+1
+    jsr print_char_at
+    lda #$f
+    and b
+    tay
+    lda at
+    clc
+    adc #1
+    sta print_char_at.at
+    lda at+1
+    adc #0
+    sta print_char_at.at+1
+    ldx print_hextab,y
+    jsr print_char_at
+    rts
+}
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zeropage($a) at)
+print_char_at: {
+    .label at = $a
+    txa
+    ldy #0
+    sta (at),y
+    rts
+}
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $22
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta return+3
+    rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
 // mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 5
+    .label m = $c
     tya
     jsr mulf8u_prepared
     lda memA
@@ -174,7 +310,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 5
+    .label return = $c
     sta memB
     tax
     sec
@@ -206,6 +342,28 @@ mulf8u_prepare: {
     sta mulf8u_prepared.sm4+1
     rts
 }
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    sta CIA2_TIMER_A_CONTROL
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2_TIMER_B_CONTROL
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2_TIMER_B_CONTROL
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2_TIMER_A_CONTROL
+    rts
+}
 init: {
     .label sprites_ptr = SCREEN+$3f8
     jsr mulf_init
@@ -224,13 +382,13 @@ init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 9
-    .label sqr = $c
-    .label sqr1_lo = 7
-    .label x_2 = $b
-    .label sqr2_hi = $10
-    .label sqr2_lo = $e
-    .label dir = $12
+    .label sqr1_hi = $10
+    .label sqr = $13
+    .label sqr1_lo = $e
+    .label x_2 = $12
+    .label sqr2_hi = $17
+    .label sqr2_lo = $15
+    .label dir = $19
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1
@@ -343,20 +501,14 @@ mulf_init: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
+  print_hextab: .text "0123456789abcdef"
   // Sine and Cosine tables  
   // Angles: $00=0, $80=PI,$100=2*PI
   // Sine/Cosine: signed fixed [-$7f,$7f]
   .align $40
-COS:
-{
-    .var min = -$7fff
-    .var max = $7fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
+SIN:
+.for(var i=0;i<$140;i++)
+        .byte >round($7fff*sin(i*2*PI/256))
 
   // Positions to rotate
   xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46

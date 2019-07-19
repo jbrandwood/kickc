@@ -4,6 +4,7 @@ import "splines"
 import "bitmap2"
 import "time"
 import "print"
+import "fastmultiply"
 import "c64"
 
 const char* PRINT_SCREEN = 0x0400;
@@ -17,7 +18,7 @@ struct Segment {
 };
 
 // True type letter c
-struct Segment[21] letter_c;
+struct Segment[22] letter_c;
 
 void main() {
     letter_c[0] = { MOVE_TO, {108,146}, {0,0} };
@@ -43,29 +44,55 @@ void main() {
     letter_c[20] = { SPLINE_TO, {104,144}, {98,160} };
     letter_c[21] = { LINE_TO, {108,146}, {0,0} };
 
+    mulf_init();
     bitmap_init(BITMAP_GRAPHICS, BITMAP_SCREEN);
     bitmap_clear(BLACK, WHITE);
     vicSelectGfxBank(BITMAP_SCREEN);
     *D018 = toD018(BITMAP_SCREEN, BITMAP_GRAPHICS);
     *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
 
+    char angle = 0;
+    while(true) {
+        bitmap_clear(BLACK, WHITE);
+        show_letter(angle);
+        for ( byte w: 0..60) {
+            do {} while(*RASTER!=0xfe);
+            do {} while(*RASTER!=0xff);
+        }
+        angle += 9;
+    }
+
+    while(true) { (*(PRINT_SCREEN+999))++; }
+}
+
+void show_letter(char angle) {
     struct SplineVector16 current = {0,0};
-    for( byte i: 0..sizeof(letter_c)/sizeof(struct Segment)) {
-        struct Segment segment = letter_c[i];
+    for( byte i: 0..21) {
+        struct SplineVector16 to = { letter_c[i].to.x, letter_c[i].to.y };
+        to = { to.x - 50, to.y - 150};
+        to = rotate(to, angle);
+        to = { to.x + 100, to.y + 100};
+        struct SplineVector16 via = { letter_c[i].via.x, letter_c[i].via.y };
+        via = { via.x - 50, via.y - 150};
+        via = rotate(via, angle);
+        via = { via.x + 100, via.y + 100};
+        struct Segment segment = { letter_c[i].type, to, via};
         if(segment.type==MOVE_TO) {
+            //bitmap_plot((unsigned int)segment.to.x, (unsigned char)segment.to.y);
             current = segment.to;
         } else if(segment.type==SPLINE_TO) {
             spline_8segB(current, segment.via, segment.to);
             bitmap_plot_spline_8seg();
+            //bitmap_plot((unsigned int)segment.to.x, (unsigned char)segment.to.y);
+            //bitmap_plot((unsigned int)segment.via.x, (unsigned char)segment.via.y);
             current = segment.to;
         } else {
             bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)segment.to.x, (unsigned int)segment.to.y);
             current = segment.to;
         }
     }
-
-    while(true) { (*(PRINT_SCREEN+999))++; }
 }
+
 
 // Plot the spline in the SPLINE_8SEG array
 void bitmap_plot_spline_8seg() {
@@ -75,4 +102,26 @@ void bitmap_plot_spline_8seg() {
         //bitmap_plot((unsigned int)current.x, (unsigned char)current.y);
         current = SPLINE_8SEG[n];
     }
+}
+
+// Sine and Cosine tables
+// Angles: $00=0, $80=PI,$100=2*PI
+// Sine/Cosine: signed fixed [-$7f,$7f]
+signed char[0x140] align(0x40) SIN = kickasm {{
+    .for(var i=0;i<$140;i++)
+        .byte >round($7fff*sin(i*2*PI/256))
+}};
+
+signed char* COS = SIN+$40; // sin(x) = cos(x+PI/2)
+
+// 2D-rotate a vector by an angle
+struct SplineVector16 rotate(struct SplineVector16 vector, char angle) {
+        signed int cos_a = (signed int) COS[angle]; // signed fixed[0.7]
+        signed int xr = (signed int )mulf16s(cos_a, vector.x)*2; // signed fixed[8.8]
+        signed int yr = (signed int )mulf16s(cos_a, vector.y)*2; // signed fixed[8.8]
+        signed int sin_a = (signed int) SIN[angle]; // signed fixed[0.7]
+	    xr -= (signed int)mulf16s(sin_a, vector.y)*2; // signed fixed[8.8]
+		yr += (signed int)mulf16s(sin_a, vector.x)*2; // signed fixed[8.8]
+        struct SplineVector16 rotated = { (signed int)(signed char)>xr, (signed int)(signed char)>yr };
+        return rotated;
 }

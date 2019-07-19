@@ -75,8 +75,8 @@ public class TestPrograms {
 
 
    @Test
-   public void testSplines() throws IOException, URISyntaxException {
-      compileAndCompare("complex/splines/simple-splines");
+   public void testTrueTypeSplines() throws IOException, URISyntaxException {
+      compileAndCompare("complex/splines/truetype-splines");
    }
 
    @Test

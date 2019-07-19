@@ -2,25 +2,20 @@
 
 import "c64"
 import "fastmultiply"
+import "time"
+import "print"
 
 byte* SCREEN = $0400;
 
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-byte[0x140] align(0x40) COS = kickasm {{
-    {
-    .var min = -$7fff
-    .var max = $7fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
+byte[0x140] align(0x40) SIN = kickasm {{
+    .for(var i=0;i<$140;i++)
+        .byte >round($7fff*sin(i*2*PI/256))
 }};
 
-byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
+byte* COS = SIN+$40; // sin(x) = cos(x+PI/2)
 
 void main() {
 	asm { sei }
@@ -46,11 +41,12 @@ void anim() {
 	byte angle = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
-        (*BORDERCOL)++; 
+        (*BORDERCOL)++;
+        clock_start();
         signed byte cos_a = (signed byte) COS[angle]; // signed fixed[0.7]
         signed byte sin_a = (signed byte) SIN[angle]; // signed fixed[0.7]
         byte sprite_msb = 0;
-        for(byte i: 0..7) {             
+        for(byte i: 0..7) {
             signed byte x = xs[i]; // signed fixed[7.0]
             signed byte y = ys[i]; // signed fixed[7.0]
             mulf8s_prepare(cos_a);
@@ -64,13 +60,17 @@ void anim() {
             if(>xpos!=0) {
                 sprite_msb |= $80;
             }
-            byte ypos = (>yr) + 89 /*center*/+ 51 /*border*/;  
+            byte ypos = (>yr) + 89 /*center*/+ 51 /*border*/;
             byte i2 = i*2;
        	    SPRITES_XPOS[i2] = <xpos;
        	    SPRITES_YPOS[i2] = ypos;
         }
         *SPRITES_XMSB = sprite_msb;
 		angle++;
+        // Calculate the cycle count - 0x12 is the base usage of start/read
+        dword cyclecount = clock()-CLOCKS_PER_INIT;
+        // Print cycle count
+        print_dword_at(cyclecount, SCREEN);
 		*BORDERCOL = LIGHT_BLUE;	
 	}
 }

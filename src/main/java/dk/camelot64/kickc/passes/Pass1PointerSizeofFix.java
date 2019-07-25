@@ -9,12 +9,14 @@ import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
@@ -38,25 +40,22 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if((assignment.getrValue1() == null) && (assignment.getOperator() != null) && (assignment.getrValue2() instanceof VariableRef)) {
+               if((assignment.getrValue1() == null) && (assignment.getOperator() != null) && (assignment.getrValue2() != null)) {
                   fixPointerUnary(assignment);
-               } else if((assignment.getrValue1() instanceof VariableRef) && (assignment.getOperator() != null) && (assignment.getrValue2() != null)) {
+               } else if((assignment.getrValue1() != null) && (assignment.getOperator() != null) && (assignment.getrValue2() != null)) {
                   fixPointerBinary(block, stmtIt, assignment);
                }
             }
          }
       }
 
-      // For each statement maps RValues used as index to the new *2 variable created
+      // For each statement maps RValues used as index to the new *sizeof() variable created
       Map<Statement, Map<RValue, VariableRef>> handled = new LinkedHashMap<>();
-
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed deref = (PointerDereferenceIndexed) programValue.get();
-            if(deref.getPointer() instanceof VariableRef) {
-               VariableRef varRef = (VariableRef) deref.getPointer();
-               Variable variable = getScope().getVariable(varRef);
-               SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+            SymbolTypePointer pointerType = getPointerType(deref.getPointer());
+            if(pointerType != null) {
                if(pointerType.getElementType().getSizeBytes() > 1) {
                   // Array-indexing into a non-byte pointer - multiply by sizeof()
                   getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
@@ -78,7 +77,6 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             }
          }
       });
-
       return false;
    }
 
@@ -89,10 +87,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     */
 
    public void fixPointerBinary(ControlFlowBlock block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
-      VariableRef varRef = (VariableRef) assignment.getrValue1();
-      Variable variable = getScope().getVariable(varRef);
-      if(variable.getType() instanceof SymbolTypePointer) {
-         SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+      SymbolTypePointer pointerType = getPointerType(assignment.getrValue1());
+      if(pointerType != null) {
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
             if(Operators.PLUS.equals(assignment.getOperator()) || Operators.MINUS.equals(assignment.getOperator())) {
                throw new CompileError("Void pointer math not allowed. ", assignment);
@@ -139,11 +135,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     * @param assignment The assignment statement
     */
    public void fixPointerUnary(StatementAssignment assignment) {
-      // Found assignment of unary operator
-      VariableRef varRef = (VariableRef) assignment.getrValue2();
-      Variable variable = getScope().getVariable(varRef);
-      if(variable.getType() instanceof SymbolTypePointer) {
-         SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+      // Found assignment with unary operator
+      SymbolTypePointer pointerType = getPointerType(assignment.getrValue2());
+      if(pointerType != null) {
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
             if(Operators.INCREMENT.equals(assignment.getOperator()) || Operators.DECREMENT.equals(assignment.getOperator())) {
                throw new CompileError("Void pointer math not allowed. ", assignment);
@@ -168,5 +162,34 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       }
    }
 
+   /**
+    * Examine the passed value to determine if it is a pointer.
+    * If it is a pointer return the type of the pointer
+    * @param pointer The potential pointer to examine
+    * @return The type of the pointer - if the value was a pointer. null if the value is not a pointer.
+    */
+   private SymbolTypePointer getPointerType(RValue pointer) {
+      if(pointer instanceof VariableRef) {
+         VariableRef varRef = (VariableRef) pointer;
+         Variable variable = getScope().getVariable(varRef);
+         SymbolType type = variable.getType();
+         if(type instanceof SymbolTypePointer) {
+            return (SymbolTypePointer) type;
+         }
+      } else if(pointer instanceof StructMemberRef) {
+         StructMemberRef structMemberRef = (StructMemberRef) pointer;
+         RValue struct = structMemberRef.getStruct();
+         SymbolType structType = SymbolTypeInference.inferType(getScope(), struct);
+         if(structType instanceof SymbolTypeStruct) {
+            StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
+            Variable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
+            SymbolType memberType = memberVariable.getType();
+            if(memberType instanceof SymbolTypePointer) {
+               return (SymbolTypePointer) memberType;
+            }
+         }
+      }
+      return null;
+   }
 
 }

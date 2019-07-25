@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -199,6 +199,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code globalDirectivePlatform}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code globalDirectivePlatform}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code globalDirectiveEncoding}
 	 * labeled alternative in {@link KickCParser#globalDirective}.

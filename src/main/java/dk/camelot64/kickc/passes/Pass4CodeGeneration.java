@@ -77,12 +77,18 @@ public class Pass4CodeGeneration {
       if(program.getProgramPc() != null) {
          programPc = program.getProgramPc();
       } else {
-         programPc = 0x080d;
+         if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+            programPc = 0x080d;
+         } else {
+            programPc = 0x1000;
+         }
       }
 
-      asm.startSegment(currentScope, null, "Basic Upstart");
-      asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-      asm.addLine(new AsmBasicUpstart("bbegin"));
+      asm.startSegment(currentScope, null, "Upstart");
+      if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+         asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
+         asm.addLine(new AsmBasicUpstart("bbegin"));
+      }
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
 
       // Generate global ZP labels

@@ -1,5 +1,5 @@
 /*
- * Find least common denominator using subtraction-based Euclidian algorithm
+ * Find greatest common denominator using subtraction-based Euclidian algorithm
  * See https://en.wikipedia.org/wiki/Euclidean_algorithm
  * Based on facebook post from
  */

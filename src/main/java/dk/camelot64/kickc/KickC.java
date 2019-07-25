@@ -6,6 +6,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetPlatform;
 import kickass.KickAssembler;
 import picocli.CommandLine;
 
@@ -115,6 +116,8 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Si"}, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
    private boolean interleaveIclFile = false;
 
+   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. ")
+   private String target = TargetPlatform.C64BASIC.getName();
 
    /** Program Exit Code signaling a compile error. */
    public static final int COMPILE_ERROR = 1;
@@ -130,6 +133,21 @@ public class KickC implements Callable<Void> {
       System.out.println("//-------------------------------------------");
 
       Compiler compiler = new Compiler();
+
+      if(target!=null) {
+         TargetPlatform targetPlatform = TargetPlatform.getTargetPlatform(target);
+         if(targetPlatform==null) {
+            System.err.println("Unknown target platform "+target);
+            StringBuffer supported = new StringBuffer();
+            supported.append("The supported target platforms are: ");
+            for(TargetPlatform value : TargetPlatform.values()) {
+               supported.append(value.getName()).append(" ");
+            }
+            System.err.println(supported);
+            System.exit(COMPILE_ERROR);
+         }
+         compiler.setTargetPlatform(targetPlatform);
+      }
 
       if(libDir != null) {
          for(Path libPath : libDir) {

@@ -1,10 +1,7 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementSequence;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -33,6 +30,9 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
+   /** The target platform. */
+   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -45,10 +45,13 @@ public class Compiler {
       this.enableZeroPageCoalasce = optimizeZeroPageCoalesce;
    }
 
+   public void setTargetPlatform(TargetPlatform targetPlatform) {
+      program.setTargetPlatform(targetPlatform);
+   }
+
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
    }
-
 
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
       try {
@@ -275,7 +278,6 @@ public class Compiler {
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
-      //optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
@@ -484,6 +486,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
+      getLog().append("Target platform is "+program.getTargetPlatform().getName());
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments

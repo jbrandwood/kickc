@@ -36,6 +36,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPlatformAsm6502() throws IOException, URISyntaxException {
+      compileAndCompare("platform-asm6502");
+   }
+
+
+   @Test
    public void testEuclid2() throws IOException, URISyntaxException {
       compileAndCompare("euclid-3");
    }

@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEuclid2() throws IOException, URISyntaxException {
+      compileAndCompare("euclid-3");
+   }
+
+   @Test
    public void testEuclidProblem2() throws IOException, URISyntaxException {
       compileAndCompare("euclid-problem-2");
    }

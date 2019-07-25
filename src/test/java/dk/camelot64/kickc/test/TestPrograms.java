@@ -36,10 +36,14 @@ public class TestPrograms {
    }
 
    @Test
+   public void testZeropageExhausted() throws IOException, URISyntaxException {
+      assertError("zeropage-exhausted", "Variables used in program do not fit on zeropage", false);
+   }
+
+   @Test
    public void testPlatformAsm6502() throws IOException, URISyntaxException {
       compileAndCompare("platform-asm6502");
    }
-
 
    @Test
    public void testEuclid2() throws IOException, URISyntaxException {

@@ -521,7 +521,7 @@ public class Compiler {
          new Pass4ZeroPageCoalesce(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);
-
+      new Pass4AssertZeropageAllocation(program).check();
    }
 
    private void pass5GenerateAndOptimizeAsm() {

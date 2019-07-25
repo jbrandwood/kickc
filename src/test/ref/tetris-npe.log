@@ -149,9 +149,6 @@ Alias (byte) ypos#0 = (byte) ypos#9
 Alias (byte) counter#4 = (byte) counter#7 
 Alias (byte) ypos#3 = (byte) ypos#6 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) counter#5
-Self Phi Eliminated (byte) ypos#11
-Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (byte) counter#11 (byte) RATE#0
 Identical Phi Values (byte) ypos#10 (byte) ypos#0
 Identical Phi Values (byte) counter#5 (byte) counter#3
@@ -173,8 +170,6 @@ if() condition always true - replacing block destination [7] if(true) goto main:
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Self Phi Eliminated (byte) ypos#2
-Successful SSA optimization Pass2SelfPhiElimination
 Inlining constant with var siblings (const byte) ypos#0
 Inlining constant with var siblings (const byte) counter#2
 Constant inlined ypos#0 = (byte) 0
@@ -192,6 +187,7 @@ Calls in [] to main:2
 Created 2 initial phi equivalence classes
 Coalesced [12] ypos#12 ← ypos#1
 Coalesced [13] counter#12 ← counter#1
+Coalesced (already) [14] ypos#13 ← ypos#2
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@15
@@ -217,7 +213,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3 main::@4
-  [5] (byte) ypos#2 ← phi( main/(byte) 0 main::@4/(byte) ypos#1 )
+  [5] (byte) ypos#2 ← phi( main/(byte) 0 main::@4/(byte) ypos#1 main::@3/(byte) ypos#2 )
   [5] (byte) counter#3 ← phi( main/(const byte) RATE#0 main::@4/(const byte) RATE#0 main::@3/(byte) counter#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -243,7 +239,7 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) ypos
 (byte) ypos#1 16.5
-(byte) ypos#2 5.5
+(byte) ypos#2 56.0
 
 Initial phi equivalence classes
 [ counter#3 counter#1 ]
@@ -296,7 +292,8 @@ main: {
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) ypos#2 = (byte) ypos#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -343,7 +340,7 @@ Potential registers zp ZP_BYTE:2 [ counter#3 counter#1 ] : zp ZP_BYTE:2 , reg by
 Potential registers zp ZP_BYTE:3 [ ypos#2 ypos#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 252.5: zp ZP_BYTE:2 [ counter#3 counter#1 ] 22: zp ZP_BYTE:3 [ ypos#2 ypos#1 ] 
+Uplift Scope [] 252.5: zp ZP_BYTE:2 [ counter#3 counter#1 ] 72.5: zp ZP_BYTE:3 [ ypos#2 ypos#1 ] 
 Uplift Scope [main] 
 
 Uplifting [] best 14052 combination reg byte y [ counter#3 counter#1 ] reg byte x [ ypos#2 ypos#1 ] 
@@ -387,7 +384,8 @@ main: {
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
-    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) ypos#2 = (byte) ypos#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -474,7 +472,7 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (byte) ypos
 (byte) ypos#1 reg byte x 16.5
-(byte) ypos#2 reg byte x 5.5
+(byte) ypos#2 reg byte x 56.0
 
 reg byte y [ counter#3 counter#1 ]
 reg byte x [ ypos#2 ypos#1 ]
@@ -508,7 +506,8 @@ main: {
     // [5] phi (byte) counter#3 = (const byte) RATE#0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
     ldy #RATE
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) ypos#2 = (byte) ypos#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi (byte) counter#3 = (byte) counter#1 [phi:main::@3->main::@1#1] -- register_copy 
     // main::@1
     // main::@2
   b2:

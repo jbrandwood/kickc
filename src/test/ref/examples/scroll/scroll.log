@@ -274,15 +274,6 @@ Alias (byte*) fillscreen::cursor#0 = (byte*) fillscreen::screen#1
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::scroll#10 = (byte) main::scroll#6 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) main::scroll#7
-Self Phi Eliminated (byte*) main::nxt#9
-Self Phi Eliminated (byte) main::scroll#3
-Self Phi Eliminated (byte*) main::nxt#6
-Self Phi Eliminated (byte*) main::nxt#3
-Self Phi Eliminated (byte) main::scroll#10
-Self Phi Eliminated (byte) fillscreen::fill#1
-Self Phi Eliminated (byte*) fillscreen::screen#2
-Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (byte) main::scroll#3 (byte) main::scroll#7
 Identical Phi Values (byte*) main::nxt#6 (byte*) main::nxt#9
 Identical Phi Values (byte*) main::nxt#3 (byte*) main::nxt#6
@@ -342,9 +333,10 @@ Consolidated array index constant in *(main::line#0+$27)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias (byte) main::i#2 = (byte~) main::$6 
 Successful SSA optimization Pass2AliasElimination
-Added new block during phi lifting main::@14(between main::@5 and main::@7)
-Added new block during phi lifting main::@15(between main::@8 and main::@8)
-Added new block during phi lifting main::@16(between main::@9 and main::@11)
+Added new block during phi lifting main::@14(between main::@2 and main::@2)
+Added new block during phi lifting main::@15(between main::@5 and main::@7)
+Added new block during phi lifting main::@16(between main::@8 and main::@8)
+Added new block during phi lifting main::@17(between main::@9 and main::@11)
 Added new block during phi lifting fillscreen::@3(between fillscreen::@1 and fillscreen::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -360,19 +352,22 @@ Calls in [main] to fillscreen:6
 
 Created 8 initial phi equivalence classes
 Coalesced [22] main::c#3 ← main::c#1
-Coalesced [26] main::nxt#12 ← main::nxt#1
-Coalesced [30] main::scroll#11 ← main::scroll#4
-Coalesced [31] main::nxt#11 ← main::nxt#10
+Coalesced [26] main::nxt#13 ← main::nxt#1
+Coalesced [30] main::scroll#12 ← main::scroll#4
+Coalesced [31] main::nxt#12 ← main::nxt#10
 Coalesced [32] main::c#4 ← main::c#0
-Coalesced [33] main::nxt#14 ← main::nxt#9
+Coalesced [33] main::nxt#15 ← main::nxt#9
 Coalesced [34] main::i#3 ← main::i#1
-Coalesced [35] main::scroll#12 ← main::scroll#1
-Coalesced (already) [36] main::nxt#13 ← main::nxt#9
-Coalesced [43] fillscreen::cursor#3 ← fillscreen::cursor#1
+Coalesced [35] main::scroll#13 ← main::scroll#1
+Coalesced (already) [36] main::nxt#14 ← main::nxt#9
+Coalesced (already) [37] main::scroll#11 ← main::scroll#7
+Coalesced (already) [38] main::nxt#11 ← main::nxt#9
+Coalesced [45] fillscreen::cursor#3 ← fillscreen::cursor#1
 Coalesced down to 5 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@17
 Culled Empty Block (label) main::@16
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@14
@@ -407,8 +402,8 @@ main: scope:[main]  from @1
   [5] call fillscreen 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@4
-  [6] (byte*) main::nxt#9 ← phi( main/(const byte*) TEXT#0 main::@4/(byte*) main::nxt#10 )
-  [6] (byte) main::scroll#7 ← phi( main/(byte) 7 main::@4/(byte) main::scroll#4 )
+  [6] (byte*) main::nxt#9 ← phi( main/(const byte*) TEXT#0 main::@1/(byte*) main::nxt#9 main::@4/(byte*) main::nxt#10 )
+  [6] (byte) main::scroll#7 ← phi( main/(byte) 7 main::@1/(byte) main::scroll#7 main::@4/(byte) main::scroll#4 )
   [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -483,11 +478,11 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::nxt#1 22.0
 (byte*) main::nxt#10 11.0
 (byte*) main::nxt#4 11.0
-(byte*) main::nxt#9 3.6666666666666665
+(byte*) main::nxt#9 20.500000000000004
 (byte) main::scroll
 (byte) main::scroll#1 16.5
 (byte) main::scroll#4 11.0
-(byte) main::scroll#7 5.5
+(byte) main::scroll#7 56.0
 
 Initial phi equivalence classes
 [ main::scroll#7 main::scroll#4 main::scroll#1 ]
@@ -557,8 +552,11 @@ main: {
     sta scroll
     jmp b1
   // Wait for raster
-    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
   b1_from_b1:
+  b1_from_b4:
+    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#9 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -668,11 +666,7 @@ main: {
     sta SCROLL
     // [24] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#10 [phi:main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#4 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp b1_from_b4
 }
   // fillscreen
 fillscreen: {
@@ -741,13 +735,13 @@ Potential registers zp ZP_WORD:5 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nx
 Potential registers zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] : zp ZP_WORD:7 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 353.5: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 71.5: zp ZP_BYTE:4 [ main::c#2 main::c#1 main::c#0 ] 47.67: zp ZP_WORD:5 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nxt#1 ] 33: zp ZP_BYTE:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] 
+Uplift Scope [main] 353.5: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 83.5: zp ZP_BYTE:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] 71.5: zp ZP_BYTE:4 [ main::c#2 main::c#1 main::c#0 ] 64.5: zp ZP_WORD:5 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nxt#1 ] 
 Uplift Scope [fillscreen] 33: zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 8554 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::c#2 main::c#1 main::c#0 ] zp ZP_WORD:5 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nxt#1 ] reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ] 
-Uplifting [fillscreen] best 8554 combination zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
-Uplifting [] best 8554 combination 
+Uplifting [main] best 8284 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ] reg byte x [ main::c#2 main::c#1 main::c#0 ] zp ZP_WORD:5 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nxt#1 ] 
+Uplifting [fillscreen] best 8284 combination zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
+Uplifting [] best 8284 combination 
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:2 [ main::nxt#4 main::nxt#9 main::nxt#10 main::nxt#1 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:4 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
 
@@ -797,8 +791,11 @@ main: {
     ldx #7
     jmp b1
   // Wait for raster
-    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
   b1_from_b1:
+  b1_from_b4:
+    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#9 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -899,11 +896,7 @@ main: {
     stx SCROLL
     // [24] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#10 [phi:main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#4 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp b1_from_b4
 }
   // fillscreen
 fillscreen: {
@@ -968,6 +961,7 @@ Replacing label b1_from_b1 with b1
 Replacing label b4_from_b3 with b4
 Replacing label b5_from_b5 with b5
 Replacing label b8_from_b6 with b8
+Replacing label b1_from_b4 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
@@ -975,6 +969,7 @@ Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
+Removing instruction b1_from_b4:
 Removing instruction b5_from_b5:
 Removing instruction b8_from_b6:
 Removing instruction b4_from_b3:
@@ -989,7 +984,6 @@ Removing instruction b6:
 Removing instruction b7:
 Removing instruction b8_from_b7:
 Removing instruction b4_from_b8:
-Removing instruction b1_from_b4:
 Removing instruction b1_from_fillscreen:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1050,11 +1044,11 @@ FINAL SYMBOL TABLE
 (byte*) main::nxt#1 nxt zp ZP_WORD:2 22.0
 (byte*) main::nxt#10 nxt zp ZP_WORD:2 11.0
 (byte*) main::nxt#4 nxt zp ZP_WORD:2 11.0
-(byte*) main::nxt#9 nxt zp ZP_WORD:2 3.6666666666666665
+(byte*) main::nxt#9 nxt zp ZP_WORD:2 20.500000000000004
 (byte) main::scroll
 (byte) main::scroll#1 reg byte x 16.5
 (byte) main::scroll#4 reg byte x 11.0
-(byte) main::scroll#7 reg byte x 5.5
+(byte) main::scroll#7 reg byte x 56.0
 
 reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ]
 reg byte x [ main::i#2 main::i#1 ]
@@ -1064,7 +1058,7 @@ zp ZP_WORD:4 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
 
 
 FINAL ASSEMBLER
-Score: 6202
+Score: 5932
 
   // File Comments
   // Basic Upstart
@@ -1100,7 +1094,9 @@ main: {
     // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #7
   // Wait for raster
-    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
+    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#9 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     // main::@1
   b1:
     // while(*RASTER!=$fe)
@@ -1194,9 +1190,6 @@ main: {
     // --*BGCOL;
     // [24] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [6] phi (byte*) main::nxt#9 = (byte*) main::nxt#10 [phi:main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#4 [phi:main::@4->main::@1#1] -- register_copy 
     jmp b1
 }
   // fillscreen

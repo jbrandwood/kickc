@@ -275,7 +275,7 @@ public class Compiler {
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
-      optimizations.add(new Pass2SelfPhiElimination(program));
+      //optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));

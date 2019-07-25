@@ -141,8 +141,6 @@ Alias (byte) col#12 = (byte) col#5
 Alias (byte) col#0 = (byte) col#15 
 Alias (byte) col#13 = (byte) col#6 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) col#14
-Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (byte) col#16 (byte) col#0
 Identical Phi Values (byte) col#10 (byte) col#0
 Identical Phi Values (byte) col#13 (byte) col#14
@@ -171,6 +169,7 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@9(between main::@2 and main::@1)
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -179,11 +178,13 @@ Calls in [] to main:2
 
 Created 2 initial phi equivalence classes
 Coalesced [6] col#17 ← col#0
-Coalesced [10] col#18 ← col#1
-Coalesced [15] col#20 ← col#4
-Coalesced [19] col#19 ← col#3
+Coalesced [10] col#19 ← col#1
+Coalesced (already) [11] col#18 ← col#14
+Coalesced [16] col#21 ← col#4
+Coalesced [20] col#20 ← col#3
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @3
+Culled Empty Block (label) main::@9
 Renumbering block @2 to @1
 Renumbering block main::@7 to main::@3
 Renumbering block irq::@3 to irq::@2
@@ -204,7 +205,7 @@ main: scope:[main]  from @1
   [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
-  [5] (byte) col#14 ← phi( main/(byte) col#0 main::@3/(byte) col#1 )
+  [5] (byte) col#14 ← phi( main/(byte) col#0 main::@2/(byte) col#14 main::@3/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1
@@ -236,7 +237,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) col#0 1.9999999999999998
 (byte) col#1 22.0
 (byte) col#12 40.0
-(byte) col#14 114.0
+(byte) col#14 158.0
 (byte) col#3 4.0
 (byte) col#4 4.0
 interrupt(KERNEL_MIN)(void()) irq()
@@ -286,13 +287,11 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
   b1_from_main:
-  b1_from_b3:
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
-    jmp b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
+  b1_from_b3:
+    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -351,7 +350,7 @@ irq: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
-Statement [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 [ col#14 ] ( main:2 [ col#14 ] ) always clobbers reg byte a 
 Statement [7] (byte) col#1 ← (byte) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
@@ -360,15 +359,15 @@ Statement [11] (byte) col#4 ← (byte) col#0 + (byte) 2 [ col#4 ] (  [ col#4 ] )
 Potential registers zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 186: zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
+Uplift Scope [] 230: zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1834 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
-Uplifting [main] best 1834 combination 
-Uplifting [irq] best 1834 combination 
+Uplifting [] best 1534 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
+Uplifting [main] best 1534 combination 
+Uplifting [irq] best 1534 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
-Uplifting [] best 1834 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
+Uplifting [] best 1534 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -406,13 +405,11 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
   b1_from_main:
-  b1_from_b3:
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
-    jmp b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
+  b1_from_b3:
+    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -477,13 +474,14 @@ Removing instruction jmp b3
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b2
 Replacing label b1_from_b2 with b2
+Replacing label b1_from_b3 with b2
 Replacing label breturn_from_b1 with breturn
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction b1_from_b2:
+Removing instruction b1_from_b3:
 Removing instruction b1:
 Removing instruction breturn_from_b1:
 Removing instruction breturn_from_b2:
@@ -493,19 +491,12 @@ Removing instruction bend:
 Removing instruction b3:
 Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b2 in jmp b1_from_b3
 Skipping double jump to $ea81 in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b3 to b1
-Succesful ASM optimization Pass5RelabelLongLabels
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction jmp b2
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda col
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -521,7 +512,7 @@ FINAL SYMBOL TABLE
 (byte) col#0 col zp ZP_BYTE:2 1.9999999999999998
 (byte) col#1 col zp ZP_BYTE:2 22.0
 (byte) col#12 col zp ZP_BYTE:2 40.0
-(byte) col#14 col zp ZP_BYTE:2 114.0
+(byte) col#14 col zp ZP_BYTE:2 158.0
 (byte) col#3 col zp ZP_BYTE:2 4.0
 (byte) col#4 col zp ZP_BYTE:2 4.0
 interrupt(KERNEL_MIN)(void()) irq()
@@ -571,9 +562,8 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
+    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     // main::@1
     // main::@2
   b2:

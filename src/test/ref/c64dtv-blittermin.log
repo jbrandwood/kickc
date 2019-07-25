@@ -423,8 +423,6 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::r#2 = (byte) main::r#3 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) main::r#2
-Successful SSA optimization Pass2SelfPhiElimination
 Simple Condition (bool~) main::$10 [90] if((byte~) main::$9!=(byte) 0) goto main::@2
 Simple Condition (bool~) main::$14 [98] if((byte) main::r#1!=rangelast(0,7)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -537,7 +535,8 @@ Constant inlined main::$4 = (byte) 0
 Constant inlined main::$7 = (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0
 Constant inlined main::$8 = (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@5(between main::@3 and main::@2)
+Added new block during phi lifting main::@5(between main::@2 and main::@2)
+Added new block during phi lifting main::@6(between main::@3 and main::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @5
@@ -548,11 +547,13 @@ CALL GRAPH
 Calls in [] to main:4 
 
 Created 1 initial phi equivalence classes
-Coalesced [46] main::r#4 ← main::r#1
+Coalesced [46] main::r#5 ← main::r#1
+Coalesced (already) [47] main::r#4 ← main::r#2
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @7
+Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@5
 Renumbering block @6 to @1
 Renumbering block main::@2 to main::@1
@@ -606,7 +607,7 @@ main: scope:[main]  from @1
   [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [36] (byte) main::r#2 ← phi( main/(byte) 0 main::@2/(byte) main::r#1 )
+  [36] (byte) main::r#2 ← phi( main/(byte) 0 main::@1/(byte) main::r#2 main::@2/(byte) main::r#1 )
   [37] (byte~) main::$9 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0
   [38] if((byte~) main::$9!=(byte) 0) goto main::@1
   to:main::@2
@@ -670,7 +671,7 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$9 202.0
 (byte) main::r
 (byte) main::r#1 16.5
-(byte) main::r#2 5.5
+(byte) main::r#2 56.0
 
 Initial phi equivalence classes
 [ main::r#2 main::r#1 ]
@@ -885,12 +886,10 @@ main: {
     sta r
     jmp b1
   // wait til blitter is ready
-    // [36] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [36] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   b1_from_b1:
-    jmp b1
-    // [36] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-    // [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [36] phi (byte) main::r#2 = (byte) main::r#2 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -999,11 +998,11 @@ Potential registers zp ZP_BYTE:2 [ main::r#2 main::r#1 ] : zp ZP_BYTE:2 , reg by
 Potential registers zp ZP_BYTE:3 [ main::$9 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 202: zp ZP_BYTE:3 [ main::$9 ] 22: zp ZP_BYTE:2 [ main::r#2 main::r#1 ] 
+Uplift Scope [main] 202: zp ZP_BYTE:3 [ main::$9 ] 72.5: zp ZP_BYTE:2 [ main::r#2 main::r#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 2815 combination reg byte a [ main::$9 ] reg byte x [ main::r#2 main::r#1 ] 
-Uplifting [] best 2815 combination 
+Uplifting [main] best 2515 combination reg byte a [ main::$9 ] reg byte x [ main::r#2 main::r#1 ] 
+Uplifting [] best 2515 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1206,12 +1205,10 @@ main: {
     ldx #0
     jmp b1
   // wait til blitter is ready
-    // [36] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [36] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   b1_from_b1:
-    jmp b1
-    // [36] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-    // [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [36] phi (byte) main::r#2 = (byte) main::r#2 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
@@ -1261,10 +1258,12 @@ Removing instruction lda #0
 Removing instruction lda #0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -1275,18 +1274,10 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b1 in bne b1_from_b1
-Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b1 to b2
-Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b2:
-Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -1389,7 +1380,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte) main::r
 (byte) main::r#1 reg byte x 16.5
-(byte) main::r#2 reg byte x 5.5
+(byte) main::r#2 reg byte x 56.0
 
 reg byte x [ main::r#2 main::r#1 ]
 reg byte a [ main::$9 ]
@@ -1610,9 +1601,8 @@ main: {
     // [36] phi (byte) main::r#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   // wait til blitter is ready
-    // [36] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [36] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [36] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
+    // [36] phi (byte) main::r#2 = (byte) main::r#2 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     // main::@1
   b1:
     // *DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY

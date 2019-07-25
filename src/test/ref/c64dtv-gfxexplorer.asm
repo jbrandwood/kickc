@@ -970,6 +970,7 @@ form_mode: {
     sta BORDERCOL
     lda form_fields_val
     sta preset_current
+  b2:
   // Let the user change values in the form
   b4:
     lda #$ff
@@ -983,14 +984,14 @@ form_mode: {
   b6:
     lda form_fields_val
     cmp preset_current
-    beq b4
+    beq b2
     jsr apply_preset
     lda form_fields_val
     sta preset_current
     jsr form_render_values
     lda form_fields_val
     jsr render_preset_name
-    jmp b4
+    jmp b2
 }
 // Render form preset name in the form
 // idx is the ID of the preset

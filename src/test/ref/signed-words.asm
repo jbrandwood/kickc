@@ -22,7 +22,7 @@
   .label yvel_10 = 6
   .label xvel = 2
   .label yvel_12 = 6
-  .label yvel_20 = 6
+  .label yvel_21 = 6
 main: {
     jsr init
     lda #<$64
@@ -84,9 +84,9 @@ anim: {
     sta yvel+1
   b3:
     lda yvel
-    sta yvel_20
+    sta yvel_21
     lda yvel+1
-    sta yvel_20+1
+    sta yvel_21+1
     lda #<0
     sta ypos
     sta ypos+1

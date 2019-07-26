@@ -85,12 +85,10 @@ public class TestPrograms {
       compileAndCompare("problem-struct-pointer-param");
    }
 
-   /*
    @Test
    public void testProblemArrayStructParam() throws IOException, URISyntaxException {
       compileAndCompare("problem-array-struct-param");
    }
-   */
 
    /*
    @Test

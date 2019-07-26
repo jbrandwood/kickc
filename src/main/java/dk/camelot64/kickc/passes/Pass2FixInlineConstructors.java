@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Identifies word constructors <code> (word) { b1, b2 }</code> and replaces
  * them with a binary operator <code>word w = b1 w= b2 ;</code>
  */
-public class Pass2FixInlineConstructorsNew extends Pass2SsaOptimization {
+public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
 
-   public Pass2FixInlineConstructorsNew(Program program) {
+   public Pass2FixInlineConstructors(Program program) {
       super(program);
    }
 
@@ -75,7 +75,7 @@ public class Pass2FixInlineConstructorsNew extends Pass2SsaOptimization {
     */
    public void addLiteralWordConstructor(OperatorBinary constructOperator, SymbolType constructType, SymbolType subType, ProgramExpression programExpression, List<RValue> listValues, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Convert list to a word constructor in a new tmp variable
-      Scope currentScope = Pass2FixInlineConstructorsNew.this.getScope().getScope(currentBlock.getScope());
+      Scope currentScope = Pass2FixInlineConstructors.this.getScope().getScope(currentBlock.getScope());
       VariableIntermediate tmpVar = currentScope.addVariableIntermediate();
       //tmpVar.setTypeInferred(constructType);
       // Move backward - to insert before the current statement
@@ -87,7 +87,7 @@ public class Pass2FixInlineConstructorsNew extends Pass2SsaOptimization {
       stmtIt.next();
       // Replace current value with the reference
       programExpression.set(tmpVar.getRef());
-      Pass2FixInlineConstructorsNew.this.getLog().append("Fixing inline constructor with " + assignment.toString());
+      Pass2FixInlineConstructors.this.getLog().append("Fixing inline constructor with " + assignment.toString());
    }
 
 

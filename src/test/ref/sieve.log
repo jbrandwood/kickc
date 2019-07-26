@@ -910,7 +910,7 @@ main::@33: scope:[main]  from main::@32
   (byte*) print_char_cursor#81 ← phi( main::@32/(byte*) print_char_cursor#83 )
   (word) rem16u#28 ← phi( main::@32/(word) rem16u#32 )
   (word) main::i#0 ← (number) 2
-  (byte*~) main::$9 ← (byte*) sieve#0 + (word) main::i#0
+  (byte*~) main::$9 ← & *((byte*) sieve#0 + (word) main::i#0)
   (byte*) main::sieve_i#0 ← (byte*~) main::$9
   to:main::@1
 main::@1: scope:[main]  from main::@33 main::@4
@@ -1028,7 +1028,7 @@ main::@13: scope:[main]  from main::@2
   (word) main::i#6 ← phi( main::@2/(word) main::i#11 )
   (number~) main::$25 ← (word) main::i#6 * (number) 2
   (word) main::j#0 ← (number~) main::$25
-  (byte*~) main::$26 ← (byte*) sieve#0 + (word) main::j#0
+  (byte*~) main::$26 ← & *((byte*) sieve#0 + (word) main::j#0)
   (byte*) main::s#0 ← (byte*~) main::$26
   to:main::@5
 main::@5: scope:[main]  from main::@13 main::@6
@@ -2089,7 +2089,7 @@ SYMBOL TABLE SSA
 (word) utoa_append::value#5
 
 Fixing inline constructor with div32u16u::$4 ← (word)div32u16u::quotient_hi#1 dw= (word)div32u16u::quotient_lo#0
-Successful SSA optimization Pass2FixInlineConstructorsNew
+Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_STOP#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) CIA_TIMER_CONTROL_START#0 ← (number) 1
@@ -2746,6 +2746,9 @@ Rewriting || if()-condition to two if()s [251] (bool~) ultoa::$6 ← (byte) ulto
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition (byte) utoa::started#2
 Warning! Adding boolean cast to non-boolean condition (byte) ultoa::started#2
+Rewriting array member address-of to pointer addition [422] (byte*) main::sieve_i#0 ← (byte*) sieve#0 + (word) main::i#0
+Rewriting array member address-of to pointer addition [477] (byte*) main::s#0 ← (byte*) sieve#0 + (word) main::j#0
+Successful SSA optimization PassNArrayElementAddressOfRewriting
 Constant right-side identified [120] (word[]) RADIX_BINARY_VALUES#0 ← { (word) $8000, (word) $4000, (word) $2000, (word) $1000, (word) $800, (word) $400, (word) $200, (word) $100, (word) $80, (word) $40, (word) $20, (word) $10, (word) 8, (word) 4, (word) 2 }
 Constant right-side identified [121] (word[]) RADIX_OCTAL_VALUES#0 ← { (word) $8000, (word) $1000, (word) $200, (word) $40, (word) 8 }
 Constant right-side identified [122] (word[]) RADIX_DECIMAL_VALUES#0 ← { (word) $2710, (word) $3e8, (word) $64, (word) $a }
@@ -8519,7 +8522,7 @@ main: {
     lda i+1
     rol
     sta j+1
-    // s = sieve+j
+    // s = &sieve[j]
     // [62] (byte*) main::s#0 ← (const byte*) sieve#0 + (word) main::j#0 -- pbuz1=pbuc1_plus_vwuz2 
     lda j
     clc

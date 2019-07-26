@@ -2042,6 +2042,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAddressOf3() throws IOException, URISyntaxException {
+      compileAndCompare("address-of-3");
+   }
+
+   @Test
    public void testAddressOf2() throws IOException, URISyntaxException {
       compileAndCompare("address-of-2");
    }

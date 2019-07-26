@@ -1,0 +1,790 @@
+Fixing pointer array-indexing *((signed word[]) VALS + (number) 1)
+Fixing pointer array-indexing *((signed word[]) VALS + (byte) main::i)
+Fixing pointer array-indexing *((signed word*) SCREEN + (byte) idx)
+Culled Empty Block (label) main::@2
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (signed word[]) VALS#0 ← { (number) 1, (number) 2, (number) 3, (number) 4 }
+  to:@1
+main: scope:[main]  from @2
+  (byte) idx#15 ← phi( @2/(byte) idx#17 )
+  (signed word*) print::p#0 ← (signed word[]) VALS#0
+  call print 
+  to:main::@3
+main::@3: scope:[main]  from main
+  (byte) idx#8 ← phi( main/(byte) idx#6 )
+  (byte) idx#0 ← (byte) idx#8
+  (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word*~) main::$1 ← & *((signed word[]) VALS#0 + (number~) main::$6)
+  (signed word*) print::p#1 ← (signed word*~) main::$1
+  call print 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  (byte) idx#9 ← phi( main::@3/(byte) idx#6 )
+  (byte) idx#1 ← (byte) idx#9
+  (byte) main::i#0 ← (byte) 2
+  to:main::@1
+main::@1: scope:[main]  from main::@4 main::@5
+  (byte) idx#16 ← phi( main::@4/(byte) idx#1 main::@5/(byte) idx#2 )
+  (byte) main::i#2 ← phi( main::@4/(byte) main::i#0 main::@5/(byte) main::i#1 )
+  (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word*~) main::$3 ← & *((signed word[]) VALS#0 + (byte~) main::$7)
+  (signed word*) print::p#2 ← (signed word*~) main::$3
+  call print 
+  to:main::@5
+main::@5: scope:[main]  from main::@1
+  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
+  (byte) idx#10 ← phi( main::@1/(byte) idx#6 )
+  (byte) idx#2 ← (byte) idx#10
+  (byte) main::i#1 ← (byte) main::i#3 + rangenext(2,3)
+  (bool~) main::$5 ← (byte) main::i#1 != rangelast(2,3)
+  if((bool~) main::$5) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@5
+  (byte) idx#11 ← phi( main::@5/(byte) idx#2 )
+  (byte) idx#3 ← (byte) idx#11
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (signed word*) SCREEN#0 ← ((signed word*)) (number) $400
+  (byte) idx#4 ← (number) 0
+  to:@2
+print: scope:[print]  from main main::@1 main::@3
+  (signed word*) print::p#3 ← phi( main/(signed word*) print::p#0 main::@1/(signed word*) print::p#2 main::@3/(signed word*) print::p#1 )
+  (byte) idx#12 ← phi( main/(byte) idx#15 main::@1/(byte) idx#16 main::@3/(byte) idx#0 )
+  (byte~) print::$0 ← (byte) idx#12 * (const byte) SIZEOF_SIGNED_WORD
+  *((signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3)
+  (byte) idx#5 ← ++ (byte) idx#12
+  to:print::@return
+print::@return: scope:[print]  from print
+  (byte) idx#13 ← phi( print/(byte) idx#5 )
+  (byte) idx#6 ← (byte) idx#13
+  return 
+  to:@return
+@2: scope:[]  from @1
+  (byte) idx#17 ← phi( @1/(byte) idx#4 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  (byte) idx#14 ← phi( @2/(byte) idx#3 )
+  (byte) idx#7 ← (byte) idx#14
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(signed word*) SCREEN
+(signed word*) SCREEN#0
+(const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(signed word[]) VALS
+(signed word[]) VALS#0
+(byte) idx
+(byte) idx#0
+(byte) idx#1
+(byte) idx#10
+(byte) idx#11
+(byte) idx#12
+(byte) idx#13
+(byte) idx#14
+(byte) idx#15
+(byte) idx#16
+(byte) idx#17
+(byte) idx#2
+(byte) idx#3
+(byte) idx#4
+(byte) idx#5
+(byte) idx#6
+(byte) idx#7
+(byte) idx#8
+(byte) idx#9
+(void()) main()
+(signed word*~) main::$1
+(signed word*~) main::$3
+(bool~) main::$5
+(number~) main::$6
+(byte~) main::$7
+(label) main::@1
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(void()) print((signed word*) print::p)
+(byte~) print::$0
+(label) print::@return
+(signed word*) print::p
+(signed word*) print::p#0
+(signed word*) print::p#1
+(signed word*) print::p#2
+(signed word*) print::p#3
+
+Adding number conversion cast (unumber) 1 in (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (unumber)(number) 1 * (const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Adding number conversion cast (signed word) to elements in (signed word[]) VALS#0 ← { (signed word)(number) 1, (signed word)(number) 2, (signed word)(number) 3, (signed word)(number) 4 }
+Successful SSA optimization PassNAddArrayNumberTypeConversions
+Inlining cast (signed word*) SCREEN#0 ← (signed word*)(number) $400
+Inlining cast (byte) idx#4 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Simplifying constant integer cast 1
+Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
+Alias (byte) idx#0 = (byte) idx#8 
+Alias (signed word*) print::p#1 = (signed word*~) main::$1 
+Alias (byte) idx#1 = (byte) idx#9 
+Alias (signed word*) print::p#2 = (signed word*~) main::$3 
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (byte) idx#10 = (byte) idx#2 (byte) idx#11 (byte) idx#3 
+Alias (byte) idx#13 = (byte) idx#5 (byte) idx#6 
+Alias (byte) idx#17 = (byte) idx#4 
+Alias (byte) idx#14 = (byte) idx#7 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) idx#15 (byte) idx#17
+Identical Phi Values (byte) idx#0 (byte) idx#13
+Identical Phi Values (byte) idx#1 (byte) idx#13
+Identical Phi Values (byte) idx#10 (byte) idx#13
+Identical Phi Values (byte) idx#14 (byte) idx#10
+Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Values (byte) idx#16 (byte) idx#13
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$5 [22] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Rewriting array member address-of to pointer addition [7] (signed word*) print::p#1 ← (signed word[]) VALS#0 + (byte~) main::$6
+Rewriting array member address-of to pointer addition [15] (signed word*) print::p#2 ← (signed word[]) VALS#0 + (byte~) main::$7
+Successful SSA optimization PassNArrayElementAddressOfRewriting
+Constant right-side identified [0] (signed word[]) VALS#0 ← { (signed word) 1, (signed word) 2, (signed word) 3, (signed word) 4 }
+Constant right-side identified [6] (byte~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const signed word[]) VALS#0 = { 1, 2, 3, 4 }
+Constant (const byte) main::$6 = 1*SIZEOF_SIGNED_WORD
+Constant (const byte) main::i#0 = 2
+Constant (const signed word*) SCREEN#0 = (signed word*) 1024
+Constant (const byte) idx#17 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const signed word*) print::p#0 = VALS#0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [20] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [22] if(main::i#1!=rangelast(2,3)) goto main::@1 to (number) 4
+Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [1] (signed word*) print::p#1 ← (const signed word[]) VALS#0 + (const byte) main::$6
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const signed word*) print::p#1 = VALS#0+main::$6
+Successful SSA optimization Pass2ConstantIdentification
+Rewriting multiplication to use shift [3] (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [10] (byte~) print::$0 ← (byte) idx#12 * (const byte) SIZEOF_SIGNED_WORD
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const signed word*) print::p#0
+Inlining constant with var siblings (const signed word*) print::p#1
+Inlining constant with var siblings (const byte) idx#17
+Constant inlined main::i#0 = (byte) 2
+Constant inlined main::$6 = (byte) 1*(const byte) SIZEOF_SIGNED_WORD
+Constant inlined idx#17 = (byte) 0
+Constant inlined print::p#1 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD
+Constant inlined print::p#0 = (const signed word[]) VALS#0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@6(between main::@5 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@4
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to print:7 print:9 print:16 
+
+Created 3 initial phi equivalence classes
+Coalesced [8] idx#19 ← idx#13
+Coalesced (already) [14] idx#18 ← idx#13
+Coalesced [15] print::p#4 ← print::p#2
+Coalesced [20] main::i#4 ← main::i#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@6
+Renumbering block @2 to @1
+Renumbering block main::@3 to main::@2
+Renumbering block main::@5 to main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call print 
+  to:main::@2
+main::@2: scope:[main]  from main
+  [6] phi()
+  [7] call print 
+  to:main::@1
+main::@1: scope:[main]  from main::@2 main::@3
+  [8] (byte) main::i#2 ← phi( main::@2/(byte) 2 main::@3/(byte) main::i#1 )
+  [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
+  [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7
+  [11] call print 
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [12] (byte) main::i#1 ← ++ (byte) main::i#2
+  [13] if((byte) main::i#1!=(byte) 4) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [14] return 
+  to:@return
+print: scope:[print]  from main main::@1 main::@2
+  [15] (signed word*) print::p#3 ← phi( main/(const signed word[]) VALS#0 main::@1/(signed word*) print::p#2 main::@2/(const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD )
+  [15] (byte) idx#12 ← phi( main/(byte) 0 main::@1/(byte) idx#13 main::@2/(byte) idx#13 )
+  [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1
+  [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3)
+  [18] (byte) idx#13 ← ++ (byte) idx#12
+  to:print::@return
+print::@return: scope:[print]  from print
+  [19] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(signed word*) SCREEN
+(signed word[]) VALS
+(byte) idx
+(byte) idx#12 5.666666666666667
+(byte) idx#13 1.3636363636363638
+(void()) main()
+(byte~) main::$7 22.0
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#2 8.25
+(void()) print((signed word*) print::p)
+(byte~) print::$0 4.0
+(signed word*) print::p
+(signed word*) print::p#2 22.0
+(signed word*) print::p#3 6.5
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ idx#12 idx#13 ]
+[ print::p#3 print::p#2 ]
+Added variable main::$7 to zero page equivalence class [ main::$7 ]
+Added variable print::$0 to zero page equivalence class [ print::$0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ idx#12 idx#13 ]
+[ print::p#3 print::p#2 ]
+[ main::$7 ]
+[ print::$0 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ idx#12 idx#13 ]
+Allocated zp ZP_WORD:4 [ print::p#3 print::p#2 ]
+Allocated zp ZP_BYTE:6 [ main::$7 ]
+Allocated zp ZP_BYTE:7 [ print::$0 ]
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test address-of an array element
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _7 = 6
+    .label i = 2
+    // [5] call print 
+    // [15] phi from main to print [phi:main->print]
+  print_from_main:
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
+    lda #<VALS
+    sta print.p
+    lda #>VALS
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
+    lda #0
+    sta idx
+    jsr print
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    jmp b2
+    // main::@2
+  b2:
+    // [7] call print 
+    // [15] phi from main::@2 to print [phi:main::@2->print]
+  print_from_b2:
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p
+    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+    jsr print
+    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
+    lda #2
+    sta i
+    jmp b1
+    // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda i
+    asl
+    sta _7
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuz2 
+    lda _7
+    clc
+    adc #<VALS
+    sta print.p
+    lda #>VALS
+    adc #0
+    sta print.p+1
+    // [11] call print 
+    // [15] phi from main::@1 to print [phi:main::@1->print]
+  print_from_b1:
+    // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+    jsr print
+    jmp b3
+    // main::@3
+  b3:
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+    // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #4
+    cmp i
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // print
+// print(signed word* zeropage(4) p)
+print: {
+    .label _0 = 7
+    .label p = 4
+    // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda idx
+    asl
+    sta _0
+    // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuz1=_deref_pwsz2 
+    ldx _0
+    ldy #0
+    lda (p),y
+    sta SCREEN,x
+    iny
+    lda (p),y
+    sta SCREEN+1,x
+    // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc idx
+    jmp breturn
+    // print::@return
+  breturn:
+    // [19] return 
+    rts
+}
+  // File Data
+  VALS: .word 1, 2, 3, 4
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$7 idx#13 ] ( main:2 [ main::i#2 main::$7 idx#13 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ idx#12 idx#13 ]
+Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
+Statement [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ idx#12 idx#13 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$7 idx#13 ] ( main:2 [ main::i#2 main::$7 idx#13 ] ) always clobbers reg byte a 
+Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
+Statement [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_BYTE:3 [ idx#12 idx#13 ] : zp ZP_BYTE:3 , reg byte x , 
+Potential registers zp ZP_WORD:4 [ print::p#3 print::p#2 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_BYTE:6 [ main::$7 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ print::$0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 24.75: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:6 [ main::$7 ] 
+Uplift Scope [print] 28.5: zp ZP_WORD:4 [ print::p#3 print::p#2 ] 4: zp ZP_BYTE:7 [ print::$0 ] 
+Uplift Scope [] 7.03: zp ZP_BYTE:3 [ idx#12 idx#13 ] 
+
+Uplifting [main] best 572 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] reg byte a [ main::$7 ] 
+Uplifting [print] best 568 combination zp ZP_WORD:4 [ print::p#3 print::p#2 ] reg byte a [ print::$0 ] 
+Uplifting [] best 568 combination zp ZP_BYTE:3 [ idx#12 idx#13 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 568 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ idx#12 idx#13 ]
+Uplifting [] best 568 combination zp ZP_BYTE:3 [ idx#12 idx#13 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test address-of an array element
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label i = 2
+    // [5] call print 
+    // [15] phi from main to print [phi:main->print]
+  print_from_main:
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
+    lda #<VALS
+    sta print.p
+    lda #>VALS
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
+    lda #0
+    sta idx
+    jsr print
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    jmp b2
+    // main::@2
+  b2:
+    // [7] call print 
+    // [15] phi from main::@2 to print [phi:main::@2->print]
+  print_from_b2:
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p
+    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+    jsr print
+    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
+    lda #2
+    sta i
+    jmp b1
+    // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    lda i
+    asl
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
+    clc
+    adc #<VALS
+    sta print.p
+    lda #>VALS
+    adc #0
+    sta print.p+1
+    // [11] call print 
+    // [15] phi from main::@1 to print [phi:main::@1->print]
+  print_from_b1:
+    // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+    jsr print
+    jmp b3
+    // main::@3
+  b3:
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+    // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #4
+    cmp i
+    bne b1_from_b3
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // print
+// print(signed word* zeropage(4) p)
+print: {
+    .label p = 4
+    // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    lda idx
+    asl
+    // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuaa=_deref_pwsz1 
+    tax
+    ldy #0
+    lda (p),y
+    sta SCREEN,x
+    iny
+    lda (p),y
+    sta SCREEN+1,x
+    // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc idx
+    jmp breturn
+    // print::@return
+  breturn:
+    // [19] return 
+    rts
+}
+  // File Data
+  VALS: .word 1, 2, 3, 4
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b2
+Removing instruction jmp b1
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b3 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b2_from_main:
+Removing instruction print_from_b2:
+Removing instruction b1_from_b3:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction print_from_main:
+Removing instruction b2:
+Removing instruction b1_from_b2:
+Removing instruction print_from_b1:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(signed word*) SCREEN
+(const signed word*) SCREEN#0 SCREEN = (signed word*) 1024
+(const byte) SIZEOF_SIGNED_WORD SIZEOF_SIGNED_WORD = (byte) 2
+(signed word[]) VALS
+(const signed word[]) VALS#0 VALS = { (signed word) 1, (signed word) 2, (signed word) 3, (signed word) 4 }
+(byte) idx
+(byte) idx#12 idx zp ZP_BYTE:3 5.666666666666667
+(byte) idx#13 idx zp ZP_BYTE:3 1.3636363636363638
+(void()) main()
+(byte~) main::$7 reg byte a 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::i
+(byte) main::i#1 i zp ZP_BYTE:2 16.5
+(byte) main::i#2 i zp ZP_BYTE:2 8.25
+(void()) print((signed word*) print::p)
+(byte~) print::$0 reg byte a 4.0
+(label) print::@return
+(signed word*) print::p
+(signed word*) print::p#2 p zp ZP_WORD:4 22.0
+(signed word*) print::p#3 p zp ZP_WORD:4 6.5
+
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+zp ZP_BYTE:3 [ idx#12 idx#13 ]
+zp ZP_WORD:4 [ print::p#3 print::p#2 ]
+reg byte a [ main::$7 ]
+reg byte a [ print::$0 ]
+
+
+FINAL ASSEMBLER
+Score: 457
+
+  // File Comments
+// Test address-of an array element
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label i = 2
+    // print(VALS)
+    // [5] call print 
+    // [15] phi from main to print [phi:main->print]
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
+    lda #<VALS
+    sta print.p
+    lda #>VALS
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
+    lda #0
+    sta idx
+    jsr print
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+    // main::@2
+    // print(&VALS[1])
+    // [7] call print 
+    // [15] phi from main::@2 to print [phi:main::@2->print]
+    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    lda #<VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p
+    lda #>VALS+1*SIZEOF_SIGNED_WORD
+    sta print.p+1
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
+    jsr print
+    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
+    lda #2
+    sta i
+    // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // main::@1
+  b1:
+    // &VALS[i]
+    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    lda i
+    asl
+    // print(&VALS[i])
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
+    clc
+    adc #<VALS
+    sta print.p
+    lda #>VALS
+    adc #0
+    sta print.p+1
+    // [11] call print 
+    // [15] phi from main::@1 to print [phi:main::@1->print]
+    // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
+    // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
+    jsr print
+    // main::@3
+    // for(char i:2..3)
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+    // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #4
+    cmp i
+    bne b1
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // print
+// print(signed word* zeropage(4) p)
+print: {
+    .label p = 4
+    // SCREEN[idx++] = *p
+    // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    lda idx
+    asl
+    // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuaa=_deref_pwsz1 
+    tax
+    ldy #0
+    lda (p),y
+    sta SCREEN,x
+    iny
+    lda (p),y
+    sta SCREEN+1,x
+    // SCREEN[idx++] = *p;
+    // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc idx
+    // print::@return
+    // }
+    // [19] return 
+    rts
+}
+  // File Data
+  VALS: .word 1, 2, 3, 4
+

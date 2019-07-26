@@ -268,7 +268,7 @@ public class Compiler {
 
    private List<Pass2SsaOptimization> getPass2Optimizations() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new Pass2FixInlineConstructorsNew(program));
+      optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNAddArrayNumberTypeConversions(program));
       optimizations.add(new Pass2InlineCast(program));
@@ -289,6 +289,7 @@ public class Compiler {
       optimizations.add(new PassNAddBooleanCasts(program));
       optimizations.add(new PassNStructPointerRewriting(program));
       optimizations.add(new PassNStructAddressOfRewriting(program));
+      optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));

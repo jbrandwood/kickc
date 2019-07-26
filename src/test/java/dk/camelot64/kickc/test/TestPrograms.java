@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArray16bitLookup() throws IOException, URISyntaxException {
+      compileAndCompare("array-16bit-lookup");
+   }
+
+   @Test
    public void testZeropageExhausted() throws IOException, URISyntaxException {
       assertError("zeropage-exhausted", "Variables used in program do not fit on zeropage", false);
    }
@@ -75,12 +80,10 @@ public class TestPrograms {
       compileAndCompare("problem-pointer-inside-struct-sizeof-rewriting");
    }
 
-   /*
    @Test
    public void testProblemStructPointerParam() throws IOException, URISyntaxException {
       compileAndCompare("problem-struct-pointer-param");
    }
-   */
 
    /*
    @Test

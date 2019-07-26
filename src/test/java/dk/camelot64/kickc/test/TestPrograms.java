@@ -90,6 +90,16 @@ public class TestPrograms {
       compileAndCompare("problem-array-struct-param");
    }
 
+   @Test
+   public void testProblemStructReturnToPointer() throws IOException, URISyntaxException {
+      compileAndCompare("problem-struct-return-to-pointer");
+   }
+
+   @Test
+   public void testProblemStructReturnPointerDeref() throws IOException, URISyntaxException {
+      compileAndCompare("problem-struct-return-pointer-deref");
+   }
+
    /*
    @Test
    public void testProblemArrayStructInit() throws IOException, URISyntaxException {
@@ -100,10 +110,9 @@ public class TestPrograms {
    /*
    @Test
    public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
-      compileAndCompare("problem-inline-struct-return");
+      compileAndCompare("problem-inline-struct-return", log().verboseCreateSsa());
    }
    */
-
 
    @Test
    public void testTrueTypeSplines() throws IOException, URISyntaxException {

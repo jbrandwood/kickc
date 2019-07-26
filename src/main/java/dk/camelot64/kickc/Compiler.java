@@ -194,6 +194,10 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, false).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();

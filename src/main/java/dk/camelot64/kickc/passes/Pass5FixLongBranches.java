@@ -84,7 +84,11 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       try {
          asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
       } catch(Throwable e) {
-         throw new CompileError("Error! KickAssembler failed, while trying to fix long branch. " + e);
+         if(e instanceof AssertionError && e.getMessage().contains("Invalid number of bytes in memblock!")) {
+            throw new CompileError("Error! KickAssembler failed due to assertion. Please run java without -ea / -enableassertions.", e);
+         }  else {
+            throw new CompileError("Error! KickAssembler failed, while trying to fix long branch. " + e);
+         }
       }  finally {
          System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
       }

@@ -76,45 +76,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testProblemPointerInsideStructSizeofRewriting() throws IOException, URISyntaxException {
-      compileAndCompare("problem-pointer-inside-struct-sizeof-rewriting");
-   }
-
-   @Test
-   public void testProblemStructPointerParam() throws IOException, URISyntaxException {
-      compileAndCompare("problem-struct-pointer-param");
-   }
-
-   @Test
-   public void testProblemArrayStructParam() throws IOException, URISyntaxException {
-      compileAndCompare("problem-array-struct-param");
-   }
-
-   @Test
-   public void testProblemStructReturnToPointer() throws IOException, URISyntaxException {
-      compileAndCompare("problem-struct-return-to-pointer");
-   }
-
-   @Test
-   public void testProblemStructReturnPointerDeref() throws IOException, URISyntaxException {
-      compileAndCompare("problem-struct-return-pointer-deref");
-   }
-
-   /*
-   @Test
-   public void testProblemArrayStructInit() throws IOException, URISyntaxException {
-      compileAndCompare("problem-array-struct-init");
-   }
-   */
-
-   /*
-   @Test
-   public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
-      compileAndCompare("problem-inline-struct-return", log().verboseCreateSsa());
-   }
-   */
-
-   @Test
    public void testTrueTypeSplines() throws IOException, URISyntaxException {
       compileAndCompare("complex/splines/truetype-splines");
    }
@@ -372,6 +333,40 @@ public class TestPrograms {
       compileAndCompare("textbox");
    }
 
+   /*
+   @Test
+   public void testProblemArrayStructInit() throws IOException, URISyntaxException {
+      compileAndCompare("problem-array-struct-init");
+   }
+   */
+
+   /*
+   @Test
+   public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
+      compileAndCompare("problem-inline-struct-return", log().verboseCreateSsa());
+   }
+   */
+
+   @Test
+   public void testStructPtr19() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-19");
+   }
+
+   @Test
+   public void testStructPtr18() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-18");
+   }
+
+   @Test
+   public void testStructPtr17() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-17");
+   }
+
+   @Test
+   public void testStructPtr16() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-16");
+   }
+
    @Test
    public void testStructPtr15() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-15");
@@ -485,6 +480,11 @@ public class TestPrograms {
    @Test
    public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
+   }
+
+   @Test
+   public void testStruct10() throws IOException, URISyntaxException {
+      compileAndCompare("struct-10");
    }
 
    @Test

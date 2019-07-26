@@ -76,12 +76,14 @@ public class Pass1UnwindStructValues extends Pass1Base {
             getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
                if(programValue.get() instanceof StructMemberRef) {
                   StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
-                  StructUnwinding.StructMemberUnwinding memberVariables = getStructMemberUnwinding(structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
-                  if(memberVariables != null && memberVariables != POSTPONE_UNWINDING) {
-                     VariableRef structMemberVariable = (VariableRef) memberVariables.getMemberUnwinding(structMemberRef.getMemberName());
-                     getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + structMemberVariable.toString(getProgram()));
-                     programValue.set(structMemberVariable);
-                     modified.set(true);
+                  if(structMemberRef.getStruct() instanceof VariableRef) {
+                     StructUnwinding.StructMemberUnwinding memberVariables = getStructMemberUnwinding(structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
+                     if(memberVariables != null && memberVariables != POSTPONE_UNWINDING) {
+                        LValue structMemberVariable = memberVariables.getMemberUnwinding(structMemberRef.getMemberName());
+                        getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + structMemberVariable.toString(getProgram()));
+                        programValue.set(structMemberVariable);
+                        modified.set(true);
+                     }
                   }
                }
             });

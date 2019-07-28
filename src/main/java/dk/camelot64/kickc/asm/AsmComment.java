@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-/** An assember comment */
+/** An assembler comment */
 public class AsmComment implements AsmLine {
 
    private String comment;

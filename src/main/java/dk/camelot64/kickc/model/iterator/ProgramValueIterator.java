@@ -205,6 +205,11 @@ public class ProgramValueIterator {
          for(int i = 0; i < size; i++) {
             subValues.add(new ProgramValue.ProgramValueConstantArrayElement(constantArrayList, i));
          }
+      } else if(value instanceof ConstantStructValue) {
+         ConstantStructValue constantStructValue = (ConstantStructValue) value;
+         for(VariableRef memberRef : constantStructValue.getMembers()) {
+            subValues.add(new ProgramValue.ProgramValueConstantStructMember(constantStructValue, memberRef));
+         }
       } else if(value instanceof CastValue) {
          subValues.add(new ProgramValue.ProgramValueCastValue((CastValue) value));
       } else if(value instanceof ConstantCastValue) {

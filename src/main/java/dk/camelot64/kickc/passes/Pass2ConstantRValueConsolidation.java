@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -9,12 +8,10 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.values.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.SymbolRef;
 
 /**
  * Compiler Pass consolidating R-values that are constant into a single {@link ConstantValue}
@@ -81,39 +78,6 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
                (OperatorBinary) assignment.getOperator(),
                Pass2ConstantIdentification.getConstant(assignment.getrValue2()),
                getScope());
-      } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-         // A candidate for a constant list - examine to confirm
-         if(lValueType instanceof SymbolTypeArray) {
-            ValueList valueList = (ValueList) assignment.getrValue2();
-            List<RValue> values = valueList.getList();
-            boolean allConstant = true;
-            // Type of the elements of the list (deducted from the type of all elements)
-            SymbolType listType = null;
-            List<ConstantValue> elements = new ArrayList<>();
-            for(RValue elmValue : values) {
-               if(elmValue instanceof ConstantValue) {
-                  ConstantValue constantValue = (ConstantValue) elmValue;
-                  SymbolType elmType = constantValue.getType(getScope());
-                  if(listType == null) {
-                     listType = elmType;
-                  } else {
-                     if(!listType.equals(elmType)) {
-                        // No overlap between list type and element type
-                        throw new InternalError("Array type " + listType + " does not match element type " + elmType + ". Array: " + valueList.toString(getProgram()));
-                     }
-                  }
-                  elements.add(constantValue);
-               } else {
-                  allConstant = false;
-                  listType = null;
-                  break;
-               }
-            }
-            if(allConstant && listType != null) {
-               // Constant list confirmed!
-               return new ConstantArrayList(elements, listType);
-            }
-         }
       } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
          // Constant address-of variable
          if(assignment.getrValue2() instanceof SymbolRef) {

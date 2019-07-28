@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 
 /** Constainer for all the expression operators */
 public class Operators {
@@ -158,7 +159,9 @@ public class Operators {
       } else if(SymbolType.BOOLEAN.equals(castType)) {
          return CAST_BOOL;
       } else if(castType instanceof SymbolTypePointer) {
-         return new OperatorCastPtr(CAST_BYTE.getPrecedence(), ((SymbolTypePointer) castType).getElementType());
+         return new OperatorCastPtr(CAST_BYTE.getPrecedence(), (SymbolTypePointer) castType);
+      } else if(castType instanceof SymbolTypeStruct) {
+         return new OperatorCastStruct(CAST_BYTE.getPrecedence(), (SymbolTypeStruct) castType);
       } else {
          throw new RuntimeException("Unknown cast type " + castType);
 

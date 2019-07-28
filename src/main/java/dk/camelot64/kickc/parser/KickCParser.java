@@ -58,7 +58,7 @@ public class KickCParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'import'", "';'", "'typedef'", "','", "'='", "'('", "')'", "'{'", 
-		"'}'", "'#'", "'pc'", "'platform'", "'encoding'", "'const'", "'extern'", 
+		"'}'", "'#'", "'pc'", "'target'", "'encoding'", "'const'", "'extern'", 
 		"'align'", "'register'", "'inline'", "'volatile'", "'interrupt'", "'reserve'", 
 		"'if'", "'else'", "'while'", "'do'", "'for'", "'return'", "'break'", "'continue'", 
 		"'asm'", "':'", "'..'", "'signed'", "'unsigned'", "'*'", "'['", "']'", 

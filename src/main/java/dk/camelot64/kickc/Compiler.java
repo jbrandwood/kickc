@@ -270,7 +270,7 @@ public class Compiler {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
-      optimizations.add(new PassNAddArrayNumberTypeConversions(program));
+      optimizations.add(new PassNAddInitializerValueListTypeCasts(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
@@ -292,6 +292,7 @@ public class Compiler {
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
+      optimizations.add(new Pass2ConstantInitializerValueLists(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));

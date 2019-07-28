@@ -30,6 +30,8 @@ public interface ProgramExpressionUnary extends ProgramExpression {
     */
    void setOperand(RValue rValue);
 
+   // TODO: Add ProgramValue getOperandValue() that returns a modifiable program value. Then setOperand() can be recoded with this.
+
    /** Unary expression assignment rvalue. */
    class ProgramExpressionUnaryAssignmentRValue implements ProgramExpressionUnary {
       private final StatementAssignment assignment;

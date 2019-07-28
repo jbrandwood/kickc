@@ -333,12 +333,25 @@ public class TestPrograms {
       compileAndCompare("textbox");
    }
 
-   /*
    @Test
-   public void testProblemArrayStructInit() throws IOException, URISyntaxException {
-      compileAndCompare("problem-array-struct-init");
+   public void testInitializer0() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-0");
    }
-   */
+
+   @Test
+   public void testInitializer1() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-1");
+   }
+
+   @Test
+   public void testInitializer2() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-2");
+   }
+
+   @Test
+   public void testInitializer3() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-3");
+   }
 
    /*
    @Test

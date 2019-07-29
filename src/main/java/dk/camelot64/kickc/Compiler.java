@@ -523,8 +523,9 @@ public class Compiler {
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();
+
       if(enableZeroPageCoalasce) {
-         new Pass4ZeroPageCoalesce(program).coalesce();
+         new Pass4ZeroPageCoalesceExhaustive(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);
       new Pass4AssertZeropageAllocation(program).check();

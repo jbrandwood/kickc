@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCoalesceAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("coalesce-assignment");
+   }
+
+   @Test
    public void testArray16bitLookup() throws IOException, URISyntaxException {
       compileAndCompare("array-16bit-lookup");
    }

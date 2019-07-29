@@ -10,35 +10,16 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * Coalesces zero page registers where their live ranges do not overlap.
  * A final step done after all other register optimizations and before ASM generation.
  */
-public class Pass4ZeroPageCoalesce extends Pass2Base {
+public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
 
    public Pass4ZeroPageCoalesce(Program program) {
       super(program);
-   }
-
-   public void coalesce() {
-      LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
-      LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      Collection<ScopeRef> threads = getThreadHeads(getProgram());
-      boolean change;
-      do {
-         change = coalesce(liveRangeEquivalenceClassSet, threads, unknownFragments);
-      } while(change);
-
-      if(unknownFragments.size() > 0) {
-         getLog().append("MISSING FRAGMENTS");
-         for(String unknownFragment : unknownFragments) {
-            getLog().append("  " + unknownFragment);
-         }
-      }
-
    }
 
    /**
@@ -62,29 +43,6 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       return threadHeads;
    }
 
-   /**
-    * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
-    *
-    * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
-    * @param unknownFragments Receives information about any unknown fragments encountered during ASM generation
-    * @return true if any classes were coalesced. False otherwise.
-    */
-   private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Collection<ScopeRef> threadHeads, Set<String> unknownFragments) {
-      for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, threadHeads, unknownFragments, getProgram())) {
-                  getLog().append("Coalescing zero page register [ " + thisEquivalenceClass + " ] with [ " + otherEquivalenceClass + " ]");
-                  liveRangeEquivalenceClassSet.consolidate(thisEquivalenceClass, otherEquivalenceClass);
-                  // Reset the program register allocation
-                  getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
-                  return true;
-               }
-            }
-         }
-      }
-      return false;
-   }
 
    /**
     * Determines if two live range equivalence classes can be coalesced.

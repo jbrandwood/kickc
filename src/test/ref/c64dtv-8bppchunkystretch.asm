@@ -9,7 +9,7 @@
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
-  .const PROCPORT_RAM_IO = $35
+  .const PROCPORT_RAM_IO = 5
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011

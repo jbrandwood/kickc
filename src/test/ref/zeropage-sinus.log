@@ -1,0 +1,933 @@
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Culled Empty Block (label) @1
+Culled Empty Block (label) @2
+Culled Empty Block (label) @3
+Culled Empty Block (label) @5
+Culled Empty Block (label) @6
+Culled Empty Block (label) @7
+Culled Empty Block (label) @8
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (word) SPRITE_PTRS#0 ← (number) $3f8
+  (byte*) SPRITES_XPOS#0 ← ((byte*)) (number) $d000
+  (byte*) SPRITES_YPOS#0 ← ((byte*)) (number) $d001
+  (byte*) SPRITES_ENABLE#0 ← ((byte*)) (number) $d015
+  to:@4
+@4: scope:[]  from @begin
+  (byte[$100]) SINTABLE#0 ← kickasm {{ .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+ }}
+  (byte[$100]) ZP_STORAGE#0 ← { fill( $100, 0) }
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte[$40]) SPRITE#0 ← kickasm {{ .fill $40,$ff  }}
+  to:@9
+main: scope:[main]  from @9
+  asm { sei  }
+  *((byte*) SPRITES_ENABLE#0) ← (number) 1
+  *((byte*) SPRITES_YPOS#0 + (number) 0) ← (number) $64
+  *((byte*) SPRITES_XPOS#0 + (number) 0) ← (number) $64
+  (byte*~) main::$0 ← (byte*) SCREEN#0 + (word) SPRITE_PTRS#0
+  (byte[$40]~) main::$1 ← (byte[$40]) SPRITE#0 / (number) $40
+  (byte~) main::$2 ← ((byte)) (byte[$40]~) main::$1
+  *((byte*~) main::$0) ← (byte~) main::$2
+  call saveZeropage 
+  to:main::@1
+main::@1: scope:[main]  from main
+  call sinZeropage 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  call animSprite 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  call restoreZeropage 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+saveZeropage: scope:[saveZeropage]  from main
+  asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+  to:saveZeropage::@return
+saveZeropage::@return: scope:[saveZeropage]  from saveZeropage
+  return 
+  to:@return
+restoreZeropage: scope:[restoreZeropage]  from main::@3
+  asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+  to:restoreZeropage::@return
+restoreZeropage::@return: scope:[restoreZeropage]  from restoreZeropage
+  return 
+  to:@return
+sinZeropage: scope:[sinZeropage]  from main::@1
+  asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+  to:sinZeropage::@return
+sinZeropage::@return: scope:[sinZeropage]  from sinZeropage
+  return 
+  to:@return
+animSprite: scope:[animSprite]  from main::@2
+  kickasm() {{ ldx #$00
+    repeat:
+        lda #$fe
+    !:
+        cmp $d012
+        bne !-
+        lda #$ff
+    !:
+        cmp $d012
+        bne !-
+        .break
+        lda $00,x
+        clc
+        adc #$38
+        sta $d000
+        lda #0
+        adc #0
+        sta $d010
+        inx
+        jmp repeat
+     }}
+  to:animSprite::@return
+animSprite::@return: scope:[animSprite]  from animSprite
+  return 
+  to:@return
+@9: scope:[]  from @4
+  call main 
+  to:@10
+@10: scope:[]  from @9
+  to:@end
+@end: scope:[]  from @10
+
+SYMBOL TABLE SSA
+(label) @10
+(label) @4
+(label) @9
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte[$100]) SINTABLE
+(byte[$100]) SINTABLE#0
+(byte[$40]) SPRITE
+(byte[$40]) SPRITE#0
+(byte*) SPRITES_ENABLE
+(byte*) SPRITES_ENABLE#0
+(byte*) SPRITES_XPOS
+(byte*) SPRITES_XPOS#0
+(byte*) SPRITES_YPOS
+(byte*) SPRITES_YPOS#0
+(word) SPRITE_PTRS
+(word) SPRITE_PTRS#0
+(byte[$100]) ZP_STORAGE
+(byte[$100]) ZP_STORAGE#0
+(void()) animSprite()
+(label) animSprite::@return
+(void()) main()
+(byte*~) main::$0
+(byte[$40]~) main::$1
+(byte~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@return
+(void()) restoreZeropage()
+(label) restoreZeropage::@return
+(void()) saveZeropage()
+(label) saveZeropage::@return
+(void()) sinZeropage()
+(label) sinZeropage::@return
+
+Adding number conversion cast (unumber) $3f8 in (word) SPRITE_PTRS#0 ← (number) $3f8
+Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE#0) ← (number) 1
+Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS#0 + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS#0 + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS#0 + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS#0 + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $40 in (byte[$40]~) main::$1 ← (byte[$40]) SPRITE#0 / (number) $40
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (word) SPRITE_PTRS#0 ← (unumber)(number) $3f8
+Inlining cast (byte*) SPRITES_XPOS#0 ← (byte*)(number) $d000
+Inlining cast (byte*) SPRITES_YPOS#0 ← (byte*)(number) $d001
+Inlining cast (byte*) SPRITES_ENABLE#0 ← (byte*)(number) $d015
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast *((byte*) SPRITES_ENABLE#0) ← (unumber)(number) 1
+Inlining cast *((byte*) SPRITES_YPOS#0 + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((byte*) SPRITES_XPOS#0 + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast (byte~) main::$2 ← (byte)(byte[$40]~) main::$1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast $3f8
+Simplifying constant pointer cast (byte*) 53248
+Simplifying constant pointer cast (byte*) 53249
+Simplifying constant pointer cast (byte*) 53269
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast $64
+Simplifying constant integer cast 0
+Simplifying constant integer cast $64
+Simplifying constant integer cast 0
+Simplifying constant integer cast $40
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $3f8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $40
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [5] (byte[$100]) ZP_STORAGE#0 ← { fill( $100, 0) }
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word) SPRITE_PTRS#0 = $3f8
+Constant (const byte*) SPRITES_XPOS#0 = (byte*) 53248
+Constant (const byte*) SPRITES_YPOS#0 = (byte*) 53249
+Constant (const byte*) SPRITES_ENABLE#0 = (byte*) 53269
+Constant (const byte[$100]) SINTABLE#0 = kickasm {{ .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+ }}
+Constant (const byte[$100]) ZP_STORAGE#0 = { fill( $100, 0) }
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte[$40]) SPRITE#0 = kickasm {{ .fill $40,$ff  }}
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SPRITES_YPOS#0 in [10] *((const byte*) SPRITES_YPOS#0 + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_XPOS#0 in [11] *((const byte*) SPRITES_XPOS#0 + (byte) 0) ← (byte) $64
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [4] (byte*~) main::$0 ← (const byte*) SCREEN#0 + (const word) SPRITE_PTRS#0
+Constant right-side identified [5] (byte[$40]~) main::$1 ← (const byte[$40]) SPRITE#0 / (byte) $40
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::$0 = SCREEN#0+SPRITE_PTRS#0
+Constant (const byte[$40]) main::$1 = SPRITE#0/$40
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte)main::$1 in [6] (byte~) main::$2 ← (byte)(const byte[$40]) main::$1
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte) main::$2 = (byte)main::$1
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$1 = (const byte[$40]) SPRITE#0/(byte) $40
+Constant inlined main::$2 = (byte)(const byte[$40]) SPRITE#0/(byte) $40
+Constant inlined main::$0 = (const byte*) SCREEN#0+(const word) SPRITE_PTRS#0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @4
+Adding NOP phi() at start of @9
+Adding NOP phi() at start of @10
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of main::@4
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to saveZeropage:11 sinZeropage:13 animSprite:15 restoreZeropage:17 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) @10
+Culled Empty Block (label) main::@4
+Renumbering block @9 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@3
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { sei  }
+  [5] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1
+  [6] *((const byte*) SPRITES_YPOS#0) ← (byte) $64
+  [7] *((const byte*) SPRITES_XPOS#0) ← (byte) $64
+  [8] *((const byte*) SCREEN#0+(const word) SPRITE_PTRS#0) ← (byte)(const byte[$40]) SPRITE#0/(byte) $40
+  [9] call saveZeropage 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [10] phi()
+  [11] call sinZeropage 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [12] phi()
+  [13] call animSprite 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [14] phi()
+  [15] call restoreZeropage 
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [16] return 
+  to:@return
+restoreZeropage: scope:[restoreZeropage]  from main::@3
+  asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+  to:restoreZeropage::@return
+restoreZeropage::@return: scope:[restoreZeropage]  from restoreZeropage
+  [18] return 
+  to:@return
+animSprite: scope:[animSprite]  from main::@2
+  kickasm() {{ ldx #$00
+    repeat:
+        lda #$fe
+    !:
+        cmp $d012
+        bne !-
+        lda #$ff
+    !:
+        cmp $d012
+        bne !-
+        .break
+        lda $00,x
+        clc
+        adc #$38
+        sta $d000
+        lda #0
+        adc #0
+        sta $d010
+        inx
+        jmp repeat
+     }}
+  to:animSprite::@return
+animSprite::@return: scope:[animSprite]  from animSprite
+  [20] return 
+  to:@return
+sinZeropage: scope:[sinZeropage]  from main::@1
+  asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+  to:sinZeropage::@return
+sinZeropage::@return: scope:[sinZeropage]  from sinZeropage
+  [22] return 
+  to:@return
+saveZeropage: scope:[saveZeropage]  from main
+  asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+  to:saveZeropage::@return
+saveZeropage::@return: scope:[saveZeropage]  from saveZeropage
+  [24] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte[$100]) SINTABLE
+(byte[$40]) SPRITE
+(byte*) SPRITES_ENABLE
+(byte*) SPRITES_XPOS
+(byte*) SPRITES_YPOS
+(word) SPRITE_PTRS
+(byte[$100]) ZP_STORAGE
+(void()) animSprite()
+(void()) main()
+(void()) restoreZeropage()
+(void()) saveZeropage()
+(void()) sinZeropage()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Attempt to store and use a sinus on zeropage
+// $00/$11 is carefully chosen to be $ff - which plays well with the processor port
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The offset of the sprite pointers from the screen start address
+  .const SPRITE_PTRS = $3f8
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_ENABLE = $d015
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { sei  }
+    // Stop interrupts
+    sei
+    // [5] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // Show sprite
+    lda #1
+    sta SPRITES_ENABLE
+    // [6] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    lda #$64
+    sta SPRITES_YPOS
+    // [7] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    lda #$64
+    sta SPRITES_XPOS
+    // [8] *((const byte*) SCREEN#0+(const word) SPRITE_PTRS#0) ← (byte)(const byte[$40]) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    lda #$ff&SPRITE/$40
+    sta SCREEN+SPRITE_PTRS
+    // [9] call saveZeropage 
+    jsr saveZeropage
+    // [10] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+    // main::@1
+  b1:
+    // [11] call sinZeropage 
+    jsr sinZeropage
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+    // main::@2
+  b2:
+    // [13] call animSprite 
+    jsr animSprite
+    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+    // main::@3
+  b3:
+    // [15] call restoreZeropage 
+    jsr restoreZeropage
+    jmp breturn
+    // main::@return
+  breturn:
+    // [16] return 
+    rts
+}
+  // restoreZeropage
+// Save all values on zeropage
+restoreZeropage: {
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda ZP_STORAGE,x
+    sta 0,x
+    inx
+    bne !-
+    jmp breturn
+    // restoreZeropage::@return
+  breturn:
+    // [18] return 
+    rts
+}
+  // animSprite
+// Move a sprite in the sinus on zeropage
+animSprite: {
+    // kickasm() {{ ldx #$00     repeat:         lda #$fe     !:         cmp $d012         bne !-         lda #$ff     !:         cmp $d012         bne !-         .break         lda $00,x         clc         adc #$38         sta $d000         lda #0         adc #0         sta $d010         inx         jmp repeat      }}
+    ldx #$00
+    repeat:
+        lda #$fe
+    !:
+        cmp $d012
+        bne !-
+        lda #$ff
+    !:
+        cmp $d012
+        bne !-
+        .break
+        lda $00,x
+        clc
+        adc #$38
+        sta $d000
+        lda #0
+        adc #0
+        sta $d010
+        inx
+        jmp repeat
+    
+    jmp breturn
+    // animSprite::@return
+  breturn:
+    // [20] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
+    sta 0,x
+    inx
+    bne !-
+    jmp breturn
+    // sinZeropage::@return
+  breturn:
+    // [22] return 
+    rts
+}
+  // saveZeropage
+// Save all values on zeropage
+saveZeropage: {
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+    ldx #0
+  !:
+    lda 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    jmp breturn
+    // saveZeropage::@return
+  breturn:
+    // [24] return 
+    rts
+}
+  // File Data
+  // A 256-byte (co)sinus (with $ff in the first two entries)
+  .align $100
+SINTABLE:
+.for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
+  // A single sprite to animate
+  .align $40
+SPRITE:
+.fill $40,$ff 
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0+(const word) SPRITE_PTRS#0) ← (byte)(const byte[$40]) SPRITE#0/(byte) $40 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
+Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
+Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [saveZeropage] 
+Uplift Scope [restoreZeropage] 
+Uplift Scope [sinZeropage] 
+Uplift Scope [animSprite] 
+Uplift Scope [] 
+
+Uplifting [main] best 417 combination 
+Uplifting [saveZeropage] best 417 combination 
+Uplifting [restoreZeropage] best 417 combination 
+Uplifting [sinZeropage] best 417 combination 
+Uplifting [animSprite] best 417 combination 
+Uplifting [] best 417 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Attempt to store and use a sinus on zeropage
+// $00/$11 is carefully chosen to be $ff - which plays well with the processor port
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The offset of the sprite pointers from the screen start address
+  .const SPRITE_PTRS = $3f8
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_ENABLE = $d015
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { sei  }
+    // Stop interrupts
+    sei
+    // [5] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // Show sprite
+    lda #1
+    sta SPRITES_ENABLE
+    // [6] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    lda #$64
+    sta SPRITES_YPOS
+    // [7] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    lda #$64
+    sta SPRITES_XPOS
+    // [8] *((const byte*) SCREEN#0+(const word) SPRITE_PTRS#0) ← (byte)(const byte[$40]) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    lda #$ff&SPRITE/$40
+    sta SCREEN+SPRITE_PTRS
+    // [9] call saveZeropage 
+    jsr saveZeropage
+    // [10] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+    // main::@1
+  b1:
+    // [11] call sinZeropage 
+    jsr sinZeropage
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+    // main::@2
+  b2:
+    // [13] call animSprite 
+    jsr animSprite
+    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+    // main::@3
+  b3:
+    // [15] call restoreZeropage 
+    jsr restoreZeropage
+    jmp breturn
+    // main::@return
+  breturn:
+    // [16] return 
+    rts
+}
+  // restoreZeropage
+// Save all values on zeropage
+restoreZeropage: {
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda ZP_STORAGE,x
+    sta 0,x
+    inx
+    bne !-
+    jmp breturn
+    // restoreZeropage::@return
+  breturn:
+    // [18] return 
+    rts
+}
+  // animSprite
+// Move a sprite in the sinus on zeropage
+animSprite: {
+    // kickasm() {{ ldx #$00     repeat:         lda #$fe     !:         cmp $d012         bne !-         lda #$ff     !:         cmp $d012         bne !-         .break         lda $00,x         clc         adc #$38         sta $d000         lda #0         adc #0         sta $d010         inx         jmp repeat      }}
+    ldx #$00
+    repeat:
+        lda #$fe
+    !:
+        cmp $d012
+        bne !-
+        lda #$ff
+    !:
+        cmp $d012
+        bne !-
+        .break
+        lda $00,x
+        clc
+        adc #$38
+        sta $d000
+        lda #0
+        adc #0
+        sta $d010
+        inx
+        jmp repeat
+    
+    jmp breturn
+    // animSprite::@return
+  breturn:
+    // [20] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
+    sta 0,x
+    inx
+    bne !-
+    jmp breturn
+    // sinZeropage::@return
+  breturn:
+    // [22] return 
+    rts
+}
+  // saveZeropage
+// Save all values on zeropage
+saveZeropage: {
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+    ldx #0
+  !:
+    lda 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    jmp breturn
+    // saveZeropage::@return
+  breturn:
+    // [24] return 
+    rts
+}
+  // File Data
+  // A 256-byte (co)sinus (with $ff in the first two entries)
+  .align $100
+SINTABLE:
+.for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
+  // A single sprite to animate
+  .align $40
+SPRITE:
+.fill $40,$ff 
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #$64
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_main:
+Removing instruction b2_from_b1:
+Removing instruction b3_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction b2:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction breturn:
+Removing instruction breturn:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(byte[$100]) SINTABLE
+(const byte[$100]) SINTABLE#0 SINTABLE = kickasm {{ .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+ }}
+(byte[$40]) SPRITE
+(const byte[$40]) SPRITE#0 SPRITE = kickasm {{ .fill $40,$ff  }}
+(byte*) SPRITES_ENABLE
+(const byte*) SPRITES_ENABLE#0 SPRITES_ENABLE = (byte*) 53269
+(byte*) SPRITES_XPOS
+(const byte*) SPRITES_XPOS#0 SPRITES_XPOS = (byte*) 53248
+(byte*) SPRITES_YPOS
+(const byte*) SPRITES_YPOS#0 SPRITES_YPOS = (byte*) 53249
+(word) SPRITE_PTRS
+(const word) SPRITE_PTRS#0 SPRITE_PTRS = (word) $3f8
+(byte[$100]) ZP_STORAGE
+(const byte[$100]) ZP_STORAGE#0 ZP_STORAGE = { fill( $100, 0) }
+(void()) animSprite()
+(label) animSprite::@return
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(void()) restoreZeropage()
+(label) restoreZeropage::@return
+(void()) saveZeropage()
+(label) saveZeropage::@return
+(void()) sinZeropage()
+(label) sinZeropage::@return
+
+
+
+FINAL ASSEMBLER
+Score: 379
+
+  // File Comments
+// Attempt to store and use a sinus on zeropage
+// $00/$11 is carefully chosen to be $ff - which plays well with the processor port
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The offset of the sprite pointers from the screen start address
+  .const SPRITE_PTRS = $3f8
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_ENABLE = $d015
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // asm
+    // asm { sei  }
+    // Stop interrupts
+    sei
+    // *SPRITES_ENABLE = 1
+    // [5] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // Show sprite
+    lda #1
+    sta SPRITES_ENABLE
+    // SPRITES_YPOS[0] = 100
+    // [6] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    lda #$64
+    sta SPRITES_YPOS
+    // SPRITES_XPOS[0] = 100
+    // [7] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    sta SPRITES_XPOS
+    // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
+    // [8] *((const byte*) SCREEN#0+(const word) SPRITE_PTRS#0) ← (byte)(const byte[$40]) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    lda #$ff&SPRITE/$40
+    sta SCREEN+SPRITE_PTRS
+    // saveZeropage()
+    // [9] call saveZeropage 
+    jsr saveZeropage
+    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // sinZeropage()
+    // [11] call sinZeropage 
+    jsr sinZeropage
+    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // animSprite()
+    // [13] call animSprite 
+    jsr animSprite
+    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // main::@3
+    // restoreZeropage()
+    // [15] call restoreZeropage 
+    jsr restoreZeropage
+    // main::@return
+    // }
+    // [16] return 
+    rts
+}
+  // restoreZeropage
+// Save all values on zeropage
+restoreZeropage: {
+    // asm
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda ZP_STORAGE,x
+    sta 0,x
+    inx
+    bne !-
+    // restoreZeropage::@return
+    // }
+    // [18] return 
+    rts
+}
+  // animSprite
+// Move a sprite in the sinus on zeropage
+animSprite: {
+    // kickasm
+    // kickasm() {{ ldx #$00     repeat:         lda #$fe     !:         cmp $d012         bne !-         lda #$ff     !:         cmp $d012         bne !-         .break         lda $00,x         clc         adc #$38         sta $d000         lda #0         adc #0         sta $d010         inx         jmp repeat      }}
+    ldx #$00
+    repeat:
+        lda #$fe
+    !:
+        cmp $d012
+        bne !-
+        lda #$ff
+    !:
+        cmp $d012
+        bne !-
+        .break
+        lda $00,x
+        clc
+        adc #$38
+        sta $d000
+        lda #0
+        adc #0
+        sta $d010
+        inx
+        jmp repeat
+    
+    // animSprite::@return
+    // }
+    // [20] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
+    sta 0,x
+    inx
+    bne !-
+    // sinZeropage::@return
+    // }
+    // [22] return 
+    rts
+}
+  // saveZeropage
+// Save all values on zeropage
+saveZeropage: {
+    // asm
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+    ldx #0
+  !:
+    lda 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    // saveZeropage::@return
+    // }
+    // [24] return 
+    rts
+}
+  // File Data
+  // A 256-byte (co)sinus (with $ff in the first two entries)
+  .align $100
+SINTABLE:
+.for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
+  // A single sprite to animate
+  .align $40
+SPRITE:
+.fill $40,$ff 
+

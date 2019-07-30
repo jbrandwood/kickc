@@ -5,9 +5,9 @@
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // RAM in $A000, $E000 CHAR ROM in $D000
-  .const PROCPORT_RAM_CHARROM = $31
+  .const PROCPORT_RAM_CHARROM = 1
   // BASIC in $A000, I/O in $D000, KERNEL in $E000
-  .const PROCPORT_BASIC_KERNEL_IO = $37
+  .const PROCPORT_BASIC_KERNEL_IO = 7
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label D018 = $d018

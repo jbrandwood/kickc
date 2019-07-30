@@ -1,0 +1,293 @@
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Culled Empty Block (label) @1
+Culled Empty Block (label) @2
+Culled Empty Block (label) @3
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) CIA2_PORT_B#0 ← ((byte*)) (number) $dd01
+  to:@4
+@4: scope:[]  from @begin
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@5
+main: scope:[main]  from @5
+  *((byte*) CIA2_PORT_B#0) ← *((byte*) CIA2_PORT_B#0) & (number) $7f
+  asm { lda#0  }
+  (byte) main::port4Value#0 ← *((byte*) CIA2_PORT_B#0)
+  *((byte*) SCREEN#0) ← (byte) main::port4Value#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@5: scope:[]  from @4
+  call main 
+  to:@6
+@6: scope:[]  from @5
+  to:@end
+@end: scope:[]  from @6
+
+SYMBOL TABLE SSA
+(label) @4
+(label) @5
+(label) @6
+(label) @begin
+(label) @end
+(byte*) CIA2_PORT_B
+(byte*) CIA2_PORT_B#0
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(label) main::@return
+(byte) main::port4Value
+(byte) main::port4Value#0
+
+Adding number conversion cast (unumber) $7f in *((byte*) CIA2_PORT_B#0) ← *((byte*) CIA2_PORT_B#0) & (number) $7f
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) CIA2_PORT_B#0 ← (byte*)(number) $dd01
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 56577
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $7f
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $7f
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte*) CIA2_PORT_B#0 = (byte*) 56577
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @4
+Adding NOP phi() at start of @5
+Adding NOP phi() at start of @6
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) @6
+Renumbering block @5 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) CIA2_PORT_B#0) ← *((const byte*) CIA2_PORT_B#0) & (byte) $7f
+  asm { lda#0  }
+  [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B#0)
+  [7] *((const byte*) SCREEN#0) ← (byte) main::port4Value#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) CIA2_PORT_B
+(byte*) SCREEN
+(void()) main()
+(byte) main::port4Value
+(byte) main::port4Value#0 4.0
+
+Initial phi equivalence classes
+Added variable main::port4Value#0 to zero page equivalence class [ main::port4Value#0 ]
+Complete equivalence classes
+[ main::port4Value#0 ]
+Allocated zp ZP_BYTE:2 [ main::port4Value#0 ]
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Tests problem writing/reading joystick encountered by Danny Spijksma
+// https://www.protovision.games/hardw/build4player.php?language=en&fbclid=IwAR1MJLgQjOU0zVa0ax2aNeGa-xVbE9IGY9zC6b6eInTV4HQzoUAoCPoXu14
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // CIA#2 Port B: RS-232
+  .label CIA2_PORT_B = $dd01
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label port4Value = 2
+    // [4] *((const byte*) CIA2_PORT_B#0) ← *((const byte*) CIA2_PORT_B#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    lda #$7f
+    and CIA2_PORT_B
+    sta CIA2_PORT_B
+    // asm { lda#0  }
+    lda #0
+    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B#0) -- vbuz1=_deref_pbuc1 
+    lda CIA2_PORT_B
+    sta port4Value
+    // [7] *((const byte*) SCREEN#0) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuz1 
+    lda port4Value
+    sta SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) CIA2_PORT_B#0) ← *((const byte*) CIA2_PORT_B#0) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement asm { lda#0  } always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::port4Value#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 4: zp ZP_BYTE:2 [ main::port4Value#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 41 combination reg byte a [ main::port4Value#0 ] 
+Uplifting [] best 41 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests problem writing/reading joystick encountered by Danny Spijksma
+// https://www.protovision.games/hardw/build4player.php?language=en&fbclid=IwAR1MJLgQjOU0zVa0ax2aNeGa-xVbE9IGY9zC6b6eInTV4HQzoUAoCPoXu14
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // CIA#2 Port B: RS-232
+  .label CIA2_PORT_B = $dd01
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [4] *((const byte*) CIA2_PORT_B#0) ← *((const byte*) CIA2_PORT_B#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    lda #$7f
+    and CIA2_PORT_B
+    sta CIA2_PORT_B
+    // asm { lda#0  }
+    lda #0
+    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B#0) -- vbuaa=_deref_pbuc1 
+    lda CIA2_PORT_B
+    // [7] *((const byte*) SCREEN#0) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) CIA2_PORT_B
+(const byte*) CIA2_PORT_B#0 CIA2_PORT_B = (byte*) 56577
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@return
+(byte) main::port4Value
+(byte) main::port4Value#0 reg byte a 4.0
+
+reg byte a [ main::port4Value#0 ]
+
+
+FINAL ASSEMBLER
+Score: 26
+
+  // File Comments
+// Tests problem writing/reading joystick encountered by Danny Spijksma
+// https://www.protovision.games/hardw/build4player.php?language=en&fbclid=IwAR1MJLgQjOU0zVa0ax2aNeGa-xVbE9IGY9zC6b6eInTV4HQzoUAoCPoXu14
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // CIA#2 Port B: RS-232
+  .label CIA2_PORT_B = $dd01
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // (*CIA2_PORT_B) &= 0x7f
+    // [4] *((const byte*) CIA2_PORT_B#0) ← *((const byte*) CIA2_PORT_B#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    lda #$7f
+    and CIA2_PORT_B
+    sta CIA2_PORT_B
+    // asm
+    // asm { lda#0  }
+    lda #0
+    // port4Value = *CIA2_PORT_B
+    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B#0) -- vbuaa=_deref_pbuc1 
+    lda CIA2_PORT_B
+    // *SCREEN = port4Value
+    // [7] *((const byte*) SCREEN#0) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // main::@return
+    // }
+    // [8] return 
+    rts
+}
+  // File Data
+

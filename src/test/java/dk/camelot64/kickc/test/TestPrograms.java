@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDannyJoystickProblem() throws IOException, URISyntaxException {
+      compileAndCompare("danny-joystick-problem");
+   }
+
+   @Test
    public void testCoalesceAssignment() throws IOException, URISyntaxException {
       compileAndCompare("coalesce-assignment");
    }

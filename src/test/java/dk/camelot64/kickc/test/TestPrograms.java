@@ -36,6 +36,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testZeropageSinus() throws IOException, URISyntaxException {
+      compileAndCompare("zeropage-sinus");
+   }
+
+   @Test
+   public void testProcessorPortTest() throws IOException, URISyntaxException {
+      compileAndCompare("processor-port-test");
+   }
+
+   @Test
    public void testSieve() throws IOException, URISyntaxException {
       compileAndCompare("sieve");
    }

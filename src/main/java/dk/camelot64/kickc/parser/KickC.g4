@@ -67,8 +67,9 @@ parameterDecl
 
 globalDirective
     : '#' directiveReserve #globalDirectiveReserve
-    | '#' 'pc' '(' NUMBER ')' #globalDirectivePc
-    | '#' 'encoding' '(' NAME')' #globalDirectiveEncoding
+    | '#pc' '(' NUMBER ')' #globalDirectivePc
+    | '#target' '(' NAME ')' #globalDirectivePlatform
+    | '#encoding' '(' NAME')' #globalDirectiveEncoding
     ;
 
 directive

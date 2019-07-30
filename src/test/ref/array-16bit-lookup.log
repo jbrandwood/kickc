@@ -1,0 +1,704 @@
+Fixing pointer array-indexing *((word*) main::SCREEN + (byte) main::idx)
+Fixing pointer array-indexing *((word[$80]) arr16 + (number~) getValue::$0)
+Identified constant variable (word*) main::SCREEN
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) getValue::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @2
+  (word*) main::SCREEN#0 ← ((word*)) (number) $400
+  (byte) main::idx#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::idx#2 ← phi( main/(byte) main::idx#0 main::@3/(byte) main::idx#1 )
+  (word) getValue::index#0 ← (byte) main::idx#2
+  call getValue 
+  (word) getValue::return#0 ← (word) getValue::return#2
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#2 )
+  (word) getValue::return#3 ← phi( main::@1/(word) getValue::return#0 )
+  (word~) main::$0 ← (word) getValue::return#3
+  (byte~) main::$2 ← (byte) main::idx#3 * (const byte) SIZEOF_WORD
+  *((word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0
+  (byte) main::idx#1 ← (byte) main::idx#3 + rangenext(0,$80)
+  (bool~) main::$1 ← (byte) main::idx#1 != rangelast(0,$80)
+  if((bool~) main::$1) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (word[$80]) arr16#0 ← { fill( $80, 0) }
+  to:@2
+getValue: scope:[getValue]  from main::@1
+  (word) getValue::index#1 ← phi( main::@1/(word) getValue::index#0 )
+  (number~) getValue::$0 ← (word) getValue::index#1 & (number) $7f
+  (number~) getValue::$4 ← (number~) getValue::$0 * (const byte) SIZEOF_WORD
+  (number~) getValue::$1 ← *((word[$80]) arr16#0 + (number~) getValue::$4) & (number) $ff
+  (number~) getValue::$2 ← (number~) getValue::$1 >> (number) 1
+  (word~) getValue::$3 ← ((word)) (number~) getValue::$2
+  (word) getValue::return#1 ← (word~) getValue::$3
+  to:getValue::@return
+getValue::@return: scope:[getValue]  from getValue
+  (word) getValue::return#4 ← phi( getValue/(word) getValue::return#1 )
+  (word) getValue::return#2 ← (word) getValue::return#4
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(const byte) SIZEOF_WORD = (byte) 2
+(word[$80]) arr16
+(word[$80]) arr16#0
+(word()) getValue((word) getValue::index)
+(number~) getValue::$0
+(number~) getValue::$1
+(number~) getValue::$2
+(word~) getValue::$3
+(number~) getValue::$4
+(label) getValue::@return
+(word) getValue::index
+(word) getValue::index#0
+(word) getValue::index#1
+(word) getValue::return
+(word) getValue::return#0
+(word) getValue::return#1
+(word) getValue::return#2
+(word) getValue::return#3
+(word) getValue::return#4
+(void()) main()
+(word~) main::$0
+(bool~) main::$1
+(byte~) main::$2
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(word*) main::SCREEN
+(word*) main::SCREEN#0
+(byte) main::idx
+(byte) main::idx#0
+(byte) main::idx#1
+(byte) main::idx#2
+(byte) main::idx#3
+
+Adding number conversion cast (unumber) $7f in (number~) getValue::$0 ← (word) getValue::index#1 & (number) $7f
+Adding number conversion cast (unumber) getValue::$0 in (number~) getValue::$0 ← (word) getValue::index#1 & (unumber)(number) $7f
+Adding number conversion cast (unumber) getValue::$4 in (number~) getValue::$4 ← (unumber~) getValue::$0 * (const byte) SIZEOF_WORD
+Adding number conversion cast (unumber) $ff in (number~) getValue::$1 ← *((word[$80]) arr16#0 + (unumber~) getValue::$4) & (number) $ff
+Adding number conversion cast (unumber) getValue::$1 in (number~) getValue::$1 ← *((word[$80]) arr16#0 + (unumber~) getValue::$4) & (unumber)(number) $ff
+Adding number conversion cast (unumber) 1 in (number~) getValue::$2 ← (unumber~) getValue::$1 >> (number) 1
+Adding number conversion cast (unumber) getValue::$2 in (number~) getValue::$2 ← (unumber~) getValue::$1 >> (unumber)(number) 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (word*) main::SCREEN#0 ← (word*)(number) $400
+Inlining cast (word~) getValue::$3 ← (word)(unumber~) getValue::$2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 1024
+Simplifying constant integer cast $7f
+Simplifying constant integer cast $ff
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) getValue::$0 ← (word) getValue::index#1 & (byte) $7f
+Inferred type updated to byte in (unumber~) getValue::$4 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
+Inferred type updated to byte in (unumber~) getValue::$1 ← *((word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff
+Inferred type updated to byte in (unumber~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1
+Alias (word) getValue::return#0 = (word) getValue::return#3 
+Alias (byte) main::idx#2 = (byte) main::idx#3 
+Alias (word) getValue::return#1 = (word~) getValue::$3 (word) getValue::return#4 (word) getValue::return#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (word) getValue::index#1 (word) getValue::index#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$1 [12] if((byte) main::idx#1!=rangelast(0,$80)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [14] (word[$80]) arr16#0 ← { fill( $80, 0) }
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word*) main::SCREEN#0 = (word*) 1024
+Constant (const byte) main::idx#0 = 0
+Constant (const word[$80]) arr16#0 = { fill( $80, 0) }
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [10] main::idx#1 ← ++ main::idx#2 to ++
+Resolved ranged comparison value [12] if(main::idx#1!=rangelast(0,$80)) goto main::@1 to (number) $81
+Adding number conversion cast (unumber) $81 in if((byte) main::idx#1!=(number) $81) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $81
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $81
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Rewriting multiplication to use shift [5] (byte~) main::$2 ← (byte) main::idx#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [11] (byte~) getValue::$4 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) main::idx#0
+Constant inlined main::idx#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Eliminating unused constant (const byte) SIZEOF_WORD
+Successful SSA optimization PassNEliminateUnusedVars
+Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to getValue:9 
+
+Created 1 initial phi equivalence classes
+Coalesced [17] main::idx#4 ← main::idx#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@4
+Renumbering block @2 to @1
+Renumbering block main::@3 to main::@2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::idx#2 ← phi( main/(byte) 0 main::@2/(byte) main::idx#1 )
+  [6] (word) getValue::index#0 ← (byte) main::idx#2
+  [7] call getValue 
+  [8] (word) getValue::return#0 ← (word) getValue::return#1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [9] (word~) main::$0 ← (word) getValue::return#0
+  [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1
+  [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0
+  [12] (byte) main::idx#1 ← ++ (byte) main::idx#2
+  [13] if((byte) main::idx#1!=(byte) $81) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [14] return 
+  to:@return
+getValue: scope:[getValue]  from main::@1
+  [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f
+  [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1
+  [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff
+  [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1
+  [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2
+  to:getValue::@return
+getValue::@return: scope:[getValue]  from getValue
+  [20] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(word[$80]) arr16
+(word()) getValue((word) getValue::index)
+(byte~) getValue::$0 4.0
+(byte~) getValue::$1 4.0
+(byte~) getValue::$2 2.0
+(byte~) getValue::$4 4.0
+(word) getValue::index
+(word) getValue::index#0 13.0
+(word) getValue::return
+(word) getValue::return#0 22.0
+(word) getValue::return#1 4.333333333333333
+(void()) main()
+(word~) main::$0 11.0
+(byte~) main::$2 22.0
+(word*) main::SCREEN
+(byte) main::idx
+(byte) main::idx#1 16.5
+(byte) main::idx#2 6.285714285714286
+
+Initial phi equivalence classes
+[ main::idx#2 main::idx#1 ]
+Added variable getValue::index#0 to zero page equivalence class [ getValue::index#0 ]
+Added variable getValue::return#0 to zero page equivalence class [ getValue::return#0 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Added variable getValue::$0 to zero page equivalence class [ getValue::$0 ]
+Added variable getValue::$4 to zero page equivalence class [ getValue::$4 ]
+Added variable getValue::$1 to zero page equivalence class [ getValue::$1 ]
+Added variable getValue::$2 to zero page equivalence class [ getValue::$2 ]
+Added variable getValue::return#1 to zero page equivalence class [ getValue::return#1 ]
+Complete equivalence classes
+[ main::idx#2 main::idx#1 ]
+[ getValue::index#0 ]
+[ getValue::return#0 ]
+[ main::$0 ]
+[ main::$2 ]
+[ getValue::$0 ]
+[ getValue::$4 ]
+[ getValue::$1 ]
+[ getValue::$2 ]
+[ getValue::return#1 ]
+Allocated zp ZP_BYTE:2 [ main::idx#2 main::idx#1 ]
+Allocated zp ZP_WORD:3 [ getValue::index#0 ]
+Allocated zp ZP_WORD:5 [ getValue::return#0 ]
+Allocated zp ZP_WORD:7 [ main::$0 ]
+Allocated zp ZP_BYTE:9 [ main::$2 ]
+Allocated zp ZP_BYTE:10 [ getValue::$0 ]
+Allocated zp ZP_BYTE:11 [ getValue::$4 ]
+Allocated zp ZP_BYTE:12 [ getValue::$1 ]
+Allocated zp ZP_BYTE:13 [ getValue::$2 ]
+Allocated zp ZP_WORD:14 [ getValue::return#1 ]
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
+// http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label _0 = 7
+    .label _2 = 9
+    .label idx = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta idx
+    jmp b1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuz2 
+    lda idx
+    sta getValue.index
+    lda #0
+    sta getValue.index+1
+    // [7] call getValue 
+    jsr getValue
+    // [8] (word) getValue::return#0 ← (word) getValue::return#1 -- vwuz1=vwuz2 
+    lda getValue.return_1
+    sta getValue.return
+    lda getValue.return_1+1
+    sta getValue.return+1
+    jmp b2
+    // main::@2
+  b2:
+    // [9] (word~) main::$0 ← (word) getValue::return#0 -- vwuz1=vwuz2 
+    lda getValue.return
+    sta _0
+    lda getValue.return+1
+    sta _0+1
+    // [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda idx
+    asl
+    sta _2
+    // [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
+    ldy _2
+    lda _0
+    sta SCREEN,y
+    lda _0+1
+    sta SCREEN+1,y
+    // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
+    inc idx
+    // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$81
+    cmp idx
+    bne b1_from_b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // getValue
+// getValue(word zeropage(3) index)
+getValue: {
+    .label _0 = $a
+    .label _1 = $c
+    .label _2 = $d
+    .label _4 = $b
+    .label index = 3
+    .label return = 5
+    .label return_1 = $e
+    // [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f -- vbuz1=vwuz2_band_vbuc1 
+    lda index
+    and #$7f
+    sta _0
+    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda _0
+    asl
+    sta _4
+    // [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff -- vbuz1=pwuc1_derefidx_vbuz2_band_vbuc2 
+    lda #$ff
+    ldy _4
+    and arr16,y
+    sta _1
+    // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
+    lda _1
+    lsr
+    sta _2
+    // [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 -- vwuz1=_word_vbuz2 
+    lda _2
+    sta return_1
+    lda #0
+    sta return_1+1
+    jmp breturn
+    // getValue::@return
+  breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+  arr16: .fill 2*$80, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] (word) getValue::index#0 ← (byte) main::idx#2 [ main::idx#2 getValue::index#0 ] ( main:2 [ main::idx#2 getValue::index#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::idx#2 main::idx#1 ]
+Statement [8] (word) getValue::return#0 ← (word) getValue::return#1 [ main::idx#2 getValue::return#0 ] ( main:2 [ main::idx#2 getValue::return#0 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$0 ← (word) getValue::return#0 [ main::idx#2 main::$0 ] ( main:2 [ main::idx#2 main::$0 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 [ main::idx#2 main::$0 main::$2 ] ( main:2 [ main::idx#2 main::$0 main::$2 ] ) always clobbers reg byte a 
+Statement [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0 [ main::idx#2 ] ( main:2 [ main::idx#2 ] ) always clobbers reg byte a 
+Statement [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f [ getValue::$0 ] ( main:2::getValue:7 [ main::idx#2 getValue::$0 ] ) always clobbers reg byte a 
+Statement [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$4 ] ( main:2::getValue:7 [ main::idx#2 getValue::$4 ] ) always clobbers reg byte a 
+Statement [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] ) always clobbers reg byte a 
+Statement [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 [ getValue::$2 ] ( main:2::getValue:7 [ main::idx#2 getValue::$2 ] ) always clobbers reg byte a 
+Statement [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 [ getValue::return#1 ] ( main:2::getValue:7 [ main::idx#2 getValue::return#1 ] ) always clobbers reg byte a 
+Statement [6] (word) getValue::index#0 ← (byte) main::idx#2 [ main::idx#2 getValue::index#0 ] ( main:2 [ main::idx#2 getValue::index#0 ] ) always clobbers reg byte a 
+Statement [8] (word) getValue::return#0 ← (word) getValue::return#1 [ main::idx#2 getValue::return#0 ] ( main:2 [ main::idx#2 getValue::return#0 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$0 ← (word) getValue::return#0 [ main::idx#2 main::$0 ] ( main:2 [ main::idx#2 main::$0 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 [ main::idx#2 main::$0 main::$2 ] ( main:2 [ main::idx#2 main::$0 main::$2 ] ) always clobbers reg byte a 
+Statement [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0 [ main::idx#2 ] ( main:2 [ main::idx#2 ] ) always clobbers reg byte a 
+Statement [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f [ getValue::$0 ] ( main:2::getValue:7 [ main::idx#2 getValue::$0 ] ) always clobbers reg byte a 
+Statement [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$4 ] ( main:2::getValue:7 [ main::idx#2 getValue::$4 ] ) always clobbers reg byte a 
+Statement [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] ) always clobbers reg byte a 
+Statement [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 [ getValue::$2 ] ( main:2::getValue:7 [ main::idx#2 getValue::$2 ] ) always clobbers reg byte a 
+Statement [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 [ getValue::return#1 ] ( main:2::getValue:7 [ main::idx#2 getValue::return#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::idx#2 main::idx#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:3 [ getValue::index#0 ] : zp ZP_WORD:3 , 
+Potential registers zp ZP_WORD:5 [ getValue::return#0 ] : zp ZP_WORD:5 , 
+Potential registers zp ZP_WORD:7 [ main::$0 ] : zp ZP_WORD:7 , 
+Potential registers zp ZP_BYTE:9 [ main::$2 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:10 [ getValue::$0 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:11 [ getValue::$4 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:12 [ getValue::$1 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:13 [ getValue::$2 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:14 [ getValue::return#1 ] : zp ZP_WORD:14 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 22.79: zp ZP_BYTE:2 [ main::idx#2 main::idx#1 ] 22: zp ZP_BYTE:9 [ main::$2 ] 11: zp ZP_WORD:7 [ main::$0 ] 
+Uplift Scope [getValue] 22: zp ZP_WORD:5 [ getValue::return#0 ] 13: zp ZP_WORD:3 [ getValue::index#0 ] 4.33: zp ZP_WORD:14 [ getValue::return#1 ] 4: zp ZP_BYTE:10 [ getValue::$0 ] 4: zp ZP_BYTE:11 [ getValue::$4 ] 4: zp ZP_BYTE:12 [ getValue::$1 ] 2: zp ZP_BYTE:13 [ getValue::$2 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 899 combination reg byte x [ main::idx#2 main::idx#1 ] reg byte a [ main::$2 ] zp ZP_WORD:7 [ main::$0 ] 
+Uplifting [getValue] best 877 combination zp ZP_WORD:5 [ getValue::return#0 ] zp ZP_WORD:3 [ getValue::index#0 ] zp ZP_WORD:14 [ getValue::return#1 ] reg byte a [ getValue::$0 ] reg byte a [ getValue::$4 ] reg byte a [ getValue::$1 ] reg byte a [ getValue::$2 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [] best 877 combination 
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ getValue::return#0 ] ] with [ zp ZP_WORD:7 [ main::$0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ getValue::return#0 main::$0 ] ] with [ zp ZP_WORD:14 [ getValue::return#1 ] ] - score: 1
+Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ getValue::index#0 ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ getValue::return#0 main::$0 getValue::return#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
+// http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label _0 = 4
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuxx 
+    txa
+    sta getValue.index
+    lda #0
+    sta getValue.index+1
+    // [7] call getValue 
+    jsr getValue
+    // [8] (word) getValue::return#0 ← (word) getValue::return#1
+    jmp b2
+    // main::@2
+  b2:
+    // [9] (word~) main::$0 ← (word) getValue::return#0
+    // [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
+    tay
+    lda _0
+    sta SCREEN,y
+    lda _0+1
+    sta SCREEN+1,y
+    // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$81
+    bne b1_from_b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [14] return 
+    rts
+}
+  // getValue
+// getValue(word zeropage(2) index)
+getValue: {
+    .label index = 2
+    .label return = 4
+    // [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f -- vbuaa=vwuz1_band_vbuc1 
+    lda index
+    and #$7f
+    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    asl
+    // [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
+    tay
+    lda #$ff
+    and arr16,y
+    // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    lsr
+    // [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 -- vwuz1=_word_vbuaa 
+    sta return
+    lda #0
+    sta return+1
+    jmp breturn
+    // getValue::@return
+  breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+  arr16: .fill 2*$80, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b2 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(word[$80]) arr16
+(const word[$80]) arr16#0 arr16 = { fill( $80, 0) }
+(word()) getValue((word) getValue::index)
+(byte~) getValue::$0 reg byte a 4.0
+(byte~) getValue::$1 reg byte a 4.0
+(byte~) getValue::$2 reg byte a 2.0
+(byte~) getValue::$4 reg byte a 4.0
+(label) getValue::@return
+(word) getValue::index
+(word) getValue::index#0 index zp ZP_WORD:2 13.0
+(word) getValue::return
+(word) getValue::return#0 return zp ZP_WORD:4 22.0
+(word) getValue::return#1 return zp ZP_WORD:4 4.333333333333333
+(void()) main()
+(word~) main::$0 $0 zp ZP_WORD:4 11.0
+(byte~) main::$2 reg byte a 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(word*) main::SCREEN
+(const word*) main::SCREEN#0 SCREEN = (word*) 1024
+(byte) main::idx
+(byte) main::idx#1 reg byte x 16.5
+(byte) main::idx#2 reg byte x 6.285714285714286
+
+reg byte x [ main::idx#2 main::idx#1 ]
+zp ZP_WORD:2 [ getValue::index#0 ]
+zp ZP_WORD:4 [ getValue::return#0 main::$0 getValue::return#1 ]
+reg byte a [ main::$2 ]
+reg byte a [ getValue::$0 ]
+reg byte a [ getValue::$4 ]
+reg byte a [ getValue::$1 ]
+reg byte a [ getValue::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 502
+
+  // File Comments
+// Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
+// http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label SCREEN = $400
+    .label _0 = 4
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // main::@1
+  b1:
+    // getValue(idx)
+    // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuxx 
+    txa
+    sta getValue.index
+    lda #0
+    sta getValue.index+1
+    // [7] call getValue 
+    jsr getValue
+    // [8] (word) getValue::return#0 ← (word) getValue::return#1
+    // main::@2
+    // [9] (word~) main::$0 ← (word) getValue::return#0
+    // SCREEN[idx] = getValue(idx)
+    // [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [11] *((const word*) main::SCREEN#0 + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
+    tay
+    lda _0
+    sta SCREEN,y
+    lda _0+1
+    sta SCREEN+1,y
+    // for(unsigned char idx : 0..128)
+    // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$81
+    bne b1
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // getValue
+// getValue(word zeropage(2) index)
+getValue: {
+    .label index = 2
+    .label return = 4
+    // index & 0x7f
+    // [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f -- vbuaa=vwuz1_band_vbuc1 
+    lda index
+    and #$7f
+    // arr16[index & 0x7f] & 0xff
+    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    asl
+    // [17] (byte~) getValue::$1 ← *((const word[$80]) arr16#0 + (byte~) getValue::$4) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
+    tay
+    lda #$ff
+    and arr16,y
+    // (arr16[index & 0x7f] & 0xff) >> 1
+    // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    lsr
+    // (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1)
+    // [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 -- vwuz1=_word_vbuaa 
+    sta return
+    lda #0
+    sta return+1
+    // getValue::@return
+    // }
+    // [20] return 
+    rts
+}
+  // File Data
+  arr16: .fill 2*$80, 0
+

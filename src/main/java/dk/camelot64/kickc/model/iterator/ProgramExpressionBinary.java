@@ -58,6 +58,19 @@ public interface ProgramExpressionBinary extends ProgramExpression {
     */
    void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols);
 
+   /**
+    * Get the left operand as a replaceable program value
+    *
+    * @return ProgramValue wrapping the left operand
+    */
+   ProgramValue getLeftValue();
+
+   /**
+    * Get the right operand as a replaceable program value
+    *
+    * @return ProgramValue wrapping the right operand
+    */
+   ProgramValue getRightValue();
 
    /** Binary expression assignment rvalue. */
    class ProgramExpressionBinaryAssignmentRValue implements ProgramExpressionBinary {
@@ -88,6 +101,16 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          assignment.setrValue2((RValue) value);
          assignment.setOperator(null);
          assignment.setrValue1(null);
+      }
+
+      @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.RValue1(assignment);
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return new ProgramValue.RValue2(assignment);
       }
 
       @Override
@@ -154,8 +177,18 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public ProgramValue getLeftValue() {
+         throw new InternalError("Parameter variable not available as program value. " + parameterDef.toString());
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return parameterValue;
+      }
+
+      @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-               throw new InternalError("Casting parameter variable not allowed. " + parameterDef.toString());
+         throw new InternalError("Casting parameter variable not allowed. " + parameterDef.toString());
       }
 
       @Override
@@ -199,7 +232,21 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void set(Value value) {
-         throw new InternalError("Updating an entire assignment is not allowed!");
+         throw new InternalError("Not supported!");
+      }
+
+      @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.ProgramValueLValue(assignment);
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         if(assignment.getOperator()==null && assignment.getrValue1()==null) {
+            return new ProgramValue.RValue2(assignment);
+         }  else {
+            throw new InternalError("Not supported for assignments with operators!");
+         }
       }
 
       @Override
@@ -269,6 +316,16 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.CondRValue1(conditionalJump);
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return new ProgramValue.CondRValue2(conditionalJump);
+      }
+
+      @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(conditionalJump.getrValue1() instanceof ConstantValue) {
             conditionalJump.setrValue1(new ConstantCastValue(toType, (ConstantValue) conditionalJump.getrValue1()));
@@ -323,6 +380,16 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.ProgramValueConstantBinaryLeft(getConstantBinary());
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return new ProgramValue.ProgramValueConstantBinaryRight(getConstantBinary());
+      }
+
+      @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          getConstantBinary().setLeft(new ConstantCastValue(toType, getConstantBinary().getLeft()));
       }
@@ -335,7 +402,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
    /** Binary expression that is an indexed dereference of a pointer eg. ptr[i] or *(ptr+i). */
    class ProgramExpressionBinaryPointerDereferenceIndexed implements ProgramExpressionBinary {
-      /** A program value containing a {@link ConstantBinary}. */
+      /** A program value containing a {@link PointerDereferenceIndexed}. */
       private ProgramValue programValue;
 
       public ProgramExpressionBinaryPointerDereferenceIndexed(ProgramValue programValue) {
@@ -367,6 +434,16 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.ProgramValuePointer(getPointerDereferenceIndexed());
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return new ProgramValue.ProgramValuePointerIndex(getPointerDereferenceIndexed());
+      }
+
+      @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(getPointerDereferenceIndexed().getPointer() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setPointer(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getPointer()));
@@ -380,7 +457,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(getPointerDereferenceIndexed().getIndex() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setIndex(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getIndex()));
-         } else if( getPointerDereferenceIndexed().getIndex() instanceof VariableRef) {
+         } else if(getPointerDereferenceIndexed().getIndex() instanceof VariableRef) {
             Variable variable = symbols.getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
             if(variable.isInferredType())
                variable.setTypeInferred(toType);
@@ -399,11 +476,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
    class ProgramExpressionBinaryPhiValueAssignemnt implements ProgramExpressionBinary {
 
       private final StatementPhiBlock.PhiVariable phiVariable;
-      private final StatementPhiBlock.PhiRValue value;
+      private final ProgramValue.PhiValue phiValue;
 
-      public ProgramExpressionBinaryPhiValueAssignemnt(StatementPhiBlock.PhiVariable phiVariable, StatementPhiBlock.PhiRValue value) {
+      public ProgramExpressionBinaryPhiValueAssignemnt(StatementPhiBlock.PhiVariable phiVariable, ProgramValue.PhiValue phiValue) {
          this.phiVariable = phiVariable;
-         this.value = value;
+         this.phiValue = phiValue;
       }
 
       @Override
@@ -418,7 +495,22 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public RValue getRight() {
-         return value.getrValue();
+         return (RValue) phiValue.get();
+      }
+
+      @Override
+      public void set(Value value) {
+         throw new InternalError("Not supported!");
+      }
+
+      @Override
+      public ProgramValue getLeftValue() {
+         return new ProgramValue.PhiVariable(phiVariable);
+      }
+
+      @Override
+      public ProgramValue getRightValue() {
+         return phiValue;
       }
 
       @Override
@@ -437,16 +529,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             if(variable.isInferredType())
                variable.setTypeInferred(toType);
          } else if(getRight() instanceof ConstantValue) {
-            value.setrValue(new ConstantCastValue(toType, (ConstantValue) getRight()));
+            phiValue.set(new ConstantCastValue(toType, (ConstantValue) getRight()));
          } else {
-            value.setrValue(new CastValue(toType, getRight()));
+            phiValue.set(new CastValue(toType, getRight()));
          }
       }
 
-      @Override
-      public void set(Value value) {
-         throw new InternalError("Not supported!");
-      }
    }
 
 

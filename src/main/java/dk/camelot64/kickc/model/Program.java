@@ -75,6 +75,8 @@ public class Program {
    private Map<LabelRef, PhiTransitions> phiTransitions;
    /** Struct values unwound to individual variables. */
    private StructUnwinding structUnwinding;
+   /** The target platform that the program is being build for. */
+   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -83,6 +85,14 @@ public class Program {
       this.imported = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
+   }
+
+   public TargetPlatform getTargetPlatform() {
+      return targetPlatform;
+   }
+
+   public void setTargetPlatform(TargetPlatform targetPlatform) {
+      this.targetPlatform = targetPlatform;
    }
 
    public StructUnwinding getStructUnwinding() {

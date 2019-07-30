@@ -1,4 +1,3 @@
-Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -189,81 +188,83 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ idx#12 idx#13 ]
 
 INITIAL ASM
-//SEG0 File Comments
+Target platform is c64basic
+  // File Comments
 // Test that void-parameter works top specify function takes no parameters
 // Output is "..." in the top left corner of the screen
-//SEG1 Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-//SEG3 @begin
+  // @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+  // @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+  // @end
 bend:
-//SEG10 main
+  // main
 main: {
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+    // main::@1
   b1:
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG18 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG20 main::@2
+    // main::@2
   b2:
-  //SEG21 [9] call print 
-  //SEG22 [11] phi from main::@2 to print [phi:main::@2->print]
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG23 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     jsr print
     jmp breturn
-  //SEG24 main::@return
+    // main::@return
   breturn:
-  //SEG25 [10] return 
+    // [10] return 
     rts
 }
-//SEG26 print
+  // print
 print: {
-  //SEG27 [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'.'
     ldy idx
     sta SCREEN,y
-  //SEG28 [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
     inc idx
     jmp breturn
-  //SEG29 print::@return
+    // print::@return
   breturn:
-  //SEG30 [14] return 
+    // [14] return 
     rts
 }
+  // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:9 [ idx#12 ] ) always clobbers reg byte a 
@@ -281,78 +282,79 @@ Uplifting [main] best 65 combination
 Uplifting [print] best 65 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 File Comments
+  // File Comments
 // Test that void-parameter works top specify function takes no parameters
 // Output is "..." in the top left corner of the screen
-//SEG1 Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
+  // @begin
 bbegin:
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG5 @1
+  // @1
 b1:
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+  // @end
 bend:
-//SEG10 main
+  // main
 main: {
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+    // main::@1
   b1:
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG18 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG20 main::@2
+    // main::@2
   b2:
-  //SEG21 [9] call print 
-  //SEG22 [11] phi from main::@2 to print [phi:main::@2->print]
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG23 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     jsr print
     jmp breturn
-  //SEG24 main::@return
+    // main::@return
   breturn:
-  //SEG25 [10] return 
+    // [10] return 
     rts
 }
-//SEG26 print
+  // print
 print: {
-  //SEG27 [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'.'
     sta SCREEN,x
-  //SEG28 [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
     jmp breturn
-  //SEG29 print::@return
+    // print::@return
   breturn:
-  //SEG30 [14] return 
+    // [14] return 
     rts
 }
+  // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -406,54 +408,62 @@ reg byte x [ idx#12 idx#13 ]
 FINAL ASSEMBLER
 Score: 41
 
-//SEG0 File Comments
+  // File Comments
 // Test that void-parameter works top specify function takes no parameters
 // Output is "..." in the top left corner of the screen
-//SEG1 Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG2 Global Constants & labels
+  // Global Constants & labels
   .label SCREEN = $400
-//SEG3 @begin
-//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG5 @1
-//SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
 main: {
-  //SEG11 [5] call print 
-  //SEG12 [11] phi from main to print [phi:main->print]
-  //SEG13 [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // print()
+    // [5] call print 
+    // [11] phi from main to print [phi:main->print]
+    // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
-  //SEG18 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // print()
+    // [7] call print 
+    // [11] phi from main::@1 to print [phi:main::@1->print]
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     jsr print
-  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG20 main::@2
-  //SEG21 [9] call print 
-  //SEG22 [11] phi from main::@2 to print [phi:main::@2->print]
-  //SEG23 [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+    // print()
+    // [9] call print 
+    // [11] phi from main::@2 to print [phi:main::@2->print]
+    // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     jsr print
-  //SEG24 main::@return
-  //SEG25 [10] return 
+    // main::@return
+    // }
+    // [10] return 
     rts
 }
-//SEG26 print
+  // print
 print: {
-  //SEG27 [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SCREEN[idx++] = '.'
+    // [12] *((const byte*) SCREEN#0 + (byte) idx#12) ← (byte) '.' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'.'
     sta SCREEN,x
-  //SEG28 [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
+    // SCREEN[idx++] = '.';
+    // [13] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG29 print::@return
-  //SEG30 [14] return 
+    // print::@return
+    // }
+    // [14] return 
     rts
 }
+  // File Data
 

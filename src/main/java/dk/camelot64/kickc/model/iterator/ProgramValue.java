@@ -434,6 +434,7 @@ public interface ProgramValue {
 
    }
 
+   /** Element in a constant array. */
    class ProgramValueConstantArrayElement implements ProgramValue {
       private final ConstantArrayList arrayList;
       private final int idx;
@@ -451,6 +452,27 @@ public interface ProgramValue {
       @Override
       public void set(Value value) {
          arrayList.getElements().set(idx, (ConstantValue) value);
+      }
+   }
+
+   /** Member of a constant struct value. */
+   class ProgramValueConstantStructMember implements ProgramValue {
+      private final ConstantStructValue structValue;
+      private final VariableRef memberRef;
+
+      public ProgramValueConstantStructMember(ConstantStructValue structValue, VariableRef memberRef) {
+         this.structValue = structValue;
+         this.memberRef = memberRef;
+      }
+
+      @Override
+      public Value get() {
+         return structValue.getValue(memberRef);
+      }
+
+      @Override
+      public void set(Value value) {
+         structValue.setValue(memberRef, (ConstantValue)value);
       }
    }
 

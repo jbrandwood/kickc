@@ -11,32 +11,29 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 /** Unary Cast to a pointer ( type* ) */
 public class OperatorCastPtr extends OperatorCast {
 
-   private final SymbolType elementType;
+   private final SymbolTypePointer pointerType;
 
-   public OperatorCastPtr(int precedence, SymbolType elementType) {
-      super("((" + elementType.toString() + "*))", "_ptr_", precedence, new SymbolTypePointer(elementType));
-      this.elementType = elementType;
+   public OperatorCastPtr(int precedence, SymbolTypePointer pointerType) {
+      super("((" + pointerType.toString() + "))", "_ptr_", precedence, pointerType);
+      this.pointerType = pointerType;
    }
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
-         return new ConstantPointer(((ConstantInteger) value).getInteger(), elementType);
+         return new ConstantPointer(((ConstantInteger) value).getInteger(), pointerType.getElementType());
       } else if(value instanceof ConstantPointer) {
-         return new ConstantPointer(((ConstantPointer) value).getLocation(), elementType);
-      }
-      if(value instanceof ConstantPointer) {
-         return new ConstantPointer(((ConstantPointer) value).getLocation(), elementType);
+         return new ConstantPointer(((ConstantPointer) value).getLocation(), pointerType.getElementType());
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value);
    }
 
    @Override
    public SymbolType inferType(SymbolType operandType) {
-      return new SymbolTypePointer(elementType);
+      return pointerType;
    }
 
-   public SymbolType getElementType() {
-      return elementType;
+   public SymbolTypePointer getPointerType() {
+      return pointerType;
    }
 }

@@ -36,6 +36,7 @@ public class TestPrograms {
    }
 
    @Test
+
    public void testZeropageSinus() throws IOException, URISyntaxException {
       compileAndCompare("zeropage-sinus");
    }
@@ -51,38 +52,44 @@ public class TestPrograms {
    }
 
    @Test
-   public void testProblemPointerInsideStructSizeofRewriting() throws IOException, URISyntaxException {
-      compileAndCompare("problem-pointer-inside-struct-sizeof-rewriting");
+   public void testCoalesceAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("coalesce-assignment");
    }
 
-   /*
    @Test
-   public void testProblemStructPointerParam() throws IOException, URISyntaxException {
-      compileAndCompare("problem-struct-pointer-param");
+   public void testArray16bitLookup() throws IOException, URISyntaxException {
+      compileAndCompare("array-16bit-lookup");
    }
-   */
 
-   /*
    @Test
-   public void testProblemArrayStructParam() throws IOException, URISyntaxException {
-      compileAndCompare("problem-array-struct-param");
+   public void testZeropageExhausted() throws IOException, URISyntaxException {
+      assertError("zeropage-exhausted", "Variables used in program do not fit on zeropage", false);
    }
-   */
 
-   /*
    @Test
-   public void testProblemArrayStructInit() throws IOException, URISyntaxException {
-      compileAndCompare("problem-array-struct-init");
+   public void testPlatformAsm6502() throws IOException, URISyntaxException {
+      compileAndCompare("platform-asm6502");
    }
-   */
 
-   /*
    @Test
-   public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
-      compileAndCompare("problem-inline-struct-return");
+   public void testEuclid2() throws IOException, URISyntaxException {
+      compileAndCompare("euclid-3");
    }
-   */
 
+   @Test
+   public void testEuclidProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("euclid-problem-2");
+   }
+
+   @Test
+   public void testEuclidProblem() throws IOException, URISyntaxException {
+      compileAndCompare("euclid-problem");
+   }
+
+   @Test
+   public void testFastMultiply127() throws IOException, URISyntaxException {
+      compileAndCompare("fastmultiply-127");
+   }
 
    @Test
    public void testTrueTypeSplines() throws IOException, URISyntaxException {
@@ -343,6 +350,53 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInitializer0() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-0");
+   }
+
+   @Test
+   public void testInitializer1() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-1");
+   }
+
+   @Test
+   public void testInitializer2() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-2");
+   }
+
+   @Test
+   public void testInitializer3() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-3");
+   }
+
+   /*
+   @Test
+   public void testProblemInlineStructReturn() throws IOException, URISyntaxException {
+      compileAndCompare("problem-inline-struct-return", log().verboseCreateSsa());
+   }
+   */
+
+   @Test
+   public void testStructPtr19() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-19");
+   }
+
+   @Test
+   public void testStructPtr18() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-18");
+   }
+
+   @Test
+   public void testStructPtr17() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-17");
+   }
+
+   @Test
+   public void testStructPtr16() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-16");
+   }
+
+   @Test
    public void testStructPtr15() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-15");
    }
@@ -458,6 +512,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct10() throws IOException, URISyntaxException {
+      compileAndCompare("struct-10");
+   }
+
+   @Test
    public void testStruct9() throws IOException, URISyntaxException {
       compileAndCompare("struct-9");
    }
@@ -517,6 +576,7 @@ public class TestPrograms {
       compileAndCompare("sequence-locality-0");
    }
 
+   @Test
    public void testVoidParameter() throws IOException, URISyntaxException {
       compileAndCompare("void-parameter");
    }
@@ -2009,6 +2069,11 @@ public class TestPrograms {
    @Test
    public void testLongJump() throws IOException, URISyntaxException {
       compileAndCompare("longjump");
+   }
+
+   @Test
+   public void testAddressOf3() throws IOException, URISyntaxException {
+      compileAndCompare("address-of-3");
    }
 
    @Test

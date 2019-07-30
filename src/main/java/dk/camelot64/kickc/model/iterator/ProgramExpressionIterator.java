@@ -2,12 +2,9 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.ListIterator;
 
 /**
  * Capable of iterating the different structures of a Program (graph, block, statement, symboltable, symbol).
- * Creates appropriate BinaryExpressions and passes them to a ProgramExpressionHandler.
+ * Creates appropriate ProgramExpressionBinary/ProgramExpressionUnary and passes them to a ProgramExpressionHandler.
  * Iteration might be guided (eg. filtering some types of the structure to iterate at call-time)
  */
 public class ProgramExpressionIterator {
@@ -63,8 +60,9 @@ public class ProgramExpressionIterator {
                }
             } else if(stmt instanceof StatementPhiBlock) {
                for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
-                  for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
-                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPhiValueAssignemnt(phiVariable, value), stmt, stmtIt, block);
+                  int size = phiVariable.getValues().size();
+                  for(int i = 0; i < size; i++) {
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPhiValueAssignemnt(phiVariable, new ProgramValue.PhiValue(phiVariable, i)), stmt, stmtIt, block);
                   }
                }
             } else if(stmt instanceof StatementCall) {
@@ -72,8 +70,8 @@ public class ProgramExpressionIterator {
                List<RValue> paramValues = call.getParameters();
                Procedure procedure = program.getScope().getProcedure(call.getProcedure());
                List<Variable> paramDefs = procedure.getParameters();
-               if(paramValues!=null && paramDefs.size()==paramValues.size()) {
-                  for(int i=0;i<paramDefs.size(); i++) {
+               if(paramValues != null && paramDefs.size() == paramValues.size()) {
+                  for(int i = 0; i < paramDefs.size(); i++) {
                      handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
                   }
                }

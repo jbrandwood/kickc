@@ -20,6 +20,14 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
    }
 
    public boolean optimize() {
+      Set<String> usedLabels = findUsedLabels();
+      List<AsmLine> removeLines = findUnusedLabelLines(usedLabels);
+      remove(removeLines);
+      return removeLines.size() > 0;
+   }
+
+   /** Find all labels that are used. */
+   private Set<String> findUsedLabels() {
       Set<String> usedLabels = new LinkedHashSet<>();
       String currentScope = "";
       for(AsmSegment segment : getAsmProgram().getSegments()) {
@@ -40,7 +48,13 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
             }
          }
       }
+      return usedLabels;
+   }
+
+   /** Find all ASM lines that are unused labels. */
+   private List<AsmLine> findUnusedLabelLines(Set<String> usedLabels) {
       List<AsmLine> removeLines = new ArrayList<>();
+      String currentScope = "";
       for(AsmSegment segment : getAsmProgram().getSegments()) {
          Integer statementIdx = segment.getStatementIdx();
          if(statementIdx != null) {
@@ -67,7 +81,8 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
             }
          }
       }
-      remove(removeLines);
-      return removeLines.size() > 0;
+      return removeLines;
    }
+
+
 }

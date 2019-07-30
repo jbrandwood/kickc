@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
-import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.StatementAssignment;

@@ -55,13 +55,14 @@ Culled Empty Block (label) @39
 Culled Empty Block (label) @40
 Culled Empty Block (label) @41
 Culled Empty Block (label) @42
-Culled Empty Block (label) @44
+Culled Empty Block (label) @43
 Culled Empty Block (label) @45
 Culled Empty Block (label) @46
 Culled Empty Block (label) @47
 Culled Empty Block (label) @48
 Culled Empty Block (label) @49
-Culled Empty Block (label) @51
+Culled Empty Block (label) @50
+Culled Empty Block (label) @52
 Culled Empty Block (label) init::@2
 Culled Empty Block (label) anim::@2
 Culled Empty Block (label) anim::@15
@@ -272,7 +273,7 @@ mulf8s_prepared::@return: scope:[mulf8s_prepared]  from mulf8s_prepared::@2
   to:@return
 @13: scope:[]  from @4
   (dword) CLOCKS_PER_INIT#0 ← (number) $12
-  to:@43
+  to:@44
 clock: scope:[clock]  from anim::@13
   (number~) clock::$0 ← (number) $ffffffff - *((dword*) CIA2_TIMER_AB#0)
   (dword) clock::return#0 ← (number~) clock::$0
@@ -344,9 +345,9 @@ print_dword_at::@2: scope:[print_dword_at]  from print_dword_at::@1
 print_dword_at::@return: scope:[print_dword_at]  from print_dword_at::@2
   return 
   to:@return
-@43: scope:[]  from @13
+@44: scope:[]  from @13
   (byte[]) print_hextab#0 ← (const string) $2
-  to:@50
+  to:@51
 print_byte_at: scope:[print_byte_at]  from print_word_at print_word_at::@1
   (byte*) print_byte_at::at#2 ← phi( print_word_at/(byte*) print_byte_at::at#0 print_word_at::@1/(byte*) print_byte_at::at#1 )
   (byte) print_byte_at::b#2 ← phi( print_word_at/(byte) print_byte_at::b#0 print_word_at::@1/(byte) print_byte_at::b#1 )
@@ -377,16 +378,16 @@ print_char_at: scope:[print_char_at]  from print_byte_at print_byte_at::@1
 print_char_at::@return: scope:[print_char_at]  from print_char_at
   return 
   to:@return
-@50: scope:[]  from @43
+@51: scope:[]  from @44
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte[$140]) SIN#0 ← kickasm {{ .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
  }}
   (byte*~) $1 ← (byte[$140]) SIN#0 + (number) $40
   (byte*) COS#0 ← (byte*~) $1
-  to:@52
-main: scope:[main]  from @53
-  (byte*) COS#9 ← phi( @53/(byte*) COS#11 )
+  to:@53
+main: scope:[main]  from @54
+  (byte*) COS#9 ← phi( @54/(byte*) COS#11 )
   asm { sei  }
   call init 
   to:main::@1
@@ -422,11 +423,11 @@ init::@1: scope:[init]  from init::@1 init::@3
 init::@return: scope:[init]  from init::@1
   return 
   to:@return
-@52: scope:[]  from @50
-  (byte*) COS#15 ← phi( @50/(byte*) COS#0 )
+@53: scope:[]  from @51
+  (byte*) COS#15 ← phi( @51/(byte*) COS#0 )
   (signed byte[8]) xs#0 ← { (number) -$46, (number) -$46, (number) -$46, (number) 0, (number) 0, (number) $46, (number) $46, (number) $46 }
   (signed byte[8]) ys#0 ← { (number) -$46, (number) 0, (number) $46, (number) -$46, (number) $46, (number) -$46, (number) 0, (number) $46 }
-  to:@53
+  to:@54
 anim: scope:[anim]  from main::@1
   (byte*) COS#5 ← phi( main::@1/(byte*) COS#7 )
   (byte) anim::angle#0 ← (number) 0
@@ -686,8 +687,8 @@ anim::@27: scope:[anim]  from anim::@26
 anim::@return: scope:[anim]  from anim::@1
   return 
   to:@return
-@53: scope:[]  from @52
-  (byte*) COS#11 ← phi( @52/(byte*) COS#15 )
+@54: scope:[]  from @53
+  (byte*) COS#11 ← phi( @53/(byte*) COS#15 )
   (byte*) SPRITE#0 ← ((byte*)) (number) $3000
   kickasm(location (byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
@@ -695,21 +696,21 @@ anim::@return: scope:[anim]  from anim::@1
             .byte pic.getSinglecolorByte(x,y)
  }}
   call main 
-  to:@54
-@54: scope:[]  from @53
+  to:@55
+@55: scope:[]  from @54
   to:@end
-@end: scope:[]  from @54
+@end: scope:[]  from @55
 
 SYMBOL TABLE SSA
 (byte*~) $1
 (const string) $2 = (string) "0123456789abcdef"
 (label) @13
 (label) @4
-(label) @43
-(label) @50
-(label) @52
+(label) @44
+(label) @51
 (label) @53
 (label) @54
+(label) @55
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
@@ -1254,7 +1255,7 @@ SYMBOL TABLE SSA
 (signed byte[8]) ys#0
 
 Fixing inline constructor with mulf8u_prepared::$0 ← (byte)*(mulf8u_prepared::memB#0) w= (byte)*(mulf8u_prepared::resL#0)
-Successful SSA optimization Pass2FixInlineConstructorsNew
+Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_STOP#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) CIA_TIMER_CONTROL_START#0 ← (number) 1
 Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_CONTINUOUS#0 ← (number) 0
@@ -1321,9 +1322,9 @@ Adding number conversion cast (unumber) 2 in (number~) anim::$25 ← (byte) anim
 Adding number conversion cast (unumber) anim::$25 in (number~) anim::$25 ← (byte) anim::i#3 * (unumber)(number) 2
 Adding number conversion cast (unumber) $80 in (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#4 | (number) $80
 Successful SSA optimization PassNAddNumberTypeConversions
-Adding number conversion cast (signed byte) to elements in (signed byte[8]) xs#0 ← { (signed byte)(number) -$46, (signed byte)(number) -$46, (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) 0, (signed byte)(number) $46, (signed byte)(number) $46, (signed byte)(number) $46 }
-Adding number conversion cast (signed byte) to elements in (signed byte[8]) ys#0 ← { (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) $46, (signed byte)(number) -$46, (signed byte)(number) $46, (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) $46 }
-Successful SSA optimization PassNAddArrayNumberTypeConversions
+Added casts to value list in (signed byte[8]) xs#0 ← (signed byte[8]){ (signed byte)(number) -$46, (signed byte)(number) -$46, (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) 0, (signed byte)(number) $46, (signed byte)(number) $46, (signed byte)(number) $46 }
+Added casts to value list in (signed byte[8]) ys#0 ← (signed byte[8]){ (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) $46, (signed byte)(number) -$46, (signed byte)(number) $46, (signed byte)(number) -$46, (signed byte)(number) 0, (signed byte)(number) $46 }
+Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*) SPRITES_XPOS#0 ← (byte*)(number) $d000
 Inlining cast (byte*) SPRITES_YPOS#0 ← (byte*)(number) $d001
 Inlining cast (byte*) SPRITES_XMSB#0 ← (byte*)(number) $d010
@@ -1615,14 +1616,6 @@ Alias (byte) anim::angle#10 = (byte) anim::angle#3
 Alias (signed byte) anim::sin_a#1 = (signed byte) anim::sin_a#7 
 Alias (byte*) COS#10 = (byte*) COS#13 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) init::sprites_ptr#1
-Self Phi Eliminated (byte*) COS#1
-Self Phi Eliminated (byte) anim::angle#2
-Self Phi Eliminated (signed byte) anim::cos_a#1
-Self Phi Eliminated (signed byte) anim::sin_a#1
-Self Phi Eliminated (byte) anim::angle#10
-Self Phi Eliminated (byte*) COS#10
-Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (byte) mulf8u_prepared::b#1 (byte) mulf8u_prepared::b#0
 Identical Phi Values (dword) print_dword_at::dw#1 (dword) print_dword_at::dw#0
 Identical Phi Values (byte*) print_dword_at::at#1 (byte*) print_dword_at::at#0
@@ -1635,6 +1628,8 @@ Identical Phi Values (signed byte) anim::cos_a#1 (signed byte) anim::cos_a#0
 Identical Phi Values (signed byte) anim::sin_a#1 (signed byte) anim::sin_a#0
 Identical Phi Values (byte) anim::angle#10 (byte) anim::angle#2
 Identical Phi Values (byte*) COS#10 (byte*) COS#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Values (byte*) COS#4 (byte*) COS#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identified duplicate assignment right side [135] (byte~) clock_start::$2 ← (byte) CIA_TIMER_CONTROL_STOP#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
 Identified duplicate assignment right side [142] (byte~) clock_start::$6 ← (byte) CIA_TIMER_CONTROL_START#0 | (byte) CIA_TIMER_CONTROL_CONTINUOUS#0
@@ -1654,9 +1649,10 @@ Constant right-side identified [17] (byte[$200]) mulf_sqr1_lo#0 ← { fill( $200
 Constant right-side identified [18] (byte[$200]) mulf_sqr1_hi#0 ← { fill( $200, 0) }
 Constant right-side identified [19] (byte[$200]) mulf_sqr2_lo#0 ← { fill( $200, 0) }
 Constant right-side identified [20] (byte[$200]) mulf_sqr2_hi#0 ← { fill( $200, 0) }
-Constant right-side identified [211] (signed byte[8]) xs#0 ← { (signed byte) -$46, (signed byte) -$46, (signed byte) -$46, (signed byte) 0, (signed byte) 0, (signed byte) $46, (signed byte) $46, (signed byte) $46 }
-Constant right-side identified [212] (signed byte[8]) ys#0 ← { (signed byte) -$46, (signed byte) 0, (signed byte) $46, (signed byte) -$46, (signed byte) $46, (signed byte) -$46, (signed byte) 0, (signed byte) $46 }
 Successful SSA optimization Pass2ConstantRValueConsolidation
+Identified constant from value list (signed byte[8]) { (signed byte) -$46, (signed byte) -$46, (signed byte) -$46, (signed byte) 0, (signed byte) 0, (signed byte) $46, (signed byte) $46, (signed byte) $46 }
+Identified constant from value list (signed byte[8]) { (signed byte) -$46, (signed byte) 0, (signed byte) $46, (signed byte) -$46, (signed byte) $46, (signed byte) -$46, (signed byte) 0, (signed byte) $46 }
+Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte*) SPRITES_XPOS#0 = (byte*) 53248
 Constant (const byte*) SPRITES_YPOS#0 = (byte*) 53249
 Constant (const byte*) SPRITES_XMSB#0 = (byte*) 53264
@@ -1736,10 +1732,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) clock_start::$1 = (byte~) clock_start::$0 (byte~) clock_start::$2 
 Alias (byte~) clock_start::$6 = (byte~) clock_start::$4 (byte~) clock_start::$7 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) COS#4
-Successful SSA optimization Pass2SelfPhiElimination
-Identical Phi Values (byte*) COS#4 (byte*) COS#0
-Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [0] (byte*) mulf_init::sqr1_hi#0 ← (const byte[$200]) mulf_sqr1_hi#0 + (byte) 1
 Constant right-side identified [1] (byte*) mulf_init::sqr1_lo#0 ← (const byte[$200]) mulf_sqr1_lo#0 + (byte) 1
 Constant right-side identified [14] (byte*~) mulf_init::$13 ← (const byte[$200]) mulf_sqr1_lo#0 + (word) $200
@@ -1866,10 +1858,10 @@ Added new block during phi lifting anim::@29(between anim::@25 and anim::@11)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @13
-Adding NOP phi() at start of @43
-Adding NOP phi() at start of @50
-Adding NOP phi() at start of @52
-Adding NOP phi() at start of @54
+Adding NOP phi() at start of @44
+Adding NOP phi() at start of @51
+Adding NOP phi() at start of @53
+Adding NOP phi() at start of @55
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -1936,10 +1928,10 @@ Coalesced (already) [210] mulf_init::x_2#6 ← mulf_init::x_2#3
 Coalesced down to 22 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @13
-Culled Empty Block (label) @43
-Culled Empty Block (label) @50
-Culled Empty Block (label) @52
-Culled Empty Block (label) @54
+Culled Empty Block (label) @44
+Culled Empty Block (label) @51
+Culled Empty Block (label) @53
+Culled Empty Block (label) @55
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) anim::@19
 Culled Empty Block (label) anim::@20
@@ -1957,7 +1949,7 @@ Culled Empty Block (label) mulf_init::@7
 Culled Empty Block (label) mulf_init::@11
 Culled Empty Block (label) mulf_init::@9
 Culled Empty Block (label) mulf_init::@10
-Renumbering block @53 to @1
+Renumbering block @54 to @1
 Renumbering block mulf_init::@5 to mulf_init::@4
 Renumbering block mulf_init::@6 to mulf_init::@5
 Renumbering block mulf_init::@8 to mulf_init::@6
@@ -2654,9 +2646,10 @@ Allocated zp ZP_BYTE:96 [ mulf_init::$10 ]
 Allocated zp ZP_BYTE:97 [ mulf_init::$11 ]
 
 INITIAL ASM
+Target platform is c64basic
   // File Comments
 // 2D rotattion of 8 sprites 
-  // Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
@@ -4129,7 +4122,7 @@ Allocated (was zp ZP_DWORD:64) zp ZP_DWORD:34 [ clock::return#2 anim::$28 clock:
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // 2D rotattion of 8 sprites 
-  // Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
@@ -5566,7 +5559,7 @@ Score: 30954
 
   // File Comments
 // 2D rotattion of 8 sprites 
-  // Basic Upstart
+  // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

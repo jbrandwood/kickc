@@ -1,10 +1,7 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementSequence;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -33,6 +30,9 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
+   /** The target platform. */
+   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -45,10 +45,13 @@ public class Compiler {
       this.enableZeroPageCoalasce = optimizeZeroPageCoalesce;
    }
 
+   public void setTargetPlatform(TargetPlatform targetPlatform) {
+      program.setTargetPlatform(targetPlatform);
+   }
+
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
    }
-
 
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
       try {
@@ -191,6 +194,10 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, false).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
@@ -261,9 +268,9 @@ public class Compiler {
 
    private List<Pass2SsaOptimization> getPass2Optimizations() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new Pass2FixInlineConstructorsNew(program));
+      optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
-      optimizations.add(new PassNAddArrayNumberTypeConversions(program));
+      optimizations.add(new PassNAddInitializerValueListTypeCasts(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
@@ -275,7 +282,6 @@ public class Compiler {
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
-      optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
@@ -283,8 +289,10 @@ public class Compiler {
       optimizations.add(new PassNAddBooleanCasts(program));
       optimizations.add(new PassNStructPointerRewriting(program));
       optimizations.add(new PassNStructAddressOfRewriting(program));
+      optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
+      optimizations.add(new Pass2ConstantInitializerValueLists(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
@@ -484,6 +492,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
+      getLog().append("Target platform is "+program.getTargetPlatform().getName());
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
@@ -514,11 +523,12 @@ public class Compiler {
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();
+
       if(enableZeroPageCoalasce) {
-         new Pass4ZeroPageCoalesce(program).coalesce();
+         new Pass4ZeroPageCoalesceExhaustive(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);
-
+      new Pass4AssertZeropageAllocation(program).check();
    }
 
    private void pass5GenerateAndOptimizeAsm() {

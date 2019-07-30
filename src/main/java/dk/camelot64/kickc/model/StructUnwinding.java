@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Keeps track of all structs that have been unwound into member variables.
+ * Keeps track of all struct variables that have been unwound into member variables.
  */
 public class StructUnwinding {
 
@@ -39,25 +39,6 @@ public class StructUnwinding {
          throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
       }
       return structVariables.get(ref);
-   }
-
-   /**
-    * Find the struct variable that the passed symbol was unwound from.
-    *
-    * @param symbolRef The symbol to look for
-    * @return The struct variable containing it. null if the passed symbol is not an unwound variable.
-    */
-   public VariableRef getContainingStructVariable(SymbolRef symbolRef) {
-      for(VariableRef structVarRef : structVariables.keySet()) {
-         VariableUnwinding variableUnwinding = getVariableUnwinding(structVarRef);
-         for(String memberName : variableUnwinding.getMemberNames()) {
-            LValue memberUnwinding = variableUnwinding.getMemberUnwinding(memberName);
-            if(memberUnwinding instanceof VariableRef && memberUnwinding.equals(symbolRef)) {
-               return structVarRef;
-            }
-         }
-      }
-      return null;
    }
 
 

@@ -77,12 +77,18 @@ public class Pass4CodeGeneration {
       if(program.getProgramPc() != null) {
          programPc = program.getProgramPc();
       } else {
-         programPc = 0x080d;
+         if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+            programPc = 0x080d;
+         } else {
+            programPc = 0x1000;
+         }
       }
 
-      asm.startSegment(currentScope, null, "Basic Upstart");
-      asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-      asm.addLine(new AsmBasicUpstart("bbegin"));
+      asm.startSegment(currentScope, null, "Upstart");
+      if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+         asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
+         asm.addLine(new AsmBasicUpstart("bbegin"));
+      }
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
 
       // Generate global ZP labels
@@ -408,25 +414,24 @@ public class Pass4CodeGeneration {
                SymbolTypeArray constTypeArray = (SymbolTypeArray) constantVar.getType();
                SymbolType elementType = constTypeArray.getElementType();
                ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
-               List<String> asmElements = new ArrayList<>();
-               for(ConstantValue element : constantArrayList.getElements()) {
-                  String asmElement = AsmFormat.getAsmConstant(program, element, 99, scopeRef);
-                  asmElements.add(asmElement);
-               }
-               if(SymbolType.BYTE.equals(elementType) || SymbolType.SBYTE.equals(elementType)) {
-                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
-                  added.add(asmName);
-               } else if(SymbolType.WORD.equals(elementType) || SymbolType.SWORD.equals(elementType)) {
-                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
-                  added.add(asmName);
-               } else if(SymbolType.DWORD.equals(elementType) || SymbolType.SDWORD.equals(elementType)) {
-                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmElements);
-                  added.add(asmName);
-               } else if(elementType instanceof SymbolTypePointer) {
-                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
-                  added.add(asmName);
+               if(elementType instanceof SymbolTypeStruct) {
+                  // Constant array of structs - output each struct as a separate chunk
+                  asm.addLabel(asmName).setDontOptimize(true);
+                  for(ConstantValue element : constantArrayList.getElements()) {
+                     AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                     addChunkData(asmDataChunk, element, scopeRef);
+                     asm.addDataNumeric(null, asmDataChunk);
+                  }
+               } else if(elementType instanceof SymbolTypeArray) {
+                  // Constant array of sub-arrays
+                  throw new InternalError("Array of array not supported");
                } else {
-                  throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
+                  // Constant array of a "simple" type - add to a single chunk
+                  AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                  for(ConstantValue element : constantArrayList.getElements()) {
+                     addChunkData(asmDataChunk, element, scopeRef);
+                  }
+                  asm.addDataNumeric(asmName, asmDataChunk);
                }
             } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
                ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
@@ -483,7 +488,7 @@ public class Pass4CodeGeneration {
                   if(size instanceof ConstantValue) {
                      ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
                      if(sizeLiteral instanceof ConstantInteger) {
-                        bytes = (int)(((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
+                        bytes = (int) (((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
                      }
                   }
                }
@@ -509,6 +514,33 @@ public class Pass4CodeGeneration {
       }
    }
 
+   /**
+    * Fill the data of a constant value into a data chunk
+    *
+    * @param dataChunk The data chunk
+    * @param structValue The constant value
+    */
+   private void addChunkData(AsmProgram.AsmDataNumericChunk dataChunk, ConstantValue value, ScopeRef scopeRef) {
+      SymbolType elementType = value.getType(program.getScope());
+      if(elementType instanceof SymbolTypeStruct) {
+         // Add each struct member recursively
+         ConstantStructValue structValue = (ConstantStructValue) value;
+         for(VariableRef memberRef : structValue.getMembers()) {
+            ConstantValue memberValue = structValue.getValue(memberRef);
+            addChunkData(dataChunk, memberValue, scopeRef);
+         }
+      } else if(SymbolType.BYTE.equals(elementType) || SymbolType.SBYTE.equals(elementType)) {
+         dataChunk.addData(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+      } else if(SymbolType.WORD.equals(elementType) || SymbolType.SWORD.equals(elementType)) {
+         dataChunk.addData(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+      } else if(SymbolType.DWORD.equals(elementType) || SymbolType.SDWORD.equals(elementType)) {
+         dataChunk.addData(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+      } else if(elementType instanceof SymbolTypePointer) {
+         dataChunk.addData(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+      } else {
+         throw new InternalError("Unhandled array element type "+elementType.toString()+ " value "+value.toString(program));
+      }
+   }
 
    /**
     * Add label declarations for all scope variables assigned to ZP registers
@@ -559,7 +591,8 @@ public class Pass4CodeGeneration {
     * @param aluState State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
     * For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
     */
-   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
+   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState
+         aluState, boolean genCallPhiEntry) {
 
       asm.startSegment(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
       generateComments(asm, statement.getComments());
@@ -845,7 +878,8 @@ public class Pass4CodeGeneration {
     * If the transition code is inserted in the to-block, this is the scope of the to-block.
     * If the transition code is inserted in the from-block this is the scope of the from-block.
     */
-   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
+   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef
+         scope) {
       PhiTransitions transitions = getTransitions(toBlock);
       PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
       if(!transitionIsGenerated(transition)) {

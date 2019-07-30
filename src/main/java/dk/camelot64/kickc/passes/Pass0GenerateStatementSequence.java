@@ -133,6 +133,19 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Number programPc = NumberParser.parseLiteral(ctx.NUMBER().getText());
       if(programPc != null) {
          program.setProgramPc(programPc);
+      } else {
+         throw new CompileError("Cannot parse #pc directive",new StatementSource(ctx));
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) {
+      TargetPlatform platform = TargetPlatform.getTargetPlatform(ctx.NAME().getText());
+      if(platform != null) {
+         program.setTargetPlatform(platform);
+      } else {
+         throw new CompileError("Unknown target platform in #platform directive",new StatementSource(ctx));
       }
       return null;
    }

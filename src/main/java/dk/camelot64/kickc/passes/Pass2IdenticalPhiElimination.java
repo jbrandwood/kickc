@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
-/** Compiler Pass eliminating phi varialbes where all rValues are the same */
+/** Compiler Pass eliminating phi variables where all rValues are the same */
 public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
 
    public Pass2IdenticalPhiElimination(Program program) {
@@ -23,7 +23,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      Map<VariableRef,RValue> phiIdentical = new LinkedHashMap<>();
+      Map<VariableRef, RValue> phiIdentical = new LinkedHashMap<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementPhiBlock) {
@@ -34,6 +34,10 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
                   RValue rValue = null;
                   boolean identical = true;
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if(phiRValue.getrValue().equals(phiVariable.getVariable())) {
+                        // Self PHI - skip that
+                        continue;
+                     }
                      if(rValue == null) {
                         rValue = phiRValue.getrValue();
                      } else {
@@ -58,7 +62,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
          getLog().append("Identical Phi Values " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
       deleteSymbols(getScope(), phiIdentical.keySet());
-      return phiIdentical.size()>0;
+      return phiIdentical.size() > 0;
    }
 
 }

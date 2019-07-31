@@ -4,7 +4,7 @@
 .pc = $80d "Program"
   .label screen = $400
 main: {
-    .label wait = 3
+    .label wait = 6
     .label x = 2
     lda #0
     sta x
@@ -87,20 +87,20 @@ main: {
   b5:
     jmp b5
 }
-// textbox(byte zeropage(2) x1, byte zeropage(5) y1, byte zeropage(6) x2, byte zeropage(7) y2, byte* zeropage(8) text)
+// textbox(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2, byte* zeropage(6) text)
 textbox: {
-    .label _8 = $f
-    .label _17 = $11
+    .label _8 = $d
+    .label _17 = $a
     .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label y = 5
-    .label x = $b
-    .label z = $c
-    .label i = $a
-    .label text = 8
-    .label _31 = $f
+    .label y1 = 3
+    .label x2 = 4
+    .label y2 = 5
+    .label y = 3
+    .label x = 8
+    .label z = $b
+    .label i = 9
+    .label text = 6
+    .label _31 = $d
     jsr draw_window
     inc y
     ldy x1
@@ -240,35 +240,35 @@ textbox: {
     inx
     jmp b3
 }
-// draw_window(byte zeropage(2) x1, byte zeropage(5) y1, byte zeropage(6) x2, byte zeropage(7) y2)
+// draw_window(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2)
 draw_window: {
-    .label _2 = $1a
-    .label _3 = $12
-    .label _4 = $20
-    .label _5 = $14
-    .label _13 = $16
-    .label _14 = $18
-    .label _18 = $1e
-    .label _19 = $1c
-    .label _24 = $24
+    .label _2 = $13
+    .label _3 = $b
+    .label _4 = $19
+    .label _5 = $d
+    .label _13 = $f
+    .label _14 = $11
+    .label _18 = $17
+    .label _19 = $15
+    .label _24 = $1d
     .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label z = $12
-    .label q = $14
-    .label z_1 = $1c
-    .label y3 = $e
-    .label z_2 = $22
-    .label _27 = $16
-    .label _28 = $18
-    .label _29 = $1a
-    .label _30 = $12
-    .label _31 = $1e
-    .label _32 = $1c
-    .label _33 = $20
-    .label _34 = $14
-    .label _35 = $24
+    .label y1 = 3
+    .label x2 = 4
+    .label y2 = 5
+    .label z = $b
+    .label q = $d
+    .label z_1 = $15
+    .label y3 = 9
+    .label z_2 = $1b
+    .label _27 = $f
+    .label _28 = $11
+    .label _29 = $13
+    .label _30 = $b
+    .label _31 = $17
+    .label _32 = $15
+    .label _33 = $19
+    .label _34 = $d
+    .label _35 = $1d
     lda y1
     asl
     asl

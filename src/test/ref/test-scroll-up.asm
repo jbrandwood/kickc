@@ -10,13 +10,13 @@ main: {
     rts
 }
 scrollup3: {
-    .label l2 = 2
-    .label l2_1 = 4
-    .label line = 2
-    .label l2_2 = 4
-    .label _3 = $d
-    .label _4 = $f
-    .label l2_4 = 4
+    .label l2 = 9
+    .label l2_1 = 3
+    .label line = 9
+    .label l2_2 = 3
+    .label _3 = 5
+    .label _4 = 7
+    .label l2_4 = 3
     lda #<0
     sta l2
     sta l2+1
@@ -69,9 +69,9 @@ scrollup3: {
     rts
 }
 scrollup2: {
-    .label line1 = 9
-    .label line2 = 7
-    .label l = 6
+    .label line1 = 3
+    .label line2 = 9
+    .label l = 2
     lda #0
     sta l
     lda #<screen
@@ -106,11 +106,11 @@ scrollup2: {
     rts
 }
 scrollup1: {
-    .label _0 = $11
-    .label _2 = $13
-    .label line = $b
-    .label _5 = $13
-    .label _6 = $11
+    .label _0 = 7
+    .label _2 = 9
+    .label line = 5
+    .label _5 = 9
+    .label _6 = 7
     lda #<0
     sta line
     sta line+1

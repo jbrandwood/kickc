@@ -75,9 +75,9 @@
   .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
   .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
-  .label heap_head = $27
-  .label SCREEN_COPY = $2b
-  .label SCREEN_DIST = $2d
+  .label heap_head = $18
+  .label SCREEN_COPY = 7
+  .label SCREEN_DIST = 9
 bbegin:
   lda #<HEAP_TOP
   sta heap_head
@@ -92,10 +92,10 @@ bbegin:
   jsr main
   rts
 main: {
-    .label dst = 4
-    .label src = 2
-    .label i = 6
-    .label center_y = $2f
+    .label dst = 3
+    .label src = $1c
+    .label i = 2
+    .label center_y = $b
     lda SCREEN_DIST
     sta init_angle_screen.screen
     lda SCREEN_DIST+1
@@ -184,36 +184,36 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($30) center_x, byte zeropage($2f) center_y)
+// startProcessing(byte zeropage($1e) center_x, byte zeropage($b) center_y)
 startProcessing: {
-    .label _0 = $31
-    .label _1 = $31
-    .label _5 = $a
-    .label _6 = $a
-    .label _8 = 8
-    .label _9 = 8
-    .label _11 = $38
-    .label _12 = $38
-    .label _13 = $38
-    .label _15 = $3a
-    .label _16 = $3a
-    .label _17 = $3a
-    .label _23 = $3d
-    .label center_x = $30
-    .label center_y = $2f
-    .label i = 7
-    .label offset = $31
-    .label colPtr = $35
-    .label spriteCol = $37
-    .label screenPtr = $31
-    .label spriteData = $a
-    .label chargenData = 8
-    .label spriteX = $38
-    .label spriteY = $3a
-    .label spritePtr = $3c
-    .label freeIdx = 7
-    .label _47 = $33
-    .label _48 = $31
+    .label _0 = $c
+    .label _1 = $c
+    .label _5 = 3
+    .label _6 = 3
+    .label _8 = $1c
+    .label _9 = $1c
+    .label _11 = $13
+    .label _12 = $13
+    .label _13 = $13
+    .label _15 = $15
+    .label _16 = $15
+    .label _17 = $15
+    .label _23 = $18
+    .label center_x = $1e
+    .label center_y = $b
+    .label i = 2
+    .label offset = $c
+    .label colPtr = $10
+    .label spriteCol = $12
+    .label screenPtr = $c
+    .label spriteData = 3
+    .label chargenData = $1c
+    .label spriteX = $13
+    .label spriteY = $15
+    .label spritePtr = $17
+    .label freeIdx = 2
+    .label _47 = $e
+    .label _48 = $c
     ldx #$ff
   b1:
     lda #0
@@ -467,19 +467,19 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _8 = $3f
-    .label _9 = $3f
-    .label _10 = $3f
-    .label screen_line = $c
-    .label dist_line = $e
-    .label y = $10
-    .label return_x = $12
-    .label return_y = $13
-    .label closest_dist = $11
-    .label closest_x = $12
-    .label closest_y = $13
-    .label _12 = $41
-    .label _13 = $3f
+    .label _8 = $18
+    .label _9 = $18
+    .label _10 = $18
+    .label screen_line = $1c
+    .label dist_line = 3
+    .label y = 2
+    .label return_x = $17
+    .label return_y = $b
+    .label closest_dist = $12
+    .label closest_x = $17
+    .label closest_y = $b
+    .label _12 = $1a
+    .label _13 = $18
     lda SCREEN_COPY
     sta screen_line
     lda SCREEN_COPY+1
@@ -614,7 +614,7 @@ setupRasterIrq: {
 }
 // Initialize sprites
 initSprites: {
-    .label sp = $14
+    .label sp = $1c
     lda #<SPRITE_DATA
     sta sp
     lda #>SPRITE_DATA
@@ -652,19 +652,19 @@ initSprites: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage($17) screen)
+// init_angle_screen(byte* zeropage(3) screen)
 init_angle_screen: {
-    .label _10 = $21
-    .label screen = $17
-    .label screen_topline = $19
-    .label screen_bottomline = $17
-    .label xw = $43
-    .label yw = $45
-    .label angle_w = $21
-    .label ang_w = $47
-    .label x = $1b
-    .label xb = $1c
-    .label y = $16
+    .label _10 = $10
+    .label screen = 3
+    .label screen_topline = $18
+    .label screen_bottomline = 3
+    .label xw = $1a
+    .label yw = $1c
+    .label angle_w = $10
+    .label ang_w = $1e
+    .label x = $12
+    .label xb = $17
+    .label y = 2
     lda screen
     clc
     adc #<$28*$c
@@ -752,18 +752,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($43) x, signed word zeropage($45) y)
+// atan2_16(signed word zeropage($1a) x, signed word zeropage($1c) y)
 atan2_16: {
-    .label _2 = $1d
-    .label _7 = $1f
-    .label yi = $1d
-    .label xi = $1f
-    .label angle = $21
-    .label xd = $25
-    .label yd = $23
-    .label return = $21
-    .label x = $43
-    .label y = $45
+    .label _2 = $c
+    .label _7 = $e
+    .label yi = $c
+    .label xi = $e
+    .label angle = $10
+    .label xd = $15
+    .label yd = $13
+    .label return = $10
+    .label x = $1a
+    .label y = $1c
     lda y+1
     bmi !b1+
     jmp b1
@@ -941,7 +941,7 @@ atan2_16: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label mem = $2d
+    .label mem = 9
     lda heap_head
     sec
     sbc #<$3e8
@@ -981,14 +981,14 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _15 = $4d
-    .label _25 = $4b
-    .label processing = $48
-    .label bitmask = $4a
-    .label i = $29
-    .label xpos = $4b
-    .label ypos = $4f
-    .label numActive = $2a
+    .label _15 = $24
+    .label _25 = $22
+    .label processing = $1f
+    .label bitmask = $21
+    .label i = 5
+    .label xpos = $22
+    .label ypos = $26
+    .label numActive = 6
     lda #0
     sta numActive
     sta i

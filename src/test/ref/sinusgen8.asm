@@ -8,7 +8,7 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label print_char_cursor = 5
+  .label print_char_cursor = 2
 main: {
     .label wavelength = $c0
     .label sb = 4
@@ -48,9 +48,9 @@ main: {
     sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zeropage(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
   b1:
     ldy #0
     lda (str),y
@@ -133,7 +133,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = 7
+    .label dst = 6
     lda #<str
     sta dst
     lda #>str
@@ -157,12 +157,12 @@ memset: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zeropage($b) sintab)
+// sin8s_gen(signed byte* zeropage($a) sintab)
 sin8s_gen: {
-    .label step = $1b
-    .label sintab = $b
-    .label x = 9
-    .label i = $d
+    .label step = $e
+    .label sintab = $a
+    .label x = 2
+    .label i = $c
     jsr div16u
     lda #<0
     sta i
@@ -211,16 +211,16 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage($10) x)
+// sin8s(word zeropage(6) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label _4 = $10
-    .label x = $10
-    .label x1 = $1d
-    .label x3 = $1e
-    .label usinx = $1f
-    .label isUpper = $f
+    .label _4 = 6
+    .label x = 6
+    .label x1 = $10
+    .label x3 = $11
+    .label usinx = $12
+    .label isUpper = 4
     lda x+1
     cmp #>PI_u4f12
     bcc b5
@@ -322,11 +322,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($12) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage(5) select)
 mulu8_sel: {
-    .label _0 = $13
-    .label _1 = $13
-    .label select = $12
+    .label _0 = 6
+    .label _1 = 6
+    .label select = 5
     tya
     jsr mul8u
     ldy select
@@ -343,9 +343,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $15
-    .label res = $13
-    .label return = $13
+    .label mb = 8
+    .label res = 6
+    .label return = 6
     sta mb
     lda #0
     sta mb+1
@@ -380,7 +380,7 @@ mul8u: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $1b
+    .label return = $e
     jsr divr16u
     rts
 }
@@ -388,12 +388,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($19) dividend, word zeropage($17) rem)
+// divr16u(word zeropage($c) dividend, word zeropage($a) rem)
 divr16u: {
-    .label rem = $17
-    .label dividend = $19
-    .label quotient = $1b
-    .label return = $1b
+    .label rem = $a
+    .label dividend = $c
+    .label quotient = $e
+    .label return = $e
     ldx #0
     txa
     sta quotient

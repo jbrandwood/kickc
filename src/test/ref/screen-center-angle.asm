@@ -28,8 +28,8 @@ main: {
     .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
-    .label _4 = $23
-    .label cyclecount = $23
+    .label _4 = $12
+    .label cyclecount = $12
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -55,9 +55,9 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($23) dw)
+// print_dword_at(dword zeropage($12) dw)
 print_dword_at: {
-    .label dw = $23
+    .label dw = $12
     lda dw+2
     sta print_word_at.w
     lda dw+3
@@ -99,9 +99,9 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
+// print_byte_at(byte zeropage($1b) b, byte* zeropage(4) at)
 print_byte_at: {
-    .label b = 6
+    .label b = $1b
     .label at = 4
     lda b
     lsr
@@ -130,9 +130,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(7) at)
+// print_char_at(byte register(X) ch, byte* zeropage(6) at)
 print_char_at: {
-    .label at = 7
+    .label at = 6
     txa
     ldy #0
     sta (at),y
@@ -141,7 +141,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $23
+    .label return = $12
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -160,16 +160,16 @@ clock: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label _10 = $14
-    .label xw = $27
-    .label yw = $29
-    .label angle_w = $14
-    .label ang_w = $2b
-    .label x = $e
-    .label xb = $f
-    .label screen_topline = $c
-    .label screen_bottomline = $a
-    .label y = 9
+    .label _10 = $d
+    .label xw = $16
+    .label yw = $18
+    .label angle_w = $d
+    .label ang_w = $1a
+    .label x = $c
+    .label xb = $11
+    .label screen_topline = 4
+    .label screen_bottomline = 2
+    .label y = $1b
     lda #<SCREEN+$28*$c
     sta screen_topline
     lda #>SCREEN+$28*$c
@@ -251,18 +251,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($27) x, signed word zeropage($29) y)
+// atan2_16(signed word zeropage($16) x, signed word zeropage($18) y)
 atan2_16: {
-    .label _2 = $10
-    .label _7 = $12
-    .label yi = $10
-    .label xi = $12
-    .label angle = $14
-    .label xd = $18
-    .label yd = $16
-    .label return = $14
-    .label x = $27
-    .label y = $29
+    .label _2 = 6
+    .label _7 = $a
+    .label yi = 6
+    .label xi = $a
+    .label angle = $d
+    .label xd = 8
+    .label yd = $f
+    .label return = $d
+    .label x = $16
+    .label y = $18
     lda y+1
     bmi !b1+
     jmp b1
@@ -460,15 +460,15 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($1d) charset)
+// init_font_hex(byte* zeropage($d) charset)
 init_font_hex: {
-    .label _0 = $2c
-    .label idx = $22
-    .label proto_lo = $1f
-    .label charset = $1d
-    .label c1 = $21
-    .label proto_hi = $1a
-    .label c = $1c
+    .label _0 = $1b
+    .label idx = $1a
+    .label proto_lo = $f
+    .label charset = $d
+    .label c1 = $11
+    .label proto_hi = $a
+    .label c = $c
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

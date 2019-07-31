@@ -219,12 +219,12 @@ gfx_init: {
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = $ff&CHARSET8/$4000
-    .label bits = 6
-    .label chargen = 3
-    .label gfxa = 7
-    .label col = 9
-    .label cr = 5
-    .label ch = 2
+    .label bits = 2
+    .label chargen = 7
+    .label gfxa = 3
+    .label col = 5
+    .label cr = 9
+    .label ch = 6
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
     lda #PROCPORT_RAM_CHARROM
@@ -302,9 +302,9 @@ dtvSetCpuBankSegment1: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label _1 = $d
-    .label ch = $b
-    .label cy = $a
+    .label _1 = 9
+    .label ch = 7
+    .label cy = 6
     lda #<SCREEN
     sta ch
     lda #>SCREEN

@@ -30,8 +30,8 @@ main: {
     .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
-    .label _4 = $21
-    .label cyclecount = $21
+    .label _4 = $d
+    .label cyclecount = $d
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -57,9 +57,9 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($21) dw)
+// print_dword_at(dword zeropage($d) dw)
 print_dword_at: {
-    .label dw = $21
+    .label dw = $d
     lda dw+2
     sta print_word_at.w
     lda dw+3
@@ -81,10 +81,10 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(2) w, byte* zeropage(4) at)
+// print_word_at(word zeropage(4) w, byte* zeropage(9) at)
 print_word_at: {
-    .label w = 2
-    .label at = 4
+    .label w = 4
+    .label at = 9
     lda w+1
     sta print_byte_at.b
     jsr print_byte_at
@@ -101,10 +101,10 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
+// print_byte_at(byte zeropage($c) b, byte* zeropage(9) at)
 print_byte_at: {
-    .label b = 6
-    .label at = 4
+    .label b = $c
+    .label at = 9
     lda b
     lsr
     lsr
@@ -132,9 +132,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(9) at)
+// print_char_at(byte register(X) ch, byte* zeropage(2) at)
 print_char_at: {
-    .label at = 9
+    .label at = 2
     txa
     ldy #0
     sta (at),y
@@ -143,7 +143,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $21
+    .label return = $d
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -162,14 +162,14 @@ clock: {
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 init_dist_screen: {
-    .label yds = $25
-    .label xds = $27
-    .label ds = $27
-    .label x = $10
-    .label xb = $11
-    .label screen_topline = $c
-    .label screen_bottomline = $e
-    .label y = $b
+    .label yds = $11
+    .label xds = $13
+    .label ds = $13
+    .label x = 6
+    .label xb = $b
+    .label screen_topline = 4
+    .label screen_bottomline = 9
+    .label y = $c
     jsr init_squares
     lda #<SCREEN+$28*$18
     sta screen_bottomline
@@ -259,12 +259,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($27) val)
+// sqrt(word zeropage($13) val)
 sqrt: {
-    .label _1 = $12
-    .label _3 = $12
-    .label found = $12
-    .label val = $27
+    .label _1 = 2
+    .label _3 = 2
+    .label found = 2
+    .label val = $13
     jsr bsearch16u
     lda _3
     sec
@@ -283,14 +283,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($27) key, word* zeropage($12) items, byte register(X) num)
+// bsearch16u(word zeropage($13) key, word* zeropage(2) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $12
-    .label pivot = $29
-    .label result = $2b
-    .label return = $12
-    .label items = $12
-    .label key = $27
+    .label _2 = 2
+    .label pivot = $15
+    .label result = $17
+    .label return = 2
+    .label items = 2
+    .label key = $13
     lda #<SQUARES
     sta items
     lda #>SQUARES
@@ -370,8 +370,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $27
-    .label return_2 = $25
+    .label return = $13
+    .label return_2 = $11
     asl
     tay
     lda SQUARES,y
@@ -383,8 +383,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $16
-    .label sqr = $14
+    .label squares = 9
+    .label sqr = 4
     jsr malloc
     ldx #0
     lda #<SQUARES
@@ -454,15 +454,15 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($1b) charset)
+// init_font_hex(byte* zeropage(9) charset)
 init_font_hex: {
-    .label _0 = $2d
-    .label idx = $20
-    .label proto_lo = $1d
-    .label charset = $1b
-    .label c1 = $1f
-    .label proto_hi = $18
-    .label c = $1a
+    .label _0 = $19
+    .label idx = $c
+    .label proto_lo = $11
+    .label charset = 9
+    .label c1 = $b
+    .label proto_hi = 4
+    .label c = 6
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

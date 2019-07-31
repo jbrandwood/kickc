@@ -1890,11 +1890,11 @@ Attempting to uplift remaining variables inzp ZP_BYTE:3 [ current_bit#29 current
 Uplifting [] best 24336 combination zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
 Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] ] with [ zp ZP_WORD:19 [ scroll_bit::$7 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 ] ] with [ zp ZP_WORD:17 [ scroll_bit::c#0 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] ] with [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ] ]
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:9 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
+Allocated (was zp ZP_WORD:7) zp ZP_WORD:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
+Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1911,8 +1911,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
-  .label current_chargen = 3
-  .label nxt = 7
+  .label current_chargen = 7
+  .label nxt = 5
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -2030,9 +2030,9 @@ scroll_soft: {
 }
   // scroll_bit
 scroll_bit: {
-    .label _7 = 3
-    .label c = 3
-    .label sc = 5
+    .label _7 = 7
+    .label c = 7
+    .label sc = 3
     // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
     // [20] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
@@ -2266,7 +2266,7 @@ next_char: {
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
-    .label cursor = 9
+    .label cursor = 7
     // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
     // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
@@ -2426,16 +2426,16 @@ FINAL SYMBOL TABLE
 (byte) current_bit#29 current_bit zp ZP_BYTE:2 31.0
 (byte) current_bit#5 current_bit zp ZP_BYTE:2 3.0
 (byte*) current_chargen
-(byte*) current_chargen#11 current_chargen zp ZP_WORD:3 3.0
-(byte*) current_chargen#19 current_chargen zp ZP_WORD:3 5.944444444444444
-(byte*) current_chargen#27 current_chargen zp ZP_WORD:3 24.111111111111107
-(byte*) current_chargen#5 current_chargen zp ZP_WORD:3 4.0
+(byte*) current_chargen#11 current_chargen zp ZP_WORD:7 3.0
+(byte*) current_chargen#19 current_chargen zp ZP_WORD:7 5.944444444444444
+(byte*) current_chargen#27 current_chargen zp ZP_WORD:7 24.111111111111107
+(byte*) current_chargen#5 current_chargen zp ZP_WORD:7 4.0
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (label) fillscreen::@1
 (label) fillscreen::@return
 (byte*) fillscreen::cursor
-(byte*) fillscreen::cursor#1 cursor zp ZP_WORD:9 16.5
-(byte*) fillscreen::cursor#2 cursor zp ZP_WORD:9 16.5
+(byte*) fillscreen::cursor#1 cursor zp ZP_WORD:7 16.5
+(byte*) fillscreen::cursor#2 cursor zp ZP_WORD:7 16.5
 (byte) fillscreen::fill
 (const byte) fillscreen::fill#0 fill = (byte) $20
 (byte*) fillscreen::screen
@@ -2455,17 +2455,17 @@ FINAL SYMBOL TABLE
 (byte) next_char::return#0 reg byte a 4.0
 (byte) next_char::return#1 reg byte x 1.5
 (byte*) nxt
-(byte*) nxt#14 nxt zp ZP_WORD:7 3.0
-(byte*) nxt#18 nxt zp ZP_WORD:7 4.0
-(byte*) nxt#19 nxt zp ZP_WORD:7 0.5714285714285714
-(byte*) nxt#31 nxt zp ZP_WORD:7 18.41666666666667
-(byte*) nxt#35 nxt zp ZP_WORD:7 0.3333333333333333
+(byte*) nxt#14 nxt zp ZP_WORD:5 3.0
+(byte*) nxt#18 nxt zp ZP_WORD:5 4.0
+(byte*) nxt#19 nxt zp ZP_WORD:5 0.5714285714285714
+(byte*) nxt#31 nxt zp ZP_WORD:5 18.41666666666667
+(byte*) nxt#35 nxt zp ZP_WORD:5 0.3333333333333333
 (byte) scroll
 (byte) scroll#10 reg byte x 3.0
 (byte) scroll#18 reg byte x 53.75
 (byte) scroll#3 reg byte x 3.0
 (void()) scroll_bit()
-(word~) scroll_bit::$7 $7 zp ZP_WORD:3 4.0
+(word~) scroll_bit::$7 $7 zp ZP_WORD:7 4.0
 (byte~) scroll_bit::$9 reg byte a 202.0
 (label) scroll_bit::@1
 (label) scroll_bit::@2
@@ -2481,13 +2481,13 @@ FINAL SYMBOL TABLE
 (byte) scroll_bit::bits
 (byte) scroll_bit::bits#0 reg byte a 202.0
 (word) scroll_bit::c
-(word) scroll_bit::c#0 c zp ZP_WORD:3 4.0
+(word) scroll_bit::c#0 c zp ZP_WORD:7 4.0
 (byte) scroll_bit::r
 (byte) scroll_bit::r#1 reg byte x 151.5
 (byte) scroll_bit::r#2 reg byte x 37.875
 (byte*) scroll_bit::sc
-(byte*) scroll_bit::sc#1 sc zp ZP_WORD:5 67.33333333333333
-(byte*) scroll_bit::sc#2 sc zp ZP_WORD:5 43.285714285714285
+(byte*) scroll_bit::sc#1 sc zp ZP_WORD:3 67.33333333333333
+(byte*) scroll_bit::sc#2 sc zp ZP_WORD:3 43.285714285714285
 (void()) scroll_hard()
 (label) scroll_hard::@1
 (label) scroll_hard::@return
@@ -2501,14 +2501,13 @@ FINAL SYMBOL TABLE
 
 reg byte x [ scroll#18 scroll#10 scroll#3 ]
 zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
 reg byte x [ scroll_bit::r#2 scroll_bit::r#1 ]
-zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
+zp ZP_WORD:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 reg byte a [ scroll_bit::b#2 ]
 reg byte x [ scroll_hard::i#2 scroll_hard::i#1 ]
-zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
+zp ZP_WORD:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
 reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-zp ZP_WORD:9 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
+zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
 reg byte a [ next_char::return#0 ]
 reg byte a [ scroll_bit::bits#0 ]
 reg byte a [ scroll_bit::$9 ]
@@ -2531,8 +2530,8 @@ Score: 20556
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
-  .label current_chargen = 3
-  .label nxt = 7
+  .label current_chargen = 7
+  .label nxt = 5
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -2631,9 +2630,9 @@ scroll_soft: {
 }
   // scroll_bit
 scroll_bit: {
-    .label _7 = 3
-    .label c = 3
-    .label sc = 5
+    .label _7 = 7
+    .label c = 7
+    .label sc = 3
     // current_bit = current_bit/2
     // [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -2861,7 +2860,7 @@ next_char: {
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
-    .label cursor = 9
+    .label cursor = 7
     // [64] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
     // [64] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN

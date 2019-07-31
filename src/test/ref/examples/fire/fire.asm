@@ -76,12 +76,12 @@ main: {
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = 2
-    .label screen_2 = 6
+    .label screen_2 = $c
     .label buffer = 4
-    .label buffer_3 = 8
-    .label screen_4 = 6
-    .label buffer_7 = 8
-    .label screen_10 = 6
+    .label buffer_3 = 9
+    .label screen_4 = $c
+    .label buffer_7 = 9
+    .label screen_10 = $c
     lda screen
     sta screen_10
     lda screen+1
@@ -175,16 +175,16 @@ sid_rnd: {
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
-    .label _10 = $15
-    .label _13 = $16
-    .label _14 = $16
-    .label _15 = $16
-    .label font = $a
-    .label font1 = $c
-    .label ii = $10
-    .label i = $f
-    .label c = $e
-    .label _18 = $16
+    .label _10 = $b
+    .label _13 = $c
+    .label _14 = $c
+    .label _15 = $c
+    .label font = 2
+    .label font1 = 4
+    .label ii = 8
+    .label i = 7
+    .label c = 6
+    .label _18 = $c
     lda #<CHARSET
     sta font
     lda #>CHARSET
@@ -305,10 +305,10 @@ sid_rnd_init: {
     rts
 }
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage($11) screen, byte register(X) fill)
+// fillscreen(byte* zeropage($c) screen, byte register(X) fill)
 fillscreen: {
-    .label screen = $11
-    .label i = $13
+    .label screen = $c
+    .label i = 9
     lda #<0
     sta i
     sta i+1

@@ -51,7 +51,7 @@ main: {
     rts
 }
 anim: {
-    .label i = 4
+    .label i = 5
     lda #0
     sta sy
     sta sx
@@ -303,9 +303,9 @@ debug_print: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte register(X) b, byte* zeropage(7) at)
+// print_sbyte_at(signed byte register(X) b, byte* zeropage($d) at)
 print_sbyte_at: {
-    .label at = 7
+    .label at = $d
     cpx #0
     bmi b1
     ldy #' '
@@ -328,18 +328,18 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
-// print_char_at(byte register(Y) ch, byte* zeropage(7) at)
+// print_char_at(byte register(Y) ch, byte* zeropage($d) at)
 print_char_at: {
-    .label at = 7
+    .label at = $d
     tya
     ldy #0
     sta (at),y
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte register(X) b, byte* zeropage(7) at)
+// print_byte_at(byte register(X) b, byte* zeropage($d) at)
 print_byte_at: {
-    .label at = 7
+    .label at = $d
     txa
     lsr
     lsr
@@ -363,10 +363,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zeropage($11) y, signed byte zeropage($12) z)
+// rotate_matrix(signed byte register(X) x, signed byte zeropage(6) y, signed byte zeropage(4) z)
 rotate_matrix: {
-    .label y = $11
-    .label z = $12
+    .label y = 6
+    .label z = 4
     txa
     sta xr
     lda y
@@ -509,15 +509,15 @@ store_matrix: {
 // calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
 calculate_matrix: {
     .label sy = 3
-    .label t1 = $13
-    .label t2 = $14
-    .label t3 = $15
-    .label t4 = $16
-    .label t5 = $17
-    .label t6 = $18
-    .label t7 = $19
-    .label t8 = $1a
-    .label t9 = $1b
+    .label t1 = 4
+    .label t2 = 5
+    .label t3 = 6
+    .label t4 = 7
+    .label t5 = 8
+    .label t6 = 9
+    .label t7 = $a
+    .label t8 = $b
+    .label t9 = $c
     lda sy
     sta t1
     lda sy
@@ -655,17 +655,17 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $1c
-    .label _44 = $1e
-    .label _47 = $20
-    .label _50 = $22
-    .label _53 = $24
-    .label _56 = $26
-    .label _59 = $28
-    .label _62 = $2a
-    .label _65 = $2c
-    .label c = 9
-    .label i = $a
+    .label _41 = $d
+    .label _44 = $f
+    .label _47 = $11
+    .label _50 = $13
+    .label _53 = $15
+    .label _56 = $17
+    .label _59 = $19
+    .label _62 = $1b
+    .label _65 = $1d
+    .label c = 2
+    .label i = 3
     jsr print_cls
     lda #<SCREEN+$22
     sta print_str_at.at
@@ -924,10 +924,10 @@ debug_print_init: {
     str11: .text "yp@"
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage($b) str, byte* zeropage($d) at)
+// print_str_at(byte* zeropage($d) str, byte* zeropage($f) at)
 print_str_at: {
-    .label at = $d
-    .label str = $b
+    .label at = $f
+    .label str = $d
   b1:
     ldy #0
     lda (str),y

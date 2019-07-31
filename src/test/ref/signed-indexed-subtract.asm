@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 2
-  .label print_char_cursor = 6
+  .label print_line_cursor = 7
+  .label print_char_cursor = 4
 main: {
     ldy #0
   b1:
@@ -71,9 +71,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(4) w)
+// print_sword(signed word zeropage(2) w)
 print_sword: {
-    .label w = 4
+    .label w = 2
     lda w+1
     bmi b1
     lda #' '
@@ -105,9 +105,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(4) w)
+// print_word(word zeropage(2) w)
 print_word: {
-    .label w = 4
+    .label w = 2
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -117,9 +117,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(8) b)
+// print_byte(byte zeropage(6) b)
 print_byte: {
-    .label b = 8
+    .label b = 6
     lda b
     lsr
     lsr
@@ -146,7 +146,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 9
+    .label dst = 7
     lda #<str
     sta dst
     lda #>str

@@ -627,7 +627,8 @@ Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::ch#2 main::ch#3 
 Uplifting [main] best 5785 combination zp ZP_BYTE:3 [ main::ch#2 main::ch#3 main::ch#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 Uplifting [main] best 5785 combination zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ memset::dst#2 memset::dst#1 ]
+Coalescing zero page register [ zp ZP_WORD:7 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:4 [ main::screen#3 main::screen#5 main::screen#2 main::screen#1 ] ]
+Allocated (was zp ZP_WORD:7) zp ZP_WORD:4 [ memset::dst#2 memset::dst#1 main::screen#3 main::screen#5 main::screen#2 main::screen#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -746,7 +747,7 @@ memset: {
     .const num = $3e8
     .label str = SCREEN
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
   b1_from_memset:
     // [18] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
@@ -858,8 +859,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:6 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:6 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:4 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:4 16.5
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -870,9 +871,8 @@ FINAL SYMBOL TABLE
 
 zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 zp ZP_BYTE:3 [ main::ch#2 main::ch#3 main::ch#1 ]
-zp ZP_WORD:4 [ main::screen#3 main::screen#5 main::screen#2 main::screen#1 ]
 reg byte x [ main::y#2 main::y#1 ]
-zp ZP_WORD:6 [ memset::dst#2 memset::dst#1 ]
+zp ZP_WORD:4 [ memset::dst#2 memset::dst#1 main::screen#3 main::screen#5 main::screen#2 main::screen#1 ]
 
 
 FINAL ASSEMBLER
@@ -979,7 +979,7 @@ memset: {
     .const num = $3e8
     .label str = SCREEN
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
     // [18] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str

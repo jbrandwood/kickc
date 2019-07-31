@@ -2092,15 +2092,16 @@ Uplifting [mulf_init] best 5883 combination zp ZP_BYTE:21 [ mulf_init::dir#2 mul
 Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 ] ] with [ zp ZP_DWORD:26 [ main::r#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 main::r#0 ] ] with [ zp ZP_DWORD:36 [ mulf16u::return#1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 main::r#0 mulf16u::return#1 ] ] with [ zp ZP_DWORD:30 [ print_dword::dw#0 ] ] - score: 1
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:6 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:8 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ]
-Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:10 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:11 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Allocated (was zp ZP_WORD:17) zp ZP_WORD:13 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
-Allocated (was zp ZP_WORD:19) zp ZP_WORD:15 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
-Allocated (was zp ZP_BYTE:21) zp ZP_BYTE:17 [ mulf_init::dir#2 mulf_init::dir#3 ]
-Allocated (was zp ZP_DWORD:22) zp ZP_DWORD:18 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
+Coalescing zero page register [ zp ZP_WORD:9 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] ] with [ zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:4 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:6 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
+Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
+Allocated (was zp ZP_WORD:17) zp ZP_WORD:9 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
+Allocated (was zp ZP_WORD:19) zp ZP_WORD:11 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
+Allocated (was zp ZP_BYTE:21) zp ZP_BYTE:13 [ mulf_init::dir#2 mulf_init::dir#3 ]
+Allocated (was zp ZP_DWORD:22) zp ZP_DWORD:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2133,7 +2134,7 @@ bend:
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = $12
+    .label r = $e
     // [5] call mulf_init 
     // [48] phi from main to mulf_init [phi:main->mulf_init]
   mulf_init_from_main:
@@ -2206,9 +2207,9 @@ print_set_screen: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zeropage($12) dw)
+// print_dword(dword zeropage($e) dw)
 print_dword: {
-    .label dw = $12
+    .label dw = $e
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
     lda dw+2
     sta print_word.w
@@ -2336,7 +2337,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $12
+    .label return = $e
     // [43] *((const word*) mulf16u::memA#0) ← (const word) main::a#0 -- _deref_pwuc1=vwuc2 
     lda #<main.a
     sta memA
@@ -2458,13 +2459,13 @@ mulf16u: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 8
-    .label sqr = $b
-    .label sqr1_lo = 6
-    .label x_2 = $a
-    .label sqr2_hi = $f
-    .label sqr2_lo = $d
-    .label dir = $11
+    .label sqr1_hi = 4
+    .label sqr = 7
+    .label sqr1_lo = 2
+    .label x_2 = 6
+    .label sqr2_hi = $b
+    .label sqr2_lo = 9
+    .label dir = $d
     // [49] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   b1_from_mulf_init:
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuz1=vbuc1 
@@ -2788,7 +2789,7 @@ FINAL SYMBOL TABLE
 (word) main::b
 (const word) main::b#0 b = (word) $929
 (dword) main::r
-(dword) main::r#0 r zp ZP_DWORD:18 11.0
+(dword) main::r#0 r zp ZP_DWORD:14 11.0
 (dword()) mulf16u((word) mulf16u::a , (word) mulf16u::b)
 (label) mulf16u::@return
 (word) mulf16u::a
@@ -2800,8 +2801,8 @@ FINAL SYMBOL TABLE
 (dword*) mulf16u::memR
 (const dword*) mulf16u::memR#0 memR = (dword*) 252
 (dword) mulf16u::return
-(dword) mulf16u::return#0 return zp ZP_DWORD:18 22.0
-(dword) mulf16u::return#1 return zp ZP_DWORD:18 4.333333333333333
+(dword) mulf16u::return#0 return zp ZP_DWORD:14 22.0
+(dword) mulf16u::return#1 return zp ZP_DWORD:14 4.333333333333333
 (void()) mulf_init()
 (byte~) mulf_init::$10 reg byte a 22.0
 (byte~) mulf_init::$11 reg byte a 22.0
@@ -2818,29 +2819,29 @@ FINAL SYMBOL TABLE
 (byte) mulf_init::c#1 reg byte x 2.357142857142857
 (byte) mulf_init::c#2 reg byte x 22.0
 (byte) mulf_init::dir
-(byte) mulf_init::dir#2 dir zp ZP_BYTE:17 4.714285714285714
-(byte) mulf_init::dir#3 dir zp ZP_BYTE:17 7.333333333333333
+(byte) mulf_init::dir#2 dir zp ZP_BYTE:13 4.714285714285714
+(byte) mulf_init::dir#3 dir zp ZP_BYTE:13 7.333333333333333
 (word) mulf_init::sqr
-(word) mulf_init::sqr#1 sqr zp ZP_WORD:11 7.333333333333333
-(word) mulf_init::sqr#2 sqr zp ZP_WORD:11 22.0
-(word) mulf_init::sqr#3 sqr zp ZP_WORD:11 9.166666666666666
-(word) mulf_init::sqr#4 sqr zp ZP_WORD:11 6.6000000000000005
+(word) mulf_init::sqr#1 sqr zp ZP_WORD:7 7.333333333333333
+(word) mulf_init::sqr#2 sqr zp ZP_WORD:7 22.0
+(word) mulf_init::sqr#3 sqr zp ZP_WORD:7 9.166666666666666
+(word) mulf_init::sqr#4 sqr zp ZP_WORD:7 6.6000000000000005
 (byte*) mulf_init::sqr1_hi
-(byte*) mulf_init::sqr1_hi#1 sqr1_hi zp ZP_WORD:8 5.5
-(byte*) mulf_init::sqr1_hi#2 sqr1_hi zp ZP_WORD:8 3.0
+(byte*) mulf_init::sqr1_hi#1 sqr1_hi zp ZP_WORD:4 5.5
+(byte*) mulf_init::sqr1_hi#2 sqr1_hi zp ZP_WORD:4 3.0
 (byte*) mulf_init::sqr1_lo
-(byte*) mulf_init::sqr1_lo#1 sqr1_lo zp ZP_WORD:6 16.5
-(byte*) mulf_init::sqr1_lo#2 sqr1_lo zp ZP_WORD:6 2.5384615384615383
+(byte*) mulf_init::sqr1_lo#1 sqr1_lo zp ZP_WORD:2 16.5
+(byte*) mulf_init::sqr1_lo#2 sqr1_lo zp ZP_WORD:2 2.5384615384615383
 (byte*) mulf_init::sqr2_hi
-(byte*) mulf_init::sqr2_hi#1 sqr2_hi zp ZP_WORD:15 3.142857142857143
-(byte*) mulf_init::sqr2_hi#2 sqr2_hi zp ZP_WORD:15 11.0
+(byte*) mulf_init::sqr2_hi#1 sqr2_hi zp ZP_WORD:11 3.142857142857143
+(byte*) mulf_init::sqr2_hi#2 sqr2_hi zp ZP_WORD:11 11.0
 (byte*) mulf_init::sqr2_lo
-(byte*) mulf_init::sqr2_lo#1 sqr2_lo zp ZP_WORD:13 16.5
-(byte*) mulf_init::sqr2_lo#2 sqr2_lo zp ZP_WORD:13 4.125
+(byte*) mulf_init::sqr2_lo#1 sqr2_lo zp ZP_WORD:9 16.5
+(byte*) mulf_init::sqr2_lo#2 sqr2_lo zp ZP_WORD:9 4.125
 (byte) mulf_init::x_2
-(byte) mulf_init::x_2#1 x_2 zp ZP_BYTE:10 11.0
-(byte) mulf_init::x_2#2 x_2 zp ZP_BYTE:10 4.888888888888889
-(byte) mulf_init::x_2#3 x_2 zp ZP_BYTE:10 8.25
+(byte) mulf_init::x_2#1 x_2 zp ZP_BYTE:6 11.0
+(byte) mulf_init::x_2#2 x_2 zp ZP_BYTE:6 4.888888888888889
+(byte) mulf_init::x_2#3 x_2 zp ZP_BYTE:6 8.25
 (byte) mulf_init::x_255
 (byte) mulf_init::x_255#1 reg byte x 5.5
 (byte) mulf_init::x_255#2 reg byte x 11.0
@@ -2877,7 +2878,7 @@ FINAL SYMBOL TABLE
 (label) print_dword::@1
 (label) print_dword::@return
 (dword) print_dword::dw
-(dword) print_dword::dw#0 dw zp ZP_DWORD:18 5.0
+(dword) print_dword::dw#0 dw zp ZP_DWORD:14 5.0
 (byte[]) print_hextab
 (const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
@@ -2893,20 +2894,18 @@ FINAL SYMBOL TABLE
 (word) print_word::w#1 w zp ZP_WORD:2 4.0
 (word) print_word::w#2 w zp ZP_WORD:2 2.6666666666666665
 
-zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp ZP_WORD:4 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
 reg byte x [ mulf_init::c#2 mulf_init::c#1 ]
-zp ZP_WORD:6 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ]
-zp ZP_WORD:8 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ]
-zp ZP_BYTE:10 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-zp ZP_WORD:11 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
+zp ZP_WORD:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
+zp ZP_WORD:4 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
+zp ZP_BYTE:6 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
+zp ZP_WORD:7 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
 reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-zp ZP_WORD:13 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
-zp ZP_WORD:15 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
-zp ZP_BYTE:17 [ mulf_init::dir#2 mulf_init::dir#3 ]
-zp ZP_DWORD:18 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
+zp ZP_WORD:9 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
+zp ZP_WORD:11 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
+zp ZP_BYTE:13 [ mulf_init::dir#2 mulf_init::dir#3 ]
+zp ZP_DWORD:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 reg byte a [ mulf_init::$7 ]
@@ -2938,7 +2937,7 @@ Score: 4311
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = $12
+    .label r = $e
     // mulf_init()
     // [5] call mulf_init 
     // [48] phi from main to mulf_init [phi:main->mulf_init]
@@ -3003,9 +3002,9 @@ print_set_screen: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zeropage($12) dw)
+// print_dword(dword zeropage($e) dw)
 print_dword: {
-    .label dw = $12
+    .label dw = $e
     // print_word(>dw)
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
     lda dw+2
@@ -3127,7 +3126,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $12
+    .label return = $e
     // *memA = a
     // [43] *((const word*) mulf16u::memA#0) ← (const word) main::a#0 -- _deref_pwuc1=vwuc2 
     lda #<main.a
@@ -3252,13 +3251,13 @@ mulf16u: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 8
-    .label sqr = $b
-    .label sqr1_lo = 6
-    .label x_2 = $a
-    .label sqr2_hi = $f
-    .label sqr2_lo = $d
-    .label dir = $11
+    .label sqr1_hi = 4
+    .label sqr = 7
+    .label sqr1_lo = 2
+    .label x_2 = 6
+    .label sqr2_hi = $b
+    .label sqr2_lo = 9
+    .label dir = $d
     // [49] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuz1=vbuc1 
     lda #0

@@ -51,10 +51,10 @@ main: {
     rts
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
+// utoa16w(word zeropage(4) value, byte* zeropage(2) dst)
 utoa16w: {
-    .label dst = 4
-    .label value = 2
+    .label dst = 2
+    .label value = 4
     lda value+1
     lsr
     lsr
@@ -102,7 +102,7 @@ utoa16n: {
 }
 cls: {
     .label screen = $400
-    .label sc = 6
+    .label sc = 4
     lda #<screen
     sta sc
     lda #>screen

@@ -35,7 +35,7 @@ lvaluevar: {
 }
 rvaluevar: {
     .label screen2 = $400
-    .label screen = 4
+    .label screen = 2
     ldy #0
     lda #<$400
     sta screen

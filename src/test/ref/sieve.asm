@@ -29,25 +29,25 @@
   .label sieve = $1000
   // Clock cycles per second (on a C64 PAL)
   .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
-  .label rem16u = $1e
-  .label print_char_cursor = $c
-  .label print_line_cursor = $15
-  .label print_char_cursor_62 = $15
-  .label print_char_cursor_99 = $15
+  .label rem16u = $f
+  .label print_char_cursor = $11
+  .label print_line_cursor = 6
+  .label print_char_cursor_62 = 6
+  .label print_char_cursor_99 = 6
 main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
-    .label _10 = $18
-    .label _14 = $28
-    .label cyclecount = $18
-    .label sec100s = 6
-    .label i = 2
-    .label sieve_i = 4
-    .label j = 8
-    .label s = $a
-    .label i_3 = 6
-    .label i_10 = 6
-    .label _38 = $2c
+    .label _10 = 9
+    .label _14 = $15
+    .label cyclecount = 9
+    .label sec100s = $d
+    .label i = $11
+    .label sieve_i = $f
+    .label j = 2
+    .label s = 4
+    .label i_3 = $d
+    .label i_10 = $d
+    .label _38 = $13
     //Show lower case font
     lda #toD0181_return
     sta D018
@@ -267,9 +267,9 @@ main: {
     str4: .text "...@"
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($e) str)
+// print_str(byte* zeropage($f) str)
 print_str: {
-    .label str = $e
+    .label str = $f
   b1:
     ldy #0
     lda (str),y
@@ -303,9 +303,9 @@ print_char: {
     rts
 }
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage(6) w)
+// print_word_decimal(word zeropage($d) w)
 print_word_decimal: {
-    .label w = 6
+    .label w = $d
     lda w
     sta utoa.value
     lda w+1
@@ -323,13 +323,13 @@ print_word_decimal: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage($11) value, byte* zeropage($13) buffer)
+// utoa(word zeropage(2) value, byte* zeropage(4) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $2e
-    .label digit = $10
-    .label value = $11
-    .label buffer = $13
+    .label digit_value = $19
+    .label digit = 8
+    .label value = 2
+    .label buffer = 4
     lda #<decimal_digits
     sta buffer
     lda #>decimal_digits
@@ -389,12 +389,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage($13) buffer, word zeropage($11) value, word zeropage($2e) sub)
+// utoa_append(byte* zeropage(4) buffer, word zeropage(2) value, word zeropage($19) sub)
 utoa_append: {
-    .label buffer = $13
-    .label value = $11
-    .label sub = $2e
-    .label return = $11
+    .label buffer = 4
+    .label value = 2
+    .label sub = $19
+    .label return = 2
     ldx #0
   b1:
     lda sub+1
@@ -441,9 +441,9 @@ print_ln: {
     rts
 }
 // Print a dword as DECIMAL
-// print_dword_decimal(dword zeropage($18) w)
+// print_dword_decimal(dword zeropage(9) w)
 print_dword_decimal: {
-    .label w = $18
+    .label w = 9
     jsr ultoa
     lda #<decimal_digits_long
     sta print_str.str
@@ -457,13 +457,13 @@ print_dword_decimal: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zeropage($18) value, byte* zeropage($1c) buffer)
+// ultoa(dword zeropage(9) value, byte* zeropage($d) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $30
-    .label digit = $17
-    .label value = $18
-    .label buffer = $1c
+    .label digit_value = $15
+    .label digit = 8
+    .label value = 9
+    .label buffer = $d
     lda #<decimal_digits_long
     sta buffer
     lda #>decimal_digits_long
@@ -537,12 +537,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zeropage($1c) buffer, dword zeropage($18) value, dword zeropage($30) sub)
+// ultoa_append(byte* zeropage($d) buffer, dword zeropage(9) value, dword zeropage($15) sub)
 ultoa_append: {
-    .label buffer = $1c
-    .label value = $18
-    .label sub = $30
-    .label return = $18
+    .label buffer = $d
+    .label value = 9
+    .label sub = $15
+    .label return = 9
     ldx #0
   b1:
     lda value+3
@@ -584,13 +584,13 @@ ultoa_append: {
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
-// div32u16u(dword zeropage($18) dividend)
+// div32u16u(dword zeropage(9) dividend)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
-    .label quotient_hi = $34
-    .label quotient_lo = $22
-    .label return = $28
-    .label dividend = $18
+    .label quotient_hi = $19
+    .label quotient_lo = $13
+    .label return = $15
+    .label dividend = 9
     lda dividend+2
     sta divr16u.dividend
     lda dividend+3
@@ -622,12 +622,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($20) dividend, word zeropage($1e) rem)
+// divr16u(word zeropage($11) dividend, word zeropage($f) rem)
 divr16u: {
-    .label rem = $1e
-    .label dividend = $20
-    .label quotient = $22
-    .label return = $22
+    .label rem = $f
+    .label dividend = $11
+    .label quotient = $13
+    .label return = $13
     ldx #0
     txa
     sta quotient
@@ -675,7 +675,7 @@ divr16u: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $18
+    .label return = 9
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -714,12 +714,12 @@ clock_start: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($26) str, byte register(X) c, word zeropage($24) num)
+// memset(void* zeropage($11) str, byte register(X) c, word zeropage($f) num)
 memset: {
-    .label end = $24
-    .label dst = $26
-    .label num = $24
-    .label str = $26
+    .label end = $f
+    .label dst = $11
+    .label num = $f
+    .label str = $11
     lda num
     bne !+
     lda num+1

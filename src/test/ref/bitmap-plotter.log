@@ -1550,14 +1550,14 @@ Uplifting [plot] best 8185 combination reg byte a [ plot::$5 ]
 Coalescing zero page register [ zp ZP_WORD:15 [ plot::plotter_x#1 ] ] with [ zp ZP_WORD:18 [ plot::plotter_x#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:21 [ plot::plotter_y#1 ] ] with [ zp ZP_WORD:24 [ plot::plotter_y#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:15 [ plot::plotter_x#1 plot::plotter_x#2 ] ] with [ zp ZP_WORD:26 [ plot::plotter#0 ] ] - score: 1
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:2 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ init_screen::b#2 init_screen::b#1 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:6 [ init_screen::c#2 init_screen::c#1 ]
-Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:8 [ plot::x#0 ]
-Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:9 [ plot::y#0 ]
-Allocated (was zp ZP_WORD:15) zp ZP_WORD:10 [ plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
-Allocated (was zp ZP_WORD:21) zp ZP_WORD:12 [ plot::plotter_y#1 plot::plotter_y#2 ]
-Allocated (was zp ZP_BYTE:30) zp ZP_BYTE:14 [ init_plot_tables::$10 ]
+Coalescing zero page register [ zp ZP_WORD:8 [ init_screen::b#2 init_screen::b#1 ] ] with [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:15 [ plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ] ] with [ zp ZP_WORD:10 [ init_screen::c#2 init_screen::c#1 ] ]
+Coalescing zero page register [ zp ZP_BYTE:30 [ init_plot_tables::$10 ] ] with [ zp ZP_BYTE:12 [ plot::x#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:21 [ plot::plotter_y#1 plot::plotter_y#2 ] ] with [ zp ZP_WORD:8 [ init_screen::b#2 init_screen::b#1 init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ] ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:2 [ plot::y#0 ]
+Allocated (was zp ZP_WORD:15) zp ZP_WORD:3 [ plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 init_screen::c#2 init_screen::c#1 ]
+Allocated (was zp ZP_WORD:21) zp ZP_WORD:5 [ plot::plotter_y#1 plot::plotter_y#2 init_screen::b#2 init_screen::b#1 init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ]
+Allocated (was zp ZP_BYTE:30) zp ZP_BYTE:7 [ init_plot_tables::$10 plot::x#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1677,13 +1677,13 @@ plots: {
     rts
 }
   // plot
-// plot(byte zeropage(8) x, byte zeropage(9) y)
+// plot(byte zeropage(7) x, byte zeropage(2) y)
 plot: {
-    .label x = 8
-    .label y = 9
-    .label plotter_x = $a
-    .label plotter_y = $c
-    .label plotter = $a
+    .label x = 7
+    .label y = 2
+    .label plotter_x = 3
+    .label plotter_y = 5
+    .label plotter = 3
     // [23] (byte~) plot::$6 ← *((const byte[$100]) plot_xhi#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy x
     lda plot_xhi,y
@@ -1732,8 +1732,8 @@ plot: {
 }
   // init_plot_tables
 init_plot_tables: {
-    .label _10 = $e
-    .label yoffs = 2
+    .label _10 = 7
+    .label yoffs = 5
     // [36] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
   b1_from_init_plot_tables:
     // [36] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
@@ -1852,8 +1852,8 @@ init_plot_tables: {
 }
   // init_screen
 init_screen: {
-    .label b = 4
-    .label c = 6
+    .label b = 5
+    .label c = 3
     // [61] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   b1_from_init_screen:
     // [61] phi (byte*) init_screen::b#2 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
@@ -2041,7 +2041,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) init_plot_tables()
 (byte~) init_plot_tables::$0 reg byte a 22.0
-(byte~) init_plot_tables::$10 $10 zp ZP_BYTE:14 5.5
+(byte~) init_plot_tables::$10 $10 zp ZP_BYTE:7 5.5
 (byte~) init_plot_tables::$7 reg byte a 22.0
 (byte~) init_plot_tables::$8 reg byte a 22.0
 (byte~) init_plot_tables::$9 reg byte a 22.0
@@ -2063,19 +2063,19 @@ FINAL SYMBOL TABLE
 (byte) init_plot_tables::y#1 reg byte x 16.5
 (byte) init_plot_tables::y#2 reg byte x 5.5
 (byte*) init_plot_tables::yoffs
-(byte*) init_plot_tables::yoffs#1 yoffs zp ZP_WORD:2 22.0
-(byte*) init_plot_tables::yoffs#2 yoffs zp ZP_WORD:2 6.875
-(byte*) init_plot_tables::yoffs#4 yoffs zp ZP_WORD:2 11.0
+(byte*) init_plot_tables::yoffs#1 yoffs zp ZP_WORD:5 22.0
+(byte*) init_plot_tables::yoffs#2 yoffs zp ZP_WORD:5 6.875
+(byte*) init_plot_tables::yoffs#4 yoffs zp ZP_WORD:5 11.0
 (void()) init_screen()
 (label) init_screen::@1
 (label) init_screen::@2
 (label) init_screen::@return
 (byte*) init_screen::b
-(byte*) init_screen::b#1 b zp ZP_WORD:4 16.5
-(byte*) init_screen::b#2 b zp ZP_WORD:4 16.5
+(byte*) init_screen::b#1 b zp ZP_WORD:5 16.5
+(byte*) init_screen::b#2 b zp ZP_WORD:5 16.5
 (byte*) init_screen::c
-(byte*) init_screen::c#1 c zp ZP_WORD:6 16.5
-(byte*) init_screen::c#2 c zp ZP_WORD:6 16.5
+(byte*) init_screen::c#1 c zp ZP_WORD:3 16.5
+(byte*) init_screen::c#2 c zp ZP_WORD:3 16.5
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -2089,17 +2089,17 @@ FINAL SYMBOL TABLE
 (byte~) plot::$9 reg byte a 4.0
 (label) plot::@return
 (byte*) plot::plotter
-(byte*) plot::plotter#0 plotter zp ZP_WORD:10 3.0
+(byte*) plot::plotter#0 plotter zp ZP_WORD:3 3.0
 (byte*) plot::plotter_x
-(byte*) plot::plotter_x#1 plotter_x zp ZP_WORD:10 2.0
-(byte*) plot::plotter_x#2 plotter_x zp ZP_WORD:10 0.8
+(byte*) plot::plotter_x#1 plotter_x zp ZP_WORD:3 2.0
+(byte*) plot::plotter_x#2 plotter_x zp ZP_WORD:3 0.8
 (word) plot::plotter_y
-(word) plot::plotter_y#1 plotter_y zp ZP_WORD:12 2.0
-(word) plot::plotter_y#2 plotter_y zp ZP_WORD:12 4.0
+(word) plot::plotter_y#1 plotter_y zp ZP_WORD:5 2.0
+(word) plot::plotter_y#2 plotter_y zp ZP_WORD:5 4.0
 (byte) plot::x
-(byte) plot::x#0 x zp ZP_BYTE:8 9.727272727272727
+(byte) plot::x#0 x zp ZP_BYTE:7 9.727272727272727
 (byte) plot::y
-(byte) plot::y#0 y zp ZP_BYTE:9 15.000000000000002
+(byte) plot::y#0 y zp ZP_BYTE:2 15.000000000000002
 (byte[$100]) plot_bit
 (const byte[$100]) plot_bit#0 plot_bit = { fill( $100, 0) }
 (byte[$100]) plot_xhi
@@ -2128,20 +2128,16 @@ reg byte x [ plots::i#2 plots::i#1 ]
 reg byte x [ init_plot_tables::x#2 init_plot_tables::x#1 ]
 reg byte y [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ]
 reg byte x [ init_plot_tables::y#2 init_plot_tables::y#1 ]
-zp ZP_WORD:2 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ]
-zp ZP_WORD:4 [ init_screen::b#2 init_screen::b#1 ]
-zp ZP_WORD:6 [ init_screen::c#2 init_screen::c#1 ]
-zp ZP_BYTE:8 [ plot::x#0 ]
-zp ZP_BYTE:9 [ plot::y#0 ]
+zp ZP_BYTE:2 [ plot::y#0 ]
 reg byte a [ plot::$6 ]
-zp ZP_WORD:10 [ plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
+zp ZP_WORD:3 [ plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 init_screen::c#2 init_screen::c#1 ]
 reg byte a [ plot::$7 ]
 reg byte a [ plot::$8 ]
-zp ZP_WORD:12 [ plot::plotter_y#1 plot::plotter_y#2 ]
+zp ZP_WORD:5 [ plot::plotter_y#1 plot::plotter_y#2 init_screen::b#2 init_screen::b#1 init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ]
 reg byte a [ plot::$9 ]
 reg byte a [ plot::$5 ]
 reg byte a [ init_plot_tables::$0 ]
-zp ZP_BYTE:14 [ init_plot_tables::$10 ]
+zp ZP_BYTE:7 [ init_plot_tables::$10 plot::x#0 ]
 reg byte a [ init_plot_tables::$7 ]
 reg byte a [ init_plot_tables::$8 ]
 reg byte a [ init_plot_tables::$9 ]
@@ -2252,13 +2248,13 @@ plots: {
     rts
 }
   // plot
-// plot(byte zeropage(8) x, byte zeropage(9) y)
+// plot(byte zeropage(7) x, byte zeropage(2) y)
 plot: {
-    .label x = 8
-    .label y = 9
-    .label plotter_x = $a
-    .label plotter_y = $c
-    .label plotter = $a
+    .label x = 7
+    .label y = 2
+    .label plotter_x = 3
+    .label plotter_y = 5
+    .label plotter = 3
     // >plotter_x = plot_xhi[x]
     // [23] (byte~) plot::$6 ← *((const byte[$100]) plot_xhi#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy x
@@ -2311,8 +2307,8 @@ plot: {
 }
   // init_plot_tables
 init_plot_tables: {
-    .label _10 = $e
-    .label yoffs = 2
+    .label _10 = 7
+    .label yoffs = 5
     // [36] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
     // [36] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
     ldy #$80
@@ -2425,8 +2421,8 @@ init_plot_tables: {
 }
   // init_screen
 init_screen: {
-    .label b = 4
-    .label c = 6
+    .label b = 5
+    .label c = 3
     // [61] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
     // [61] phi (byte*) init_screen::b#2 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP

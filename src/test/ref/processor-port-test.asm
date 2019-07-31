@@ -23,8 +23,8 @@
   .label KERNAL_ROM = $e000
   .label IO_RAM = $d000
   .label SCREEN = $400
-  .label print_char_cursor = 6
-  .label print_line_cursor = 4
+  .label print_char_cursor = 4
+  .label print_line_cursor = 8
 main: {
     // Avoid interrupts
     sei
@@ -330,9 +330,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zeropage(6) str)
 print_str: {
-    .label str = 8
+    .label str = 6
   b1:
     ldy #0
     lda (str),y
@@ -364,7 +364,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $a
+    .label dst = 8
     lda #<str
     sta dst
     lda #>str

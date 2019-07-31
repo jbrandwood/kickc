@@ -1909,9 +1909,9 @@ Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem
 Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 ] ] with [ zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 ] ] with [ zp ZP_WORD:19 [ print_word::w#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 ] ] with [ zp ZP_WORD:23 [ getFAC::return#0 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ] ] with [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ] ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
-Allocated (was zp ZP_WORD:17) zp ZP_WORD:9 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ]
+Allocated (was zp ZP_WORD:17) zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2172,9 +2172,9 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage(9) w)
+// print_word(word zeropage(7) w)
 print_word: {
-    .label w = 9
+    .label w = 7
     // [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
     lda w+1
     tax
@@ -2264,7 +2264,7 @@ print_char: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = 9
+    .label return = 7
     // asm { jsr$b1aa sty$fe sta$ff  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
@@ -2604,8 +2604,8 @@ FINAL SYMBOL TABLE
 (word()) getFAC()
 (label) getFAC::@return
 (word) getFAC::return
-(word) getFAC::return#0 return zp ZP_WORD:9 4.333333333333333
-(word) getFAC::return#2 return zp ZP_WORD:9 22.0
+(word) getFAC::return#0 return zp ZP_WORD:7 4.333333333333333
+(word) getFAC::return#2 return zp ZP_WORD:7 22.0
 (word) getFAC::w
 (void()) main()
 (label) main::@1
@@ -2686,7 +2686,7 @@ FINAL SYMBOL TABLE
 (label) print_word::@1
 (label) print_word::@return
 (word) print_word::w
-(word) print_word::w#0 w zp ZP_WORD:9 5.0
+(word) print_word::w#0 w zp ZP_WORD:7 5.0
 (void()) setFAC((word) setFAC::w)
 (label) setFAC::@1
 (label) setFAC::@return
@@ -2706,8 +2706,7 @@ zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-zp ZP_WORD:7 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
-zp ZP_WORD:9 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ]
+zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 reg byte a [ prepareMEM::$0 ]
@@ -2928,9 +2927,9 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage(9) w)
+// print_word(word zeropage(7) w)
 print_word: {
-    .label w = 9
+    .label w = 7
     // print_byte(>w)
     // [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
     lda w+1
@@ -3017,7 +3016,7 @@ print_char: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = 9
+    .label return = 7
     // asm
     // asm { jsr$b1aa sty$fe sta$ff  }
     // Load FAC (floating point accumulator) integer part into word register Y,A

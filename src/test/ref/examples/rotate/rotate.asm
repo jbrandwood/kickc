@@ -38,22 +38,22 @@ main: {
     rts
 }
 anim: {
-    .label _5 = $c
-    .label _7 = $c
-    .label _10 = $c
-    .label _11 = $c
-    .label _12 = $c
-    .label _13 = $c
-    .label _28 = $22
-    .label x = $1a
-    .label y = $1b
-    .label xr = $1c
-    .label yr = $1e
-    .label xpos = $20
-    .label sprite_msb = 4
-    .label i = 3
-    .label angle = 2
-    .label cyclecount = $22
+    .label _5 = 3
+    .label _7 = 3
+    .label _10 = 3
+    .label _11 = 3
+    .label _12 = 3
+    .label _13 = 3
+    .label _28 = $13
+    .label x = $b
+    .label y = $c
+    .label xr = $d
+    .label yr = $f
+    .label xpos = $11
+    .label sprite_msb = $a
+    .label i = 2
+    .label angle = 9
+    .label cyclecount = $13
     lda #0
     sta angle
   b2:
@@ -176,9 +176,9 @@ anim: {
     jmp b2
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($22) dw)
+// print_dword_at(dword zeropage($13) dw)
 print_dword_at: {
-    .label dw = $22
+    .label dw = $13
     lda dw+2
     sta print_word_at.w
     lda dw+3
@@ -200,10 +200,10 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(5) w, byte* zeropage(7) at)
+// print_word_at(word zeropage(3) w, byte* zeropage(5) at)
 print_word_at: {
-    .label w = 5
-    .label at = 7
+    .label w = 3
+    .label at = 5
     lda w+1
     sta print_byte_at.b
     jsr print_byte_at
@@ -220,10 +220,10 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(9) b, byte* zeropage(7) at)
+// print_byte_at(byte zeropage(2) b, byte* zeropage(5) at)
 print_byte_at: {
-    .label b = 9
-    .label at = 7
+    .label b = 2
+    .label at = 5
     lda b
     lsr
     lsr
@@ -251,9 +251,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage($a) at)
+// print_char_at(byte register(X) ch, byte* zeropage(7) at)
 print_char_at: {
-    .label at = $a
+    .label at = 7
     txa
     ldy #0
     sta (at),y
@@ -262,7 +262,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $22
+    .label return = $13
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -283,7 +283,7 @@ clock: {
 // mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = $c
+    .label m = 3
     tya
     jsr mulf8u_prepared
     lda memA
@@ -310,7 +310,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = $c
+    .label return = 3
     sta memB
     tax
     sec
@@ -382,13 +382,13 @@ init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = $10
-    .label sqr = $13
-    .label sqr1_lo = $e
-    .label x_2 = $12
-    .label sqr2_hi = $17
-    .label sqr2_lo = $15
-    .label dir = $19
+    .label sqr1_hi = 7
+    .label sqr = $d
+    .label sqr1_lo = 5
+    .label x_2 = 9
+    .label sqr2_hi = $11
+    .label sqr2_lo = $f
+    .label dir = $a
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1

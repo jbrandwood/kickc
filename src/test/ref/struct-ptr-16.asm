@@ -8,8 +8,8 @@
   .label p1 = $b000
   .label p2 = $e000
 main: {
-    .label _1_x = 3
-    .label _1_y = 4
+    .label _1_x = 2
+    .label _1_y = 3
     lda #0
     jsr get
     lda get.return_y

@@ -14,15 +14,15 @@
   .label SPRITE = $2000
   .const g = -5
   .label SPRITES_PTR = SCREEN+$3f8
-  .label yvel_init = 4
-  .label yvel = 4
-  .label yvel_9 = 6
-  .label xpos = 8
-  .label ypos = $a
-  .label yvel_10 = 6
-  .label xvel = 2
-  .label yvel_12 = 6
-  .label yvel_21 = 6
+  .label yvel_init = 2
+  .label yvel = 2
+  .label yvel_9 = 4
+  .label xpos = 6
+  .label ypos = 8
+  .label yvel_10 = 4
+  .label xvel = $a
+  .label yvel_12 = 4
+  .label yvel_21 = 4
 main: {
     jsr init
     lda #<$64
@@ -50,10 +50,10 @@ main: {
     jmp b1
 }
 anim: {
-    .label _5 = $e
-    .label _7 = $10
-    .label sprite_x = $e
-    .label sprite_y = $10
+    .label _5 = $c
+    .label _7 = $e
+    .label sprite_x = $c
+    .label sprite_y = $e
     lda ypos+1
     bpl b1
     sec
@@ -170,7 +170,7 @@ anim: {
 }
 // Fill and show a sprite, clear the screen
 init: {
-    .label sc = $c
+    .label sc = $a
     lda #1
     sta SPRITES_ENABLE
     lda #0

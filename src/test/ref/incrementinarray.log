@@ -964,10 +964,10 @@ Uplifting [main] best 12732 combination reg byte x [ main::i#2 main::i#1 ]
 Uplifting [RADIX] best 12732 combination 
 Uplifting [print_ln] best 12732 combination 
 Uplifting [print_cls] best 12732 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ print_char_cursor#12 print_char_cursor#25 print_char_cursor#31 print_char_cursor#1 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ memset::dst#2 memset::dst#1 ]
+Coalescing zero page register [ zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:3 [ print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ] ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:2 [ print_str::str#2 print_str::str#0 ]
+Allocated (was zp ZP_WORD:7) zp ZP_WORD:4 [ print_char_cursor#12 print_char_cursor#25 print_char_cursor#31 print_char_cursor#1 ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:6 [ memset::dst#2 memset::dst#1 print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -976,8 +976,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = 2
+  .label print_char_cursor = 4
+  .label print_line_cursor = 6
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -1097,9 +1097,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 4
+    .label str = 2
     // [21] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
@@ -1164,7 +1164,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 8
+    .label dst = 6
     // [31] phi from memset to memset::@1 [phi:memset->memset::@1]
   b1_from_memset:
     // [31] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
@@ -1283,8 +1283,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:8 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:8 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:6 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:6 16.5
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -1293,16 +1293,16 @@ FINAL SYMBOL TABLE
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(byte*) 1024
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:6 101.0
-(byte*) print_char_cursor#12 print_char_cursor zp ZP_WORD:6 40.6
-(byte*) print_char_cursor#25 print_char_cursor zp ZP_WORD:6 6.5
-(byte*~) print_char_cursor#31 print_char_cursor zp ZP_WORD:6 22.0
+(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:4 101.0
+(byte*) print_char_cursor#12 print_char_cursor zp ZP_WORD:4 40.6
+(byte*) print_char_cursor#25 print_char_cursor zp ZP_WORD:4 6.5
+(byte*~) print_char_cursor#31 print_char_cursor zp ZP_WORD:4 22.0
 (void()) print_cls()
 (label) print_cls::@return
 (byte*) print_line_cursor
-(byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:2 40.625
-(byte*) print_line_cursor#19 print_line_cursor zp ZP_WORD:2 3.25
-(byte*) print_line_cursor#9 print_line_cursor zp ZP_WORD:2 204.0
+(byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:6 40.625
+(byte*) print_line_cursor#19 print_line_cursor zp ZP_WORD:6 3.25
+(byte*) print_line_cursor#9 print_line_cursor zp ZP_WORD:6 204.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -1312,16 +1312,15 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp ZP_WORD:4 202.0
-(byte*) print_str::str#2 str zp ZP_WORD:4 101.0
+(byte*) print_str::str#0 str zp ZP_WORD:2 202.0
+(byte*) print_str::str#2 str zp ZP_WORD:2 101.0
 (byte[]) txt
 (const byte[]) txt#0 txt = (string) "camelot@"
 
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ]
-zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
-zp ZP_WORD:6 [ print_char_cursor#12 print_char_cursor#25 print_char_cursor#31 print_char_cursor#1 ]
-zp ZP_WORD:8 [ memset::dst#2 memset::dst#1 ]
+zp ZP_WORD:2 [ print_str::str#2 print_str::str#0 ]
+zp ZP_WORD:4 [ print_char_cursor#12 print_char_cursor#25 print_char_cursor#31 print_char_cursor#1 ]
+zp ZP_WORD:6 [ memset::dst#2 memset::dst#1 print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ]
 
 
 FINAL ASSEMBLER
@@ -1333,8 +1332,8 @@ Score: 11134
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = 2
+  .label print_char_cursor = 4
+  .label print_line_cursor = 6
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -1436,9 +1435,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 4
+    .label str = 2
     // [21] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
     // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
@@ -1500,7 +1499,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 8
+    .label dst = 6
     // [31] phi from memset to memset::@1 [phi:memset->memset::@1]
     // [31] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str

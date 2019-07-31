@@ -769,9 +769,9 @@ Attempting to uplift remaining variables inzp ZP_BYTE:8 [ main::$0_x ]
 Uplifting [main] best 649 combination reg byte x [ main::$0_x ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ main::$0_y ]
 Uplifting [main] best 643 combination reg byte a [ main::$0_y ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ get::return_y#5 get::return_y#2 get::return_y#3 get::return_y#4 ]
-Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:3 [ main::$1_x ]
-Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:4 [ main::$1_y ]
+Coalescing zero page register [ zp ZP_BYTE:12 [ main::$1_x ] ] with [ zp ZP_BYTE:5 [ get::return_y#5 get::return_y#2 get::return_y#3 get::return_y#4 ] ]
+Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:2 [ main::$1_x get::return_y#5 get::return_y#2 get::return_y#3 get::return_y#4 ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:3 [ main::$1_y ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -804,8 +804,8 @@ bend_from_b1:
 bend:
   // main
 main: {
-    .label _1_x = 3
-    .label _1_y = 4
+    .label _1_x = 2
+    .label _1_y = 3
     // [5] call get 
     // [25] phi from main to get [phi:main->get]
   get_from_main:
@@ -1007,8 +1007,8 @@ FINAL SYMBOL TABLE
 (byte) main::$0_x reg byte x 2.0
 (byte) main::$0_y reg byte a 2.0
 (struct Point~) main::$1
-(byte) main::$1_x $1_x zp ZP_BYTE:3 7.333333333333333
-(byte) main::$1_y $1_y zp ZP_BYTE:4 7.333333333333333
+(byte) main::$1_x $1_x zp ZP_BYTE:2 7.333333333333333
+(byte) main::$1_y $1_y zp ZP_BYTE:3 7.333333333333333
 (byte~) main::$3 reg byte x 16.5
 (label) main::@1
 (label) main::@2
@@ -1027,15 +1027,14 @@ FINAL SYMBOL TABLE
 reg byte y [ main::i#2 main::i#1 ]
 reg byte a [ get::i#2 get::i#1 ]
 reg byte x [ get::return_x#5 get::return_x#2 get::return_x#3 get::return_x#4 ]
-zp ZP_BYTE:2 [ get::return_y#5 get::return_y#2 get::return_y#3 get::return_y#4 ]
 reg byte x [ get::return_x#0 ]
 reg byte a [ get::return_y#0 ]
 reg byte x [ main::$0_x ]
 reg byte a [ main::$0_y ]
 reg byte x [ get::return_x#1 ]
 reg byte a [ get::return_y#1 ]
-zp ZP_BYTE:3 [ main::$1_x ]
-zp ZP_BYTE:4 [ main::$1_y ]
+zp ZP_BYTE:2 [ main::$1_x get::return_y#5 get::return_y#2 get::return_y#3 get::return_y#4 ]
+zp ZP_BYTE:3 [ main::$1_y ]
 reg byte x [ main::$3 ]
 
 
@@ -1063,8 +1062,8 @@ Score: 505
   // @end
   // main
 main: {
-    .label _1_x = 3
-    .label _1_y = 4
+    .label _1_x = 2
+    .label _1_y = 3
     // get(0)
     // [5] call get 
     // [25] phi from main to get [phi:main->get]

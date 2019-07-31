@@ -8,12 +8,12 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label _2 = 6
-    .label _3 = 6
-    .label _4 = $1d
-    .label _11 = 6
-    .label _12 = 6
-    .label _13 = $1f
+    .label _2 = $17
+    .label _3 = $17
+    .label _4 = $f
+    .label _11 = $17
+    .label _12 = $17
+    .label _13 = $11
     .label v = 4
     .label u = 2
     lda #$17
@@ -140,21 +140,21 @@ Print: {
   done:
     rts
 }
-// myprintf(byte* zeropage(8) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage(6) w3)
+// myprintf(byte* zeropage($d) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
 myprintf: {
-    .label str = 8
-    .label bDigits = $12
-    .label bLen = $11
-    .label b = $10
-    .label bArg = $b
-    .label return = $11
+    .label str = $d
+    .label bDigits = $c
+    .label bLen = $b
+    .label b = $a
+    .label bArg = 7
+    .label return = $b
     .label w1 = 2
     .label w2 = 4
-    .label w3 = 6
-    .label bFormat = $a
-    .label w = $c
-    .label bTrailing = $e
-    .label bLeadZero = $f
+    .label w3 = $17
+    .label bFormat = 6
+    .label w = $f
+    .label bTrailing = 8
+    .label bLeadZero = 9
     lda #0
     sta bLeadZero
     sta bDigits
@@ -394,10 +394,10 @@ myprintf: {
     jmp b27
     buf6: .fill 6, 0
 }
-// utoa(word zeropage($13) value, byte* zeropage($15) dst)
+// utoa(word zeropage($11) value, byte* zeropage($13) dst)
 utoa: {
-    .label value = $13
-    .label dst = $15
+    .label value = $11
+    .label dst = $13
     lda value+1
     cmp #>$2710
     bcc !+
@@ -515,12 +515,12 @@ utoa: {
     jmp b1
 }
 // simple 'utoa' without using multiply or divide
-// append(byte* zeropage($15) dst, word zeropage($13) value, word zeropage($17) sub)
+// append(byte* zeropage($13) dst, word zeropage($11) value, word zeropage($15) sub)
 append: {
-    .label value = $13
-    .label return = $13
-    .label dst = $15
-    .label sub = $17
+    .label value = $11
+    .label return = $11
+    .label dst = $13
+    .label sub = $15
     lda #'0'
     ldy #0
     sta (dst),y
@@ -549,15 +549,15 @@ append: {
     sta value+1
     jmp b1
 }
-// div10(word zeropage($21) val)
+// div10(word zeropage($13) val)
 div10: {
-    .label _0 = $21
-    .label _2 = $23
-    .label _3 = $25
+    .label _0 = $13
+    .label _2 = $15
+    .label _3 = $17
     .label _4 = 4
-    .label val = $21
-    .label val_1 = $23
-    .label val_2 = $25
+    .label val = $13
+    .label val_1 = $15
+    .label val_2 = $17
     .label val_3 = 4
     .label return = 4
     .label val_4 = 2
@@ -642,10 +642,10 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($1b) dividend, word zeropage($19) rem)
+// divr16u(word zeropage($d) dividend, word zeropage($17) rem)
 divr16u: {
-    .label rem = $19
-    .label dividend = $1b
+    .label rem = $17
+    .label dividend = $d
     .label quotient = 4
     .label return = 4
     ldx #0

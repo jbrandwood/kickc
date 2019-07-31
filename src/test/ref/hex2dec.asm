@@ -6,8 +6,8 @@
   .label raster = $d012
   .label bordercol = $d020
 main: {
-    .label _1 = $e
-    .label time_start = $f
+    .label _1 = 8
+    .label time_start = 9
     sei
     jsr cls
   b1:
@@ -96,9 +96,9 @@ main: {
 // utoa10w(word zeropage(2) value, byte* zeropage(6) dst)
 utoa10w: {
     .label value = 2
-    .label digit = 4
+    .label digit = 8
     .label dst = 6
-    .label bStarted = 5
+    .label bStarted = 9
     lda #<$400+$28+$28+$28+$28+$50
     sta dst
     lda #>$400+$28+$28+$28+$28+$50
@@ -174,10 +174,10 @@ utoa10w: {
     jmp b1
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(8) value, byte* zeropage($a) dst)
+// utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
 utoa16w: {
-    .label dst = $a
-    .label value = 8
+    .label dst = 4
+    .label value = 2
     lda value+1
     lsr
     lsr
@@ -225,7 +225,7 @@ utoa16n: {
 }
 cls: {
     .label screen = $400
-    .label sc = $c
+    .label sc = 6
     lda #<screen
     sta sc
     lda #>screen

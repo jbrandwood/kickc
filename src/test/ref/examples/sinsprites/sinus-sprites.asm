@@ -23,10 +23,10 @@
   .const sinlen_y = $c5
   .label sprites = $2000
   .label SCREEN = $400
-  .label progress_idx = $10
-  .label progress_cursor = $11
-  .label sin_idx_x = 2
-  .label sin_idx_y = 3
+  .label progress_idx = 9
+  .label progress_cursor = 2
+  .label sin_idx_x = 6
+  .label sin_idx_y = 7
 main: {
     jsr init
     lda #0
@@ -40,13 +40,13 @@ main: {
     jmp b1
 }
 anim: {
-    .label _6 = 5
-    .label xidx = 4
-    .label yidx = 7
-    .label x = $24
-    .label x_msb = 5
-    .label j2 = 6
-    .label j = 8
+    .label _6 = 9
+    .label xidx = 8
+    .label yidx = 4
+    .label x = $b
+    .label x_msb = 9
+    .label j2 = $a
+    .label j = 5
     inc BORDERCOL
     lda sin_idx_x
     sta xidx
@@ -169,7 +169,7 @@ init: {
     rts
 }
 clear_screen: {
-    .label sc = 9
+    .label sc = $d
     lda #<SCREEN
     sta sc
     lda #>SCREEN
@@ -197,14 +197,14 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-// gen_sintab(byte* zeropage($d) sintab, byte zeropage($c) length, byte zeropage($b) min, byte register(X) max)
+// gen_sintab(byte* zeropage($d) sintab, byte zeropage(7) length, byte zeropage(6) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label _23 = $26
-    .label i = $f
-    .label min = $b
-    .label length = $c
+    .label _23 = $b
+    .label i = 8
+    .label min = 6
+    .label length = 7
     .label sintab = $d
     txa
     sta setFAC.w
@@ -332,7 +332,7 @@ progress_inc: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = $26
+    .label return = $b
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
@@ -358,9 +358,9 @@ addMEMtoFAC: {
     rts
 }
 // Prepare MEM pointers for operations using MEM
-// prepareMEM(byte* zeropage($13) mem)
+// prepareMEM(byte* zeropage($b) mem)
 prepareMEM: {
-    .label mem = $13
+    .label mem = $b
     lda mem
     sta memLo
     lda mem+1
@@ -370,9 +370,9 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-// mulFACbyMEM(byte* zeropage($13) mem)
+// mulFACbyMEM(byte* zeropage($b) mem)
 mulFACbyMEM: {
-    .label mem = $13
+    .label mem = $b
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -389,9 +389,9 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
-// divMEMbyFAC(byte* zeropage($13) mem)
+// divMEMbyFAC(byte* zeropage($b) mem)
 divMEMbyFAC: {
-    .label mem = $13
+    .label mem = $b
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -400,9 +400,9 @@ divMEMbyFAC: {
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-// setFAC(word zeropage($13) w)
+// setFAC(word zeropage($b) w)
 setFAC: {
-    .label w = $13
+    .label w = $b
     jsr prepareMEM
     // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
@@ -413,9 +413,9 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zeropage($13) mem)
+// setMEMtoFAC(byte* zeropage($b) mem)
 setMEMtoFAC: {
-    .label mem = $13
+    .label mem = $b
     jsr prepareMEM
     ldx $fe
     ldy $ff
@@ -435,14 +435,14 @@ setARGtoFAC: {
     rts
 }
 // Initialize the PETSCII progress bar
-// progress_init(byte* zeropage($11) line)
+// progress_init(byte* zeropage(2) line)
 progress_init: {
-    .label line = $11
+    .label line = 2
     rts
 }
 gen_sprites: {
-    .label spr = $16
-    .label i = $15
+    .label spr = 2
+    .label i = $a
     lda #<sprites
     sta spr
     lda #>sprites
@@ -474,17 +474,17 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(X) ch, byte* zeropage($1d) sprite)
+// gen_chargen_sprite(byte register(X) ch, byte* zeropage($b) sprite)
 gen_chargen_sprite: {
-    .label _0 = $28
-    .label _1 = $28
-    .label sprite = $1d
-    .label chargen = $28
-    .label bits = $19
-    .label s_gen = $1c
-    .label x = $1a
-    .label y = $18
-    .label c = $1b
+    .label _0 = $d
+    .label _1 = $d
+    .label sprite = $b
+    .label chargen = $d
+    .label bits = 5
+    .label s_gen = 8
+    .label x = 6
+    .label y = 4
+    .label c = 7
     txa
     sta _0
     lda #0
@@ -579,11 +579,11 @@ gen_chargen_sprite: {
 }
 place_sprites: {
     .label sprites_ptr = SCREEN+$3f8
-    .label spr_id = $1f
-    .label spr_x = $21
-    .label col = $23
-    .label j2 = $22
-    .label j = $20
+    .label spr_id = 6
+    .label spr_x = 8
+    .label col = $a
+    .label j2 = 9
+    .label j = 7
     lda #$7f
     sta SPRITES_ENABLE
     sta SPRITES_EXPAND_X

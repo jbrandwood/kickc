@@ -67,11 +67,11 @@
   .const KEY_Q = $3e
   .label SCREEN = $400
 main: {
-    .label sc = 2
-    .label i = 4
-    .label ch = 7
-    .label cur_pos = 5
-    .label shift = 6
+    .label sc = 6
+    .label i = 2
+    .label ch = 5
+    .label cur_pos = 3
+    .label shift = 4
     lda #<SCREEN
     sta sc
     lda #>SCREEN
@@ -216,13 +216,13 @@ main: {
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
-    .label _0 = 8
-    .label _1 = 8
-    .label _7 = $c
-    .label chargen = 8
-    .label sc = $c
-    .label bits = $b
-    .label y = $a
+    .label _0 = 6
+    .label _1 = 6
+    .label _7 = $a
+    .label chargen = 6
+    .label sc = $a
+    .label bits = 9
+    .label y = 8
     sei
     sta _0
     lda #0
@@ -309,9 +309,9 @@ plot_chargen: {
 // mul8u(byte register(X) a)
 mul8u: {
     .const b = $a
-    .label mb = $e
-    .label res = $c
-    .label return = $c
+    .label mb = $c
+    .label res = $a
+    .label return = $a
     lda #<b
     sta mb
     lda #>b
@@ -384,10 +384,10 @@ keyboard_get_keycode: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage($10) str, byte* zeropage($12) at)
+// print_str_at(byte* zeropage($a) str, byte* zeropage($c) at)
 print_str_at: {
-    .label at = $12
-    .label str = $10
+    .label at = $c
+    .label str = $a
   b1:
     ldy #0
     lda (str),y

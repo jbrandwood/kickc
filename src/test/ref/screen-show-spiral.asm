@@ -12,12 +12,12 @@
   // Char to fill with
   .const FILL_CHAR = '@'
   .const NUM_SQUARES = $30
-  .label heap_head = $2c
-  .label SQUARES = $2e
+  .label heap_head = $f
+  .label SQUARES = $11
   // Screen containing distance to center
-  .label SCREEN_DIST = $30
+  .label SCREEN_DIST = $b
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $32
+  .label SCREEN_ANGLE = $d
 bbegin:
   lda #<$3e8
   sta malloc.size
@@ -44,15 +44,15 @@ bbegin:
   jsr main
   rts
 main: {
-    .label dist = 4
-    .label angle = 6
-    .label fill = 2
-    .label dist_angle = $c
-    .label min_dist_angle = 8
-    .label min_dist_angle_3 = $c
-    .label min_fill = $a
-    .label min_dist_angle_7 = $c
-    .label min_dist_angle_8 = $c
+    .label dist = 9
+    .label angle = $14
+    .label fill = 7
+    .label dist_angle = $1a
+    .label min_dist_angle = $16
+    .label min_dist_angle_3 = $1a
+    .label min_fill = $18
+    .label min_dist_angle_7 = $1a
+    .label min_dist_angle_8 = $1a
     lda SCREEN_DIST
     sta init_dist_screen.screen
     lda SCREEN_DIST+1
@@ -161,19 +161,19 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage($f) screen)
+// init_angle_screen(byte* zeropage(7) screen)
 init_angle_screen: {
-    .label _10 = $19
-    .label screen = $f
-    .label screen_topline = $11
-    .label screen_bottomline = $f
-    .label xw = $34
-    .label yw = $36
-    .label angle_w = $19
-    .label ang_w = $38
-    .label x = $13
-    .label xb = $14
-    .label y = $e
+    .label _10 = $18
+    .label screen = 7
+    .label screen_topline = 9
+    .label screen_bottomline = 7
+    .label xw = $f
+    .label yw = $11
+    .label angle_w = $18
+    .label ang_w = $13
+    .label x = 5
+    .label xb = 6
+    .label y = 2
     lda screen
     clc
     adc #<$28*$c
@@ -261,18 +261,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($34) x, signed word zeropage($36) y)
+// atan2_16(signed word zeropage($f) x, signed word zeropage($11) y)
 atan2_16: {
-    .label _2 = $15
-    .label _7 = $17
-    .label yi = $15
-    .label xi = $17
-    .label angle = $19
-    .label xd = $1d
-    .label yd = $1b
-    .label return = $19
-    .label x = $34
-    .label y = $36
+    .label _2 = $14
+    .label _7 = $16
+    .label yi = $14
+    .label xi = $16
+    .label angle = $18
+    .label xd = 3
+    .label yd = $1a
+    .label return = $18
+    .label x = $f
+    .label y = $11
     lda y+1
     bmi !b1+
     jmp b1
@@ -449,17 +449,17 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage($20) screen)
+// init_dist_screen(byte* zeropage(3) screen)
 init_dist_screen: {
-    .label screen = $20
-    .label screen_bottomline = $22
-    .label yds = $39
-    .label xds = $3b
-    .label ds = $3b
-    .label x = $24
-    .label xb = $25
-    .label screen_topline = $20
-    .label y = $1f
+    .label screen = 3
+    .label screen_bottomline = 7
+    .label yds = $14
+    .label xds = $16
+    .label ds = $16
+    .label x = 5
+    .label xb = 6
+    .label screen_topline = 3
+    .label y = 2
     jsr init_squares
     lda screen
     clc
@@ -548,12 +548,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($3b) val)
+// sqrt(word zeropage($16) val)
 sqrt: {
-    .label _1 = $26
-    .label _3 = $26
-    .label found = $26
-    .label val = $3b
+    .label _1 = 9
+    .label _3 = 9
+    .label found = 9
+    .label val = $16
     lda SQUARES
     sta bsearch16u.items
     lda SQUARES+1
@@ -576,14 +576,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($3b) key, word* zeropage($26) items, byte register(X) num)
+// bsearch16u(word zeropage($16) key, word* zeropage(9) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $26
-    .label pivot = $3d
-    .label result = $3f
-    .label return = $26
-    .label items = $26
-    .label key = $3b
+    .label _2 = 9
+    .label pivot = $18
+    .label result = $1a
+    .label return = 9
+    .label items = 9
+    .label key = $16
     ldx #NUM_SQUARES
   b3:
     cpx #0
@@ -659,8 +659,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $3b
-    .label return_2 = $39
+    .label return = $16
+    .label return_2 = $14
     asl
     tay
     lda (SQUARES),y
@@ -673,8 +673,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $2a
-    .label sqr = $28
+    .label squares = 9
+    .label sqr = 7
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
     lda #>NUM_SQUARES*SIZEOF_WORD
@@ -719,10 +719,10 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($2e) size)
+// malloc(word zeropage($11) size)
 malloc: {
-    .label mem = $2e
-    .label size = $2e
+    .label mem = $11
+    .label size = $11
     lda heap_head
     sec
     sbc mem

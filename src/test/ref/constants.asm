@@ -4,8 +4,8 @@
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label print_char_cursor = 5
-  .label print_line_cursor = 7
+  .label print_char_cursor = 2
+  .label print_line_cursor = 4
 main: {
     jsr print_cls
     lda #GREEN
@@ -66,10 +66,10 @@ test_sbytes: {
     msg3: .text "-(0+2-4)=2@"
     msg4: .text "-127-127=2@"
 }
-// assert_sbyte(byte* zeropage(2) msg, signed byte register(X) b, signed byte zeropage(4) c)
+// assert_sbyte(byte* zeropage(7) msg, signed byte register(X) b, signed byte zeropage(6) c)
 assert_sbyte: {
-    .label msg = 2
-    .label c = 4
+    .label msg = 7
+    .label c = 6
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -101,9 +101,9 @@ assert_sbyte: {
     jmp b2
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zeropage(7) str)
 print_str: {
-    .label str = 2
+    .label str = 7
   b1:
     ldy #0
     lda (str),y
@@ -192,10 +192,10 @@ test_bytes: {
     rts
     msg2: .text "0+2-4=254@"
 }
-// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(9) c)
+// assert_byte(byte* zeropage(7) msg, byte register(X) b, byte zeropage(6) c)
 assert_byte: {
-    .label msg = 2
-    .label c = 9
+    .label msg = 7
+    .label c = 6
     jsr print_str
     lda #<str
     sta print_str.str
@@ -233,7 +233,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $a
+    .label dst = 7
     lda #<str
     sta dst
     lda #>str

@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label screen = 4
+  .label screen = 2
 main: {
     ldx #' '
     lda #<msg1
@@ -32,9 +32,9 @@ main: {
     jsr print
     rts
 }
-// print(byte* zeropage(2) msg)
+// print(byte* zeropage(4) msg)
 print: {
-    .label msg = 2
+    .label msg = 4
   b1:
     ldy #0
     lda (msg),y
@@ -53,13 +53,13 @@ print: {
     bne b1
     rts
 }
-// strip(byte* zeropage($a) p, byte register(X) c)
+// strip(byte* zeropage(8) p, byte register(X) c)
 strip: {
-    .label dest = 8
-    .label p = $a
-    .label p_4 = 6
-    .label p_7 = 6
-    .label p_8 = 6
+    .label dest = 6
+    .label p = 8
+    .label p_4 = 4
+    .label p_7 = 4
+    .label p_8 = 4
     lda dest
     sta p_7
     lda dest+1

@@ -9,8 +9,8 @@
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
-  .label current_chargen = 3
-  .label nxt = 7
+  .label current_chargen = 7
+  .label nxt = 5
 main: {
     jsr fillscreen
     lda #<CHARGEN
@@ -49,9 +49,9 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label _7 = 3
-    .label c = 3
-    .label sc = 5
+    .label _7 = 7
+    .label c = 7
+    .label sc = 3
     lsr current_bit
     lda current_bit
     cmp #0
@@ -162,7 +162,7 @@ next_char: {
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
-    .label cursor = 9
+    .label cursor = 7
     lda #<SCREEN
     sta cursor
     lda #>SCREEN

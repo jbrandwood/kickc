@@ -44,16 +44,16 @@ main: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label _10 = $f
-    .label xw = $1e
-    .label yw = $20
-    .label angle_w = $f
-    .label ang_w = $22
-    .label x = 9
-    .label xb = $a
-    .label screen_topline = 5
-    .label screen_bottomline = 7
-    .label y = 4
+    .label _10 = 4
+    .label xw = $13
+    .label yw = $15
+    .label angle_w = 4
+    .label ang_w = $17
+    .label x = $11
+    .label xb = $12
+    .label screen_topline = 2
+    .label screen_bottomline = $a
+    .label y = $c
     lda #<SCREEN+$28*$c
     sta screen_bottomline
     lda #>SCREEN+$28*$c
@@ -137,18 +137,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($1e) x, signed word zeropage($20) y)
+// atan2_16(signed word zeropage($13) x, signed word zeropage($15) y)
 atan2_16: {
-    .label _2 = $b
-    .label _7 = $d
-    .label yi = $b
-    .label xi = $d
-    .label angle = $f
-    .label xd = $13
-    .label yd = $11
-    .label return = $f
-    .label x = $1e
-    .label y = $20
+    .label _2 = $d
+    .label _7 = $f
+    .label yi = $d
+    .label xi = $f
+    .label angle = 4
+    .label xd = 8
+    .label yd = 6
+    .label return = 4
+    .label x = $13
+    .label y = $15
     lda y+1
     bmi !b1+
     jmp b1
@@ -324,15 +324,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($18) charset)
+// init_font_hex(byte* zeropage($d) charset)
 init_font_hex: {
-    .label _0 = $23
-    .label idx = $1d
-    .label proto_lo = $1a
-    .label charset = $18
-    .label c1 = $1c
-    .label proto_hi = $15
-    .label c = $17
+    .label _0 = $17
+    .label idx = $12
+    .label proto_lo = $f
+    .label charset = $d
+    .label c1 = $11
+    .label proto_hi = $a
+    .label c = $c
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

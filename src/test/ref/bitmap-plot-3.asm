@@ -14,10 +14,10 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _6 = 8
-    .label _10 = $18
-    .label a = 2
-    .label i = 3
+    .label _6 = $b
+    .label _10 = $f
+    .label a = $1b
+    .label i = 2
     jsr bitmap_init
     jsr bitmap_clear
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -74,20 +74,20 @@ main: {
     jmp b2
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zeropage(8) x1, word zeropage(6) y1, word zeropage($18) x2, word zeropage($1a) y2)
+// bitmap_line(word zeropage($b) x1, word zeropage(9) y1, word zeropage($f) x2, word zeropage($11) y2)
 bitmap_line: {
-    .label dx = $1c
-    .label dy = $10
-    .label sx = $1e
-    .label sy = $e
-    .label e1 = $a
-    .label e = 4
-    .label y = 6
-    .label x = 8
-    .label x1 = 8
-    .label y1 = 6
-    .label x2 = $18
-    .label y2 = $1a
+    .label dx = $13
+    .label dy = 7
+    .label sx = $15
+    .label sy = 5
+    .label e1 = $d
+    .label e = 3
+    .label y = 9
+    .label x = $b
+    .label x1 = $b
+    .label y1 = 9
+    .label x2 = $f
+    .label y2 = $11
     lda x2
     sec
     sbc x1
@@ -266,11 +266,11 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage(8) x, byte register(X) y)
+// bitmap_plot(word zeropage($b) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $22
-    .label plotter = $20
-    .label x = 8
+    .label _1 = $19
+    .label plotter = $17
+    .label x = $b
     lda bitmap_plot_yhi,x
     sta plotter+1
     lda bitmap_plot_ylo,x
@@ -298,10 +298,10 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zeropage($c) w)
+// sgn_u16(word zeropage(3) w)
 sgn_u16: {
-    .label w = $c
-    .label return = $e
+    .label w = 3
+    .label return = 5
     lda w+1
     and #$80
     cmp #0
@@ -319,10 +319,10 @@ sgn_u16: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zeropage($10) w)
+// abs_u16(word zeropage(7) w)
 abs_u16: {
-    .label w = $10
-    .label return = $10
+    .label w = 7
+    .label return = 7
     lda w+1
     and #$80
     cmp #0
@@ -366,12 +366,12 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($14) str, byte register(X) c, word zeropage($12) num)
+// memset(void* zeropage($b) str, byte register(X) c, word zeropage(9) num)
 memset: {
-    .label end = $12
-    .label dst = $14
-    .label num = $12
-    .label str = $14
+    .label end = 9
+    .label dst = $b
+    .label num = 9
+    .label str = $b
     lda num
     bne !+
     lda num+1
@@ -403,8 +403,8 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $24
-    .label yoffs = $16
+    .label _7 = $1b
+    .label yoffs = $d
     ldx #0
     lda #$80
   b1:

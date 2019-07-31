@@ -6,8 +6,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
+  .label print_line_cursor = 6
+  .label print_char_cursor = 4
 main: {
     jsr print_cls
     lda #<$400
@@ -172,7 +172,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 8
+    .label dst = 6
     lda #<str
     sta dst
     lda #>str

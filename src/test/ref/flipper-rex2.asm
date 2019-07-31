@@ -57,8 +57,8 @@ plot: {
 }
 // Flip buffer
 flip: {
-    .label c = 6
-    .label r = 5
+    .label c = 5
+    .label r = 4
     lda #$10
     sta r
     ldx #$f

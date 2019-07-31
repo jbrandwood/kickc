@@ -3082,17 +3082,17 @@ Attempting to uplift remaining variables inzp ZP_BYTE:25 [ plexShowSprite::$11 ]
 Uplifting [plexShowSprite] best 80836 combination reg byte x [ plexShowSprite::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ]
 Uplifting [plexShowSprite] best 80836 combination zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:3 [ plex_free_next#17 plex_free_next#13 ]
-Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:4 [ plex_sprite_idx#42 plex_sprite_idx#15 ]
-Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:5 [ plex_show_idx#42 plex_show_idx#15 ]
-Allocated (was zp ZP_BYTE:8) zp ZP_BYTE:6 [ plex_sprite_msb#42 plex_sprite_msb#16 plex_sprite_msb#3 ]
-Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:7 [ loop::ss#5 loop::ss#1 ]
-Allocated (was zp ZP_BYTE:10) zp ZP_BYTE:8 [ plexSort::m#2 plexSort::m#1 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:9 [ init::xp#2 init::xp#1 ]
-Allocated (was zp ZP_BYTE:19) zp ZP_BYTE:11 [ loop::plexFreeNextYpos1_return#0 ]
-Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:12 [ plexShowSprite::plex_sprite_idx2#0 ]
-Allocated (was zp ZP_BYTE:30) zp ZP_BYTE:13 [ plexSort::nxt_idx#0 ]
-Allocated (was zp ZP_BYTE:31) zp ZP_BYTE:14 [ plexSort::nxt_y#0 ]
+Coalescing zero page register [ zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] ] with [ zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] ]
+Coalescing zero page register [ zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] ] with [ zp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ] ]
+Coalescing zero page register [ zp ZP_BYTE:30 [ plexSort::nxt_idx#0 ] ] with [ zp ZP_BYTE:6 [ plex_sprite_idx#42 plex_sprite_idx#15 ] ]
+Coalescing zero page register [ zp ZP_BYTE:31 [ plexSort::nxt_y#0 ] ] with [ zp ZP_BYTE:7 [ plex_show_idx#42 plex_show_idx#15 ] ]
+Allocated (was zp ZP_BYTE:8) zp ZP_BYTE:3 [ plex_sprite_msb#42 plex_sprite_msb#16 plex_sprite_msb#3 ]
+Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:4 [ loop::ss#5 loop::ss#1 ]
+Allocated (was zp ZP_BYTE:10) zp ZP_BYTE:5 [ plexSort::m#2 plexSort::m#1 plex_free_next#17 plex_free_next#13 ]
+Allocated (was zp ZP_WORD:14) zp ZP_WORD:6 [ init::xp#2 init::xp#1 ]
+Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:8 [ plexShowSprite::plex_sprite_idx2#0 loop::plexFreeNextYpos1_return#0 ]
+Allocated (was zp ZP_BYTE:30) zp ZP_BYTE:9 [ plexSort::nxt_idx#0 plex_sprite_idx#42 plex_sprite_idx#15 ]
+Allocated (was zp ZP_BYTE:31) zp ZP_BYTE:10 [ plexSort::nxt_y#0 plex_show_idx#42 plex_show_idx#15 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -3122,10 +3122,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label SPRITE = $2000
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_sprite_msb = 6
-  .label plex_free_next = 3
-  .label plex_sprite_idx = 4
-  .label plex_show_idx = 5
+  .label plex_sprite_msb = 3
+  .label plex_free_next = 5
+  .label plex_sprite_idx = 9
+  .label plex_show_idx = $a
   // @begin
 bbegin:
   jmp b1
@@ -3169,8 +3169,8 @@ main: {
 // The raster loop
 loop: {
     .label sin_idx = 2
-    .label plexFreeNextYpos1_return = $b
-    .label ss = 7
+    .label plexFreeNextYpos1_return = 8
+    .label ss = 4
     // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
     // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
@@ -3320,7 +3320,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $c
+    .label plex_sprite_idx2 = 8
     // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda plex_sprite_idx
     asl
@@ -3436,9 +3436,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $d
-    .label nxt_y = $e
-    .label m = 8
+    .label nxt_idx = 9
+    .label nxt_y = $a
+    .label m = 5
     // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
   b1_from_plexSort:
     // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
@@ -3543,7 +3543,7 @@ plexSort: {
   // init
 // Initialize the program
 init: {
-    .label xp = 9
+    .label xp = 6
     // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -3885,8 +3885,8 @@ FINAL SYMBOL TABLE
 (byte) init::sx#1 reg byte x 16.5
 (byte) init::sx#2 reg byte x 8.8
 (word) init::xp
-(word) init::xp#1 xp zp ZP_WORD:9 7.333333333333333
-(word) init::xp#2 xp zp ZP_WORD:9 8.25
+(word) init::xp#1 xp zp ZP_WORD:6 7.333333333333333
+(word) init::xp#2 xp zp ZP_WORD:6 8.25
 (void()) loop()
 (byte~) loop::$4 reg byte a 202.0
 (label) loop::@1
@@ -3903,14 +3903,14 @@ FINAL SYMBOL TABLE
 (label) loop::@9
 (label) loop::plexFreeNextYpos1
 (byte) loop::plexFreeNextYpos1_return
-(byte) loop::plexFreeNextYpos1_return#0 plexFreeNextYpos1_return zp ZP_BYTE:11 551.0
+(byte) loop::plexFreeNextYpos1_return#0 plexFreeNextYpos1_return zp ZP_BYTE:8 551.0
 (byte) loop::rasterY
 (byte) loop::sin_idx
 (byte) loop::sin_idx#1 sin_idx zp ZP_BYTE:2 1.4666666666666666
 (byte) loop::sin_idx#6 sin_idx zp ZP_BYTE:2 3.666666666666667
 (byte) loop::ss
-(byte) loop::ss#1 ss zp ZP_BYTE:7 151.5
-(byte) loop::ss#5 ss zp ZP_BYTE:7 33.666666666666664
+(byte) loop::ss#1 ss zp ZP_BYTE:4 151.5
+(byte) loop::ss#5 ss zp ZP_BYTE:4 33.666666666666664
 (byte) loop::sy
 (byte) loop::sy#1 reg byte y 151.5
 (byte) loop::sy#2 reg byte y 101.0
@@ -3952,7 +3952,7 @@ FINAL SYMBOL TABLE
 (byte) plexShowSprite::plexFreeAdd1_ypos
 (byte) plexShowSprite::plexFreeAdd1_ypos#0 reg byte a 3.0
 (byte) plexShowSprite::plex_sprite_idx2
-(byte) plexShowSprite::plex_sprite_idx2#0 plex_sprite_idx2 zp ZP_BYTE:12 0.5454545454545454
+(byte) plexShowSprite::plex_sprite_idx2#0 plex_sprite_idx2 zp ZP_BYTE:8 0.5454545454545454
 (byte) plexShowSprite::xpos_idx
 (byte) plexShowSprite::xpos_idx#0 reg byte a 4.0
 (byte) plexShowSprite::ypos
@@ -3965,12 +3965,12 @@ FINAL SYMBOL TABLE
 (label) plexSort::@6
 (label) plexSort::@return
 (byte) plexSort::m
-(byte) plexSort::m#1 m zp ZP_BYTE:8 151.5
-(byte) plexSort::m#2 m zp ZP_BYTE:8 42.08333333333333
+(byte) plexSort::m#1 m zp ZP_BYTE:5 151.5
+(byte) plexSort::m#2 m zp ZP_BYTE:5 42.08333333333333
 (byte) plexSort::nxt_idx
-(byte) plexSort::nxt_idx#0 nxt_idx zp ZP_BYTE:13 30.299999999999997
+(byte) plexSort::nxt_idx#0 nxt_idx zp ZP_BYTE:9 30.299999999999997
 (byte) plexSort::nxt_y
-(byte) plexSort::nxt_y#0 nxt_y zp ZP_BYTE:14 150.375
+(byte) plexSort::nxt_y#0 nxt_y zp ZP_BYTE:10 150.375
 (label) plexSort::plexFreePrepare1
 (bool~) plexSort::plexFreePrepare1_$0
 (label) plexSort::plexFreePrepare1_@1
@@ -3983,37 +3983,33 @@ FINAL SYMBOL TABLE
 (byte) plexSort::s#3 reg byte x 2052.5
 (byte~) plexSort::s#6 reg byte x 202.0
 (byte) plex_free_next
-(byte) plex_free_next#13 plex_free_next zp ZP_BYTE:3 4.681818181818182
-(byte) plex_free_next#17 plex_free_next zp ZP_BYTE:3 20.599999999999998
+(byte) plex_free_next#13 plex_free_next zp ZP_BYTE:5 4.681818181818182
+(byte) plex_free_next#17 plex_free_next zp ZP_BYTE:5 20.599999999999998
 (byte) plex_show_idx
-(byte) plex_show_idx#15 plex_show_idx zp ZP_BYTE:5 11.444444444444443
-(byte) plex_show_idx#42 plex_show_idx zp ZP_BYTE:5 4.541666666666665
+(byte) plex_show_idx#15 plex_show_idx zp ZP_BYTE:10 11.444444444444443
+(byte) plex_show_idx#42 plex_show_idx zp ZP_BYTE:10 4.541666666666665
 (byte) plex_sprite_idx
-(byte) plex_sprite_idx#15 plex_sprite_idx zp ZP_BYTE:4 10.299999999999999
-(byte) plex_sprite_idx#42 plex_sprite_idx zp ZP_BYTE:4 4.863636363636363
+(byte) plex_sprite_idx#15 plex_sprite_idx zp ZP_BYTE:9 10.299999999999999
+(byte) plex_sprite_idx#42 plex_sprite_idx zp ZP_BYTE:9 4.863636363636363
 (byte) plex_sprite_msb
-(byte) plex_sprite_msb#16 plex_sprite_msb zp ZP_BYTE:6 20.599999999999998
-(byte) plex_sprite_msb#3 plex_sprite_msb zp ZP_BYTE:6 2.0
-(byte) plex_sprite_msb#42 plex_sprite_msb zp ZP_BYTE:6 4.28
+(byte) plex_sprite_msb#16 plex_sprite_msb zp ZP_BYTE:3 20.599999999999998
+(byte) plex_sprite_msb#3 plex_sprite_msb zp ZP_BYTE:3 2.0
+(byte) plex_sprite_msb#42 plex_sprite_msb zp ZP_BYTE:3 4.28
 
 zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
 reg byte x [ loop::y_idx#2 loop::y_idx#1 loop::y_idx#4 ]
 reg byte y [ loop::sy#2 loop::sy#1 ]
-zp ZP_BYTE:3 [ plex_free_next#17 plex_free_next#13 ]
-zp ZP_BYTE:4 [ plex_sprite_idx#42 plex_sprite_idx#15 ]
-zp ZP_BYTE:5 [ plex_show_idx#42 plex_show_idx#15 ]
-zp ZP_BYTE:6 [ plex_sprite_msb#42 plex_sprite_msb#16 plex_sprite_msb#3 ]
-zp ZP_BYTE:7 [ loop::ss#5 loop::ss#1 ]
-zp ZP_BYTE:8 [ plexSort::m#2 plexSort::m#1 ]
+zp ZP_BYTE:3 [ plex_sprite_msb#42 plex_sprite_msb#16 plex_sprite_msb#3 ]
+zp ZP_BYTE:4 [ loop::ss#5 loop::ss#1 ]
+zp ZP_BYTE:5 [ plexSort::m#2 plexSort::m#1 plex_free_next#17 plex_free_next#13 ]
 reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ]
 reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ]
 reg byte x [ init::sx#2 init::sx#1 ]
-zp ZP_WORD:9 [ init::xp#2 init::xp#1 ]
+zp ZP_WORD:6 [ init::xp#2 init::xp#1 ]
 reg byte x [ init::ss#2 init::ss#1 ]
 reg byte x [ plexInit::i#2 plexInit::i#1 ]
 reg byte a [ loop::$4 ]
-zp ZP_BYTE:11 [ loop::plexFreeNextYpos1_return#0 ]
-zp ZP_BYTE:12 [ plexShowSprite::plex_sprite_idx2#0 ]
+zp ZP_BYTE:8 [ plexShowSprite::plex_sprite_idx2#0 loop::plexFreeNextYpos1_return#0 ]
 reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ]
 reg byte a [ plexShowSprite::plexFreeAdd1_$0#0 ]
 reg byte x [ plexShowSprite::plexFreeAdd1_$1#0 ]
@@ -4023,8 +4019,8 @@ reg byte a [ plexShowSprite::$2 ]
 reg byte a [ plexShowSprite::$3 ]
 reg byte a [ plexShowSprite::$9 ]
 reg byte x [ plexShowSprite::$5 ]
-zp ZP_BYTE:13 [ plexSort::nxt_idx#0 ]
-zp ZP_BYTE:14 [ plexSort::nxt_y#0 ]
+zp ZP_BYTE:9 [ plexSort::nxt_idx#0 plex_sprite_idx#42 plex_sprite_idx#15 ]
+zp ZP_BYTE:10 [ plexSort::nxt_y#0 plex_show_idx#42 plex_show_idx#15 ]
 reg byte x [ plexSort::s#2 ]
 reg byte a [ init::$8 ]
 
@@ -4059,10 +4055,10 @@ Score: 62204
   .label SCREEN = $400
   .label SPRITE = $2000
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_sprite_msb = 6
-  .label plex_free_next = 3
-  .label plex_sprite_idx = 4
-  .label plex_show_idx = 5
+  .label plex_sprite_msb = 3
+  .label plex_free_next = 5
+  .label plex_sprite_idx = 9
+  .label plex_show_idx = $a
   // @begin
   // @1
   // kickasm
@@ -4095,8 +4091,8 @@ main: {
 // The raster loop
 loop: {
     .label sin_idx = 2
-    .label plexFreeNextYpos1_return = $b
-    .label ss = 7
+    .label plexFreeNextYpos1_return = 8
+    .label ss = 4
     // [11] phi from loop to loop::@1 [phi:loop->loop::@1]
     // [11] phi (byte) loop::sin_idx#6 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -4232,7 +4228,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $c
+    .label plex_sprite_idx2 = 8
     // plex_sprite_idx2 = plex_sprite_idx*2
     // [35] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#42 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda plex_sprite_idx
@@ -4357,9 +4353,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $d
-    .label nxt_y = $e
-    .label m = 8
+    .label nxt_idx = 9
+    .label nxt_y = $a
+    .label m = 5
     // [61] phi from plexSort to plexSort::@1 [phi:plexSort->plexSort::@1]
     // [61] phi (byte) plexSort::m#2 = (byte) 0 [phi:plexSort->plexSort::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -4452,7 +4448,7 @@ plexSort: {
   // init
 // Initialize the program
 init: {
-    .label xp = 9
+    .label xp = 6
     // *D011 = VIC_DEN | VIC_RSEL | 3
     // [81] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|3

@@ -12,9 +12,9 @@
   .label SCREEN = $2800
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label screen = 4
-    .label x = 3
-    .label y = 2
+    .label screen = 3
+    .label x = $a
+    .label y = 5
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -54,15 +54,15 @@ main: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// atan2_8(signed byte zeropage(3) x, signed byte zeropage(2) y)
+// atan2_8(signed byte zeropage($a) x, signed byte zeropage(5) y)
 atan2_8: {
-    .label _7 = 6
-    .label xi = 6
-    .label xd = $12
-    .label angle = 8
-    .label i = 7
-    .label x = 3
-    .label y = 2
+    .label _7 = $b
+    .label xi = $b
+    .label xd = $c
+    .label angle = 2
+    .label i = $d
+    .label x = $a
+    .label y = 5
     lda y
     cmp #0
     beq !+
@@ -190,15 +190,15 @@ atan2_8: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($c) charset)
+// init_font_hex(byte* zeropage(6) charset)
 init_font_hex: {
-    .label _0 = $13
-    .label idx = $11
-    .label proto_lo = $e
-    .label charset = $c
-    .label c1 = $10
-    .label proto_hi = 9
-    .label c = $b
+    .label _0 = $d
+    .label idx = $b
+    .label proto_lo = 8
+    .label charset = 6
+    .label c1 = $a
+    .label proto_hi = 3
+    .label c = 5
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

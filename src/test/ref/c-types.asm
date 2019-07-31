@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = $a
-  .label print_line_cursor = 2
+  .label print_char_cursor = 6
+  .label print_line_cursor = $a
 main: {
     jsr print_cls
     jsr testChar
@@ -81,9 +81,9 @@ print_ln: {
     rts
 }
 // Print a signed dword as HEX
-// print_sdword(signed dword zeropage(4) dw)
+// print_sdword(signed dword zeropage(2) dw)
 print_sdword: {
-    .label dw = 4
+    .label dw = 2
     lda dw+3
     bmi b1
     lda #' '
@@ -125,9 +125,9 @@ print_char: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage(4) dw)
+// print_dword(dword zeropage(2) dw)
 print_dword: {
-    .label dw = 4
+    .label dw = 2
     lda dw+2
     sta print_word.w
     lda dw+3
@@ -170,9 +170,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($c) str)
+// print_str(byte* zeropage(8) str)
 print_str: {
-    .label str = $c
+    .label str = 8
   b1:
     ldy #0
     lda (str),y
@@ -338,7 +338,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $e
+    .label dst = $a
     lda #<str
     sta dst
     lda #>str

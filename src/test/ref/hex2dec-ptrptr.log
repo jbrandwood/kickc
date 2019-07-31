@@ -1173,7 +1173,9 @@ Attempting to uplift remaining variables inzp ZP_BYTE:12 [ utoa16w::started#1 ]
 Uplifting [utoa16w] best 899 combination reg byte x [ utoa16w::started#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:15 [ utoa16w::started#2 ]
 Uplifting [utoa16w] best 893 combination reg byte x [ utoa16w::started#2 ] 
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ cls::sc#2 cls::sc#1 ]
+Coalescing zero page register [ zp ZP_WORD:8 [ cls::sc#2 cls::sc#1 ] ] with [ zp ZP_WORD:2 [ utoa16w::value#5 ] ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ utoa16w::dst#5 utoa16w::dst#0 utoa16w::dst#1 utoa16w::dst#2 utoa16w::dst#3 utoa16w::dst#4 ]
+Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ cls::sc#2 cls::sc#1 utoa16w::value#5 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1303,10 +1305,10 @@ main: {
 }
   // utoa16w
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
+// utoa16w(word zeropage(4) value, byte* zeropage(2) dst)
 utoa16w: {
-    .label dst = 4
-    .label value = 2
+    .label dst = 2
+    .label value = 4
     // [18] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda value+1
     // [19] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
@@ -1431,7 +1433,7 @@ utoa16n: {
   // cls
 cls: {
     .label screen = $400
-    .label sc = 6
+    .label sc = 4
     // [47] phi from cls to cls::@1 [phi:cls->cls::@1]
   b1_from_cls:
     // [47] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
@@ -1554,8 +1556,8 @@ FINAL SYMBOL TABLE
 (label) cls::@1
 (label) cls::@return
 (byte*) cls::sc
-(byte*) cls::sc#1 sc zp ZP_WORD:6 16.5
-(byte*) cls::sc#2 sc zp ZP_WORD:6 16.5
+(byte*) cls::sc#1 sc zp ZP_WORD:4 16.5
+(byte*) cls::sc#2 sc zp ZP_WORD:4 16.5
 (byte*) cls::screen
 (const byte*) cls::screen#0 screen = (byte*) 1024
 (void()) main()
@@ -1597,23 +1599,22 @@ FINAL SYMBOL TABLE
 (label) utoa16w::@4
 (label) utoa16w::@return
 (byte*) utoa16w::dst
-(byte*) utoa16w::dst#0 dst zp ZP_WORD:4 4.0
-(byte*) utoa16w::dst#1 dst zp ZP_WORD:4 4.0
-(byte*) utoa16w::dst#2 dst zp ZP_WORD:4 4.0
-(byte*) utoa16w::dst#3 dst zp ZP_WORD:4 4.0
-(byte*) utoa16w::dst#4 dst zp ZP_WORD:4 4.0
-(byte*) utoa16w::dst#5 dst zp ZP_WORD:4 0.4444444444444444
+(byte*) utoa16w::dst#0 dst zp ZP_WORD:2 4.0
+(byte*) utoa16w::dst#1 dst zp ZP_WORD:2 4.0
+(byte*) utoa16w::dst#2 dst zp ZP_WORD:2 4.0
+(byte*) utoa16w::dst#3 dst zp ZP_WORD:2 4.0
+(byte*) utoa16w::dst#4 dst zp ZP_WORD:2 4.0
+(byte*) utoa16w::dst#5 dst zp ZP_WORD:2 0.4444444444444444
 (byte) utoa16w::started
 (byte) utoa16w::started#1 reg byte x 1.3333333333333333
 (byte) utoa16w::started#2 reg byte x 1.3333333333333333
 (word) utoa16w::value
-(word) utoa16w::value#5 value zp ZP_WORD:2 0.5
+(word) utoa16w::value#5 value zp ZP_WORD:4 0.5
 
-zp ZP_WORD:2 [ utoa16w::value#5 ]
-zp ZP_WORD:4 [ utoa16w::dst#5 utoa16w::dst#0 utoa16w::dst#1 utoa16w::dst#2 utoa16w::dst#3 utoa16w::dst#4 ]
+zp ZP_WORD:2 [ utoa16w::dst#5 utoa16w::dst#0 utoa16w::dst#1 utoa16w::dst#2 utoa16w::dst#3 utoa16w::dst#4 ]
 reg byte a [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ]
 reg byte x [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
-zp ZP_WORD:6 [ cls::sc#2 cls::sc#1 ]
+zp ZP_WORD:4 [ cls::sc#2 cls::sc#1 utoa16w::value#5 ]
 reg byte a [ utoa16w::$0 ]
 reg byte x [ utoa16n::return#0 ]
 reg byte x [ utoa16w::started#1 ]
@@ -1733,10 +1734,10 @@ main: {
 }
   // utoa16w
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
+// utoa16w(word zeropage(4) value, byte* zeropage(2) dst)
 utoa16w: {
-    .label dst = 4
-    .label value = 2
+    .label dst = 2
+    .label value = 4
     // >value
     // [18] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda value+1
@@ -1856,7 +1857,7 @@ utoa16n: {
   // cls
 cls: {
     .label screen = $400
-    .label sc = 6
+    .label sc = 4
     // [47] phi from cls to cls::@1 [phi:cls->cls::@1]
     // [47] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen

@@ -44,13 +44,13 @@ plots: {
     bcc b1
     rts
 }
-// plot(byte zeropage(8) x, byte zeropage(9) y)
+// plot(byte zeropage(7) x, byte zeropage(2) y)
 plot: {
-    .label x = 8
-    .label y = 9
-    .label plotter_x = $a
-    .label plotter_y = $c
-    .label plotter = $a
+    .label x = 7
+    .label y = 2
+    .label plotter_x = 3
+    .label plotter_y = 5
+    .label plotter = 3
     ldy x
     lda plot_xhi,y
     sta plotter_x+1
@@ -81,8 +81,8 @@ plot: {
     rts
 }
 init_plot_tables: {
-    .label _10 = $e
-    .label yoffs = 2
+    .label _10 = 7
+    .label yoffs = 5
     ldy #$80
     ldx #0
   b1:
@@ -132,8 +132,8 @@ init_plot_tables: {
     rts
 }
 init_screen: {
-    .label b = 4
-    .label c = 6
+    .label b = 5
+    .label c = 3
     lda #<BITMAP
     sta b
     lda #>BITMAP

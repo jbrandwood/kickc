@@ -23,15 +23,15 @@
   .label SCREEN1 = $2800
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
-  .label print_char_cursor = $12
-  .label c1A = 4
-  .label c1B = 5
-  .label c2A = 6
-  .label c2B = 7
+  .label print_char_cursor = 9
+  .label c1A = $b
+  .label c1B = $e
+  .label c2A = $f
+  .label c2B = 2
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
-    .label col = 2
+    .label col = 9
     sei
     lda #BLUE
     sta BORDERCOL
@@ -79,15 +79,15 @@ main: {
     jmp b4
 }
 // Render plasma to the passed screen
-// doplasma(byte* zeropage($e) screen)
+// doplasma(byte* zeropage(9) screen)
 doplasma: {
-    .label c1a = 8
-    .label c1b = 9
-    .label i = $a
-    .label c2a = $b
-    .label c2b = $c
-    .label i1 = $d
-    .label screen = $e
+    .label c1a = 3
+    .label c1b = 4
+    .label i = 5
+    .label c2a = 6
+    .label c2b = 7
+    .label i1 = 8
+    .label screen = 9
     lda c1A
     sta c1a
     lda c1B
@@ -176,13 +176,13 @@ doplasma: {
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _4 = $18
-    .label _8 = $19
-    .label _9 = $19
-    .label s = $17
-    .label i = $14
-    .label c = $10
-    .label _16 = $19
+    .label _4 = $f
+    .label _8 = $10
+    .label _9 = $10
+    .label s = $e
+    .label i = $b
+    .label c = $c
+    .label _16 = $10
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -297,7 +297,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = $15
+    .label dst = $c
     lda #<str
     sta dst
     lda #>str

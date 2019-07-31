@@ -57,18 +57,18 @@ main: {
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
-    .label tileno = $a
-    .label x1 = $b
+    .label tileno = 6
+    .label x1 = $15
     .label z = 4
-    .label z_1 = $b
-    .label _11 = $d
-    .label _12 = $f
-    .label _13 = $11
-    .label _14 = $13
-    .label _15 = $15
-    .label _16 = $17
-    .label _17 = $19
-    .label _18 = $b
+    .label z_1 = $15
+    .label _11 = 7
+    .label _12 = 9
+    .label _13 = $b
+    .label _14 = $d
+    .label _15 = $f
+    .label _16 = $11
+    .label _17 = $13
+    .label _18 = $15
     asl
     asl
     sta tileno
@@ -170,7 +170,7 @@ draw_block: {
 // mul8u(byte register(X) a)
 mul8u: {
     .const b = $28
-    .label mb = 6
+    .label mb = 7
     .label res = 4
     .label return = 4
     lda #<b
@@ -235,11 +235,11 @@ init: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage(8) str, byte register(X) c)
+// memset(void* zeropage(4) str, byte register(X) c)
 memset: {
-    .label end = $1b
-    .label dst = 8
-    .label str = 8
+    .label end = $15
+    .label dst = 4
+    .label str = 4
     lda str
     clc
     adc #<$3e8

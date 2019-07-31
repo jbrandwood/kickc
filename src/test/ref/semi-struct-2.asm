@@ -33,36 +33,36 @@
   .const SIZEOF_ENTRY = $12
   // The maximal number of files
   .const MAX_FILES = $90
-  .label print_char_cursor = $a
-  .label print_line_cursor = $14
-  .label print_line_cursor_32 = 6
-  .label print_line_cursor_63 = 6
-  .label print_line_cursor_157 = 6
-  .label print_line_cursor_158 = 6
-  .label print_line_cursor_159 = 6
-  .label print_line_cursor_160 = 6
-  .label print_line_cursor_161 = 6
-  .label print_line_cursor_162 = 6
-  .label print_line_cursor_163 = 6
-  .label print_line_cursor_164 = 6
-  .label print_line_cursor_165 = 6
-  .label print_line_cursor_166 = 6
-  .label print_line_cursor_167 = 6
-  .label print_line_cursor_168 = 6
-  .label print_line_cursor_169 = 6
-  .label print_line_cursor_170 = 6
-  .label print_line_cursor_171 = 6
-  .label print_line_cursor_172 = 6
-  .label print_line_cursor_173 = 6
-  .label print_line_cursor_175 = 6
+  .label print_char_cursor = 4
+  .label print_line_cursor = 8
+  .label print_line_cursor_32 = $a
+  .label print_line_cursor_63 = $a
+  .label print_line_cursor_157 = $a
+  .label print_line_cursor_158 = $a
+  .label print_line_cursor_159 = $a
+  .label print_line_cursor_160 = $a
+  .label print_line_cursor_161 = $a
+  .label print_line_cursor_162 = $a
+  .label print_line_cursor_163 = $a
+  .label print_line_cursor_164 = $a
+  .label print_line_cursor_165 = $a
+  .label print_line_cursor_166 = $a
+  .label print_line_cursor_167 = $a
+  .label print_line_cursor_168 = $a
+  .label print_line_cursor_169 = $a
+  .label print_line_cursor_170 = $a
+  .label print_line_cursor_171 = $a
+  .label print_line_cursor_172 = $a
+  .label print_line_cursor_173 = $a
+  .label print_line_cursor_175 = $a
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1__0 = 8
-    .label entry1 = 8
-    .label fileEntry2__0 = $10
-    .label entry2 = $10
+    .label fileEntry1__0 = 2
+    .label entry1 = 2
+    .label fileEntry2__0 = 6
+    .label entry2 = 6
     jsr keyboard_init
     ldx #fileEntry1_idx
     jsr mul8u
@@ -213,7 +213,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 2
+    .label dst = $a
     lda #<str
     sta dst
     lda #>str
@@ -258,9 +258,9 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage($a) str)
 print_str: {
-    .label str = 4
+    .label str = $a
   b1:
     ldy #0
     lda (str),y
@@ -307,9 +307,9 @@ print_ln: {
     jmp b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zeropage(8) entry)
+// printEntry(byte* zeropage(2) entry)
 printEntry: {
-    .label entry = 8
+    .label entry = 2
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -603,9 +603,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($c) w)
+// print_word(word zeropage($a) w)
 print_word: {
-    .label w = $c
+    .label w = $a
     lda w+1
     tax
     jsr print_byte
@@ -616,14 +616,14 @@ print_word: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zeropage($e) entry, byte register(X) n)
+// initEntry(byte* zeropage(4) entry, byte register(X) n)
 initEntry: {
-    .label _1 = $16
-    .label _3 = $18
-    .label _5 = $1a
-    .label _7 = $1c
-    .label _17 = $1e
-    .label entry = $e
+    .label _1 = 8
+    .label _3 = $a
+    .label _5 = $c
+    .label _7 = $e
+    .label _17 = $10
+    .label entry = 4
     txa
     clc
     adc #<$1111
@@ -734,9 +734,9 @@ initEntry: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
-    .label mb = $12
-    .label res = $10
-    .label return = $10
+    .label mb = 8
+    .label res = 6
+    .label return = 6
     lda #<SIZEOF_ENTRY
     sta mb
     lda #>SIZEOF_ENTRY

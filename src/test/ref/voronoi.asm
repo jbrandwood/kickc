@@ -74,8 +74,8 @@ animate: {
     rts
 }
 render: {
-    .label x = 5
-    .label colline = 3
+    .label x = 3
+    .label colline = 6
     .label y = 2
     lda #<COLORS
     sta colline
@@ -107,14 +107,14 @@ render: {
     bne b1
     rts
 }
-// findcol(byte zeropage(5) x, byte zeropage(2) y)
+// findcol(byte zeropage(3) x, byte zeropage(2) y)
 findcol: {
-    .label x = 5
+    .label x = 3
     .label y = 2
-    .label yp = $a
-    .label return = 7
-    .label mincol = 7
-    .label mindiff = 6
+    .label yp = 8
+    .label return = 5
+    .label mincol = 5
+    .label mindiff = 4
     lda #0
     sta mincol
     lda #$ff
@@ -186,7 +186,7 @@ findcol: {
     jmp b4
 }
 initscreen: {
-    .label screen = 8
+    .label screen = 6
     lda #<SCREEN
     sta screen
     lda #>SCREEN

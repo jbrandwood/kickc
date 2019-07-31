@@ -521,10 +521,14 @@ public class Compiler {
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
 
-      // Final register coalesce and finalization
+      // Register coalesce on assignment (saving bytes & cycles)
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();
 
+      // Register coalesce on call graph (saving ZP)
+      new Pass4ZeroPageCoalesceCallGraph(program).coalesce();
+
       if(enableZeroPageCoalasce) {
+         // Register coalesce using exhaustive search (saving even more ZP - but slow)
          new Pass4ZeroPageCoalesceExhaustive(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);

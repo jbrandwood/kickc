@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 9
-  .label print_line_cursor = 4
+  .label print_char_cursor = 7
+  .label print_line_cursor = $a
 main: {
-    .label b = $e
+    .label b = $c
     .label a = 2
     .label i = 3
     jsr print_cls
@@ -398,11 +398,11 @@ print_ln: {
   !:
     rts
 }
-// printu(byte zeropage(2) a, byte[] zeropage(6) op, byte zeropage(8) b, byte register(X) res)
+// printu(byte zeropage(2) a, byte[] zeropage(4) op, byte zeropage(6) b, byte register(X) res)
 printu: {
     .label a = 2
-    .label b = 8
-    .label op = 6
+    .label b = 6
+    .label op = 4
     lda #' '
     jsr print_char
     lda a
@@ -430,9 +430,9 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($b) b)
+// print_byte(byte zeropage(9) b)
 print_byte: {
-    .label b = $b
+    .label b = 9
     lda b
     lsr
     lsr
@@ -449,9 +449,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(6) str)
+// print_str(byte* zeropage(4) str)
 print_str: {
-    .label str = 6
+    .label str = 4
   b1:
     ldy #0
     lda (str),y
@@ -483,7 +483,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $c
+    .label dst = $a
     lda #<str
     sta dst
     lda #>str

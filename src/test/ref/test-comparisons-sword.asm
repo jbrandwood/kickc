@@ -12,11 +12,11 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_char_cursor = $a
-  .label print_line_cursor = 5
+  .label print_char_cursor = 8
+  .label print_line_cursor = $d
 main: {
-    .label w1 = $11
-    .label w2 = $13
+    .label w1 = $f
+    .label w2 = $11
     .label s = 4
     .label j = 3
     .label i = 2
@@ -105,12 +105,12 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(signed word zeropage($c) w1, signed word zeropage($13) w2, byte register(X) op)
+// compare(signed word zeropage($a) w1, signed word zeropage($11) w2, byte register(X) op)
 compare: {
-    .label w1 = $c
-    .label w2 = $13
-    .label ops = 7
-    .label r = 9
+    .label w1 = $a
+    .label w2 = $11
+    .label ops = 5
+    .label r = 7
     cpx #LT
     bne !b1+
     jmp b1
@@ -303,9 +303,9 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($c) w)
+// print_sword(signed word zeropage($a) w)
 print_sword: {
-    .label w = $c
+    .label w = $a
     lda w+1
     bmi b1
     lda #' '
@@ -326,9 +326,9 @@ print_sword: {
     jmp b2
 }
 // Print a word as HEX
-// print_word(word zeropage($c) w)
+// print_word(word zeropage($a) w)
 print_word: {
-    .label w = $c
+    .label w = $a
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -338,9 +338,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($e) b)
+// print_byte(byte zeropage($c) b)
 print_byte: {
-    .label b = $e
+    .label b = $c
     lda b
     lsr
     lsr
@@ -357,9 +357,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(7) str)
+// print_str(byte* zeropage(5) str)
 print_str: {
-    .label str = 7
+    .label str = 5
   b1:
     ldy #0
     lda (str),y
@@ -391,7 +391,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $f
+    .label dst = $d
     lda #<str
     sta dst
     lda #>str

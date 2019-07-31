@@ -12,8 +12,8 @@
   .const SIZEOF_POINT = 2
   // The number of points
   .const NUM_POINTS = 4
-  .label print_char_cursor = 5
-  .label print_line_cursor = 3
+  .label print_char_cursor = 9
+  .label print_line_cursor = 4
 // Initialize some points and print them
 main: {
     jsr init_points
@@ -22,8 +22,8 @@ main: {
 }
 // Print points
 print_points: {
-    .label point = $c
-    .label i = 2
+    .label point = 7
+    .label i = 6
     jsr print_cls
     lda #<$400
     sta print_line_cursor
@@ -116,9 +116,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(7) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 7
+    .label str = 2
     lda #<print_points.str
     sta str
     lda #>print_points.str
@@ -154,7 +154,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 9
+    .label dst = 4
     lda #<str
     sta dst
     lda #>str
@@ -177,8 +177,8 @@ memset: {
 }
 // Initialize points
 init_points: {
-    .label getPoint1_return = $e
-    .label pos = $b
+    .label getPoint1_return = 9
+    .label pos = 6
     lda #$a
     sta pos
     ldx #0

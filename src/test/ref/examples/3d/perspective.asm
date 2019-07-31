@@ -12,7 +12,7 @@
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  .label print_char_cursor = 6
+  .label print_char_cursor = 4
   .label print_line_cursor = 2
 main: {
     sei
@@ -110,9 +110,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 4
+    .label str = 2
   b1:
     ldy #0
     lda (str),y
@@ -221,7 +221,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 8
+    .label dst = 4
     lda #<str
     sta dst
     lda #>str
@@ -244,9 +244,9 @@ memset: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = $e
-    .label sqr = $a
-    .label add = $c
+    .label val = 6
+    .label sqr = 2
+    .label add = 4
     lda #<1
     sta add
     lda #>1

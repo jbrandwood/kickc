@@ -49,7 +49,7 @@ memset: {
     .const num = $3e8
     .label str = SCREEN
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta dst
     lda #>str

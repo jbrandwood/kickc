@@ -97,9 +97,9 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(9) w)
+// print_word(word zeropage(7) w)
 print_word: {
-    .label w = 9
+    .label w = 7
     lda w+1
     tax
     jsr print_byte
@@ -140,7 +140,7 @@ print_char: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = 9
+    .label return = 7
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe

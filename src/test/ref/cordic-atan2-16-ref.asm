@@ -10,18 +10,18 @@
   .label COLS = $d800
   .label CHARSET = $2000
   .label SCREEN = $2800
-  .label print_char_cursor = $a
+  .label print_char_cursor = 2
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label _12 = $10
-    .label xw = $1f
-    .label yw = $21
-    .label angle_w = $10
-    .label diff_sum = 6
-    .label screen = 8
-    .label screen_ref = 4
-    .label x = 3
-    .label y = 2
+    .label _12 = 6
+    .label xw = $15
+    .label yw = $17
+    .label angle_w = 6
+    .label diff_sum = $c
+    .label screen = $f
+    .label screen_ref = 2
+    .label x = $13
+    .label y = $e
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -100,9 +100,9 @@ main: {
     jmp b5
 }
 // Print a word as HEX
-// print_word(word zeropage(6) w)
+// print_word(word zeropage($c) w)
 print_word: {
-    .label w = 6
+    .label w = $c
     lda w+1
     tax
     lda #<$400
@@ -162,18 +162,18 @@ diff: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($1f) x, signed word zeropage($21) y)
+// atan2_16(signed word zeropage($15) x, signed word zeropage($17) y)
 atan2_16: {
-    .label _2 = $c
-    .label _7 = $e
-    .label yi = $c
-    .label xi = $e
-    .label angle = $10
-    .label xd = $14
-    .label yd = $12
-    .label return = $10
-    .label x = $1f
-    .label y = $21
+    .label _2 = $11
+    .label _7 = 4
+    .label yi = $11
+    .label xi = 4
+    .label angle = 6
+    .label xd = $a
+    .label yd = 8
+    .label return = 6
+    .label x = $15
+    .label y = $17
     lda y+1
     bmi !b1+
     jmp b1
@@ -349,15 +349,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($19) charset)
+// init_font_hex(byte* zeropage($f) charset)
 init_font_hex: {
-    .label _0 = $23
-    .label idx = $1e
-    .label proto_lo = $1b
-    .label charset = $19
-    .label c1 = $1d
-    .label proto_hi = $16
-    .label c = $18
+    .label _0 = $19
+    .label idx = $14
+    .label proto_lo = $11
+    .label charset = $f
+    .label c1 = $13
+    .label proto_hi = $c
+    .label c = $e
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

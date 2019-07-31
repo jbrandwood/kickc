@@ -57,12 +57,12 @@
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 8
-  .label irq_raster_next = 9
-  .label irq_sprite_ypos = $a
-  .label irq_sprite_ptr = $b
-  .label irq_cnt = $c
-  .label sin_idx = 4
+  .label render_screen_showing = 5
+  .label irq_raster_next = 6
+  .label irq_sprite_ypos = 7
+  .label irq_sprite_ptr = 8
+  .label irq_cnt = 9
+  .label sin_idx = 3
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
@@ -85,8 +85,8 @@ main: {
     .const toSpritePtr2_return = SIN_SPRITE/$40
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    .label xpos = 2
-    .label ypos = 3
+    .label xpos = 3
+    .label ypos = 2
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -129,7 +129,7 @@ main: {
     rts
 }
 loop: {
-    .label s = 5
+    .label s = 2
     lda #0
     sta sin_idx
   b2:
@@ -188,7 +188,7 @@ sprites_irq_init: {
 }
 // Setup the sprites
 sprites_init: {
-    .label xpos = 6
+    .label xpos = 3
     lda #$f
     sta SPRITES_ENABLE
     lda #0
@@ -219,7 +219,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 7
+    .label raster_sprite_gfx_modify = 4
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

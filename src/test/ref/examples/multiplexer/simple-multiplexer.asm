@@ -22,10 +22,10 @@
   .label SCREEN = $400
   .label SPRITE = $2000
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_sprite_msb = 6
-  .label plex_free_next = 3
-  .label plex_sprite_idx = 4
-  .label plex_show_idx = 5
+  .label plex_sprite_msb = 3
+  .label plex_free_next = 5
+  .label plex_sprite_idx = 9
+  .label plex_show_idx = $a
 main: {
     sei
     jsr init
@@ -35,8 +35,8 @@ main: {
 // The raster loop
 loop: {
     .label sin_idx = 2
-    .label plexFreeNextYpos1_return = $b
-    .label ss = 7
+    .label plexFreeNextYpos1_return = 8
+    .label ss = 4
     lda #0
     sta sin_idx
   b2:
@@ -96,7 +96,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $c
+    .label plex_sprite_idx2 = 8
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
@@ -163,9 +163,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $d
-    .label nxt_y = $e
-    .label m = 8
+    .label nxt_idx = 9
+    .label nxt_y = $a
+    .label m = 5
     lda #0
     sta m
   b1:
@@ -209,7 +209,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
-    .label xp = 9
+    .label xp = 6
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
     jsr plexInit

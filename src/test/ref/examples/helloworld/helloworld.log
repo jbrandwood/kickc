@@ -531,6 +531,9 @@ Uplifting [print_str] best 1423 combination zp ZP_WORD:4 [ print_str::str#2 prin
 Uplifting [RADIX] best 1423 combination 
 Uplifting [print_ln] best 1423 combination 
 Uplifting [main] best 1423 combination 
+Coalescing zero page register [ zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ] ] with [ zp ZP_WORD:2 [ print_line_cursor#6 print_line_cursor#1 ] ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ print_str::str#2 print_str::str#0 print_line_cursor#6 print_line_cursor#1 ]
+Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ print_char_cursor#10 print_char_cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -539,7 +542,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
+  .label print_char_cursor = 4
   .label print_line_cursor = 2
   // @begin
 bbegin:
@@ -621,9 +624,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 4
+    .label str = 2
     // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
     // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
@@ -727,8 +730,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (const string) main::str str = (string) "hello world!@"
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:6 11.0
-(byte*) print_char_cursor#10 print_char_cursor zp ZP_WORD:6 4.4
+(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:4 11.0
+(byte*) print_char_cursor#10 print_char_cursor zp ZP_WORD:4 4.4
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:2 16.5
 (byte*) print_line_cursor#6 print_line_cursor zp ZP_WORD:2 22.0
@@ -741,12 +744,11 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp ZP_WORD:4 22.0
-(byte*) print_str::str#2 str zp ZP_WORD:4 11.0
+(byte*) print_str::str#0 str zp ZP_WORD:2 22.0
+(byte*) print_str::str#2 str zp ZP_WORD:2 11.0
 
-zp ZP_WORD:2 [ print_line_cursor#6 print_line_cursor#1 ]
-zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
-zp ZP_WORD:6 [ print_char_cursor#10 print_char_cursor#1 ]
+zp ZP_WORD:2 [ print_str::str#2 print_str::str#0 print_line_cursor#6 print_line_cursor#1 ]
+zp ZP_WORD:4 [ print_char_cursor#10 print_char_cursor#1 ]
 
 
 FINAL ASSEMBLER
@@ -758,7 +760,7 @@ Score: 1235
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
+  .label print_char_cursor = 4
   .label print_line_cursor = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -824,9 +826,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(2) str)
 print_str: {
-    .label str = 4
+    .label str = 2
     // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
     // [15] phi (byte*) print_char_cursor#10 = (byte*) 1024 [phi:print_str->print_str::@1#0] -- pbuz1=pbuc1 
     lda #<$400

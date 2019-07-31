@@ -11,10 +11,10 @@ import java.util.*;
 
 /**
  * Use the call graph to coalesce zero page registers.
- * For all variables:
+ * For each live range equivalence class:
  *  - Look up through the call graph and avoid all variables declared in the scopes there
- *  - Go through the zero pages from low to high and try to coalesce with the lowest possible one.
- *
+ *  - Go through already handled live range equivalence classes and if any exist with no scope overlap with the call graph - try to coalesce
+ *  - Add to the list of already handled live range equivalence classes
  */
 public class Pass4ZeroPageCoalesceCallGraph extends Pass2Base {
 

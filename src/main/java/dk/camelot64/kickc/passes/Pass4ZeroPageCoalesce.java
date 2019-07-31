@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -54,7 +55,22 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
    static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Set<String> unknownFragments, Program program) {
-      return canCoalesceVolatile(ec1, ec2, program) && canCoalesceThreads(ec1, ec2, threadHeads, program) && canCoalesceClobber(ec1, ec2, unknownFragments, program);
+      return
+            canCoalesceNotEqual(ec1, ec2) &&
+                  canCoalesceVolatile(ec1, ec2, program) &&
+                  canCoalesceThreads(ec1, ec2, threadHeads, program) &&
+                  canCoalesceClobber(ec1, ec2, unknownFragments, program);
+   }
+
+   /**
+    * Determines if two lice range equivalence classes are candidates for coalescing by checking that they are not the same
+    *
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   private static boolean canCoalesceNotEqual(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2) {
+      return !ec1.equals(ec2);
    }
 
    /**
@@ -161,4 +177,74 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
       return true;
    }
 
+
+   /**
+    * Try to coalesce two live range equivalence classes
+    *
+    * @param candidate The candidate for coalescing
+    * @param threadHeads The thread heads (get using {@link #getThreadHeads(Program)})
+    * @param unknownFragments Receives information about ASM fragments that can't be created during the coalescence).
+    * @param program The program.
+    * @return true if the coalescence succeeds and the program was updated. false otherwise.
+    */
+   public static boolean attemptCoalesce(LiveRangeEquivalenceClassCoalesceCandidate candidate, Collection<ScopeRef> threadHeads, Set<String> unknownFragments, Program program) {
+      LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = program.getLiveRangeEquivalenceClassSet();
+      List<LiveRangeEquivalenceClass> equivalenceClasses = liveRangeEquivalenceClassSet.getEquivalenceClasses();
+      if(equivalenceClasses.contains(candidate.getEc1()) && equivalenceClasses.contains(candidate.getEc2())) {
+         // Both equivalence classes still exist
+         if(Pass4ZeroPageCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), threadHeads, unknownFragments, program)) {
+            String scoreString = (candidate.getScore() == null) ? "" : (" - score: " + candidate.getScore());
+            program.getLog().append("Coalescing zero page register [ " + candidate.getEc1() + " ] with [ " + candidate.getEc2() + " ]" + scoreString);
+            liveRangeEquivalenceClassSet.consolidate(candidate.getEc1(), candidate.getEc2());
+            // Reset the program register allocation
+            program.getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
+            return true;
+         }
+      }
+      return false;
+   }
+
+
+   /**
+    * A pair of live range equivalence classes that are candidates for coalescing.
+    * The pair is unordered - meaning it is equal to the pair with the same classes in opposite order.
+    */
+   static class LiveRangeEquivalenceClassCoalesceCandidate {
+      private LiveRangeEquivalenceClass ec1;
+      private LiveRangeEquivalenceClass ec2;
+      private Integer score;
+
+      public LiveRangeEquivalenceClassCoalesceCandidate(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Integer score) {
+         this.ec1 = ec1;
+         this.ec2 = ec2;
+         this.score = score;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         LiveRangeEquivalenceClassCoalesceCandidate that = (LiveRangeEquivalenceClassCoalesceCandidate) o;
+         if(ec1.equals(that.ec1) && ec2.equals(that.ec2)) return true;
+         if(ec1.equals(that.ec2) && ec2.equals(that.ec1)) return true;
+         return false;
+      }
+
+      @Override
+      public int hashCode() {
+         return ec1.hashCode() + ec2.hashCode();
+      }
+
+      public Integer getScore() {
+         return score;
+      }
+
+      public LiveRangeEquivalenceClass getEc1() {
+         return ec1;
+      }
+
+      public LiveRangeEquivalenceClass getEc2() {
+         return ec2;
+      }
+   }
 }

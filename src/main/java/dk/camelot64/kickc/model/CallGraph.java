@@ -201,7 +201,7 @@ public class CallGraph {
    public static class CallBlock {
 
       /**
-       * The label of the scope. (Program scope has label "" and procedure scopes have their respective labels).
+       * The scope. The top level is represented by {@link ScopeRef#ROOT}
        */
       private ScopeRef scopeLabel;
 
@@ -282,7 +282,7 @@ public class CallGraph {
          private Integer callStatementIdx;
 
          /**
-          * The label of the called procedure.
+          * The called procedure (which is itself also a Scope).
           */
          private ProcedureRef procedure;
 

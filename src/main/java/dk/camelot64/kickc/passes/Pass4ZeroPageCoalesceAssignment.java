@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Coalesces zero page registers where their live ranges do not overlap.
- * This step tries to coalesce lvalues with rvalues for all assignments - saving code cycles & bytes code if successful.
+ * This step tries to coalesce lvalues with rvalues for all assignments - saving both cycles & bytes if successful.
  */
 public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
 
@@ -27,10 +27,10 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
          change = false;
          CoalesceLiveRangeEquivalenceClassScores equivalenceClassScores =
                new CoalesceLiveRangeEquivalenceClassScores(getProgram(), coalesceVarScores);
-         List<LiveRangeEquivalenceClassCoalesceCandidate> coalesceCandidates =
+         List<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> coalesceCandidates =
                equivalenceClassScores.getCoalesceCandidates();
-         for(LiveRangeEquivalenceClassCoalesceCandidate candidate : coalesceCandidates) {
-            change |= attemptCoalesce(candidate, threadHeads, unknownFragments);
+         for(Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate : coalesceCandidates) {
+            change |= Pass4ZeroPageCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram());
          }
       } while(change);
 
@@ -42,21 +42,6 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
       }
    }
 
-   private boolean attemptCoalesce(LiveRangeEquivalenceClassCoalesceCandidate candidate, Collection<ScopeRef> threadHeads, LinkedHashSet<String> unknownFragments) {
-      LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      List<LiveRangeEquivalenceClass> equivalenceClasses = liveRangeEquivalenceClassSet.getEquivalenceClasses();
-      if(equivalenceClasses.contains(candidate.getEc1()) && equivalenceClasses.contains(candidate.getEc2())) {
-         // Both equivalence classes still exist
-         if(Pass4ZeroPageCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), threadHeads, unknownFragments, getProgram())) {
-            getLog().append("Coalescing zero page register with common assignment [ " + candidate.getEc1() + " ] with [ " + candidate.getEc2()+ " ] - score: "+candidate.getScore());
-            liveRangeEquivalenceClassSet.consolidate(candidate.getEc1(), candidate.getEc2());
-            // Reset the program register allocation
-            getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
-            return true;
-         }
-      }
-      return false;
-   }
 
    /**
     * Scores for coalescing any pair of variables.
@@ -162,14 +147,14 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
        *
        * @return candidate pairs of live range equivalence classes for coalescing with a positive score
        */
-      public List<LiveRangeEquivalenceClassCoalesceCandidate> getCoalesceCandidates() {
-         ArrayList<LiveRangeEquivalenceClassCoalesceCandidate> candidates = new ArrayList<>();
+      public List<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> getCoalesceCandidates() {
+         ArrayList<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> candidates = new ArrayList<>();
          for(LiveRangeEquivalenceClass ec1 : scores.keySet()) {
             Map<LiveRangeEquivalenceClass, Integer> ec1Scores = scores.get(ec1);
             for(LiveRangeEquivalenceClass ec2 : ec1Scores.keySet()) {
                Integer score = ec1Scores.get(ec2);
-               LiveRangeEquivalenceClassCoalesceCandidate candidate =
-                     new LiveRangeEquivalenceClassCoalesceCandidate(ec1, ec2, score);
+               Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate =
+                     new Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(ec1, ec2, score);
                if(!candidates.contains(candidate)) {
                   candidates.add(candidate);
                }
@@ -177,50 +162,6 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
          }
          candidates.sort((o1, o2) -> (o2.getScore() - o1.getScore()));
          return candidates;
-      }
-
-   }
-
-   /**
-    * A pair of live range equivalence classes that are candidates for coalescing.
-    * The pair is unordered - meaning it is equal to the pair with the same classes in opposite order.
-    */
-   private static class LiveRangeEquivalenceClassCoalesceCandidate {
-      private LiveRangeEquivalenceClass ec1;
-      private LiveRangeEquivalenceClass ec2;
-      private Integer score;
-
-      public LiveRangeEquivalenceClassCoalesceCandidate(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Integer score) {
-         this.ec1 = ec1;
-         this.ec2 = ec2;
-         this.score = score;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if(this == o) return true;
-         if(o == null || getClass() != o.getClass()) return false;
-         LiveRangeEquivalenceClassCoalesceCandidate that = (LiveRangeEquivalenceClassCoalesceCandidate) o;
-         if(ec1.equals(that.ec1) && ec2.equals(that.ec2)) return true;
-         if(ec1.equals(that.ec2) && ec2.equals(that.ec1)) return true;
-         return false;
-      }
-
-      @Override
-      public int hashCode() {
-         return ec1.hashCode() + ec2.hashCode();
-      }
-
-      public Integer getScore() {
-         return score;
-      }
-
-      public LiveRangeEquivalenceClass getEc1() {
-         return ec1;
-      }
-
-      public LiveRangeEquivalenceClass getEc2() {
-         return ec2;
       }
    }
 

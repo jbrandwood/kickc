@@ -48,20 +48,15 @@ public class Pass4ZeroPageCoalesceExhaustive extends Pass2Base {
    private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Collection<ScopeRef> threadHeads, Set<String> unknownFragments) {
       for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(Pass4ZeroPageCoalesce.canCoalesce(thisEquivalenceClass, otherEquivalenceClass, threadHeads, unknownFragments, getProgram())) {
-                  getLog().append("Coalescing zero page register [ " + thisEquivalenceClass + " ] with [ " + otherEquivalenceClass + " ]");
-                  liveRangeEquivalenceClassSet.consolidate(thisEquivalenceClass, otherEquivalenceClass);
-                  // Reset the program register allocation
-                  getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
-                  return true;
-               }
+            Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate = new Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(thisEquivalenceClass, otherEquivalenceClass, null);
+            boolean modified = Pass4ZeroPageCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram());
+            if(modified) {
+               return true;
             }
          }
       }
       return false;
    }
-
 
 
 }

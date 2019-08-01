@@ -28,7 +28,7 @@ public class ProgramScope extends Scope {
       if(liveRangeEquivalenceClassSet != null) {
          out.append("\n");
          for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            out.append(liveRangeEquivalenceClass);
+            out.append(liveRangeEquivalenceClass.toString());
             out.append("\n");
          }
       }

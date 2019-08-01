@@ -1,12 +1,11 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.*;
 
 /**
  * Finds register weights for all variables.
@@ -17,24 +16,20 @@ import dk.camelot64.kickc.model.symbols.Variable;
  * <p>
  * Based on ComputeWeight from http://compilers.cs.ucla.edu/fernando/projects/soc/reports/short_tech.pdf
  */
-public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
+public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegisterWeights> {
 
-   private NaturalLoopSet loopSet;
-   private VariableRegisterWeights variableRegisterWeights;
-   private LiveRangeVariables liveRangeVariables;
-
-   public Pass3VariableRegisterWeightAnalysis(Program program) {
+   public PassNCalcVariableRegisterWeight(Program program) {
       super(program);
    }
 
    /**
     * Find register weights for all variables
     */
-   public void findWeights() {
-
-      variableRegisterWeights = new VariableRegisterWeights();
-      loopSet = getProgram().getLoopSet();
-      liveRangeVariables = getProgram().getLiveRangeVariables();
+   @Override
+   public VariableRegisterWeights calculate() {
+      NaturalLoopSet loopSet = getProgram().getLoopSet();
+      LiveRangeVariables liveRangeVariables = getProgram().getLiveRangeVariables();
+      VariableRegisterWeights variableRegisterWeights = new VariableRegisterWeights();
 
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
@@ -44,47 +39,44 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
                   VariableRef philVariable = phiVariable.getVariable();
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      if(phiRValue.getrValue() instanceof VariableRef) {
-                        double w = addWeight(philVariable, phiRValue.getPredecessor());
+                        double w = addWeight(philVariable, phiRValue.getPredecessor(), variableRegisterWeights, loopSet, liveRangeVariables);
                         //log.append("Definition of " + philVariable + " w+:" + w + " - [" + statement.getIndex()+"]");
                      }
                   }
                   // Add weights for each usage of a variable
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     addUsageWeightRValue(phiRValue.getrValue(), statement, phiRValue.getPredecessor());
+                     addUsageWeightRValue(phiRValue.getrValue(), statement, phiRValue.getPredecessor(), variableRegisterWeights, loopSet, liveRangeVariables);
                   }
                }
             } else if(statement instanceof StatementAssignment) {
                // Add weights for the definition of the variable
-               addUsageWeightRValue(((StatementAssignment) statement).getlValue(), statement, block.getLabel());
+               addUsageWeightRValue(((StatementAssignment) statement).getlValue(), statement, block.getLabel(), variableRegisterWeights, loopSet, liveRangeVariables);
                // Add weights for each usage of variables
-               addUsageWeightRValue(((StatementAssignment) statement).getrValue1(), statement, block.getLabel());
-               addUsageWeightRValue(((StatementAssignment) statement).getrValue2(), statement, block.getLabel());
+               addUsageWeightRValue(((StatementAssignment) statement).getrValue1(), statement, block.getLabel(), variableRegisterWeights, loopSet, liveRangeVariables);
+               addUsageWeightRValue(((StatementAssignment) statement).getrValue2(), statement, block.getLabel(), variableRegisterWeights, loopSet, liveRangeVariables);
             } else if(statement instanceof StatementConditionalJump) {
                // Add weights for each usage of variables
-               addUsageWeightRValue(((StatementConditionalJump) statement).getrValue1(), statement, block.getLabel());
-               addUsageWeightRValue(((StatementConditionalJump) statement).getrValue2(), statement, block.getLabel());
+               addUsageWeightRValue(((StatementConditionalJump) statement).getrValue1(), statement, block.getLabel(), variableRegisterWeights, loopSet, liveRangeVariables);
+               addUsageWeightRValue(((StatementConditionalJump) statement).getrValue2(), statement, block.getLabel(), variableRegisterWeights, loopSet, liveRangeVariables);
             }
          }
       }
-
-      getProgram().setVariableRegisterWeights(variableRegisterWeights);
-
+      return variableRegisterWeights;
    }
 
-   private void addUsageWeightRValue(Value rValue, Statement statement, LabelRef block) {
+   private static void addUsageWeightRValue(Value rValue, Statement statement, LabelRef block, VariableRegisterWeights variableRegisterWeights, NaturalLoopSet loopSet, LiveRangeVariables liveRangeVariables) {
       if(rValue instanceof VariableRef) {
-         double w = addWeight((VariableRef) rValue, block);
+         double w = addWeight((VariableRef) rValue, block, variableRegisterWeights, loopSet, liveRangeVariables);
          //log.append("Usage of " + rValue + " w+:" + w + " - [" + statement.getIndex()+"]");
       } else if(rValue instanceof PointerDereferenceSimple) {
-         addUsageWeightRValue(((PointerDereferenceSimple) rValue).getPointer(), statement, block);
+         addUsageWeightRValue(((PointerDereferenceSimple) rValue).getPointer(), statement, block, variableRegisterWeights, loopSet, liveRangeVariables);
       } else if(rValue instanceof PointerDereferenceIndexed) {
-         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getPointer(), statement, block);
-         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getIndex(), statement, block);
+         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getPointer(), statement, block, variableRegisterWeights, loopSet, liveRangeVariables);
+         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getIndex(), statement, block, variableRegisterWeights, loopSet, liveRangeVariables);
       }
    }
 
-   private double addWeight(VariableRef variable, LabelRef block) {
-      Variable var = getProgram().getScope().getVariable(variable);
+   private static double addWeight(VariableRef variable, LabelRef block, VariableRegisterWeights variableRegisterWeights, NaturalLoopSet loopSet, LiveRangeVariables liveRangeVariables) {
       int depth = loopSet.getMaxLoopDepth(block);
       double w = 1.0 + Math.pow(10.0, depth);
       LiveRange liveRange = liveRangeVariables.getLiveRange(variable);

@@ -51,6 +51,8 @@ public class Program {
    private ProgramScope scope;
    /** The control flow graph. PASS 1-5 (DYNAMIC) */
    private ControlFlowGraph graph;
+   /** Registers potentially usable as allocation for each live range equivalence class. PASS 4 (DYNAMIC) */
+   private RegisterPotentials registerPotentials;
    /** Live range equivalence classes containing variables that do not have overlapping live ranges. PASS 3-5 (DYNAMIC) */
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
    /** The 6502 ASM program. PASS 4-5 (DYNAMIC) */
@@ -67,22 +69,19 @@ public class Program {
    private DominatorsGraph dominators;
    /** Cached information about symbols. Contains a symbol table cache for fast access. PASS 3-4 (CACHED ON-DEMAND) */
    private SymbolInfos symbolInfos;
-   /** Cached phi transitions into each block. PASS 4 (CACHED) */
+   /** Cached phi transitions into each block. PASS 4 (CACHED ON-DEMAND) */
    private Map<LabelRef, PhiTransitions> phiTransitions;
-   /** The live ranges of all variables. PASS 3-4 (CACHED) */
+   /** The live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
    private LiveRangeVariables liveRangeVariables;
-   /** The effective live ranges of all variables. PASS 3-4 (CACHED) */
+   /** The effective live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
    private LiveRangeVariablesEffective liveRangeVariablesEffective;
-   /** Registers potentially usable as allocation for each live range equivalence class. PASS 4 (CACHED) */
-   private RegisterPotentials registerPotentials;
-   /** Separation of live range equivalence classes into scopes - used for register uplift. PASS 4 (CACHED) */
+   /** Separation of live range equivalence classes into scopes - used for register uplift. PASS 4 (CACHED ON-DEMAND) */
    private RegisterUpliftProgram registerUpliftProgram;
-
-   /** Cached information about which block is each statement a part of. PASS 2U-5 (CACHED) */
+   /** Cached information about which block is each statement a part of. PASS 2U-5 (CACHED ON-DEMAND) */
    private StatementInfos statementInfos;
-   /** Information about loops. PASS 2U-5 (CACHED) */
+   /** Information about loops. PASS 2U-5 (CACHED ON-DEMAND) */
    private NaturalLoopSet loopSet;
-   /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED) */
+   /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
 
    public Program() {
@@ -279,22 +278,28 @@ public class Program {
       this.phiTransitions = null;
    }
 
-
-   public NaturalLoopSet getLoopSet() {
-      return loopSet;
+   public LiveRangeVariables getLiveRangeVariables() {
+      if(liveRangeVariables==null)
+         this.liveRangeVariables = new PassNCalcLiveRangeVariables(this).calculate();
+      return liveRangeVariables;
    }
 
-   public void setLoopSet(NaturalLoopSet loopSet) {
-      this.loopSet = loopSet;
+   public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
+      this.liveRangeVariables = liveRangeVariables;
    }
 
+   public void clearLiveRangeVariables() {
+      this.liveRangeVariables = null;
+   }
 
    public StatementInfos getStatementInfos() {
+      if(statementInfos==null)
+         this.statementInfos = new PassNCalcStatementInfos(this).calculate();
       return statementInfos;
    }
 
-   public void setStatementInfos(StatementInfos statementInfos) {
-      this.statementInfos = statementInfos;
+   public void clearStatementInfos() {
+      this.statementInfos = null;
    }
 
    public SymbolInfos getSymbolInfos() {
@@ -303,20 +308,40 @@ public class Program {
       return symbolInfos;
    }
 
-   public LiveRangeVariables getLiveRangeVariables() {
-      return liveRangeVariables;
-   }
-
-   public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
-      this.liveRangeVariables = liveRangeVariables;
-   }
-
    public LiveRangeVariablesEffective getLiveRangeVariablesEffective() {
+      if(liveRangeVariablesEffective==null)
+         this.liveRangeVariablesEffective = new PassNCalcLiveRangesEffective(this).calculate();
       return liveRangeVariablesEffective;
    }
 
-   public void setLiveRangeVariablesEffective(LiveRangeVariablesEffective liveRangeVariablesEffective) {
-      this.liveRangeVariablesEffective = liveRangeVariablesEffective;
+   public void clearLiveRangeVariablesEffective() {
+      this.liveRangeVariablesEffective = null;
+   }
+
+   public RegisterUpliftProgram getRegisterUpliftProgram() {
+      if(registerUpliftProgram==null)
+         this.registerUpliftProgram = new PassNCalcRegisterUpliftProgram(this).calculate();
+      return registerUpliftProgram;
+   }
+
+   public NaturalLoopSet getLoopSet() {
+      if(loopSet==null)
+         this.loopSet = new PassNCalcLoopSet(this).calculate();
+      return loopSet;
+   }
+
+   public void clearLoopSet() {
+      this.loopSet = null;
+   }
+
+   public VariableRegisterWeights getVariableRegisterWeights() {
+      if(variableRegisterWeights==null)
+         this.variableRegisterWeights = new PassNCalcVariableRegisterWeight(this).calculate();
+      return variableRegisterWeights;
+   }
+
+   public VariableRegisterWeights getOrNullVariableRegisterWeights() {
+      return variableRegisterWeights;
    }
 
    public LiveRangeEquivalenceClassSet getLiveRangeEquivalenceClassSet() {
@@ -327,28 +352,12 @@ public class Program {
       this.liveRangeEquivalenceClassSet = liveRangeEquivalenceClassSet;
    }
 
-   public VariableRegisterWeights getVariableRegisterWeights() {
-      return variableRegisterWeights;
-   }
-
-   public void setVariableRegisterWeights(VariableRegisterWeights variableRegisterWeights) {
-      this.variableRegisterWeights = variableRegisterWeights;
-   }
-
    public RegisterPotentials getRegisterPotentials() {
       return registerPotentials;
    }
 
    public void setRegisterPotentials(RegisterPotentials registerPotentials) {
       this.registerPotentials = registerPotentials;
-   }
-
-   public RegisterUpliftProgram getRegisterUpliftProgram() {
-      return registerUpliftProgram;
-   }
-
-   public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {
-      this.registerUpliftProgram = registerUpliftProgram;
    }
 
    public Collection<VariableRef> getEarlyIdentifiedConstants() {

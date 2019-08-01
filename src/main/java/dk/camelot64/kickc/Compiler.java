@@ -315,9 +315,9 @@ public class Compiler {
       List<PassStep> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
       loopUnrolling.add(() -> { program.clearVariableReferenceInfos(); return false; });
-      loopUnrolling.add(new PassNStatementInfos(program));
+      loopUnrolling.add(() -> { program.clearStatementInfos(); return false; });
       loopUnrolling.add(() -> { program.clearDominators(); return false; });
-      loopUnrolling.add(new PassNLoopAnalysis(program));
+      loopUnrolling.add(() -> { program.clearLoopSet(); return false; });
       loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
 
@@ -422,9 +422,8 @@ public class Compiler {
 
       //getLog().setVerboseLiveRanges(true);
 
-      new PassNStatementInfos(program).execute();
+      program.clearStatementInfos();
       program.clearVariableReferenceInfos();
-      new Pass3LiveRangesAnalysis(program).findLiveRanges();
       //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
       //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
@@ -439,10 +438,10 @@ public class Compiler {
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
       program.clearCallGraph();
-      new PassNStatementInfos(program).execute();
+      program.clearStatementInfos();
       program.clearVariableReferenceInfos();
-      new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
+      program.clearLiveRangeVariables();
+      program.clearLiveRangeVariablesEffective();
       pass2AssertSSA();
 
       getLog().append("\nFINAL CONTROL FLOW GRAPH");
@@ -463,7 +462,7 @@ public class Compiler {
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("NATURAL LOOPS");
       }
-      new PassNLoopAnalysis(program).step();
+      program.clearLoopSet();
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append(program.getLoopSet().toString());
       }
@@ -477,7 +476,7 @@ public class Compiler {
       }
 
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
-      new Pass3VariableRegisterWeightAnalysis(program).findWeights();
+      program.getVariableRegisterWeights();
       getLog().append(program.getScope().toString(program, Variable.class));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
@@ -502,7 +501,6 @@ public class Compiler {
 
       // Find register uplift scopes
       getLog().append("REGISTER UPLIFT SCOPES");
-      new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
       getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations

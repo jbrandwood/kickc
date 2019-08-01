@@ -18,13 +18,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class Pass3LiveRangesAnalysis extends Pass2Base {
+public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariables> {
 
-   public Pass3LiveRangesAnalysis(Program program) {
+   public PassNCalcLiveRangeVariables(Program program) {
       super(program);
    }
 
-   public void findLiveRanges() {
+   @Override
+   public LiveRangeVariables calculate() {
       LiveRangeVariables liveRanges = new LiveRangeVariables(getProgram());
       boolean propagating;
       do {
@@ -36,6 +37,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
             getLog().append(getProgram().getGraph().toString(getProgram()));
          }
       } while(propagating);
+      return liveRanges;
    }
 
    /**

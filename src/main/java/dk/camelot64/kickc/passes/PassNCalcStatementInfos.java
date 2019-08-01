@@ -11,9 +11,9 @@ import java.util.LinkedHashMap;
 /**
  * Identify the block for each statement.
  */
-public class PassNStatementInfos extends Pass2SsaOptimization {
+public class PassNCalcStatementInfos extends PassNCalcBase<StatementInfos> {
 
-   public PassNStatementInfos(Program program) {
+   public PassNCalcStatementInfos(Program program) {
       super(program);
    }
 
@@ -22,7 +22,7 @@ public class PassNStatementInfos extends Pass2SsaOptimization {
     * Create map from statement index to block
     */
    @Override
-   public boolean step() {
+   public StatementInfos calculate() {
       LinkedHashMap<Integer, ControlFlowBlock> stmtBlocks = new LinkedHashMap<>();
       LinkedHashMap<Integer, Statement> stmtIdx = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
@@ -31,8 +31,7 @@ public class PassNStatementInfos extends Pass2SsaOptimization {
             stmtIdx.put(statement.getIndex(), statement);
          }
       }
-      getProgram().setStatementInfos(new StatementInfos(getProgram(), stmtBlocks, stmtIdx));
-      return false;
+      return new StatementInfos(getProgram(), stmtBlocks, stmtIdx);
    }
 
 

@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.passes.PassNLoopAnalysis;
+import dk.camelot64.kickc.passes.PassNCalcLoopSet;
 
 import java.util.*;
 
 /**
  * A set of natural loops in a control flow graph.
  * <p>For definitions and more see http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
- * <p>Created by {@link PassNLoopAnalysis}
+ * <p>Created by {@link PassNCalcLoopSet}
  */
 public class NaturalLoopSet {
 

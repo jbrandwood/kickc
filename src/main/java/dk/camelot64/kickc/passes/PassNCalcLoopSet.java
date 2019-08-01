@@ -11,12 +11,11 @@ import java.util.*;
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
  */
-public class PassNLoopAnalysis extends Pass2SsaOptimization {
+public class PassNCalcLoopSet extends PassNCalcBase<NaturalLoopSet> {
 
-   public PassNLoopAnalysis(Program program) {
+   public PassNCalcLoopSet(Program program) {
       super(program);
    }
-
 
    /**
     * Finds loops and nested loops in the control flow graph.
@@ -25,7 +24,7 @@ public class PassNLoopAnalysis extends Pass2SsaOptimization {
     * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
     */
    @Override
-   public boolean step() {
+   public NaturalLoopSet calculate() {
       DominatorsGraph dominators = getProgram().getDominators();
       Collection<ControlFlowBlock> blocks = getGraph().getAllBlocks();
 
@@ -74,8 +73,7 @@ public class PassNLoopAnalysis extends Pass2SsaOptimization {
       while(coalesceMore) {
          coalesceMore = coalesceLoops(loopSet);
       }
-      getProgram().setLoopSet(loopSet);
-      return false;
+      return loopSet;
    }
 
    /**

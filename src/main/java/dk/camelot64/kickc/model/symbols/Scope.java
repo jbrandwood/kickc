@@ -324,7 +324,7 @@ public abstract class Scope implements Symbol {
    }
 
    public String toString(Program program, Class symbolClass) {
-      VariableRegisterWeights registerWeights = program.getVariableRegisterWeights();
+      VariableRegisterWeights registerWeights = program.getOrNullVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);

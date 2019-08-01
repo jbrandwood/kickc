@@ -1,21 +1,24 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
 /**
  * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
  */
-public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
+public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariablesEffective> {
+
+   public PassNCalcLiveRangesEffective(Program program) {
+      super(program);
+   }
 
    /**
     * Call-paths for all procedures.
@@ -32,18 +35,14 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
     */
    private VariableReferenceInfos referenceInfo;
 
-
-   public Pass3LiveRangesEffectiveAnalysis(Program program) {
-      super(program);
-   }
-
-   public void findLiveRangesEffective() {
+   @Override
+   public LiveRangeVariablesEffective calculate() {
       this.liveRangeVariables = getProgram().getLiveRangeVariables();
       this.referenceInfo = getProgram().getVariableReferenceInfos();
       this.procedureCallPaths = new LinkedHashMap<>();
       populateProcedureCallPaths();
       LiveRangeVariablesEffective aliveEffective = new LiveRangeVariablesEffective(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo);
-      getProgram().setLiveRangeVariablesEffective(aliveEffective);
+      return aliveEffective;
       //getLog().append("Calculated effective variable live ranges");
    }
 

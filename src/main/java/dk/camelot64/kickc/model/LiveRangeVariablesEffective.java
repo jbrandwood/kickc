@@ -8,13 +8,14 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
+import dk.camelot64.kickc.passes.PassNCalcLiveRangesEffective;
 
 import java.util.*;
 
 /**
  * Effective variable live ranges for all statements.
  * (Including variables alive in calling methods).
- * Created by {@link dk.camelot64.kickc.passes.Pass3LiveRangesEffectiveAnalysis}
+ * Created by {@link PassNCalcLiveRangesEffective}
  */
 public class LiveRangeVariablesEffective {
 

@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.passes.Pass3LiveRangesAnalysis;
+import dk.camelot64.kickc.passes.PassNCalcLiveRangeVariables;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Live ranges for all variables.
- * Created by {@link Pass3LiveRangesAnalysis}
+ * Created by {@link PassNCalcLiveRangeVariables}
  */
 public class LiveRangeVariables {
 

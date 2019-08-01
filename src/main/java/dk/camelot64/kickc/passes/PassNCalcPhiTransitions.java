@@ -6,23 +6,25 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Generate phi-transitions for all phi-block transitions
  */
-public class Pass4PhiTransitions extends Pass2Base {
+public class PassNCalcPhiTransitions extends PassNCalcBase<Map<LabelRef, PhiTransitions>> {
 
-   public Pass4PhiTransitions(Program program) {
+   public PassNCalcPhiTransitions(Program program) {
       super(program);
    }
 
-   public void generate() {
+   @Override
+   public Map<LabelRef, PhiTransitions> calculate() {
       LinkedHashMap<LabelRef, PhiTransitions> phiTransitions = new LinkedHashMap<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          PhiTransitions blockTransitions = new PhiTransitions(getProgram(), block);
          phiTransitions.put(block.getLabel(), blockTransitions);
       }
-      getProgram().setPhiTransitions(phiTransitions);
+      return phiTransitions;
    }
 
 

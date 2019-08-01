@@ -6,9 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.passes.PassNCalcCallGraph;
-import dk.camelot64.kickc.passes.PassNCalcVariableReferenceInfos;
-import dk.camelot64.kickc.passes.PassNDominatorsAnalysis;
+import dk.camelot64.kickc.passes.*;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -65,9 +63,9 @@ public class Program {
    private CallGraph callGraph;
    /** Cached information about the variables referenced by blocks/statements. PASS 1-4 (CACHED ON-DEMAND) */
    private VariableReferenceInfos variableReferenceInfos;
-   /** Information about dominators of all blocks. PASS 2U-4 (CACHED) */
+   /** Information about dominators of all blocks. PASS 2U-4 (CACHED ON-DEMAND) */
    private DominatorsGraph dominators;
-   /** Cached information about symbols. Contains a symbol table cache for fast access. PASS 3-4 (CACHED) */
+   /** Cached information about symbols. Contains a symbol table cache for fast access. PASS 3-4 (CACHED ON-DEMAND) */
    private SymbolInfos symbolInfos;
    /** Cached phi transitions into each block. PASS 4 (CACHED) */
    private Map<LabelRef, PhiTransitions> phiTransitions;
@@ -168,14 +166,6 @@ public class Program {
 
    public void setStructUnwinding(StructUnwinding structUnwinding) {
       this.structUnwinding = structUnwinding;
-   }
-
-   public Map<LabelRef, PhiTransitions> getPhiTransitions() {
-      return phiTransitions;
-   }
-
-   public void setPhiTransitions(Map<LabelRef, PhiTransitions> phiTransitions) {
-      this.phiTransitions = phiTransitions;
    }
 
    public List<Comment> getFileComments() {
@@ -279,6 +269,17 @@ public class Program {
       this.dominators = null;
    }
 
+   public Map<LabelRef, PhiTransitions> getPhiTransitions() {
+      if(phiTransitions==null)
+         this.phiTransitions = new PassNCalcPhiTransitions(this).calculate();
+      return phiTransitions;
+   }
+
+   public void clearPhiTransitions() {
+      this.phiTransitions = null;
+   }
+
+
    public NaturalLoopSet getLoopSet() {
       return loopSet;
    }
@@ -297,11 +298,9 @@ public class Program {
    }
 
    public SymbolInfos getSymbolInfos() {
+      if(symbolInfos==null)
+         this.symbolInfos = new PassNCalcSymbolInfos(this).calculate();
       return symbolInfos;
-   }
-
-   public void setSymbolInfos(SymbolInfos symbolInfos) {
-      this.symbolInfos = symbolInfos;
    }
 
    public LiveRangeVariables getLiveRangeVariables() {

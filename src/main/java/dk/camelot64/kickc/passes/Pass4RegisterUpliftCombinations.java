@@ -8,7 +8,6 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.*;
@@ -110,7 +109,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       }
       // Generate ASM
       try {
-         new Pass4PhiTransitions(program).generate();
+         program.clearPhiTransitions();
          new Pass4CodeGeneration(program, false).generate();
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          unknownFragments.add(e.getFragmentSignature());

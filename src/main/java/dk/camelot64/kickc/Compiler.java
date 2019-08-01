@@ -441,7 +441,6 @@ public class Compiler {
       program.clearCallGraph();
       new PassNStatementInfos(program).execute();
       program.clearVariableReferenceInfos();
-      new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
       pass2AssertSSA();
@@ -485,7 +484,6 @@ public class Compiler {
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
-      new Pass4PhiTransitions(program).generate();
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
@@ -532,7 +530,7 @@ public class Compiler {
       new Pass4AssertZeropageAllocation(program).check();
 
       // Final ASM code generation before optimization
-      new Pass4PhiTransitions(program).generate();
+      program.clearPhiTransitions();
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
 

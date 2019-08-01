@@ -38,8 +38,8 @@ public class Compiler {
       this.upliftCombinations = upliftCombinations;
    }
 
-   void setEnableZeroPageCoalasce(boolean optimizeZeroPageCoalesce) {
-      this.enableZeroPageCoalasce = optimizeZeroPageCoalesce;
+   void enableZeroPageCoalasce() {
+      this.enableZeroPageCoalasce = true;
    }
 
    void setTargetPlatform(TargetPlatform targetPlatform) {
@@ -263,8 +263,8 @@ public class Compiler {
       }
    }
 
-   private List<Pass2SsaOptimization> getPass2Optimizations() {
-      List<Pass2SsaOptimization> optimizations = new ArrayList<>();
+   private List<PassStep> getPass2Optimizations() {
+      List<PassStep> optimizations = new ArrayList<>();
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNAddInitializerValueListTypeCasts(program));
@@ -276,7 +276,7 @@ public class Compiler {
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(new PassNVariableReferenceInfosClear(program));
+      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
@@ -307,16 +307,16 @@ public class Compiler {
    }
 
    private void pass2Optimize() {
-      List<Pass2SsaOptimization> optimizations = getPass2Optimizations();
+      List<PassStep> optimizations = getPass2Optimizations();
       pass2Execute(optimizations);
    }
 
    private void pass2UnrollLoops() {
-      List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
+      List<PassStep> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
-      loopUnrolling.add(new PassNVariableReferenceInfosClear(program));
+      loopUnrolling.add(() -> { program.clearVariableReferenceInfos(); return false; });
       loopUnrolling.add(new PassNStatementInfos(program));
-      loopUnrolling.add(new PassNDominatorsAnalysis(program));
+      loopUnrolling.add(() -> { program.clearDominators(); return false; });
       loopUnrolling.add(new PassNLoopAnalysis(program));
       loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
@@ -339,9 +339,9 @@ public class Compiler {
 
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
-      List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
+      List<PassStep> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
-      constantOptimizations.add(new PassNVariableReferenceInfosClear(program));
+      constantOptimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
@@ -357,12 +357,12 @@ public class Compiler {
     *
     * @param optimizations The optimizations to repeat
     */
-   private void pass2Execute(List<Pass2SsaOptimization> optimizations) {
+   private void pass2Execute(List<PassStep> optimizations) {
       boolean ssaOptimized = true;
       while(ssaOptimized) {
          pass2AssertSSA();
          ssaOptimized = false;
-         for(Pass2SsaOptimization optimization : optimizations) {
+         for(PassStep optimization : optimizations) {
             boolean stepOptimized = true;
             while(stepOptimized) {
                stepOptimized = optimization.step();
@@ -378,9 +378,9 @@ public class Compiler {
     * @param optimizations The optimizations
     * @return true if any step performed an optimization
     */
-   private boolean pass2ExecuteOnce(List<Pass2SsaOptimization> optimizations) {
+   private boolean pass2ExecuteOnce(List<PassStep> optimizations) {
       boolean ssaOptimized = false;
-      for(Pass2SsaOptimization optimization : optimizations) {
+      for(PassStep optimization : optimizations) {
          pass2AssertSSA();
          boolean stepOptimized = optimization.step();
          ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
@@ -388,7 +388,7 @@ public class Compiler {
       return ssaOptimized;
    }
 
-   private boolean pass2LogOptimization(boolean ssaOptimized, Pass2SsaOptimization optimization, boolean stepOptimized) {
+   private boolean pass2LogOptimization(boolean ssaOptimized, PassStep optimization, boolean stepOptimized) {
       if(stepOptimized) {
          getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
          ssaOptimized = true;
@@ -456,7 +456,7 @@ public class Compiler {
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("DOMINATORS");
       }
-      new PassNDominatorsAnalysis(program).step();
+      program.clearDominators();
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append(program.getDominators().toString());
       }

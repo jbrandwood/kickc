@@ -13,7 +13,7 @@ import java.util.*;
  * Optimization on Single Static Assignment form (Control Flow Graph) performed during Compiler Pass 2.
  * Optimizations are performed repeatedly until none of them yield any result
  */
-public abstract class Pass2SsaOptimization extends Pass1Base {
+public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep {
 
    public Pass2SsaOptimization(Program program) {
       super(program);

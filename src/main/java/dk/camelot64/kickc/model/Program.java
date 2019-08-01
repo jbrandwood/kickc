@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.PassNCalcCallGraph;
 import dk.camelot64.kickc.passes.PassNCalcVariableReferenceInfos;
+import dk.camelot64.kickc.passes.PassNDominatorsAnalysis;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -268,13 +269,14 @@ public class Program {
       this.variableReferenceInfos = null;
    }
 
-
    public DominatorsGraph getDominators() {
+      if(dominators==null)
+         this.dominators = new PassNDominatorsAnalysis(this).calculate();
       return dominators;
    }
 
-   public void setDominators(DominatorsGraph dominators) {
-      this.dominators = dominators;
+   public void clearDominators() {
+      this.dominators = null;
    }
 
    public NaturalLoopSet getLoopSet() {
@@ -404,6 +406,5 @@ public class Program {
    public void setLog(CompileLog log) {
       this.log = log;
    }
-
 
 }

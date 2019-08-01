@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 /**
  * Pass 1 (before SSA optimizations) base class
  */
-public abstract class Pass1Base {
+public abstract class Pass1Base implements PassStep {
 
    private Program program;
 

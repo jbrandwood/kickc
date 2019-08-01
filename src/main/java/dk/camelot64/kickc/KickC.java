@@ -208,7 +208,7 @@ public class KickC implements Callable<Void> {
          }
 
          if(optimizeZeroPageCoalesce) {
-            compiler.setEnableZeroPageCoalasce(true);
+            compiler.enableZeroPageCoalasce();
          }
 
          System.out.println("Compiling " + kcFile);

@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.DominatorsBlock;
+import dk.camelot64.kickc.model.DominatorsGraph;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
@@ -8,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Finds the dominators for the control flow graph. */
-public class PassNDominatorsAnalysis extends Pass2SsaOptimization {
+public class PassNDominatorsAnalysis extends PassNCalcBase<DominatorsGraph> {
 
    public PassNDominatorsAnalysis(Program program) {
       super(program);
    }
+
 
    /**
     * Analyse the control flow graph to find dominators for all blocks.
@@ -22,7 +26,7 @@ public class PassNDominatorsAnalysis extends Pass2SsaOptimization {
     * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
     */
    @Override
-   public boolean step() {
+   public DominatorsGraph calculate() {
       DominatorsGraph dominatorsGraph = new DominatorsGraph();
 
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
@@ -74,8 +78,7 @@ public class PassNDominatorsAnalysis extends Pass2SsaOptimization {
          }
 
       } while(change);
-      getProgram().setDominators(dominatorsGraph);
-      return false;
+      return dominatorsGraph;
    }
 
 

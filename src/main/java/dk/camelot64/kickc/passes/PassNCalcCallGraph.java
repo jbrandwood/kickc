@@ -12,15 +12,13 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 /** Finds the call graph for the control flow graph - identifies all calls in all scopes and creates a graph from these. */
-public class PassNCallGraphAnalysis extends Pass2SsaOptimization {
+public class PassNCalcCallGraph extends PassNCalcBase<CallGraph> {
 
-
-   public PassNCallGraphAnalysis(Program program) {
+   public PassNCalcCallGraph(Program program) {
       super(program);
    }
 
-   @Override
-   public boolean step() {
+   public CallGraph calculate() {
       CallGraph callGraph = new CallGraph();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ScopeRef scopeRef = getScopeRef(block, getProgram());
@@ -32,8 +30,7 @@ public class PassNCallGraphAnalysis extends Pass2SsaOptimization {
             }
          }
       }
-      getProgram().setCallGraph(callGraph);
-      return false;
+      return callGraph;
    }
 
    /**

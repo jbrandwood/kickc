@@ -97,7 +97,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHead = loop.getHead();
          ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHead);
-         ScopeRef scopeRef = PassNCallGraphAnalysis.getScopeRef(loopHeadBlock, getProgram());
+         ScopeRef scopeRef = PassNCalcCallGraph.getScopeRef(loopHeadBlock, getProgram());
          if(scopeRef.equals(currentScope)) {
             // Loop is inside current scope block!
             currentScopeLoops.add(loop);

@@ -200,7 +200,7 @@ public class Compiler {
       }
       new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();
-      new PassNCallGraphAnalysis(program).step();
+      program.clearCallGraph();
       new Pass1AssertNoRecursion(program).execute();
       new Pass1AssertInterrupts(program).execute();
 
@@ -422,7 +422,7 @@ public class Compiler {
       new PassNStatementIndices(program).execute();
 
       getLog().append("CALL GRAPH");
-      new PassNCallGraphAnalysis(program).step();
+      program.clearCallGraph();
       getLog().append(program.getCallGraph().toString());
 
       //getLog().setVerboseLiveRanges(true);
@@ -443,7 +443,7 @@ public class Compiler {
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
-      new PassNCallGraphAnalysis(program).step();
+      program.clearCallGraph();
       new PassNStatementInfos(program).execute();
       new PassNVariableReferenceInfos(program).execute();
       new Pass3SymbolInfos(program).generateSymbolInfos();

@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.PassNCalcCallGraph;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class Program {
    /** The 6502 ASM program. PASS 4-5 (DYNAMIC) */
    private AsmProgram asm;
 
-   /** A saved program snapshot that can be rolled back. Used to store the (DYNAMIC) state of the program while trying out a potential optimization. PASS 2 (DYNAMIC)*/
+   /** A saved program snapshot that can be rolled back. Used to store the (DYNAMIC) state of the program while trying out a potential optimization. PASS 2 (DYNAMIC) */
    private ProgramSnapshot snapshot;
 
    /** Cached information about calls. PASS 1-4 (CACHED) */
@@ -123,16 +124,16 @@ public class Program {
    }
 
    /** Save a snapshot of the dynamic parts of the program. */
-   public void saveSnapshot() {
-      if(this.snapshot!=null)
+   public void snapshotCreate() {
+      if(this.snapshot != null)
          throw new InternalError("Snapshot already saved!");
-      if(this.liveRangeEquivalenceClassSet!=null)
+      if(this.liveRangeEquivalenceClassSet != null)
          throw new InternalError("Compiler Program Snapshot does not support liveRangeEquivalenceClassSet!");
       this.snapshot = new ProgramSnapshot(scope, graph);
    }
 
    /** Restore the snapshot of the dynamic parts of the program. Clear all cached data and the snapshot. */
-   public void restoreSnapshot() {
+   public void snapshotRestore() {
       this.scope = snapshot.getScope();
       this.graph = snapshot.getGraph();
       this.snapshot = null;
@@ -239,12 +240,21 @@ public class Program {
       this.asm = asm;
    }
 
+   /**
+    * Get the call-graph for the program. Calculates the call-graph if it has not already been calculated.
+    * @return The call-graph
+    */
    public CallGraph getCallGraph() {
+      if(callGraph == null)
+         this.callGraph = new PassNCalcCallGraph(this).calculate();
       return callGraph;
    }
 
-   public void setCallGraph(CallGraph callGraph) {
-      this.callGraph = callGraph;
+   /**
+    * Clears the call-graph ensuring it will be re-calculated if used.
+    */
+   public void clearCallGraph() {
+      this.callGraph = null;
    }
 
    public DominatorsGraph getDominators() {
@@ -354,6 +364,7 @@ public class Program {
 
    /**
     * Adds a bunch of reserved zero-page addresses that the compiler is not allowed to use.
+    *
     * @param reservedZp addresses to reserve
     */
    public void addReservedZps(List<Number> reservedZp) {
@@ -370,6 +381,7 @@ public class Program {
 
    /**
     * Set the absolute position of the program code
+    *
     * @param programPc The address
     */
    public void setProgramPc(Number programPc) {
@@ -387,6 +399,6 @@ public class Program {
    public void setLog(CompileLog log) {
       this.log = log;
    }
-   
+
 
 }

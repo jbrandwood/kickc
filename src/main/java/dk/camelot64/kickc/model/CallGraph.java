@@ -3,13 +3,13 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.passes.PassNCallGraphAnalysis;
+import dk.camelot64.kickc.passes.PassNCalcCallGraph;
 
 import java.util.*;
 
 /**
  * The call graph for the entire control flow graph.
- * Created by {@link PassNCallGraphAnalysis}
+ * Created by {@link PassNCalcCallGraph}
  */
 public class CallGraph {
 

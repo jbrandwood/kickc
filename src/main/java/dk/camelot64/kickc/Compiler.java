@@ -244,6 +244,8 @@ public class Compiler {
       getLog().append("SYMBOL TABLE SSA");
       getLog().append(program.getScope().toString(program, null));
 
+      program.endPass1();
+
       return program;
    }
 
@@ -533,9 +535,6 @@ public class Compiler {
       }
       new Pass4RegistersFinalize(program).allocate(true);
       new Pass4AssertZeropageAllocation(program).check();
-   }
-
-   private void pass5GenerateAndOptimizeAsm() {
 
       // Final ASM code generation before optimization
       new Pass4PhiTransitions(program).generate();
@@ -544,6 +543,12 @@ public class Compiler {
 
       // Remove unnecessary register savings from interrupts {@link InterruptType#HARDWARE_NOCLOBBER}
       new Pass4InterruptClobberFix(program).fix();
+
+      program.endPass4();
+
+   }
+
+   private void pass5GenerateAndOptimizeAsm() {
 
       getLog().append("\nASSEMBLER BEFORE OPTIMIZATION");
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));

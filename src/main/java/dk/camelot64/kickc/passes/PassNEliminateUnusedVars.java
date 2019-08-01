@@ -2,7 +2,6 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StructUnwinding;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -11,6 +10,7 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
@@ -51,9 +51,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                      // Not volatile
                      eliminate = true;
                   } else if(variable.isVolatile() && variable.getType() instanceof SymbolTypeStruct) {
-                     // If an unwound volatile struct - eliminate it
-                     StructUnwinding.VariableUnwinding variableUnwinding = getProgram().getStructUnwinding().getVariableUnwinding(variable.getRef());
-                     if(variableUnwinding != null) {
+                     if(assignment.getOperator()==null && assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
                         eliminate = true;
                      }
                   }

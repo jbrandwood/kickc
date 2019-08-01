@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPosFill() throws IOException, URISyntaxException {
+      compileAndCompare("struct-pos-fill");
+   }
+
+   @Test
    public void testDannyJoystickProblem() throws IOException, URISyntaxException {
       compileAndCompare("danny-joystick-problem");
    }

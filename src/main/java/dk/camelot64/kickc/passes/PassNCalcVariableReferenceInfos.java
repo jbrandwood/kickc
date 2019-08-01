@@ -14,18 +14,17 @@ import java.util.*;
 /**
  * Identify variables defined/referenced for each block & statement.
  */
-public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
+public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableReferenceInfos> {
 
-   public PassNVariableReferenceInfos(Program program) {
+   public PassNCalcVariableReferenceInfos(Program program) {
       super(program);
    }
 
    private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectVarRefsMap = null;
    private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectUsedVarsMap = null;
 
-   /** Create defined/referenced maps */
    @Override
-   public boolean step() {
+   public VariableReferenceInfos calculate() {
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockReferencedVars = new LinkedHashMap<>();
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsedVars = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
@@ -34,12 +33,11 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       blockDirectVarRefsMap = new LinkedHashMap<>();
       blockDirectUsedVarsMap = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         LinkedHashSet<VariableRef> blockDirectVarRefs = new LinkedHashSet<>();;
-         LinkedHashSet<VariableRef> blockDirectUsedVars = new LinkedHashSet<>();;
+         LinkedHashSet<VariableRef> blockDirectVarRefs = new LinkedHashSet<>();
+         LinkedHashSet<VariableRef> blockDirectUsedVars = new LinkedHashSet<>();
          for(Statement statement : block.getStatements()) {
             LinkedHashSet<SymbolVariableRef> stmtSymbolVarRefs = new LinkedHashSet<>();
             LinkedHashSet<VariableRef> stmtVarRefs = new LinkedHashSet<>();
-            LinkedHashSet<VariableRef> stmtUsedVars = new LinkedHashSet<>();
             ProgramValueIterator.execute(statement,
                   (programValue, currentStmt, stmtIt, currentBlock) -> {
                      if(programValue.get() instanceof SymbolVariableRef)
@@ -49,7 +47,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
                   }
                   , null, null);
             Collection<VariableRef> stmtDefinedVars = getDefinedVars(statement);
-            stmtUsedVars.addAll(stmtVarRefs);
+            LinkedHashSet<VariableRef> stmtUsedVars = new LinkedHashSet<>(stmtVarRefs);
             stmtUsedVars.removeAll(stmtDefinedVars);
             blockDirectVarRefs.addAll(stmtVarRefs);
             blockDirectUsedVars.addAll(stmtUsedVars);
@@ -103,8 +101,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
                   }
                });
       }
-      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences));
-      return false;
+      return new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences);
    }
 
    /**
@@ -129,7 +126,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
     * @param rValue The rValue
     * @return All referenced constants
     */
-   public static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
+   static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
       LinkedHashSet<ConstantRef> referencedConsts = new LinkedHashSet<>();
       for(SymbolRef symbolRef : getReferenced(rValue)) {
          if(symbolRef instanceof ConstantRef) {
@@ -163,7 +160,6 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
     * @param referencedVars the set of referenced variables
     * @param usedVars the set of referenced variables
     * @param visited The blocks already visited during the search. Used to stop infinite recursion
-    * @return All used variables
     */
    private void addReferencedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> referencedVars, LinkedHashSet<VariableRef> usedVars, Collection<LabelRef> visited) {
       if(labelRef == null || visited.contains(labelRef))
@@ -192,7 +188,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
          StatementAssignment assignment = (StatementAssignment) stmt;
          LValue lValue = assignment.getlValue();
          if(lValue instanceof VariableRef) {
-            return Arrays.asList((VariableRef) lValue);
+            return Collections.singletonList((VariableRef) lValue);
          }
       } else if(stmt instanceof StatementPhiBlock) {
          List<VariableRef> defined = new ArrayList<>();

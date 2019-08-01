@@ -33,14 +33,13 @@ public class Pass1AssertUsedVars extends Pass1Base {
    public boolean step() {
 
       new PassNStatementIndices(getProgram()).execute();
-      new PassNVariableReferenceInfos(getProgram()).execute();
+      getProgram().clearVariableReferenceInfos();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
       assertUsedVars(beginBlock, null, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
-      getProgram().setVariableReferenceInfos(null);
+      getProgram().clearVariableReferenceInfos();
       new PassNStatementIndices(getProgram()).clearStatementIndices();
-
       return false;
    }
 

@@ -30,9 +30,6 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
-   /** The target platform. */
-   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
-
    public Compiler() {
       this.program = new Program();
    }
@@ -41,11 +38,11 @@ public class Compiler {
       this.upliftCombinations = upliftCombinations;
    }
 
-   public void setEnableZeroPageCoalasce(boolean optimizeZeroPageCoalesce) {
+   void setEnableZeroPageCoalasce(boolean optimizeZeroPageCoalesce) {
       this.enableZeroPageCoalasce = optimizeZeroPageCoalesce;
    }
 
-   public void setTargetPlatform(TargetPlatform targetPlatform) {
+   void setTargetPlatform(TargetPlatform targetPlatform) {
       program.setTargetPlatform(targetPlatform);
    }
 
@@ -155,8 +152,7 @@ public class Compiler {
       }
    }
 
-   private Program pass1GenerateSSA() {
-
+   private void pass1GenerateSSA() {
       if(getLog().isVerboseStatementSequence()) {
          getLog().append("\nSTATEMENTS");
          getLog().append(program.getStatementSequence().toString(program));
@@ -246,7 +242,6 @@ public class Compiler {
 
       program.endPass1();
 
-      return program;
    }
 
    private void pass2AssertSSA() {
@@ -281,7 +276,7 @@ public class Compiler {
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(new PassNVariableReferenceInfos(program));
+      optimizations.add(new PassNVariableReferenceInfosClear(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
@@ -319,7 +314,7 @@ public class Compiler {
    private void pass2UnrollLoops() {
       List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
-      loopUnrolling.add(new PassNVariableReferenceInfos(program));
+      loopUnrolling.add(new PassNVariableReferenceInfosClear(program));
       loopUnrolling.add(new PassNStatementInfos(program));
       loopUnrolling.add(new PassNDominatorsAnalysis(program));
       loopUnrolling.add(new PassNLoopAnalysis(program));
@@ -346,7 +341,7 @@ public class Compiler {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
-      constantOptimizations.add(new PassNVariableReferenceInfos(program));
+      constantOptimizations.add(new PassNVariableReferenceInfosClear(program));
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
@@ -428,7 +423,7 @@ public class Compiler {
       //getLog().setVerboseLiveRanges(true);
 
       new PassNStatementInfos(program).execute();
-      new PassNVariableReferenceInfos(program).execute();
+      program.clearVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
       //getLog().append(program.getGraph().toString(program));
@@ -445,7 +440,7 @@ public class Compiler {
       new PassNStatementIndices(program).execute();
       program.clearCallGraph();
       new PassNStatementInfos(program).execute();
-      new PassNVariableReferenceInfos(program).execute();
+      program.clearVariableReferenceInfos();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();

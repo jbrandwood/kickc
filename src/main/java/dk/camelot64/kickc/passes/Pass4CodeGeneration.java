@@ -344,7 +344,7 @@ public class Pass4CodeGeneration {
                for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      RValue phiRRValue = phiRValue.getrValue();
-                     Collection<ConstantRef> phiRValueConstRefs = PassNVariableReferenceInfos.getReferencedConsts(phiRRValue);
+                     Collection<ConstantRef> phiRValueConstRefs = PassNCalcVariableReferenceInfos.getReferencedConsts(phiRRValue);
                      for(ConstantRef phiRValueConstRef : phiRValueConstRefs) {
                         if(phiRValueConstRef.equals(constantVar.getRef())) {
                            found = true;

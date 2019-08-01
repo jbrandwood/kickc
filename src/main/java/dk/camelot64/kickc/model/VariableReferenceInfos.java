@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.passes.PassNVariableReferenceInfos;
+import dk.camelot64.kickc.passes.PassNCalcVariableReferenceInfos;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -146,7 +146,7 @@ public class VariableReferenceInfos {
     * @return All referenced variables
     */
    public static Collection<VariableRef> getReferencedVars(RValue rValue) {
-      return PassNVariableReferenceInfos.getReferencedVars(rValue);
+      return PassNCalcVariableReferenceInfos.getReferencedVars(rValue);
    }
 
    /**

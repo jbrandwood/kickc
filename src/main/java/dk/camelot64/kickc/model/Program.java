@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.PassNCalcCallGraph;
+import dk.camelot64.kickc.passes.PassNCalcVariableReferenceInfos;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -59,9 +60,9 @@ public class Program {
    /** A saved program snapshot that can be rolled back. Used to store the (DYNAMIC) state of the program while trying out a potential optimization. PASS 2 (DYNAMIC) */
    private ProgramSnapshot snapshot;
 
-   /** Cached information about calls. PASS 1-4 (CACHED) */
+   /** Cached information about calls. PASS 1-4 (CACHED ON-DEMAND) */
    private CallGraph callGraph;
-   /** Cached information about the variables referenced by blocks/statements. PASS 1-4 (CACHED) */
+   /** Cached information about the variables referenced by blocks/statements. PASS 1-4 (CACHED ON-DEMAND) */
    private VariableReferenceInfos variableReferenceInfos;
    /** Information about dominators of all blocks. PASS 2U-4 (CACHED) */
    private DominatorsGraph dominators;
@@ -257,6 +258,17 @@ public class Program {
       this.callGraph = null;
    }
 
+   public VariableReferenceInfos getVariableReferenceInfos() {
+      if(variableReferenceInfos==null)
+         this.variableReferenceInfos = new PassNCalcVariableReferenceInfos(this).calculate();
+      return variableReferenceInfos;
+   }
+
+   public void clearVariableReferenceInfos() {
+      this.variableReferenceInfos = null;
+   }
+
+
    public DominatorsGraph getDominators() {
       return dominators;
    }
@@ -273,13 +285,6 @@ public class Program {
       this.loopSet = loopSet;
    }
 
-   public VariableReferenceInfos getVariableReferenceInfos() {
-      return variableReferenceInfos;
-   }
-
-   public void setVariableReferenceInfos(VariableReferenceInfos variableReferenceInfos) {
-      this.variableReferenceInfos = variableReferenceInfos;
-   }
 
    public StatementInfos getStatementInfos() {
       return statementInfos;

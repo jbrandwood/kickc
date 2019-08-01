@@ -953,15 +953,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       addLoopBody(stmtForCtx.stmt());
       addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
-      if(ctx.commaExpr(1) != null) {
-         PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(1), StatementSource.forClassic(ctx));
-         this.visit(ctx.commaExpr(1));
-         PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(1), StatementSource.forClassic(ctx));
+      KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
+      if(incrementCtx != null) {
+         PrePostModifierHandler.addPreModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
+         this.visit(incrementCtx);
+         PrePostModifierHandler.addPostModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
       }
       // Add condition
-      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(0), StatementSource.forClassic(ctx));
-      RValue rValue = (RValue) this.visit(ctx.commaExpr(0));
-      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(0), StatementSource.forClassic(ctx));
+      KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
+      PrePostModifierHandler.addPreModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
+      RValue rValue = (RValue) this.visit(conditionCtx);
+      PrePostModifierHandler.addPostModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
       // Add jump if condition was met
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);

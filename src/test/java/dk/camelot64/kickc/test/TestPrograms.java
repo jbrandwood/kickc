@@ -2492,6 +2492,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopWhileMin() throws IOException, URISyntaxException {
+      compileAndCompare("loop-while-min");
+   }
+
+   @Test
+   public void testLoopWhileSideeffect() throws IOException, URISyntaxException {
+      compileAndCompare("loop-while-sideeffect");
+   }
+
+   @Test
+   public void testLoopForSideeffect() throws IOException, URISyntaxException {
+      compileAndCompare("loop-for-sideeffect");
+   }
+
+   @Test
    public void testForClassicMin() throws IOException, URISyntaxException {
       compileAndCompare("forclassicmin");
    }

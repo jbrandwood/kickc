@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
 import kickass.KickAssembler;
+import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -262,7 +263,7 @@ public class KickC implements Callable<Void> {
             System.setOut(new PrintStream(kasmLogOutputStream));
             int kasmResult = -1;
             try {
-               //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
+               CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
                kasmResult = KickAssembler.main2(assembleCommand);
             } catch(Throwable e) {
                throw new CompileError("KickAssembling file failed! ", e);

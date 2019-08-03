@@ -83,7 +83,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
       try {
-         //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
+         CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
          asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
       } catch(Throwable e) {
          if(e instanceof AssertionError && e.getMessage().contains("Invalid number of bytes in memblock!")) {

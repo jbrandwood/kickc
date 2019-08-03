@@ -2810,7 +2810,7 @@ public class TestPrograms {
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
       try {
-         //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
+         CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
          asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem", "-bytedump"});
       } catch(Throwable e) {
          fail("KickAssembling file failed! " + e.getMessage());

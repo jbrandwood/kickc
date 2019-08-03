@@ -43,6 +43,10 @@ public class AsmFragmentInstanceSpecFactory {
    private int nextConstIdx = 1;
    private int nextLabelIdx = 1;
 
+   public Map<String, Value> getBindings() {
+      return bindings;
+   }
+
    public AsmFragmentInstanceSpecFactory(
          StatementConditionalJump conditionalJump,
          ControlFlowBlock block,

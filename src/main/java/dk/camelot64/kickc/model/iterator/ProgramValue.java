@@ -250,20 +250,20 @@ public interface ProgramValue {
 
    /** A generic Value. */
    class GenericValue implements ProgramValue {
-      private RValue rValue;
+      private Value value;
 
-      public GenericValue(RValue rValue) {
-         this.rValue = rValue;
+      public GenericValue(Value value) {
+         this.value = value;
       }
 
       @Override
       public Value get() {
-         return rValue;
+         return value;
       }
 
       @Override
       public void set(Value value) {
-         this.rValue = (RValue) value;
+         this.value = value;
       }
    }
 

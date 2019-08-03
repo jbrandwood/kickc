@@ -38,12 +38,12 @@ public class TestPrograms {
 
    @Test
    public void testKcKaStringEncoding() throws IOException, URISyntaxException {
-      compileAndCompare("kc-ka-string-encoding", log());
+      compileAndCompare("kc-ka-string-encoding");
    }
 
    @Test
    public void testGlobalPcMultiple() throws IOException, URISyntaxException {
-      compileAndCompare("global-pc-multiple", log());
+      compileAndCompare("global-pc-multiple");
    }
 
 

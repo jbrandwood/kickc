@@ -4,9 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
@@ -232,6 +230,8 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueLValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value == null ||
             value instanceof VariableRef ||
+            value instanceof VariableVersion ||
+            value instanceof VariableIntermediate ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||

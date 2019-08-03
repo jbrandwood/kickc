@@ -4,6 +4,9 @@ import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -270,6 +273,8 @@ public class Pass4CodeGeneration {
                added.add(asmName);
                // Add any comments
                generateComments(asm, constantVar.getComments());
+               // Ensure encoding is good
+               ensureEncoding(asm, constantVar.getValue());
                // Find the constant value calculation
                String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                if(constantVar.getType() instanceof SymbolTypePointer) {
@@ -419,6 +424,7 @@ public class Pass4CodeGeneration {
                   asm.addLabel(asmName).setDontOptimize(true);
                   for(ConstantValue element : constantArrayList.getElements()) {
                      AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                     ensureEncoding(asm, element);
                      addChunkData(asmDataChunk, element, scopeRef);
                      asm.addDataNumeric(null, asmDataChunk);
                   }
@@ -429,6 +435,7 @@ public class Pass4CodeGeneration {
                   // Constant array of a "simple" type - add to a single chunk
                   AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
                   for(ConstantValue element : constantArrayList.getElements()) {
+                     ensureEncoding(asm, element);
                      addChunkData(asmDataChunk, element, scopeRef);
                   }
                   asm.addDataNumeric(asmName, asmDataChunk);
@@ -436,6 +443,8 @@ public class Pass4CodeGeneration {
             } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
                ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
                ConstantValue arraySize = constantArrayFilled.getSize();
+               // ensure encoding is good
+               ensureEncoding(asm, arraySize);
                ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
                if(!(arraySizeConst instanceof ConstantInteger)) {
                   throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
@@ -497,11 +506,8 @@ public class Pass4CodeGeneration {
                try {
                   ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
                   if(literal instanceof ConstantString) {
-                     ConstantString.Encoding stringEncoding = ((ConstantString) literal).getEncoding();
-                     if(!currentEncoding.equals(stringEncoding)) {
-                        asm.addLine(new AsmSetEncoding(stringEncoding));
-                        currentEncoding = stringEncoding;
-                     }
+                     // Ensure encoding is good
+                     ensureEncoding(asm, constantVar.getValue());
                      String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                      asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
                      added.add(asmName);
@@ -514,11 +520,12 @@ public class Pass4CodeGeneration {
       }
    }
 
+
    /**
     * Fill the data of a constant value into a data chunk
     *
     * @param dataChunk The data chunk
-    * @param structValue The constant value
+    * @param value The constant value
     */
    private void addChunkData(AsmProgram.AsmDataNumericChunk dataChunk, ConstantValue value, ScopeRef scopeRef) {
       SymbolType elementType = value.getType(program.getScope());
@@ -538,7 +545,7 @@ public class Pass4CodeGeneration {
       } else if(elementType instanceof SymbolTypePointer) {
          dataChunk.addData(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
       } else {
-         throw new InternalError("Unhandled array element type "+elementType.toString()+ " value "+value.toString(program));
+         throw new InternalError("Unhandled array element type " + elementType.toString() + " value " + value.toString(program));
       }
    }
 
@@ -629,6 +636,7 @@ public class Pass4CodeGeneration {
                   //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, program);
+                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory);
                }
             }
@@ -696,6 +704,7 @@ public class Pass4CodeGeneration {
             if(procedure instanceof PointerDereferenceSimple) {
                RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
                if(pointer instanceof ConstantValue) {
+                  ensureEncoding(asm, pointer);
                   asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
                   supported = true;
                } else if(pointer instanceof VariableRef) {
@@ -915,6 +924,79 @@ public class Pass4CodeGeneration {
          program.getLog().append("Already generated transition from " + fromBlock.getLabel() + " to " + toBlock.getLabel() + " - not generating it again!");
       }
    }
+
+
+   /**
+    * Ensure that the current encoding in the ASM matches any encoding in the data to be emitted
+    *
+    * @param asm The ASM program (where any .encoding directive will be emitted)
+    * @param asmFragmentInstance The ASM fragment to be emitted
+    */
+   private void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstance) {
+      ensureEncoding(asm, getEncoding(asmFragmentInstance));
+   }
+
+   private void ensureEncoding(AsmProgram asm, Value value) {
+      ensureEncoding(asm, getEncoding(value));
+   }
+
+   /**
+    * Ensure that the current encoding in the ASM matches any encoding in the data to be emitted
+    *
+    * @param asm The ASM program (where any .encoding directive will be emitted)
+    * @param encodings The encodings to ensure
+    */
+   private void ensureEncoding(AsmProgram asm, Collection<ConstantString.Encoding> encodings) {
+      if(encodings == null || encodings.size()==0) return;
+      if(encodings.size()>1) {
+         throw new CompileError("Different character encodings in one ASM statement not supported!");
+      }
+      // Size is 1 - grab it!
+      ConstantString.Encoding encoding = encodings.iterator().next();
+      if(!currentEncoding.equals(encoding)) {
+         asm.addLine(new AsmSetEncoding(encoding));
+         currentEncoding = encoding;
+      }
+   }
+
+   /**
+    * Examine a constantvalue to see if any string encoding information is present
+    *
+    * @param value The constant to examine
+    * @return Any encoding found inside the constant
+    */
+   private Set<ConstantString.Encoding> getEncoding(Value value) {
+      LinkedHashSet<ConstantString.Encoding> encodings = new LinkedHashSet<>();
+      ProgramValue programValue = new ProgramValue.GenericValue(value);
+      ProgramValueHandler handler = (ProgramValue pVal, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) -> {
+         Value val = pVal.get();
+         if(val instanceof ConstantChar) {
+            encodings.add(((ConstantChar) val).getEncoding());
+         } else if(val instanceof ConstantString) {
+            encodings.add(((ConstantString) val).getEncoding());
+         }
+      };
+      ProgramValueIterator.execute(programValue, handler, null, null, null);
+      return encodings;
+   }
+
+
+   /**
+    * Examine an ASM fragment to see if any string encoding information is present
+    *
+    * @param asmFragmentInstance The asm fragment instance to examine
+    * @return Any encoding found inside the constant
+    */
+   private Set<ConstantString.Encoding> getEncoding(AsmFragmentInstanceSpecFactory asmFragmentInstance) {
+      LinkedHashSet<ConstantString.Encoding> encodings = new LinkedHashSet<>();
+      Map<String, Value> bindings = asmFragmentInstance.getBindings();
+      for(Value boundValue : bindings.values()) {
+         encodings.addAll(getEncoding(boundValue));
+      }
+      return encodings;
+   }
+
+
 
    /**
     * Get phi transitions for a specific to-block.

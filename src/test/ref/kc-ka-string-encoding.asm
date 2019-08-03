@@ -2,6 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+  .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
     lda #0
@@ -16,5 +17,4 @@ main: {
   done:
     rts
 }
-.encoding "petscii_mixed"
   strTemp: .text "v=X@"

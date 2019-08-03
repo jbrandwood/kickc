@@ -34,6 +34,10 @@ public class ConstantChar implements ConstantLiteral<Character> {
       return value;
    }
 
+   public ConstantString.Encoding getEncoding() {
+      return encoding;
+   }
+
    @Override
    public String toString() {
       return toString(null);

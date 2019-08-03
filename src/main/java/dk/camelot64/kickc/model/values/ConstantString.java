@@ -13,17 +13,20 @@ public class ConstantString implements ConstantLiteral<String> {
 
    /** String encoding. */
    public static enum Encoding {
-      PETSCII_MIXED("petscii_mixed"),
-      PETSCII_UPPER("petscii_upper"),
-      SCREENCODE_MIXED("screencode_mixed"),
-      SCREENCODE_UPPER("screencode_upper")
+      PETSCII_MIXED("petscii_mixed", "pm"),
+      PETSCII_UPPER("petscii_upper", "pu"),
+      SCREENCODE_MIXED("screencode_mixed", "sm"),
+      SCREENCODE_UPPER("screencode_upper", "su")
       ;
 
       public final String name;
+      public final String suffix;
 
-      Encoding(String name) {
+      Encoding(String name, String suffix) {
          this.name = name;
+         this.suffix = suffix;
       }
+
    }
 
    private String value;
@@ -60,11 +63,11 @@ public class ConstantString implements ConstantLiteral<String> {
 
    @Override
    public String toString(Program program) {
-      String enc = (encoding.equals(Encoding.SCREENCODE_MIXED))?"":encoding.toString();
+      String enc = (encoding.equals(Encoding.SCREENCODE_MIXED))?"":encoding.suffix;
       if(program == null) {
-         return enc + "\"" + value + "\"";
+         return "\"" + value + "\""+enc;
       } else {
-         return "(" + SymbolType.STRING.getTypeName() + ") "+enc + "\"" + value + "\"";
+         return "(" + SymbolType.STRING.getTypeName() + ") "+"\"" + value + "\""+enc;
       }
    }
 

@@ -9,10 +9,15 @@ import dk.camelot64.kickc.model.types.SymbolType;
  */
 public class ConstantChar implements ConstantLiteral<Character> {
 
+   /** The character. */
    private Character value;
 
-   public ConstantChar(Character value) {
+   /** The encoding of the character. */
+   private ConstantString.Encoding encoding;
+
+   public ConstantChar(Character value, ConstantString.Encoding encoding) {
       this.value = value;
+      this.encoding = encoding;
    }
 
    @Override
@@ -36,10 +41,11 @@ public class ConstantChar implements ConstantLiteral<Character> {
 
    @Override
    public String toString(Program program) {
+      String enc = (encoding.equals(ConstantString.Encoding.SCREENCODE_MIXED))?"":encoding.suffix;
       if(program == null) {
-         return "'" + value + "'";
+         return "'" + value + "'"+enc;
       } else {
-         return "(" + SymbolType.BYTE.getTypeName() + ") " + "'" + value + "'";
+         return "(" + SymbolType.BYTE.getTypeName() + ") " + "'" + value + "'"+enc;
       }
    }
 

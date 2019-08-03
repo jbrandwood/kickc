@@ -136,7 +136,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(programPc != null) {
          program.setProgramPc(programPc);
       } else {
-         throw new CompileError("Cannot parse #pc directive",new StatementSource(ctx));
+         throw new CompileError("Cannot parse #pc directive", new StatementSource(ctx));
       }
       return null;
    }
@@ -147,7 +147,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(platform != null) {
          program.setTargetPlatform(platform);
       } else {
-         throw new CompileError("Unknown target platform in #platform directive",new StatementSource(ctx));
+         throw new CompileError("Unknown target platform in #platform directive", new StatementSource(ctx));
       }
       return null;
    }
@@ -546,24 +546,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       // Add KickAsm statement
       StatementKickAsm kasm = (StatementKickAsm) this.visit(ctx.declKasm());
-      if(kasm.getUses().size()>0) {
+      if(kasm.getUses().size() > 0) {
          throw new CompileError("KickAsm initializers does not support 'uses' directive.", new StatementSource(ctx));
       }
-      if(kasm.getLocation()!=null) {
+      if(kasm.getLocation() != null) {
          throw new CompileError("KickAsm initializers does not support 'location' directive.", new StatementSource(ctx));
       }
-      if(kasm.getCycles()!=null) {
+      if(kasm.getCycles() != null) {
          throw new CompileError("KickAsm initializers does not support 'cycles' directive.", new StatementSource(ctx));
       }
-      if(kasm.getBytes()!=null) {
+      if(kasm.getBytes() != null) {
          throw new CompileError("KickAsm initializers does not support 'bytes' directive.", new StatementSource(ctx));
       }
-      if(kasm.getDeclaredClobber()!=null) {
+      if(kasm.getDeclaredClobber() != null) {
          throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", new StatementSource(ctx));
       }
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypeArray) type).getElementType(), kasm.getKickAsmCode());
       // Remove the KickAsm statement
-      sequence.getStatements().remove(sequence.getStatements().size()-1);
+      sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add an initializer statement instead
       Statement stmt = new StatementAssignment(lValue.getRef(), constantArrayKickAsm, new StatementSource(ctx), ensureUnusedComments(comments));
       sequence.addStatement(stmt);
@@ -596,6 +596,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
+    *
     * @param varRef The variable to initialize
     * @param type The type of the variable
     * @param statementSource The source line
@@ -1269,8 +1270,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitStructRef(KickCParser.StructRefContext ctx) {
       String structDefName = ctx.NAME().getText();
       StructDefinition structDefinition = getCurrentScope().getStructDefinition(structDefName);
-      if(structDefinition==null) {
-         throw new CompileError("Unknown struct type "+structDefName, new StatementSource(ctx));
+      if(structDefinition == null) {
+         throw new CompileError("Unknown struct type " + structDefName, new StatementSource(ctx));
       }
       return structDefinition.getType();
    }
@@ -1305,7 +1306,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue()));
          }
          return SymbolType.BYTE;
-      } catch (CompileError e) {
+      } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
    }
@@ -1314,10 +1315,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitEnumMember(KickCParser.EnumMemberContext ctx) {
       String memberName = ctx.NAME().getText();
       ConstantValue enumValue;
-      if(ctx.expr()!=null) {
+      if(ctx.expr() != null) {
          RValue exprVal = (RValue) visit(ctx.expr());
          if(!(exprVal instanceof ConstantValue)) {
-            throw new CompileError("Enum value not constant "+memberName, new StatementSource(ctx));
+            throw new CompileError("Enum value not constant " + memberName, new StatementSource(ctx));
          }
          enumValue = (ConstantValue) exprVal;
       } else {
@@ -1326,11 +1327,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          if(values.isEmpty()) {
             enumValue = new ConstantInteger(0L, SymbolType.BYTE);
          } else {
-            ConstantVar prevEnumMember= values.get(values.size() - 1);
+            ConstantVar prevEnumMember = values.get(values.size() - 1);
             ConstantValue prevValue = prevEnumMember.getValue();
             if(prevValue instanceof ConstantInteger) {
-               enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger()+1, SymbolType.BYTE);
-            }  else {
+               enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger() + 1, SymbolType.BYTE);
+            } else {
                enumValue = new ConstantBinary(prevValue, Operators.PLUS, new ConstantInteger(1L, SymbolType.BYTE));
 
             }
@@ -1349,8 +1350,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitEnumRef(KickCParser.EnumRefContext ctx) {
       String enumDefName = ctx.NAME().getText();
       EnumDefinition enumDefinition = getCurrentScope().getEnumDefinition(enumDefName);
-      if(enumDefinition==null) {
-         throw new CompileError("Unknown enum "+enumDefName, new StatementSource(ctx));
+      if(enumDefinition == null) {
+         throw new CompileError("Unknown enum " + enumDefName, new StatementSource(ctx));
       }
       return SymbolType.BYTE;
    }
@@ -1359,10 +1360,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
       Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
-      if(typeDefVariable!=null) {
+      if(typeDefVariable != null) {
          return typeDefVariable.getType();
       }
-      throw new CompileError("Unknown type "+ctx.getText(), new StatementSource(ctx));
+      throw new CompileError("Unknown type " + ctx.getText(), new StatementSource(ctx));
    }
 
    @Override
@@ -1377,8 +1378,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       String fullName = signedness + " " + simpleTypeName;
       SymbolType symbolType = SymbolType.get(fullName);
-      if(symbolType==null) {
-         throw new CompileError("Unknown type "+fullName, new StatementSource(ctx));
+      if(symbolType == null) {
+         throw new CompileError("Unknown type " + fullName, new StatementSource(ctx));
       }
       return symbolType;
    }
@@ -1595,41 +1596,43 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       for(TerminalNode stringNode : ctx.STRING()) {
          subText = stringNode.getText();
          String suffix = subText.substring(subText.lastIndexOf('"') + 1);
-
-         if(suffix.contains("pm")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_MIXED))
+         ConstantString.Encoding suffixEncoding = getEncodingFromSuffix(suffix);
+         if(suffixEncoding!=null) {
+            if(encoding != null && !encoding.equals(suffixEncoding)) {
                throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.PETSCII_MIXED;
-         } else if(suffix.contains("pu")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_UPPER))
-               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.PETSCII_UPPER;
-         } else if(suffix.contains("p")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_MIXED))
-               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.PETSCII_MIXED;
-         } else if(suffix.contains("sm")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_MIXED))
-               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.SCREENCODE_MIXED;
-         } else if(suffix.contains("su")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_UPPER))
-               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.SCREENCODE_UPPER;
-         } else if(suffix.contains("s")) {
-            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_MIXED))
-               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
-            encoding = ConstantString.Encoding.SCREENCODE_MIXED;
+            }
+            encoding = suffixEncoding;
          }
-
          lastSuffix = suffix;
          stringValue += subText.substring(1, subText.lastIndexOf('"'));
       }
       if(!lastSuffix.contains("z")) {
          stringValue += "@";
       }
-      if(encoding == null) encoding = currentEncoding;
       return new ConstantString(stringValue, encoding);
+   }
+
+   /**
+    * Examine a string suffix, and find any encoding information inside it.
+    * @param suffix The string suffix
+    * @return The encoding specified by the suffix. If not the current source encoding is returned.
+    */
+   private ConstantString.Encoding getEncodingFromSuffix(String suffix) {
+      if(suffix.contains("pm")) {
+         return ConstantString.Encoding.PETSCII_MIXED;
+      } else if(suffix.contains("pu")) {
+         return ConstantString.Encoding.PETSCII_UPPER;
+      } else if(suffix.contains("p")) {
+         return ConstantString.Encoding.PETSCII_MIXED;
+      } else if(suffix.contains("sm")) {
+         return ConstantString.Encoding.SCREENCODE_MIXED;
+      } else if(suffix.contains("su")) {
+         return ConstantString.Encoding.SCREENCODE_UPPER;
+      } else if(suffix.contains("s")) {
+         return ConstantString.Encoding.SCREENCODE_MIXED;
+      } else {
+         return currentEncoding;
+      }
    }
 
    @Override
@@ -1640,7 +1643,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprChar(KickCParser.ExprCharContext ctx) {
-      return new ConstantChar(ctx.getText().charAt(1));
+      return new ConstantChar(ctx.getText().charAt(1), currentEncoding);
    }
 
    @Override
@@ -1651,7 +1654,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Operator operator = Operators.getBinary(op);
       if(left instanceof ConstantValue && right instanceof ConstantValue) {
          return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
-      }  else {
+      } else {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));

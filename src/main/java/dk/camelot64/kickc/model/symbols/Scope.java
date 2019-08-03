@@ -7,12 +7,13 @@ import dk.camelot64.kickc.model.VariableRegisterWeights;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Manages symbols (variables, labels)
  */
-public abstract class Scope implements Symbol {
+public abstract class Scope implements Symbol, Serializable {
 
    private String name;
    private HashMap<String, Symbol> symbols;

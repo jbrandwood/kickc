@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.asm;
 
+import java.io.Serializable;
+
 /** Information about what parts of the CPU an ASM instruction clobbers */
-public class AsmClobber {
+public class AsmClobber implements Serializable {
 
    public static final AsmClobber CLOBBER_ALL = new AsmClobber(true);
    boolean clobberA;

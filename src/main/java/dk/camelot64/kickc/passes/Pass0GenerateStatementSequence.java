@@ -11,9 +11,11 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -1118,9 +1120,25 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
          }
       }
-      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, declaredClobber, StatementSource.asm(ctx), comments);
+      StatementAsm statementAsm = new StatementAsm(getSourceBody(ctx.asmLines()), referenced, declaredClobber, StatementSource.asm(ctx), comments);
       sequence.addStatement(statementAsm);
       return null;
+   }
+
+   /**
+    * Extract the string source body representing a part of the parse tree
+    *
+    * @param sourceContext The parse tree context
+    * @return The string source code.
+    */
+   private static String getSourceBody(ParserRuleContext sourceContext) {
+      Token tokenStart = StatementSource.getToken(sourceContext, true);
+      Token tokenStop = StatementSource.getToken(sourceContext, false);
+      CharStream stream = tokenStart.getInputStream();
+      int startIndex = tokenStart.getStartIndex();
+      int stopIndex = tokenStop.getStopIndex();
+      Interval interval = new Interval(startIndex, stopIndex);
+      return stream.getText(interval);
    }
 
    /**

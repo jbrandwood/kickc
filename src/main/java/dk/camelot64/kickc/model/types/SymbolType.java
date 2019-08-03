@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.model.types;
 
+import java.io.Serializable;
+
 /** Symbol Types */
-public interface SymbolType {
+public interface SymbolType extends Serializable {
 
    /** Unsigned byte (8 bits)). */
    SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8);

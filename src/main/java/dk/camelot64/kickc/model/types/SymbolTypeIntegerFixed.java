@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /** Integer type with a fixed size (byte, signed byte, word, ...). */
 public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
@@ -101,5 +102,18 @@ public class SymbolTypeIntegerFixed implements SymbolTypeInteger {
    @Override
    public String toString() {
       return getTypeName();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      SymbolTypeIntegerFixed that = (SymbolTypeIntegerFixed) o;
+      return Objects.equals(typeName, that.typeName);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(typeName);
    }
 }

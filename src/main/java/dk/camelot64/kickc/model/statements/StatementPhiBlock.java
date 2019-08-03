@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 import org.antlr.v4.runtime.RuleContext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -122,7 +123,7 @@ public class StatementPhiBlock extends StatementBase {
    /**
     * A variable being defined as part of a phi predecessor.
     */
-   public static class PhiVariable {
+   public static class PhiVariable implements Serializable {
 
       /**
        * The variable being defined.
@@ -219,7 +220,7 @@ public class StatementPhiBlock extends StatementBase {
    /**
     * The value assigned to a phi variable when entering the predecessor from a specific predecessor block.
     */
-   public static class PhiRValue {
+   public static class PhiRValue implements Serializable {
 
       /**
        * The predecessor predecessor

@@ -1,0 +1,397 @@
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@10
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
+  (byte*) RASTER#0 ← ((byte*)) (number) $d012
+  to:@2
+main: scope:[main]  from @2
+  asm { sei  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@11 main::@8
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (bool~) main::$0 ← *((byte*) RASTER#0) < (number) $1e
+  if((bool~) main::$0) goto main::@4
+  to:main::@8
+main::@4: scope:[main]  from main::@2
+  call incScreen 
+  to:main::@11
+main::@11: scope:[main]  from main::@4
+  to:main::@1
+main::@8: scope:[main]  from main::@2
+  *((byte*) BGCOL#0) ← (number) 0
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+incScreen: scope:[incScreen]  from main::@4
+  *((byte*) BGCOL#0) ← *((byte*) RASTER#0)
+  to:incScreen::@return
+incScreen::@return: scope:[incScreen]  from incScreen
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte*) RASTER
+(byte*) RASTER#0
+(void()) incScreen()
+(label) incScreen::@return
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@11
+(label) main::@2
+(label) main::@4
+(label) main::@8
+(label) main::@return
+
+Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((byte*) RASTER#0) < (number) $1e
+Adding number conversion cast (unumber) 0 in *((byte*) BGCOL#0) ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
+Inlining cast *((byte*) BGCOL#0) ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (byte*) 53266
+Simplifying constant integer cast $1e
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $1e
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition (bool~) main::$0 [5] if(*((byte*) RASTER#0)<(byte) $1e) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) BGCOL#0 = (byte*) 53281
+Constant (const byte*) RASTER#0 = (byte*) 53266
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [3] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@4
+Adding NOP phi() at start of main::@11
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to incScreen:10 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) main::@11
+Renumbering block @2 to @1
+Renumbering block main::@2 to main::@1
+Renumbering block main::@4 to main::@2
+Renumbering block main::@8 to main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@2
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { sei  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@2 main::@3
+  [5] if(*((const byte*) RASTER#0)<(byte) $1e) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [6] *((const byte*) BGCOL#0) ← (byte) 0
+  to:main::@1
+main::@2: scope:[main]  from main::@1
+  [7] phi()
+  [8] call incScreen 
+  to:main::@1
+incScreen: scope:[incScreen]  from main::@2
+  [9] *((const byte*) BGCOL#0) ← *((const byte*) RASTER#0)
+  to:incScreen::@return
+incScreen::@return: scope:[incScreen]  from incScreen
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte*) RASTER
+(void()) incScreen()
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test setting the program PC through a #pc directive
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $2000 "Program"
+  // Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { sei  }
+    sei
+    jmp b1
+    // main::@1
+  b1:
+    // [5] if(*((const byte*) RASTER#0)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$1e
+    bcc b2_from_b1
+    jmp b3
+    // main::@3
+  b3:
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    jmp b1
+    // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+    // main::@2
+  b2:
+    // [8] call incScreen 
+    jsr incScreen
+    jmp b1
+}
+  // incScreen
+incScreen: {
+    // [9] *((const byte*) BGCOL#0) ← *((const byte*) RASTER#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda RASTER
+    sta BGCOL
+    jmp breturn
+    // incScreen::@return
+  breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] if(*((const byte*) RASTER#0)<(byte) $1e) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) BGCOL#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) BGCOL#0) ← *((const byte*) RASTER#0) [ ] ( main:2::incScreen:8 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [incScreen] 
+Uplift Scope [] 
+
+Uplifting [main] best 359 combination 
+Uplifting [incScreen] best 359 combination 
+Uplifting [] best 359 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test setting the program PC through a #pc directive
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $2000 "Program"
+  // Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { sei  }
+    sei
+    jmp b1
+    // main::@1
+  b1:
+    // [5] if(*((const byte*) RASTER#0)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$1e
+    bcc b2_from_b1
+    jmp b3
+    // main::@3
+  b3:
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    jmp b1
+    // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+    // main::@2
+  b2:
+    // [8] call incScreen 
+    jsr incScreen
+    jmp b1
+}
+  // incScreen
+incScreen: {
+    // [9] *((const byte*) BGCOL#0) ← *((const byte*) RASTER#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda RASTER
+    sta BGCOL
+    jmp breturn
+    // incScreen::@return
+  breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b3
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b2_from_b1 with b2
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Removing instruction b2_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = (byte*) 53281
+(byte*) RASTER
+(const byte*) RASTER#0 RASTER = (byte*) 53266
+(void()) incScreen()
+(label) incScreen::@return
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+
+
+
+FINAL ASSEMBLER
+Score: 281
+
+  // File Comments
+// Test setting the program PC through a #pc directive
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $2000 "Program"
+  // Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // asm
+    // asm { sei  }
+    sei
+    // main::@1
+  b1:
+    // if(*RASTER<30)
+    // [5] if(*((const byte*) RASTER#0)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$1e
+    bcc b2
+    // main::@3
+    // *BGCOL = 0
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    jmp b1
+    // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // main::@2
+  b2:
+    // incScreen()
+    // [8] call incScreen 
+    jsr incScreen
+    jmp b1
+}
+  // incScreen
+incScreen: {
+    // *BGCOL = *RASTER
+    // [9] *((const byte*) BGCOL#0) ← *((const byte*) RASTER#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda RASTER
+    sta BGCOL
+    // incScreen::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+

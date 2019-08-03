@@ -22,6 +22,7 @@ public class TestKickAssRun {
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       try {
+         //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
          KickAssembler.main2(new String[]{asmPath.toAbsolutePath().toString(), "-o", asmPrgFile.getAbsolutePath()});
       } catch (AssertionError e) {
          System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));

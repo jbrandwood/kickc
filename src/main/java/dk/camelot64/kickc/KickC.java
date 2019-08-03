@@ -262,6 +262,7 @@ public class KickC implements Callable<Void> {
             System.setOut(new PrintStream(kasmLogOutputStream));
             int kasmResult = -1;
             try {
+               //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
                kasmResult = KickAssembler.main2(assembleCommand);
             } catch(Throwable e) {
                throw new CompileError("KickAssembling file failed! ", e);

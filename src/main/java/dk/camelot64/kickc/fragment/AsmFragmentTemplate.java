@@ -1,18 +1,19 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.Value;
-import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
-import org.antlr.v4.runtime.*;
 
 import java.util.LinkedHashMap;
 
@@ -75,17 +76,7 @@ public class AsmFragmentTemplate {
     */
    private void initAsm() {
       // Parse the body ASM
-      CodePointCharStream fragmentCharStream = CharStreams.fromString(body);
-      KickCLexer kickCLexer = new KickCLexer(fragmentCharStream);
-      KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer));
-      kickCParser.addErrorListener(new BaseErrorListener() {
-         @Override
-         public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-            throw new RuntimeException("Error parsing fragment " + signature + "\n - Line: " + line + "\n - Message: " + msg);
-         }
-      });
-      kickCParser.setBuildParseTree(true);
-      this.bodyAsm = kickCParser.asmFile().asmLines();
+      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature+".asm", 1, this.body, 0, 0));
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
@@ -123,7 +114,7 @@ public class AsmFragmentTemplate {
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
       AsmProgram asm = new AsmProgram();
-      asm.startSegment( ScopeRef.ROOT, null, signature);
+      asm.startSegment(ScopeRef.ROOT, null, signature);
       fragmentInstance.generate(asm);
       AsmClobber asmClobber = asm.getClobber();
       this.clobber = new AsmFragmentClobber(asmClobber);

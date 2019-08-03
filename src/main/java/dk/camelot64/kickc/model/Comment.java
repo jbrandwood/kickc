@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.ArrayList;
  * Comments are attached to symbols and statements and
  * can be output in the generated assembler code.
  **/
-public class Comment {
+public class Comment implements Serializable {
 
    /** Empty comments collection. */
    public static final ArrayList<Comment> NO_COMMENTS = new ArrayList<>();

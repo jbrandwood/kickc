@@ -205,10 +205,10 @@ public class AsmSegment {
             if(statement != null) {
                StatementSource source = statement.getSource();
                if(source != null) {
-                  if(source.getFile() != null || source.getLineNumber() != null) {
+                  if(source.getFileName() != null || source.getLineNumber() != null) {
                      String fileInfo = "";
-                     if(source.getFile() != null)
-                        fileInfo += source.getFile();
+                     if(source.getFileName() != null)
+                        fileInfo += source.getFileName();
                      fileInfo += ":";
                      if(source.getLineNumber() != null)
                         fileInfo += source.getLineNumber();

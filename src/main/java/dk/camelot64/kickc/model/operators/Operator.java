@@ -1,9 +1,11 @@
 package dk.camelot64.kickc.model.operators;
 
+import java.io.Serializable;
+
 /**
  * An Operator. The operation performed on the rvalues in a Statement.
  */
-public class Operator {
+public class Operator implements Serializable {
 
    private String operator;
    private int precedence;

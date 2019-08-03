@@ -7,6 +7,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
+import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,6 +35,17 @@ public class TestPrograms {
 
    public TestPrograms() {
    }
+
+   @Test
+   public void testKcKaStringEncoding() throws IOException, URISyntaxException {
+      compileAndCompare("kc-ka-string-encoding", log());
+   }
+
+   @Test
+   public void testGlobalPcMultiple() throws IOException, URISyntaxException {
+      compileAndCompare("global-pc-multiple", log());
+   }
+
 
    @Test
    public void testStructPosFill() throws IOException, URISyntaxException {
@@ -2798,7 +2810,8 @@ public class TestPrograms {
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
       try {
-         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
+         //CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
+         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem", "-bytedump"});
       } catch(Throwable e) {
          fail("KickAssembling file failed! " + e.getMessage());
       } finally {

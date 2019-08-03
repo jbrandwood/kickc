@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
@@ -12,8 +13,11 @@ import java.util.Map;
 /** Inline ASM code */
 public class StatementAsm extends StatementBase {
 
-   /** ASM Fragment code. */
-   private KickCParser.AsmLinesContext asmLines;
+   /** ASM code. */
+   private String asmBody;
+
+   /** Cached parsed ASM code. */
+   private transient KickCParser.AsmLinesContext asmLines;
 
    /** All variables/constants referenced in the inline assembler. */
    private Map<String, SymbolVariableRef> referenced;
@@ -21,9 +25,9 @@ public class StatementAsm extends StatementBase {
    /** Declared clobber for the inline ASM. */
    private AsmClobber declaredClobber;
 
-   public StatementAsm(KickCParser.AsmLinesContext asmLines, Map<String, SymbolVariableRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
+   public StatementAsm(String asmBody, Map<String, SymbolVariableRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
-      this.asmLines = asmLines;
+      this.asmBody = asmBody;
       this.referenced = referenced;
       this.declaredClobber = declaredClobber;
    }
@@ -32,14 +36,21 @@ public class StatementAsm extends StatementBase {
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder txt = new StringBuilder();
       txt.append("asm { ");
-      for(KickCParser.AsmLineContext line : asmLines.asmLine()) {
+      for(KickCParser.AsmLineContext line : getAsmLines().asmLine()) {
          txt.append(line.getText()).append(" ");
       }
       txt.append(" }");
       return txt.toString();
    }
 
+   public String getAsmBody() {
+      return asmBody;
+   }
+
    public KickCParser.AsmLinesContext getAsmLines() {
+      if(asmLines==null) {
+         this.asmLines = AsmParser.parseAsm(asmBody, getSource());
+      }
       return asmLines;
    }
 

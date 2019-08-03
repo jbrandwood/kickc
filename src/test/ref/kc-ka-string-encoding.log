@@ -1,0 +1,301 @@
+Culled Empty Block (label) main::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte[]) strTemp#0 ← (const string) $0
+  to:@1
+main: scope:[main]  from @1
+  *((byte[]) strTemp#0 + (number) 2) ← (byte) 'e'
+  *((byte[]) strTemp#0 + (number) 3) ← (number) 0
+  asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
+  (signed word) main::return#0 ← (number) 0
+  to:main::@return
+main::@return: scope:[main]  from main
+  (signed word) main::return#3 ← phi( main/(signed word) main::return#0 )
+  (signed word) main::return#1 ← (signed word) main::return#3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  (signed word) main::return#2 ← (signed word) main::return#1
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(const string) $0 = (string) PETSCII_MIXED"v=X@"
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(signed word()) main()
+(label) main::@return
+(signed word) main::return
+(signed word) main::return#0
+(signed word) main::return#1
+(signed word) main::return#2
+(signed word) main::return#3
+(byte[]) strTemp
+(byte[]) strTemp#0
+
+Adding number conversion cast (unumber) 2 in *((byte[]) strTemp#0 + (number) 2) ← (byte) 'e'
+Adding number conversion cast (unumber) 0 in *((byte[]) strTemp#0 + (number) 3) ← (number) 0
+Adding number conversion cast (unumber) 3 in *((byte[]) strTemp#0 + (number) 3) ← ((unumber)) (number) 0
+Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((byte[]) strTemp#0 + (unumber)(number) 3) ← (unumber)(number) 0
+Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 2
+Simplifying constant integer cast 0
+Simplifying constant integer cast 3
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
+Finalized signed number type (signed byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (signed word) main::return#0 = (signed word) main::return#3 (signed word) main::return#1 
+Successful SSA optimization Pass2AliasElimination
+Constant (const byte[]) strTemp#0 = $0
+Constant (const signed word) main::return#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const signed word) main::return#2 = main::return#0
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused constant (const signed word) main::return#2
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const signed word) main::return#0
+Successful SSA optimization PassNEliminateUnusedVars
+Constant inlined $0 = (const byte[]) strTemp#0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(strTemp#0+2)
+Consolidated array index constant in *(strTemp#0+3)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'
+  [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0
+  asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [7] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(signed word()) main()
+(signed word) main::return
+(byte[]) strTemp
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e' -- _deref_pbuc1=vbuc2 
+    lda #'e'
+    sta strTemp+2
+    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta strTemp+3
+    // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
+    ldy #0
+  loop:
+    lda strTemp,y
+    beq done
+    jsr $ffd2
+    iny
+    jmp loop
+  done:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  strTemp: .text "v=X@"
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  } always clobbers reg byte a reg byte x reg byte y 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 53 combination 
+Uplifting [] best 53 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e' -- _deref_pbuc1=vbuc2 
+    lda #'e'
+    sta strTemp+2
+    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta strTemp+3
+    // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
+    ldy #0
+  loop:
+    lda strTemp,y
+    beq done
+    jsr $ffd2
+    iny
+    jmp loop
+  done:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  strTemp: .text "v=X@"
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction ldy #0 with TAY
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(signed word()) main()
+(label) main::@return
+(signed word) main::return
+(byte[]) strTemp
+(const byte[]) strTemp#0 strTemp = (string) PETSCII_MIXED"v=X@"
+
+
+
+FINAL ASSEMBLER
+Score: 38
+
+  // File Comments
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // strTemp[2] = 'e'
+    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e' -- _deref_pbuc1=vbuc2 
+    lda #'e'
+    sta strTemp+2
+    // strTemp[3] = 0
+    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta strTemp+3
+    // asm
+    // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
+    tay
+  loop:
+    lda strTemp,y
+    beq done
+    jsr $ffd2
+    iny
+    jmp loop
+  done:
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  strTemp: .text "v=X@"
+

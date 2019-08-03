@@ -9,26 +9,55 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.io.Serializable;
+
 /** Contains information about the source of a program statement */
-public class StatementSource {
+public class StatementSource implements Serializable {
 
-   private Token tokenStart;
+   /** The file name of the file containing the source. */
+   private String fileName;
+   /** The line number of the start of the source. */
+   private Integer lineNumber;
+   /** The source code. */
+   private String code;
+   /** The index of the first char of the source in the file. */
+   private int startIndex;
+   /** The index of the last char of the source in the file. */
+   private int stopIndex;
 
-   private Token tokenStop;
+   public StatementSource(String fileName, Integer lineNumber, String code, int startIndex, int stopIndex) {
+      this.fileName = fileName;
+      this.lineNumber = lineNumber;
+      this.code = code;
+      this.startIndex = startIndex;
+      this.stopIndex = stopIndex;
+   }
+
+   public StatementSource(Token tokenStart, Token tokenStop) {
+      if(tokenStart != null) {
+         this.startIndex = tokenStart.getStartIndex();
+         CharStream stream = tokenStart.getInputStream();
+         this.fileName = stream.getSourceName();
+         this.lineNumber = tokenStart.getLine();
+         if(tokenStop != null) {
+            this.stopIndex = tokenStop.getStopIndex();
+            Interval interval = getInterval();
+            this.code = stream.getText(interval);
+         }
+      }
+   }
 
    public StatementSource(ParserRuleContext context) {
-      this.tokenStart = context.getStart();
-      this.tokenStop = context.getStop();
+      this(context.getStart(), context.getStop());
    }
 
    public StatementSource(ParseTree start, ParseTree stop) {
-      this.tokenStart = getToken(start, true);
-      this.tokenStop = getToken(stop, false);
+      this(getToken(start, true), getToken(stop, false));
    }
 
    public static Token getToken(ParseTree node, boolean start) {
       Token token;
-      if(node==null) {
+      if(node == null) {
          return null;
       } else if(node instanceof TerminalNode) {
          token = ((TerminalNode) node).getSymbol();
@@ -58,7 +87,7 @@ public class StatementSource {
 
    public static StatementSource ifThen(KickCParser.StmtIfElseContext ctx) {
       ParseTree nodeStart = ctx;
-      if(ctx.stmt(1)==null) {
+      if(ctx.stmt(1) == null) {
          // No else part
          ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 2);
          return new StatementSource(nodeStart, nodeStop);
@@ -88,14 +117,14 @@ public class StatementSource {
    }
 
    public static StatementSource procedureEnd(KickCParser.DeclFunctionContext ctx) {
-      ParseTree nodeStart = ctx.getChild(ctx.getChildCount()-1);
+      ParseTree nodeStart = ctx.getChild(ctx.getChildCount() - 1);
       ParseTree nodeStop = ctx;
       return new StatementSource(nodeStart, nodeStop);
    }
 
    public static StatementSource procedureBegin(KickCParser.DeclFunctionContext ctx) {
       ParseTree nodeStart = ctx;
-      ParseTree nodeStop = ctx.getChild(ctx.getChildCount()-4);
+      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 4);
       return new StatementSource(nodeStart, nodeStop);
    }
 
@@ -113,55 +142,49 @@ public class StatementSource {
 
    /**
     * Get the underlying source token interval
+    *
     * @return The interval
     */
    private Interval getInterval() {
-      return new Interval(tokenStart.getStartIndex(), tokenStop.getStopIndex());
+      return new Interval(startIndex, stopIndex);
    }
 
    /**
     * Determines if this source contains another source
+    *
     * @param other The other source to examine
     * @return true if this source contains the other source
     */
    public boolean contains(StatementSource other) {
-      if(other==null)
+      if(other == null)
          return false;
       return getInterval().properlyContains(other.getInterval());
    }
 
-   public String getFile() {
-      if(tokenStart != null) {
-         CharStream stream = tokenStart.getInputStream();
-         return stream.getSourceName();
-      }
-      return null;
+   public String getFileName() {
+      return fileName;
    }
 
    public Integer getLineNumber() {
-      if(tokenStart != null) {
-         return tokenStart.getLine();
-      }
-      return null;
+      return lineNumber;
    }
 
    public String getCode() {
-      if(tokenStart != null) {
-         CharStream stream = tokenStart.getInputStream();
-         Interval interval = getInterval();
-         String codeText = stream.getText(interval);
-         return codeText;
-      }
-      return null;
+      return code;
    }
 
+   public int getStartIndex() {
+      return startIndex;
+   }
+
+   public int getStopIndex() {
+      return stopIndex;
+   }
 
    @Override
    public String toString() {
-      if(tokenStart != null) {
-         CharStream stream = tokenStart.getInputStream();
-         Interval interval = getInterval();
-         return "File " + stream.getSourceName() + "\nLine " + tokenStart.getLine() + "\n" + stream.getText(interval);
+      if(getFileName() != null) {
+         return "File " + getFileName() + "\nLine " + getLineNumber() + "\n" + getCode();
       } else {
          return "";
       }

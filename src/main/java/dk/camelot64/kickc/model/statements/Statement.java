@@ -4,13 +4,14 @@ package dk.camelot64.kickc.model.statements;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Single Static Assignment Form Statement.
  * Intermediate form used for compiler optimization.
  */
-public interface Statement {
+public interface Statement extends Serializable {
 
    String toString(Program program, boolean aliveInfo);
 

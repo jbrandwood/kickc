@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -8,6 +8,8 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.Pass2AliasElimination;
+import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
 import java.util.*;
 

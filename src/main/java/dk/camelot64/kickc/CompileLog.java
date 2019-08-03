@@ -138,6 +138,11 @@ public class CompileLog {
       this.verboseLoopAnalysis = verboseLoopAnalysis;
    }
 
+   public CompileLog verboseLoopAnalysis() {
+      setVerboseLoopAnalysis(true);
+      return this;
+   }
+
    public void setVerboseNonOptimization(boolean verboseNonOptimization) {
       this.verboseNonOptimization = verboseNonOptimization;
    }

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.passes.calcs.PassNCalcCallGraph;
 
 import java.util.*;
 

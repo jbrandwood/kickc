@@ -2509,6 +2509,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopMemsetMin() throws IOException, URISyntaxException {
+      compileAndCompare("loop-memset-min");
+   }
+
+   @Test
    public void testLoopWhileSideeffect() throws IOException, URISyntaxException {
       compileAndCompare("loop-while-sideeffect");
    }

@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.passes.PassNCalcLiveRangeVariables;
+import dk.camelot64.kickc.passes.calcs.PassNCalcLiveRangeVariables;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

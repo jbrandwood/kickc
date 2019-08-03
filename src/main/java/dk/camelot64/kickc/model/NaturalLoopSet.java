@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.passes.PassNCalcLoopSet;
+import dk.camelot64.kickc.passes.calcs.PassNCalcLoopSet;
 
 import java.util.*;
 

@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.passes.*;
+import dk.camelot64.kickc.passes.calcs.*;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -260,7 +260,7 @@ public class Program {
 
    public DominatorsGraph getDominators() {
       if(dominators==null)
-         this.dominators = new PassNDominatorsAnalysis(this).calculate();
+         this.dominators = new PassNCalcDominators(this).calculate();
       return dominators;
    }
 

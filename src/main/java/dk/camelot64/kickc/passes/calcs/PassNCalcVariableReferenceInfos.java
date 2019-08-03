@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
@@ -126,7 +126,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
     * @param rValue The rValue
     * @return All referenced constants
     */
-   static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
+   public static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
       LinkedHashSet<ConstantRef> referencedConsts = new LinkedHashSet<>();
       for(SymbolRef symbolRef : getReferenced(rValue)) {
          if(symbolRef instanceof ConstantRef) {

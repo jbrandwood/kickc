@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.passes.PassNCalcVariableReferenceInfos;
+import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

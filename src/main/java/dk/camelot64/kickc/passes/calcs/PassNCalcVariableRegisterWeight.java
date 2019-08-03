@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;

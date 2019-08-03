@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowGraph;
@@ -33,6 +33,5 @@ public abstract class PassNCalcBase<Data> {
    public ControlFlowGraph getGraph() {
       return program.getGraph();
    }
-
 
 }

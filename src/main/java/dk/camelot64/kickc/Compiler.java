@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.passes.PassNCastSimplification;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
 
@@ -141,6 +142,7 @@ public class Compiler {
 
          pass1GenerateSSA();
          pass2Optimize();
+
          pass2UnrollLoops();
          pass2InlineConstants();
          pass3Analysis();
@@ -303,6 +305,8 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      //optimizations.add(new PassNStatementIndices(program));
+      //optimizations.add(new Pass2LoopHeadConstantIdentification(program));
       return optimizations;
    }
 

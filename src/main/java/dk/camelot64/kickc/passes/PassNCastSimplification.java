@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.passes.Pass2SsaOptimization;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

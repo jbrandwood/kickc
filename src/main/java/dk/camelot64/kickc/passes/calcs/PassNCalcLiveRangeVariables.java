@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 /**
  * Identify the alive intervals for all variables. Add the intervals to the ProgramScope.

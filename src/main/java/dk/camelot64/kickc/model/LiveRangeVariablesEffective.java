@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
-import dk.camelot64.kickc.passes.PassNCalcLiveRangesEffective;
+import dk.camelot64.kickc.passes.calcs.PassNCalcLiveRangesEffective;
 
 import java.util.*;
 

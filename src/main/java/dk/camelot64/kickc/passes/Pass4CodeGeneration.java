@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
 import java.util.*;
 

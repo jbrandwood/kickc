@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.DominatorsBlock;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Finds the dominators for the control flow graph. */
-public class PassNDominatorsAnalysis extends PassNCalcBase<DominatorsGraph> {
+public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
 
-   public PassNDominatorsAnalysis(Program program) {
+   public PassNCalcDominators(Program program) {
       super(program);
    }
 

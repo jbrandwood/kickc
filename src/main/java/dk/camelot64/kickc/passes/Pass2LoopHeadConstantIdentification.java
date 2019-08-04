@@ -38,6 +38,8 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
             return true;
          }
       }
+      // TODO: Move to Program
+      new PassNStatementIndices(getProgram()).clearStatementIndices();
       return false;
    }
 

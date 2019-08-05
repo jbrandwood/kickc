@@ -15,7 +15,7 @@ import java.util.Map;
 /** A {@link ProgramValueIterator} that replaces symbols with their alias. */
 public class AliasReplacer implements ProgramValueHandler {
 
-   /** true if anything has ben replaced. */
+   /** true if anything has been replaced. */
    private boolean replaced;
 
    /** The alias map. */

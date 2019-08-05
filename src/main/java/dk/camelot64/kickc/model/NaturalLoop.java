@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A single natural loop in a control flow graph.
  */
-public class NaturalLoop {
+public class NaturalLoop implements BlockSet {
 
    /**
     * The head of the natural loop. The block where control enters the loop and the block where the back edge returns to. Dominates all nodes in the loop.
@@ -61,22 +61,6 @@ public class NaturalLoop {
    public void setBlocks(Set<LabelRef> blocks) {
       this.blocks = blocks;
    }
-
-   /**
-    * Get the actual blocks (not refs)
-    * @param graph The control flow graph containing the blocks
-    * @return The blocks of the loop (in the same order as they appear in the control flow graph.)
-    */
-   public List<ControlFlowBlock> getBlocks(ControlFlowGraph graph) {
-      ArrayList<ControlFlowBlock> controlFlowBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
-         if(getBlocks().contains(block.getLabel())) {
-            controlFlowBlocks.add(block);
-         }
-      }
-      return controlFlowBlocks;
-   }
-
 
    @Override
    public String toString() {

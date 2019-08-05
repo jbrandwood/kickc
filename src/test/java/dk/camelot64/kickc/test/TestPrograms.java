@@ -1713,6 +1713,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUnrollWhileMin() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-while-min");
+   }
+
+   @Test
+   public void testUnrollForMin() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-for-min");
+   }
+
+   @Test
    public void testLoop100() throws IOException, URISyntaxException {
       compileAndCompare("loop100");
    }
@@ -2505,7 +2515,7 @@ public class TestPrograms {
 
    @Test
    public void testLoopWhileMin() throws IOException, URISyntaxException {
-      compileAndCompare("loop-while-min");
+      compileAndCompare("loop-while-min", log().verboseLoopAnalysis());
    }
 
    @Test

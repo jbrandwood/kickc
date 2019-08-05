@@ -134,6 +134,11 @@ public class CompileLog {
       this.verboseLoopUnroll = verboseLoopUnroll;
    }
 
+   public CompileLog verboseLoopUnroll() {
+      setVerboseLoopUnroll(true);
+      return this;
+   }
+
    public void setVerboseLoopAnalysis(boolean verboseLoopAnalysis) {
       this.verboseLoopAnalysis = verboseLoopAnalysis;
    }

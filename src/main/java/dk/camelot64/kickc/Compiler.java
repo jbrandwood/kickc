@@ -322,8 +322,12 @@ public class Compiler {
       loopUnrolling.add(() -> { program.clearStatementInfos(); return false; });
       loopUnrolling.add(() -> { program.clearDominators(); return false; });
       loopUnrolling.add(() -> { program.clearLoopSet(); return false; });
-      loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
+
+      if(getLog().isVerboseLoopUnroll()) {
+         getLog().append("CONTROL FLOW GRAPH BEFORE UNROLLING");
+         getLog().append(program.getGraph().toString(program));
+      }
 
       boolean unrolled;
       do {

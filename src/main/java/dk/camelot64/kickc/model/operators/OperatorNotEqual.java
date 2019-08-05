@@ -23,7 +23,6 @@ public class OperatorNotEqual extends OperatorBinary {
       } else if(left instanceof ConstantPointer && right instanceof ConstantPointer) {
          return new ConstantBool(!Objects.equals(((ConstantPointer) left).getLocation(), ((ConstantPointer) right).getLocation()));
       }
-
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
 

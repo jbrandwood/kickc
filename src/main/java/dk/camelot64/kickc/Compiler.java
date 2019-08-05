@@ -306,6 +306,8 @@ public class Compiler {
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new PassNStatementIndices(program));
+      optimizations.add(() -> { program.clearDominators(); return false; });
+      optimizations.add(() -> { program.clearLoopSet(); return false; });
       optimizations.add(new Pass2LoopHeadConstantIdentification(program));
       return optimizations;
    }

@@ -1,19 +1,22 @@
 package dk.camelot64.kickc.passes;
 
-
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.PointerDereference;
 import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.utils.Unroller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Identify loop heads where the condition is constant when examind the first time
@@ -31,8 +34,11 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHeadRef = loop.getHead();
          ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHeadRef);
-         boolean modified = optimizeLoopHead(loopHeadBlock, loop, variableReferenceInfos);
+         //TODO: Fix remaining errors!
+         //boolean modified = optimizeLoopHead(loopHeadBlock, loop, variableReferenceInfos);
+         boolean modified = false;
          if(modified) {
+            getProgram().clearStatementInfos();
             getProgram().clearLoopSet();
             getProgram().clearDominators();
             return true;
@@ -52,7 +58,10 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
                condition = (StatementConditionalJump) statement;
             }
          }
+         if(isVolatile(condition)) return false;
+
          Collection<VariableRef> conditionVars = variableReferenceInfos.getUsedVars(condition);
+
          // Examines if they have constant values in the first iteration
          List<VariableRef> optimizeVars = new ArrayList<>();
          StatementPhiBlock phiBlock = loopHeadBlock.getPhiBlock();
@@ -82,14 +91,50 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
          }
          if(doOptimize) {
             // Optimization is a good idea since the condition is completely constant when entering!
-            ScopeRef scopeRef = loopHeadBlock.getScope();
-            Scope scope = getScope().getScope(scopeRef);
+            BlockSet unrollBlocks = () -> {
+               LinkedHashSet<LabelRef> blocks = new LinkedHashSet<>();
+               blocks.add(loopHeadBlock.getLabel());
+               return blocks;
+            };
 
-            // TODO: Copy the block and all statements - and redirect the PHI-entry to the copy!
+            // Copy the block and all statements - enter through the copy - finish through the original
+            Unroller.UnrollStrategy unrollStrategy = new Unroller.UnrollStrategy() {
+               @Override
+               public TransitionHandling getEntryStrategy(LabelRef from, LabelRef to) {
+                  if(loop.getBlocks().contains(from)) {
+                     return TransitionHandling.TO_ORIGINAL;
+                  }  else {
+                     return TransitionHandling.TO_COPY;
+                  }
+               }
 
+               @Override
+               public TransitionHandling getInternalStrategy(LabelRef from, LabelRef to) {
+                  return TransitionHandling.TO_ORIGINAL;
+               }
+            };
+            Unroller unroller = new Unroller(getProgram(), unrollBlocks, unrollStrategy);
+            unroller.unroll();
+            return true;
          }
       }
       return false;
+   }
+
+
+   private boolean isVolatile(Statement condition) {
+      AtomicBoolean isVol = new AtomicBoolean(false);
+      ProgramValueIterator.execute(condition, (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof PointerDereference) {
+            isVol.set(true);
+         }
+         if(programValue.get() instanceof VariableRef) {
+            Variable variable = getScope().getVariable((VariableRef) programValue.get());
+            if(variable.isVolatile())
+               isVol.set(true);
+         }
+      }, null, null);
+      return isVol.get();
    }
 
 }

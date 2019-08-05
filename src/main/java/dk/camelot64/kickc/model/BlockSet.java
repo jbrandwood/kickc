@@ -22,7 +22,7 @@ public interface BlockSet {
     * @param graph The control flow graph containing the blocks
     * @return The blocks of the loop (in the same order as they appear in the control flow graph.)
     */
-   default public List<ControlFlowBlock> getBlocks(ControlFlowGraph graph) {
+   default List<ControlFlowBlock> getBlocks(ControlFlowGraph graph) {
       ArrayList<ControlFlowBlock> controlFlowBlocks = new ArrayList<>();
       for(ControlFlowBlock block : graph.getAllBlocks()) {
          if(getBlocks().contains(block.getLabel())) {

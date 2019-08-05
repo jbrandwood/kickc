@@ -18,18 +18,18 @@ import java.util.*;
  * <p>
  * Unrolling has a number of phases
  * <ol>
- *    <li>Prepare by ensuring that all successors of the blocks have PHI-statements for all variables defined inside the blocks </li>
- *    <li>Copy all variables defined inside the blocks </li>
- *    <li>Copy all block labels</li>
- *    <li>Copy all blocks & statements - rewriting  all internal transitions in both original and copy according to a strategy.</li>
- *    <li>Patch all predecessor blocks so they hit either the original or the new copied block according to a strategy.</li>
- *    <li>Patch all successor blocks so they are now hit by both original and copy.</li>
+ * <li>Prepare by ensuring that all successors of the blocks have PHI-statements for all variables defined inside the blocks </li>
+ * <li>Copy all variables defined inside the blocks </li>
+ * <li>Copy all block labels</li>
+ * <li>Copy all blocks & statements - rewriting  all internal transitions in both original and copy according to a strategy.</li>
+ * <li>Patch all predecessor blocks so they hit either the original or the new copied block according to a strategy.</li>
+ * <li>Patch all successor blocks so they are now hit by both original and copy.</li>
  * </ol>
  * <p>
  * The {@link UnrollStrategy} defines
  * <ul>
- *    <li> For each block transition entering the blocks being copied - should the transition hit the original or the copy?</li>
- *    <li> For each block transition between two blocks being copied - should the transition be copied, always hit the original or always hit the copy?</li>
+ * <li> For each block transition entering the blocks being copied - should the transition hit the original or the copy?</li>
+ * <li> For each block transition between two blocks being copied - should the transition be copied, always hit the original or always hit the copy?</li>
  * </ul>
  */
 public class Unroller {
@@ -57,6 +57,12 @@ public class Unroller {
    public void unroll() {
       // 0. Prepare for copying by ensuring that all variables defined in the blocks are represented in PHI-blocks of the successors
       prepare();
+
+      if(program.getLog().isVerboseSSAOptimize()) {
+         program.getLog().append("CONTROL FLOW GRAPH (PREPARED)");
+         program.getLog().append(program.getGraph().toString(program));
+      }
+
       // 1. Create new versions of all symbols assigned inside the loop
       this.varsOriginalToCopied = copyDefinedVars(unrollBlocks, program);
       // 2. Create new labels for all blocks in the loop
@@ -69,31 +75,67 @@ public class Unroller {
     * Ensure that all variables defined inside the blocks to be copied has a PHI in successor blocks.
     */
    private void prepare() {
-      for(VariableRef definedVarRef : getVarsDefinedIn(unrollBlocks, program)) {
+      for(VariableRef origVarRef : getVarsDefinedIn(unrollBlocks, program)) {
          // Find out if the variable is ever referenced outside the loop
-         if(isReferencedOutside(definedVarRef, unrollBlocks, program)) {
+         if(isReferencedOutside(origVarRef, unrollBlocks, program)) {
             //  Add any needed PHI-statements to the successors
             for(SuccessorTransition successorTransition : getSuccessorTransitions(unrollBlocks, program.getGraph())) {
                ControlFlowBlock successorBlock = program.getGraph().getBlock(successorTransition.successor);
                StatementPhiBlock phiBlock = successorBlock.getPhiBlock();
                // Create a new version of the variable
-               Variable definedVar = program.getScope().getVariable(definedVarRef);
-               Variable newVar = ((VariableVersion) definedVar).getVersionOf().createVersion();
-               // Replace all references outside the loop to the new version!
-               LinkedHashMap<SymbolRef, RValue> aliases = new LinkedHashMap<>();
-               aliases.put(definedVarRef, newVar.getRef());
-               ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
-                  if(currentBlock != null) {
-                     if(!unrollBlocks.getBlocks().contains(currentBlock.getLabel())) {
-                        new AliasReplacer(aliases).execute(programValue, currentStmt, stmtIt, currentBlock);
-                     }
-                  }
-               });
+               Variable origVar = program.getScope().getVariable(origVarRef);
+               Variable newVar;
+               if(origVar instanceof VariableVersion) {
+                  newVar = ((VariableVersion) origVar).getVersionOf().createVersion();
+               } else {
+                  newVar = origVar.getScope().addVariableIntermediate();
+               }
+               // Replace all references from the new phi and forward
+               forwardReplaceAllUsages(successorTransition.successor, origVarRef, newVar.getRef(), new LinkedHashSet<>());
                // Create the new phi-variable in the successor phi block
                StatementPhiBlock.PhiVariable newPhiVar = phiBlock.addPhiVariable(newVar.getRef());
-               newPhiVar.setrValue(successorTransition.predecessor, definedVarRef);
-               program.getLog().append("Creating PHI for " + definedVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(program, false));
+               newPhiVar.setrValue(successorTransition.predecessor, origVarRef);
+               program.getLog().append("Creating PHI for " + origVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(program, false));
+
             }
+         }
+      }
+   }
+
+   /**
+    * Introduces a new version of a variable - and replaces all uses of the old variable with the new one from a specific point in the control flow graph and forward until the old variable is defined.
+    * @param blockRef The block to replace the usage from
+    * @param origVarRef The original variable
+    * @param newVarRef The new variable replacing the original
+    * @param visited All blocks that have already been visited.
+    */
+   private void forwardReplaceAllUsages(LabelRef blockRef, VariableRef origVarRef, VariableRef newVarRef, Set<LabelRef> visited) {
+      VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
+      LinkedHashMap<SymbolRef, RValue> aliases = new LinkedHashMap<>();
+      aliases.put(origVarRef, newVarRef);
+      AliasReplacer aliasReplacer = new AliasReplacer(aliases);
+      ControlFlowBlock block = program.getGraph().getBlock(blockRef);
+      if(block!=null) {
+         for(Statement statement : block.getStatements()) {
+            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
+            if(definedVars!=null && definedVars.contains(origVarRef)) {
+               // Found definition of the original variable - don't replace any more
+               return;
+            }
+            // Replace any usage in the statement
+            ProgramValueIterator.execute(statement, aliasReplacer, null, block);
+         }
+      }
+      visited.add(blockRef);
+      if(block!=null) {
+         if(block.getConditionalSuccessor() != null && !visited.contains(block.getConditionalSuccessor())) {
+            forwardReplaceAllUsages(block.getConditionalSuccessor(), origVarRef, newVarRef, visited);
+         }
+         if(block.getDefaultSuccessor() != null && !visited.contains(block.getDefaultSuccessor())) {
+            forwardReplaceAllUsages(block.getDefaultSuccessor(), origVarRef, newVarRef, visited);
+         }
+         if(block.getCallSuccessor() != null && !visited.contains(block.getCallSuccessor())) {
+            forwardReplaceAllUsages(block.getCallSuccessor(), origVarRef, newVarRef, visited);
          }
       }
    }
@@ -182,7 +224,7 @@ public class Unroller {
 
          // Set default successor for both new & original blocks
          LabelRef origSuccessor = origBlock.getDefaultSuccessor();
-         if(unrollBlocks.contains(origSuccessor)) {
+         if(isInternal(origSuccessor)) {
             // Default Successor is inside copied blocks - Use strategy to find default successors
             UnrollStrategy.TransitionHandling handling = strategy.getInternalStrategy(origBlock.getLabel(), origSuccessor);
             if(UnrollStrategy.TransitionHandling.TO_COPY.equals(handling)) {
@@ -208,8 +250,8 @@ public class Unroller {
 
          // Examine whether conditional successor is external
          LabelRef origConditionalSuccessor = origBlock.getConditionalSuccessor();
-         if(origConditionalSuccessor !=null) {
-            if(!unrollBlocks.contains(origConditionalSuccessor)) {
+         if(origConditionalSuccessor != null) {
+            if(!isInternal(origConditionalSuccessor)) {
                // Update the PHI blocks of the external conditional successor to also get values from the copied PHI block
                patchSuccessorBlockPhi(origConditionalSuccessor, origBlock.getLabel(), newBlockLabel);
             }
@@ -219,10 +261,22 @@ public class Unroller {
    }
 
    /**
+    * Determine if a block is one of the blovks being copied (original or copy)
+    *
+    * @param block The block to examine
+    * @return true if the block is one of the blocks being copied
+    */
+   private boolean isInternal(LabelRef block) {
+      return unrollBlocks.contains(block) || blocksOriginalToCopied.values().contains(block);
+
+   }
+
+   /**
     * Patch the PHI-block of an external successor block. Ensures that the PHI-block also receives data from the new coped block.
+    *
     * @param successor The successor block's label
     * @param origBlock The label of the original block
-    * @param newBlock  The label of the newly created copy
+    * @param newBlock The label of the newly created copy
     */
    private void patchSuccessorBlockPhi(LabelRef successor, LabelRef origBlock, LabelRef newBlock) {
       ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
@@ -275,8 +329,9 @@ public class Unroller {
 
    /**
     * Create a copy of a conditional jump statement. Also updates the original  conditional jump if specified by the strategy.
+    *
     * @param origConditional The original conditional jump
-    * @param origBlock  The block containing the original PHI statement
+    * @param origBlock The block containing the original PHI statement
     * @return The new copied conditional jump statement.
     */
    private Statement unrollStatementConditionalJump(StatementConditionalJump origConditional, LabelRef origBlock) {
@@ -292,7 +347,7 @@ public class Unroller {
       newConditional.setDeclaredUnroll(origConditional.isDeclaredUnroll());
       // Then make sure the destination is correct in both the original and copy
       LabelRef origSuccessor = origConditional.getDestination();
-      if(unrollBlocks.contains(origSuccessor)) {
+      if(isInternal(origSuccessor)) {
          // Successor is inside the copied blocks!
          UnrollStrategy.TransitionHandling handling = strategy.getInternalStrategy(origBlock, origSuccessor);
          if(UnrollStrategy.TransitionHandling.TO_COPY.equals(handling)) {
@@ -317,8 +372,9 @@ public class Unroller {
 
    /**
     * Create a copy of a PHI-statement. Also updates the original PHI-statement if specified by the strategy.
+    *
     * @param origPhiBlock The original PHI statement
-    * @param origBlock  The block containing the original PHI statement
+    * @param origBlock The block containing the original PHI statement
     * @return The new copied PH statement.
     */
    private Statement unrollStatementPhi(StatementPhiBlock origPhiBlock, LabelRef origBlock) {
@@ -332,7 +388,7 @@ public class Unroller {
          while(origPhiRValuesIt.hasNext()) {
             StatementPhiBlock.PhiRValue origPhiRValue = origPhiRValuesIt.next();
             LabelRef predecessor = origPhiRValue.getPredecessor();
-            if(unrollBlocks.contains(predecessor)) {
+            if(isInternal(predecessor)) {
                // Predecessor is inside the loop
                UnrollStrategy.TransitionHandling handling = strategy.getInternalStrategy(predecessor, origBlock);
                if(UnrollStrategy.TransitionHandling.TO_COPY.equals(handling)) {

@@ -46,7 +46,6 @@ public class TestPrograms {
       compileAndCompare("global-pc-multiple");
    }
 
-
    @Test
    public void testStructPosFill() throws IOException, URISyntaxException {
       compileAndCompare("struct-pos-fill");
@@ -2515,7 +2514,7 @@ public class TestPrograms {
 
    @Test
    public void testLoopWhileMin() throws IOException, URISyntaxException {
-      compileAndCompare("loop-while-min", log().verboseLoopAnalysis());
+      compileAndCompare("loop-while-min");
    }
 
    @Test

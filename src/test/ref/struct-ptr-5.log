@@ -49,7 +49,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   (byte) main::idx#6 ← phi( main/(byte) main::idx#0 main::@2/(byte) main::idx#4 )
   (struct Entry*) main::entry#2 ← phi( main/(struct Entry*) main::entry#0 main::@2/(struct Entry*) main::entry#1 )
-  (bool~) main::$17 ← (number) 0 != (struct Entry*) main::entry#2
+  (bool~) main::$17 ← (struct Entry*)(word) 0 != (struct Entry*) main::entry#2
   if((bool~) main::$17) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -146,7 +146,6 @@ Adding number conversion cast (unumber) 1 in *((byte*) main::$8) ← (number) 1
 Adding number conversion cast (unumber) 2 in *((byte*) main::$10) ← (number) 2
 Adding number conversion cast (unumber) 3 in *((byte*) main::$12) ← (number) 3
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$17 ← (number) 0 != (struct Entry*) main::entry#2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (struct Entry*) ENTRIES#0 ← (struct Entry*)(number) $1000
 Inlining cast *((byte*) main::$8) ← (unumber)(number) 1
@@ -165,14 +164,12 @@ Simplifying constant pointer cast (struct Entry*) 0
 Simplifying constant integer cast 3
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_ENTRY
@@ -182,7 +179,7 @@ Alias (struct Entry*) main::entry2#0 = (struct Entry*~) main::$1
 Alias (struct Entry*) main::entry#2 = (struct Entry*) main::entry#3 
 Alias (byte) main::idx#5 = (byte) main::idx#6 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$17 [25] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2
+Simple Condition (bool~) main::$17 [25] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [2] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_ENTRY
 Constant right-side identified [5] (byte~) main::$6 ← (byte) 2 * (const byte) SIZEOF_STRUCT_ENTRY
@@ -291,7 +288,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   [10] (byte) main::idx#5 ← phi( main/(byte) 0 main::@2/(byte) main::idx#4 )
   [10] (struct Entry*) main::entry#2 ← phi( main/(const struct Entry*) ENTRIES#0 main::@2/(struct Entry*) main::entry#1 )
-  [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2
+  [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [12] return 
@@ -439,7 +436,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2 -- vwuc1_neq_pssz1_then_la1 
+    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda entry+1
     cmp #>0
     bne b2
@@ -523,7 +520,7 @@ Statement [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte
 Statement [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] ) always clobbers reg byte a 
+Statement [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::idx#5 main::idx#4 ]
 Statement [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] ( main:2 [ main::entry#2 main::idx#5 main::$2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ main::idx#5 main::idx#4 ]
@@ -542,7 +539,7 @@ Statement [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte
 Statement [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] ) always clobbers reg byte a 
+Statement [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] ) always clobbers reg byte a 
 Statement [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] ( main:2 [ main::entry#2 main::idx#5 main::$2 ] ) always clobbers reg byte a reg byte y 
 Statement [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#1 main::$3 ] ( main:2 [ main::entry#2 main::idx#1 main::$3 ] ) always clobbers reg byte a reg byte y 
 Statement [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#2 main::$4 ] ( main:2 [ main::entry#2 main::idx#2 main::$4 ] ) always clobbers reg byte a reg byte y 
@@ -641,7 +638,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2 -- vwuc1_neq_pssz1_then_la1 
+    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda entry+1
     cmp #>0
     bne b2
@@ -833,7 +830,7 @@ main: {
     // main::@1
   b1:
     // while(entry)
-    // [11] if((byte) 0!=(struct Entry*) main::entry#2) goto main::@2 -- vwuc1_neq_pssz1_then_la1 
+    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda entry+1
     cmp #>0
     bne b2

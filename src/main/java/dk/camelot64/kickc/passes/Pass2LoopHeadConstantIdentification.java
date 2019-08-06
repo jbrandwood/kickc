@@ -34,9 +34,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHeadRef = loop.getHead();
          ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHeadRef);
-         //TODO: Fix remaining errors!
-         //boolean modified = optimizeLoopHead(loopHeadBlock, loop, variableReferenceInfos);
-         boolean modified = false;
+         boolean modified = optimizeLoopHead(loopHeadBlock, loop, variableReferenceInfos);
          if(modified) {
             getProgram().clearStatementInfos();
             getProgram().clearLoopSet();

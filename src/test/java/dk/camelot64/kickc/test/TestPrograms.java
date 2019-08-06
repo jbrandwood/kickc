@@ -1952,8 +1952,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testBoolIfs() throws IOException, URISyntaxException {
-      compileAndCompare("bool-ifs");
+   public void testBoolIfsMin() throws IOException, URISyntaxException {
+      compileAndCompare("bool-ifs-min");
    }
 
    @Test

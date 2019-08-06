@@ -18,10 +18,6 @@ lvaluevar: {
     lda #>$400
     sta screen+1
     ldx #2
-  b1:
-    cpx #$a
-    bcc b2
-    rts
   b2:
     lda #b
     ldy #0
@@ -31,49 +27,43 @@ lvaluevar: {
     inc screen+1
   !:
     inx
-    jmp b1
+    cpx #$a
+    bcc b2
+    rts
 }
 rvaluevar: {
     .label screen2 = $400
     .label screen = 2
-    ldy #0
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     ldx #2
-  b1:
-    cpx #$a
-    bcc b2
-    sty screen2
-    rts
   b2:
     ldy #0
     lda (screen),y
-    tay
     inc screen
     bne !+
     inc screen+1
   !:
     inx
-    jmp b1
+    cpx #$a
+    bcc b2
+    sta screen2
+    rts
 }
 rvalue: {
     // A constant pointer
     .label SCREEN = $400
     .label screen2 = $400
-    // RValue constant array pointer constant index
-    lda SCREEN+1
     ldx #2
-  b1:
+  b2:
+    lda SCREEN,x
+    inx
     cpx #$a
     bcc b2
     sta screen2
     rts
-  b2:
-    lda SCREEN,x
-    inx
-    jmp b1
 }
 lvalue: {
     // A constant pointer
@@ -85,13 +75,11 @@ lvalue: {
     lda #2
     sta SCREEN+1
     tax
-  b1:
-    cpx #$a
-    bcc b2
-    rts
   b2:
     lda #3
     sta SCREEN,x
     inx
-    jmp b1
+    cpx #$a
+    bcc b2
+    rts
 }

@@ -140,22 +140,24 @@ Print: {
   done:
     rts
 }
-// myprintf(byte* zeropage($d) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
+// myprintf(byte* zeropage($f) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
 myprintf: {
-    .label str = $d
+    .label str = $f
     .label bDigits = $c
     .label bLen = $b
     .label b = $a
     .label bArg = 7
-    .label return = $b
     .label w1 = 2
     .label w2 = 4
     .label w3 = $17
+    .label w = $d
     .label bFormat = 6
-    .label w = $f
     .label bTrailing = 8
     .label bLeadZero = 9
-    lda #0
+    ldy #0
+    lda (str),y
+    tax
+    tya
     sta bLeadZero
     sta bDigits
     sta bTrailing
@@ -164,19 +166,37 @@ myprintf: {
     sta bLen
     sta bArg
     sta bFormat
-  b1:
-    ldy #0
-    lda (str),y
-    tax
-    lda bFormat
+  b2:
+    cpx #'%'
+    beq !b28+
+    jmp b28
+  !b28:
+    // default format
+    //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
+    lda bArg
     cmp #0
-    bne !b2+
-    jmp b2
-  !b2:
-    cpx #'0'
-    bne b3
+    bne !b29+
+    jmp b29
+  !b29:
     lda #1
+    cmp bArg
+    bne !b30+
+    jmp b30
+  !b30:
+    lda w3
+    sta w
+    lda w3+1
+    sta w+1
+  b31:
+    inc bArg
+    lda #0
     sta bLeadZero
+    lda #1
+    sta bDigits
+    lda #0
+    sta bTrailing
+    lda #1
+    sta bFormat
   b27:
     inc str
     bne !+
@@ -187,9 +207,21 @@ myprintf: {
     cmp #0
     bne b1
     tya
-    ldy return
+    ldy bLen
     sta strTemp,y
     rts
+  b1:
+    ldy #0
+    lda (str),y
+    tax
+    lda bFormat
+    cmp #0
+    beq b2
+    cpx #'0'
+    bne b3
+    lda #1
+    sta bLeadZero
+    jmp b27
   b3:
     cpx #'1'
     bcc b4
@@ -339,32 +371,6 @@ myprintf: {
     txa
     axs #'0'
     stx bDigits
-    jmp b27
-  b2:
-    cpx #'%'
-    bne b28
-    // default format
-    //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
-    lda bArg
-    cmp #0
-    beq b29
-    lda #1
-    cmp bArg
-    beq b30
-    lda w3
-    sta w
-    lda w3+1
-    sta w+1
-  b31:
-    inc bArg
-    lda #0
-    sta bLeadZero
-    lda #1
-    sta bDigits
-    lda #0
-    sta bTrailing
-    lda #1
-    sta bFormat
     jmp b27
   b30:
     lda w2

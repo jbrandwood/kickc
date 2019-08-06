@@ -183,32 +183,19 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
     * @param stmt The statement
     * @return Variables defined by the statement
     */
-   private Collection<VariableRef> getDefinedVars(Statement stmt) {
-      if(stmt instanceof StatementAssignment) {
-         StatementAssignment assignment = (StatementAssignment) stmt;
-         LValue lValue = assignment.getlValue();
-         if(lValue instanceof VariableRef) {
-            return Collections.singletonList((VariableRef) lValue);
-         }
-      } else if(stmt instanceof StatementPhiBlock) {
+   public static Collection<VariableRef> getDefinedVars(Statement stmt) {
+      if(stmt instanceof StatementPhiBlock) {
          List<VariableRef> defined = new ArrayList<>();
          StatementPhiBlock phi = (StatementPhiBlock) stmt;
          for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
             defined.add(phiVariable.getVariable());
          }
          return defined;
-      } else if(stmt instanceof StatementCall) {
-         List<VariableRef> defined = new ArrayList<>();
-         if(((StatementCall) stmt).getlValue() instanceof VariableRef) {
-            defined.add((VariableRef) ((StatementCall) stmt).getlValue());
+      } else if(stmt instanceof StatementLValue) {
+         LValue lValue = ((StatementLValue) stmt).getlValue();
+         if(lValue instanceof VariableRef) {
+            return Collections.singletonList((VariableRef) lValue);
          }
-         return defined;
-      } else if(stmt instanceof StatementCallPointer) {
-         List<VariableRef> defined = new ArrayList<>();
-         if(((StatementCallPointer) stmt).getlValue() instanceof VariableRef) {
-            defined.add((VariableRef) ((StatementCallPointer) stmt).getlValue());
-         }
-         return defined;
       }
       return new ArrayList<>();
    }

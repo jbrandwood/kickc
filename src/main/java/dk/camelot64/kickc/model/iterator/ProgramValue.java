@@ -8,11 +8,10 @@ import dk.camelot64.kickc.model.values.*;
 
 /**
  * Any Value in the program being iterated by {@link ProgramValueIterator}.
- *
+ * <p>
  * The Value can be inspected using get() and replaced inside the model using set(val).
- *
+ * <p>
  * The context of the Value can be determined from the sub-class containing it plus the parameters to the ProgramValueHandler.
- *
  */
 public interface ProgramValue {
 
@@ -204,6 +203,11 @@ public interface ProgramValue {
       public void set(Value value) {
          phiVariable.getValues().get(i).setrValue((RValue) value);
       }
+
+      public LabelRef getPredecessor() {
+         return phiVariable.getValues().get(i).getPredecessor();
+      }
+
    }
 
    class PhiValuePredecessor implements ProgramValue {
@@ -472,7 +476,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value value) {
-         structValue.setValue(memberRef, (ConstantValue)value);
+         structValue.setValue(memberRef, (ConstantValue) value);
       }
    }
 

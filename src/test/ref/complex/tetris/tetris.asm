@@ -878,18 +878,13 @@ play_spawn_current: {
     lda #1
     sta game_over
   b1:
-    lda #7
-    sta piece_idx
-  b2:
-    lda #7
-    cmp piece_idx
-    beq sid_rnd1
-    rts
-  sid_rnd1:
     lda SID_VOICE3_OSC
     and #7
     sta piece_idx
-    jmp b2
+    lda #7
+    cmp piece_idx
+    beq b1
+    rts
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)

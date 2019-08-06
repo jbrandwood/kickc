@@ -79,18 +79,47 @@ fire: {
     .label screen_2 = $c
     .label buffer = 4
     .label buffer_3 = 9
-    .label screen_4 = $c
     .label buffer_7 = 9
     .label screen_10 = $c
+    .label screen_15 = $c
     lda screen
-    sta screen_10
+    sta screen_15
     lda screen+1
-    sta screen_10+1
+    sta screen_15+1
     lda #<BUFFER
     sta buffer
     lda #>BUFFER
     sta buffer+1
-  b1:
+  b2:
+    ldy #$28-1
+    clc
+    lda (buffer),y
+    adc (buffer),y
+    ldy #$28
+    clc
+    adc (buffer),y
+    ldy #$29
+    clc
+    adc (buffer),y
+    lsr
+    lsr
+    cmp #2+1
+    bcc b4
+    sec
+    sbc #3
+  b4:
+    ldy #0
+    sta (buffer),y
+    lda (buffer),y
+    sta (screen_10),y
+    inc screen_2
+    bne !+
+    inc screen_2+1
+  !:
+    inc buffer
+    bne !+
+    inc buffer+1
+  !:
     lda buffer+1
     cmp #>BUFFER+$18*$28
     bne b2
@@ -135,37 +164,6 @@ fire: {
     cmp #<BUFFER+$19*$28
     bne b6
     rts
-  b2:
-    ldy #$28-1
-    clc
-    lda (buffer),y
-    adc (buffer),y
-    ldy #$28
-    clc
-    adc (buffer),y
-    ldy #$29
-    clc
-    adc (buffer),y
-    lsr
-    lsr
-    cmp #2+1
-    bcc b4
-    sec
-    sbc #3
-  b4:
-    ldy #0
-    sta (buffer),y
-    lda (buffer),y
-    sta (screen_4),y
-    inc screen_2
-    bne !+
-    inc screen_2+1
-  !:
-    inc buffer
-    bne !+
-    inc buffer+1
-  !:
-    jmp b1
 }
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()

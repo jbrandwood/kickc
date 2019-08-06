@@ -1,24 +1,24 @@
-// Type inference into the ternary operator
+// A test of boolean conditions using && || and !
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
     .label screen = $400
     ldx #0
-  b2:
-    lda #$57
   b3:
-    stx $ff
-    clc
-    adc $ff
+    lda #'*'
     sta screen,x
+  b2:
     inx
-    cpx #$b
+    cpx #$15
     bne b1
     rts
   b1:
-    cpx #5
-    bcc b2
-    lda #'0'
+    txa
+    and #1
+    cpx #$a
+    bcs b2
+    cmp #0
+    bne b2
     jmp b3
 }

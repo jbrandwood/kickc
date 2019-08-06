@@ -6,18 +6,9 @@
   .label SCREEN = $400
 main: {
     lda #7
-  b1:
-    tax
-    sta SCREEN,x
-    tax
-    inx
-    cmp #7
-    bcc b3
+    sta SCREEN+7
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
-    sta SCREEN,x
+    sta SCREEN+8
     rts
-  b3:
-    txa
-    jmp b1
 }

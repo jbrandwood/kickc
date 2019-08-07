@@ -72,6 +72,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSieveMin() throws IOException, URISyntaxException {
+      compileAndCompare("sieve-min");
+   }
+
+   @Test
    public void testCoalesceAssignment() throws IOException, URISyntaxException {
       compileAndCompare("coalesce-assignment");
    }

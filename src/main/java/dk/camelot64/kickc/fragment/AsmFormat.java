@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
+import kickass.nonasm.c64.CharToPetsciiConverter;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
@@ -31,7 +32,15 @@ public class AsmFormat {
       } else if(value instanceof ConstantBool) {
          return getAsmBool(((ConstantBool) value).getBool());
       } else if(value instanceof ConstantChar) {
-         return "'" + ((ConstantChar) value).getValue() + "'";
+            ConstantChar constantChar = (ConstantChar) value;
+            if(!ConstantString.Encoding.SCREENCODE_MIXED.equals(constantChar.getEncoding())) {
+               // Manually convert literal chars in non-standard encodings
+               CharToPetsciiConverter.setCurrentEncoding(constantChar.getEncoding().name);
+               byte converted = CharToPetsciiConverter.convertOrChar(constantChar.getChar(), true);
+               return getAsmNumber(new Long(converted));
+            } else {
+               return "'" + constantChar.getValue() + "'";
+            }
       } else if(value instanceof ConstantString) {
          return "\"" + ((ConstantString) value).getValue() + "\"";
       } else if(value instanceof ConstantUnary) {

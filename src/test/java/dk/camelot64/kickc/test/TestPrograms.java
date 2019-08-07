@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEncodingLiteralChar() throws IOException, URISyntaxException {
+      compileAndCompare("encoding-literal-char");
+   }
+
+   @Test
    public void testKcKaStringEncoding() throws IOException, URISyntaxException {
       compileAndCompare("kc-ka-string-encoding");
    }

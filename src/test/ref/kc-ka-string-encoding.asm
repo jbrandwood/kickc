@@ -3,7 +3,7 @@
 .pc = $80d "Program"
 main: {
   .encoding "petscii_mixed"
-    lda #'e'
+    lda #$45
     sta strTemp+2
     lda #0
     sta strTemp+3

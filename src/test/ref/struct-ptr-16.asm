@@ -12,22 +12,22 @@ main: {
     .label _1_y = 3
     lda #0
     jsr get
-    lda get.return_y
+    lda.z get.return_y
     stx SCREEN
     sta SCREEN+OFFSET_STRUCT_POINT_Y
     ldy #1
   b1:
     tya
     jsr get
-    lda get.return_y
-    stx _1_x
-    sta _1_y
+    lda.z get.return_y
+    stx.z _1_x
+    sta.z _1_y
     tya
     asl
     tax
-    lda _1_x
+    lda.z _1_x
     sta SCREEN,x
-    lda _1_y
+    lda.z _1_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x
     iny
     cpy #3
@@ -43,16 +43,16 @@ get: {
     beq b2
     ldx p2
     lda p2+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     rts
   b2:
     ldx p1
     lda p1+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     rts
   b1:
     ldx p0
     lda p0+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     rts
 }

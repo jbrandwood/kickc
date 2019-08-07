@@ -9,47 +9,47 @@ main: {
     .label b = 4
     ldx #0
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<$1024
-    sta b
+    sta.z b
     lda #>$1024
-    sta b+1
+    sta.z b+1
     lda #<-$3ff
-    sta a
+    sta.z a
     lda #>-$3ff
-    sta a+1
+    sta.z a+1
   b1:
-    lda a
+    lda.z a
     clc
     adc #<-7
-    sta a
-    lda a+1
+    sta.z a
+    lda.z a+1
     adc #>-7
-    sta a+1
+    sta.z a+1
     clc
-    lda b
+    lda.z b
     adc #<$141
-    sta b
-    lda b+1
+    sta.z b
+    lda.z b+1
     adc #>$141
-    sta b+1
-    lda a
-    sta print_sword.w
-    lda a+1
-    sta print_sword.w+1
+    sta.z b+1
+    lda.z a
+    sta.z print_sword.w
+    lda.z a+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #' '
     jsr print_char
-    lda b
-    sta print_word.w
-    lda b+1
-    sta print_word.w+1
+    lda.z b
+    sta.z print_word.w
+    lda.z b+1
+    sta.z print_word.w+1
     jsr print_word
     jsr print_ln
     inx
@@ -57,10 +57,10 @@ main: {
     bne b6
     rts
   b6:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
 }
 // Print a newline
@@ -68,17 +68,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -87,11 +87,11 @@ print_ln: {
 // print_word(word zeropage(8) w)
 print_word: {
     .label w = 8
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -99,7 +99,7 @@ print_word: {
 // print_byte(byte zeropage($a) b)
 print_byte: {
     .label b = $a
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -108,7 +108,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -119,9 +119,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -129,7 +129,7 @@ print_char: {
 // print_sword(signed word zeropage(8) w)
 print_sword: {
     .label w = 8
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -141,11 +141,11 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
   print_hextab: .text "0123456789abcdef"

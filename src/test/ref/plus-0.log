@@ -376,12 +376,12 @@ main: {
   fill_from_main:
     // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
     lda #'a'
-    sta fill.ch
+    sta.z fill.ch
     // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta fill.screen
+    sta.z fill.screen
     lda #>$400
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -393,12 +393,12 @@ main: {
   fill_from_b1:
     // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
     lda #'b'
-    sta fill.ch
+    sta.z fill.ch
     // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
-    sta fill.screen
+    sta.z fill.screen
     lda #>$2000
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     jmp breturn
     // main::@return
@@ -418,7 +418,7 @@ fill: {
   b1_from_fill:
     // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   b1_from_b3:
@@ -430,8 +430,8 @@ fill: {
     // fill::@2
   b2:
     // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ch
-    ldy i
+    lda.z ch
+    ldy.z i
     sta (screen),y
     jmp b2_1
     // fill::@2_1
@@ -439,14 +439,14 @@ fill: {
     // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
-    adc screen
-    sta _5
+    adc.z screen
+    sta.z _5
     lda #0
-    adc screen+1
-    sta _5+1
+    adc.z screen+1
+    sta.z _5+1
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ch
-    ldy i
+    lda.z ch
+    ldy.z i
     sta (_5),y
     jmp b2_2
     // fill::@2_2
@@ -454,23 +454,23 @@ fill: {
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
-    adc screen
-    sta _7
+    adc.z screen
+    sta.z _7
     lda #0
-    adc screen+1
-    sta _7+1
+    adc.z screen+1
+    sta.z _7+1
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ch
-    ldy i
+    lda.z ch
+    ldy.z i
     sta (_7),y
     jmp b3
     // fill::@3
   b3:
     // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // fill::@return
@@ -542,9 +542,9 @@ main: {
     ldx #'a'
     // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta fill.screen
+    sta.z fill.screen
     lda #>$400
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -558,9 +558,9 @@ main: {
     ldx #'b'
     // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
-    sta fill.screen
+    sta.z fill.screen
     lda #>$2000
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     jmp breturn
     // main::@return
@@ -597,11 +597,11 @@ fill: {
     // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
-    adc screen
-    sta _5
+    adc.z screen
+    sta.z _5
     lda #0
-    adc screen+1
-    sta _5+1
+    adc.z screen+1
+    sta.z _5+1
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_5),y
@@ -611,11 +611,11 @@ fill: {
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
-    adc screen
-    sta _7
+    adc.z screen
+    sta.z _7
     lda #0
-    adc screen+1
-    sta _7+1
+    adc.z screen+1
+    sta.z _7+1
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (_7),y
@@ -734,9 +734,9 @@ main: {
     ldx #'a'
     // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta fill.screen
+    sta.z fill.screen
     lda #>$400
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -747,9 +747,9 @@ main: {
     ldx #'b'
     // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
-    sta fill.screen
+    sta.z fill.screen
     lda #>$2000
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     // main::@return
     // }
@@ -779,11 +779,11 @@ fill: {
     // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
-    adc screen
-    sta _5
+    adc.z screen
+    sta.z _5
     lda #0
-    adc screen+1
-    sta _5+1
+    adc.z screen+1
+    sta.z _5+1
     // (screen+j*40)[i] = ch
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
@@ -793,11 +793,11 @@ fill: {
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
-    adc screen
-    sta _7
+    adc.z screen
+    sta.z _7
     lda #0
-    adc screen+1
-    sta _7+1
+    adc.z screen+1
+    sta.z _7+1
     // (screen+j*40)[i] = ch
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa

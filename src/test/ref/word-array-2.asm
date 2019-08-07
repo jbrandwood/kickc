@@ -14,38 +14,38 @@ main: {
     ldx #0
   b1:
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     txa
-    sta _2
+    sta.z _2
     lda #0
-    sta _2+1
-    lda _3
-    sta _3+1
+    sta.z _2+1
+    lda.z _3
+    sta.z _3+1
     lda #0
-    sta _3
+    sta.z _3
     txa
     clc
-    adc _4
-    sta _4
+    adc.z _4
+    sta.z _4
     bcc !+
-    inc _4+1
+    inc.z _4+1
   !:
-    asl _6
-    rol _6+1
+    asl.z _6
+    rol.z _6+1
     clc
-    lda _9
+    lda.z _9
     adc #<words
-    sta _9
-    lda _9+1
+    sta.z _9
+    lda.z _9+1
     adc #>words
-    sta _9+1
+    sta.z _9+1
     ldy #0
-    lda _4
+    lda.z _4
     sta (_9),y
     iny
-    lda _4+1
+    lda.z _4+1
     sta (_9),y
     inx
     cpx #0

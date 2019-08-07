@@ -344,7 +344,7 @@ Target platform is c64basic
 bbegin:
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col1
+  sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -373,7 +373,7 @@ main: {
   b1_from_b5:
     // [5] phi (byte) main::x#6 = (byte) 0 [phi:main/main::@5->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b1
     // main::@1
   b1:
@@ -381,7 +381,7 @@ main: {
   b2_from_b1:
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b2
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
@@ -393,7 +393,7 @@ main: {
   b3_from_b2:
     // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta a
+    sta.z a
     jmp b3
     // [7] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   b3_from_b3:
@@ -402,37 +402,37 @@ main: {
     // main::@3
   b3:
     // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
-    lda a
+    lda.z a
     clc
-    adc y
-    sta _1
+    adc.z y
+    sta.z _1
     // [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _1
-    ldy x
+    lda.z _1
+    ldy.z x
     sta SCREEN,y
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
-    inc a
+    inc.z a
     // [11] if((byte) main::a#1!=(byte) $b) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp a
+    cmp.z a
     bne b3_from_b3
     jmp b4
     // main::@4
   b4:
     // [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [13] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp y
+    cmp.z y
     bne b2_from_b4
     jmp b5
     // main::@5
   b5:
     // [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [15] if((byte) main::x#1!=(byte) $b) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp x
+    cmp.z x
     bne b6_from_b5
     jmp b1_from_b5
     // [16] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
@@ -455,10 +455,10 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [19] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
-    lda col1
+    lda.z col1
     sta SCREEN+$28
     // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
-    inc col1
+    inc.z col1
     jmp breturn
     // irq::@return
   breturn:
@@ -521,7 +521,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 bbegin:
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col1
+  sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -554,7 +554,7 @@ main: {
   b2_from_b1:
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b2
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
@@ -576,7 +576,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
-    adc y
+    adc.z y
     // [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
@@ -588,10 +588,10 @@ main: {
     // main::@4
   b4:
     // [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [13] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp y
+    cmp.z y
     bne b2_from_b4
     jmp b5
     // main::@5
@@ -622,10 +622,10 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [19] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
-    lda col1
+    lda.z col1
     sta SCREEN+$28
     // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
-    inc col1
+    inc.z col1
     jmp breturn
     // irq::@return
   breturn:
@@ -737,7 +737,7 @@ bbegin:
   // col1 = 0
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col1
+  sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
@@ -763,7 +763,7 @@ main: {
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
     // [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
     // main::@2
@@ -779,7 +779,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
-    adc y
+    adc.z y
     // SCREEN[x] = a+y
     // [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -792,10 +792,10 @@ main: {
     // main::@4
     // for(byte y: 0..10)
     // [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [13] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp y
+    cmp.z y
     bne b2
     // main::@5
     // for(byte x: 0..10)
@@ -823,11 +823,11 @@ irq: {
     lda $dc0d
     // SCREEN[40] = col1++
     // [19] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
-    lda col1
+    lda.z col1
     sta SCREEN+$28
     // SCREEN[40] = col1++;
     // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
-    inc col1
+    inc.z col1
     // irq::@return
     // }
     // [21] return  - exit interrupt(KERNEL_MIN)

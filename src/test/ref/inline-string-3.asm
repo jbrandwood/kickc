@@ -13,9 +13,9 @@ main: {
     lda #>STRING
     sta PTR+1
     lda PTR
-    sta ptr
+    sta.z ptr
     lda PTR+1
-    sta ptr+1
+    sta.z ptr+1
     ldy #0
     lda (ptr),y
     sta SCREEN

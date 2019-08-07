@@ -9,30 +9,30 @@ main: {
     .label _4 = 3
     .label idx = 2
     lda #0
-    sta idx
+    sta.z idx
     tax
   b1:
     txa
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
-    sta _4
+    adc.z $ff
+    sta.z _4
     tay
     lda points,y
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
-    inc idx
-    ldy _4
+    inc.z idx
+    ldy.z _4
     lda points+OFFSET_STRUCT_POINT_Y,y
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
-    inc idx
-    ldy _4
+    inc.z idx
+    ldy.z _4
     lda points+OFFSET_STRUCT_POINT_Y+1,y
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
-    inc idx
+    inc.z idx
     inx
     cpx #3
     bne b1

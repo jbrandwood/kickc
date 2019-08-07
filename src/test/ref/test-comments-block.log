@@ -280,10 +280,10 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta b
+    sta.z b
     jmp b1
   // Do some sums
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
@@ -294,31 +294,31 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuz1=vbuz2 
-    lda b
-    sta sum.b
+    lda.z b
+    sta.z sum.b
     // [7] call sum 
     jsr sum
     // [8] (byte) sum::return#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
-    lda sum.return_1
-    sta sum.return
+    lda.z sum.return_1
+    sta.z sum.return
     jmp b2
     // main::@2
   b2:
     // [9] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
-    lda sum.return
-    sta _0
+    lda.z sum.return
+    sta.z _0
     // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     // Output the result on the screen
-    lda _0
-    ldy i
+    lda.z _0
+    ldy.z i
     sta SCREEN,y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
-    inc b
+    inc.z b
     // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp b
+    cmp.z b
     bne b1_from_b2
     jmp breturn
     // main::@return
@@ -338,9 +338,9 @@ sum: {
     .label return = 5
     .label return_1 = 7
     // [15] (byte) sum::return#1 ← (const byte) a#0 + (byte) sum::b#0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax b
+    lax.z b
     axs #-[a]
-    stx return_1
+    stx.z return_1
     jmp breturn
     // sum::@return
   breturn:

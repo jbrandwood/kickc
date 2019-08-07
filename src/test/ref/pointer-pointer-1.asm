@@ -8,11 +8,11 @@ main: {
     .label b = 2
     .label pb = 3
     lda #'a'
-    sta b
+    sta.z b
     lda #<b
-    sta pb
+    sta.z pb
     lda #>b
-    sta pb+1
+    sta.z pb+1
     ldy #0
     lda (ppb),y
     sta SCREEN

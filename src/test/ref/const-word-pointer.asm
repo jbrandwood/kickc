@@ -8,9 +8,9 @@ main: {
     .label wp = w
     .label w = 2
     lda #<$d03
-    sta w
+    sta.z w
     lda #>$d03
-    sta w+1
+    sta.z w+1
     lda wp
     sta screen
     lda wp+1

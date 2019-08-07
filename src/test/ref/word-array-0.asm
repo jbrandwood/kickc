@@ -9,20 +9,20 @@ main: {
     .label w1 = 2
     .label w2 = 4
     lda words+1*SIZEOF_WORD
-    sta w1
+    sta.z w1
     lda words+1*SIZEOF_WORD+1
-    sta w1+1
-    lda w1
+    sta.z w1+1
+    lda.z w1
     sta SCREEN
-    lda w1+1
+    lda.z w1+1
     sta SCREEN+1
     lda words+2*SIZEOF_WORD
-    sta w2
+    sta.z w2
     lda words+2*SIZEOF_WORD+1
-    sta w2+1
-    lda w2
+    sta.z w2+1
+    lda.z w2
     sta SCREEN+2
-    lda w2+1
+    lda.z w2+1
     sta SCREEN+3
     rts
 }

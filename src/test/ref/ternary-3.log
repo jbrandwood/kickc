@@ -419,7 +419,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
@@ -428,40 +428,40 @@ main: {
     // main::@1
   b1:
     // [6] (byte) cond::b#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta cond.b
+    lda.z i
+    sta.z cond.b
     // [7] call cond 
     jsr cond
     // [8] (bool) cond::return#0 ← (bool) cond::return#1 -- vboz1=vboz2 
-    lda cond.return_1
-    sta cond.return
+    lda.z cond.return_1
+    sta.z cond.return
     jmp b5
     // main::@5
   b5:
     // [9] (bool~) main::$0 ← (bool) cond::return#0 -- vboz1=vboz2 
-    lda cond.return
-    sta _0
+    lda.z cond.return
+    sta.z _0
     // [10] if((bool~) main::$0) goto main::@2 -- vboz1_then_la1 
-    lda _0
+    lda.z _0
     cmp #0
     bne b2
     jmp b3
     // main::@3
   b3:
     // [11] (byte) m2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta m2.i
+    lda.z i
+    sta.z m2.i
     // [12] call m2 
     jsr m2
     // [13] (byte) m2::return#0 ← (byte) m2::return#1 -- vbuz1=vbuz2 
-    lda m2.return_1
-    sta m2.return
+    lda.z m2.return_1
+    sta.z m2.return
     jmp b7
     // main::@7
   b7:
     // [14] (byte~) main::$2 ← (byte) m2::return#0 -- vbuz1=vbuz2 
-    lda m2.return
-    sta _2
+    lda.z m2.return
+    sta.z _2
     // [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
   b4_from_b6:
   b4_from_b7:
@@ -470,14 +470,14 @@ main: {
     // main::@4
   b4:
     // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _5
-    ldy i
+    lda.z _5
+    ldy.z i
     sta SCREEN,y
     // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [18] if((byte) main::i#1!=(byte) $a) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
-    cmp i
+    cmp.z i
     bne b1_from_b4
     jmp breturn
     // main::@return
@@ -487,19 +487,19 @@ main: {
     // main::@2
   b2:
     // [20] (byte) m1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta m1.i
+    lda.z i
+    sta.z m1.i
     // [21] call m1 
     jsr m1
     // [22] (byte) m1::return#0 ← (byte) m1::return#1 -- vbuz1=vbuz2 
-    lda m1.return_1
-    sta m1.return
+    lda.z m1.return_1
+    sta.z m1.return
     jmp b6
     // main::@6
   b6:
     // [23] (byte~) main::$4 ← (byte) m1::return#0 -- vbuz1=vbuz2 
-    lda m1.return
-    sta _4
+    lda.z m1.return
+    sta.z _4
     jmp b4_from_b6
 }
   // m1
@@ -509,9 +509,9 @@ m1: {
     .label return = $a
     .label return_1 = $b
     // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax i
+    lax.z i
     axs #-[5]
-    stx return_1
+    stx.z return_1
     jmp breturn
     // m1::@return
   breturn:
@@ -525,9 +525,9 @@ m2: {
     .label return = 8
     .label return_1 = $c
     // [26] (byte) m2::return#1 ← (byte) $a + (byte) m2::i#0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax i
+    lax.z i
     axs #-[$a]
-    stx return_1
+    stx.z return_1
     jmp breturn
     // m2::@return
   breturn:
@@ -541,12 +541,12 @@ cond: {
     .label return = 5
     .label return_1 = $d
     // [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboz1=vbuz2_lt_vbuc1 
-    lda b
+    lda.z b
     cmp #5
     lda #0
     rol
     eor #1
-    sta return_1
+    sta.z return_1
     jmp breturn
     // cond::@return
   breturn:

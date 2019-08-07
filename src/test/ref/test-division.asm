@@ -20,59 +20,59 @@ test_16s: {
     .label res = 9
     .label i = $d
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tax
     lda dividends,x
-    sta dividend
+    sta.z dividend
     lda dividends+1,x
-    sta dividend+1
+    sta.z dividend+1
     lda divisors,x
-    sta divisor
+    sta.z divisor
     lda divisors+1,x
-    sta divisor+1
+    sta.z divisor+1
     jsr div16s
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_sword
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda divisor
-    sta print_sword.w
-    lda divisor+1
-    sta print_sword.w+1
+    lda.z divisor
+    sta.z print_sword.w
+    lda.z divisor+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda res
-    sta print_sword.w
-    lda res+1
-    sta print_sword.w+1
+    lda.z res
+    sta.z print_sword.w
+    lda.z res+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda rem16s
-    sta print_sword.w
-    lda rem16s+1
-    sta print_sword.w+1
+    lda.z rem16s
+    sta.z print_sword.w
+    lda.z rem16s+1
+    sta.z print_sword.w+1
     jsr print_sword
     jsr print_ln
-    inc i
+    inc.z i
     lda #6
-    cmp i
+    cmp.z i
     bne b1
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
@@ -83,17 +83,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -102,7 +102,7 @@ print_ln: {
 // print_sword(signed word zeropage(3) w)
 print_sword: {
     .label w = 3
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -114,11 +114,11 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 // Print a single char
@@ -126,9 +126,9 @@ print_sword: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -136,11 +136,11 @@ print_char: {
 // print_word(word zeropage(3) w)
 print_word: {
     .label w = 3
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -148,7 +148,7 @@ print_word: {
 // print_byte(byte zeropage(2) b)
 print_byte: {
     .label b = 2
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -157,7 +157,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -177,13 +177,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -198,14 +198,14 @@ div16s: {
     .label return = 9
     .label dividend = 3
     .label divisor = $11
-    lda dividend
-    sta divr16s.dividend
-    lda dividend+1
-    sta divr16s.dividend+1
-    lda divisor
-    sta divr16s.divisor
-    lda divisor+1
-    sta divr16s.divisor+1
+    lda.z dividend
+    sta.z divr16s.dividend
+    lda.z dividend+1
+    sta.z divr16s.dividend+1
+    lda.z divisor
+    sta.z divr16s.divisor
+    lda.z divisor+1
+    sta.z divr16s.divisor+1
     jsr divr16s
     rts
 }
@@ -223,11 +223,11 @@ divr16s: {
     .label return = 9
     .label dividend = 5
     .label divisor = 7
-    lda dividend+1
+    lda.z dividend+1
     bmi b1
     ldy #0
   b2:
-    lda divisor+1
+    lda.z divisor+1
     bmi b3
   b4:
     jsr divr16u
@@ -235,28 +235,28 @@ divr16s: {
     beq breturn
     sec
     lda #0
-    sbc rem16s
-    sta rem16s
+    sbc.z rem16s
+    sta.z rem16s
     lda #0
-    sbc rem16s+1
-    sta rem16s+1
+    sbc.z rem16s+1
+    sta.z rem16s+1
     sec
     lda #0
-    sbc return
-    sta return
+    sbc.z return
+    sta.z return
     lda #0
-    sbc return+1
-    sta return+1
+    sbc.z return+1
+    sta.z return+1
   breturn:
     rts
   b3:
     sec
     lda #0
-    sbc divisoru
-    sta divisoru
+    sbc.z divisoru
+    sta.z divisoru
     lda #0
-    sbc divisoru+1
-    sta divisoru+1
+    sbc.z divisoru+1
+    sta.z divisoru+1
     tya
     eor #1
     tay
@@ -264,11 +264,11 @@ divr16s: {
   b1:
     sec
     lda #0
-    sbc dividendu
-    sta dividendu
+    sbc.z dividendu
+    sta.z dividendu
     lda #0
-    sbc dividendu+1
-    sta dividendu+1
+    sbc.z dividendu+1
+    sta.z dividendu+1
     ldy #1
     jmp b2
 }
@@ -285,44 +285,44 @@ divr16u: {
     .label divisor = 7
     ldx #0
     txa
-    sta quotient
-    sta quotient+1
-    sta rem
-    sta rem+1
+    sta.z quotient
+    sta.z quotient+1
+    sta.z rem
+    sta.z rem+1
   b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
+    asl.z rem
+    rol.z rem+1
+    lda.z dividend+1
     and #$80
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
   b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
-    cmp divisor+1
+    asl.z dividend
+    rol.z dividend+1
+    asl.z quotient
+    rol.z quotient+1
+    lda.z rem+1
+    cmp.z divisor+1
     bcc b3
     bne !+
-    lda rem
-    cmp divisor
+    lda.z rem
+    cmp.z divisor
     bcc b3
   !:
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
-    lda rem
+    lda.z rem
     sec
-    sbc divisor
-    sta rem
-    lda rem+1
-    sbc divisor+1
-    sta rem+1
+    sbc.z divisor
+    sta.z rem
+    lda.z rem+1
+    sbc.z divisor+1
+    sta.z rem+1
   b3:
     inx
     cpx #$10
@@ -335,49 +335,49 @@ test_8s: {
     .label res = $14
     .label i = $d
     lda #0
-    sta i
+    sta.z i
   b1:
-    ldy i
+    ldy.z i
     lda dividends,y
-    sta dividend
+    sta.z dividend
     lda divisors,y
-    sta divisor
-    ldy dividend
+    sta.z divisor
+    ldy.z dividend
     tax
     jsr div8s
-    sta res
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    sta.z res
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_sbyte
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda divisor
-    sta print_sbyte.b
+    lda.z divisor
+    sta.z print_sbyte.b
     jsr print_sbyte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda res
-    sta print_sbyte.b
+    lda.z res
+    sta.z print_sbyte.b
     jsr print_sbyte
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    stx print_sbyte.b
+    stx.z print_sbyte.b
     jsr print_sbyte
     jsr print_ln
-    inc i
+    inc.z i
     lda #6
-    cmp i
+    cmp.z i
     bne b1
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
@@ -387,7 +387,7 @@ test_8s: {
 // print_sbyte(signed byte zeropage(2) b)
 print_sbyte: {
     .label b = 2
-    lda b
+    lda.z b
     bmi b1
     lda #' '
     jsr print_char
@@ -397,11 +397,11 @@ print_sbyte: {
   b1:
     lda #'-'
     jsr print_char
-    lda b
+    lda.z b
     eor #$ff
     clc
     adc #1
-    sta b
+    sta.z b
     jmp b2
 }
 // Perform division on two signed 8-bit numbers
@@ -416,7 +416,7 @@ div8s: {
     cpy #0
     bmi b1
     lda #0
-    sta neg
+    sta.z neg
   b2:
     cpx #0
     bmi b3
@@ -424,7 +424,7 @@ div8s: {
     tya
     jsr div8u
     tay
-    lda neg
+    lda.z neg
     cmp #0
     beq b5
     txa
@@ -447,8 +447,8 @@ div8s: {
     adc #1
     tax
     lda #1
-    eor neg
-    sta neg
+    eor.z neg
+    sta.z neg
     jmp b4
   b1:
     tya
@@ -457,7 +457,7 @@ div8s: {
     adc #1
     tay
     lda #1
-    sta neg
+    sta.z neg
     jmp b2
 }
 // Performs division on two 8 bit unsigned bytes
@@ -466,10 +466,10 @@ div8s: {
 // Implemented using simple binary division
 // div8u(byte register(A) dividend, byte register(X) divisor)
 div8u: {
-    sta divr8u.dividend
-    stx divr8u.divisor
+    sta.z divr8u.dividend
+    stx.z divr8u.divisor
     jsr divr8u
-    lda divr8u.return
+    lda.z divr8u.return
     rts
 }
 // Performs division on two 8 bit unsigned bytes and an initial remainder
@@ -484,28 +484,28 @@ divr8u: {
     .label return = $16
     ldx #0
     txa
-    sta quotient
+    sta.z quotient
     tay
   b1:
     tya
     asl
     tay
     lda #$80
-    and dividend
+    and.z dividend
     cmp #0
     beq b2
     tya
     ora #1
     tay
   b2:
-    asl dividend
-    asl quotient
-    cpy divisor
+    asl.z dividend
+    asl.z quotient
+    cpy.z divisor
     bcc b3
-    inc quotient
+    inc.z quotient
     tya
     sec
-    sbc divisor
+    sbc.z divisor
     tay
   b3:
     inx
@@ -521,59 +521,59 @@ test_16u: {
     .label res = 9
     .label i = $e
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tax
     lda dividends,x
-    sta dividend
+    sta.z dividend
     lda dividends+1,x
-    sta dividend+1
+    sta.z dividend+1
     lda divisors,x
-    sta divisor
+    sta.z divisor
     lda divisors+1,x
-    sta divisor+1
+    sta.z divisor+1
     jsr div16u
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_word
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda divisor
-    sta print_word.w
-    lda divisor+1
-    sta print_word.w+1
+    lda.z divisor
+    sta.z print_word.w
+    lda.z divisor+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda res
-    sta print_word.w
-    lda res+1
-    sta print_word.w+1
+    lda.z res
+    sta.z print_word.w
+    lda.z res+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda rem16u
-    sta print_word.w
-    lda rem16u+1
-    sta print_word.w+1
+    lda.z rem16u
+    sta.z print_word.w
+    lda.z rem16u+1
+    sta.z print_word.w+1
     jsr print_word
     jsr print_ln
-    inc i
+    inc.z i
     lda #6
-    cmp i
+    cmp.z i
     bne b1
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
@@ -588,10 +588,10 @@ div16u: {
     .label return = 9
     .label dividend = 3
     .label divisor = 7
-    lda dividend
-    sta divr16u.dividend
-    lda dividend+1
-    sta divr16u.dividend+1
+    lda.z dividend
+    sta.z divr16u.dividend
+    lda.z dividend+1
+    sta.z divr16u.dividend+1
     jsr divr16u
     rts
 }
@@ -601,60 +601,60 @@ test_8u: {
     .label res = $16
     .label i = $13
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #0
-    sta i
+    sta.z i
   b1:
-    ldy i
+    ldy.z i
     lda dividends,y
-    sta dividend
+    sta.z dividend
     lda divisors,y
-    sta divisor
-    lda dividend
-    ldx divisor
+    sta.z divisor
+    lda.z dividend
+    ldx.z divisor
     jsr div8u
-    sta res
+    sta.z res
     jsr print_byte
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda divisor
-    sta print_byte.b
+    lda.z divisor
+    sta.z print_byte.b
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda res
-    sta print_byte.b
+    lda.z res
+    sta.z print_byte.b
     jsr print_byte
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    stx print_byte.b
+    stx.z print_byte.b
     jsr print_byte
     jsr print_ln
-    inc i
+    inc.z i
     lda #6
-    cmp i
+    cmp.z i
     bne b11
     rts
   b11:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
@@ -672,21 +672,21 @@ memset: {
     .label end = str+num
     .label dst = $f
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

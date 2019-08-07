@@ -31,28 +31,28 @@ init_font_hex: {
     .label proto_hi = 2
     .label c = 4
     lda #0
-    sta c
+    sta.z c
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
   b1:
     lda #0
-    sta c1
+    sta.z c1
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
   b2:
     lda #0
     tay
     sta (charset),y
     lda #1
-    sta idx
+    sta.z idx
     ldx #0
   b3:
     txa
@@ -62,51 +62,51 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora _0
-    ldy idx
+    ora.z _0
+    ldy.z idx
     sta (charset),y
-    inc idx
+    inc.z idx
     inx
     cpx #5
     bne b3
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     iny
     sta (charset),y
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
-    inc c1
+    inc.z c1
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
-    inc c
+    inc.z c
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     rts
 }

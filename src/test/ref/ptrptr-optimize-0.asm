@@ -6,9 +6,9 @@ main: {
     .label pscreen = screen
     .label screen = 2
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     lda #'a'
     ldy #0
     sta (pscreen),y

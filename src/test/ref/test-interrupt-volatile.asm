@@ -6,7 +6,7 @@
   .label col = 2
 bbegin:
   lda #0
-  sta col
+  sta.z col
   jsr main
   rts
 main: {
@@ -15,12 +15,12 @@ main: {
     lda #>irq
     sta KERNEL_IRQ+1
   b2:
-    inc col
+    inc.z col
     jmp b2
 }
 irq: {
     lda $dc0d
-    lda col
+    lda.z col
     sta BGCOL
     jmp $ea81
 }

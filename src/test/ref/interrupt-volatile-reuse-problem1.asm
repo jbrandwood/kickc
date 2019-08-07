@@ -8,9 +8,9 @@
   .label col2 = 3
 bbegin:
   lda #0
-  sta col1
+  sta.z col1
   lda #8
-  sta col2
+  sta.z col2
   jsr main
   rts
 main: {
@@ -21,11 +21,11 @@ main: {
     rts
 }
 irq: {
-    lda col1
+    lda.z col1
     sta SCREEN+$28
-    inc col1
-    lda col2
+    inc.z col1
+    lda.z col2
     sta SCREEN+$29
-    inc col2
+    inc.z col2
     jmp $ea81
 }

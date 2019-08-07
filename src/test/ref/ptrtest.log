@@ -654,12 +654,12 @@ lvaluevar: {
   b2_from_lvaluevar:
     // [14] phi (byte*) lvaluevar::screen#4 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [14] phi (byte) lvaluevar::i#4 = (byte) 2 [phi:lvaluevar->lvaluevar::@2#1] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b2
     // [14] phi from lvaluevar::@1 to lvaluevar::@2 [phi:lvaluevar::@1->lvaluevar::@2]
   b2_from_b1:
@@ -673,17 +673,17 @@ lvaluevar: {
     ldy #0
     sta (screen),y
     // [16] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b1
     // lvaluevar::@1
   b1:
     // [18] if((byte) lvaluevar::i#1<(byte) $a) goto lvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$a
     bcc b2_from_b1
     jmp breturn
@@ -702,12 +702,12 @@ rvaluevar: {
   b2_from_rvaluevar:
     // [21] phi (byte*) rvaluevar::screen#4 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [21] phi (byte) rvaluevar::i#4 = (byte) 2 [phi:rvaluevar->rvaluevar::@2#1] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b2
     // [21] phi from rvaluevar::@1 to rvaluevar::@2 [phi:rvaluevar::@1->rvaluevar::@2]
   b2_from_b1:
@@ -719,26 +719,26 @@ rvaluevar: {
     // [22] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#4) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (screen),y
-    sta b
+    sta.z b
     // [23] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [24] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b1
     // rvaluevar::@1
   b1:
     // [25] if((byte) rvaluevar::i#1<(byte) $a) goto rvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$a
     bcc b2_from_b1
     jmp b3
     // rvaluevar::@3
   b3:
     // [26] *((const byte*) rvaluevar::screen2#0) ← (byte) rvaluevar::b#1 -- _deref_pbuc1=vbuz1 
-    lda b
+    lda.z b
     sta screen2
     jmp breturn
     // rvaluevar::@return
@@ -757,7 +757,7 @@ rvalue: {
   b2_from_rvalue:
     // [29] phi (byte) rvalue::i#4 = (byte) 2 [phi:rvalue->rvalue::@2#0] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b2
     // [29] phi from rvalue::@1 to rvalue::@2 [phi:rvalue::@1->rvalue::@2]
   b2_from_b1:
@@ -766,23 +766,23 @@ rvalue: {
     // rvalue::@2
   b2:
     // [30] (byte) rvalue::b#2 ← *((const byte[$400]) rvalue::SCREEN#0 + (byte) rvalue::i#4) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda SCREEN,y
-    sta b
+    sta.z b
     // [31] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b1
     // rvalue::@1
   b1:
     // [32] if((byte) rvalue::i#1<(byte) $a) goto rvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$a
     bcc b2_from_b1
     jmp b3
     // rvalue::@3
   b3:
     // [33] *((const byte*) rvalue::screen2#0) ← (byte) rvalue::b#2 -- _deref_pbuc1=vbuz1 
-    lda b
+    lda.z b
     sta screen2
     jmp breturn
     // rvalue::@return
@@ -807,7 +807,7 @@ lvalue: {
   b2_from_lvalue:
     // [37] phi (byte) lvalue::i#4 = (byte) 2 [phi:lvalue->lvalue::@2#0] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b2
     // [37] phi from lvalue::@1 to lvalue::@2 [phi:lvalue::@1->lvalue::@2]
   b2_from_b1:
@@ -817,15 +817,15 @@ lvalue: {
   b2:
     // [38] *((const byte[$400]) lvalue::SCREEN#0 + (byte) lvalue::i#4) ← (byte) 3 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #3
-    ldy i
+    ldy.z i
     sta SCREEN,y
     // [39] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b1
     // lvalue::@1
   b1:
     // [40] if((byte) lvalue::i#1<(byte) $a) goto lvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$a
     bcc b2_from_b1
     jmp breturn
@@ -948,9 +948,9 @@ lvaluevar: {
   b2_from_lvaluevar:
     // [14] phi (byte*) lvaluevar::screen#4 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [14] phi (byte) lvaluevar::i#4 = (byte) 2 [phi:lvaluevar->lvaluevar::@2#1] -- vbuxx=vbuc1 
     ldx #2
     jmp b2
@@ -966,9 +966,9 @@ lvaluevar: {
     ldy #0
     sta (screen),y
     // [16] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#4 -- vbuxx=_inc_vbuxx 
     inx
@@ -992,9 +992,9 @@ rvaluevar: {
   b2_from_rvaluevar:
     // [21] phi (byte*) rvaluevar::screen#4 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [21] phi (byte) rvaluevar::i#4 = (byte) 2 [phi:rvaluevar->rvaluevar::@2#1] -- vbuxx=vbuc1 
     ldx #2
     jmp b2
@@ -1009,9 +1009,9 @@ rvaluevar: {
     ldy #0
     lda (screen),y
     // [23] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [24] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#4 -- vbuxx=_inc_vbuxx 
     inx
@@ -1306,9 +1306,9 @@ lvaluevar: {
     // [14] phi from lvaluevar to lvaluevar::@2 [phi:lvaluevar->lvaluevar::@2]
     // [14] phi (byte*) lvaluevar::screen#4 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [14] phi (byte) lvaluevar::i#4 = (byte) 2 [phi:lvaluevar->lvaluevar::@2#1] -- vbuxx=vbuc1 
     ldx #2
     // [14] phi from lvaluevar::@1 to lvaluevar::@2 [phi:lvaluevar::@1->lvaluevar::@2]
@@ -1323,9 +1323,9 @@ lvaluevar: {
     sta (screen),y
     // screen++;
     // [16] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // i++;
     // [17] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#4 -- vbuxx=_inc_vbuxx 
@@ -1347,9 +1347,9 @@ rvaluevar: {
     // [21] phi from rvaluevar to rvaluevar::@2 [phi:rvaluevar->rvaluevar::@2]
     // [21] phi (byte*) rvaluevar::screen#4 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [21] phi (byte) rvaluevar::i#4 = (byte) 2 [phi:rvaluevar->rvaluevar::@2#1] -- vbuxx=vbuc1 
     ldx #2
     // [21] phi from rvaluevar::@1 to rvaluevar::@2 [phi:rvaluevar::@1->rvaluevar::@2]
@@ -1363,9 +1363,9 @@ rvaluevar: {
     lda (screen),y
     // screen++;
     // [23] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#4 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // i++;
     // [24] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#4 -- vbuxx=_inc_vbuxx 

@@ -7,23 +7,23 @@ main: {
     .label w1 = 2
     ldx #0
     lda #<$4d2
-    sta w1
+    sta.z w1
     lda #>$4d2
-    sta w1+1
+    sta.z w1+1
   b1:
-    lda w1
+    lda.z w1
     sec
     sbc #$29
-    sta w1
-    lda w1+1
+    sta.z w1
+    lda.z w1+1
     sbc #>$29
-    sta w1+1
+    sta.z w1+1
     txa
     asl
     tay
-    lda w1
+    lda.z w1
     sta screen,y
-    lda w1+1
+    lda.z w1+1
     sta screen+1,y
     inx
     cpx #$b

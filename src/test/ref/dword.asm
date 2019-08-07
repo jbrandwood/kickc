@@ -10,17 +10,17 @@ main: {
     txa
     clc
     adc #<a
-    sta b
+    sta.z b
     lda #>a
     adc #0
-    sta b+1
+    sta.z b+1
     lda #<a>>$10
     adc #0
-    sta b+2
+    sta.z b+2
     lda #>a>>$10
     adc #0
-    sta b+3
-    lda b
+    sta.z b+3
+    lda.z b
     sta SCREEN,x
     inx
     cpx #$65

@@ -10,16 +10,16 @@ main: {
     .label ub = 2
     .label sb = 3
     lda #$ff
-    sta ub
+    sta.z ub
     lda #1
     sta sb_ptr
-    lda ub
+    lda.z ub
     sta ub_screen
     lda #$7f
-    sta sb
+    sta.z sb
     lda #1
     sta ub_ptr
-    lda sb
+    lda.z sb
     sta sb_screen
     rts
 }

@@ -9,37 +9,37 @@ main: {
     .label x = 2
     jsr memset
     lda #0
-    sta x
+    sta.z x
     lda #<SCREEN+$28+1
-    sta screen
+    sta.z screen
     lda #>SCREEN+$28+1
-    sta screen+1
+    sta.z screen+1
     lda #0
-    sta ch
+    sta.z ch
   b1:
     ldx #0
   b2:
-    lda ch
+    lda.z ch
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc ch
+    inc.z ch
     inx
     cpx #$10
     bne b2
     lda #$28-$10
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc x
+    inc.z x
     lda #$10
-    cmp x
+    cmp.z x
     bne b1
     rts
 }
@@ -51,21 +51,21 @@ memset: {
     .label end = str+num
     .label dst = 4
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

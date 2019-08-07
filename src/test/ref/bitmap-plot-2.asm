@@ -49,7 +49,7 @@
 bbegin:
   // Counts frames - updated by the IRQ
   lda #1
-  sta frame_cnt
+  sta.z frame_cnt
   jsr main
   rts
 main: {
@@ -81,159 +81,159 @@ main: {
     sta D018
     jsr init_irq
     lda #$20
-    sta r_add
+    sta.z r_add
     lda #<$80
-    sta idx_y
+    sta.z idx_y
     lda #>$80
-    sta idx_y+1
+    sta.z idx_y+1
     lda #<0
-    sta r
-    sta r+1
-    sta idx_x
-    sta idx_x+1
+    sta.z r
+    sta.z r+1
+    sta.z idx_x
+    sta.z idx_x+1
   b2:
-    lda idx_x
+    lda.z idx_x
     asl
-    sta _32
-    lda idx_x+1
+    sta.z _32
+    lda.z idx_x+1
     rol
-    sta _32+1
+    sta.z _32+1
     clc
-    lda _34
+    lda.z _34
     adc #<SINUS
-    sta _34
-    lda _34+1
+    sta.z _34
+    lda.z _34+1
     adc #>SINUS
-    sta _34+1
+    sta.z _34+1
     ldy #0
     lda (cos_x),y
     tax
     iny
     lda (cos_x),y
-    stx cos_x
-    sta cos_x+1
+    stx.z cos_x
+    sta.z cos_x+1
     jsr mul16s
-    lda xpos+2
-    sta _10
-    lda xpos+3
-    sta _10+1
-    lda _11+1
+    lda.z xpos+2
+    sta.z _10
+    lda.z xpos+3
+    sta.z _10+1
+    lda.z _11+1
     cmp #$80
-    ror _11+1
-    ror _11
-    lda _11+1
+    ror.z _11+1
+    ror.z _11
+    lda.z _11+1
     cmp #$80
-    ror _11+1
-    ror _11
+    ror.z _11+1
+    ror.z _11
     clc
-    lda x
+    lda.z x
     adc #<$a0
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     adc #>$a0
-    sta x+1
-    lda idx_y
+    sta.z x+1
+    lda.z idx_y
     asl
-    sta _33
-    lda idx_y+1
+    sta.z _33
+    lda.z idx_y+1
     rol
-    sta _33+1
+    sta.z _33+1
     clc
-    lda _35
+    lda.z _35
     adc #<SINUS
-    sta _35
-    lda _35+1
+    sta.z _35
+    lda.z _35+1
     adc #>SINUS
-    sta _35+1
+    sta.z _35+1
     ldy #0
     lda (sin_y),y
     tax
     iny
     lda (sin_y),y
-    stx sin_y
-    sta sin_y+1
+    stx.z sin_y
+    sta.z sin_y+1
     jsr mul16s
-    lda ypos+2
-    sta _16
-    lda ypos+3
-    sta _16+1
-    lda _17+1
+    lda.z ypos+2
+    sta.z _16
+    lda.z ypos+3
+    sta.z _16+1
+    lda.z _17+1
     cmp #$80
-    ror _17+1
-    ror _17
-    lda _17+1
+    ror.z _17+1
+    ror.z _17
+    lda.z _17+1
     cmp #$80
-    ror _17+1
-    ror _17
-    lda y
+    ror.z _17+1
+    ror.z _17
+    lda.z y
     clc
     adc #<$64
-    sta y
-    lda y+1
+    sta.z y
+    lda.z y+1
     adc #>$64
-    sta y+1
-    lda y
+    sta.z y+1
+    lda.z y
     tax
     jsr bitmap_plot
-    ldx frame_cnt
+    ldx.z frame_cnt
     inc plots_per_frame,x
-    lda r_add
+    lda.z r_add
     clc
-    adc idx_x
-    sta idx_x
+    adc.z idx_x
+    sta.z idx_x
     bcc !+
-    inc idx_x+1
+    inc.z idx_x+1
   !:
-    lda idx_x+1
+    lda.z idx_x+1
     cmp #>$200
     bcc b3
     bne !+
-    lda idx_x
+    lda.z idx_x
     cmp #<$200
     bcc b3
   !:
     lda #<0
-    sta idx_x
-    sta idx_x+1
+    sta.z idx_x
+    sta.z idx_x+1
   b3:
-    lda r_add
+    lda.z r_add
     clc
-    adc idx_y
-    sta idx_y
+    adc.z idx_y
+    sta.z idx_y
     bcc !+
-    inc idx_y+1
+    inc.z idx_y+1
   !:
-    lda idx_y+1
+    lda.z idx_y+1
     cmp #>$200
     bcc b4
     bne !+
-    lda idx_y
+    lda.z idx_y
     cmp #<$200
     bcc b4
   !:
     lda #<0
-    sta idx_y
-    sta idx_y+1
+    sta.z idx_y
+    sta.z idx_y+1
   b4:
     clc
-    lda r
-    adc r_add
-    sta r
-    lda r+1
+    lda.z r
+    adc.z r_add
+    sta.z r
+    lda.z r+1
     adc #0
-    sta r+1
-    lda idx_x
+    sta.z r+1
+    lda.z idx_x
     bne b5
-    lda idx_x+1
+    lda.z idx_x+1
     bne b5
     lda #1
-    cmp r_add
+    cmp.z r_add
     beq b5
-    lsr r_add
+    lsr.z r_add
   b5:
-    lda r
+    lda.z r
     cmp #<$200*$c+$100
-    lda r+1
+    lda.z r+1
     sbc #>$200*$c+$100
     bvc !+
     eor #$80
@@ -251,23 +251,23 @@ bitmap_plot: {
     .label plotter = $17
     .label x = $20
     lda bitmap_plot_yhi,x
-    sta plotter+1
+    sta.z plotter+1
     lda bitmap_plot_ylo,x
-    sta plotter
-    lda x
+    sta.z plotter
+    lda.z x
     and #<$fff8
-    sta _1
-    lda x+1
+    sta.z _1
+    lda.z x+1
     and #>$fff8
-    sta _1+1
-    lda plotter
+    sta.z _1+1
+    lda.z plotter
     clc
-    adc _1
-    sta plotter
-    lda plotter+1
-    adc _1+1
-    sta plotter+1
-    lda x
+    adc.z _1
+    sta.z plotter
+    lda.z plotter+1
+    adc.z _1+1
+    sta.z plotter+1
+    lda.z x
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -287,57 +287,57 @@ mul16s: {
     .label return = $e
     .label a = 8
     .label b = $24
-    lda a
-    sta mul16u.a
-    lda a+1
-    sta mul16u.a+1
-    lda b
-    sta mul16u.b
-    lda b+1
-    sta mul16u.b+1
-    lda mul16u.b
-    sta mul16u.mb
-    lda mul16u.b+1
-    sta mul16u.mb+1
+    lda.z a
+    sta.z mul16u.a
+    lda.z a+1
+    sta.z mul16u.a+1
+    lda.z b
+    sta.z mul16u.b
+    lda.z b+1
+    sta.z mul16u.b+1
+    lda.z mul16u.b
+    sta.z mul16u.mb
+    lda.z mul16u.b+1
+    sta.z mul16u.mb+1
     lda #0
-    sta mul16u.mb+2
-    sta mul16u.mb+3
+    sta.z mul16u.mb+2
+    sta.z mul16u.mb+3
     jsr mul16u
-    lda a+1
+    lda.z a+1
     bpl b1
-    lda m+2
-    sta _9
-    lda m+3
-    sta _9+1
-    lda _16
+    lda.z m+2
+    sta.z _9
+    lda.z m+3
+    sta.z _9+1
+    lda.z _16
     sec
-    sbc b
-    sta _16
-    lda _16+1
-    sbc b+1
-    sta _16+1
-    lda _16
-    sta m+2
-    lda _16+1
-    sta m+3
+    sbc.z b
+    sta.z _16
+    lda.z _16+1
+    sbc.z b+1
+    sta.z _16+1
+    lda.z _16
+    sta.z m+2
+    lda.z _16+1
+    sta.z m+3
   b1:
-    lda b+1
+    lda.z b+1
     bpl b2
-    lda m+2
-    sta _13
-    lda m+3
-    sta _13+1
-    lda _17
+    lda.z m+2
+    sta.z _13
+    lda.z m+3
+    sta.z _13+1
+    lda.z _17
     sec
-    sbc a
-    sta _17
-    lda _17+1
-    sbc a+1
-    sta _17+1
-    lda _17
-    sta m+2
-    lda _17+1
-    sta m+3
+    sbc.z a
+    sta.z _17
+    lda.z _17+1
+    sbc.z a+1
+    sta.z _17+1
+    lda.z _17
+    sta.z m+2
+    lda.z _17+1
+    sta.z m+3
   b2:
     rts
 }
@@ -351,41 +351,41 @@ mul16u: {
     .label return = $e
     .label b_1 = 2
     lda #0
-    sta res
-    sta res+1
-    sta res+2
-    sta res+3
+    sta.z res
+    sta.z res+1
+    sta.z res+2
+    sta.z res+3
   b1:
-    lda a
+    lda.z a
     bne b2
-    lda a+1
+    lda.z a+1
     bne b2
     rts
   b2:
-    lda a
+    lda.z a
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
-    lda res+2
-    adc mb+2
-    sta res+2
-    lda res+3
-    adc mb+3
-    sta res+3
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
   b3:
-    lsr a+1
-    ror a
-    asl mb
-    rol mb+1
-    rol mb+2
-    rol mb+3
+    lsr.z a+1
+    ror.z a
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
     jmp b1
 }
 // Setup the IRQ
@@ -423,23 +423,23 @@ bitmap_clear: {
     .const col = WHITE*$10
     ldx #col
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$3e8
-    sta memset.num
+    sta.z memset.num
     lda #>$3e8
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     ldx #0
     lda #<BITMAP
-    sta memset.str
+    sta.z memset.str
     lda #>BITMAP
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$1f40
-    sta memset.num
+    sta.z memset.num
     lda #>$1f40
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     rts
 }
@@ -450,24 +450,24 @@ memset: {
     .label dst = $12
     .label num = 8
     .label str = $12
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
   breturn:
     rts
@@ -475,9 +475,9 @@ memset: {
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }
@@ -498,28 +498,28 @@ bitmap_init: {
     cpx #0
     bne b1
     lda #<BITMAP
-    sta yoffs
+    sta.z yoffs
     lda #>BITMAP
-    sta yoffs+1
+    sta.z yoffs+1
     ldx #0
   b3:
     lda #7
-    sax _7
-    lda yoffs
-    ora _7
+    sax.z _7
+    lda.z yoffs
+    ora.z _7
     sta bitmap_plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp _7
+    cmp.z _7
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0
@@ -543,71 +543,71 @@ sin16s_gen2: {
     .label i = $12
     jsr div32u16u
     lda #<SINUS
-    sta sintab
+    sta.z sintab
     lda #>SINUS
-    sta sintab+1
+    sta.z sintab+1
     lda #0
-    sta x
-    sta x+1
-    sta x+2
-    sta x+3
-    sta i
-    sta i+1
+    sta.z x
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
+    sta.z i
+    sta.z i+1
   b2:
-    lda x
-    sta sin16s.x
-    lda x+1
-    sta sin16s.x+1
-    lda x+2
-    sta sin16s.x+2
-    lda x+3
-    sta sin16s.x+3
+    lda.z x
+    sta.z sin16s.x
+    lda.z x+1
+    sta.z sin16s.x+1
+    lda.z x+2
+    sta.z sin16s.x+2
+    lda.z x+3
+    sta.z sin16s.x+3
     jsr sin16s
     lda #<ampl
-    sta mul16s.b
+    sta.z mul16s.b
     lda #>ampl
-    sta mul16s.b+1
+    sta.z mul16s.b+1
     jsr mul16s
-    lda _6+2
-    sta _9
-    lda _6+3
-    sta _9+1
+    lda.z _6+2
+    sta.z _9
+    lda.z _6+3
+    sta.z _9+1
     ldy #0
-    lda _9
+    lda.z _9
     sta (sintab),y
     iny
-    lda _9+1
+    lda.z _9+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
-    inc i
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
   // u[4.28]
-    lda i+1
+    lda.z i+1
     cmp #>wavelength
     bcc b2
     bne !+
-    lda i
+    lda.z i
     cmp #<wavelength
     bcc b2
   !:
@@ -631,162 +631,162 @@ sin16s: {
     .label x5_128 = $24
     .label sinx = 8
     .label isUpper = $1b
-    lda x+3
+    lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b4
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_u4f28>>$10
     bcc b4
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f28
     bcc b4
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f28
     bcc b4
   !:
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f28
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f28
-    sta x+1
-    lda x+2
+    sta.z x+1
+    lda.z x+2
     sbc #<PI_u4f28>>$10
-    sta x+2
-    lda x+3
+    sta.z x+2
+    lda.z x+3
     sbc #>PI_u4f28>>$10
-    sta x+3
+    sta.z x+3
     lda #1
-    sta isUpper
+    sta.z isUpper
     jmp b1
   b4:
     lda #0
-    sta isUpper
+    sta.z isUpper
   b1:
-    lda x+3
+    lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
     bcc b2
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
     bcc b2
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f28
     bcc b2
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f28
     bcc b2
   !:
     lda #<PI_u4f28
     sec
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f28
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     lda #<PI_u4f28>>$10
-    sbc x+2
-    sta x+2
+    sbc.z x+2
+    sta.z x+2
     lda #>PI_u4f28>>$10
-    sbc x+3
-    sta x+3
+    sbc.z x+3
+    sta.z x+3
   b2:
     ldy #3
   !:
-    asl _4
-    rol _4+1
-    rol _4+2
-    rol _4+3
+    asl.z _4
+    rol.z _4+1
+    rol.z _4+2
+    rol.z _4+3
     dey
     bne !-
-    lda _4+2
-    sta x1
-    lda _4+3
-    sta x1+1
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z _4+2
+    sta.z x1
+    lda.z _4+3
+    sta.z x1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda mulu16_sel.return
-    sta x2
-    lda mulu16_sel.return+1
-    sta x2+1
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z mulu16_sel.return
+    sta.z x2
+    lda.z mulu16_sel.return+1
+    sta.z x2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     ldx #1
     jsr mulu16_sel
-    lda mulu16_sel.return
-    sta mulu16_sel.return_1
-    lda mulu16_sel.return+1
-    sta mulu16_sel.return_1+1
+    lda.z mulu16_sel.return
+    sta.z mulu16_sel.return_1
+    lda.z mulu16_sel.return+1
+    sta.z mulu16_sel.return_1+1
     ldx #1
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     jsr mulu16_sel
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda mulu16_sel.return
-    sta mulu16_sel.return_10
-    lda mulu16_sel.return+1
-    sta mulu16_sel.return_10+1
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z mulu16_sel.return
+    sta.z mulu16_sel.return_10
+    lda.z mulu16_sel.return+1
+    sta.z mulu16_sel.return_10+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lda usinx
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx
-    lda usinx+1
-    adc x5_128+1
-    sta usinx+1
-    lda isUpper
+    adc.z x5_128
+    sta.z usinx
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx+1
+    lda.z isUpper
     cmp #0
     beq b3
     sec
     lda #0
-    sbc sinx
-    sta sinx
+    sbc.z sinx
+    sta.z sinx
     lda #0
-    sbc sinx+1
-    sta sinx+1
+    sbc.z sinx+1
+    sta.z sinx+1
   b3:
     rts
 }
@@ -801,32 +801,32 @@ mulu16_sel: {
     .label return = $24
     .label return_1 = $17
     .label return_10 = $17
-    lda v1
-    sta mul16u.a
-    lda v1+1
-    sta mul16u.a+1
-    lda mul16u.b_1
-    sta mul16u.mb
-    lda mul16u.b_1+1
-    sta mul16u.mb+1
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
+    lda.z mul16u.b_1
+    sta.z mul16u.mb
+    lda.z mul16u.b_1+1
+    sta.z mul16u.mb+1
     lda #0
-    sta mul16u.mb+2
-    sta mul16u.mb+3
+    sta.z mul16u.mb+2
+    sta.z mul16u.mb+3
     jsr mul16u
     cpx #0
     beq !e+
   !:
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
+    asl.z _1
+    rol.z _1+1
+    rol.z _1+2
+    rol.z _1+3
     dex
     bne !-
   !e:
-    lda _1+2
-    sta return
-    lda _1+3
-    sta return+1
+    lda.z _1+2
+    sta.z return
+    lda.z _1+3
+    sta.z return+1
     rts
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
@@ -836,30 +836,30 @@ div32u16u: {
     .label quotient_lo = $14
     .label return = $1c
     lda #<PI2_u4f28>>$10
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
     jsr divr16u
-    lda divr16u.return
-    sta quotient_hi
-    lda divr16u.return+1
-    sta quotient_hi+1
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
     lda #<PI2_u4f28&$ffff
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     jsr divr16u
-    lda quotient_hi
-    sta return+2
-    lda quotient_hi+1
-    sta return+3
-    lda quotient_lo
-    sta return
-    lda quotient_lo+1
-    sta return+1
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
     rts
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -874,42 +874,42 @@ divr16u: {
     .label return = $14
     ldx #0
     txa
-    sta quotient
-    sta quotient+1
+    sta.z quotient
+    sta.z quotient+1
   b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
+    asl.z rem
+    rol.z rem+1
+    lda.z dividend+1
     and #$80
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
   b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
+    asl.z dividend
+    rol.z dividend+1
+    asl.z quotient
+    rol.z quotient+1
+    lda.z rem+1
     cmp #>sin16s_gen2.wavelength
     bcc b3
     bne !+
-    lda rem
+    lda.z rem
     cmp #<sin16s_gen2.wavelength
     bcc b3
   !:
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
-    lda rem
+    lda.z rem
     sec
     sbc #<sin16s_gen2.wavelength
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>sin16s_gen2.wavelength
-    sta rem+1
+    sta.z rem+1
   b3:
     inx
     cpx #$10
@@ -922,9 +922,9 @@ irq: {
     lda #WHITE
     sta BGCOL
     lda #0
-    cmp frame_cnt
+    cmp.z frame_cnt
     beq b1
-    inc frame_cnt
+    inc.z frame_cnt
   b1:
     lda #BLACK
     sta BGCOL

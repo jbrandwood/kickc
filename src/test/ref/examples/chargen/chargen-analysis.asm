@@ -73,120 +73,120 @@ main: {
     .label cur_pos = 3
     .label shift = 4
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
   // Clear screen
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2
   !:
     lda #<SCREEN+1
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+1+$a
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$a
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str1
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str1
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+1+$14
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$14
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str2
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str2
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+1+$1e
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$1e
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str3
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str3
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #0
-    sta i
+    sta.z i
   b4:
-    ldy i
+    ldy.z i
     ldx #0
     lda #$20
     jsr plot_chargen
-    inc i
+    inc.z i
     lda #4
-    cmp i
+    cmp.z i
     bne b4
     lda #0
-    sta cur_pos
+    sta.z cur_pos
   b5:
     ldx #KEY_F1
     jsr keyboard_key_pressed
     cmp #0
     beq b6
     lda #0
-    sta cur_pos
+    sta.z cur_pos
   b6:
     ldx #KEY_F3
     jsr keyboard_key_pressed
     cmp #0
     beq b7
     lda #1
-    sta cur_pos
+    sta.z cur_pos
   b7:
     ldx #KEY_F5
     jsr keyboard_key_pressed
     cmp #0
     beq b8
     lda #2
-    sta cur_pos
+    sta.z cur_pos
   b8:
     ldx #KEY_F7
     jsr keyboard_key_pressed
     cmp #0
     beq b9
     lda #3
-    sta cur_pos
+    sta.z cur_pos
   b9:
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
     bne b10
     lda #0
-    sta shift
+    sta.z shift
     jmp b11
   b10:
     lda #1
-    sta shift
+    sta.z shift
   b11:
     lda #0
-    sta ch
+    sta.z ch
   // Check for key presses - and plot char if found
   b12:
-    ldx ch
+    ldx.z ch
     jsr keyboard_get_keycode
     cmp #$3f
     beq b1
@@ -198,14 +198,14 @@ main: {
   b13:
     cmp #0
     beq b14
-    ldy cur_pos
-    lda ch
-    ldx shift
+    ldy.z cur_pos
+    lda.z ch
+    ldx.z shift
     jsr plot_chargen
   b14:
-    inc ch
+    inc.z ch
     lda #$40
-    cmp ch
+    cmp.z ch
     bne b12
     jmp b5
     str: .text "f1"
@@ -228,31 +228,31 @@ plot_chargen: {
     .label bits = 9
     .label y = 8
     sei
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    sta.z _0+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     cpx #0
     beq b1
     clc
-    lda chargen
+    lda.z chargen
     adc #<$800
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>$800
-    sta chargen+1
+    sta.z chargen+1
   b1:
     lda #$32
     sta PROCPORT
@@ -260,22 +260,22 @@ plot_chargen: {
     tax
     jsr mul8u
     clc
-    lda sc
+    lda.z sc
     adc #<SCREEN+$28+1
-    sta sc
-    lda sc+1
+    sta.z sc
+    lda.z sc+1
     adc #>SCREEN+$28+1
-    sta sc+1
+    sta.z sc+1
     lda #0
-    sta y
+    sta.z y
   b3:
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     ldx #0
   b4:
     lda #$80
-    and bits
+    and.z bits
     cmp #0
     beq b2
     lda #'*'
@@ -285,24 +285,24 @@ plot_chargen: {
   b5:
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    asl bits
+    asl.z bits
     inx
     cpx #8
     bne b4
     lda #$20
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
-    inc y
+    inc.z y
     lda #8
-    cmp y
+    cmp.z y
     bne b3
     lda #$37
     sta PROCPORT
@@ -317,12 +317,12 @@ mul8u: {
     .label res = $a
     .label return = $a
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -332,19 +332,19 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -402,13 +402,13 @@ print_str_at: {
     ldy #0
     lda (str),y
     sta (at),y
-    inc at
+    inc.z at
     bne !+
-    inc at+1
+    inc.z at+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }

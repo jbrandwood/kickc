@@ -13,73 +13,73 @@ main: {
   b1:
     lda #$80
     and control
-    sta _1
+    sta.z _1
     lda raster
     lsr
-    ora _1
+    ora.z _1
     cmp #$30
     bne b1
     lda #1
     sta bordercol
     lda raster
-    sta time_start
+    sta.z time_start
     lda #<$400
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<0
-    sta utoa16w.value
-    sta utoa16w.value+1
+    sta.z utoa16w.value
+    sta.z utoa16w.value+1
     jsr utoa16w
     inc bordercol
     lda #<$400+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$4d2
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$4d2
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     inc bordercol
     lda #<$400+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$162e
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$162e
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     inc bordercol
     lda #<$400+$28+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$270f
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$270f
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     inc bordercol
     lda #<$400+$28+$28+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$e608
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$e608
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     ldx raster
     lda #0
     sta bordercol
     txa
     sec
-    sbc time_start
-    sta utoa10w.value
+    sbc.z time_start
+    sta.z utoa10w.value
     lda #0
-    sta utoa10w.value+1
+    sta.z utoa10w.value+1
     jsr utoa10w
     ldx #0
   b3:
@@ -103,22 +103,22 @@ utoa10w: {
     .label dst = 6
     .label bStarted = 9
     lda #<$400+$28+$28+$28+$28+$50
-    sta dst
+    sta.z dst
     lda #>$400+$28+$28+$28+$28+$50
-    sta dst+1
+    sta.z dst+1
     lda #0
-    sta bStarted
-    sta digit
+    sta.z bStarted
+    sta.z digit
     tax
   b1:
     txa
     asl
     tay
     lda UTOA10_SUB+1,y
-    cmp value+1
+    cmp.z value+1
     bne !+
     lda UTOA10_SUB,y
-    cmp value
+    cmp.z value
     beq b2
   !:
     bcc b2
@@ -126,32 +126,32 @@ utoa10w: {
     and #1
     cmp #0
     beq b6
-    lda bStarted
+    lda.z bStarted
     cmp #0
     beq b7
-    ldy digit
+    ldy.z digit
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
   b7:
     lda #0
-    sta digit
+    sta.z digit
   b6:
     inx
     cpx #8
     bne b1
-    lda value
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     lda #0
     tay
@@ -160,20 +160,20 @@ utoa10w: {
   b2:
     lda UTOA10_VAL,x
     clc
-    adc digit
-    sta digit
+    adc.z digit
+    sta.z digit
     txa
     asl
     tay
     sec
-    lda value
+    lda.z value
     sbc UTOA10_SUB,y
-    sta value
-    lda value+1
+    sta.z value
+    lda.z value+1
     sbc UTOA10_SUB+1,y
-    sta value+1
+    sta.z value+1
     lda #1
-    sta bStarted
+    sta.z bStarted
     jmp b1
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
@@ -181,23 +181,23 @@ utoa10w: {
 utoa16w: {
     .label dst = 4
     .label value = 2
-    lda value+1
+    lda.z value+1
     lsr
     lsr
     lsr
     lsr
     ldx #0
     jsr utoa16n
-    lda value+1
+    lda.z value+1
     and #$f
     jsr utoa16n
-    lda value
+    lda.z value
     lsr
     lsr
     lsr
     lsr
     jsr utoa16n
-    lda value
+    lda.z value
     and #$f
     ldx #1
     jsr utoa16n
@@ -230,21 +230,21 @@ cls: {
     .label screen = $400
     .label sc = 6
     lda #<screen
-    sta sc
+    sta.z sc
     lda #>screen
-    sta sc+1
+    sta.z sc+1
   b1:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>screen+$3e7+1
     bne b1
-    lda sc
+    lda.z sc
     cmp #<screen+$3e7+1
     bne b1
     rts

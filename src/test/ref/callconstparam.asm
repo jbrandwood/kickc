@@ -7,15 +7,15 @@
   .label screen = 3
 main: {
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     lda #2
-    sta line.x1
+    sta.z line.x1
     ldx #1
     jsr line
     lda #5
-    sta line.x1
+    sta.z line.x1
     ldx #3
     jsr line
     rts
@@ -24,16 +24,16 @@ main: {
 line: {
     .label x1 = 2
   b1:
-    cpx x1
+    cpx.z x1
     bcc b2
     rts
   b2:
     txa
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     inx
     jmp b1

@@ -9,30 +9,30 @@ main: {
     .label charset = 3
     .label c = 2
     lda #<CHARSET+8
-    sta charset
+    sta.z charset
     lda #>CHARSET+8
-    sta charset+1
+    sta.z charset+1
     lda #0
-    sta c
+    sta.z c
   b2:
-    lda c
+    lda.z c
     asl
     tax
     lda charset_spec_row,x
-    sta gen_char3.spec
+    sta.z gen_char3.spec
     lda charset_spec_row+1,x
-    sta gen_char3.spec+1
+    sta.z gen_char3.spec+1
     jsr gen_char3
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
-    inc c
+    inc.z c
     lda #4
-    cmp c
+    cmp.z c
     bne b2
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
@@ -46,12 +46,12 @@ gen_char3: {
     .label spec = 6
     .label r = 5
     lda #0
-    sta r
+    sta.z r
   b1:
     ldx #0
     ldy #0
   b2:
-    lda spec+1
+    lda.z spec+1
     and #$80
     cmp #0
     beq b3
@@ -62,17 +62,17 @@ gen_char3: {
     tya
     asl
     tay
-    asl spec
-    rol spec+1
+    asl.z spec
+    rol.z spec+1
     inx
     cpx #3
     bne b2
     tya
-    ldy r
+    ldy.z r
     sta (dst),y
-    inc r
+    inc.z r
     lda #5
-    cmp r
+    cmp.z r
     bne b1
     rts
 }

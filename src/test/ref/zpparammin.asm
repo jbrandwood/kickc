@@ -6,50 +6,50 @@
 main: {
     .label i = 2
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     clc
     adc #1
-    ldx i
+    ldx.z i
     inx
     inx
-    ldy i
+    ldy.z i
     jsr sum
-    ldy i
+    ldy.z i
     sta SCREEN,y
     tya
     clc
     adc #1
-    ldx i
+    ldx.z i
     inx
     inx
     jsr sum2
-    ldy i
+    ldy.z i
     sta SCREEN2,y
-    inc i
+    inc.z i
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
 // sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum2: {
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
-    stx $ff
+    adc.z $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     rts
 }
 // sum(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum: {
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
-    stx $ff
+    adc.z $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     rts
 }

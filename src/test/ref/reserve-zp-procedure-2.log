@@ -310,7 +310,7 @@ main: {
     .label i = 8
     // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
@@ -319,46 +319,46 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sub1.i
+    lda.z i
+    sta.z sub1.i
     // [7] call sub1 
     jsr sub1
     // [8] (byte) sub1::return#0 ← (byte) sub1::return#1 -- vbuz1=vbuz2 
-    lda sub1.return_1
-    sta sub1.return
+    lda.z sub1.return_1
+    sta.z sub1.return
     jmp b2
     // main::@2
   b2:
     // [9] (byte~) main::$0 ← (byte) sub1::return#0 -- vbuz1=vbuz2 
-    lda sub1.return
-    sta _0
+    lda.z sub1.return
+    sta.z _0
     // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _0
-    ldy i
+    lda.z _0
+    ldy.z i
     sta SCREEN,y
     // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sub2.i
+    lda.z i
+    sta.z sub2.i
     // [12] call sub2 
     jsr sub2
     // [13] (byte) sub2::return#0 ← (byte) sub2::return#1 -- vbuz1=vbuz2 
-    lda sub2.return_1
-    sta sub2.return
+    lda.z sub2.return_1
+    sta.z sub2.return
     jmp b3
     // main::@3
   b3:
     // [14] (byte~) main::$2 ← (byte) sub2::return#0 -- vbuz1=vbuz2 
-    lda sub2.return
-    sta _2
+    lda.z sub2.return
+    sta.z _2
     // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _2
-    ldy i
+    lda.z _2
+    ldy.z i
     sta SCREEN+$28,y
     // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -374,14 +374,14 @@ sub2: {
     .label return = $d
     .label return_1 = $10
     // [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz2 
-    lda i
+    lda.z i
     asl
-    sta _0
+    sta.z _0
     // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _0
+    lda.z _0
     clc
-    adc i
-    sta return_1
+    adc.z i
+    sta.z return_1
     jmp breturn
     // sub2::@return
   breturn:
@@ -395,9 +395,9 @@ sub1: {
     .label return = $a
     .label return_1 = $11
     // [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuz1=vbuz2_plus_vbuz2 
-    lda i
+    lda.z i
     asl
-    sta return_1
+    sta.z return_1
     jmp breturn
     // sub1::@return
   breturn:
@@ -475,7 +475,7 @@ main: {
     .label i = 8
     // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
   b1_from_b3:
@@ -484,7 +484,7 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
-    lda i
+    lda.z i
     // [7] call sub1 
     jsr sub1
     // [8] (byte) sub1::return#0 ← (byte) sub1::return#1
@@ -493,10 +493,10 @@ main: {
   b2:
     // [9] (byte~) main::$0 ← (byte) sub1::return#0
     // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN,y
     // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
-    ldx i
+    ldx.z i
     // [12] call sub2 
     jsr sub2
     // [13] (byte) sub2::return#0 ← (byte) sub2::return#1
@@ -505,13 +505,13 @@ main: {
   b3:
     // [14] (byte~) main::$2 ← (byte) sub2::return#0
     // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN+$28,y
     // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -526,9 +526,9 @@ sub2: {
     txa
     asl
     // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     jmp breturn
     // sub2::@return
   breturn:
@@ -646,14 +646,14 @@ main: {
     // for( volatile byte i : 0..2)
     // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     // main::@1
   b1:
     // sub1(i)
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
-    lda i
+    lda.z i
     // [7] call sub1 
     jsr sub1
     // [8] (byte) sub1::return#0 ← (byte) sub1::return#1
@@ -661,11 +661,11 @@ main: {
     // [9] (byte~) main::$0 ← (byte) sub1::return#0
     // SCREEN[i] = sub1(i)
     // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN,y
     // sub2(i)
     // [11] (byte) sub2::i#0 ← (byte) main::i#2 -- vbuxx=vbuz1 
-    ldx i
+    ldx.z i
     // [12] call sub2 
     jsr sub2
     // [13] (byte) sub2::return#0 ← (byte) sub2::return#1
@@ -673,14 +673,14 @@ main: {
     // [14] (byte~) main::$2 ← (byte) sub2::return#0
     // (SCREEN+40)[i] = sub2(i)
     // [15] *((const byte*) main::SCREEN#0+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN+$28,y
     // for( volatile byte i : 0..2)
     // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [17] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1
     // main::@return
     // }
@@ -696,9 +696,9 @@ sub2: {
     asl
     // i+i+i
     // [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // sub2::@return
     // }
     // [21] return 

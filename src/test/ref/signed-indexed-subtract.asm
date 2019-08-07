@@ -21,22 +21,22 @@ main: {
     bne b1
     jsr print_cls
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     ldx #0
   b3:
     txa
     asl
     tay
     lda words,y
-    sta print_sword.w
+    sta.z print_sword.w
     lda words+1,y
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     jsr print_sword
     jsr print_ln
     inx
@@ -44,10 +44,10 @@ main: {
     bne b9
     rts
   b9:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b3
 }
 // Print a newline
@@ -55,17 +55,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -74,7 +74,7 @@ print_ln: {
 // print_sword(signed word zeropage(2) w)
 print_sword: {
     .label w = 2
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -86,11 +86,11 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 // Print a single char
@@ -98,9 +98,9 @@ print_sword: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -108,11 +108,11 @@ print_char: {
 // print_word(word zeropage(2) w)
 print_word: {
     .label w = 2
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -120,7 +120,7 @@ print_word: {
 // print_byte(byte zeropage(6) b)
 print_byte: {
     .label b = 6
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -129,7 +129,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -148,21 +148,21 @@ memset: {
     .label end = str+num
     .label dst = 7
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts
@@ -171,10 +171,10 @@ memset: {
 sub: {
     asl
     sec
-    stx $ff
+    stx.z $ff
     tax
     lda words,x
-    sbc $ff
+    sbc.z $ff
     sta words,x
     bcs !+
     dec words+1,x

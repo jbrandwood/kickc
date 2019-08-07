@@ -516,16 +516,16 @@ main: {
   keyboard_key_pressed_from_b2:
     jsr keyboard_key_pressed
     // [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_2
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_2
     jmp b5
     // main::@5
   b5:
     // [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_2
-    sta _2
+    lda.z keyboard_key_pressed.return_2
+    sta.z _2
     // [11] if((byte~) main::$2!=(byte) 0) goto main::@4 -- vbuz1_neq_0_then_la1 
-    lda _2
+    lda.z _2
     cmp #0
     bne b4
     jmp b3
@@ -556,18 +556,18 @@ keyboard_key_pressed: {
     // [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return
-    sta keyboard_matrix_read.return_2
+    lda.z keyboard_matrix_read.return
+    sta.z keyboard_matrix_read.return_2
     jmp b1
     // keyboard_key_pressed::@1
   b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return_2
-    sta _2
+    lda.z keyboard_matrix_read.return_2
+    sta.z _2
     // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
-    and _2
-    sta return
+    and.z _2
+    sta.z return
     jmp breturn
     // keyboard_key_pressed::@return
   breturn:
@@ -589,7 +589,7 @@ keyboard_matrix_read: {
     // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_matrix_read::@return
   breturn:

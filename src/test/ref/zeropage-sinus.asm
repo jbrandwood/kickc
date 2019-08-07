@@ -31,7 +31,7 @@ restoreZeropage: {
     ldx #0
   !:
     lda ZP_STORAGE,x
-    sta 0,x
+    sta.z 0,x
     inx
     bne !-
     rts
@@ -66,7 +66,7 @@ sinZeropage: {
     ldx #0
   !:
     lda SINTABLE,x
-    sta 0,x
+    sta.z 0,x
     inx
     bne !-
     rts
@@ -75,7 +75,7 @@ sinZeropage: {
 saveZeropage: {
     ldx #0
   !:
-    lda 0,x
+    lda.z 0,x
     sta ZP_STORAGE,x
     inx
     bne !-

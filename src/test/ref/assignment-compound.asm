@@ -10,59 +10,59 @@
 main: {
     ldx #0
     lda #3
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #1
     lda #3+1
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #2
     lda #3+1-1
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #3
     lda #(3+1-1)*6
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #4
     lda #(3+1-1)*6/2
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #5
     lda #mod((3+1-1)*6/2,2)
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #6
     lda #mod((3+1-1)*6/2,2)<<2
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #7
     lda #mod((3+1-1)*6/2,2)<<2>>1
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #8
     lda #mod((3+1-1)*6/2,2)<<2>>1^6
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #9
     lda #mod((3+1-1)*6/2,2)<<2>>1^6|1
-    sta test.a
+    sta.z test.a
     jsr test
     ldx #$a
     lda #(mod((3+1-1)*6/2,2)<<2>>1^6|1)&1
-    sta test.a
+    sta.z test.a
     jsr test
     rts
 }
 // test(byte register(X) i, byte zeropage(2) a)
 test: {
     .label a = 2
-    lda a
+    lda.z a
     sta screen1,x
     lda ref,x
     sta screen2,x
     lda ref,x
-    cmp a
+    cmp.z a
     beq b1
     lda #RED
     sta cols,x

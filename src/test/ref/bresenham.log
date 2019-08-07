@@ -431,18 +431,18 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::y#2 = (const byte) main::y0#0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #y0
-    sta y
+    sta.z y
     // [5] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #yd/2
-    sta e
+    sta.z e
     // [5] phi (byte) main::x#2 = (const byte) main::x0#0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #x0
-    sta x
+    sta.z x
     // [5] phi (byte*) main::cursor#3 = (const byte[$28*$19]) SCREEN#0+(const byte) main::y0#0*(byte) $28+(const byte) main::x0#0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
     lda #<SCREEN+y0*$28+x0
-    sta cursor
+    sta.z cursor
     lda #>SCREEN+y0*$28+x0
-    sta cursor+1
+    sta.z cursor+1
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -458,37 +458,37 @@ main: {
     ldy #0
     sta (cursor),y
     // [7] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc x
+    inc.z x
     // [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 -- vbuz1=vbuz1_plus_vbuc1 
-    lax e
+    lax.z e
     axs #-[yd]
-    stx e
+    stx.z e
     // [10] if((const byte) main::xd#0>(byte) main::e#1) goto main::@2 -- vbuc1_gt_vbuz1_then_la1 
-    lda e
+    lda.z e
     cmp #xd
     bcc b2_from_b1
     jmp b3
     // main::@3
   b3:
     // [11] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc y
+    inc.z y
     // [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc cursor
-    sta cursor
+    adc.z cursor
+    sta.z cursor
     bcc !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax e
+    lax.z e
     axs #xd
-    stx e
+    stx.z e
     // [14] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   b2_from_b1:
   b2_from_b3:
@@ -499,7 +499,7 @@ main: {
     // main::@2
   b2:
     // [15] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #x1+1
     bcc b1_from_b2
     jmp breturn
@@ -586,17 +586,17 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::y#2 = (const byte) main::y0#0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #y0
-    sta y
+    sta.z y
     // [5] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #yd/2
     // [5] phi (byte) main::x#2 = (const byte) main::x0#0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #x0
-    sta x
+    sta.z x
     // [5] phi (byte*) main::cursor#3 = (const byte[$28*$19]) SCREEN#0+(const byte) main::y0#0*(byte) $28+(const byte) main::x0#0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
     lda #<SCREEN+y0*$28+x0
-    sta cursor
+    sta.z cursor
     lda #>SCREEN+y0*$28+x0
-    sta cursor+1
+    sta.z cursor+1
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -612,11 +612,11 @@ main: {
     ldy #0
     sta (cursor),y
     // [7] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc x
+    inc.z x
     // [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 -- vbuxx=vbuxx_plus_vbuc1 
     txa
@@ -628,14 +628,14 @@ main: {
     // main::@3
   b3:
     // [11] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc y
+    inc.z y
     // [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc cursor
-    sta cursor
+    adc.z cursor
+    sta.z cursor
     bcc !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 -- vbuxx=vbuxx_minus_vbuc1 
     txa
@@ -650,7 +650,7 @@ main: {
     // main::@2
   b2:
     // [15] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #x1+1
     bcc b1_from_b2
     jmp breturn
@@ -773,17 +773,17 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::y#2 = (const byte) main::y0#0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #y0
-    sta y
+    sta.z y
     // [5] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #yd/2
     // [5] phi (byte) main::x#2 = (const byte) main::x0#0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #x0
-    sta x
+    sta.z x
     // [5] phi (byte*) main::cursor#3 = (const byte[$28*$19]) SCREEN#0+(const byte) main::y0#0*(byte) $28+(const byte) main::x0#0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
     lda #<SCREEN+y0*$28+x0
-    sta cursor
+    sta.z cursor
     lda #>SCREEN+y0*$28+x0
-    sta cursor+1
+    sta.z cursor+1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::y#2 = (byte) main::y#4 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte) main::e#3 = (byte) main::e#5 [phi:main::@2->main::@1#1] -- register_copy 
@@ -798,12 +798,12 @@ main: {
     sta (cursor),y
     // x = x + 1
     // [7] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc x
+    inc.z x
     // cursor = cursor + 1
     // [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 -- pbuz1=pbuz1_plus_1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // e = e+yd
     // [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 -- vbuxx=vbuxx_plus_vbuc1 
@@ -816,15 +816,15 @@ main: {
     // main::@3
     // y = y+1
     // [11] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 -- vbuz1=vbuz1_plus_1 
-    inc y
+    inc.z y
     // cursor = cursor + 40
     // [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc cursor
-    sta cursor
+    adc.z cursor
+    sta.z cursor
     bcc !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // e = e - xd
     // [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 -- vbuxx=vbuxx_minus_vbuc1 
@@ -838,7 +838,7 @@ main: {
   b2:
     // while (x<(x1+1))
     // [15] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #x1+1
     bcc b1
     // main::@return

@@ -294,12 +294,12 @@ main: {
   print_from_main:
     // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
-    sta print.w
+    sta.z print.w
     lda #>$1234
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -311,9 +311,9 @@ main: {
   print_from_b1:
     // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
-    sta print.w
+    sta.z print.w
     lda #>w
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -326,9 +326,9 @@ main: {
   print_from_b2:
     // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
-    sta print.w
+    sta.z print.w
     lda #>$12*$100+$34
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     jmp breturn
@@ -343,17 +343,17 @@ print: {
     .label _0 = 5
     .label w = 3
     // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda idx
+    lda.z idx
     asl
-    sta _0
+    sta.z _0
     // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _0
-    lda w
+    ldy.z _0
+    lda.z w
     sta SCREEN,y
-    lda w+1
+    lda.z w+1
     sta SCREEN+1,y
     // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // print::@return
   breturn:
@@ -415,9 +415,9 @@ main: {
   print_from_main:
     // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
-    sta print.w
+    sta.z print.w
     lda #>$1234
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
     ldx #0
     jsr print
@@ -431,9 +431,9 @@ main: {
   print_from_b1:
     // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
-    sta print.w
+    sta.z print.w
     lda #>w
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -446,9 +446,9 @@ main: {
   print_from_b2:
     // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
-    sta print.w
+    sta.z print.w
     lda #>$12*$100+$34
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     jmp breturn
@@ -466,9 +466,9 @@ print: {
     asl
     // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda w
+    lda.z w
     sta SCREEN,y
-    lda w+1
+    lda.z w+1
     sta SCREEN+1,y
     // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
@@ -562,9 +562,9 @@ main: {
     // [11] phi from main to print [phi:main->print]
     // [11] phi (word) print::w#3 = (word) $1234 [phi:main->print#0] -- vwuz1=vwuc1 
     lda #<$1234
-    sta print.w
+    sta.z print.w
     lda #>$1234
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuxx=vbuc1 
     ldx #0
     jsr print
@@ -575,9 +575,9 @@ main: {
     // [11] phi from main::@1 to print [phi:main::@1->print]
     // [11] phi (word) print::w#3 = (const word) main::w#0 [phi:main::@1->print#0] -- vwuz1=vwuc1 
     lda #<w
-    sta print.w
+    sta.z print.w
     lda #>w
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -587,9 +587,9 @@ main: {
     // [11] phi from main::@2 to print [phi:main::@2->print]
     // [11] phi (word) print::w#3 = (byte) $12*(word) $100+(byte) $34 [phi:main::@2->print#0] -- vwuz1=vwuc1 
     lda #<$12*$100+$34
-    sta print.w
+    sta.z print.w
     lda #>$12*$100+$34
-    sta print.w+1
+    sta.z print.w+1
     // [11] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // main::@return
@@ -607,9 +607,9 @@ print: {
     asl
     // [13] *((const word*) SCREEN#0 + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda w
+    lda.z w
     sta SCREEN,y
-    lda w+1
+    lda.z w+1
     sta SCREEN+1,y
     // SCREEN[idx++] = w;
     // [14] (byte) idx#13 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 

@@ -53,210 +53,210 @@ main: {
     sta D018
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<COUNT
-    sta print_word_decimal.w
+    sta.z print_word_decimal.w
     lda #>COUNT
-    sta print_word_decimal.w+1
+    sta.z print_word_decimal.w+1
     jsr print_word_decimal
     jsr print_ln
     ldx #0
     lda #<sieve
-    sta memset.str
+    sta.z memset.str
     lda #>sieve
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<COUNT
-    sta memset.num
+    sta.z memset.num
     lda #>COUNT
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     jsr clock_start
     lda #<sieve+2
-    sta sieve_i
+    sta.z sieve_i
     lda #>sieve+2
-    sta sieve_i+1
+    sta.z sieve_i+1
     lda #<2
-    sta i_17
+    sta.z i_17
     lda #>2
-    sta i_17+1
+    sta.z i_17+1
   b2:
     ldy #0
     lda (sieve_i),y
     cmp #0
     bne b4
-    lda i_17
+    lda.z i_17
     asl
-    sta j
-    lda i_17+1
+    sta.z j
+    lda.z i_17+1
     rol
-    sta j+1
-    lda j
+    sta.z j+1
+    lda.z j
     clc
     adc #<sieve
-    sta s
-    lda j+1
+    sta.z s
+    lda.z j+1
     adc #>sieve
-    sta s+1
+    sta.z s+1
   b5:
-    lda j+1
+    lda.z j+1
     cmp #>COUNT
     bcs !b6+
     jmp b6
   !b6:
     bne !+
-    lda j
+    lda.z j
     cmp #<COUNT
     bcs !b6+
     jmp b6
   !b6:
   !:
   b4:
-    inc i_12
+    inc.z i_12
     bne !+
-    inc i_12+1
+    inc.z i_12+1
   !:
-    inc sieve_i
+    inc.z sieve_i
     bne !+
-    inc sieve_i+1
+    inc.z sieve_i+1
   !:
-    lda i_12+1
+    lda.z i_12+1
     cmp #>SQRT_COUNT
     bcc b2
     bne !+
-    lda i_12
+    lda.z i_12
     cmp #<SQRT_COUNT
     bcc b2
   !:
     jsr clock
-    lda cyclecount
+    lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
-    sta cyclecount
-    lda cyclecount+1
+    sta.z cyclecount
+    lda.z cyclecount+1
     sbc #>CLOCKS_PER_INIT
-    sta cyclecount+1
-    lda cyclecount+2
+    sta.z cyclecount+1
+    lda.z cyclecount+2
     sbc #<CLOCKS_PER_INIT>>$10
-    sta cyclecount+2
-    lda cyclecount+3
+    sta.z cyclecount+2
+    lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
-    sta cyclecount+3
+    sta.z cyclecount+3
     jsr div32u16u
-    lda _14
-    sta sec100s
-    lda _14+1
-    sta sec100s+1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z _14
+    sta.z sec100s
+    lda.z _14+1
+    sta.z sec100s+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_word_decimal
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_dword_decimal
     jsr print_ln
     lda #<2
-    sta i
+    sta.z i
     lda #>2
-    sta i+1
+    sta.z i+1
   b9:
-    lda i
+    lda.z i
     clc
     adc #<sieve
-    sta _38
-    lda i+1
+    sta.z _38
+    lda.z i+1
     adc #>sieve
-    sta _38+1
+    sta.z _38+1
     ldy #0
     lda (_38),y
     cmp #0
     bne b30
-    lda print_char_cursor_90
-    sta print_char_cursor
-    lda print_char_cursor_90+1
-    sta print_char_cursor+1
+    lda.z print_char_cursor_90
+    sta.z print_char_cursor
+    lda.z print_char_cursor_90+1
+    sta.z print_char_cursor+1
     jsr print_word_decimal
     jsr print_char
   b11:
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$514
     bcc b29
     bne !+
-    lda i
+    lda.z i
     cmp #<$514
     bcc b29
   !:
     lda #<str4
-    sta print_str.str
+    sta.z print_str.str
     lda #>str4
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
   b13:
     inc SCREEN+$3e7
     jmp b13
   b29:
-    lda print_char_cursor
-    sta print_char_cursor_104
-    lda print_char_cursor+1
-    sta print_char_cursor_104+1
+    lda.z print_char_cursor
+    sta.z print_char_cursor_104
+    lda.z print_char_cursor+1
+    sta.z print_char_cursor_104+1
     jmp b9
   b30:
-    lda print_char_cursor_90
-    sta print_char_cursor
-    lda print_char_cursor_90+1
-    sta print_char_cursor+1
+    lda.z print_char_cursor_90
+    sta.z print_char_cursor
+    lda.z print_char_cursor_90+1
+    sta.z print_char_cursor+1
     jmp b11
   b6:
     lda #1
     ldy #0
     sta (s),y
-    lda s
+    lda.z s
     clc
-    adc i_17
-    sta s
-    lda s+1
-    adc i_17+1
-    sta s+1
-    lda j
+    adc.z i_17
+    sta.z s
+    lda.z s+1
+    adc.z i_17+1
+    sta.z s+1
+    lda.z j
     clc
-    adc i_17
-    sta j
-    lda j+1
-    adc i_17+1
-    sta j+1
+    adc.z i_17
+    sta.z j
+    lda.z j+1
+    adc.z i_17+1
+    sta.z j+1
     jmp b5
     str: .text "Sieve benchmark - calculating primes"
     .byte 0
@@ -283,13 +283,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -299,9 +299,9 @@ print_char: {
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -309,15 +309,15 @@ print_char: {
 // print_word_decimal(word zeropage($b) w)
 print_word_decimal: {
     .label w = $b
-    lda w
-    sta utoa.value
-    lda w+1
-    sta utoa.value+1
+    lda.z w
+    sta.z utoa.value
+    lda.z w+1
+    sta.z utoa.value+1
     jsr utoa
     lda #<decimal_digits
-    sta print_str.str
+    sta.z print_str.str
     lda #>decimal_digits
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     rts
 }
@@ -334,59 +334,59 @@ utoa: {
     .label digit = 6
     .label value = $11
     lda RADIX_DECIMAL_VALUES
-    sta digit_value
+    sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1
-    sta digit_value+1
+    sta.z digit_value+1
     lda #<decimal_digits
-    sta buffer
+    sta.z buffer
     lda #>decimal_digits
-    sta buffer+1
+    sta.z buffer+1
     ldx #0
     txa
-    sta digit
+    sta.z digit
   b7:
-    lda digit_value+1
-    cmp value+1
+    lda.z digit_value+1
+    cmp.z value+1
     bne !+
-    lda digit_value
-    cmp value
+    lda.z digit_value
+    cmp.z value
     beq b5
   !:
     bcc b5
   b4:
-    inc digit
-    lda digit
+    inc.z digit
+    lda.z digit
     cmp #max_digits-1
     bcc b2
-    lda value
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0
     sta (buffer),y
-    inc buffer
+    inc.z buffer
     bne !+
-    inc buffer+1
+    inc.z buffer+1
   !:
     lda #0
     tay
     sta (buffer),y
     rts
   b2:
-    lda digit
+    lda.z digit
     asl
     tay
     lda RADIX_DECIMAL_VALUES,y
-    sta digit_value
+    sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1,y
-    sta digit_value+1
+    sta.z digit_value+1
     cpx #0
     bne b5
     jmp b7
   b5:
     jsr utoa_append
-    inc buffer
+    inc.z buffer
     bne !+
-    inc buffer+1
+    inc.z buffer+1
   !:
     ldx #1
     jmp b4
@@ -407,11 +407,11 @@ utoa_append: {
     .label return = $11
     ldx #0
   b1:
-    lda sub+1
-    cmp value+1
+    lda.z sub+1
+    cmp.z value+1
     bne !+
-    lda sub
-    cmp value
+    lda.z sub
+    cmp.z value
     beq b2
   !:
     bcc b2
@@ -421,13 +421,13 @@ utoa_append: {
     rts
   b2:
     inx
-    lda value
+    lda.z value
     sec
-    sbc sub
-    sta value
-    lda value+1
-    sbc sub+1
-    sta value+1
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
     jmp b1
 }
 // Print a newline
@@ -435,17 +435,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -456,9 +456,9 @@ print_dword_decimal: {
     .label w = 7
     jsr ultoa
     lda #<decimal_digits_long
-    sta print_str.str
+    sta.z print_str.str
     lda #>decimal_digits_long
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     rts
 }
@@ -475,76 +475,76 @@ ultoa: {
     .label digit = 6
     .label value = 7
     lda RADIX_DECIMAL_VALUES_LONG
-    sta digit_value
+    sta.z digit_value
     lda RADIX_DECIMAL_VALUES_LONG+1
-    sta digit_value+1
+    sta.z digit_value+1
     lda RADIX_DECIMAL_VALUES_LONG+2
-    sta digit_value+2
+    sta.z digit_value+2
     lda RADIX_DECIMAL_VALUES_LONG+3
-    sta digit_value+3
+    sta.z digit_value+3
     lda #<decimal_digits_long
-    sta buffer
+    sta.z buffer
     lda #>decimal_digits_long
-    sta buffer+1
+    sta.z buffer+1
     ldx #0
     txa
-    sta digit
+    sta.z digit
   b7:
-    lda value+3
-    cmp digit_value+3
+    lda.z value+3
+    cmp.z digit_value+3
     bcc !+
     bne b5
-    lda value+2
-    cmp digit_value+2
+    lda.z value+2
+    cmp.z digit_value+2
     bcc !+
     bne b5
-    lda value+1
-    cmp digit_value+1
+    lda.z value+1
+    cmp.z digit_value+1
     bcc !+
     bne b5
-    lda value
-    cmp digit_value
+    lda.z value
+    cmp.z digit_value
     bcs b5
   !:
   b4:
-    inc digit
-    lda digit
+    inc.z digit
+    lda.z digit
     cmp #max_digits-1
     bcc b2
-    lda value
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0
     sta (buffer),y
-    inc buffer
+    inc.z buffer
     bne !+
-    inc buffer+1
+    inc.z buffer+1
   !:
     lda #0
     tay
     sta (buffer),y
     rts
   b2:
-    lda digit
+    lda.z digit
     asl
     asl
     tay
     lda RADIX_DECIMAL_VALUES_LONG,y
-    sta digit_value
+    sta.z digit_value
     lda RADIX_DECIMAL_VALUES_LONG+1,y
-    sta digit_value+1
+    sta.z digit_value+1
     lda RADIX_DECIMAL_VALUES_LONG+2,y
-    sta digit_value+2
+    sta.z digit_value+2
     lda RADIX_DECIMAL_VALUES_LONG+3,y
-    sta digit_value+3
+    sta.z digit_value+3
     cpx #0
     bne b5
     jmp b7
   b5:
     jsr ultoa_append
-    inc buffer
+    inc.z buffer
     bne !+
-    inc buffer+1
+    inc.z buffer+1
   !:
     ldx #1
     jmp b4
@@ -565,20 +565,20 @@ ultoa_append: {
     .label return = 7
     ldx #0
   b1:
-    lda value+3
-    cmp sub+3
+    lda.z value+3
+    cmp.z sub+3
     bcc !+
     bne b2
-    lda value+2
-    cmp sub+2
+    lda.z value+2
+    cmp.z sub+2
     bcc !+
     bne b2
-    lda value+1
-    cmp sub+1
+    lda.z value+1
+    cmp.z sub+1
     bcc !+
     bne b2
-    lda value
-    cmp sub
+    lda.z value
+    cmp.z sub
     bcs b2
   !:
     lda DIGITS,x
@@ -587,19 +587,19 @@ ultoa_append: {
     rts
   b2:
     inx
-    lda value
+    lda.z value
     sec
-    sbc sub
-    sta value
-    lda value+1
-    sbc sub+1
-    sta value+1
-    lda value+2
-    sbc sub+2
-    sta value+2
-    lda value+3
-    sbc sub+3
-    sta value+3
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
+    lda.z value+2
+    sbc.z sub+2
+    sta.z value+2
+    lda.z value+3
+    sbc.z sub+3
+    sta.z value+3
     jmp b1
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
@@ -611,31 +611,31 @@ div32u16u: {
     .label quotient_lo = $11
     .label return = $13
     .label dividend = 7
-    lda dividend+2
-    sta divr16u.dividend
-    lda dividend+3
-    sta divr16u.dividend+1
+    lda.z dividend+2
+    sta.z divr16u.dividend
+    lda.z dividend+3
+    sta.z divr16u.dividend+1
     lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
     jsr divr16u
-    lda divr16u.return
-    sta quotient_hi
-    lda divr16u.return+1
-    sta quotient_hi+1
-    lda dividend
-    sta divr16u.dividend
-    lda dividend+1
-    sta divr16u.dividend+1
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
+    lda.z dividend
+    sta.z divr16u.dividend
+    lda.z dividend+1
+    sta.z divr16u.dividend+1
     jsr divr16u
-    lda quotient_hi
-    sta return+2
-    lda quotient_hi+1
-    sta return+3
-    lda quotient_lo
-    sta return
-    lda quotient_lo+1
-    sta return+1
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
     rts
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -650,42 +650,42 @@ divr16u: {
     .label return = $11
     ldx #0
     txa
-    sta quotient
-    sta quotient+1
+    sta.z quotient
+    sta.z quotient+1
   b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
+    asl.z rem
+    rol.z rem+1
+    lda.z dividend+1
     and #$80
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
   b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
+    asl.z dividend
+    rol.z dividend+1
+    asl.z quotient
+    rol.z quotient+1
+    lda.z rem+1
     cmp #>div32u16u.divisor
     bcc b3
     bne !+
-    lda rem
+    lda.z rem
     cmp #<div32u16u.divisor
     bcc b3
   !:
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
-    lda rem
+    lda.z rem
     sec
     sbc #<div32u16u.divisor
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>div32u16u.divisor
-    sta rem+1
+    sta.z rem+1
   b3:
     inx
     cpx #$10
@@ -699,16 +699,16 @@ clock: {
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
-    sta return
+    sta.z return
     lda #>$ffffffff
     sbc CIA2_TIMER_AB+1
-    sta return+1
+    sta.z return+1
     lda #<$ffffffff>>$10
     sbc CIA2_TIMER_AB+2
-    sta return+2
+    sta.z return+2
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Reset & start the processor clock time. The value can be read using clock().
@@ -740,24 +740,24 @@ memset: {
     .label dst = $11
     .label num = $f
     .label str = $11
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
   breturn:
     rts
@@ -765,9 +765,9 @@ memset: {
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }
@@ -775,13 +775,13 @@ memset: {
 print_cls: {
     ldx #' '
     lda #<$400
-    sta memset.str
+    sta.z memset.str
     lda #>$400
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$3e8
-    sta memset.num
+    sta.z memset.num
     lda #>$3e8
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     rts
 }

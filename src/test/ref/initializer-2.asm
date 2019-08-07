@@ -9,9 +9,9 @@ main: {
     .label i = 2
     ldy #0
     tya
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tax
     lda points,x
@@ -20,9 +20,9 @@ main: {
     lda points+OFFSET_STRUCT_POINT_Y,x
     sta SCREEN,y
     iny
-    inc i
+    inc.z i
     lda #3
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

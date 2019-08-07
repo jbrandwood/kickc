@@ -346,7 +346,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -355,43 +355,43 @@ main: {
     // main::@1
   b1:
     // [6] (signed byte~) main::$2 ← - (signed byte)(byte) main::i#2 -- vbsz1=_neg_vbsz2 
-    lda i
+    lda.z i
     eor #$ff
     clc
     adc #1
-    sta _2
+    sta.z _2
     // [7] (byte) main::$17 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _17
+    sta.z _17
     // [8] (byte~) main::$6 ← (byte) main::$17 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _17
+    lda.z _17
     clc
-    adc i
-    sta _6
+    adc.z i
+    sta.z _6
     // [9] *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuz1=vbsz2 
-    lda i
-    ldy _6
+    lda.z i
+    ldy.z _6
     sta points,y
     // [10] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) ← (signed byte~) main::$2 -- pbsc1_derefidx_vbuz1=vbsz2 
-    lda _2
-    ldy _6
+    lda.z _2
+    ldy.z _6
     sta points+OFFSET_STRUCT_POINT_Y,y
     // [11] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuz1=vbsz2 
-    lda i
-    ldy _6
+    lda.z i
+    ldy.z _6
     sta points+OFFSET_STRUCT_POINT_Z,y
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1_from_b1
     // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     // [14] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     jmp b2
     // [14] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
@@ -400,31 +400,31 @@ main: {
     // main::@2
   b2:
     // [15] (byte) main::$19 ← (byte) main::i1#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i1
+    lda.z i1
     asl
-    sta _19
+    sta.z _19
     // [16] (byte~) main::$7 ← (byte) main::$19 + (byte) main::i1#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _19
+    lda.z _19
     clc
-    adc i1
-    sta _7
+    adc.z i1
+    sta.z _7
     // [17] *((signed byte*)(const struct Point*) main::SCREEN#0 + (byte~) main::$7) ← *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$7) -- pbsc1_derefidx_vbuz1=pbsc2_derefidx_vbuz1 
-    ldy _7
+    ldy.z _7
     lda points,y
     sta SCREEN,y
     // [18] *((signed byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) ← *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) -- pbsc1_derefidx_vbuz1=pbsc2_derefidx_vbuz1 
-    ldy _7
+    ldy.z _7
     lda points+OFFSET_STRUCT_POINT_Y,y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,y
     // [19] *((signed byte*)(const struct Point*) main::SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$7) ← *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$7) -- pbsc1_derefidx_vbuz1=pbsc2_derefidx_vbuz1 
-    ldy _7
+    ldy.z _7
     lda points+OFFSET_STRUCT_POINT_Z,y
     sta SCREEN+OFFSET_STRUCT_POINT_Z,y
     // [20] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i1
+    cmp.z i1
     bne b2_from_b2
     jmp breturn
     // main::@return
@@ -534,20 +534,20 @@ main: {
     eor #$ff
     clc
     adc #1
-    sta _2
+    sta.z _2
     // [7] (byte) main::$17 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] (byte~) main::$6 ← (byte) main::$17 + (byte) main::i#2 -- vbuyy=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     // [9] *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuyy=vbsxx 
     txa
     sta points,y
     // [10] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) ← (signed byte~) main::$2 -- pbsc1_derefidx_vbuyy=vbsz1 
-    lda _2
+    lda.z _2
     sta points+OFFSET_STRUCT_POINT_Y,y
     // [11] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuyy=vbsxx 
     txa
@@ -572,9 +572,9 @@ main: {
     txa
     asl
     // [16] (byte~) main::$7 ← (byte) main::$19 + (byte) main::i1#2 -- vbuyy=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     // [17] *((signed byte*)(const struct Point*) main::SCREEN#0 + (byte~) main::$7) ← *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$7) -- pbsc1_derefidx_vbuyy=pbsc2_derefidx_vbuyy 
     lda points,y
@@ -703,21 +703,21 @@ main: {
     eor #$ff
     clc
     adc #1
-    sta _2
+    sta.z _2
     // points[i] = { (signed byte)i, -(signed byte)i, (signed byte)i }
     // [7] (byte) main::$17 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] (byte~) main::$6 ← (byte) main::$17 + (byte) main::i#2 -- vbuyy=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     // [9] *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuyy=vbsxx 
     txa
     sta points,y
     // [10] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) ← (signed byte~) main::$2 -- pbsc1_derefidx_vbuyy=vbsz1 
-    lda _2
+    lda.z _2
     sta points+OFFSET_STRUCT_POINT_Y,y
     // [11] *((signed byte*)(const struct Point[4]) points#0+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$6) ← (signed byte)(byte) main::i#2 -- pbsc1_derefidx_vbuyy=vbsxx 
     txa
@@ -740,9 +740,9 @@ main: {
     txa
     asl
     // [16] (byte~) main::$7 ← (byte) main::$19 + (byte) main::i1#2 -- vbuyy=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     // [17] *((signed byte*)(const struct Point*) main::SCREEN#0 + (byte~) main::$7) ← *((signed byte*)(const struct Point[4]) points#0 + (byte~) main::$7) -- pbsc1_derefidx_vbuyy=pbsc2_derefidx_vbuyy 
     lda points,y

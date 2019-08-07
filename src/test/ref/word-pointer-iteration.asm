@@ -10,36 +10,36 @@ main: {
     .label idx = 4
     ldx #0
     txa
-    sta idx
+    sta.z idx
     lda #<words
-    sta wp
+    sta.z wp
     lda #>words
-    sta wp+1
+    sta.z wp+1
   b1:
     ldy #0
     lda (wp),y
-    sta w
+    sta.z w
     iny
     lda (wp),y
-    sta w+1
+    sta.z w+1
     lda #SIZEOF_WORD
     clc
-    adc wp
-    sta wp
+    adc.z wp
+    sta.z wp
     bcc !+
-    inc wp+1
+    inc.z wp+1
   !:
-    lda w
-    ldy idx
+    lda.z w
+    ldy.z idx
     sta SCREEN,y
     iny
-    lda w+1
+    lda.z w+1
     sta SCREEN,y
     iny
     tya
     clc
     adc #1
-    sta idx
+    sta.z idx
     inx
     cpx #4
     bne b1

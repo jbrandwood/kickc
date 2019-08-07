@@ -5,48 +5,48 @@
 main: {
     jsr cls
     lda #<$400
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<0
-    sta utoa16w.value
-    sta utoa16w.value+1
+    sta.z utoa16w.value
+    sta.z utoa16w.value+1
     jsr utoa16w
     lda #<$400+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$4d2
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$4d2
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     lda #<$400+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$162e
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$162e
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     lda #<$400+$28+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$270f
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$270f
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     lda #<$400+$28+$28+$28+$28
-    sta utoa16w.dst
+    sta.z utoa16w.dst
     lda #>$400+$28+$28+$28+$28
-    sta utoa16w.dst+1
+    sta.z utoa16w.dst+1
     lda #<$e608
-    sta utoa16w.value
+    sta.z utoa16w.value
     lda #>$e608
-    sta utoa16w.value+1
+    sta.z utoa16w.value+1
     jsr utoa16w
     rts
 }
@@ -55,23 +55,23 @@ main: {
 utoa16w: {
     .label dst = 2
     .label value = 4
-    lda value+1
+    lda.z value+1
     lsr
     lsr
     lsr
     lsr
     ldx #0
     jsr utoa16n
-    lda value+1
+    lda.z value+1
     and #$f
     jsr utoa16n
-    lda value
+    lda.z value
     lsr
     lsr
     lsr
     lsr
     jsr utoa16n
-    lda value
+    lda.z value
     and #$f
     ldx #1
     jsr utoa16n
@@ -104,21 +104,21 @@ cls: {
     .label screen = $400
     .label sc = 4
     lda #<screen
-    sta sc
+    sta.z sc
     lda #>screen
-    sta sc+1
+    sta.z sc+1
   b1:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>screen+$3e7+1
     bne b1
-    lda sc
+    lda.z sc
     cmp #<screen+$3e7+1
     bne b1
     rts

@@ -6,23 +6,23 @@ main: {
     .label i = 2
     .label f = 3
     lda #0
-    sta i
+    sta.z i
   b2:
-    inc i
+    inc.z i
     lda #1
-    and i
+    and.z i
     cmp #0
     beq b3
     lda #<fn2
-    sta f
+    sta.z f
     lda #>fn2
-    sta f+1
+    sta.z f+1
     jmp b4
   b3:
     lda #<fn1
-    sta f
+    sta.z f
     lda #>fn1
-    sta f+1
+    sta.z f+1
   b4:
     jsr bi_f
     jmp b2

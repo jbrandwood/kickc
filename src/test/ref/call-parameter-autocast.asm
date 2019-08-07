@@ -6,20 +6,20 @@
 main: {
     .const w = $1234
     lda #<$1234
-    sta print.w
+    sta.z print.w
     lda #>$1234
-    sta print.w+1
+    sta.z print.w+1
     ldx #0
     jsr print
     lda #<w
-    sta print.w
+    sta.z print.w
     lda #>w
-    sta print.w+1
+    sta.z print.w+1
     jsr print
     lda #<$12*$100+$34
-    sta print.w
+    sta.z print.w
     lda #>$12*$100+$34
-    sta print.w+1
+    sta.z print.w+1
     jsr print
     rts
 }
@@ -29,9 +29,9 @@ print: {
     txa
     asl
     tay
-    lda w
+    lda.z w
     sta SCREEN,y
-    lda w+1
+    lda.z w+1
     sta SCREEN+1,y
     inx
     rts

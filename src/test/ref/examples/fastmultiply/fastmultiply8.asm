@@ -24,81 +24,81 @@ main: {
     .label at_12 = 3
     jsr init_screen
     lda #<$400+4
-    sta at
+    sta.z at
     lda #>$400+4
-    sta at+1
+    sta.z at+1
     ldx #0
   b1:
     lda vals,x
-    sta print_sbyte_at.b
-    lda at
-    sta print_sbyte_at.at
-    lda at+1
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.b
+    lda.z at
+    sta.z print_sbyte_at.at
+    lda.z at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     lda #4
     clc
-    adc at
-    sta at
+    adc.z at
+    sta.z at
     bcc !+
-    inc at+1
+    inc.z at+1
   !:
     inx
     cpx #9
     bne b1
     lda #0
-    sta i
+    sta.z i
     lda #<$400
-    sta at_line
+    sta.z at_line
     lda #>$400
-    sta at_line+1
+    sta.z at_line+1
   b2:
     lda #$28
     clc
-    adc at_2
-    sta at_2
+    adc.z at_2
+    sta.z at_2
     bcc !+
-    inc at_2+1
+    inc.z at_2+1
   !:
-    ldy i
+    ldy.z i
     lda vals,y
-    sta print_sbyte_at.b
-    lda at_2
-    sta print_sbyte_at.at
-    lda at_2+1
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.b
+    lda.z at_2
+    sta.z print_sbyte_at.at
+    lda.z at_2+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda at_2
-    sta at_12
-    lda at_2+1
-    sta at_12+1
+    lda.z at_2
+    sta.z at_12
+    lda.z at_2+1
+    sta.z at_12+1
     lda #0
-    sta j
+    sta.z j
   b3:
     lda #4
     clc
-    adc at_3
-    sta at_3
+    adc.z at_3
+    sta.z at_3
     bcc !+
-    inc at_3+1
+    inc.z at_3+1
   !:
-    ldy i
+    ldy.z i
     lda vals,y
-    ldy j
+    ldy.z j
     ldx vals,y
     jsr fmul8
-    sta print_sbyte_at.b
-    lda at_3
-    sta print_sbyte_at.at
-    lda at_3+1
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.b
+    lda.z at_3
+    sta.z print_sbyte_at.at
+    lda.z at_3+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
-    inc j
+    inc.z j
     lda #9
-    cmp j
+    cmp.z j
     bne b3
-    inc i
-    cmp i
+    inc.z i
+    cmp.z i
     bne b2
     rts
 }
@@ -107,27 +107,27 @@ main: {
 print_sbyte_at: {
     .label b = 8
     .label at = 6
-    lda b
+    lda.z b
     bmi b1
     lda #' '
-    sta print_char_at.ch
+    sta.z print_char_at.ch
     jsr print_char_at
   b2:
-    inc print_byte_at.at
+    inc.z print_byte_at.at
     bne !+
-    inc print_byte_at.at+1
+    inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
   b1:
     lda #'-'
-    sta print_char_at.ch
+    sta.z print_char_at.ch
     jsr print_char_at
-    lda b
+    lda.z b
     eor #$ff
     clc
     adc #1
-    sta b
+    sta.z b
     jmp b2
 }
 // Print a single char
@@ -135,7 +135,7 @@ print_sbyte_at: {
 print_char_at: {
     .label at = 6
     .label ch = 9
-    lda ch
+    lda.z ch
     ldy #0
     sta (at),y
     rts
@@ -145,24 +145,24 @@ print_char_at: {
 print_byte_at: {
     .label b = 8
     .label at = 6
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
     tay
     lda print_hextab,y
-    sta print_char_at.ch
+    sta.z print_char_at.ch
     jsr print_char_at
     lda #$f
-    and b
+    and.z b
     tay
-    inc print_char_at.at
+    inc.z print_char_at.at
     bne !+
-    inc print_char_at.at+1
+    inc.z print_char_at.at+1
   !:
     lda print_hextab,y
-    sta print_char_at.ch
+    sta.z print_char_at.ch
     jsr print_char_at
     rts
 }
@@ -197,9 +197,9 @@ init_screen: {
     bne b1
     ldx #0
     lda #<$d800
-    sta COLS
+    sta.z COLS
     lda #>$d800
-    sta COLS+1
+    sta.z COLS+1
   b2:
     lda #WHITE
     ldy #0
@@ -212,10 +212,10 @@ init_screen: {
     sta (COLS),y
     lda #$28
     clc
-    adc COLS
-    sta COLS
+    adc.z COLS
+    sta.z COLS
     bcc !+
-    inc COLS+1
+    inc.z COLS+1
   !:
     inx
     cpx #$19
@@ -235,21 +235,21 @@ memset: {
     .label end = str+num
     .label dst = $c
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

@@ -350,12 +350,12 @@ raster: {
     nop
     // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuz1=_deref_pbuc1 
     lda rastercols
-    sta col
+    sta.z col
     // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
   b1_from_raster:
     // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [11] phi (byte) raster::col#2 = (byte) raster::col#0 [phi:raster->raster::@1#1] -- register_copy 
     jmp b1
     // [11] phi from raster::@1 to raster::@1 [phi:raster::@1->raster::@1]
@@ -366,17 +366,17 @@ raster: {
     // raster::@1
   b1:
     // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BORDERCOL
     // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda rastercols,y
-    sta col
+    sta.z col
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -402,7 +402,7 @@ raster: {
     nop
     // [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
-    cmp col
+    cmp.z col
     bne b1_from_b1
     jmp breturn
     // raster::@return

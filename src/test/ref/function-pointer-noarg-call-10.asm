@@ -6,19 +6,19 @@
   .label idx = 7
 bbegin:
   lda #0
-  sta idx
+  sta.z idx
   jsr main
   rts
 main: {
     lda #<hello
-    sta do10.fn
+    sta.z do10.fn
     lda #>hello
-    sta do10.fn+1
+    sta.z do10.fn+1
     jsr do10
     lda #<world
-    sta do10.fn
+    sta.z do10.fn
     lda #>world
-    sta do10.fn+1
+    sta.z do10.fn+1
     jsr do10
     rts
 }
@@ -27,12 +27,12 @@ do10: {
     .label i = 4
     .label fn = 2
     lda #0
-    sta i
+    sta.z i
   b1:
     jsr bi_fn
-    inc i
+    inc.z i
     lda #$a
-    cmp i
+    cmp.z i
     bne b1
     rts
   bi_fn:
@@ -40,9 +40,9 @@ do10: {
 }
 world: {
     lda #<msg
-    sta print.msg
+    sta.z print.msg
     lda #>msg
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     rts
     msg: .text "world "
@@ -54,9 +54,9 @@ print: {
     ldy #0
   b1:
     lda (msg),y
-    ldx idx
+    ldx.z idx
     sta SCREEN,x
-    inc idx
+    inc.z idx
     iny
     lda (msg),y
     cmp #0
@@ -65,9 +65,9 @@ print: {
 }
 hello: {
     lda #<msg
-    sta print.msg
+    sta.z print.msg
     lda #>msg
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     rts
     msg: .text "hello "

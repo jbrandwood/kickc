@@ -240,7 +240,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -250,27 +250,27 @@ main: {
   b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and i
-    sta _0
+    and.z i
+    sta.z _0
     // [7] if((byte) 0==(byte~) main::$0) goto main::@3 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
-    cmp _0
+    cmp.z _0
     beq b3
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     // [9] phi (word) main::w#2 = (byte) -1 [phi:main::@1->main::@2#0] -- vwuz1=vbuc1 
     lda #<-1
-    sta w
+    sta.z w
     lda #>-1
-    sta w+1
+    sta.z w+1
     jmp b2
     // main::@3
   b3:
     // [8] (word~) main::w#3 ← (byte) main::i#2 -- vwuz1=vbuz2 
-    lda i
-    sta w
+    lda.z i
+    sta.z w
     lda #0
-    sta w+1
+    sta.z w+1
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
     // [9] phi (word) main::w#2 = (word~) main::w#3 [phi:main::@3->main::@2#0] -- register_copy 
@@ -278,20 +278,20 @@ main: {
     // main::@2
   b2:
     // [10] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _3
+    sta.z _3
     // [11] *((const word*) screen#0 + (byte~) main::$3) ← (word) main::w#2 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _3
-    lda w
+    ldy.z _3
+    lda.z w
     sta screen,y
-    lda w+1
+    lda.z w+1
     sta screen+1,y
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // main::@return
@@ -372,17 +372,17 @@ main: {
   b2_from_b1:
     // [9] phi (word) main::w#2 = (byte) -1 [phi:main::@1->main::@2#0] -- vwuz1=vbuc1 
     lda #<-1
-    sta w
+    sta.z w
     lda #>-1
-    sta w+1
+    sta.z w+1
     jmp b2
     // main::@3
   b3:
     // [8] (word~) main::w#3 ← (byte) main::i#2 -- vwuz1=vbuxx 
     txa
-    sta w
+    sta.z w
     lda #0
-    sta w+1
+    sta.z w+1
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
     // [9] phi (word) main::w#2 = (word~) main::w#3 [phi:main::@3->main::@2#0] -- register_copy 
@@ -394,9 +394,9 @@ main: {
     asl
     // [11] *((const word*) screen#0 + (byte~) main::$3) ← (word) main::w#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda w
+    lda.z w
     sta screen,y
-    lda w+1
+    lda.z w+1
     sta screen+1,y
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -504,17 +504,17 @@ main: {
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [9] phi (word) main::w#2 = (byte) -1 [phi:main::@1->main::@2#0] -- vwuz1=vbuc1 
     lda #<-1
-    sta w
+    sta.z w
     lda #>-1
-    sta w+1
+    sta.z w+1
     jmp b2
     // main::@3
   b3:
     // [8] (word~) main::w#3 ← (byte) main::i#2 -- vwuz1=vbuxx 
     txa
-    sta w
+    sta.z w
     lda #0
-    sta w+1
+    sta.z w+1
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
     // [9] phi (word) main::w#2 = (word~) main::w#3 [phi:main::@3->main::@2#0] -- register_copy 
     // main::@2
@@ -525,9 +525,9 @@ main: {
     asl
     // [11] *((const word*) screen#0 + (byte~) main::$3) ← (word) main::w#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda w
+    lda.z w
     sta screen,y
-    lda w+1
+    lda.z w+1
     sta screen+1,y
     // for( byte i:0..7)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

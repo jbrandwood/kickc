@@ -6,19 +6,19 @@ main: {
     .label SCREEN = $400
     .label i = 8
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     jsr sub1
-    ldy i
+    ldy.z i
     sta SCREEN,y
-    ldx i
+    ldx.z i
     jsr sub2
-    ldy i
+    ldy.z i
     sta SCREEN+$28,y
-    inc i
+    inc.z i
     lda #3
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
@@ -26,9 +26,9 @@ main: {
 sub2: {
     txa
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     rts
 }
 // sub1(byte register(A) i)

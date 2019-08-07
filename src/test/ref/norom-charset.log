@@ -619,12 +619,12 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::charset#5 = (const byte*) CHARSET#0+(byte) 8 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARSET+8
-    sta charset
+    sta.z charset
     lda #>CHARSET+8
-    sta charset+1
+    sta.z charset+1
     // [5] phi (byte) main::c#5 = (byte) 0 [phi:main->main::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     jmp b2
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -634,20 +634,20 @@ main: {
     // main::@2
   b2:
     // [6] (byte~) main::$10 ← (byte) main::c#5 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda c
+    lda.z c
     asl
-    sta _10
+    sta.z _10
     // [7] (byte*) gen_char3::dst#0 ← (byte*) main::charset#5 -- pbuz1=pbuz2 
-    lda charset
-    sta gen_char3.dst
-    lda charset+1
-    sta gen_char3.dst+1
+    lda.z charset
+    sta.z gen_char3.dst
+    lda.z charset+1
+    sta.z gen_char3.dst+1
     // [8] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy _10
+    ldy.z _10
     lda charset_spec_row,y
-    sta gen_char3.spec
+    sta.z gen_char3.spec
     lda charset_spec_row+1,y
-    sta gen_char3.spec+1
+    sta.z gen_char3.spec+1
     // [9] call gen_char3 
     // [15] phi from main::@2 to gen_char3 [phi:main::@2->gen_char3]
   gen_char3_from_b2:
@@ -658,19 +658,19 @@ main: {
     // [10] (byte*) main::charset#1 ← (byte*) main::charset#5 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [11] (byte) main::c#1 ← ++ (byte) main::c#5 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     jmp b1
     // main::@1
   b1:
     // [12] if((byte) main::c#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp c
+    cmp.z c
     bne b2_from_b1
     jmp b3
     // main::@3
@@ -700,7 +700,7 @@ gen_char3: {
   b1_from_gen_char3:
     // [16] phi (byte) gen_char3::r#6 = (byte) 0 [phi:gen_char3->gen_char3::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta r
+    sta.z r
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#0 [phi:gen_char3->gen_char3::@1#1] -- register_copy 
     jmp b1
     // [16] phi from gen_char3::@5 to gen_char3::@1 [phi:gen_char3::@5->gen_char3::@1]
@@ -714,10 +714,10 @@ gen_char3: {
   b2_from_b1:
     // [17] phi (byte) gen_char3::c#2 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [17] phi (byte) gen_char3::b#4 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta b
+    sta.z b
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#4 [phi:gen_char3::@1->gen_char3::@2#2] -- register_copy 
     jmp b2
     // [17] phi from gen_char3::@3 to gen_char3::@2 [phi:gen_char3::@3->gen_char3::@2]
@@ -729,14 +729,14 @@ gen_char3: {
     // gen_char3::@2
   b2:
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuz1=_hi_vwuz2 
-    lda spec+1
-    sta _0
+    lda.z spec+1
+    sta.z _0
     // [19] (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and _0
-    sta _1
+    and.z _0
+    sta.z _1
     // [20] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3_from_b2
     jmp b4
@@ -744,8 +744,8 @@ gen_char3: {
   b4:
     // [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 -- vbuz1=vbuz1_bor_vbuc1 
     lda #1
-    ora b
-    sta b
+    ora.z b
+    sta.z b
     // [22] phi from gen_char3::@2 gen_char3::@4 to gen_char3::@3 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3]
   b3_from_b2:
   b3_from_b4:
@@ -754,28 +754,28 @@ gen_char3: {
     // gen_char3::@3
   b3:
     // [23] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl b
+    asl.z b
     // [24] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl spec
-    rol spec+1
+    asl.z spec
+    rol.z spec+1
     // [25] (byte) gen_char3::c#1 ← ++ (byte) gen_char3::c#2 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [26] if((byte) gen_char3::c#1!=(byte) 3) goto gen_char3::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp c
+    cmp.z c
     bne b2_from_b3
     jmp b5
     // gen_char3::@5
   b5:
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda b
-    ldy r
+    lda.z b
+    ldy.z r
     sta (dst),y
     // [28] (byte) gen_char3::r#1 ← ++ (byte) gen_char3::r#6 -- vbuz1=_inc_vbuz1 
-    inc r
+    inc.z r
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp r
+    cmp.z r
     bne b1_from_b5
     jmp breturn
     // gen_char3::@return
@@ -871,12 +871,12 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::charset#5 = (const byte*) CHARSET#0+(byte) 8 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARSET+8
-    sta charset
+    sta.z charset
     lda #>CHARSET+8
-    sta charset+1
+    sta.z charset+1
     // [5] phi (byte) main::c#5 = (byte) 0 [phi:main->main::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     jmp b2
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -886,15 +886,15 @@ main: {
     // main::@2
   b2:
     // [6] (byte~) main::$10 ← (byte) main::c#5 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda c
+    lda.z c
     asl
     tax
     // [7] (byte*) gen_char3::dst#0 ← (byte*) main::charset#5
     // [8] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
-    sta gen_char3.spec
+    sta.z gen_char3.spec
     lda charset_spec_row+1,x
-    sta gen_char3.spec+1
+    sta.z gen_char3.spec+1
     // [9] call gen_char3 
     // [15] phi from main::@2 to gen_char3 [phi:main::@2->gen_char3]
   gen_char3_from_b2:
@@ -905,19 +905,19 @@ main: {
     // [10] (byte*) main::charset#1 ← (byte*) main::charset#5 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [11] (byte) main::c#1 ← ++ (byte) main::c#5 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     jmp b1
     // main::@1
   b1:
     // [12] if((byte) main::c#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp c
+    cmp.z c
     bne b2_from_b1
     jmp b3
     // main::@3
@@ -943,7 +943,7 @@ gen_char3: {
   b1_from_gen_char3:
     // [16] phi (byte) gen_char3::r#6 = (byte) 0 [phi:gen_char3->gen_char3::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta r
+    sta.z r
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#0 [phi:gen_char3->gen_char3::@1#1] -- register_copy 
     jmp b1
     // [16] phi from gen_char3::@5 to gen_char3::@1 [phi:gen_char3::@5->gen_char3::@1]
@@ -970,7 +970,7 @@ gen_char3: {
     // gen_char3::@2
   b2:
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuaa=_hi_vwuz1 
-    lda spec+1
+    lda.z spec+1
     // [19] (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
     // [20] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3 -- vbuaa_eq_0_then_la1 
@@ -995,8 +995,8 @@ gen_char3: {
     asl
     tay
     // [24] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl spec
-    rol spec+1
+    asl.z spec
+    rol.z spec+1
     // [25] (byte) gen_char3::c#1 ← ++ (byte) gen_char3::c#2 -- vbuxx=_inc_vbuxx 
     inx
     // [26] if((byte) gen_char3::c#1!=(byte) 3) goto gen_char3::@2 -- vbuxx_neq_vbuc1_then_la1 
@@ -1007,13 +1007,13 @@ gen_char3: {
   b5:
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuyy 
     tya
-    ldy r
+    ldy.z r
     sta (dst),y
     // [28] (byte) gen_char3::r#1 ← ++ (byte) gen_char3::r#6 -- vbuz1=_inc_vbuz1 
-    inc r
+    inc.z r
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp r
+    cmp.z r
     bne b1_from_b5
     jmp breturn
     // gen_char3::@return
@@ -1169,12 +1169,12 @@ main: {
     // [5] phi from main to main::@2 [phi:main->main::@2]
     // [5] phi (byte*) main::charset#5 = (const byte*) CHARSET#0+(byte) 8 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARSET+8
-    sta charset
+    sta.z charset
     lda #>CHARSET+8
-    sta charset+1
+    sta.z charset+1
     // [5] phi (byte) main::c#5 = (byte) 0 [phi:main->main::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [5] phi (byte*) main::charset#5 = (byte*) main::charset#1 [phi:main::@1->main::@2#0] -- register_copy 
     // [5] phi (byte) main::c#5 = (byte) main::c#1 [phi:main::@1->main::@2#1] -- register_copy 
@@ -1182,15 +1182,15 @@ main: {
   b2:
     // gen_char3(charset, charset_spec_row[c])
     // [6] (byte~) main::$10 ← (byte) main::c#5 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda c
+    lda.z c
     asl
     tax
     // [7] (byte*) gen_char3::dst#0 ← (byte*) main::charset#5
     // [8] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
-    sta gen_char3.spec
+    sta.z gen_char3.spec
     lda charset_spec_row+1,x
-    sta gen_char3.spec+1
+    sta.z gen_char3.spec+1
     // [9] call gen_char3 
     // [15] phi from main::@2 to gen_char3 [phi:main::@2->gen_char3]
     jsr gen_char3
@@ -1199,18 +1199,18 @@ main: {
     // [10] (byte*) main::charset#1 ← (byte*) main::charset#5 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // for(byte c=0;c!=4;c++)
     // [11] (byte) main::c#1 ← ++ (byte) main::c#5 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // main::@1
     // [12] if((byte) main::c#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp c
+    cmp.z c
     bne b2
     // main::@3
     // *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
@@ -1233,7 +1233,7 @@ gen_char3: {
     // [16] phi from gen_char3 to gen_char3::@1 [phi:gen_char3->gen_char3::@1]
     // [16] phi (byte) gen_char3::r#6 = (byte) 0 [phi:gen_char3->gen_char3::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta r
+    sta.z r
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#0 [phi:gen_char3->gen_char3::@1#1] -- register_copy 
     // [16] phi from gen_char3::@5 to gen_char3::@1 [phi:gen_char3::@5->gen_char3::@1]
     // [16] phi (byte) gen_char3::r#6 = (byte) gen_char3::r#1 [phi:gen_char3::@5->gen_char3::@1#0] -- register_copy 
@@ -1254,7 +1254,7 @@ gen_char3: {
   b2:
     // >spec
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuaa=_hi_vwuz1 
-    lda spec+1
+    lda.z spec+1
     // >spec&$80
     // [19] (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -1279,8 +1279,8 @@ gen_char3: {
     tay
     // spec = spec*2
     // [24] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl spec
-    rol spec+1
+    asl.z spec
+    rol.z spec+1
     // for(byte c: 0..2 )
     // [25] (byte) gen_char3::c#1 ← ++ (byte) gen_char3::c#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -1291,14 +1291,14 @@ gen_char3: {
     // dst[r] = b
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuyy 
     tya
-    ldy r
+    ldy.z r
     sta (dst),y
     // for(byte r : 0..4 )
     // [28] (byte) gen_char3::r#1 ← ++ (byte) gen_char3::r#6 -- vbuz1=_inc_vbuz1 
-    inc r
+    inc.z r
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp r
+    cmp.z r
     bne b1
     // gen_char3::@return
     // }

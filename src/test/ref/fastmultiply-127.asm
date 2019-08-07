@@ -11,99 +11,99 @@
 main: {
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
     lda #0
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
     lda #$7f
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
     lda #$40
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
     lda #$7f
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     ldy #$40
     jsr print_mulf8u127
     lda #$c0
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     ldy #$40
     jsr print_mulf8u127
     lda #$7f
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     ldy #$ff
     jsr print_mulf8u127
     lda #$c0
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
     lda #$ff
-    sta print_mulf8u127.b
+    sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_ln
     lda #0
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
     lda #$40
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
     lda #$7f
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     ldy #$40
     jsr print_mulf8s127
     lda #$40
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     ldy #-$40
     jsr print_mulf8s127
     lda #-$40
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     ldy #$40
     jsr print_mulf8s127
     lda #-$40
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
     lda #$7f
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
     lda #$7f
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     ldy #-$7f
     jsr print_mulf8s127
     lda #-$7f
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     ldy #$7f
     jsr print_mulf8s127
     lda #-$7f
-    sta print_mulf8s127.b
+    sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
     rts
@@ -119,14 +119,14 @@ print_mulf8s127: {
     jsr mulf8s127
     tya
     tax
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_sbyte
     lda #'*'
     jsr print_char
-    ldx b
+    ldx.z b
     jsr print_sbyte
     lda #'='
     jsr print_char
@@ -139,17 +139,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -158,7 +158,7 @@ print_ln: {
 // print_sword(signed word zeropage(2) w)
 print_sword: {
     .label w = 2
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -170,11 +170,11 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 // Print a single char
@@ -182,9 +182,9 @@ print_sword: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -192,10 +192,10 @@ print_char: {
 // print_word(word zeropage(2) w)
 print_word: {
     .label w = 2
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -247,59 +247,59 @@ mulf8s127: {
     .label return = 2
     .label c = 2
     tya
-    ldx b
+    ldx.z b
     jsr mulf8u127
     cpy #0
     bpl b1
-    lda b
-    sta _12
+    lda.z b
+    sta.z _12
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta _12+1
-    asl _13
-    rol _13+1
-    lda c
+    sta.z _12+1
+    asl.z _13
+    rol.z _13+1
+    lda.z c
     sec
-    sbc _13
-    sta c
-    lda c+1
-    sbc _13+1
-    sta c+1
+    sbc.z _13
+    sta.z c
+    lda.z c+1
+    sbc.z _13+1
+    sta.z c+1
   b1:
-    lda b
+    lda.z b
     cmp #0
     bpl b2
     tya
-    sta _14
+    sta.z _14
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta _14+1
-    asl _15
-    rol _15+1
-    lda c
+    sta.z _14+1
+    asl.z _15
+    rol.z _15+1
+    lda.z c
     sec
-    sbc _15
-    sta c
-    lda c+1
-    sbc _15+1
-    sta c+1
+    sbc.z _15
+    sta.z c
+    lda.z c+1
+    sbc.z _15+1
+    sta.z c+1
   b2:
     cpy #0
     bpl b3
-    lda b
+    lda.z b
     cmp #0
     bpl b3
-    lda c
+    lda.z c
     sec
     sbc #<$200
-    sta c
-    lda c+1
+    sta.z c
+    lda.z c+1
     sbc #>$200
-    sta c+1
+    sta.z c+1
     rts
   b3:
     rts
@@ -331,9 +331,9 @@ mulf8u127: {
     sbc mulf127_sqr2_hi,x
     sta resH
     lda res
-    sta return
+    sta.z return
     lda res+1
-    sta return+1
+    sta.z return+1
     rts
 }
 // Print a zero-terminated string
@@ -350,13 +350,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -365,18 +365,18 @@ print_mulf8u127: {
     .label c = 2
     .label b = 4
     tya
-    ldx b
+    ldx.z b
     jsr mulf8u127
     tya
     tax
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_byte
     lda #'*'
     jsr print_char
-    ldx b
+    ldx.z b
     jsr print_byte
     lda #'='
     jsr print_char
@@ -397,21 +397,21 @@ memset: {
     .label end = str+num
     .label dst = 5
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

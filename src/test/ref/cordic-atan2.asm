@@ -19,30 +19,30 @@ main: {
     lda #toD0181_return
     sta D018
     lda #<SCREEN
-    sta screen
+    sta.z screen
     lda #>SCREEN
-    sta screen+1
+    sta.z screen+1
     lda #-$c
-    sta y
+    sta.z y
   b1:
     lda #-$13
-    sta x
+    sta.z x
   b2:
     jsr atan2_8
     txa
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc x
+    inc.z x
     lda #$15
-    cmp x
+    cmp.z x
     bne b2
-    inc y
+    inc.z y
     lda #$d
-    cmp y
+    cmp.z y
     bne b1
   b4:
     lda COLS+$c*$28+$13
@@ -63,44 +63,44 @@ atan2_8: {
     .label i = $d
     .label x = $a
     .label y = 5
-    lda y
+    lda.z y
     cmp #0
     beq !+
     bmi !b1+
     jmp b1
   !b1:
   !:
-    lda y
+    lda.z y
     eor #$ff
     clc
     adc #1
     tax
   b3:
-    lda x
+    lda.z x
     cmp #0
     beq !+
     bmi !b4+
     jmp b4
   !b4:
   !:
-    lda x
+    lda.z x
     eor #$ff
     clc
     adc #1
-    sta _7
+    sta.z _7
   b6:
     lda #0
-    sta angle
-    sta i
+    sta.z angle
+    sta.z i
   b10:
     txa
     cmp #0
     bne b11
   b12:
-    lda angle
+    lda.z angle
     lsr
     tax
-    lda x
+    lda.z x
     cmp #0
     bpl b7
     txa
@@ -109,7 +109,7 @@ atan2_8: {
     adc #$80+1
     tax
   b7:
-    lda y
+    lda.z y
     cmp #0
     bpl b8
     dex
@@ -119,8 +119,8 @@ atan2_8: {
   b8:
     rts
   b11:
-    lda xi
-    ldy i
+    lda.z xi
+    ldy.z i
     cpy #0
     beq !e+
   !l:
@@ -129,8 +129,8 @@ atan2_8: {
     dey
     bne !l-
   !e:
-    sta xd
-    ldy i
+    sta.z xd
+    ldy.z i
     txa
     cpy #0
     beq !e+
@@ -149,44 +149,44 @@ atan2_8: {
     tya
     eor #$ff
     sec
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     txa
     clc
-    adc xd
+    adc.z xd
     tax
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     sec
     sbc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
   b14:
-    inc i
+    inc.z i
     lda #CORDIC_ITERATIONS_8-1+1
-    cmp i
+    cmp.z i
     beq b12
     jmp b10
   b13:
     tya
     clc
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     txa
     sec
-    sbc xd
+    sbc.z xd
     tax
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     clc
     adc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
     jmp b14
   b4:
-    lda x
-    sta xi
+    lda.z x
+    sta.z xi
     jmp b6
   b1:
-    ldx y
+    ldx.z y
     jmp b3
 }
 // Make charset from proto chars
@@ -200,28 +200,28 @@ init_font_hex: {
     .label proto_hi = 3
     .label c = 5
     lda #0
-    sta c
+    sta.z c
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
   b1:
     lda #0
-    sta c1
+    sta.z c1
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
   b2:
     lda #0
     tay
     sta (charset),y
     lda #1
-    sta idx
+    sta.z idx
     ldx #0
   b3:
     txa
@@ -231,51 +231,51 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora _0
-    ldy idx
+    ora.z _0
+    ldy.z idx
     sta (charset),y
-    inc idx
+    inc.z idx
     inx
     cpx #5
     bne b3
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     iny
     sta (charset),y
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
-    inc c1
+    inc.z c1
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
-    inc c
+    inc.z c
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     rts
 }

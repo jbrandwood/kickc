@@ -12,9 +12,9 @@ main: {
     .label w = 3
     // Simple types
     lda #0
-    sta b
-    sta w
-    sta w+1
+    sta.z b
+    sta.z w
+    sta.z w+1
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
     lda #'0'+SIZEOF_BYTE

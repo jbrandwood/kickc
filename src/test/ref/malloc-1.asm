@@ -13,9 +13,9 @@ bbegin:
 main: {
     .label w = 2
     lda #<WORDS
-    sta w
+    sta.z w
     lda #>WORDS
-    sta w+1
+    sta.z w+1
     ldx #0
   b1:
     txa
@@ -26,10 +26,10 @@ main: {
     sta (w),y
     lda #SIZEOF_WORD
     clc
-    adc w
-    sta w
+    adc.z w
+    sta.z w
     bcc !+
-    inc w+1
+    inc.z w+1
   !:
     inx
     cpx #0

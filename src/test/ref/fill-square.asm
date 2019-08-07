@@ -11,52 +11,52 @@ main: {
     .label _6 = 5
     .label _7 = 3
     lda #5
-    sta y
+    sta.z y
   b1:
-    lda y
-    sta _0
+    lda.z y
+    sta.z _0
     lda #0
-    sta _0+1
-    lda _0
+    sta.z _0+1
+    lda.z _0
     asl
-    sta _6
-    lda _0+1
+    sta.z _6
+    lda.z _0+1
     rol
-    sta _6+1
-    asl _6
-    rol _6+1
-    lda _7
+    sta.z _6+1
+    asl.z _6
+    rol.z _6+1
+    lda.z _7
     clc
-    adc _6
-    sta _7
-    lda _7+1
-    adc _6+1
-    sta _7+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    adc.z _6
+    sta.z _7
+    lda.z _7+1
+    adc.z _6+1
+    sta.z _7+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     clc
-    lda line
+    lda.z line
     adc #<SCREEN
-    sta line
-    lda line+1
+    sta.z line
+    lda.z line+1
     adc #>SCREEN
-    sta line+1
+    sta.z line+1
     ldy #5
   b2:
     tya
     clc
-    adc y
+    adc.z y
     sta (line),y
     iny
     cpy #$10
     bne b2
-    inc y
+    inc.z y
     lda #$10
-    cmp y
+    cmp.z y
     bne b1
     rts
 }

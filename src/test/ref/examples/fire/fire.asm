@@ -31,43 +31,43 @@ main: {
     sta BORDERCOL
     sta BGCOL
     lda #<BUFFER
-    sta fillscreen.screen
+    sta.z fillscreen.screen
     lda #>BUFFER
-    sta fillscreen.screen+1
+    sta.z fillscreen.screen+1
     ldx #0
     jsr fillscreen
     lda #<SCREEN1
-    sta fillscreen.screen
+    sta.z fillscreen.screen
     lda #>SCREEN1
-    sta fillscreen.screen+1
+    sta.z fillscreen.screen+1
     ldx #0
     jsr fillscreen
     lda #<SCREEN2
-    sta fillscreen.screen
+    sta.z fillscreen.screen
     lda #>SCREEN2
-    sta fillscreen.screen+1
+    sta.z fillscreen.screen+1
     ldx #0
     jsr fillscreen
     lda #<COLS
-    sta fillscreen.screen
+    sta.z fillscreen.screen
     lda #>COLS
-    sta fillscreen.screen+1
+    sta.z fillscreen.screen+1
     ldx #YELLOW
     jsr fillscreen
     jsr sid_rnd_init
     jsr makecharset
   b1:
     lda #<SCREEN1
-    sta fire.screen
+    sta.z fire.screen
     lda #>SCREEN1
-    sta fire.screen+1
+    sta.z fire.screen+1
     jsr fire
     lda #toD0181_return
     sta D018
     lda #<SCREEN2
-    sta fire.screen
+    sta.z fire.screen
     lda #>SCREEN2
-    sta fire.screen+1
+    sta.z fire.screen+1
     jsr fire
     lda #toD0182_return
     sta D018
@@ -82,14 +82,14 @@ fire: {
     .label screen_11 = $c
     .label buffer_15 = 9
     .label screen_19 = $c
-    lda screen
-    sta screen_19
-    lda screen+1
-    sta screen_19+1
+    lda.z screen
+    sta.z screen_19
+    lda.z screen+1
+    sta.z screen_19+1
     lda #<BUFFER
-    sta buffer
+    sta.z buffer
     lda #>BUFFER
-    sta buffer+1
+    sta.z buffer+1
   b2:
     ldy #$28-1
     clc
@@ -112,31 +112,31 @@ fire: {
     sta (buffer),y
     lda (buffer),y
     sta (screen_11),y
-    inc screen_2
+    inc.z screen_2
     bne !+
-    inc screen_2+1
+    inc.z screen_2+1
   !:
-    inc buffer
+    inc.z buffer
     bne !+
-    inc buffer+1
+    inc.z buffer+1
   !:
-    lda buffer+1
+    lda.z buffer+1
     cmp #>BUFFER+$18*$28
     bne b2
-    lda buffer
+    lda.z buffer
     cmp #<BUFFER+$18*$28
     bne b2
     clc
-    lda screen
+    lda.z screen
     adc #<$18*$28
-    sta screen
-    lda screen+1
+    sta.z screen
+    lda.z screen+1
     adc #>$18*$28
-    sta screen+1
+    sta.z screen+1
     lda #<BUFFER+$18*$28
-    sta buffer_15
+    sta.z buffer_15
     lda #>BUFFER+$18*$28
-    sta buffer_15+1
+    sta.z buffer_15+1
   b7:
     jsr sid_rnd
     lsr
@@ -149,18 +149,18 @@ fire: {
     sta (buffer_15),y
     lda (buffer_15),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc buffer_10
+    inc.z buffer_10
     bne !+
-    inc buffer_10+1
+    inc.z buffer_10+1
   !:
-    lda buffer_10+1
+    lda.z buffer_10+1
     cmp #>BUFFER+$19*$28
     bne b7
-    lda buffer_10
+    lda.z buffer_10
     cmp #<BUFFER+$19*$28
     bne b7
     rts
@@ -184,109 +184,109 @@ makecharset: {
     .label ii = 8
     .label _18 = $c
     lda #<CHARSET
-    sta font
+    sta.z font
     lda #>CHARSET
-    sta font+1
+    sta.z font+1
   b2:
     lda #0
     tay
     sta (font),y
-    inc font
+    inc.z font
     bne !+
-    inc font+1
+    inc.z font+1
   !:
-    lda font+1
+    lda.z font+1
     cmp #>CHARSET+1*8
     bne b2
-    lda font
+    lda.z font
     cmp #<CHARSET+1*8
     bne b2
     lda #<CHARSET+$40*8
-    sta font1
+    sta.z font1
     lda #>CHARSET+$40*8
-    sta font1+1
+    sta.z font1+1
   b4:
     lda #$ff
     ldy #0
     sta (font1),y
-    inc font1
+    inc.z font1
     bne !+
-    inc font1+1
+    inc.z font1+1
   !:
-    lda font1+1
+    lda.z font1+1
     cmp #>CHARSET+$100*8
     bne b4
-    lda font1
+    lda.z font1
     cmp #<CHARSET+$100*8
     bne b4
     lda #0
-    sta c
+    sta.z c
   b6:
     ldx #0
     txa
-    sta i
+    sta.z i
   b8:
     ldy #0
     tya
-    sta ii
+    sta.z ii
   b11:
     txa
     clc
-    adc c
+    adc.z c
     tax
     cpx #$3f+1
     bcc b13
     txa
     axs #$40
     lda #1
-    and i
+    and.z i
     clc
-    adc ii
+    adc.z ii
     and #7
-    sta _13
+    sta.z _13
     tya
-    ldy _13
+    ldy.z _13
     clc
     adc bittab,y
     tay
   b13:
-    inc ii
-    lda ii
+    inc.z ii
+    lda.z ii
     cmp #8
     bcc b11
-    lda c
-    sta _15
+    lda.z c
+    sta.z _15
     lda #0
-    sta _15+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    lda i
+    sta.z _15+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
+    lda.z i
     clc
-    adc _17
-    sta _17
+    adc.z _17
+    sta.z _17
     bcc !+
-    inc _17+1
+    inc.z _17+1
   !:
     clc
-    lda _18
+    lda.z _18
     adc #<CHARSET+1*8
-    sta _18
-    lda _18+1
+    sta.z _18
+    lda.z _18+1
     adc #>CHARSET+1*8
-    sta _18+1
+    sta.z _18+1
     tya
     ldy #0
     sta (_18),y
-    inc i
-    lda i
+    inc.z i
+    lda.z i
     cmp #8
     bcc b8
-    inc c
-    lda c
+    inc.z c
+    lda.z c
     cmp #$40
     bcc b6
     rts
@@ -308,24 +308,24 @@ fillscreen: {
     .label screen = $c
     .label i = 9
     lda #<0
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
   b1:
     txa
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$3e8
     bne b1
-    lda i
+    lda.z i
     cmp #<$3e8
     bne b1
     rts

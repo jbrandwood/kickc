@@ -268,7 +268,7 @@ Target platform is c64basic
 bbegin:
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -300,7 +300,7 @@ main: {
     // main::@2
   b2:
     // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
@@ -308,7 +308,7 @@ main: {
   b3:
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b1_from_b3
 }
   // irq
@@ -317,20 +317,20 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     bne b1
     jmp b2
     // irq::@2
   b2:
     // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    lda col
+    lda.z col
     clc
     adc #2
-    sta col
+    sta.z col
     // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
   breturn_from_b1:
   breturn_from_b2:
@@ -343,7 +343,7 @@ irq: {
     // irq::@1
   b1:
     // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     jmp breturn_from_b1
 }
   // File Data
@@ -386,7 +386,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 bbegin:
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -418,7 +418,7 @@ main: {
     // main::@2
   b2:
     // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
@@ -426,7 +426,7 @@ main: {
   b3:
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b1_from_b3
 }
   // irq
@@ -435,20 +435,20 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     bne b1
     jmp b2
     // irq::@2
   b2:
     // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    lda col
+    lda.z col
     clc
     adc #2
-    sta col
+    sta.z col
     // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
   breturn_from_b1:
   breturn_from_b2:
@@ -461,7 +461,7 @@ irq: {
     // irq::@1
   b1:
     // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     jmp breturn_from_b1
 }
   // File Data
@@ -496,7 +496,7 @@ Skipping double jump to $ea81 in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction lda col
+Removing instruction lda.z col
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -547,7 +547,7 @@ bbegin:
   // col = 0
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
@@ -570,14 +570,14 @@ main: {
   b2:
     // if(col>10)
     // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b2
     // main::@3
     // col = 0
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b2
 }
   // irq
@@ -588,11 +588,11 @@ irq: {
     lda $dc0d
     // *BGCOL = col
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // if(col!=0)
     // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     bne b1
     // irq::@2
@@ -600,7 +600,7 @@ irq: {
     // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     clc
     adc #2
-    sta col
+    sta.z col
     // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
     // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     // irq::@return
@@ -611,7 +611,7 @@ irq: {
   b1:
     // col++;
     // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     jmp $ea81
 }
   // File Data

@@ -7,9 +7,9 @@ main: {
     .label SCREEN = $400
     .label p = 2
     lda #<2*$100+3
-    sta p
+    sta.z p
     lda #>2*$100+3
-    sta p+1
+    sta.z p+1
     lda q
     sta SCREEN
     lda q+1

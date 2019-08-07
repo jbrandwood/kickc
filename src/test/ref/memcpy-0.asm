@@ -19,33 +19,33 @@ main: {
     lda #toD0181_return
     sta D018
     lda #<$400
-    sta memcpy.num
+    sta.z memcpy.num
     lda #>$400
-    sta memcpy.num+1
+    sta.z memcpy.num+1
     lda #<SCREEN_COPY
-    sta memcpy.destination
+    sta.z memcpy.destination
     lda #>SCREEN_COPY
-    sta memcpy.destination+1
+    sta.z memcpy.destination+1
     lda #<SCREEN
-    sta memcpy.source
+    sta.z memcpy.source
     lda #>SCREEN
-    sta memcpy.source+1
+    sta.z memcpy.source+1
     jsr memcpy
     sei
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     lda #<$800
-    sta memcpy.num
+    sta.z memcpy.num
     lda #>$800
-    sta memcpy.num+1
+    sta.z memcpy.num+1
     lda #<CHARSET
-    sta memcpy.destination
+    sta.z memcpy.destination
     lda #>CHARSET
-    sta memcpy.destination+1
+    sta.z memcpy.destination+1
     lda #<CHARGEN
-    sta memcpy.source
+    sta.z memcpy.source
     lda #>CHARGEN
-    sta memcpy.source+1
+    sta.z memcpy.source+1
     jsr memcpy
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
@@ -62,32 +62,32 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-    lda src_end
+    lda.z src_end
     clc
-    adc source
-    sta src_end
-    lda src_end+1
-    adc source+1
-    sta src_end+1
+    adc.z source
+    sta.z src_end
+    lda.z src_end+1
+    adc.z source+1
+    sta.z src_end+1
   b1:
-    lda src+1
-    cmp src_end+1
+    lda.z src+1
+    cmp.z src_end+1
     bne b2
-    lda src
-    cmp src_end
+    lda.z src
+    cmp.z src_end
     bne b2
     rts
   b2:
     ldy #0
     lda (src),y
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    inc src
+    inc.z src
     bne !+
-    inc src+1
+    inc.z src+1
   !:
     jmp b1
 }

@@ -6,29 +6,29 @@
 main: {
     ldx #' '
     lda #<msg1
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg1
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     lda #<msg1
-    sta print.msg
+    sta.z print.msg
     lda #>msg1
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     ldx #'y'
     lda #<msg2
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg2
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     lda #<msg2
-    sta print.msg
+    sta.z print.msg
     lda #>msg2
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     rts
 }
@@ -39,13 +39,13 @@ print: {
     ldy #0
     lda (msg),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     ldy #0
     lda (msg),y
@@ -60,10 +60,10 @@ strip: {
     .label p_4 = 4
     .label p_7 = 4
     .label p_8 = 4
-    lda dest
-    sta p_7
-    lda dest+1
-    sta p_7+1
+    lda.z dest
+    sta.z p_7
+    lda.z dest+1
+    sta.z p_7+1
   b1:
     txa
     ldy #0
@@ -71,28 +71,28 @@ strip: {
     beq b2
     lda (p_4),y
     sta (dest),y
-    inc dest
+    inc.z dest
     bne !+
-    inc dest+1
+    inc.z dest+1
   !:
   b2:
-    lda p_4
+    lda.z p_4
     clc
     adc #1
-    sta p
-    lda p_4+1
+    sta.z p
+    lda.z p_4+1
     adc #0
-    sta p+1
+    sta.z p+1
     ldy #0
     lda (p_4),y
     cmp #0
     bne b4
     rts
   b4:
-    lda p
-    sta p_8
-    lda p+1
-    sta p_8+1
+    lda.z p
+    sta.z p_8
+    lda.z p+1
+    sta.z p_8+1
     jmp b1
 }
   msg1: .text "hello world!"

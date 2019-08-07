@@ -299,15 +299,15 @@ main: {
   line_from_main:
     // [9] phi (byte*) screen#16 = (byte*) 1024 [phi:main->line#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#1] -- vbuz1=vbuc1 
     lda #2
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuz1=vbuc1 
     lda #1
-    sta line.x
+    sta.z line.x
     jsr line
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -320,10 +320,10 @@ main: {
     // [9] phi (byte*) screen#16 = (byte*) screen#10 [phi:main::@1->line#0] -- register_copy 
     // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#1] -- vbuz1=vbuc1 
     lda #5
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuz1=vbuc1 
     lda #3
-    sta line.x
+    sta.z line.x
     jsr line
     jmp breturn
     // main::@return
@@ -345,8 +345,8 @@ line: {
     // line::@1
   b1:
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuz1_lt_vbuz2_then_la1 
-    lda x
-    cmp x1
+    lda.z x
+    cmp.z x1
     bcc b2
     jmp breturn
     // line::@return
@@ -356,16 +356,16 @@ line: {
     // line::@2
   b2:
     // [13] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuz2 
-    lda x
+    lda.z x
     ldy #0
     sta (screen),y
     // [14] (byte*) screen#4 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     jmp b1_from_b2
 }
   // File Data
@@ -424,12 +424,12 @@ main: {
   line_from_main:
     // [9] phi (byte*) screen#16 = (byte*) 1024 [phi:main->line#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#1] -- vbuz1=vbuc1 
     lda #2
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
@@ -444,7 +444,7 @@ main: {
     // [9] phi (byte*) screen#16 = (byte*) screen#10 [phi:main::@1->line#0] -- register_copy 
     // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#1] -- vbuz1=vbuc1 
     lda #5
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
@@ -467,7 +467,7 @@ line: {
     // line::@1
   b1:
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuxx_lt_vbuz1_then_la1 
-    cpx x1
+    cpx.z x1
     bcc b2
     jmp breturn
     // line::@return
@@ -481,9 +481,9 @@ line: {
     ldy #0
     sta (screen),y
     // [14] (byte*) screen#4 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -576,12 +576,12 @@ main: {
     // [9] phi from main to line [phi:main->line]
     // [9] phi (byte*) screen#16 = (byte*) 1024 [phi:main->line#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#1] -- vbuz1=vbuc1 
     lda #2
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
@@ -593,7 +593,7 @@ main: {
     // [9] phi (byte*) screen#16 = (byte*) screen#10 [phi:main::@1->line#0] -- register_copy 
     // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#1] -- vbuz1=vbuc1 
     lda #5
-    sta line.x1
+    sta.z line.x1
     // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
@@ -613,7 +613,7 @@ line: {
   b1:
     // for(byte x  = x0; x<x1; x++)
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuxx_lt_vbuz1_then_la1 
-    cpx x1
+    cpx.z x1
     bcc b2
     // line::@return
     // }
@@ -628,9 +628,9 @@ line: {
     sta (screen),y
     // screen++;
     // [14] (byte*) screen#4 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // for(byte x  = x0; x<x1; x++)
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 

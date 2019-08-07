@@ -9,9 +9,9 @@ main: {
     .label p_x = 2
     .label p_y = 3
     lda #2
-    sta p_x
+    sta.z p_x
     lda #3
-    sta p_y
+    sta.z p_y
     lda q
     sta SCREEN
     lda q+OFFSET_STRUCT_POINT_Y

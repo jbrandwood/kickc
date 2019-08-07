@@ -804,7 +804,7 @@ main: {
   b1_from_b2:
     // [8] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     jmp b1
   // Show all chars on screen
     // [8] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -814,13 +814,13 @@ main: {
     // main::@1
   b1:
     // [9] *((const byte*) SCREEN#0 + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy c
+    ldy.z c
     tya
     sta SCREEN,y
     // [10] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [11] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b1_from_b1
     jmp breturn
@@ -848,17 +848,17 @@ init_font_hex: {
   b1_from_init_font_hex:
     // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     jmp b1
     // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
@@ -872,12 +872,12 @@ init_font_hex: {
   b2_from_b1:
     // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
     // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
@@ -896,10 +896,10 @@ init_font_hex: {
   b3_from_b2:
     // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
     // [17] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   b3_from_b3:
@@ -909,70 +909,70 @@ init_font_hex: {
     // init_font_hex::@3
   b3:
     // [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
-    ldy i
+    ldy.z i
     lda (proto_hi),y
     asl
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
-    ldy i
+    ldy.z i
     lda (proto_lo),y
     asl
-    sta _1
+    sta.z _1
     // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
-    lda _0
-    ora _1
-    sta _2
+    lda.z _0
+    ora.z _1
+    sta.z _2
     // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _2
-    ldy idx
+    lda.z _2
+    ldy.z idx
     sta (charset),y
     // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp i
+    cmp.z i
     bne b3_from_b3
     jmp b4
     // init_font_hex::@4
   b4:
     // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
-    ldy idx
+    ldy.z idx
     iny
-    sty idx_3
+    sty.z idx_3
     // [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx_3
+    ldy.z idx_3
     sta (charset),y
     // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2_from_b4
     jmp b5
     // init_font_hex::@5
@@ -980,16 +980,16 @@ init_font_hex: {
     // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1_from_b5
     jmp breturn
     // init_font_hex::@return
@@ -1153,17 +1153,17 @@ init_font_hex: {
   b1_from_init_font_hex:
     // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     jmp b1
     // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
@@ -1177,12 +1177,12 @@ init_font_hex: {
   b2_from_b1:
     // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
     // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
@@ -1201,7 +1201,7 @@ init_font_hex: {
   b3_from_b2:
     // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
@@ -1220,19 +1220,19 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
     // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _0
+    ora.z _0
     // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
@@ -1243,10 +1243,10 @@ init_font_hex: {
   b4:
     // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
-    ldy idx
+    ldy.z idx
     iny
     // [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #0
@@ -1254,24 +1254,24 @@ init_font_hex: {
     // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2_from_b4
     jmp b5
     // init_font_hex::@5
@@ -1279,16 +1279,16 @@ init_font_hex: {
     // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1_from_b5
     jmp breturn
     // init_font_hex::@return
@@ -1315,7 +1315,7 @@ Removing instruction jmp b5
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldy #0 with TAY
-Removing instruction ldy idx
+Removing instruction ldy.z idx
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
@@ -1508,17 +1508,17 @@ init_font_hex: {
     // [14] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
     // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
     // [14] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
     // [14] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
@@ -1528,12 +1528,12 @@ init_font_hex: {
     // [15] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
     // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
     // [15] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
@@ -1549,7 +1549,7 @@ init_font_hex: {
     // [17] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
     // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     // [17] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
@@ -1566,7 +1566,7 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // proto_lo[i]<<1
     // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
@@ -1575,14 +1575,14 @@ init_font_hex: {
     asl
     // proto_hi[i]<<4 | proto_lo[i]<<1
     // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _0
+    ora.z _0
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
     // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
     // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // for( byte i: 0..4)
     // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -1593,7 +1593,7 @@ init_font_hex: {
     // charset[idx++] = 0
     // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // charset[idx++] = 0;
     // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
@@ -1605,43 +1605,43 @@ init_font_hex: {
     // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // charset += 8
     // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // for( byte c: 0..15 )
     // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     // init_font_hex::@5
     // proto_hi += 5
     // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // for( byte c: 0..15 )
     // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     // init_font_hex::@return
     // }

@@ -7,13 +7,13 @@ main: {
     .label screen = 2
     .label cols = 4
     lda #<$d800
-    sta cols
+    sta.z cols
     lda #>$d800
-    sta cols+1
+    sta.z cols+1
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     ldx #0
   b1:
     ldy sintab,x
@@ -21,19 +21,19 @@ main: {
     sta (screen),y
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     lda #1
     sta (cols),y
     lda #$28
     clc
-    adc cols
-    sta cols
+    adc.z cols
+    sta.z cols
     bcc !+
-    inc cols+1
+    inc.z cols+1
   !:
     inx
     cpx #$19

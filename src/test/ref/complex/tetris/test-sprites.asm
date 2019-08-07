@@ -66,19 +66,19 @@
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
-  sta render_screen_showing
+  sta.z render_screen_showing
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
-  sta irq_raster_next
+  sta.z irq_raster_next
   // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
-  sta irq_sprite_ypos
+  sta.z irq_sprite_ypos
   // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
-  sta irq_sprite_ptr
+  sta.z irq_sprite_ptr
   // Counting the 10 IRQs
   lda #0
-  sta irq_cnt
+  sta.z irq_cnt
   jsr main
   rts
 main: {
@@ -97,17 +97,17 @@ main: {
     lda #$ff
     sta SPRITES_ENABLE
     lda #$32
-    sta ypos
+    sta.z ypos
     lda #$18
-    sta xpos
+    sta.z xpos
     ldy #4
   b1:
     tya
     asl
     tax
-    lda xpos
+    lda.z xpos
     sta SPRITES_XPOS,x
-    lda ypos
+    lda.z ypos
     sta SPRITES_YPOS,x
     tya
     sec
@@ -115,12 +115,12 @@ main: {
     sta SPRITES_COLS,y
     lda #toSpritePtr2_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
-    lax xpos
+    lax.z xpos
     axs #-[$18]
-    stx xpos
-    lax ypos
+    stx.z xpos
+    lax.z ypos
     axs #-[$18]
-    stx ypos
+    stx.z ypos
     iny
     cpy #8
     bne b1
@@ -131,27 +131,27 @@ main: {
 loop: {
     .label s = 2
     lda #0
-    sta sin_idx
+    sta.z sin_idx
   b2:
     lda #$ff
     cmp RASTER
     bne b2
-    ldx sin_idx
+    ldx.z sin_idx
     lda #4
-    sta s
+    sta.z s
   b4:
-    lda s
+    lda.z s
     asl
     tay
     lda SIN,x
     sta SPRITES_YPOS,y
     txa
     axs #-[$a]
-    inc s
+    inc.z s
     lda #8
-    cmp s
+    cmp.z s
     bne b4
-    inc sin_idx
+    inc.z sin_idx
     jmp b2
 }
 // Setup the IRQ
@@ -196,19 +196,19 @@ sprites_init: {
     sta SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
     lda #$18+$f*8
-    sta xpos
+    sta.z xpos
     ldy #0
   b1:
     tya
     asl
     tax
-    lda xpos
+    lda.z xpos
     sta SPRITES_XPOS,x
     lda #BLACK
     sta SPRITES_COLS,y
-    lax xpos
+    lax.z xpos
     axs #-[$18]
-    stx xpos
+    stx.z xpos
     iny
     cpy #4
     bne b1
@@ -226,21 +226,21 @@ sprites_irq: {
     // Clear decimal flag (because it is used by the score algorithm)
     cld
     // Place the sprites
-    lda irq_sprite_ypos
+    lda.z irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
     sta SPRITES_YPOS+4
     sta SPRITES_YPOS+6
-    ldx irq_raster_next
+    ldx.z irq_raster_next
     inx
     // Wait for the y-position before changing sprite pointers
-    stx raster_sprite_gfx_modify
+    stx.z raster_sprite_gfx_modify
   b8:
     lda RASTER
-    cmp raster_sprite_gfx_modify
+    cmp.z raster_sprite_gfx_modify
     bcc b8
-    ldx irq_sprite_ptr
-    lda render_screen_showing
+    ldx.z irq_sprite_ptr
+    lda.z render_screen_showing
     cmp #0
     beq b1
     stx PLAYFIELD_SPRITE_PTRS_2
@@ -252,25 +252,25 @@ sprites_irq: {
     adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+3
   b2:
-    inc irq_cnt
+    inc.z irq_cnt
     lda #9
-    cmp irq_cnt
+    cmp.z irq_cnt
     beq b3
     lda #$a
-    cmp irq_cnt
+    cmp.z irq_cnt
     beq b4
-    lax irq_raster_next
+    lax.z irq_raster_next
     axs #-[$14]
-    stx irq_raster_next
-    lax irq_sprite_ypos
+    stx.z irq_raster_next
+    lax.z irq_sprite_ypos
     axs #-[$15]
-    stx irq_sprite_ypos
-    lax irq_sprite_ptr
+    stx.z irq_sprite_ypos
+    lax.z irq_sprite_ptr
     axs #-[3]
-    stx irq_sprite_ptr
+    stx.z irq_sprite_ptr
   b5:
     // Setup next interrupt
-    lda irq_raster_next
+    lda.z irq_raster_next
     sta RASTER
     // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
@@ -282,24 +282,24 @@ sprites_irq: {
     rti
   b4:
     lda #0
-    sta irq_cnt
+    sta.z irq_cnt
     lda #IRQ_RASTER_FIRST
-    sta irq_raster_next
-    lax irq_sprite_ypos
+    sta.z irq_raster_next
+    lax.z irq_sprite_ypos
     axs #-[$15]
-    stx irq_sprite_ypos
-    lax irq_sprite_ptr
+    stx.z irq_sprite_ypos
+    lax.z irq_sprite_ptr
     axs #-[3]
-    stx irq_sprite_ptr
+    stx.z irq_sprite_ptr
     jmp b5
   b3:
-    lax irq_raster_next
+    lax.z irq_raster_next
     axs #-[$15]
-    stx irq_raster_next
+    stx.z irq_raster_next
     lda #SPRITES_FIRST_YPOS
-    sta irq_sprite_ypos
+    sta.z irq_sprite_ypos
     lda #toSpritePtr2_return
-    sta irq_sprite_ptr
+    sta.z irq_sprite_ptr
     jmp b5
   b1:
     stx PLAYFIELD_SPRITE_PTRS_1

@@ -47,147 +47,147 @@ main: {
     sta IO_RAM
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #PROCPORT_RAM_ALL
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #PROCPORT_DDR_MEMORY_MASK
     jsr testProcport
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #PROCPORT_RAM_IO
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #PROCPORT_DDR_MEMORY_MASK
     jsr testProcport
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #PROCPORT_RAM_CHARROM
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #PROCPORT_DDR_MEMORY_MASK
     jsr testProcport
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #PROCPORT_KERNEL_IO
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #PROCPORT_DDR_MEMORY_MASK
     jsr testProcport
     lda #PROCPORT_DDR_MEMORY_MASK
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #PROCPORT_BASIC_KERNEL_IO
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #PROCPORT_DDR_MEMORY_MASK
     jsr testProcport
     lda #0
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     tax
     jsr testProcport
     lda #0
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #0
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$ff
-    sta testProcport.port
+    sta.z testProcport.port
     tax
     jsr testProcport
     lda #$ff
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #0
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #$ff
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$55
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #$ff
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$aa
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #$ff
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     tax
     jsr testProcport
     lda #$55
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #0
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$55
     jsr testProcport
     lda #$55
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     tax
     jsr testProcport
     lda #$55
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$ff
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$55
     jsr testProcport
     lda #$aa
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #0
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$aa
     jsr testProcport
     lda #$aa
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$ff
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$aa
     jsr testProcport
     lda #$aa
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     tax
     jsr testProcport
     lda #0
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$d0
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #$55
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     ldx #$ff
     jsr testProcport
     lda #$15
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     ldx #$17
     jsr testProcport
     lda #$17
-    sta testProcport.ddr2
+    sta.z testProcport.ddr2
     lda #$15
-    sta testProcport.port
+    sta.z testProcport.port
     ldx #$17
     jsr testProcport
     lda #$17
-    sta testProcport.ddr2
-    sta testProcport.port
+    sta.z testProcport.ddr2
+    sta.z testProcport.port
     tax
     jsr testProcport
     // Enable interrupts
@@ -212,66 +212,66 @@ testProcport: {
     lda #0
     sta PROCPORT
     stx PROCPORT_DDR
-    lda port
+    lda.z port
     sta PROCPORT
-    lda ddr2
+    lda.z ddr2
     sta PROCPORT_DDR
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    ldx port
+    ldx.z port
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    ldx ddr2
+    ldx.z ddr2
     jsr print_byte
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx PROCPORT_DDR
     jsr print_byte
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx PROCPORT
     jsr print_byte
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx BASIC_ROM
     jsr print_byte
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx IO_RAM
     jsr print_byte
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx KERNAL_ROM
     jsr print_byte
@@ -291,17 +291,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -328,9 +328,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -348,13 +348,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -371,21 +371,21 @@ memset: {
     .label end = str+num
     .label dst = 8
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

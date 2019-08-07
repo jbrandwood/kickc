@@ -345,12 +345,12 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (struct Point*) main::points#4 = (const struct Point*) POINTS#0 [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<POINTS
-    sta points
+    sta.z points
     lda #>POINTS
-    sta points+1
+    sta.z points+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -360,44 +360,44 @@ main: {
     // main::@1
   b1:
     // [6] *((byte*)(struct Point*) main::points#4) ← (byte) main::i#2 -- _deref_pbuz1=vbuz2 
-    lda i
+    lda.z i
     ldy #0
     sta (points),y
     // [7] (byte~) main::$0 ← (byte) main::i#2 + (byte) 5 -- vbuz1=vbuz2_plus_vbuc1 
-    lax i
+    lax.z i
     axs #-[5]
-    stx _0
+    stx.z _0
     // [8] *((byte*)(struct Point*) main::points#4 + (const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$0 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda _0
+    lda.z _0
     ldy #OFFSET_STRUCT_POINT_Y
     sta (points),y
     // [9] (struct Point*) main::points#1 ← (struct Point*) main::points#4 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points
-    sta points
+    adc.z points
+    sta.z points
     bcc !+
-    inc points+1
+    inc.z points+1
   !:
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [11] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1_from_b1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     // [12] phi (byte) main::idx#4 = (byte) 0 [phi:main::@1->main::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx_4
+    sta.z idx_4
     // [12] phi (struct Point*) main::points#5 = (const struct Point*) POINTS#0 [phi:main::@1->main::@2#2] -- pssz1=pssc1 
     lda #<POINTS
-    sta points_5
+    sta.z points_5
     lda #>POINTS
-    sta points_5+1
+    sta.z points_5+1
     jmp b2
     // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
@@ -408,44 +408,44 @@ main: {
     // main::@2
   b2:
     // [13] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← *((byte*)(struct Point*) main::points#5) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
-    ldx idx_4
+    ldx.z idx_4
     ldy #0
     lda (points_5),y
     sta SCREEN,x
     // [14] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuz1=_inc_vbuz2 
-    ldy idx_4
+    ldy.z idx_4
     iny
-    sty idx
+    sty.z idx
     // [15] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← *((byte*)(struct Point*) main::points#5 + (const byte) OFFSET_STRUCT_POINT_Y) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
-    ldx idx
+    ldx.z idx
     ldy #OFFSET_STRUCT_POINT_Y
     lda (points_5),y
     sta SCREEN,x
     // [16] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
-    ldy idx
+    ldy.z idx
     iny
-    sty idx_2
+    sty.z idx_2
     // [17] *((const byte*) main::SCREEN#0 + (byte) main::idx#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
-    ldy idx_2
+    ldy.z idx_2
     sta SCREEN,y
     // [18] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz2 
-    ldy idx_2
+    ldy.z idx_2
     iny
-    sty idx_3
+    sty.z idx_3
     // [19] (struct Point*) main::points#3 ← (struct Point*) main::points#5 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points_3
-    sta points_3
+    adc.z points_3
+    sta.z points_3
     bcc !+
-    inc points_3+1
+    inc.z points_3+1
   !:
     // [20] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i1
+    cmp.z i1
     bne b2_from_b2
     jmp breturn
     // main::@return
@@ -546,9 +546,9 @@ main: {
     ldx #0
     // [5] phi (struct Point*) main::points#4 = (const struct Point*) POINTS#0 [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<POINTS
-    sta points
+    sta.z points
     lda #>POINTS
-    sta points+1
+    sta.z points+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -571,10 +571,10 @@ main: {
     // [9] (struct Point*) main::points#1 ← (struct Point*) main::points#4 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points
-    sta points
+    adc.z points
+    sta.z points
     bcc !+
-    inc points+1
+    inc.z points+1
   !:
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -585,14 +585,14 @@ main: {
   b2_from_b1:
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     // [12] phi (byte) main::idx#4 = (byte) 0 [phi:main::@1->main::@2#1] -- vbuxx=vbuc1 
     ldx #0
     // [12] phi (struct Point*) main::points#5 = (const struct Point*) POINTS#0 [phi:main::@1->main::@2#2] -- pssz1=pssc1 
     lda #<POINTS
-    sta points_5
+    sta.z points_5
     lda #>POINTS
-    sta points_5+1
+    sta.z points_5+1
     jmp b2
     // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
@@ -622,16 +622,16 @@ main: {
     // [19] (struct Point*) main::points#3 ← (struct Point*) main::points#5 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points_3
-    sta points_3
+    adc.z points_3
+    sta.z points_3
     bcc !+
-    inc points_3+1
+    inc.z points_3+1
   !:
     // [20] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i1
+    cmp.z i1
     bne b2_from_b2
     jmp breturn
     // main::@return
@@ -749,9 +749,9 @@ main: {
     ldx #0
     // [5] phi (struct Point*) main::points#4 = (const struct Point*) POINTS#0 [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<POINTS
-    sta points
+    sta.z points
     lda #>POINTS
-    sta points+1
+    sta.z points+1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (struct Point*) main::points#4 = (struct Point*) main::points#1 [phi:main::@1->main::@1#1] -- register_copy 
@@ -775,10 +775,10 @@ main: {
     // [9] (struct Point*) main::points#1 ← (struct Point*) main::points#4 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points
-    sta points
+    adc.z points
+    sta.z points
     bcc !+
-    inc points+1
+    inc.z points+1
   !:
     // for( byte i: 0..3)
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -789,14 +789,14 @@ main: {
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     // [12] phi (byte) main::idx#4 = (byte) 0 [phi:main::@1->main::@2#1] -- vbuxx=vbuc1 
     tax
     // [12] phi (struct Point*) main::points#5 = (const struct Point*) POINTS#0 [phi:main::@1->main::@2#2] -- pssz1=pssc1 
     lda #<POINTS
-    sta points_5
+    sta.z points_5
     lda #>POINTS
-    sta points_5+1
+    sta.z points_5+1
     // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
     // [12] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [12] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@2->main::@2#1] -- register_copy 
@@ -830,17 +830,17 @@ main: {
     // [19] (struct Point*) main::points#3 ← (struct Point*) main::points#5 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points_3
-    sta points_3
+    adc.z points_3
+    sta.z points_3
     bcc !+
-    inc points_3+1
+    inc.z points_3+1
   !:
     // for( byte i: 0..3)
     // [20] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i1
+    cmp.z i1
     bne b2
     // main::@return
     // }

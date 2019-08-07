@@ -9,166 +9,166 @@
   .label print_line_cursor = $b
 main: {
     lda #<lintab1
-    sta lin16u_gen.lintab
+    sta.z lin16u_gen.lintab
     lda #>lintab1
-    sta lin16u_gen.lintab+1
+    sta.z lin16u_gen.lintab+1
     lda #<$22d
-    sta lin16u_gen.min
+    sta.z lin16u_gen.min
     lda #>$22d
-    sta lin16u_gen.min+1
+    sta.z lin16u_gen.min+1
     lda #<$7461
-    sta lin16u_gen.max
+    sta.z lin16u_gen.max
     lda #>$7461
-    sta lin16u_gen.max+1
+    sta.z lin16u_gen.max+1
     jsr lin16u_gen
     lda #<lintab2
-    sta lin16u_gen.lintab
+    sta.z lin16u_gen.lintab
     lda #>lintab2
-    sta lin16u_gen.lintab+1
+    sta.z lin16u_gen.lintab+1
     lda #<$79cb
-    sta lin16u_gen.min
+    sta.z lin16u_gen.min
     lda #>$79cb
-    sta lin16u_gen.min+1
+    sta.z lin16u_gen.min+1
     lda #<$f781
-    sta lin16u_gen.max
+    sta.z lin16u_gen.max
     lda #>$f781
-    sta lin16u_gen.max+1
+    sta.z lin16u_gen.max+1
     jsr lin16u_gen
     lda #<lintab3
-    sta lin16u_gen.lintab
+    sta.z lin16u_gen.lintab
     lda #>lintab3
-    sta lin16u_gen.lintab+1
+    sta.z lin16u_gen.lintab+1
     lda #<0
-    sta lin16u_gen.min
-    sta lin16u_gen.min+1
+    sta.z lin16u_gen.min
+    sta.z lin16u_gen.min+1
     lda #<$6488
-    sta lin16u_gen.max
+    sta.z lin16u_gen.max
     lda #>$6488
-    sta lin16u_gen.max+1
+    sta.z lin16u_gen.max+1
     jsr lin16u_gen
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$22d
-    sta print_word.w
+    sta.z print_word.w
     lda #>$22d
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$79cb
-    sta print_word.w
+    sta.z print_word.w
     lda #>$79cb
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<0
-    sta print_word.w
-    sta print_word.w+1
+    sta.z print_word.w
+    sta.z print_word.w+1
     jsr print_word
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
     ldx #0
   b2:
-    stx print_byte.b
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    stx.z print_byte.b
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     txa
     asl
     tay
     lda lintab1,y
-    sta print_word.w
+    sta.z print_word.w
     lda lintab1+1,y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     txa
     asl
     tay
     lda lintab2,y
-    sta print_word.w
+    sta.z print_word.w
     lda lintab2+1,y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     txa
     asl
     tay
     lda lintab3,y
-    sta print_word.w
+    sta.z print_word.w
     lda lintab3+1,y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     jsr print_ln
     inx
     cpx #$14
     bcc b2
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$7461
-    sta print_word.w
+    sta.z print_word.w
     lda #>$7461
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$f781
-    sta print_word.w
+    sta.z print_word.w
     lda #>$f781
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$6488
-    sta print_word.w
+    sta.z print_word.w
     lda #>$6488
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     jsr print_ln
     rts
@@ -185,17 +185,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -204,11 +204,11 @@ print_ln: {
 // print_word(word zeropage(5) w)
 print_word: {
     .label w = 5
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -216,7 +216,7 @@ print_word: {
 // print_byte(byte zeropage(2) b)
 print_byte: {
     .label b = 2
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -225,7 +225,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -236,9 +236,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -256,13 +256,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -279,21 +279,21 @@ memset: {
     .label end = str+num
     .label dst = $b
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts
@@ -313,91 +313,91 @@ lin16u_gen: {
     .label i = $d
     .label max = 3
     .label min = 5
-    lda ampl
+    lda.z ampl
     sec
-    sbc min
-    sta ampl
-    lda ampl+1
-    sbc min+1
-    sta ampl+1
+    sbc.z min
+    sta.z ampl
+    lda.z ampl+1
+    sbc.z min+1
+    sta.z ampl+1
     lda #<$14-1
-    sta divr16u.divisor
+    sta.z divr16u.divisor
     lda #>$14-1
-    sta divr16u.divisor+1
+    sta.z divr16u.divisor+1
     lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
     jsr divr16u
-    lda divr16u.return
-    sta stepi
-    lda divr16u.return+1
-    sta stepi+1
+    lda.z divr16u.return
+    sta.z stepi
+    lda.z divr16u.return+1
+    sta.z stepi+1
     lda #<$14-1
-    sta divr16u.divisor
+    sta.z divr16u.divisor
     lda #>$14-1
-    sta divr16u.divisor+1
+    sta.z divr16u.divisor+1
     lda #<0
-    sta divr16u.dividend
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend
+    sta.z divr16u.dividend+1
     jsr divr16u
-    lda stepi
-    sta step+2
-    lda stepi+1
-    sta step+3
-    lda stepf
-    sta step
-    lda stepf+1
-    sta step+1
+    lda.z stepi
+    sta.z step+2
+    lda.z stepi+1
+    sta.z step+3
+    lda.z stepf
+    sta.z step
+    lda.z stepf+1
+    sta.z step+1
     lda #<0
-    sta val
-    sta val+1
-    lda min
-    sta val+2
-    lda min+1
-    sta val+3
+    sta.z val
+    sta.z val+1
+    lda.z min
+    sta.z val+2
+    lda.z min+1
+    sta.z val+3
     lda #<0
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
   b2:
-    lda val+2
-    sta _6
-    lda val+3
-    sta _6+1
+    lda.z val+2
+    sta.z _6
+    lda.z val+3
+    sta.z _6+1
     ldy #0
-    lda _6
+    lda.z _6
     sta (lintab),y
     iny
-    lda _6+1
+    lda.z _6+1
     sta (lintab),y
-    lda val
+    lda.z val
     clc
-    adc step
-    sta val
-    lda val+1
-    adc step+1
-    sta val+1
-    lda val+2
-    adc step+2
-    sta val+2
-    lda val+3
-    adc step+3
-    sta val+3
+    adc.z step
+    sta.z val
+    lda.z val+1
+    adc.z step+1
+    sta.z val+1
+    lda.z val+2
+    adc.z step+2
+    sta.z val+2
+    lda.z val+3
+    adc.z step+3
+    sta.z val+3
     lda #SIZEOF_WORD
     clc
-    adc lintab
-    sta lintab
+    adc.z lintab
+    sta.z lintab
     bcc !+
-    inc lintab+1
+    inc.z lintab+1
   !:
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$14
     bcc b2
     bne !+
-    lda i
+    lda.z i
     cmp #<$14
     bcc b2
   !:
@@ -416,42 +416,42 @@ divr16u: {
     .label divisor = $d
     ldx #0
     txa
-    sta quotient
-    sta quotient+1
+    sta.z quotient
+    sta.z quotient+1
   b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
+    asl.z rem
+    rol.z rem+1
+    lda.z dividend+1
     and #$80
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
   b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
-    cmp divisor+1
+    asl.z dividend
+    rol.z dividend+1
+    asl.z quotient
+    rol.z quotient+1
+    lda.z rem+1
+    cmp.z divisor+1
     bcc b3
     bne !+
-    lda rem
-    cmp divisor
+    lda.z rem
+    cmp.z divisor
     bcc b3
   !:
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
-    lda rem
+    lda.z rem
     sec
-    sbc divisor
-    sta rem
-    lda rem+1
-    sbc divisor+1
-    sta rem+1
+    sbc.z divisor
+    sta.z rem
+    lda.z rem+1
+    sbc.z divisor+1
+    sta.z rem+1
   b3:
     inx
     cpx #$10

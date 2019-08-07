@@ -5,9 +5,9 @@
 main: {
     .label cols = 2
     lda #<$d800
-    sta cols
+    sta.z cols
     lda #>$d800
-    sta cols+1
+    sta.z cols+1
   b2:
     jsr fn1
     ldy #0
@@ -15,15 +15,15 @@ main: {
     clc
     adc #1
     sta (cols),y
-    inc cols
+    inc.z cols
     bne !+
-    inc cols+1
+    inc.z cols+1
   !:
-    lda cols+1
+    lda.z cols+1
     cmp #>$d800+$3e8
     bcc b2
     bne !+
-    lda cols
+    lda.z cols
     cmp #<$d800+$3e8
     bcc b2
   !:
@@ -32,24 +32,24 @@ main: {
 fn1: {
     .label screen = 4
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
   b2:
     ldy #0
     lda (screen),y
     clc
     adc #1
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    lda screen+1
+    lda.z screen+1
     cmp #>$400+$3e8
     bcc b2
     bne !+
-    lda screen
+    lda.z screen
     cmp #<$400+$3e8
     bcc b2
   !:

@@ -8,9 +8,9 @@ main: {
   b2:
     lda #$57
   b3:
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta screen,x
     inx
     cpx #$b

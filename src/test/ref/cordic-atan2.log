@@ -1585,12 +1585,12 @@ main: {
   b1_from_b5:
     // [8] phi (byte*) main::screen#4 = (const byte*) SCREEN#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta screen
+    sta.z screen
     lda #>SCREEN
-    sta screen+1
+    sta.z screen+1
     // [8] phi (signed byte) main::y#4 = (signed byte) -$c [phi:main::@5->main::@1#1] -- vbsz1=vbsc1 
     lda #-$c
-    sta y
+    sta.z y
     jmp b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -1604,7 +1604,7 @@ main: {
     // [9] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1->main::@2#0] -- register_copy 
     // [9] phi (signed byte) main::x#2 = (signed byte) -$13 [phi:main::@1->main::@2#1] -- vbsz1=vbsc1 
     lda #-$13
-    sta x
+    sta.z x
     jmp b2
     // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   b2_from_b6:
@@ -1614,45 +1614,45 @@ main: {
     // main::@2
   b2:
     // [10] (signed byte) atan2_8::x#0 ← (signed byte) main::x#2 -- vbsz1=vbsz2 
-    lda x
-    sta atan2_8.x
+    lda.z x
+    sta.z atan2_8.x
     // [11] (signed byte) atan2_8::y#0 ← (signed byte) main::y#4 -- vbsz1=vbsz2 
-    lda y
-    sta atan2_8.y
+    lda.z y
+    sta.z atan2_8.y
     // [12] call atan2_8 
     jsr atan2_8
     // [13] (byte) atan2_8::return#2 ← (byte) atan2_8::return#0 -- vbuz1=vbuz2 
-    lda atan2_8.return
-    sta atan2_8.return_2
+    lda.z atan2_8.return
+    sta.z atan2_8.return_2
     jmp b6
     // main::@6
   b6:
     // [14] (byte) main::angle#0 ← (byte) atan2_8::return#2 -- vbuz1=vbuz2 
-    lda atan2_8.return_2
-    sta angle
+    lda.z atan2_8.return_2
+    sta.z angle
     // [15] *((byte*) main::screen#2) ← (byte) main::angle#0 -- _deref_pbuz1=vbuz2 
-    lda angle
+    lda.z angle
     ldy #0
     sta (screen),y
     // [16] (byte*) main::screen#1 ← ++ (byte*) main::screen#2 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (signed byte) main::x#1 ← ++ (signed byte) main::x#2 -- vbsz1=_inc_vbsz1 
-    inc x
+    inc.z x
     // [18] if((signed byte) main::x#1!=(signed byte) $15) goto main::@2 -- vbsz1_neq_vbsc1_then_la1 
     lda #$15
-    cmp x
+    cmp.z x
     bne b2_from_b6
     jmp b3
     // main::@3
   b3:
     // [19] (signed byte) main::y#1 ← ++ (signed byte) main::y#4 -- vbsz1=_inc_vbsz1 
-    inc y
+    inc.z y
     // [20] if((signed byte) main::y#1!=(signed byte) $d) goto main::@1 -- vbsz1_neq_vbsc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1_from_b3
     jmp b4
     // main::@4
@@ -1688,7 +1688,7 @@ atan2_8: {
     .label angle_12 = 9
     .label angle_13 = 9
     // [22] if((signed byte) atan2_8::y#0>(signed byte) 0) goto atan2_8::@1 -- vbsz1_gt_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     beq !+
     bpl b1
@@ -1697,11 +1697,11 @@ atan2_8: {
     // atan2_8::@2
   b2:
     // [23] (signed byte~) atan2_8::$2 ← - (signed byte) atan2_8::y#0 -- vbsz1=_neg_vbsz2 
-    lda y
+    lda.z y
     eor #$ff
     clc
     adc #1
-    sta _2
+    sta.z _2
     // [24] phi from atan2_8::@1 atan2_8::@2 to atan2_8::@3 [phi:atan2_8::@1/atan2_8::@2->atan2_8::@3]
   b3_from_b1:
   b3_from_b2:
@@ -1710,7 +1710,7 @@ atan2_8: {
     // atan2_8::@3
   b3:
     // [25] if((signed byte) atan2_8::x#0>(signed byte) 0) goto atan2_8::@4 -- vbsz1_gt_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     beq !+
     bpl b4
@@ -1719,11 +1719,11 @@ atan2_8: {
     // atan2_8::@5
   b5:
     // [26] (signed byte~) atan2_8::$7 ← - (signed byte) atan2_8::x#0 -- vbsz1=_neg_vbsz2 
-    lda x
+    lda.z x
     eor #$ff
     clc
     adc #1
-    sta _7
+    sta.z _7
     // [27] phi from atan2_8::@4 atan2_8::@5 to atan2_8::@6 [phi:atan2_8::@4/atan2_8::@5->atan2_8::@6]
   b6_from_b4:
   b6_from_b5:
@@ -1735,17 +1735,17 @@ atan2_8: {
   b10_from_b6:
     // [28] phi (byte) atan2_8::angle#12 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#0] -- vbuz1=vbuc1 
     lda #0
-    sta angle_12
+    sta.z angle_12
     // [28] phi (byte) atan2_8::i#2 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [28] phi (signed byte) atan2_8::xi#3 = (signed byte) atan2_8::xi#0 [phi:atan2_8::@6->atan2_8::@10#2] -- register_copy 
     // [28] phi (signed byte) atan2_8::yi#3 = (signed byte) atan2_8::yi#0 [phi:atan2_8::@6->atan2_8::@10#3] -- register_copy 
     jmp b10
     // atan2_8::@10
   b10:
     // [29] if((signed byte) atan2_8::yi#3!=(signed byte) 0) goto atan2_8::@11 -- vbsz1_neq_0_then_la1 
-    lda yi
+    lda.z yi
     cmp #0
     bne b11
     // [30] phi from atan2_8::@10 atan2_8::@14 to atan2_8::@12 [phi:atan2_8::@10/atan2_8::@14->atan2_8::@12]
@@ -1756,11 +1756,11 @@ atan2_8: {
     // atan2_8::@12
   b12:
     // [31] (byte) atan2_8::angle#1 ← (byte) atan2_8::angle#6 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
-    lda angle_6
+    lda.z angle_6
     lsr
-    sta angle
+    sta.z angle
     // [32] if((signed byte) atan2_8::x#0>=(signed byte) 0) goto atan2_8::@7 -- vbsz1_ge_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     bpl b7_from_b12
     jmp b16
@@ -1769,8 +1769,8 @@ atan2_8: {
     // [33] (byte) atan2_8::angle#4 ← (byte) $80 - (byte) atan2_8::angle#1 -- vbuz1=vbuc1_minus_vbuz1 
     lda #$80
     sec
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     // [34] phi from atan2_8::@12 atan2_8::@16 to atan2_8::@7 [phi:atan2_8::@12/atan2_8::@16->atan2_8::@7]
   b7_from_b12:
   b7_from_b16:
@@ -1779,18 +1779,18 @@ atan2_8: {
     // atan2_8::@7
   b7:
     // [35] if((signed byte) atan2_8::y#0>=(signed byte) 0) goto atan2_8::@8 -- vbsz1_ge_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bpl b8_from_b7
     jmp b9
     // atan2_8::@9
   b9:
     // [36] (byte) atan2_8::angle#5 ← - (byte) atan2_8::angle#11 -- vbuz1=_neg_vbuz1 
-    lda angle
+    lda.z angle
     eor #$ff
     clc
     adc #1
-    sta angle
+    sta.z angle
     // [37] phi from atan2_8::@7 atan2_8::@9 to atan2_8::@8 [phi:atan2_8::@7/atan2_8::@9->atan2_8::@8]
   b8_from_b7:
   b8_from_b9:
@@ -1806,8 +1806,8 @@ atan2_8: {
     // atan2_8::@11
   b11:
     // [39] (signed byte) atan2_8::xd#0 ← (signed byte) atan2_8::xi#3 >> (byte) atan2_8::i#2 -- vbsz1=vbsz2_ror_vbuz3 
-    lda xi
-    ldy i
+    lda.z xi
+    ldy.z i
     cpy #0
     beq !e+
   !l:
@@ -1816,10 +1816,10 @@ atan2_8: {
     dey
     bne !l-
   !e:
-    sta xd
+    sta.z xd
     // [40] (signed byte) atan2_8::yd#0 ← (signed byte) atan2_8::yi#3 >> (byte) atan2_8::i#2 -- vbsz1=vbsz2_ror_vbuz3 
-    lda yi
-    ldy i
+    lda.z yi
+    ldy.z i
     cpy #0
     beq !e+
   !l:
@@ -1828,9 +1828,9 @@ atan2_8: {
     dey
     bne !l-
   !e:
-    sta yd
+    sta.z yd
     // [41] if((signed byte) atan2_8::yi#3>(signed byte) 0) goto atan2_8::@13 -- vbsz1_gt_0_then_la1 
-    lda yi
+    lda.z yi
     cmp #0
     beq !+
     bpl b13
@@ -1839,21 +1839,21 @@ atan2_8: {
     // atan2_8::@15
   b15:
     // [42] (signed byte) atan2_8::xi#2 ← (signed byte) atan2_8::xi#3 - (signed byte) atan2_8::yd#0 -- vbsz1=vbsz1_minus_vbsz2 
-    lda xi
+    lda.z xi
     sec
-    sbc yd
-    sta xi
+    sbc.z yd
+    sta.z xi
     // [43] (signed byte) atan2_8::yi#2 ← (signed byte) atan2_8::yi#3 + (signed byte) atan2_8::xd#0 -- vbsz1=vbsz1_plus_vbsz2 
-    lda yi
+    lda.z yi
     clc
-    adc xd
-    sta yi
+    adc.z xd
+    sta.z yi
     // [44] (byte) atan2_8::angle#3 ← (byte) atan2_8::angle#12 - *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_minus_pbuc1_derefidx_vbuz2 
-    lda angle_3
-    ldy i
+    lda.z angle_3
+    ldy.z i
     sec
     sbc CORDIC_ATAN2_ANGLES_8,y
-    sta angle_3
+    sta.z angle_3
     // [45] phi from atan2_8::@13 atan2_8::@15 to atan2_8::@14 [phi:atan2_8::@13/atan2_8::@15->atan2_8::@14]
   b14_from_b13:
   b14_from_b15:
@@ -1864,10 +1864,10 @@ atan2_8: {
     // atan2_8::@14
   b14:
     // [46] (byte) atan2_8::i#1 ← ++ (byte) atan2_8::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [47] if((byte) atan2_8::i#1==(const byte) CORDIC_ITERATIONS_8#0-(byte) 1+(byte) 1) goto atan2_8::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_8-1+1
-    cmp i
+    cmp.z i
     beq b12_from_b14
     // [28] phi from atan2_8::@14 to atan2_8::@10 [phi:atan2_8::@14->atan2_8::@10]
   b10_from_b14:
@@ -1879,33 +1879,33 @@ atan2_8: {
     // atan2_8::@13
   b13:
     // [48] (signed byte) atan2_8::xi#1 ← (signed byte) atan2_8::xi#3 + (signed byte) atan2_8::yd#0 -- vbsz1=vbsz1_plus_vbsz2 
-    lda xi
+    lda.z xi
     clc
-    adc yd
-    sta xi
+    adc.z yd
+    sta.z xi
     // [49] (signed byte) atan2_8::yi#1 ← (signed byte) atan2_8::yi#3 - (signed byte) atan2_8::xd#0 -- vbsz1=vbsz1_minus_vbsz2 
-    lda yi
+    lda.z yi
     sec
-    sbc xd
-    sta yi
+    sbc.z xd
+    sta.z yi
     // [50] (byte) atan2_8::angle#2 ← (byte) atan2_8::angle#12 + *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
-    lda angle_2
-    ldy i
+    lda.z angle_2
+    ldy.z i
     clc
     adc CORDIC_ATAN2_ANGLES_8,y
-    sta angle_2
+    sta.z angle_2
     jmp b14_from_b13
     // atan2_8::@4
   b4:
     // [51] (signed byte~) atan2_8::xi#8 ← (signed byte) atan2_8::x#0 -- vbsz1=vbsz2 
-    lda x
-    sta xi
+    lda.z x
+    sta.z xi
     jmp b6_from_b4
     // atan2_8::@1
   b1:
     // [52] (signed byte~) atan2_8::yi#11 ← (signed byte) atan2_8::y#0 -- vbsz1=vbsz2 
-    lda y
-    sta yi
+    lda.z y
+    sta.z yi
     jmp b3_from_b1
 }
   // init_font_hex
@@ -1927,17 +1927,17 @@ init_font_hex: {
   b1_from_init_font_hex:
     // [54] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [54] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [54] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     jmp b1
     // [54] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
@@ -1951,12 +1951,12 @@ init_font_hex: {
   b2_from_b1:
     // [55] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [55] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [55] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
     // [55] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
@@ -1975,10 +1975,10 @@ init_font_hex: {
   b3_from_b2:
     // [57] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [57] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
     // [57] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   b3_from_b3:
@@ -1988,70 +1988,70 @@ init_font_hex: {
     // init_font_hex::@3
   b3:
     // [58] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
-    ldy i
+    ldy.z i
     lda (proto_hi),y
     asl
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // [59] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
-    ldy i
+    ldy.z i
     lda (proto_lo),y
     asl
-    sta _1
+    sta.z _1
     // [60] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
-    lda _0
-    ora _1
-    sta _2
+    lda.z _0
+    ora.z _1
+    sta.z _2
     // [61] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _2
-    ldy idx
+    lda.z _2
+    ldy.z idx
     sta (charset),y
     // [62] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [63] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [64] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp i
+    cmp.z i
     bne b3_from_b3
     jmp b4
     // init_font_hex::@4
   b4:
     // [65] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [66] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
-    ldy idx
+    ldy.z idx
     iny
-    sty idx_3
+    sty.z idx_3
     // [67] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx_3
+    ldy.z idx_3
     sta (charset),y
     // [68] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // [69] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [70] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [71] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2_from_b4
     jmp b5
     // init_font_hex::@5
@@ -2059,16 +2059,16 @@ init_font_hex: {
     // [72] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // [73] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [74] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1_from_b5
     jmp breturn
     // init_font_hex::@return
@@ -2303,12 +2303,12 @@ main: {
   b1_from_b5:
     // [8] phi (byte*) main::screen#4 = (const byte*) SCREEN#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta screen
+    sta.z screen
     lda #>SCREEN
-    sta screen+1
+    sta.z screen+1
     // [8] phi (signed byte) main::y#4 = (signed byte) -$c [phi:main::@5->main::@1#1] -- vbsz1=vbsc1 
     lda #-$c
-    sta y
+    sta.z y
     jmp b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -2322,7 +2322,7 @@ main: {
     // [9] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1->main::@2#0] -- register_copy 
     // [9] phi (signed byte) main::x#2 = (signed byte) -$13 [phi:main::@1->main::@2#1] -- vbsz1=vbsc1 
     lda #-$13
-    sta x
+    sta.z x
     jmp b2
     // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   b2_from_b6:
@@ -2345,24 +2345,24 @@ main: {
     ldy #0
     sta (screen),y
     // [16] (byte*) main::screen#1 ← ++ (byte*) main::screen#2 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (signed byte) main::x#1 ← ++ (signed byte) main::x#2 -- vbsz1=_inc_vbsz1 
-    inc x
+    inc.z x
     // [18] if((signed byte) main::x#1!=(signed byte) $15) goto main::@2 -- vbsz1_neq_vbsc1_then_la1 
     lda #$15
-    cmp x
+    cmp.z x
     bne b2_from_b6
     jmp b3
     // main::@3
   b3:
     // [19] (signed byte) main::y#1 ← ++ (signed byte) main::y#4 -- vbsz1=_inc_vbsz1 
-    inc y
+    inc.z y
     // [20] if((signed byte) main::y#1!=(signed byte) $d) goto main::@1 -- vbsz1_neq_vbsc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1_from_b3
     jmp b4
     // main::@4
@@ -2388,7 +2388,7 @@ atan2_8: {
     .label x = $a
     .label y = 5
     // [22] if((signed byte) atan2_8::y#0>(signed byte) 0) goto atan2_8::@1 -- vbsz1_gt_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     beq !+
     bpl b1
@@ -2397,7 +2397,7 @@ atan2_8: {
     // atan2_8::@2
   b2:
     // [23] (signed byte~) atan2_8::$2 ← - (signed byte) atan2_8::y#0 -- vbsxx=_neg_vbsz1 
-    lda y
+    lda.z y
     eor #$ff
     clc
     adc #1
@@ -2410,7 +2410,7 @@ atan2_8: {
     // atan2_8::@3
   b3:
     // [25] if((signed byte) atan2_8::x#0>(signed byte) 0) goto atan2_8::@4 -- vbsz1_gt_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     beq !+
     bpl b4
@@ -2419,11 +2419,11 @@ atan2_8: {
     // atan2_8::@5
   b5:
     // [26] (signed byte~) atan2_8::$7 ← - (signed byte) atan2_8::x#0 -- vbsz1=_neg_vbsz2 
-    lda x
+    lda.z x
     eor #$ff
     clc
     adc #1
-    sta _7
+    sta.z _7
     // [27] phi from atan2_8::@4 atan2_8::@5 to atan2_8::@6 [phi:atan2_8::@4/atan2_8::@5->atan2_8::@6]
   b6_from_b4:
   b6_from_b5:
@@ -2435,10 +2435,10 @@ atan2_8: {
   b10_from_b6:
     // [28] phi (byte) atan2_8::angle#12 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#0] -- vbuz1=vbuc1 
     lda #0
-    sta angle
+    sta.z angle
     // [28] phi (byte) atan2_8::i#2 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [28] phi (signed byte) atan2_8::xi#3 = (signed byte) atan2_8::xi#0 [phi:atan2_8::@6->atan2_8::@10#2] -- register_copy 
     // [28] phi (signed byte) atan2_8::yi#3 = (signed byte) atan2_8::yi#0 [phi:atan2_8::@6->atan2_8::@10#3] -- register_copy 
     jmp b10
@@ -2456,11 +2456,11 @@ atan2_8: {
     // atan2_8::@12
   b12:
     // [31] (byte) atan2_8::angle#1 ← (byte) atan2_8::angle#6 >> (byte) 1 -- vbuxx=vbuz1_ror_1 
-    lda angle
+    lda.z angle
     lsr
     tax
     // [32] if((signed byte) atan2_8::x#0>=(signed byte) 0) goto atan2_8::@7 -- vbsz1_ge_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     bpl b7_from_b12
     jmp b16
@@ -2480,7 +2480,7 @@ atan2_8: {
     // atan2_8::@7
   b7:
     // [35] if((signed byte) atan2_8::y#0>=(signed byte) 0) goto atan2_8::@8 -- vbsz1_ge_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bpl b8_from_b7
     jmp b9
@@ -2506,8 +2506,8 @@ atan2_8: {
     // atan2_8::@11
   b11:
     // [39] (signed byte) atan2_8::xd#0 ← (signed byte) atan2_8::xi#3 >> (byte) atan2_8::i#2 -- vbsz1=vbsz2_ror_vbuz3 
-    lda xi
-    ldy i
+    lda.z xi
+    ldy.z i
     cpy #0
     beq !e+
   !l:
@@ -2516,9 +2516,9 @@ atan2_8: {
     dey
     bne !l-
   !e:
-    sta xd
+    sta.z xd
     // [40] (signed byte) atan2_8::yd#0 ← (signed byte) atan2_8::yi#3 >> (byte) atan2_8::i#2 -- vbsyy=vbsxx_ror_vbuz1 
-    ldy i
+    ldy.z i
     txa
     cpy #0
     beq !e+
@@ -2542,19 +2542,19 @@ atan2_8: {
     tya
     eor #$ff
     sec
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     // [43] (signed byte) atan2_8::yi#2 ← (signed byte) atan2_8::yi#3 + (signed byte) atan2_8::xd#0 -- vbsxx=vbsxx_plus_vbsz1 
     txa
     clc
-    adc xd
+    adc.z xd
     tax
     // [44] (byte) atan2_8::angle#3 ← (byte) atan2_8::angle#12 - *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_minus_pbuc1_derefidx_vbuz2 
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     sec
     sbc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
     // [45] phi from atan2_8::@13 atan2_8::@15 to atan2_8::@14 [phi:atan2_8::@13/atan2_8::@15->atan2_8::@14]
   b14_from_b13:
   b14_from_b15:
@@ -2565,10 +2565,10 @@ atan2_8: {
     // atan2_8::@14
   b14:
     // [46] (byte) atan2_8::i#1 ← ++ (byte) atan2_8::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [47] if((byte) atan2_8::i#1==(const byte) CORDIC_ITERATIONS_8#0-(byte) 1+(byte) 1) goto atan2_8::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_8-1+1
-    cmp i
+    cmp.z i
     beq b12_from_b14
     // [28] phi from atan2_8::@14 to atan2_8::@10 [phi:atan2_8::@14->atan2_8::@10]
   b10_from_b14:
@@ -2582,30 +2582,30 @@ atan2_8: {
     // [48] (signed byte) atan2_8::xi#1 ← (signed byte) atan2_8::xi#3 + (signed byte) atan2_8::yd#0 -- vbsz1=vbsz1_plus_vbsyy 
     tya
     clc
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     // [49] (signed byte) atan2_8::yi#1 ← (signed byte) atan2_8::yi#3 - (signed byte) atan2_8::xd#0 -- vbsxx=vbsxx_minus_vbsz1 
     txa
     sec
-    sbc xd
+    sbc.z xd
     tax
     // [50] (byte) atan2_8::angle#2 ← (byte) atan2_8::angle#12 + *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     clc
     adc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
     jmp b14_from_b13
     // atan2_8::@4
   b4:
     // [51] (signed byte~) atan2_8::xi#8 ← (signed byte) atan2_8::x#0 -- vbsz1=vbsz2 
-    lda x
-    sta xi
+    lda.z x
+    sta.z xi
     jmp b6_from_b4
     // atan2_8::@1
   b1:
     // [52] (signed byte~) atan2_8::yi#11 ← (signed byte) atan2_8::y#0 -- vbsxx=vbsz1 
-    ldx y
+    ldx.z y
     jmp b3_from_b1
 }
   // init_font_hex
@@ -2623,17 +2623,17 @@ init_font_hex: {
   b1_from_init_font_hex:
     // [54] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [54] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [54] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     jmp b1
     // [54] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   b1_from_b5:
@@ -2647,12 +2647,12 @@ init_font_hex: {
   b2_from_b1:
     // [55] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [55] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [55] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp b2
     // [55] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
@@ -2671,7 +2671,7 @@ init_font_hex: {
   b3_from_b2:
     // [57] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [57] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
@@ -2690,19 +2690,19 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // [59] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
     // [60] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _0
+    ora.z _0
     // [61] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [62] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [63] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [64] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
@@ -2713,10 +2713,10 @@ init_font_hex: {
   b4:
     // [65] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // [66] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
-    ldy idx
+    ldy.z idx
     iny
     // [67] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #0
@@ -2724,24 +2724,24 @@ init_font_hex: {
     // [68] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // [69] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // [70] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [71] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2_from_b4
     jmp b5
     // init_font_hex::@5
@@ -2749,16 +2749,16 @@ init_font_hex: {
     // [72] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // [73] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [74] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1_from_b5
     jmp breturn
     // init_font_hex::@return
@@ -2806,7 +2806,7 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Replacing instruction ldy #0 with TAY
-Removing instruction ldy idx
+Removing instruction ldy.z idx
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b2_from_b6 with b2
@@ -3090,12 +3090,12 @@ main: {
     // [8] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
     // [8] phi (byte*) main::screen#4 = (const byte*) SCREEN#0 [phi:main::@5->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta screen
+    sta.z screen
     lda #>SCREEN
-    sta screen+1
+    sta.z screen+1
     // [8] phi (signed byte) main::y#4 = (signed byte) -$c [phi:main::@5->main::@1#1] -- vbsz1=vbsc1 
     lda #-$c
-    sta y
+    sta.z y
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [8] phi (byte*) main::screen#4 = (byte*) main::screen#1 [phi:main::@3->main::@1#0] -- register_copy 
     // [8] phi (signed byte) main::y#4 = (signed byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
@@ -3105,7 +3105,7 @@ main: {
     // [9] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1->main::@2#0] -- register_copy 
     // [9] phi (signed byte) main::x#2 = (signed byte) -$13 [phi:main::@1->main::@2#1] -- vbsz1=vbsc1 
     lda #-$13
-    sta x
+    sta.z x
     // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
     // [9] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@6->main::@2#0] -- register_copy 
     // [9] phi (signed byte) main::x#2 = (signed byte) main::x#1 [phi:main::@6->main::@2#1] -- register_copy 
@@ -3127,24 +3127,24 @@ main: {
     sta (screen),y
     // *screen++ = angle;
     // [16] (byte*) main::screen#1 ← ++ (byte*) main::screen#2 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // for(signed byte x: -19..20)
     // [17] (signed byte) main::x#1 ← ++ (signed byte) main::x#2 -- vbsz1=_inc_vbsz1 
-    inc x
+    inc.z x
     // [18] if((signed byte) main::x#1!=(signed byte) $15) goto main::@2 -- vbsz1_neq_vbsc1_then_la1 
     lda #$15
-    cmp x
+    cmp.z x
     bne b2
     // main::@3
     // for(signed byte y: -12..12)
     // [19] (signed byte) main::y#1 ← ++ (signed byte) main::y#4 -- vbsz1=_inc_vbsz1 
-    inc y
+    inc.z y
     // [20] if((signed byte) main::y#1!=(signed byte) $d) goto main::@1 -- vbsz1_neq_vbsc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1
     // main::@4
   b4:
@@ -3171,7 +3171,7 @@ atan2_8: {
     .label y = 5
     // (y>0)?y:-y
     // [22] if((signed byte) atan2_8::y#0>(signed byte) 0) goto atan2_8::@1 -- vbsz1_gt_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     beq !+
     bmi !b1+
@@ -3180,7 +3180,7 @@ atan2_8: {
   !:
     // atan2_8::@2
     // [23] (signed byte~) atan2_8::$2 ← - (signed byte) atan2_8::y#0 -- vbsxx=_neg_vbsz1 
-    lda y
+    lda.z y
     eor #$ff
     clc
     adc #1
@@ -3191,7 +3191,7 @@ atan2_8: {
   b3:
     // (x>0)?x:-x
     // [25] if((signed byte) atan2_8::x#0>(signed byte) 0) goto atan2_8::@4 -- vbsz1_gt_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     beq !+
     bmi !b4+
@@ -3200,11 +3200,11 @@ atan2_8: {
   !:
     // atan2_8::@5
     // [26] (signed byte~) atan2_8::$7 ← - (signed byte) atan2_8::x#0 -- vbsz1=_neg_vbsz2 
-    lda x
+    lda.z x
     eor #$ff
     clc
     adc #1
-    sta _7
+    sta.z _7
     // [27] phi from atan2_8::@4 atan2_8::@5 to atan2_8::@6 [phi:atan2_8::@4/atan2_8::@5->atan2_8::@6]
     // [27] phi (signed byte) atan2_8::xi#0 = (signed byte~) atan2_8::xi#8 [phi:atan2_8::@4/atan2_8::@5->atan2_8::@6#0] -- register_copy 
     // atan2_8::@6
@@ -3212,9 +3212,9 @@ atan2_8: {
     // [28] phi from atan2_8::@6 to atan2_8::@10 [phi:atan2_8::@6->atan2_8::@10]
     // [28] phi (byte) atan2_8::angle#12 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#0] -- vbuz1=vbuc1 
     lda #0
-    sta angle
+    sta.z angle
     // [28] phi (byte) atan2_8::i#2 = (byte) 0 [phi:atan2_8::@6->atan2_8::@10#1] -- vbuz1=vbuc1 
-    sta i
+    sta.z i
     // [28] phi (signed byte) atan2_8::xi#3 = (signed byte) atan2_8::xi#0 [phi:atan2_8::@6->atan2_8::@10#2] -- register_copy 
     // [28] phi (signed byte) atan2_8::yi#3 = (signed byte) atan2_8::yi#0 [phi:atan2_8::@6->atan2_8::@10#3] -- register_copy 
     // atan2_8::@10
@@ -3230,12 +3230,12 @@ atan2_8: {
   b12:
     // angle = angle/2
     // [31] (byte) atan2_8::angle#1 ← (byte) atan2_8::angle#6 >> (byte) 1 -- vbuxx=vbuz1_ror_1 
-    lda angle
+    lda.z angle
     lsr
     tax
     // if(x<0)
     // [32] if((signed byte) atan2_8::x#0>=(signed byte) 0) goto atan2_8::@7 -- vbsz1_ge_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     bpl b7
     // atan2_8::@16
@@ -3252,7 +3252,7 @@ atan2_8: {
   b7:
     // if(y<0)
     // [35] if((signed byte) atan2_8::y#0>=(signed byte) 0) goto atan2_8::@8 -- vbsz1_ge_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bpl b8
     // atan2_8::@9
@@ -3274,8 +3274,8 @@ atan2_8: {
   b11:
     // xd = xi>>i
     // [39] (signed byte) atan2_8::xd#0 ← (signed byte) atan2_8::xi#3 >> (byte) atan2_8::i#2 -- vbsz1=vbsz2_ror_vbuz3 
-    lda xi
-    ldy i
+    lda.z xi
+    ldy.z i
     cpy #0
     beq !e+
   !l:
@@ -3284,10 +3284,10 @@ atan2_8: {
     dey
     bne !l-
   !e:
-    sta xd
+    sta.z xd
     // yd = yi>>i
     // [40] (signed byte) atan2_8::yd#0 ← (signed byte) atan2_8::yi#3 >> (byte) atan2_8::i#2 -- vbsyy=vbsxx_ror_vbuz1 
-    ldy i
+    ldy.z i
     txa
     cpy #0
     beq !e+
@@ -3311,21 +3311,21 @@ atan2_8: {
     tya
     eor #$ff
     sec
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     // yi += xd
     // [43] (signed byte) atan2_8::yi#2 ← (signed byte) atan2_8::yi#3 + (signed byte) atan2_8::xd#0 -- vbsxx=vbsxx_plus_vbsz1 
     txa
     clc
-    adc xd
+    adc.z xd
     tax
     // angle -= CORDIC_ATAN2_ANGLES_8[i]
     // [44] (byte) atan2_8::angle#3 ← (byte) atan2_8::angle#12 - *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_minus_pbuc1_derefidx_vbuz2 
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     sec
     sbc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
     // [45] phi from atan2_8::@13 atan2_8::@15 to atan2_8::@14 [phi:atan2_8::@13/atan2_8::@15->atan2_8::@14]
     // [45] phi (signed byte) atan2_8::xi#7 = (signed byte) atan2_8::xi#1 [phi:atan2_8::@13/atan2_8::@15->atan2_8::@14#0] -- register_copy 
     // [45] phi (byte) atan2_8::angle#13 = (byte) atan2_8::angle#2 [phi:atan2_8::@13/atan2_8::@15->atan2_8::@14#1] -- register_copy 
@@ -3334,10 +3334,10 @@ atan2_8: {
   b14:
     // for( byte i: 0..CORDIC_ITERATIONS_8-1)
     // [46] (byte) atan2_8::i#1 ← ++ (byte) atan2_8::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [47] if((byte) atan2_8::i#1==(const byte) CORDIC_ITERATIONS_8#0-(byte) 1+(byte) 1) goto atan2_8::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_8-1+1
-    cmp i
+    cmp.z i
     beq b12
     // [28] phi from atan2_8::@14 to atan2_8::@10 [phi:atan2_8::@14->atan2_8::@10]
     // [28] phi (byte) atan2_8::angle#12 = (byte) atan2_8::angle#13 [phi:atan2_8::@14->atan2_8::@10#0] -- register_copy 
@@ -3351,32 +3351,32 @@ atan2_8: {
     // [48] (signed byte) atan2_8::xi#1 ← (signed byte) atan2_8::xi#3 + (signed byte) atan2_8::yd#0 -- vbsz1=vbsz1_plus_vbsyy 
     tya
     clc
-    adc xi
-    sta xi
+    adc.z xi
+    sta.z xi
     // yi -= xd
     // [49] (signed byte) atan2_8::yi#1 ← (signed byte) atan2_8::yi#3 - (signed byte) atan2_8::xd#0 -- vbsxx=vbsxx_minus_vbsz1 
     txa
     sec
-    sbc xd
+    sbc.z xd
     tax
     // angle += CORDIC_ATAN2_ANGLES_8[i]
     // [50] (byte) atan2_8::angle#2 ← (byte) atan2_8::angle#12 + *((const byte[CORDIC_ITERATIONS_8#0]) CORDIC_ATAN2_ANGLES_8#0 + (byte) atan2_8::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
-    lda angle
-    ldy i
+    lda.z angle
+    ldy.z i
     clc
     adc CORDIC_ATAN2_ANGLES_8,y
-    sta angle
+    sta.z angle
     jmp b14
     // atan2_8::@4
   b4:
     // [51] (signed byte~) atan2_8::xi#8 ← (signed byte) atan2_8::x#0 -- vbsz1=vbsz2 
-    lda x
-    sta xi
+    lda.z x
+    sta.z xi
     jmp b6
     // atan2_8::@1
   b1:
     // [52] (signed byte~) atan2_8::yi#11 ← (signed byte) atan2_8::y#0 -- vbsxx=vbsz1 
-    ldx y
+    ldx.z y
     jmp b3
 }
   // init_font_hex
@@ -3393,17 +3393,17 @@ init_font_hex: {
     // [54] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
     // [54] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [54] phi (byte*) init_font_hex::proto_hi#6 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     // [54] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET#0 [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
     // [54] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
     // [54] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
     // [54] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
@@ -3413,12 +3413,12 @@ init_font_hex: {
     // [55] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
     // [55] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta c1
+    sta.z c1
     // [55] phi (byte*) init_font_hex::proto_lo#4 = (const byte[]) FONT_HEX_PROTO#0 [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
     // [55] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     // [55] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
     // [55] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
@@ -3434,7 +3434,7 @@ init_font_hex: {
     // [57] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
     // [57] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta idx
+    sta.z idx
     // [57] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     // [57] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
@@ -3451,7 +3451,7 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     // proto_lo[i]<<1
     // [59] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
@@ -3460,14 +3460,14 @@ init_font_hex: {
     asl
     // proto_hi[i]<<4 | proto_lo[i]<<1
     // [60] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _0
+    ora.z _0
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
     // [61] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
     // [62] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // for( byte i: 0..4)
     // [63] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -3478,7 +3478,7 @@ init_font_hex: {
     // charset[idx++] = 0
     // [65] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     // charset[idx++] = 0;
     // [66] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
@@ -3490,43 +3490,43 @@ init_font_hex: {
     // [68] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     // charset += 8
     // [69] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
     // for( byte c: 0..15 )
     // [70] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
-    inc c1
+    inc.z c1
     // [71] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     // init_font_hex::@5
     // proto_hi += 5
     // [72] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
     // for( byte c: 0..15 )
     // [73] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [74] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     // init_font_hex::@return
     // }

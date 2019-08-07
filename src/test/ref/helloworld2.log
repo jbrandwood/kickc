@@ -289,9 +289,9 @@ main: {
   print2_from_main:
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0 [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
-    sta print2.at
+    sta.z print2.at
     lda #>screen
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -303,9 +303,9 @@ main: {
   print2_from_b1:
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
-    sta print2.at
+    sta.z print2.at
     lda #>screen+$50
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     jmp breturn
     // main::@return
@@ -325,16 +325,16 @@ print2: {
   b1_from_print2:
     // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // print2::@1
   b1:
     // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
-    ldy i
+    ldy.z i
     cmp main.hello,y
     bne b2
     jmp breturn
@@ -345,17 +345,17 @@ print2: {
     // print2::@2
   b2:
     // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
-    ldy i
+    ldy.z i
     lda main.hello,y
-    ldy j
+    ldy.z j
     sta (at),y
     // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    lda j
+    lda.z j
     clc
     adc #2
-    sta j
+    sta.z j
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
   b1_from_b2:
     // [10] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
@@ -418,9 +418,9 @@ main: {
   print2_from_main:
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0 [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
-    sta print2.at
+    sta.z print2.at
     lda #>screen
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -432,9 +432,9 @@ main: {
   print2_from_b1:
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
-    sta print2.at
+    sta.z print2.at
     lda #>screen+$50
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     jmp breturn
     // main::@return
@@ -453,7 +453,7 @@ print2: {
   b1_from_print2:
     // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -474,13 +474,13 @@ print2: {
   b2:
     // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
     lda main.hello,x
-    ldy j
+    ldy.z j
     sta (at),y
     // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    lda j
+    lda.z j
     clc
     adc #2
-    sta j
+    sta.z j
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
@@ -500,7 +500,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
-Replacing instruction lda j with TYA
+Replacing instruction lda.z j with TYA
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -576,9 +576,9 @@ main: {
     // [9] phi from main to print2 [phi:main->print2]
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0 [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
-    sta print2.at
+    sta.z print2.at
     lda #>screen
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -587,9 +587,9 @@ main: {
     // [9] phi from main::@1 to print2 [phi:main::@1->print2]
     // [9] phi (byte*) print2::at#4 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
-    sta print2.at
+    sta.z print2.at
     lda #>screen+$50
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     // main::@return
     // }
@@ -606,7 +606,7 @@ print2: {
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
     // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     tax
     // print2::@1
@@ -627,14 +627,14 @@ print2: {
     // at[j] = msg[i]
     // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
     lda main.hello,x
-    ldy j
+    ldy.z j
     sta (at),y
     // j += 2
     // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     tya
     clc
     adc #2
-    sta j
+    sta.z j
     // for(byte i=0; msg[i]; i++)
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx

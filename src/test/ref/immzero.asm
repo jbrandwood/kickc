@@ -6,15 +6,15 @@ main: {
     .label w = 2
     ldx #0
     txa
-    sta w
-    sta w+1
+    sta.z w
+    sta.z w+1
   b1:
     txa
     clc
-    adc w
-    sta w
+    adc.z w
+    sta.z w
     bcc !+
-    inc w+1
+    inc.z w+1
   !:
     inx
     cpx #$b

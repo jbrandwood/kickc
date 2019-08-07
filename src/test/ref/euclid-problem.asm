@@ -8,25 +8,25 @@ main: {
     .label a = 2
     ldx #2
     lda #$80
-    sta a
+    sta.z a
   b4:
     txa
     eor #$ff
     sec
-    adc a
-    sta a
+    adc.z a
+    sta.z a
   b1:
-    cpx a
+    cpx.z a
     bne b2
-    lda a
+    lda.z a
     sta SCREEN
     rts
   b2:
-    cpx a
+    cpx.z a
     bcc b4
     txa
     sec
-    sbc a
+    sbc.z a
     tax
     jmp b1
 }

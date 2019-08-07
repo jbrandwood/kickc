@@ -153,22 +153,22 @@ menu: {
     cpx #$10
     bne b1
     lda #<COLS
-    sta c
+    sta.z c
     lda #>COLS
-    sta c+1
+    sta.z c+1
   b3:
     lda #LIGHT_GREEN
     ldy #0
     sta (c),y
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
   // Char Colors
-    lda c+1
+    lda.z c+1
     cmp #>COLS+$3e8
     bne b3
-    lda c
+    lda.z c
     cmp #<COLS+$3e8
     bne b3
     // Screen colors
@@ -310,62 +310,62 @@ mode_8bppchunkybmm: {
     jsr dtvSetCpuBankSegment1
     ldx #PLANEB/$4000+1
     lda #0
-    sta y
+    sta.z y
     lda #<$4000
-    sta gfxb
+    sta.z gfxb
     lda #>$4000
-    sta gfxb+1
+    sta.z gfxb+1
   b3:
     lda #<0
-    sta x
-    sta x+1
+    sta.z x
+    sta.z x+1
   b4:
-    lda gfxb+1
+    lda.z gfxb+1
     cmp #>$8000
     bne b5
-    lda gfxb
+    lda.z gfxb
     cmp #<$8000
     bne b5
     txa
     jsr dtvSetCpuBankSegment1
     inx
     lda #<$4000
-    sta gfxb
+    sta.z gfxb
     lda #>$4000
-    sta gfxb+1
+    sta.z gfxb+1
   b5:
-    lda y
+    lda.z y
     clc
-    adc x
-    sta _26
+    adc.z x
+    sta.z _26
     lda #0
-    adc x+1
-    sta _26+1
-    lda _26
+    adc.z x+1
+    sta.z _26+1
+    lda.z _26
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
-    inc x
+    inc.z x
     bne !+
-    inc x+1
+    inc.z x+1
   !:
-    lda x+1
+    lda.z x+1
     cmp #>$140
     bne b4
-    lda x
+    lda.z x
     cmp #<$140
     bne b4
-    inc y
+    inc.z y
     lda #$c8
-    cmp y
+    cmp.z y
     bne b3
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -384,7 +384,7 @@ mode_ctrl: {
     rts
   b4:
     // Read the current control byte
-    ldx dtv_control
+    ldx.z dtv_control
     ldy #KEY_L
     jsr keyboard_key_pressed
     cmp #0
@@ -439,9 +439,9 @@ mode_ctrl: {
     beq b11
     ldx #0
   b11:
-    cpx dtv_control
+    cpx.z dtv_control
     beq b1
-    stx dtv_control
+    stx.z dtv_control
     stx DTV_CONTROL
     stx BORDERCOL
     jmp b1
@@ -455,14 +455,14 @@ keyboard_key_pressed: {
     .label colidx = 6
     tya
     and #7
-    sta colidx
+    sta.z colidx
     tya
     lsr
     lsr
     lsr
     tay
     jsr keyboard_matrix_read
-    ldy colidx
+    ldy.z colidx
     and keyboard_matrix_col_bitmask,y
     rts
 }
@@ -488,7 +488,7 @@ dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd
-    lda $ff
+    lda.z $ff
     .byte $32, $00
     rts
 }
@@ -555,96 +555,96 @@ mode_8bpppixelcell: {
     cpx #$10
     bne b1
     lda #<PLANEA
-    sta gfxa
+    sta.z gfxa
     lda #>PLANEA
-    sta gfxa+1
+    sta.z gfxa+1
     lda #0
-    sta ay
+    sta.z ay
   b2:
     ldx #0
   b3:
     lda #$f
-    and ay
+    and.z ay
     asl
     asl
     asl
     asl
-    sta _15
+    sta.z _15
     txa
     and #$f
-    ora _15
+    ora.z _15
     ldy #0
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
     inx
     cpx #$28
     bne b3
-    inc ay
+    inc.z ay
     lda #$19
-    cmp ay
+    cmp.z ay
     bne b2
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     lda #0
-    sta ch
-    sta col
+    sta.z ch
+    sta.z col
     lda #<PLANEB
-    sta gfxb
+    sta.z gfxb
     lda #>PLANEB
-    sta gfxb+1
+    sta.z gfxb+1
     lda #<CHARGEN
-    sta chargen
+    sta.z chargen
     lda #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
   b6:
     lda #0
-    sta cr
+    sta.z cr
   b7:
     ldy #0
     lda (chargen),y
-    sta bits
-    inc chargen
+    sta.z bits
+    inc.z chargen
     bne !+
-    inc chargen+1
+    inc.z chargen+1
   !:
     ldx #0
   b8:
     lda #$80
-    and bits
+    and.z bits
     cmp #0
     beq b4
-    lda col
+    lda.z col
     jmp b9
   b4:
     lda #0
   b9:
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
-    asl bits
-    inc col
+    asl.z bits
+    inc.z col
     inx
     cpx #8
     bne b8
-    inc cr
+    inc.z cr
     lda #8
-    cmp cr
+    cmp.z cr
     bne b7
-    inc ch
-    lda ch
+    inc.z ch
+    lda.z ch
     cmp #0
     bne b6
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -711,83 +711,83 @@ mode_sixsfred: {
     lda #0
     sta BORDERCOL
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     txa
     clc
-    adc cy
+    adc.z cy
     and #$f
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #<PLANEA
-    sta gfxa
+    sta.z gfxa
     lda #>PLANEA
-    sta gfxa+1
+    sta.z gfxa+1
     lda #0
-    sta ay
+    sta.z ay
   b6:
     ldx #0
   b7:
-    lda ay
+    lda.z ay
     lsr
     and #3
     tay
     lda row_bitmask,y
     ldy #0
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
     inx
     cpx #$28
     bne b7
-    inc ay
+    inc.z ay
     lda #$c8
-    cmp ay
+    cmp.z ay
     bne b6
     lda #0
-    sta by
+    sta.z by
     lda #<PLANEB
-    sta gfxb
+    sta.z gfxb
     lda #>PLANEB
-    sta gfxb+1
+    sta.z gfxb+1
   b9:
     ldx #0
   b10:
     lda #$1b
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
     inx
     cpx #$28
     bne b10
-    inc by
+    inc.z by
     lda #$c8
-    cmp by
+    cmp.z by
     bne b9
     lda #DTV_HIGHCOLOR|DTV_LINEAR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
@@ -864,99 +864,99 @@ mode_twoplanebitmap: {
     lda #$d4
     sta BGCOL2
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _17
+    sta.z _17
     txa
     and #$f
-    ora _17
+    ora.z _17
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #<PLANEA
-    sta gfxa
+    sta.z gfxa
     lda #>PLANEA
-    sta gfxa+1
+    sta.z gfxa+1
     lda #0
-    sta ay
+    sta.z ay
   b6:
     ldx #0
   b7:
     lda #4
-    and ay
+    and.z ay
     cmp #0
     beq b8
     lda #$ff
     ldy #0
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
   b9:
     inx
     cpx #$28
     bne b7
-    inc ay
+    inc.z ay
     lda #$c8
-    cmp ay
+    cmp.z ay
     bne b6
     lda #0
-    sta by
+    sta.z by
     lda #<PLANEB
-    sta gfxb
+    sta.z gfxb
     lda #>PLANEB
-    sta gfxb+1
+    sta.z gfxb+1
   b12:
     ldx #0
   b13:
     lda #$f
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
     inx
     cpx #$28
     bne b13
-    inc by
+    inc.z by
     lda #$c8
-    cmp by
+    cmp.z by
     bne b12
     lda #DTV_HIGHCOLOR|DTV_LINEAR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
   b8:
     lda #0
     tay
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
     jmp b9
 }
@@ -1024,11 +1024,11 @@ mode_sixsfred2: {
     lda #0
     sta BORDERCOL
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
@@ -1038,75 +1038,75 @@ mode_sixsfred2: {
     asl
     asl
     asl
-    sta _16
+    sta.z _16
     lda #3
-    and cy
-    ora _16
+    and.z cy
+    ora.z _16
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #<PLANEA
-    sta gfxa
+    sta.z gfxa
     lda #>PLANEA
-    sta gfxa+1
+    sta.z gfxa+1
     lda #0
-    sta ay
+    sta.z ay
   b6:
     ldx #0
   b7:
-    lda ay
+    lda.z ay
     lsr
     and #3
     tay
     lda row_bitmask,y
     ldy #0
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
     inx
     cpx #$28
     bne b7
-    inc ay
+    inc.z ay
     lda #$c8
-    cmp ay
+    cmp.z ay
     bne b6
     lda #0
-    sta by
+    sta.z by
     lda #<PLANEB
-    sta gfxb
+    sta.z gfxb
     lda #>PLANEB
-    sta gfxb+1
+    sta.z gfxb+1
   b9:
     ldx #0
   b10:
     lda #$1b
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
     inx
     cpx #$28
     bne b10
-    inc by
+    inc.z by
     lda #$c8
-    cmp by
+    cmp.z by
     bne b9
     lda #DTV_LINEAR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
@@ -1175,49 +1175,49 @@ mode_hicolmcchar: {
     lda #$58
     sta BGCOL3
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _27
+    sta.z _27
     txa
     and #$f
-    ora _27
+    ora.z _27
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #DTV_HIGHCOLOR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1286,49 +1286,49 @@ mode_hicolecmchar: {
     lda #$5c
     sta BGCOL4
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _27
+    sta.z _27
     txa
     and #$f
-    ora _27
+    ora.z _27
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #DTV_HIGHCOLOR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1386,49 +1386,49 @@ mode_hicolstdchar: {
     sta BGCOL
     sta BORDERCOL
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _26
+    sta.z _26
     txa
     and #$f
-    ora _26
+    ora.z _26
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #DTV_HIGHCOLOR
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1479,63 +1479,63 @@ mode_stdbitmap: {
     sta BGCOL
     sta BORDERCOL
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     txa
     clc
-    adc cy
+    adc.z cy
     and #$f
     tay
     tya
     eor #$ff
     clc
     adc #$f+1
-    sta col2
+    sta.z col2
     tya
     asl
     asl
     asl
     asl
-    ora col2
+    ora.z col2
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     jsr bitmap_init
     jsr bitmap_clear
     lda #0
-    sta l
+    sta.z l
   b8:
-    ldy l
+    ldy.z l
     lda lines_x,y
-    sta bitmap_line.x0
+    sta.z bitmap_line.x0
     ldx lines_x+1,y
     lda lines_y,y
-    sta bitmap_line.y0
+    sta.z bitmap_line.y0
     lda lines_y+1,y
-    sta bitmap_line.y1
+    sta.z bitmap_line.y1
     jsr bitmap_line
-    inc l
-    lda l
+    inc.z l
+    lda.z l
     cmp #lines_cnt
     bcc b8
     lda #0
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
@@ -1549,102 +1549,102 @@ bitmap_line: {
     .label y0 = 8
     .label y1 = 3
     txa
-    cmp x0
+    cmp.z x0
     beq !+
     bcs b1
   !:
     txa
     eor #$ff
     sec
-    adc x0
-    sta xd
-    lda y0
-    cmp y1
+    adc.z x0
+    sta.z xd
+    lda.z y0
+    cmp.z y1
     bcc b7
     sec
-    sbc y1
+    sbc.z y1
     tay
-    cpy xd
+    cpy.z xd
     bcc b8
-    lda y1
-    sta bitmap_line_ydxi.y
-    lda y0
-    sta bitmap_line_ydxi.y1
-    sty bitmap_line_ydxi.yd
+    lda.z y1
+    sta.z bitmap_line_ydxi.y
+    lda.z y0
+    sta.z bitmap_line_ydxi.y1
+    sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     rts
   b8:
-    stx bitmap_line_xdyi.x
-    lda y1
-    sta bitmap_line_xdyi.y
-    sty bitmap_line_xdyi.yd
+    stx.z bitmap_line_xdyi.x
+    lda.z y1
+    sta.z bitmap_line_xdyi.y
+    sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
   b7:
-    lda y1
+    lda.z y1
     sec
-    sbc y0
+    sbc.z y0
     tay
-    cpy xd
+    cpy.z xd
     bcc b9
-    lda y0
-    sta bitmap_line_ydxd.y
-    ldx x0
-    lda y1
-    sta bitmap_line_ydxd.y1
-    sty bitmap_line_ydxd.yd
+    lda.z y0
+    sta.z bitmap_line_ydxd.y
+    ldx.z x0
+    lda.z y1
+    sta.z bitmap_line_ydxd.y1
+    sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
   b9:
-    stx bitmap_line_xdyd.x
-    lda y1
-    sta bitmap_line_xdyd.y
-    sty bitmap_line_xdyd.yd
+    stx.z bitmap_line_xdyd.x
+    lda.z y1
+    sta.z bitmap_line_xdyd.y
+    sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   b1:
     txa
     sec
-    sbc x0
-    sta xd
-    lda y0
-    cmp y1
+    sbc.z x0
+    sta.z xd
+    lda.z y0
+    cmp.z y1
     bcc b11
     sec
-    sbc y1
+    sbc.z y1
     tay
-    cpy xd
+    cpy.z xd
     bcc b12
-    lda y1
-    sta bitmap_line_ydxd.y
-    sty bitmap_line_ydxd.yd
+    lda.z y1
+    sta.z bitmap_line_ydxd.y
+    sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
   b12:
-    lda x0
-    sta bitmap_line_xdyd.x
-    stx bitmap_line_xdyd.x1
-    sty bitmap_line_xdyd.yd
+    lda.z x0
+    sta.z bitmap_line_xdyd.x
+    stx.z bitmap_line_xdyd.x1
+    sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   b11:
-    lda y1
+    lda.z y1
     sec
-    sbc y0
+    sbc.z y0
     tay
-    cpy xd
+    cpy.z xd
     bcc b13
-    lda y0
-    sta bitmap_line_ydxi.y
-    ldx x0
-    sty bitmap_line_ydxi.yd
+    lda.z y0
+    sta.z bitmap_line_ydxi.y
+    ldx.z x0
+    sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     rts
   b13:
-    lda x0
-    sta bitmap_line_xdyi.x
-    stx bitmap_line_xdyi.x1
-    sty bitmap_line_xdyi.yd
+    lda.z x0
+    sta.z bitmap_line_xdyi.x
+    stx.z bitmap_line_xdyi.x1
+    sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
 }
@@ -1656,30 +1656,30 @@ bitmap_line_xdyi: {
     .label xd = 7
     .label yd = $d
     .label e = 3
-    lda yd
+    lda.z yd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldx x
-    ldy y
+    ldx.z x
+    ldy.z y
     jsr bitmap_plot
-    inc x
-    lda e
+    inc.z x
+    lda.z e
     clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
+    adc.z yd
+    sta.z e
+    lda.z xd
+    cmp.z e
     bcs b2
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     sec
-    sbc xd
-    sta e
+    sbc.z xd
+    sta.z e
   b2:
-    ldx x1
+    ldx.z x1
     inx
-    cpx x
+    cpx.z x
     bne b1
     rts
 }
@@ -1689,20 +1689,20 @@ bitmap_plot: {
     .label plotter_y = $b
     .label plotter = 9
     lda bitmap_plot_xhi,x
-    sta plotter_x+1
+    sta.z plotter_x+1
     lda bitmap_plot_xlo,x
-    sta plotter_x
+    sta.z plotter_x
     lda bitmap_plot_yhi,y
-    sta plotter_y+1
+    sta.z plotter_y+1
     lda bitmap_plot_ylo,y
-    sta plotter_y
-    lda plotter
+    sta.z plotter_y
+    lda.z plotter
     clc
-    adc plotter_y
-    sta plotter
-    lda plotter+1
-    adc plotter_y+1
-    sta plotter+1
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -1716,30 +1716,30 @@ bitmap_line_ydxi: {
     .label yd = $d
     .label xd = 7
     .label e = 6
-    lda xd
+    lda.z xd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
+    adc.z xd
+    sta.z e
+    lda.z yd
+    cmp.z e
     bcs b2
     inx
-    lda e
+    lda.z e
     sec
-    sbc yd
-    sta e
+    sbc.z yd
+    sta.z e
   b2:
-    lda y1
+    lda.z y1
     clc
     adc #1
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -1751,30 +1751,30 @@ bitmap_line_xdyd: {
     .label xd = 7
     .label yd = $d
     .label e = 3
-    lda yd
+    lda.z yd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldx x
-    ldy y
+    ldx.z x
+    ldy.z y
     jsr bitmap_plot
-    inc x
-    lda e
+    inc.z x
+    lda.z e
     clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
+    adc.z yd
+    sta.z e
+    lda.z xd
+    cmp.z e
     bcs b2
-    dec y
-    lda e
+    dec.z y
+    lda.z e
     sec
-    sbc xd
-    sta e
+    sbc.z xd
+    sta.z e
   b2:
-    ldx x1
+    ldx.z x1
     inx
-    cpx x
+    cpx.z x
     bne b1
     rts
 }
@@ -1785,30 +1785,30 @@ bitmap_line_ydxd: {
     .label yd = $d
     .label xd = 7
     .label e = 3
-    lda xd
+    lda.z xd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
+    adc.z xd
+    sta.z e
+    lda.z yd
+    cmp.z e
     bcs b2
     dex
-    lda e
+    lda.z e
     sec
-    sbc yd
-    sta e
+    sbc.z yd
+    sta.z e
   b2:
-    lda y1
+    lda.z y1
     clc
     adc #1
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -1817,27 +1817,27 @@ bitmap_clear: {
     .label bitmap = 9
     .label y = $e
     lda bitmap_plot_xlo
-    sta bitmap
+    sta.z bitmap
     lda bitmap_plot_xhi
-    sta bitmap+1
+    sta.z bitmap+1
     lda #0
-    sta y
+    sta.z y
   b1:
     ldx #0
   b2:
     lda #0
     tay
     sta (bitmap),y
-    inc bitmap
+    inc.z bitmap
     bne !+
-    inc bitmap+1
+    inc.z bitmap+1
   !:
     inx
     cpx #$c8
     bne b2
-    inc y
+    inc.z y
     lda #$28
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -1866,27 +1866,27 @@ bitmap_init: {
     cpx #0
     bne b1
     lda #<0
-    sta yoffs
-    sta yoffs+1
+    sta.z yoffs
+    sta.z yoffs+1
     tax
   b3:
     lda #7
-    sax _10
-    lda yoffs
-    ora _10
+    sax.z _10
+    lda.z yoffs
+    ora.z _10
     sta bitmap_plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0
@@ -1956,53 +1956,53 @@ mode_mcchar: {
     lda #BLUE
     sta BGCOL3
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     txa
     clc
-    adc cy
+    adc.z cy
     and #$f
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _29
+    sta.z _29
     txa
     and #$f
-    ora _29
+    ora.z _29
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #0
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -2069,53 +2069,53 @@ mode_ecmchar: {
     lda #6
     sta BGCOL4
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     txa
     clc
-    adc cy
+    adc.z cy
     and #$f
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _29
+    sta.z _29
     txa
     and #$f
-    ora _29
+    ora.z _29
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #0
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -2172,53 +2172,53 @@ mode_stdchar: {
     sta BGCOL
     sta BORDERCOL
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #<COLORS
-    sta col
+    sta.z col
     lda #>COLORS
-    sta col+1
+    sta.z col+1
     lda #0
-    sta cy
+    sta.z cy
   b3:
     ldx #0
   b4:
     txa
     clc
-    adc cy
+    adc.z cy
     and #$f
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _28
+    sta.z _28
     txa
     and #$f
-    ora _28
+    ora.z _28
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b4
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b3
     lda #0
-    sta dtv_control
+    sta.z dtv_control
     jsr mode_ctrl
     rts
 }
@@ -2228,17 +2228,17 @@ mode_stdchar: {
 print_str_lines: {
     .label str = $b
     lda #<menu.SCREEN
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>menu.SCREEN
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<menu.SCREEN
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>menu.SCREEN
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<MENU_TEXT
-    sta str
+    sta.z str
     lda #>MENU_TEXT
-    sta str+1
+    sta.z str+1
   b1:
     ldy #0
     lda (str),y
@@ -2248,26 +2248,26 @@ print_str_lines: {
   b2:
     ldy #0
     lda (str),y
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     cmp #0
     beq b3
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
   b3:
     cmp #0
     bne b2
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
 }
 // Print a newline
@@ -2275,17 +2275,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -2303,21 +2303,21 @@ memset: {
     .label end = str+num
     .label dst = 9
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

@@ -40,7 +40,7 @@
 bbegin:
   // Counts frames - updated by the IRQ
   lda #1
-  sta frame_cnt
+  sta.z frame_cnt
   jsr main
   rts
 main: {
@@ -57,61 +57,61 @@ main: {
     sta D018
     jsr init_irq
     lda #1
-    sta vy
-    sta vx
+    sta.z vy
+    sta.z vx
     lda #>1
-    sta vx+1
-    sta y
-    sta x
-    sta x+1
+    sta.z vx+1
+    sta.z y
+    sta.z x
+    sta.z x+1
   b2:
-    ldx y
+    ldx.z y
     jsr bitmap_plot
-    lda x
+    lda.z x
     clc
-    adc vx
-    sta x
-    lda x+1
-    adc vx+1
-    sta x+1
-    lda y
+    adc.z vx
+    sta.z x
+    lda.z x+1
+    adc.z vx+1
+    sta.z x+1
+    lda.z y
     clc
-    adc vy
-    sta y
-    lda x
+    adc.z vy
+    sta.z y
+    lda.z x
     cmp #<$13f
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>$13f
     beq b5
   !:
-    lda x
+    lda.z x
     bne b3
-    lda x+1
+    lda.z x+1
     bne b3
   b5:
     sec
     lda #0
-    sbc vx
-    sta vx
+    sbc.z vx
+    sta.z vx
     lda #0
-    sbc vx+1
-    sta vx+1
+    sbc.z vx+1
+    sta.z vx+1
   b3:
     lda #$c7
-    cmp y
+    cmp.z y
     beq b6
-    lda y
+    lda.z y
     cmp #0
     bne b4
   b6:
-    lda vy
+    lda.z vy
     eor #$ff
     clc
     adc #1
-    sta vy
+    sta.z vy
   b4:
-    ldx frame_cnt
+    ldx.z frame_cnt
     inc plots_per_frame,x
     jmp b2
 }
@@ -122,23 +122,23 @@ bitmap_plot: {
     .label plotter = 8
     .label x = 3
     lda bitmap_plot_yhi,x
-    sta plotter+1
+    sta.z plotter+1
     lda bitmap_plot_ylo,x
-    sta plotter
-    lda x
+    sta.z plotter
+    lda.z x
     and #<$fff8
-    sta _1
-    lda x+1
+    sta.z _1
+    lda.z x+1
     and #>$fff8
-    sta _1+1
-    lda plotter
+    sta.z _1+1
+    lda.z plotter
     clc
-    adc _1
-    sta plotter
-    lda plotter+1
-    adc _1+1
-    sta plotter+1
-    lda x
+    adc.z _1
+    sta.z plotter
+    lda.z plotter+1
+    adc.z _1+1
+    sta.z plotter+1
+    lda.z x
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -181,23 +181,23 @@ bitmap_clear: {
     .const col = WHITE*$10
     ldx #col
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$3e8
-    sta memset.num
+    sta.z memset.num
     lda #>$3e8
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     ldx #0
     lda #<BITMAP
-    sta memset.str
+    sta.z memset.str
     lda #>BITMAP
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$1f40
-    sta memset.num
+    sta.z memset.num
     lda #>$1f40
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     rts
 }
@@ -208,24 +208,24 @@ memset: {
     .label dst = 5
     .label num = 3
     .label str = 5
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
   breturn:
     rts
@@ -233,9 +233,9 @@ memset: {
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }
@@ -256,28 +256,28 @@ bitmap_init: {
     cpx #0
     bne b1
     lda #<BITMAP
-    sta yoffs
+    sta.z yoffs
     lda #>BITMAP
-    sta yoffs+1
+    sta.z yoffs+1
     ldx #0
   b3:
     lda #7
-    sax _7
-    lda yoffs
-    ora _7
+    sax.z _7
+    lda.z yoffs
+    ora.z _7
     sta bitmap_plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp _7
+    cmp.z _7
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0
@@ -290,9 +290,9 @@ irq: {
     lda #WHITE
     sta BGCOL
     lda #0
-    cmp frame_cnt
+    cmp.z frame_cnt
     beq b1
-    inc frame_cnt
+    inc.z frame_cnt
   b1:
     lda #BLACK
     sta BGCOL

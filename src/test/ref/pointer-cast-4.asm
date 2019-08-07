@@ -9,15 +9,15 @@ main: {
     ldx #0
   b1:
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     txa
     asl
     tay
-    lda _1
+    lda.z _1
     sta wscreen,y
-    lda _1+1
+    lda.z _1+1
     sta wscreen+1,y
     inx
     cpx #3

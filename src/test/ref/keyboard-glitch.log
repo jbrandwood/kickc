@@ -775,19 +775,19 @@ menu: {
   keyboard_key_pressed_from_b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_C
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_2
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_2
     jmp b8
     // menu::@8
   b8:
     // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_2
-    sta _0
+    lda.z keyboard_key_pressed.return_2
+    sta.z _0
     // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuz1_eq_0_then_la1 
-    lda _0
+    lda.z _0
     cmp #0
     beq b2_from_b8
     // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
@@ -812,19 +812,19 @@ menu: {
   keyboard_key_pressed_from_b2:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_I
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_3
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_3
     jmp b9
     // menu::@9
   b9:
     // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_3
-    sta _4
+    lda.z keyboard_key_pressed.return_3
+    sta.z _4
     // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuz1_eq_0_then_la1 
-    lda _4
+    lda.z _4
     cmp #0
     beq b3_from_b9
     jmp b6
@@ -846,19 +846,19 @@ menu: {
   keyboard_key_pressed_from_b3:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@3->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_E
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_4
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_4
     jmp b10
     // menu::@10
   b10:
     // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_4
-    sta _7
+    lda.z keyboard_key_pressed.return_4
+    sta.z _7
     // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
-    lda _7
+    lda.z _7
     cmp #0
     beq b4
     jmp b7
@@ -894,33 +894,33 @@ keyboard_key_pressed: {
     .label return_10 = $10
     // [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
-    and key
-    sta colidx
+    and.z key
+    sta.z colidx
     // [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
-    lda key
+    lda.z key
     lsr
     lsr
     lsr
-    sta rowidx
+    sta.z rowidx
     // [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
-    lda rowidx
-    sta keyboard_matrix_read.rowid
+    lda.z rowidx
+    sta.z keyboard_matrix_read.rowid
     // [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return
-    sta keyboard_matrix_read.return_2
+    lda.z keyboard_matrix_read.return
+    sta.z keyboard_matrix_read.return_2
     jmp b1
     // keyboard_key_pressed::@1
   b1:
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return_2
-    sta _2
+    lda.z keyboard_matrix_read.return_2
+    sta.z _2
     // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
-    lda _2
-    ldy colidx
+    lda.z _2
+    ldy.z colidx
     and keyboard_matrix_col_bitmask,y
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_key_pressed::@return
   breturn:
@@ -939,13 +939,13 @@ keyboard_matrix_read: {
     .label rowid = $b
     .label return_2 = $c
     // [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
-    ldy rowid
+    ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
     // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_matrix_read::@return
   breturn:
@@ -968,19 +968,19 @@ pressed: {
   keyboard_key_pressed_from_b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_SPACE
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_10
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_10
     jmp b2
     // pressed::@2
   b2:
     // [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_10
-    sta _0
+    lda.z keyboard_key_pressed.return_10
+    sta.z _0
     // [48] if((byte~) pressed::$0!=(byte) 0) goto pressed::@return -- vbuz1_neq_0_then_la1 
-    lda _0
+    lda.z _0
     cmp #0
     bne breturn
     jmp b1_from_b2

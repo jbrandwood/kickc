@@ -6,24 +6,24 @@ main: {
     .label j = 3
     .label i = 2
     lda #$64
-    sta i
+    sta.z i
   b1:
     lda #$64
-    sta j
+    sta.z j
   b2:
     jsr nest1
-    dec j
-    lda j
+    dec.z j
+    lda.z j
     bne b2
-    dec i
-    lda i
+    dec.z i
+    lda.z i
     bne b1
     rts
 }
 nest1: {
     .label i = 4
     lda #$64
-    sta i
+    sta.z i
   b1:
     lda #$64
   b2:
@@ -32,8 +32,8 @@ nest1: {
     sbc #1
     cmp #0
     bne b2
-    dec i
-    lda i
+    dec.z i
+    lda.z i
     bne b1
     rts
 }

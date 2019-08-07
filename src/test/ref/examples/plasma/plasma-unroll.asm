@@ -37,31 +37,31 @@ main: {
     sta BORDERCOL
     sta BGCOL
     lda #<COLS
-    sta col
+    sta.z col
     lda #>COLS
-    sta col+1
+    sta.z col+1
   b1:
     lda #BLACK
     ldy #0
     sta (col),y
-    inc col
+    inc.z col
     bne !+
-    inc col+1
+    inc.z col+1
   !:
-    lda col+1
+    lda.z col+1
     cmp #>COLS+$3e8+1
     bne b1
-    lda col
+    lda.z col
     cmp #<COLS+$3e8+1
     bne b1
     jsr makecharset
     lda #toD0181_return
     sta D018
     lda #0
-    sta c2B
-    sta c2A
-    sta c1B
-    sta c1A
+    sta.z c2B
+    sta.z c2A
+    sta.z c1B
+    sta.z c1A
   b4:
     jsr doplasma
     jmp b4
@@ -75,76 +75,76 @@ doplasma: {
     .label c2b = 8
     .label i1 = 6
     .label yprev = $e
-    lda c1A
-    sta c1a
-    lda c1B
-    sta c1b
+    lda.z c1A
+    sta.z c1a
+    lda.z c1B
+    sta.z c1b
     ldx #0
     txa
-    sta i
+    sta.z i
   b2:
-    ldy c1a
+    ldy.z c1a
     lda SINTABLE,y
-    ldy c1b
+    ldy.z c1b
     clc
     adc SINTABLE,y
-    sta yprev
+    sta.z yprev
     txa
     eor #$ff
     sec
-    adc yprev
-    ldy i
+    adc.z yprev
+    ldy.z i
     sta ybuf,y
-    lax c1a
+    lax.z c1a
     axs #-[4]
-    stx c1a
-    lax c1b
+    stx.z c1a
+    lax.z c1b
     axs #-[9]
-    stx c1b
-    inc i
+    stx.z c1b
+    inc.z i
   // Calculate ybuff as a bunch of differences
-    lda i
+    lda.z i
     cmp #$19
     bcs !b11+
     jmp b11
   !b11:
-    lax c1A
+    lax.z c1A
     axs #-[3]
-    stx c1A
-    lax c1B
+    stx.z c1A
+    lax.z c1B
     axs #5
-    stx c1B
-    lda c2A
-    sta c2a
-    lda c2B
-    sta c2b
+    stx.z c1B
+    lda.z c2A
+    sta.z c2a
+    lda.z c2B
+    sta.z c2b
     lda #0
-    sta i1
+    sta.z i1
   b5:
-    ldy c2a
+    ldy.z c2a
     lda SINTABLE,y
-    ldy c2b
+    ldy.z c2b
     clc
     adc SINTABLE,y
-    ldy i1
+    ldy.z i1
     sta xbuf,y
-    lax c2a
+    lax.z c2a
     axs #-[3]
-    stx c2a
-    lax c2b
+    stx.z c2a
+    lax.z c2b
     axs #-[7]
-    stx c2b
-    inc i1
-    lda i1
+    stx.z c2b
+    inc.z i1
+    lda.z i1
     cmp #$28
     bcc b5
-    lda c2A
+    lda.z c2A
     clc
     adc #2
-    sta c2A
-    lax c2B
+    sta.z c2A
+    lax.z c2B
     axs #3
-    stx c2B
+    stx.z c2B
     ldx #0
   b8:
     // Find the first value on the row
@@ -231,7 +231,7 @@ doplasma: {
   !b8:
     rts
   b11:
-    ldx yprev
+    ldx.z yprev
     jmp b2
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
@@ -248,28 +248,28 @@ makecharset: {
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>print_line_cursor
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<0
-    sta c
-    sta c+1
+    sta.z c
+    sta.z c+1
   b2:
-    lda c
+    lda.z c
     tay
     lda SINTABLE,y
-    sta s
+    sta.z s
     lda #0
-    sta i
+    sta.z i
   b4:
     ldy #0
     ldx #0
   b7:
     jsr sid_rnd
     and #$ff
-    sta _7
-    lda s
-    cmp _7
+    sta.z _7
+    lda.z s
+    cmp.z _7
     bcs b9
     tya
     ora bittab,x
@@ -278,52 +278,52 @@ makecharset: {
     inx
     cpx #8
     bcc b7
-    lda c
+    lda.z c
     asl
-    sta _10
-    lda c+1
+    sta.z _10
+    lda.z c+1
     rol
-    sta _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    lda i
+    sta.z _10+1
+    asl.z _10
+    rol.z _10+1
+    asl.z _10
+    rol.z _10+1
+    lda.z i
     clc
-    adc _11
-    sta _11
+    adc.z _11
+    sta.z _11
     bcc !+
-    inc _11+1
+    inc.z _11+1
   !:
     clc
-    lda _16
+    lda.z _16
     adc #<CHARSET
-    sta _16
-    lda _16+1
+    sta.z _16
+    lda.z _16+1
     adc #>CHARSET
-    sta _16+1
+    sta.z _16+1
     tya
     ldy #0
     sta (_16),y
-    inc i
-    lda i
+    inc.z i
+    lda.z i
     cmp #8
     bcc b4
-    lda c
+    lda.z c
     and #7
     cmp #0
     bne b12
     jsr print_char
   b12:
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
-    lda c+1
+    lda.z c+1
     cmp #>$100
     bcc b2
     bne !+
-    lda c
+    lda.z c
     cmp #<$100
     bcc b2
   !:
@@ -336,9 +336,9 @@ print_char: {
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -361,21 +361,21 @@ memset: {
     .label end = str+num
     .label dst = $c
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

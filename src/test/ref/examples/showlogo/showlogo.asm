@@ -32,23 +32,23 @@ main: {
     sta D016
     ldx #BLACK
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     ldx #WHITE|8
     lda #<COLS
-    sta memset.str
+    sta.z memset.str
     lda #>COLS
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     ldx #0
   b1:
@@ -69,24 +69,24 @@ memset: {
     .label dst = 4
     .label num = 2
     .label str = 4
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
   breturn:
     rts
@@ -94,9 +94,9 @@ memset: {
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }

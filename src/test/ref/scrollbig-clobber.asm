@@ -7,9 +7,9 @@ main: {
     .label SCREEN = $400
     ldx #0
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b1:
     jsr next_char
     tya
@@ -28,13 +28,13 @@ next_char: {
     bne b1
     ldy TEXT
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b1:
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     rts
 }

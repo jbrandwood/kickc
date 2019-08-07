@@ -12,91 +12,91 @@ main: {
     sta SCREEN,x
     txa
     asl
-    sta _31
+    sta.z _31
     sta SCREEN+1*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     sta SCREEN+2*$28,x
     txa
     asl
     asl
-    sta _33
+    sta.z _33
     sta SCREEN+3*$28,x
     txa
     clc
-    adc _33
+    adc.z _33
     sta SCREEN+4*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
     sta SCREEN+5*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta SCREEN+6*$28,x
     txa
     asl
     asl
     asl
     sta SCREEN+7*$28,x
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta SCREEN+8*$28,x
     txa
     clc
-    adc _33
+    adc.z _33
     asl
     sta SCREEN+9*$28,x
     txa
     clc
-    adc _33
+    adc.z _33
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta SCREEN+$a*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
     asl
     sta SCREEN+$b*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta SCREEN+$c*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     asl
     sta SCREEN+$d*$28,x
     txa
     clc
-    adc _31
+    adc.z _31
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta SCREEN+$e*$28,x
     inx
     cpx #$12

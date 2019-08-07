@@ -8,7 +8,7 @@
   .label col1 = 3
 bbegin:
   lda #0
-  sta col1
+  sta.z col1
   jsr main
   rts
 main: {
@@ -21,20 +21,20 @@ main: {
     ldx #0
   b1:
     lda #0
-    sta y
+    sta.z y
   b2:
     ldy #0
   b3:
     tya
     clc
-    adc y
+    adc.z y
     sta SCREEN,x
     iny
     cpy #$b
     bne b3
-    inc y
+    inc.z y
     lda #$b
-    cmp y
+    cmp.z y
     bne b2
     inx
     cpx #$b
@@ -46,8 +46,8 @@ irq: {
     lda #1
     sta IRQ_STATUS
     lda $dc0d
-    lda col1
+    lda.z col1
     sta SCREEN+$28
-    inc col1
+    inc.z col1
     jmp $ea81
 }

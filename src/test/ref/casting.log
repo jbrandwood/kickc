@@ -398,7 +398,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta b
+    sta.z b
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -409,27 +409,27 @@ main: {
     // [6] (byte) main::b2#0 ← (byte) $c8 - (byte) main::b#2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$c8
     sec
-    sbc b
-    sta b2
+    sbc.z b
+    sta.z b2
     // [7] *((const byte*) SCREEN#0 + (byte) main::b#2) ← (byte) main::b2#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda b2
-    ldy b
+    lda.z b2
+    ldy.z b
     sta SCREEN,y
     // [8] (signed byte) main::sb#0 ← - (signed byte)(byte) main::b#2 -- vbsz1=_neg_vbsz2 
-    lda b
+    lda.z b
     eor #$ff
     clc
     adc #1
-    sta sb
+    sta.z sb
     // [9] *((const byte*) SCREEN2#0 + (byte) main::b#2) ← (byte)(signed byte) main::sb#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda sb
-    ldy b
+    lda.z sb
+    ldy.z b
     sta SCREEN2,y
     // [10] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
-    inc b
+    inc.z b
     // [11] if((byte) main::b#1!=(byte) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
-    cmp b
+    cmp.z b
     bne b1_from_b1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -457,7 +457,7 @@ w: {
   b1_from_w:
     // [16] phi (byte) w::i#2 = (byte) 0 [phi:w->w::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [16] phi from w::@1 to w::@1 [phi:w::@1->w::@1]
   b1_from_b1:
@@ -466,22 +466,22 @@ w: {
     // w::@1
   b1:
     // [17] (byte) w::b2#0 ← (byte)(number) $578-(number) $546 + (byte) w::i#2 -- vbuz1=vbuc1_plus_vbuz2 
-    lax i
+    lax.z i
     axs #-[$578-$546]
-    stx b2
+    stx.z b2
     // [18] *((const byte*) SCREEN3#0 + (byte) w::i#2) ← (const byte) w::b#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #b
-    ldy i
+    ldy.z i
     sta SCREEN3,y
     // [19] *((const byte*) SCREEN4#0 + (byte) w::i#2) ← (byte) w::b2#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda b2
-    ldy i
+    lda.z b2
+    ldy.z i
     sta SCREEN4,y
     // [20] (byte) w::i#1 ← ++ (byte) w::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) w::i#1!=(byte) $b) goto w::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // w::@return

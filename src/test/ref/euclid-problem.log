@@ -260,10 +260,10 @@ main: {
   b4_from_main:
     // [5] phi (byte) main::b#10 = (byte) 2 [phi:main->main::@4#0] -- vbuz1=vbuc1 
     lda #2
-    sta b
+    sta.z b
     // [5] phi (byte) main::a#13 = (byte) $80 [phi:main->main::@4#1] -- vbuz1=vbuc1 
     lda #$80
-    sta a
+    sta.z a
     jmp b4
     // [5] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
@@ -273,10 +273,10 @@ main: {
     // main::@4
   b4:
     // [6] (byte) main::a#1 ← (byte) main::a#13 - (byte) main::b#10 -- vbuz1=vbuz1_minus_vbuz2 
-    lda a
+    lda.z a
     sec
-    sbc b
-    sta a
+    sbc.z b
+    sta.z a
     // [7] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
   b1_from_b4:
   b1_from_b5:
@@ -285,14 +285,14 @@ main: {
     // main::@1
   b1:
     // [8] if((byte) main::a#1!=(byte) main::b#11) goto main::@2 -- vbuz1_neq_vbuz2_then_la1 
-    lda a
-    cmp b
+    lda.z a
+    cmp.z b
     bne b2
     jmp b3
     // main::@3
   b3:
     // [9] *((const byte*) SCREEN#0) ← (byte) main::a#1 -- _deref_pbuc1=vbuz1 
-    lda a
+    lda.z a
     sta SCREEN
     jmp breturn
     // main::@return
@@ -302,17 +302,17 @@ main: {
     // main::@2
   b2:
     // [11] if((byte) main::a#1>(byte) main::b#11) goto main::@4 -- vbuz1_gt_vbuz2_then_la1 
-    lda b
-    cmp a
+    lda.z b
+    cmp.z a
     bcc b4_from_b2
     jmp b5
     // main::@5
   b5:
     // [12] (byte) main::b#1 ← (byte) main::b#11 - (byte) main::a#1 -- vbuz1=vbuz1_minus_vbuz2 
-    lda b
+    lda.z b
     sec
-    sbc a
-    sta b
+    sbc.z a
+    sta.z b
     jmp b1_from_b5
 }
   // File Data
@@ -371,7 +371,7 @@ main: {
     ldx #2
     // [5] phi (byte) main::a#13 = (byte) $80 [phi:main->main::@4#1] -- vbuz1=vbuc1 
     lda #$80
-    sta a
+    sta.z a
     jmp b4
     // [5] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   b4_from_b2:
@@ -384,8 +384,8 @@ main: {
     txa
     eor #$ff
     sec
-    adc a
-    sta a
+    adc.z a
+    sta.z a
     // [7] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
   b1_from_b4:
   b1_from_b5:
@@ -394,13 +394,13 @@ main: {
     // main::@1
   b1:
     // [8] if((byte) main::a#1!=(byte) main::b#11) goto main::@2 -- vbuz1_neq_vbuxx_then_la1 
-    cpx a
+    cpx.z a
     bne b2
     jmp b3
     // main::@3
   b3:
     // [9] *((const byte*) SCREEN#0) ← (byte) main::a#1 -- _deref_pbuc1=vbuz1 
-    lda a
+    lda.z a
     sta SCREEN
     jmp breturn
     // main::@return
@@ -410,7 +410,7 @@ main: {
     // main::@2
   b2:
     // [11] if((byte) main::a#1>(byte) main::b#11) goto main::@4 -- vbuz1_gt_vbuxx_then_la1 
-    cpx a
+    cpx.z a
     bcc b4_from_b2
     jmp b5
     // main::@5
@@ -418,7 +418,7 @@ main: {
     // [12] (byte) main::b#1 ← (byte) main::b#11 - (byte) main::a#1 -- vbuxx=vbuxx_minus_vbuz1 
     txa
     sec
-    sbc a
+    sbc.z a
     tax
     jmp b1_from_b5
 }
@@ -509,7 +509,7 @@ main: {
     ldx #2
     // [5] phi (byte) main::a#13 = (byte) $80 [phi:main->main::@4#1] -- vbuz1=vbuc1 
     lda #$80
-    sta a
+    sta.z a
     // [5] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
     // [5] phi (byte) main::b#10 = (byte) main::b#11 [phi:main::@2->main::@4#0] -- register_copy 
     // [5] phi (byte) main::a#13 = (byte) main::a#1 [phi:main::@2->main::@4#1] -- register_copy 
@@ -520,20 +520,20 @@ main: {
     txa
     eor #$ff
     sec
-    adc a
-    sta a
+    adc.z a
+    sta.z a
     // [7] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
     // [7] phi (byte) main::b#11 = (byte) main::b#10 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
     // main::@1
   b1:
     // while (a!=b)
     // [8] if((byte) main::a#1!=(byte) main::b#11) goto main::@2 -- vbuz1_neq_vbuxx_then_la1 
-    cpx a
+    cpx.z a
     bne b2
     // main::@3
     // *SCREEN = a
     // [9] *((const byte*) SCREEN#0) ← (byte) main::a#1 -- _deref_pbuc1=vbuz1 
-    lda a
+    lda.z a
     sta SCREEN
     // main::@return
     // }
@@ -543,14 +543,14 @@ main: {
   b2:
     // if(a>b)
     // [11] if((byte) main::a#1>(byte) main::b#11) goto main::@4 -- vbuz1_gt_vbuxx_then_la1 
-    cpx a
+    cpx.z a
     bcc b4
     // main::@5
     // b = b-a
     // [12] (byte) main::b#1 ← (byte) main::b#11 - (byte) main::a#1 -- vbuxx=vbuxx_minus_vbuz1 
     txa
     sec
-    sbc a
+    sbc.z a
     tax
     jmp b1
 }

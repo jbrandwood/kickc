@@ -194,12 +194,12 @@ main: {
   b1_from_main:
     // [5] phi (signed word) main::sw#2 = (signed word) $1234 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$1234
-    sta sw
+    sta.z sw
     lda #>$1234
-    sta sw+1
+    sta.z sw+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -209,35 +209,35 @@ main: {
     // main::@1
   b1:
     // [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 -- vwsz1=vwsz1_plus_vbsz2 
-    lda i
-    sta $fe
+    lda.z i
+    sta.z $fe
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta $ff
+    sta.z $ff
     clc
-    lda sw
-    adc $fe
-    sta sw
-    lda sw+1
-    adc $ff
-    sta sw+1
+    lda.z sw
+    adc.z $fe
+    sta.z sw
+    lda.z sw+1
+    adc.z $ff
+    sta.z sw+1
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _2
+    sta.z _2
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuz1=vwsz2 
-    ldy _2
-    lda sw
+    ldy.z _2
+    lda.z sw
     sta screen,y
-    lda sw+1
+    lda.z sw+1
     sta screen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // main::@return
@@ -299,9 +299,9 @@ main: {
   b1_from_main:
     // [5] phi (signed word) main::sw#2 = (signed word) $1234 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$1234
-    sta sw
+    sta.z sw
     lda #>$1234
-    sta sw+1
+    sta.z sw+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -314,27 +314,27 @@ main: {
   b1:
     // [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
-    sta $fe
+    sta.z $fe
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta $ff
+    sta.z $ff
     clc
-    lda sw
-    adc $fe
-    sta sw
-    lda sw+1
-    adc $ff
-    sta sw+1
+    lda.z sw
+    adc.z $fe
+    sta.z sw
+    lda.z sw+1
+    adc.z $ff
+    sta.z sw+1
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
-    lda sw
+    lda.z sw
     sta screen,y
-    lda sw+1
+    lda.z sw+1
     sta screen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -420,9 +420,9 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (signed word) main::sw#2 = (signed word) $1234 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$1234
-    sta sw
+    sta.z sw
     lda #>$1234
-    sta sw+1
+    sta.z sw+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -433,28 +433,28 @@ main: {
     // sw += (signed byte)i
     // [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 -- vwsz1=vwsz1_plus_vbsxx 
     txa
-    sta $fe
+    sta.z $fe
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta $ff
+    sta.z $ff
     clc
-    lda sw
-    adc $fe
-    sta sw
-    lda sw+1
-    adc $ff
-    sta sw+1
+    lda.z sw
+    adc.z $fe
+    sta.z sw
+    lda.z sw+1
+    adc.z $ff
+    sta.z sw+1
     // screen[i] = sw
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
-    lda sw
+    lda.z sw
     sta screen,y
-    lda sw+1
+    lda.z sw+1
     sta screen+1,y
     // for( byte i: 0..10)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

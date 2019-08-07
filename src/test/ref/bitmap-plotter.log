@@ -1167,7 +1167,7 @@ plots: {
   b2_from_plots:
     // [16] phi (byte) plots::i#5 = (byte) 0 [phi:plots->plots::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b2
     // [16] phi from plots::@1 to plots::@2 [phi:plots::@1->plots::@2]
   b2_from_b1:
@@ -1176,25 +1176,25 @@ plots: {
     // plots::@2
   b2:
     // [17] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda plots_x,y
-    sta plot.x
+    sta.z plot.x
     // [18] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda plots_y,y
-    sta plot.y
+    sta.z plot.y
     // [19] call plot 
     jsr plot
     jmp b3
     // plots::@3
   b3:
     // [20] (byte) plots::i#1 ← ++ (byte) plots::i#5 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b1
     // plots::@1
   b1:
     // [21] if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #plots_cnt
     bcc b2_from_b1
     jmp breturn
@@ -1219,57 +1219,57 @@ plot: {
     .label plotter_y_2 = $18
     .label plotter = $1a
     // [23] (byte~) plot::$6 ← *((const byte[$100]) plot_xhi#0 + (byte) plot::x#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy x
+    ldy.z x
     lda plot_xhi,y
-    sta _6
+    sta.z _6
     // [24] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuz2 
-    lda _6
-    sta plotter_x+1
+    lda.z _6
+    sta.z plotter_x+1
     lda #<0
-    sta plotter_x
+    sta.z plotter_x
     // [25] (byte~) plot::$7 ← *((const byte[$100]) plot_xlo#0 + (byte) plot::x#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy x
+    ldy.z x
     lda plot_xlo,y
-    sta _7
+    sta.z _7
     // [26] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz2_setlo_vbuz3 
-    lda _7
-    sta plotter_x_2
-    lda plotter_x+1
-    sta plotter_x_2+1
+    lda.z _7
+    sta.z plotter_x_2
+    lda.z plotter_x+1
+    sta.z plotter_x_2+1
     // [27] (byte~) plot::$8 ← *((const byte[$100]) plot_yhi#0 + (byte) plot::y#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy y
+    ldy.z y
     lda plot_yhi,y
-    sta _8
+    sta.z _8
     // [28] (word) plot::plotter_y#1 ← (byte) 0 hi= (byte~) plot::$8 -- vwuz1=vbuc1_sethi_vbuz2 
-    lda _8
-    sta plotter_y+1
+    lda.z _8
+    sta.z plotter_y+1
     lda #<0
-    sta plotter_y
+    sta.z plotter_y
     // [29] (byte~) plot::$9 ← *((const byte[$100]) plot_ylo#0 + (byte) plot::y#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy y
+    ldy.z y
     lda plot_ylo,y
-    sta _9
+    sta.z _9
     // [30] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz2_setlo_vbuz3 
-    lda _9
-    sta plotter_y_2
-    lda plotter_y+1
-    sta plotter_y_2+1
+    lda.z _9
+    sta.z plotter_y_2
+    lda.z plotter_y+1
+    sta.z plotter_y_2+1
     // [31] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz2_plus_vwuz3 
-    lda plotter_x_2
+    lda.z plotter_x_2
     clc
-    adc plotter_y_2
-    sta plotter
-    lda plotter_x_2+1
-    adc plotter_y_2+1
-    sta plotter+1
+    adc.z plotter_y_2
+    sta.z plotter
+    lda.z plotter_x_2+1
+    adc.z plotter_y_2+1
+    sta.z plotter+1
     // [32] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[$100]) plot_bit#0 + (byte) plot::x#0) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
     ldy #0
     lda (plotter),y
-    ldy x
+    ldy.z x
     ora plot_bit,y
-    sta _5
+    sta.z _5
     // [33] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuz2 
-    lda _5
+    lda.z _5
     ldy #0
     sta (plotter),y
     jmp breturn
@@ -1293,10 +1293,10 @@ init_plot_tables: {
   b1_from_init_plot_tables:
     // [36] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuz1=vbuc1 
     lda #$80
-    sta bits
+    sta.z bits
     // [36] phi (byte) init_plot_tables::x#2 = (byte) 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b1
     // [36] phi from init_plot_tables::@2 to init_plot_tables::@1 [phi:init_plot_tables::@2->init_plot_tables::@1]
   b1_from_b2:
@@ -1307,31 +1307,31 @@ init_plot_tables: {
   b1:
     // [37] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8 -- vbuz1=vbuz2_band_vbuc1 
     lda #$f8
-    and x
-    sta _0
+    and.z x
+    sta.z _0
     // [38] *((const byte[$100]) plot_xlo#0 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _0
-    ldy x
+    lda.z _0
+    ldy.z x
     sta plot_xlo,y
     // [39] *((const byte[$100]) plot_xhi#0 + (byte) init_plot_tables::x#2) ← >(const byte*) BITMAP#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #>BITMAP
-    ldy x
+    ldy.z x
     sta plot_xhi,y
     // [40] *((const byte[$100]) plot_bit#0 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda bits
-    ldy x
+    lda.z bits
+    ldy.z x
     sta plot_bit,y
     // [41] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr bits
+    lsr.z bits
     // [42] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@6 -- vbuz1_neq_0_then_la1 
-    lda bits
+    lda.z bits
     cmp #0
     bne b6_from_b1
     // [44] phi from init_plot_tables::@1 to init_plot_tables::@2 [phi:init_plot_tables::@1->init_plot_tables::@2]
   b2_from_b1:
     // [44] phi (byte) init_plot_tables::bits#4 = (byte) $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuz1=vbuc1 
     lda #$80
-    sta bits
+    sta.z bits
     jmp b2
     // [43] phi from init_plot_tables::@1 to init_plot_tables::@6 [phi:init_plot_tables::@1->init_plot_tables::@6]
   b6_from_b1:
@@ -1345,21 +1345,21 @@ init_plot_tables: {
     // init_plot_tables::@2
   b2:
     // [45] (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [46] if((byte) init_plot_tables::x#1!=(byte) 0) goto init_plot_tables::@1 -- vbuz1_neq_0_then_la1 
-    lda x
+    lda.z x
     cmp #0
     bne b1_from_b2
     // [47] phi from init_plot_tables::@2 to init_plot_tables::@3 [phi:init_plot_tables::@2->init_plot_tables::@3]
   b3_from_b2:
     // [47] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
     lda #<0
-    sta yoffs
+    sta.z yoffs
     lda #>0
-    sta yoffs+1
+    sta.z yoffs+1
     // [47] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b3
     // [47] phi from init_plot_tables::@4 to init_plot_tables::@3 [phi:init_plot_tables::@4->init_plot_tables::@3]
   b3_from_b4:
@@ -1370,41 +1370,41 @@ init_plot_tables: {
   b3:
     // [48] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
-    and y
-    sta _10
+    and.z y
+    sta.z _10
     // [49] (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs#2 -- vbuz1=_lo_pbuz2 
-    lda yoffs
-    sta _7
+    lda.z yoffs
+    sta.z _7
     // [50] (byte~) init_plot_tables::$8 ← (byte~) init_plot_tables::$10 | (byte~) init_plot_tables::$7 -- vbuz1=vbuz2_bor_vbuz3 
-    lda _10
-    ora _7
-    sta _8
+    lda.z _10
+    ora.z _7
+    sta.z _8
     // [51] *((const byte[$100]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _8
-    ldy y
+    lda.z _8
+    ldy.z y
     sta plot_ylo,y
     // [52] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 -- vbuz1=_hi_pbuz2 
-    lda yoffs+1
-    sta _9
+    lda.z yoffs+1
+    sta.z _9
     // [53] *((const byte[$100]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _9
-    ldy y
+    lda.z _9
+    ldy.z y
     sta plot_yhi,y
     // [54] if((byte~) init_plot_tables::$10!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4_from_b3
     jmp b5
     // init_plot_tables::@5
   b5:
     // [55] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
     // [56] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
   b4_from_b3:
   b4_from_b5:
@@ -1413,9 +1413,9 @@ init_plot_tables: {
     // init_plot_tables::@4
   b4:
     // [57] (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [58] if((byte) init_plot_tables::y#1!=(byte) 0) goto init_plot_tables::@3 -- vbuz1_neq_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bne b3_from_b4
     jmp breturn
@@ -1432,9 +1432,9 @@ init_screen: {
   b2_from_init_screen:
     // [61] phi (byte*) init_screen::b#4 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@2#0] -- pbuz1=pbuc1 
     lda #<BITMAP
-    sta b
+    sta.z b
     lda #>BITMAP
-    sta b+1
+    sta.z b+1
     jmp b2
     // [61] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
   b2_from_b1:
@@ -1447,27 +1447,27 @@ init_screen: {
     ldy #0
     sta (b),y
     // [63] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#4 -- pbuz1=_inc_pbuz1 
-    inc b
+    inc.z b
     bne !+
-    inc b+1
+    inc.z b+1
   !:
     jmp b1
     // init_screen::@1
   b1:
     // [64] if((byte*) init_screen::b#1!=(const byte*) BITMAP#0+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda b+1
+    lda.z b+1
     cmp #>BITMAP+$2000
     bne b2_from_b1
-    lda b
+    lda.z b
     cmp #<BITMAP+$2000
     bne b2_from_b1
     // [65] phi from init_screen::@1 to init_screen::@4 [phi:init_screen::@1->init_screen::@4]
   b4_from_b1:
     // [65] phi (byte*) init_screen::c#4 = (const byte*) SCREEN#0 [phi:init_screen::@1->init_screen::@4#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta c
+    sta.z c
     lda #>SCREEN
-    sta c+1
+    sta.z c+1
     jmp b4
     // [65] phi from init_screen::@3 to init_screen::@4 [phi:init_screen::@3->init_screen::@4]
   b4_from_b3:
@@ -1480,18 +1480,18 @@ init_screen: {
     ldy #0
     sta (c),y
     // [67] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#4 -- pbuz1=_inc_pbuz1 
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
     jmp b3
     // init_screen::@3
   b3:
     // [68] if((byte*) init_screen::c#1!=(const byte*) SCREEN#0+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
-    lda c+1
+    lda.z c+1
     cmp #>SCREEN+$400
     bne b4_from_b3
-    lda c
+    lda.z c
     cmp #<SCREEN+$400
     bne b4_from_b3
     jmp breturn
@@ -1722,10 +1722,10 @@ plots: {
   b2:
     // [17] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_x,x
-    sta plot.x
+    sta.z plot.x
     // [18] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
-    sta plot.y
+    sta.z plot.y
     // [19] call plot 
     jsr plot
     jmp b3
@@ -1754,41 +1754,41 @@ plot: {
     .label plotter_y = 5
     .label plotter = 3
     // [23] (byte~) plot::$6 ← *((const byte[$100]) plot_xhi#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy x
+    ldy.z x
     lda plot_xhi,y
     // [24] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
-    sta plotter_x+1
+    sta.z plotter_x+1
     lda #<0
-    sta plotter_x
+    sta.z plotter_x
     // [25] (byte~) plot::$7 ← *((const byte[$100]) plot_xlo#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy x
+    ldy.z x
     lda plot_xlo,y
     // [26] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
-    sta plotter_x
+    sta.z plotter_x
     // [27] (byte~) plot::$8 ← *((const byte[$100]) plot_yhi#0 + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy y
+    ldy.z y
     lda plot_yhi,y
     // [28] (word) plot::plotter_y#1 ← (byte) 0 hi= (byte~) plot::$8 -- vwuz1=vbuc1_sethi_vbuaa 
-    sta plotter_y+1
+    sta.z plotter_y+1
     lda #<0
-    sta plotter_y
+    sta.z plotter_y
     // [29] (byte~) plot::$9 ← *((const byte[$100]) plot_ylo#0 + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy y
+    ldy.z y
     lda plot_ylo,y
     // [30] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
-    sta plotter_y
+    sta.z plotter_y
     // [31] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
-    lda plotter
+    lda.z plotter
     clc
-    adc plotter_y
-    sta plotter
-    lda plotter+1
-    adc plotter_y+1
-    sta plotter+1
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
     // [32] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[$100]) plot_bit#0 + (byte) plot::x#0) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter),y
-    ldy x
+    ldy.z x
     ora plot_bit,y
     // [33] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -1860,9 +1860,9 @@ init_plot_tables: {
   b3_from_b2:
     // [47] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
     lda #<0
-    sta yoffs
+    sta.z yoffs
     lda #>0
-    sta yoffs+1
+    sta.z yoffs+1
     // [47] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
@@ -1875,32 +1875,32 @@ init_plot_tables: {
   b3:
     // [48] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax _10
+    sax.z _10
     // [49] (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
-    lda yoffs
+    lda.z yoffs
     // [50] (byte~) init_plot_tables::$8 ← (byte~) init_plot_tables::$10 | (byte~) init_plot_tables::$7 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _10
+    ora.z _10
     // [51] *((const byte[$100]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_ylo,x
     // [52] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
-    lda yoffs+1
+    lda.z yoffs+1
     // [53] *((const byte[$100]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_yhi,x
     // [54] if((byte~) init_plot_tables::$10!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4_from_b3
     jmp b5
     // init_plot_tables::@5
   b5:
     // [55] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
     // [56] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
   b4_from_b3:
   b4_from_b5:
@@ -1927,9 +1927,9 @@ init_screen: {
   b2_from_init_screen:
     // [61] phi (byte*) init_screen::b#4 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@2#0] -- pbuz1=pbuc1 
     lda #<BITMAP
-    sta b
+    sta.z b
     lda #>BITMAP
-    sta b+1
+    sta.z b+1
     jmp b2
     // [61] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
   b2_from_b1:
@@ -1942,27 +1942,27 @@ init_screen: {
     ldy #0
     sta (b),y
     // [63] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#4 -- pbuz1=_inc_pbuz1 
-    inc b
+    inc.z b
     bne !+
-    inc b+1
+    inc.z b+1
   !:
     jmp b1
     // init_screen::@1
   b1:
     // [64] if((byte*) init_screen::b#1!=(const byte*) BITMAP#0+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda b+1
+    lda.z b+1
     cmp #>BITMAP+$2000
     bne b2_from_b1
-    lda b
+    lda.z b
     cmp #<BITMAP+$2000
     bne b2_from_b1
     // [65] phi from init_screen::@1 to init_screen::@4 [phi:init_screen::@1->init_screen::@4]
   b4_from_b1:
     // [65] phi (byte*) init_screen::c#4 = (const byte*) SCREEN#0 [phi:init_screen::@1->init_screen::@4#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta c
+    sta.z c
     lda #>SCREEN
-    sta c+1
+    sta.z c+1
     jmp b4
     // [65] phi from init_screen::@3 to init_screen::@4 [phi:init_screen::@3->init_screen::@4]
   b4_from_b3:
@@ -1975,18 +1975,18 @@ init_screen: {
     ldy #0
     sta (c),y
     // [67] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#4 -- pbuz1=_inc_pbuz1 
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
     jmp b3
     // init_screen::@3
   b3:
     // [68] if((byte*) init_screen::c#1!=(const byte*) SCREEN#0+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
-    lda c+1
+    lda.z c+1
     cmp #>SCREEN+$400
     bne b4_from_b3
-    lda c
+    lda.z c
     cmp #<SCREEN+$400
     bne b4_from_b3
     jmp breturn
@@ -2030,8 +2030,8 @@ Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
-Removing instruction ldy x
-Removing instruction ldy y
+Removing instruction ldy.z x
+Removing instruction ldy.z y
 Removing instruction lda #>0
 Replacing instruction ldx #0 with TAX
 Replacing instruction ldy #0 with TAY
@@ -2313,10 +2313,10 @@ plots: {
     // plot(plots_x[i], plots_y[i])
     // [17] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_x,x
-    sta plot.x
+    sta.z plot.x
     // [18] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#5) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
-    sta plot.y
+    sta.z plot.y
     // [19] call plot 
     jsr plot
     // plots::@3
@@ -2342,44 +2342,44 @@ plot: {
     .label plotter = 3
     // >plotter_x = plot_xhi[x]
     // [23] (byte~) plot::$6 ← *((const byte[$100]) plot_xhi#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy x
+    ldy.z x
     lda plot_xhi,y
     // [24] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
-    sta plotter_x+1
+    sta.z plotter_x+1
     lda #<0
-    sta plotter_x
+    sta.z plotter_x
     // <plotter_x = plot_xlo[x]
     // [25] (byte~) plot::$7 ← *((const byte[$100]) plot_xlo#0 + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
     lda plot_xlo,y
     // [26] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
-    sta plotter_x
+    sta.z plotter_x
     // >plotter_y = plot_yhi[y]
     // [27] (byte~) plot::$8 ← *((const byte[$100]) plot_yhi#0 + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy y
+    ldy.z y
     lda plot_yhi,y
     // [28] (word) plot::plotter_y#1 ← (byte) 0 hi= (byte~) plot::$8 -- vwuz1=vbuc1_sethi_vbuaa 
-    sta plotter_y+1
+    sta.z plotter_y+1
     lda #<0
-    sta plotter_y
+    sta.z plotter_y
     // <plotter_y = plot_ylo[y]
     // [29] (byte~) plot::$9 ← *((const byte[$100]) plot_ylo#0 + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
     lda plot_ylo,y
     // [30] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
-    sta plotter_y
+    sta.z plotter_y
     // plotter = plotter_x+plotter_y
     // [31] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
-    lda plotter
+    lda.z plotter
     clc
-    adc plotter_y
-    sta plotter
-    lda plotter+1
-    adc plotter_y+1
-    sta plotter+1
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
     // *plotter | plot_bit[x]
     // [32] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[$100]) plot_bit#0 + (byte) plot::x#0) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter),y
-    ldy x
+    ldy.z x
     ora plot_bit,y
     // *plotter = *plotter | plot_bit[x]
     // [33] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuaa 
@@ -2446,8 +2446,8 @@ init_plot_tables: {
     // [47] phi from init_plot_tables::@2 to init_plot_tables::@3 [phi:init_plot_tables::@2->init_plot_tables::@3]
     // [47] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
     lda #<0
-    sta yoffs
-    sta yoffs+1
+    sta.z yoffs
+    sta.z yoffs+1
     // [47] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
     tax
     // [47] phi from init_plot_tables::@4 to init_plot_tables::@3 [phi:init_plot_tables::@4->init_plot_tables::@3]
@@ -2458,37 +2458,37 @@ init_plot_tables: {
     // y&$7
     // [48] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax _10
+    sax.z _10
     // <yoffs
     // [49] (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
-    lda yoffs
+    lda.z yoffs
     // y&$7 | <yoffs
     // [50] (byte~) init_plot_tables::$8 ← (byte~) init_plot_tables::$10 | (byte~) init_plot_tables::$7 -- vbuaa=vbuz1_bor_vbuaa 
-    ora _10
+    ora.z _10
     // plot_ylo[y] = y&$7 | <yoffs
     // [51] *((const byte[$100]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_ylo,x
     // >yoffs
     // [52] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
-    lda yoffs+1
+    lda.z yoffs+1
     // plot_yhi[y] = >yoffs
     // [53] *((const byte[$100]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_yhi,x
     // if((y&$7)==7)
     // [54] if((byte~) init_plot_tables::$10!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4
     // init_plot_tables::@5
     // yoffs = yoffs + 40*8
     // [55] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
     // [56] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
     // [56] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
     // init_plot_tables::@4
@@ -2511,9 +2511,9 @@ init_screen: {
     // [61] phi from init_screen to init_screen::@2 [phi:init_screen->init_screen::@2]
     // [61] phi (byte*) init_screen::b#4 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@2#0] -- pbuz1=pbuc1 
     lda #<BITMAP
-    sta b
+    sta.z b
     lda #>BITMAP
-    sta b+1
+    sta.z b+1
     // [61] phi from init_screen::@1 to init_screen::@2 [phi:init_screen::@1->init_screen::@2]
     // [61] phi (byte*) init_screen::b#4 = (byte*) init_screen::b#1 [phi:init_screen::@1->init_screen::@2#0] -- register_copy 
     // init_screen::@2
@@ -2525,24 +2525,24 @@ init_screen: {
     sta (b),y
     // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
     // [63] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#4 -- pbuz1=_inc_pbuz1 
-    inc b
+    inc.z b
     bne !+
-    inc b+1
+    inc.z b+1
   !:
     // init_screen::@1
     // [64] if((byte*) init_screen::b#1!=(const byte*) BITMAP#0+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda b+1
+    lda.z b+1
     cmp #>BITMAP+$2000
     bne b2
-    lda b
+    lda.z b
     cmp #<BITMAP+$2000
     bne b2
     // [65] phi from init_screen::@1 to init_screen::@4 [phi:init_screen::@1->init_screen::@4]
     // [65] phi (byte*) init_screen::c#4 = (const byte*) SCREEN#0 [phi:init_screen::@1->init_screen::@4#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta c
+    sta.z c
     lda #>SCREEN
-    sta c+1
+    sta.z c+1
     // [65] phi from init_screen::@3 to init_screen::@4 [phi:init_screen::@3->init_screen::@4]
     // [65] phi (byte*) init_screen::c#4 = (byte*) init_screen::c#1 [phi:init_screen::@3->init_screen::@4#0] -- register_copy 
     // init_screen::@4
@@ -2554,16 +2554,16 @@ init_screen: {
     sta (c),y
     // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
     // [67] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#4 -- pbuz1=_inc_pbuz1 
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
     // init_screen::@3
     // [68] if((byte*) init_screen::c#1!=(const byte*) SCREEN#0+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
-    lda c+1
+    lda.z c+1
     cmp #>SCREEN+$400
     bne b4
-    lda c
+    lda.z c
     cmp #<SCREEN+$400
     bne b4
     // init_screen::@return

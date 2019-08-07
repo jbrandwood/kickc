@@ -5,12 +5,12 @@
 main: {
     .label i = 2
     lda #0
-    sta i
+    sta.z i
   b1:
     jsr $e544
-    inc i
+    inc.z i
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

@@ -15,10 +15,10 @@ main: {
     tya
     clc
     adc #<points
-    sta point_i
+    sta.z point_i
     lda #>points
     adc #0
-    sta point_i+1
+    sta.z point_i+1
     txa
     sta points,y
     txa
@@ -38,10 +38,10 @@ main: {
     tya
     clc
     adc #<points
-    sta point_i1
+    sta.z point_i1
     lda #>points
     adc #0
-    sta point_i1+1
+    sta.z point_i1+1
     lda points,y
     sta SCREEN,x
     // SCREEN[i] = points[i].x;

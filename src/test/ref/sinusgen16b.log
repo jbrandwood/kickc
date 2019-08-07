@@ -3792,22 +3792,22 @@ main: {
   b1_from_b5:
     // [10] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [10] phi (byte*) print_char_cursor#52 = (const byte*) print_line_cursor#0 [phi:main::@5->main::@1#1] -- pbuz1=pbuc1 
     lda #<print_line_cursor
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>print_line_cursor
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2#0 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
-    sta st2
+    sta.z st2
     lda #>sintab2
-    sta st2+1
+    sta.z st2+1
     // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1#0 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
-    sta st1
+    sta.z st1
     lda #>sintab1
-    sta st1+1
+    sta.z st1+1
     jmp b1
     // [10] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   b1_from_b7:
@@ -3823,13 +3823,13 @@ main: {
     sec
     lda (st1),y
     sbc (st2),y
-    sta sw
+    sta.z sw
     iny
     lda (st1),y
     sbc (st2),y
-    sta sw+1
+    sta.z sw+1
     // [12] if((signed word) main::sw#0<(signed byte) 0) goto main::@2 -- vwsz1_lt_0_then_la1 
-    lda sw+1
+    lda.z sw+1
     bmi b2_from_b1
     // [13] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
@@ -3842,9 +3842,9 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#52 [phi:main::@3->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@3->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     // [15] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   b2_from_b1:
@@ -3854,10 +3854,10 @@ main: {
     // main::@2
   b2:
     // [16] (signed word) print_sword::w#1 ← (signed word) main::sw#0 -- vwsz1=vwsz2 
-    lda sw
-    sta print_sword.w
-    lda sw+1
-    sta print_sword.w+1
+    lda.z sw
+    sta.z print_sword.w
+    lda.z sw+1
+    sta.z print_sword.w+1
     // [17] call print_sword 
     jsr print_sword
     // [18] phi from main::@2 to main::@6 [phi:main::@2->main::@6]
@@ -3871,9 +3871,9 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#13 [phi:main::@6->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jmp b7
     // main::@7
@@ -3881,24 +3881,24 @@ main: {
     // [20] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st1
-    sta st1
+    adc.z st1
+    sta.z st1
     bcc !+
-    inc st1+1
+    inc.z st1+1
   !:
     // [21] (signed word*) main::st2#1 ← (signed word*) main::st2#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st2
-    sta st2
+    adc.z st2
+    sta.z st2
     bcc !+
-    inc st2+1
+    inc.z st2+1
   !:
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [23] if((byte) main::i#1!=(byte) $78) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$78
-    cmp i
+    cmp.z i
     bne b1_from_b7
     jmp breturn
     // main::@return
@@ -3943,14 +3943,14 @@ print_str: {
     ldy #0
     sta (print_char_cursor),y
     // [30] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [31] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#3 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1_from_b2
 }
@@ -3960,7 +3960,7 @@ print_str: {
 print_sword: {
     .label w = 9
     // [32] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1_from_print_sword
     // [33] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
   b3_from_print_sword:
@@ -3973,7 +3973,7 @@ print_sword: {
     // [42] phi (byte*) print_char_cursor#35 = (byte*) print_char_cursor#51 [phi:print_sword::@3->print_char#0] -- register_copy 
     // [42] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sword::@3->print_char#1] -- vbuz1=vbuc1 
     lda #' '
-    sta print_char.ch
+    sta.z print_char.ch
     jsr print_char
     // [35] phi from print_sword::@3 print_sword::@4 to print_sword::@2 [phi:print_sword::@3/print_sword::@4->print_sword::@2]
   b2_from_b3:
@@ -3983,10 +3983,10 @@ print_sword: {
     // print_sword::@2
   b2:
     // [36] (word) print_word::w#0 ← (word)(signed word) print_sword::w#4 -- vwuz1=vwuz2 
-    lda w
-    sta print_word.w
-    lda w+1
-    sta print_word.w+1
+    lda.z w
+    sta.z print_word.w
+    lda.z w+1
+    sta.z print_word.w+1
     // [37] call print_word 
     jsr print_word
     jmp breturn
@@ -4005,7 +4005,7 @@ print_sword: {
     // [42] phi (byte*) print_char_cursor#35 = (byte*) print_char_cursor#51 [phi:print_sword::@1->print_char#0] -- register_copy 
     // [42] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sword::@1->print_char#1] -- vbuz1=vbuc1 
     lda #'-'
-    sta print_char.ch
+    sta.z print_char.ch
     jsr print_char
     jmp b4
     // print_sword::@4
@@ -4013,11 +4013,11 @@ print_sword: {
     // [41] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2_from_b4
 }
   // print_char
@@ -4026,13 +4026,13 @@ print_sword: {
 print_char: {
     .label ch = $b
     // [43] *((byte*) print_char_cursor#35) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuz2 
-    lda ch
+    lda.z ch
     ldy #0
     sta (print_char_cursor),y
     // [44] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#35 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -4046,8 +4046,8 @@ print_char: {
 print_word: {
     .label w = $47
     // [46] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [47] call print_byte 
     // [51] phi from print_word to print_byte [phi:print_word->print_byte]
   print_byte_from_print_word:
@@ -4057,8 +4057,8 @@ print_word: {
     // print_word::@1
   b1:
     // [48] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [49] call print_byte 
     // [51] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
   print_byte_from_b1:
@@ -4078,16 +4078,16 @@ print_byte: {
     .label _2 = $4a
     .label b = $e
     // [52] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
-    sta _0
+    sta.z _0
     // [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _0
+    ldy.z _0
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [54] call print_char 
     // [42] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
@@ -4099,12 +4099,12 @@ print_byte: {
   b1:
     // [55] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
-    and b
-    sta _2
+    and.z b
+    sta.z _2
     // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _2
+    ldy.z _2
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [57] call print_char 
     // [42] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -4142,9 +4142,9 @@ memset: {
   b2_from_memset:
     // [63] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [63] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -4157,18 +4157,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [65] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [66] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -4193,45 +4193,45 @@ sin16s_genb: {
   div32u16u_from_sin16s_genb:
     jsr div32u16u
     // [70] (dword) div32u16u::return#3 ← (dword) div32u16u::return#0 -- vduz1=vduz2 
-    lda div32u16u.return
-    sta div32u16u.return_3
-    lda div32u16u.return+1
-    sta div32u16u.return_3+1
-    lda div32u16u.return+2
-    sta div32u16u.return_3+2
-    lda div32u16u.return+3
-    sta div32u16u.return_3+3
+    lda.z div32u16u.return
+    sta.z div32u16u.return_3
+    lda.z div32u16u.return+1
+    sta.z div32u16u.return_3+1
+    lda.z div32u16u.return+2
+    sta.z div32u16u.return_3+2
+    lda.z div32u16u.return+3
+    sta.z div32u16u.return_3+3
     jmp b3
     // sin16s_genb::@3
   b3:
     // [71] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3 -- vduz1=vduz2 
-    lda div32u16u.return_3
-    sta step
-    lda div32u16u.return_3+1
-    sta step+1
-    lda div32u16u.return_3+2
-    sta step+2
-    lda div32u16u.return_3+3
-    sta step+3
+    lda.z div32u16u.return_3
+    sta.z step
+    lda.z div32u16u.return_3+1
+    sta.z step+1
+    lda.z div32u16u.return_3+2
+    sta.z step+2
+    lda.z div32u16u.return_3+3
+    sta.z step+3
     // [72] phi from sin16s_genb::@3 to sin16s_genb::@2 [phi:sin16s_genb::@3->sin16s_genb::@2]
   b2_from_b3:
     // [72] phi (signed word*) sin16s_genb::sintab#7 = (const signed word[$78]) main::sintab2#0 [phi:sin16s_genb::@3->sin16s_genb::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
-    sta sintab
+    sta.z sintab
     lda #>main.sintab2
-    sta sintab+1
+    sta.z sintab+1
     // [72] phi (dword) sin16s_genb::x#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     lda #0
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [72] phi (word) sin16s_genb::i#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#2] -- vwuz1=vbuc1 
     lda #<0
-    sta i
+    sta.z i
     lda #>0
-    sta i+1
+    sta.z i+1
     jmp b2
     // [72] phi from sin16s_genb::@1 to sin16s_genb::@2 [phi:sin16s_genb::@1->sin16s_genb::@2]
   b2_from_b1:
@@ -4242,69 +4242,69 @@ sin16s_genb: {
     // sin16s_genb::@2
   b2:
     // [73] (word) sin16sb::x#0 ← > (dword) sin16s_genb::x#5 -- vwuz1=_hi_vduz2 
-    lda x+2
-    sta sin16sb.x
-    lda x+3
-    sta sin16sb.x+1
+    lda.z x+2
+    sta.z sin16sb.x
+    lda.z x+3
+    sta.z sin16sb.x+1
     // [74] call sin16sb 
     jsr sin16sb
     // [75] (signed word) sin16sb::return#0 ← (signed word) sin16sb::return#1 -- vwsz1=vwsz2 
-    lda sin16sb.return_1
-    sta sin16sb.return
-    lda sin16sb.return_1+1
-    sta sin16sb.return+1
+    lda.z sin16sb.return_1
+    sta.z sin16sb.return
+    lda.z sin16sb.return_1+1
+    sta.z sin16sb.return+1
     jmp b4
     // sin16s_genb::@4
   b4:
     // [76] (signed word~) sin16s_genb::$3 ← (signed word) sin16sb::return#0 -- vwsz1=vwsz2 
-    lda sin16sb.return
-    sta _3
-    lda sin16sb.return+1
-    sta _3+1
+    lda.z sin16sb.return
+    sta.z _3
+    lda.z sin16sb.return+1
+    sta.z _3+1
     // [77] *((signed word*) sin16s_genb::sintab#7) ← (signed word~) sin16s_genb::$3 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _3
+    lda.z _3
     sta (sintab),y
     iny
-    lda _3+1
+    lda.z _3+1
     sta (sintab),y
     // [78] (signed word*) sin16s_genb::sintab#0 ← (signed word*) sin16s_genb::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // [79] (dword) sin16s_genb::x#1 ← (dword) sin16s_genb::x#5 + (dword) sin16s_genb::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // [80] (word) sin16s_genb::i#1 ← ++ (word) sin16s_genb::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
     jmp b1
   // u[4.28]
     // sin16s_genb::@1
   b1:
     // [81] if((word) sin16s_genb::i#1<(const word) main::wavelength#0) goto sin16s_genb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2_from_b1
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2_from_b1
   !:
@@ -4336,11 +4336,11 @@ sin16sb: {
     .label isUpper = $19
     .label return_5 = $1c
     // [83] if((word) sin16sb::x#0<(const word) PI_u4f12#0) goto sin16sb::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f12
     bcc b1_from_sin16sb
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f12
     bcc b1_from_sin16sb
   !:
@@ -4348,35 +4348,35 @@ sin16sb: {
     // sin16sb::@4
   b4:
     // [84] (word) sin16sb::x#1 ← (word) sin16sb::x#0 - (const word) PI_u4f12#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f12
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f12
-    sta x+1
+    sta.z x+1
     // [85] phi from sin16sb::@4 to sin16sb::@1 [phi:sin16sb::@4->sin16sb::@1]
   b1_from_b4:
     // [85] phi (byte) sin16sb::isUpper#2 = (byte) 1 [phi:sin16sb::@4->sin16sb::@1#0] -- vbuz1=vbuc1 
     lda #1
-    sta isUpper
+    sta.z isUpper
     // [85] phi (word) sin16sb::x#4 = (word) sin16sb::x#1 [phi:sin16sb::@4->sin16sb::@1#1] -- register_copy 
     jmp b1
     // [85] phi from sin16sb to sin16sb::@1 [phi:sin16sb->sin16sb::@1]
   b1_from_sin16sb:
     // [85] phi (byte) sin16sb::isUpper#2 = (byte) 0 [phi:sin16sb->sin16sb::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta isUpper
+    sta.z isUpper
     // [85] phi (word) sin16sb::x#4 = (word) sin16sb::x#0 [phi:sin16sb->sin16sb::@1#1] -- register_copy 
     jmp b1
     // sin16sb::@1
   b1:
     // [86] if((word) sin16sb::x#4<(const word) PI_HALF_u4f12#0) goto sin16sb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f12
     bcc b2_from_b1
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f12
     bcc b2_from_b1
   !:
@@ -4386,11 +4386,11 @@ sin16sb: {
     // [87] (word) sin16sb::x#2 ← (const word) PI_u4f12#0 - (word) sin16sb::x#4 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<PI_u4f12
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f12
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     // [88] phi from sin16sb::@1 sin16sb::@5 to sin16sb::@2 [phi:sin16sb::@1/sin16sb::@5->sin16sb::@2]
   b2_from_b1:
   b2_from_b5:
@@ -4399,206 +4399,206 @@ sin16sb: {
     // sin16sb::@2
   b2:
     // [89] (word) sin16sb::x1#0 ← (word) sin16sb::x#6 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda x
+    lda.z x
     asl
-    sta x1
-    lda x+1
+    sta.z x1
+    lda.z x+1
     rol
-    sta x1+1
-    asl x1
-    rol x1+1
-    asl x1
-    rol x1+1
+    sta.z x1+1
+    asl.z x1
+    rol.z x1+1
+    asl.z x1
+    rol.z x1+1
     // [90] (word) mulu16_sel::v1#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [91] (word) mulu16_sel::v2#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [92] call mulu16_sel 
     // [122] phi from sin16sb::@2 to mulu16_sel [phi:sin16sb::@2->mulu16_sel]
   mulu16_sel_from_b2:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@2->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#5 [phi:sin16sb::@2->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#5 [phi:sin16sb::@2->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [93] (word) mulu16_sel::return#18 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_18
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_18+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_18
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_18+1
     jmp b7
     // sin16sb::@7
   b7:
     // [94] (word) sin16sb::x2#0 ← (word) mulu16_sel::return#18 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_18
-    sta x2
-    lda mulu16_sel.return_18+1
-    sta x2+1
+    lda.z mulu16_sel.return_18
+    sta.z x2
+    lda.z mulu16_sel.return_18+1
+    sta.z x2+1
     // [95] (word) mulu16_sel::v1#6 ← (word) sin16sb::x2#0 -- vwuz1=vwuz2 
-    lda x2
-    sta mulu16_sel.v1
-    lda x2+1
-    sta mulu16_sel.v1+1
+    lda.z x2
+    sta.z mulu16_sel.v1
+    lda.z x2+1
+    sta.z mulu16_sel.v1+1
     // [96] (word) mulu16_sel::v2#6 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [97] call mulu16_sel 
     // [122] phi from sin16sb::@7 to mulu16_sel [phi:sin16sb::@7->mulu16_sel]
   mulu16_sel_from_b7:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16sb::@7->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #1
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#6 [phi:sin16sb::@7->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#6 [phi:sin16sb::@7->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [98] (word) mulu16_sel::return#19 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_19
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_19+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_19
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_19+1
     jmp b8
     // sin16sb::@8
   b8:
     // [99] (word) sin16sb::x3#0 ← (word) mulu16_sel::return#19 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_19
-    sta x3
-    lda mulu16_sel.return_19+1
-    sta x3+1
+    lda.z mulu16_sel.return_19
+    sta.z x3
+    lda.z mulu16_sel.return_19+1
+    sta.z x3+1
     // [100] (word) mulu16_sel::v1#7 ← (word) sin16sb::x3#0 -- vwuz1=vwuz2 
-    lda x3
-    sta mulu16_sel.v1
-    lda x3+1
-    sta mulu16_sel.v1+1
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     // [101] call mulu16_sel 
     // [122] phi from sin16sb::@8 to mulu16_sel [phi:sin16sb::@8->mulu16_sel]
   mulu16_sel_from_b8:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16sb::@8->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #1
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16sb::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#7 [phi:sin16sb::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [102] (word) mulu16_sel::return#20 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_20
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_20+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_20
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_20+1
     jmp b9
     // sin16sb::@9
   b9:
     // [103] (word) sin16sb::x3_6#0 ← (word) mulu16_sel::return#20 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_20
-    sta x3_6
-    lda mulu16_sel.return_20+1
-    sta x3_6+1
+    lda.z mulu16_sel.return_20
+    sta.z x3_6
+    lda.z mulu16_sel.return_20+1
+    sta.z x3_6+1
     // [104] (word) sin16sb::usinx#0 ← (word) sin16sb::x1#0 - (word) sin16sb::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // [105] (word) mulu16_sel::v1#8 ← (word) sin16sb::x3#0 -- vwuz1=vwuz2 
-    lda x3
-    sta mulu16_sel.v1
-    lda x3+1
-    sta mulu16_sel.v1+1
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     // [106] (word) mulu16_sel::v2#8 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [107] call mulu16_sel 
     // [122] phi from sin16sb::@9 to mulu16_sel [phi:sin16sb::@9->mulu16_sel]
   mulu16_sel_from_b9:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@9->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#8 [phi:sin16sb::@9->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#8 [phi:sin16sb::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [108] (word) mulu16_sel::return#10 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_10
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_10+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_10
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_10+1
     jmp b10
     // sin16sb::@10
   b10:
     // [109] (word) sin16sb::x4#0 ← (word) mulu16_sel::return#10 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_10
-    sta x4
-    lda mulu16_sel.return_10+1
-    sta x4+1
+    lda.z mulu16_sel.return_10
+    sta.z x4
+    lda.z mulu16_sel.return_10+1
+    sta.z x4+1
     // [110] (word) mulu16_sel::v1#9 ← (word) sin16sb::x4#0 -- vwuz1=vwuz2 
-    lda x4
-    sta mulu16_sel.v1
-    lda x4+1
-    sta mulu16_sel.v1+1
+    lda.z x4
+    sta.z mulu16_sel.v1
+    lda.z x4+1
+    sta.z mulu16_sel.v1+1
     // [111] (word) mulu16_sel::v2#9 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [112] call mulu16_sel 
     // [122] phi from sin16sb::@10 to mulu16_sel [phi:sin16sb::@10->mulu16_sel]
   mulu16_sel_from_b10:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@10->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#9 [phi:sin16sb::@10->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#9 [phi:sin16sb::@10->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [113] (word) mulu16_sel::return#11 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_11
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_11+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_11
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_11+1
     jmp b11
     // sin16sb::@11
   b11:
     // [114] (word) sin16sb::x5#0 ← (word) mulu16_sel::return#11 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_11
-    sta x5
-    lda mulu16_sel.return_11+1
-    sta x5+1
+    lda.z mulu16_sel.return_11
+    sta.z x5
+    lda.z mulu16_sel.return_11+1
+    sta.z x5+1
     // [115] (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 >> (byte) 4 -- vwuz1=vwuz2_ror_4 
-    lda x5+1
+    lda.z x5+1
     lsr
-    sta x5_128+1
-    lda x5
+    sta.z x5_128+1
+    lda.z x5
     ror
-    sta x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    sta.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // [116] (word) sin16sb::usinx#1 ← (word) sin16sb::usinx#0 + (word) sin16sb::x5_128#0 -- vwuz1=vwuz2_plus_vwuz3 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx_1
-    lda usinx+1
-    adc x5_128+1
-    sta usinx_1+1
+    adc.z x5_128
+    sta.z usinx_1
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx_1+1
     // [117] if((byte) sin16sb::isUpper#2==(byte) 0) goto sin16sb::@12 -- vbuz1_eq_0_then_la1 
-    lda isUpper
+    lda.z isUpper
     cmp #0
     beq b12
     jmp b6
@@ -4607,11 +4607,11 @@ sin16sb: {
     // [118] (signed word) sin16sb::sinx#1 ← - (signed word)(word) sin16sb::usinx#1 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc usinx_1
-    sta sinx
+    sbc.z usinx_1
+    sta.z sinx
     lda #0
-    sbc usinx_1+1
-    sta sinx+1
+    sbc.z usinx_1+1
+    sta.z sinx+1
     // [119] phi from sin16sb::@12 sin16sb::@6 to sin16sb::@3 [phi:sin16sb::@12/sin16sb::@6->sin16sb::@3]
   b3_from_b12:
   b3_from_b6:
@@ -4627,10 +4627,10 @@ sin16sb: {
     // sin16sb::@12
   b12:
     // [121] (signed word~) sin16sb::return#5 ← (signed word)(word) sin16sb::usinx#1 -- vwsz1=vwsz2 
-    lda usinx_1
-    sta return_5
-    lda usinx_1+1
-    sta return_5+1
+    lda.z usinx_1
+    sta.z return_5
+    lda.z usinx_1+1
+    sta.z return_5+1
     jmp b3_from_b12
 }
   // mulu16_sel
@@ -4655,64 +4655,64 @@ mulu16_sel: {
     .label return_19 = $5d
     .label return_20 = $61
     // [123] (word) mul16u::a#1 ← (word) mulu16_sel::v1#10 -- vwuz1=vwuz2 
-    lda v1
-    sta mul16u.a
-    lda v1+1
-    sta mul16u.a+1
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
     // [124] (word) mul16u::b#0 ← (word) mulu16_sel::v2#10 -- vwuz1=vwuz2 
-    lda v2
-    sta mul16u.b
-    lda v2+1
-    sta mul16u.b+1
+    lda.z v2
+    sta.z mul16u.b
+    lda.z v2+1
+    sta.z mul16u.b+1
     // [125] call mul16u 
     // [131] phi from mulu16_sel to mul16u [phi:mulu16_sel->mul16u]
   mul16u_from_mulu16_sel:
     jsr mul16u
     // [126] (dword) mul16u::return#2 ← (dword) mul16u::res#2 -- vduz1=vduz2 
-    lda mul16u.res
-    sta mul16u.return
-    lda mul16u.res+1
-    sta mul16u.return+1
-    lda mul16u.res+2
-    sta mul16u.return+2
-    lda mul16u.res+3
-    sta mul16u.return+3
+    lda.z mul16u.res
+    sta.z mul16u.return
+    lda.z mul16u.res+1
+    sta.z mul16u.return+1
+    lda.z mul16u.res+2
+    sta.z mul16u.return+2
+    lda.z mul16u.res+3
+    sta.z mul16u.return+3
     jmp b1
     // mulu16_sel::@1
   b1:
     // [127] (dword~) mulu16_sel::$0 ← (dword) mul16u::return#2 -- vduz1=vduz2 
-    lda mul16u.return
-    sta _0
-    lda mul16u.return+1
-    sta _0+1
-    lda mul16u.return+2
-    sta _0+2
-    lda mul16u.return+3
-    sta _0+3
+    lda.z mul16u.return
+    sta.z _0
+    lda.z mul16u.return+1
+    sta.z _0+1
+    lda.z mul16u.return+2
+    sta.z _0+2
+    lda.z mul16u.return+3
+    sta.z _0+3
     // [128] (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select#10 -- vduz1=vduz2_rol_vbuz3 
-    lda _0
-    sta _1
-    lda _0+1
-    sta _1+1
-    lda _0+2
-    sta _1+2
-    lda _0+3
-    sta _1+3
-    ldx select
+    lda.z _0
+    sta.z _1
+    lda.z _0+1
+    sta.z _1+1
+    lda.z _0+2
+    sta.z _1+2
+    lda.z _0+3
+    sta.z _1+3
+    ldx.z select
     beq !e+
   !:
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
+    asl.z _1
+    rol.z _1+1
+    rol.z _1+2
+    rol.z _1+3
     dex
     bne !-
   !e:
     // [129] (word) mulu16_sel::return#17 ← > (dword~) mulu16_sel::$1 -- vwuz1=_hi_vduz2 
-    lda _1+2
-    sta return_17
-    lda _1+3
-    sta return_17+1
+    lda.z _1+2
+    sta.z return_17
+    lda.z _1+3
+    sta.z return_17+1
     jmp breturn
     // mulu16_sel::@return
   breturn:
@@ -4732,28 +4732,28 @@ mul16u: {
     // [132] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   b1_from_mul16u:
     // [132] phi (dword) mul16u::mb#2 = (word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vwuz2 
-    lda b
-    sta mb
-    lda b+1
-    sta mb+1
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
     lda #0
-    sta mb+2
-    sta mb+3
+    sta.z mb+2
+    sta.z mb+3
     // [132] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
     lda #0
-    sta res
+    sta.z res
     lda #0
-    sta res+1
-    sta res+2
-    sta res+3
+    sta.z res+1
+    sta.z res+2
+    sta.z res+3
     // [132] phi (word) mul16u::a#2 = (word) mul16u::a#1 [phi:mul16u->mul16u::@1#2] -- register_copy 
     jmp b1
     // mul16u::@1
   b1:
     // [133] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     bne b2
-    lda a+1
+    lda.z a+1
     bne b2
     jmp breturn
     // mul16u::@return
@@ -4763,30 +4763,30 @@ mul16u: {
     // mul16u::@2
   b2:
     // [135] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuz1=vwuz2_band_vbuc1 
-    lda a
+    lda.z a
     and #1
-    sta _1
+    sta.z _1
     // [136] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3_from_b2
     jmp b4
     // mul16u::@4
   b4:
     // [137] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
-    lda res+2
-    adc mb+2
-    sta res+2
-    lda res+3
-    adc mb+3
-    sta res+3
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
     // [138] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -4795,13 +4795,13 @@ mul16u: {
     // mul16u::@3
   b3:
     // [139] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr a+1
-    ror a
+    lsr.z a+1
+    ror.z a
     // [140] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
-    asl mb
-    rol mb+1
-    rol mb+2
-    rol mb+3
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
     // [132] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
   b1_from_b3:
     // [132] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
@@ -4823,65 +4823,65 @@ div32u16u: {
   divr16u_from_div32u16u:
     // [151] phi (word) divr16u::dividend#5 = >(const dword) PI2_u4f28#0 [phi:div32u16u->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28>>$10
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (byte) 0 [phi:div32u16u->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
-    sta divr16u.rem
+    sta.z divr16u.rem
     lda #>0
-    sta divr16u.rem+1
+    sta.z divr16u.rem+1
     jsr divr16u
     // [143] (word) divr16u::return#2 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
-    lda divr16u.return
-    sta divr16u.return_2
-    lda divr16u.return+1
-    sta divr16u.return_2+1
+    lda.z divr16u.return
+    sta.z divr16u.return_2
+    lda.z divr16u.return+1
+    sta.z divr16u.return_2+1
     jmp b1
     // div32u16u::@1
   b1:
     // [144] (word) div32u16u::quotient_hi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
-    lda divr16u.return_2
-    sta quotient_hi
-    lda divr16u.return_2+1
-    sta quotient_hi+1
+    lda.z divr16u.return_2
+    sta.z quotient_hi
+    lda.z divr16u.return_2+1
+    sta.z quotient_hi+1
     // [145] (word) divr16u::rem#4 ← (word) rem16u#1 -- vwuz1=vwuz2 
-    lda rem16u
-    sta divr16u.rem
-    lda rem16u+1
-    sta divr16u.rem+1
+    lda.z rem16u
+    sta.z divr16u.rem
+    lda.z rem16u+1
+    sta.z divr16u.rem+1
     // [146] call divr16u 
     // [151] phi from div32u16u::@1 to divr16u [phi:div32u16u::@1->divr16u]
   divr16u_from_b1:
     // [151] phi (word) divr16u::dividend#5 = <(const dword) PI2_u4f28#0 [phi:div32u16u::@1->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28&$ffff
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:div32u16u::@1->divr16u#1] -- register_copy 
     jsr divr16u
     // [147] (word) divr16u::return#3 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
-    lda divr16u.return
-    sta divr16u.return_3
-    lda divr16u.return+1
-    sta divr16u.return_3+1
+    lda.z divr16u.return
+    sta.z divr16u.return_3
+    lda.z divr16u.return+1
+    sta.z divr16u.return_3+1
     jmp b2
     // div32u16u::@2
   b2:
     // [148] (word) div32u16u::quotient_lo#0 ← (word) divr16u::return#3 -- vwuz1=vwuz2 
-    lda divr16u.return_3
-    sta quotient_lo
-    lda divr16u.return_3+1
-    sta quotient_lo+1
+    lda.z divr16u.return_3
+    sta.z quotient_lo
+    lda.z divr16u.return_3+1
+    sta.z quotient_lo+1
     // [149] (dword) div32u16u::return#0 ← (word) div32u16u::quotient_hi#0 dw= (word) div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
-    lda quotient_hi
-    sta return+2
-    lda quotient_hi+1
-    sta return+3
-    lda quotient_lo
-    sta return
-    lda quotient_lo+1
-    sta return+1
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
     jmp breturn
     // div32u16u::@return
   breturn:
@@ -4908,12 +4908,12 @@ divr16u: {
   b1_from_divr16u:
     // [152] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [152] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta quotient
+    sta.z quotient
     lda #>0
-    sta quotient+1
+    sta.z quotient+1
     // [152] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
     // [152] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
     jmp b1
@@ -4927,17 +4927,17 @@ divr16u: {
     // divr16u::@1
   b1:
     // [153] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl rem
-    rol rem+1
+    asl.z rem
+    rol.z rem+1
     // [154] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuz1=_hi_vwuz2 
-    lda dividend+1
-    sta _1
+    lda.z dividend+1
+    sta.z _1
     // [155] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and _1
-    sta _2
+    and.z _1
+    sta.z _2
     // [156] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuz1_eq_0_then_la1 
-    lda _2
+    lda.z _2
     cmp #0
     beq b2_from_b1
     jmp b4
@@ -4945,8 +4945,8 @@ divr16u: {
   b4:
     // [157] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
     // [158] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
@@ -4955,17 +4955,17 @@ divr16u: {
     // divr16u::@2
   b2:
     // [159] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl dividend
-    rol dividend+1
+    asl.z dividend
+    rol.z dividend+1
     // [160] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl quotient
-    rol quotient+1
+    asl.z quotient
+    rol.z quotient+1
     // [161] if((word) divr16u::rem#6<(const word) main::wavelength#0) goto divr16u::@3 -- vwuz1_lt_vwuc1_then_la1 
-    lda rem+1
+    lda.z rem+1
     cmp #>main.wavelength
     bcc b3_from_b2
     bne !+
-    lda rem
+    lda.z rem
     cmp #<main.wavelength
     bcc b3_from_b2
   !:
@@ -4973,18 +4973,18 @@ divr16u: {
     // divr16u::@5
   b5:
     // [162] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
     // [163] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) main::wavelength#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda rem
+    lda.z rem
     sec
     sbc #<main.wavelength
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>main.wavelength
-    sta rem+1
+    sta.z rem+1
     // [164] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
   b3_from_b2:
   b3_from_b5:
@@ -4994,19 +4994,19 @@ divr16u: {
     // divr16u::@3
   b3:
     // [165] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [166] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp b6
     // divr16u::@6
   b6:
     // [167] (word) rem16u#1 ← (word) divr16u::rem#11 -- vwuz1=vwuz2 
-    lda rem
-    sta rem16u
-    lda rem+1
-    sta rem16u+1
+    lda.z rem
+    sta.z rem16u
+    lda.z rem+1
+    sta.z rem16u+1
     jmp breturn
     // divr16u::@return
   breturn:
@@ -5029,45 +5029,45 @@ sin16s_gen: {
   div32u16u_from_sin16s_gen:
     jsr div32u16u
     // [171] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0 -- vduz1=vduz2 
-    lda div32u16u.return
-    sta div32u16u.return_2
-    lda div32u16u.return+1
-    sta div32u16u.return_2+1
-    lda div32u16u.return+2
-    sta div32u16u.return_2+2
-    lda div32u16u.return+3
-    sta div32u16u.return_2+3
+    lda.z div32u16u.return
+    sta.z div32u16u.return_2
+    lda.z div32u16u.return+1
+    sta.z div32u16u.return_2+1
+    lda.z div32u16u.return+2
+    sta.z div32u16u.return_2+2
+    lda.z div32u16u.return+3
+    sta.z div32u16u.return_2+3
     jmp b3
     // sin16s_gen::@3
   b3:
     // [172] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2 -- vduz1=vduz2 
-    lda div32u16u.return_2
-    sta step
-    lda div32u16u.return_2+1
-    sta step+1
-    lda div32u16u.return_2+2
-    sta step+2
-    lda div32u16u.return_2+3
-    sta step+3
+    lda.z div32u16u.return_2
+    sta.z step
+    lda.z div32u16u.return_2+1
+    sta.z step+1
+    lda.z div32u16u.return_2+2
+    sta.z step+2
+    lda.z div32u16u.return_2+3
+    sta.z step+3
     // [173] phi from sin16s_gen::@3 to sin16s_gen::@2 [phi:sin16s_gen::@3->sin16s_gen::@2]
   b2_from_b3:
     // [173] phi (signed word*) sin16s_gen::sintab#7 = (const signed word[$78]) main::sintab1#0 [phi:sin16s_gen::@3->sin16s_gen::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
-    sta sintab
+    sta.z sintab
     lda #>main.sintab1
-    sta sintab+1
+    sta.z sintab+1
     // [173] phi (dword) sin16s_gen::x#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     lda #0
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [173] phi (word) sin16s_gen::i#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#2] -- vwuz1=vbuc1 
     lda #<0
-    sta i
+    sta.z i
     lda #>0
-    sta i+1
+    sta.z i+1
     jmp b2
     // [173] phi from sin16s_gen::@1 to sin16s_gen::@2 [phi:sin16s_gen::@1->sin16s_gen::@2]
   b2_from_b1:
@@ -5078,73 +5078,73 @@ sin16s_gen: {
     // sin16s_gen::@2
   b2:
     // [174] (dword) sin16s::x#0 ← (dword) sin16s_gen::x#5 -- vduz1=vduz2 
-    lda x
-    sta sin16s.x
-    lda x+1
-    sta sin16s.x+1
-    lda x+2
-    sta sin16s.x+2
-    lda x+3
-    sta sin16s.x+3
+    lda.z x
+    sta.z sin16s.x
+    lda.z x+1
+    sta.z sin16s.x+1
+    lda.z x+2
+    sta.z sin16s.x+2
+    lda.z x+3
+    sta.z sin16s.x+3
     // [175] call sin16s 
     jsr sin16s
     // [176] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1 -- vwsz1=vwsz2 
-    lda sin16s.return_1
-    sta sin16s.return
-    lda sin16s.return_1+1
-    sta sin16s.return+1
+    lda.z sin16s.return_1
+    sta.z sin16s.return
+    lda.z sin16s.return_1+1
+    sta.z sin16s.return+1
     jmp b4
     // sin16s_gen::@4
   b4:
     // [177] (signed word~) sin16s_gen::$2 ← (signed word) sin16s::return#0 -- vwsz1=vwsz2 
-    lda sin16s.return
-    sta _2
-    lda sin16s.return+1
-    sta _2+1
+    lda.z sin16s.return
+    sta.z _2
+    lda.z sin16s.return+1
+    sta.z _2+1
     // [178] *((signed word*) sin16s_gen::sintab#7) ← (signed word~) sin16s_gen::$2 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _2
+    lda.z _2
     sta (sintab),y
     iny
-    lda _2+1
+    lda.z _2+1
     sta (sintab),y
     // [179] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // [180] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#5 + (dword) sin16s_gen::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // [181] (word) sin16s_gen::i#1 ← ++ (word) sin16s_gen::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
     jmp b1
   // u[4.28]
     // sin16s_gen::@1
   b1:
     // [182] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2_from_b1
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2_from_b1
   !:
@@ -5177,19 +5177,19 @@ sin16s: {
     .label isUpper = $3e
     .label return_5 = $43
     // [184] if((dword) sin16s::x#0<(const dword) PI_u4f28#0) goto sin16s::@1 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b1_from_sin16s
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_u4f28>>$10
     bcc b1_from_sin16s
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f28
     bcc b1_from_sin16s
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f28
     bcc b1_from_sin16s
   !:
@@ -5197,49 +5197,49 @@ sin16s: {
     // sin16s::@4
   b4:
     // [185] (dword) sin16s::x#1 ← (dword) sin16s::x#0 - (const dword) PI_u4f28#0 -- vduz1=vduz1_minus_vduc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f28
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f28
-    sta x+1
-    lda x+2
+    sta.z x+1
+    lda.z x+2
     sbc #<PI_u4f28>>$10
-    sta x+2
-    lda x+3
+    sta.z x+2
+    lda.z x+3
     sbc #>PI_u4f28>>$10
-    sta x+3
+    sta.z x+3
     // [186] phi from sin16s::@4 to sin16s::@1 [phi:sin16s::@4->sin16s::@1]
   b1_from_b4:
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 1 [phi:sin16s::@4->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #1
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#1 [phi:sin16s::@4->sin16s::@1#1] -- register_copy 
     jmp b1
     // [186] phi from sin16s to sin16s::@1 [phi:sin16s->sin16s::@1]
   b1_from_sin16s:
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 0 [phi:sin16s->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#0 [phi:sin16s->sin16s::@1#1] -- register_copy 
     jmp b1
     // sin16s::@1
   b1:
     // [187] if((dword) sin16s::x#4<(const dword) PI_HALF_u4f28#0) goto sin16s::@2 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
     bcc b2_from_b1
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
     bcc b2_from_b1
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f28
     bcc b2_from_b1
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f28
     bcc b2_from_b1
   !:
@@ -5249,17 +5249,17 @@ sin16s: {
     // [188] (dword) sin16s::x#2 ← (const dword) PI_u4f28#0 - (dword) sin16s::x#4 -- vduz1=vduc1_minus_vduz1 
     lda #<PI_u4f28
     sec
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f28
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     lda #<PI_u4f28>>$10
-    sbc x+2
-    sta x+2
+    sbc.z x+2
+    sta.z x+2
     lda #>PI_u4f28>>$10
-    sbc x+3
-    sta x+3
+    sbc.z x+3
+    sta.z x+3
     // [189] phi from sin16s::@1 sin16s::@5 to sin16s::@2 [phi:sin16s::@1/sin16s::@5->sin16s::@2]
   b2_from_b1:
   b2_from_b5:
@@ -5268,217 +5268,217 @@ sin16s: {
     // sin16s::@2
   b2:
     // [190] (dword~) sin16s::$4 ← (dword) sin16s::x#6 << (byte) 3 -- vduz1=vduz2_rol_3 
-    lda x
-    sta _4
-    lda x+1
-    sta _4+1
-    lda x+2
-    sta _4+2
-    lda x+3
-    sta _4+3
+    lda.z x
+    sta.z _4
+    lda.z x+1
+    sta.z _4+1
+    lda.z x+2
+    sta.z _4+2
+    lda.z x+3
+    sta.z _4+3
     ldy #3
   !:
-    asl _4
-    rol _4+1
-    rol _4+2
-    rol _4+3
+    asl.z _4
+    rol.z _4+1
+    rol.z _4+2
+    rol.z _4+3
     dey
     bne !-
     // [191] (word) sin16s::x1#0 ← > (dword~) sin16s::$4 -- vwuz1=_hi_vduz2 
-    lda _4+2
-    sta x1
-    lda _4+3
-    sta x1+1
+    lda.z _4+2
+    sta.z x1
+    lda.z _4+3
+    sta.z x1+1
     // [192] (word) mulu16_sel::v1#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [193] (word) mulu16_sel::v2#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [194] call mulu16_sel 
     // [122] phi from sin16s::@2 to mulu16_sel [phi:sin16s::@2->mulu16_sel]
   mulu16_sel_from_b2:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@2->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#0 [phi:sin16s::@2->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#0 [phi:sin16s::@2->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [195] (word) mulu16_sel::return#0 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b7
     // sin16s::@7
   b7:
     // [196] (word) sin16s::x2#0 ← (word) mulu16_sel::return#0 -- vwuz1=vwuz2 
-    lda mulu16_sel.return
-    sta x2
-    lda mulu16_sel.return+1
-    sta x2+1
+    lda.z mulu16_sel.return
+    sta.z x2
+    lda.z mulu16_sel.return+1
+    sta.z x2+1
     // [197] (word) mulu16_sel::v1#1 ← (word) sin16s::x2#0 -- vwuz1=vwuz2 
-    lda x2
-    sta mulu16_sel.v1
-    lda x2+1
-    sta mulu16_sel.v1+1
+    lda.z x2
+    sta.z mulu16_sel.v1
+    lda.z x2+1
+    sta.z mulu16_sel.v1+1
     // [198] (word) mulu16_sel::v2#1 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [199] call mulu16_sel 
     // [122] phi from sin16s::@7 to mulu16_sel [phi:sin16s::@7->mulu16_sel]
   mulu16_sel_from_b7:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16s::@7->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #1
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#1 [phi:sin16s::@7->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#1 [phi:sin16s::@7->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [200] (word) mulu16_sel::return#1 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_1
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_1+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_1
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_1+1
     jmp b8
     // sin16s::@8
   b8:
     // [201] (word) sin16s::x3#0 ← (word) mulu16_sel::return#1 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_1
-    sta x3
-    lda mulu16_sel.return_1+1
-    sta x3+1
+    lda.z mulu16_sel.return_1
+    sta.z x3
+    lda.z mulu16_sel.return_1+1
+    sta.z x3+1
     // [202] (word) mulu16_sel::v1#2 ← (word) sin16s::x3#0 -- vwuz1=vwuz2 
-    lda x3
-    sta mulu16_sel.v1
-    lda x3+1
-    sta mulu16_sel.v1+1
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     // [203] call mulu16_sel 
     // [122] phi from sin16s::@8 to mulu16_sel [phi:sin16s::@8->mulu16_sel]
   mulu16_sel_from_b8:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16s::@8->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #1
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16s::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#2 [phi:sin16s::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [204] (word) mulu16_sel::return#14 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_14
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_14+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_14
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_14+1
     jmp b9
     // sin16s::@9
   b9:
     // [205] (word) sin16s::x3_6#0 ← (word) mulu16_sel::return#14 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_14
-    sta x3_6
-    lda mulu16_sel.return_14+1
-    sta x3_6+1
+    lda.z mulu16_sel.return_14
+    sta.z x3_6
+    lda.z mulu16_sel.return_14+1
+    sta.z x3_6+1
     // [206] (word) sin16s::usinx#0 ← (word) sin16s::x1#0 - (word) sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // [207] (word) mulu16_sel::v1#3 ← (word) sin16s::x3#0 -- vwuz1=vwuz2 
-    lda x3
-    sta mulu16_sel.v1
-    lda x3+1
-    sta mulu16_sel.v1+1
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     // [208] (word) mulu16_sel::v2#3 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [209] call mulu16_sel 
     // [122] phi from sin16s::@9 to mulu16_sel [phi:sin16s::@9->mulu16_sel]
   mulu16_sel_from_b9:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@9->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#3 [phi:sin16s::@9->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#3 [phi:sin16s::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [210] (word) mulu16_sel::return#15 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_15
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_15+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_15
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_15+1
     jmp b10
     // sin16s::@10
   b10:
     // [211] (word) sin16s::x4#0 ← (word) mulu16_sel::return#15 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_15
-    sta x4
-    lda mulu16_sel.return_15+1
-    sta x4+1
+    lda.z mulu16_sel.return_15
+    sta.z x4
+    lda.z mulu16_sel.return_15+1
+    sta.z x4+1
     // [212] (word) mulu16_sel::v1#4 ← (word) sin16s::x4#0 -- vwuz1=vwuz2 
-    lda x4
-    sta mulu16_sel.v1
-    lda x4+1
-    sta mulu16_sel.v1+1
+    lda.z x4
+    sta.z mulu16_sel.v1
+    lda.z x4+1
+    sta.z mulu16_sel.v1+1
     // [213] (word) mulu16_sel::v2#4 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [214] call mulu16_sel 
     // [122] phi from sin16s::@10 to mulu16_sel [phi:sin16s::@10->mulu16_sel]
   mulu16_sel_from_b10:
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@10->mulu16_sel#0] -- vbuz1=vbuc1 
     lda #0
-    sta mulu16_sel.select
+    sta.z mulu16_sel.select
     // [122] phi (word) mulu16_sel::v2#10 = (word) mulu16_sel::v2#4 [phi:sin16s::@10->mulu16_sel#1] -- register_copy 
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#4 [phi:sin16s::@10->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [215] (word) mulu16_sel::return#16 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return_16
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return_16+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return_16
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return_16+1
     jmp b11
     // sin16s::@11
   b11:
     // [216] (word) sin16s::x5#0 ← (word) mulu16_sel::return#16 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_16
-    sta x5
-    lda mulu16_sel.return_16+1
-    sta x5+1
+    lda.z mulu16_sel.return_16
+    sta.z x5
+    lda.z mulu16_sel.return_16+1
+    sta.z x5+1
     // [217] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte) 4 -- vwuz1=vwuz2_ror_4 
-    lda x5+1
+    lda.z x5+1
     lsr
-    sta x5_128+1
-    lda x5
+    sta.z x5_128+1
+    lda.z x5
     ror
-    sta x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    sta.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // [218] (word) sin16s::usinx#1 ← (word) sin16s::usinx#0 + (word) sin16s::x5_128#0 -- vwuz1=vwuz2_plus_vwuz3 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx_1
-    lda usinx+1
-    adc x5_128+1
-    sta usinx_1+1
+    adc.z x5_128
+    sta.z usinx_1
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx_1+1
     // [219] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@12 -- vbuz1_eq_0_then_la1 
-    lda isUpper
+    lda.z isUpper
     cmp #0
     beq b12
     jmp b6
@@ -5487,11 +5487,11 @@ sin16s: {
     // [220] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc usinx_1
-    sta sinx
+    sbc.z usinx_1
+    sta.z sinx
     lda #0
-    sbc usinx_1+1
-    sta sinx+1
+    sbc.z usinx_1+1
+    sta.z sinx+1
     // [221] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
   b3_from_b12:
   b3_from_b6:
@@ -5507,10 +5507,10 @@ sin16s: {
     // sin16s::@12
   b12:
     // [223] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 -- vwsz1=vwsz2 
-    lda usinx_1
-    sta return_5
-    lda usinx_1+1
-    sta return_5+1
+    lda.z usinx_1
+    sta.z return_5
+    lda.z usinx_1+1
+    sta.z return_5+1
     jmp b3_from_b12
 }
   // File Data
@@ -6032,19 +6032,19 @@ main: {
     ldx #0
     // [10] phi (byte*) print_char_cursor#52 = (const byte*) print_line_cursor#0 [phi:main::@5->main::@1#1] -- pbuz1=pbuc1 
     lda #<print_line_cursor
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>print_line_cursor
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2#0 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
-    sta st2
+    sta.z st2
     lda #>sintab2
-    sta st2+1
+    sta.z st2+1
     // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1#0 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
-    sta st1
+    sta.z st1
     lda #>sintab1
-    sta st1+1
+    sta.z st1+1
     jmp b1
     // [10] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   b1_from_b7:
@@ -6060,13 +6060,13 @@ main: {
     sec
     lda (st1),y
     sbc (st2),y
-    sta sw
+    sta.z sw
     iny
     lda (st1),y
     sbc (st2),y
-    sta sw+1
+    sta.z sw+1
     // [12] if((signed word) main::sw#0<(signed byte) 0) goto main::@2 -- vwsz1_lt_0_then_la1 
-    lda sw+1
+    lda.z sw+1
     bmi b2_from_b1
     // [13] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
@@ -6079,9 +6079,9 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#52 [phi:main::@3->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@3->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     // [15] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   b2_from_b1:
@@ -6104,9 +6104,9 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#13 [phi:main::@6->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jmp b7
     // main::@7
@@ -6114,18 +6114,18 @@ main: {
     // [20] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st1
-    sta st1
+    adc.z st1
+    sta.z st1
     bcc !+
-    inc st1+1
+    inc.z st1+1
   !:
     // [21] (signed word*) main::st2#1 ← (signed word*) main::st2#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st2
-    sta st2
+    adc.z st2
+    sta.z st2
     bcc !+
-    inc st2+1
+    inc.z st2+1
   !:
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -6175,14 +6175,14 @@ print_str: {
     ldy #0
     sta (print_char_cursor),y
     // [30] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [31] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#3 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1_from_b2
 }
@@ -6192,7 +6192,7 @@ print_str: {
 print_sword: {
     .label w = $1d
     // [32] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1_from_print_sword
     // [33] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
   b3_from_print_sword:
@@ -6239,11 +6239,11 @@ print_sword: {
     // [41] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2_from_b4
 }
   // print_char
@@ -6254,9 +6254,9 @@ print_char: {
     ldy #0
     sta (print_char_cursor),y
     // [44] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#35 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -6270,8 +6270,8 @@ print_char: {
 print_word: {
     .label w = $1d
     // [46] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [47] call print_byte 
     // [51] phi from print_word to print_byte [phi:print_word->print_byte]
   print_byte_from_print_word:
@@ -6281,8 +6281,8 @@ print_word: {
     // print_word::@1
   b1:
     // [48] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [49] call print_byte 
     // [51] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
   print_byte_from_b1:
@@ -6300,7 +6300,7 @@ print_word: {
 print_byte: {
     .label b = $10
     // [52] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -6319,7 +6319,7 @@ print_byte: {
   b1:
     // [55] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
-    and b
+    and.z b
     // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
@@ -6360,9 +6360,9 @@ memset: {
   b2_from_memset:
     // [63] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [63] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -6375,18 +6375,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [65] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [66] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -6419,21 +6419,21 @@ sin16s_genb: {
   b2_from_b3:
     // [72] phi (signed word*) sin16s_genb::sintab#7 = (const signed word[$78]) main::sintab2#0 [phi:sin16s_genb::@3->sin16s_genb::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
-    sta sintab
+    sta.z sintab
     lda #>main.sintab2
-    sta sintab+1
+    sta.z sintab+1
     // [72] phi (dword) sin16s_genb::x#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     lda #0
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [72] phi (word) sin16s_genb::i#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#2] -- vwuz1=vbuc1 
     lda #<0
-    sta i
+    sta.z i
     lda #>0
-    sta i+1
+    sta.z i+1
     jmp b2
     // [72] phi from sin16s_genb::@1 to sin16s_genb::@2 [phi:sin16s_genb::@1->sin16s_genb::@2]
   b2_from_b1:
@@ -6444,10 +6444,10 @@ sin16s_genb: {
     // sin16s_genb::@2
   b2:
     // [73] (word) sin16sb::x#0 ← > (dword) sin16s_genb::x#5 -- vwuz1=_hi_vduz2 
-    lda x+2
-    sta sin16sb.x
-    lda x+3
-    sta sin16sb.x+1
+    lda.z x+2
+    sta.z sin16sb.x
+    lda.z x+3
+    sta.z sin16sb.x+1
     // [74] call sin16sb 
     jsr sin16sb
     // [75] (signed word) sin16sb::return#0 ← (signed word) sin16sb::return#1
@@ -6457,48 +6457,48 @@ sin16s_genb: {
     // [76] (signed word~) sin16s_genb::$3 ← (signed word) sin16sb::return#0
     // [77] *((signed word*) sin16s_genb::sintab#7) ← (signed word~) sin16s_genb::$3 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _3
+    lda.z _3
     sta (sintab),y
     iny
-    lda _3+1
+    lda.z _3+1
     sta (sintab),y
     // [78] (signed word*) sin16s_genb::sintab#0 ← (signed word*) sin16s_genb::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // [79] (dword) sin16s_genb::x#1 ← (dword) sin16s_genb::x#5 + (dword) sin16s_genb::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // [80] (word) sin16s_genb::i#1 ← ++ (word) sin16s_genb::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
     jmp b1
   // u[4.28]
     // sin16s_genb::@1
   b1:
     // [81] if((word) sin16s_genb::i#1<(const word) main::wavelength#0) goto sin16s_genb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2_from_b1
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2_from_b1
   !:
@@ -6526,11 +6526,11 @@ sin16sb: {
     .label x5_128 = $1b
     .label sinx = $1f
     // [83] if((word) sin16sb::x#0<(const word) PI_u4f12#0) goto sin16sb::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f12
     bcc b1_from_sin16sb
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f12
     bcc b1_from_sin16sb
   !:
@@ -6538,13 +6538,13 @@ sin16sb: {
     // sin16sb::@4
   b4:
     // [84] (word) sin16sb::x#1 ← (word) sin16sb::x#0 - (const word) PI_u4f12#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f12
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f12
-    sta x+1
+    sta.z x+1
     // [85] phi from sin16sb::@4 to sin16sb::@1 [phi:sin16sb::@4->sin16sb::@1]
   b1_from_b4:
     // [85] phi (byte) sin16sb::isUpper#2 = (byte) 1 [phi:sin16sb::@4->sin16sb::@1#0] -- vbuyy=vbuc1 
@@ -6560,11 +6560,11 @@ sin16sb: {
     // sin16sb::@1
   b1:
     // [86] if((word) sin16sb::x#4<(const word) PI_HALF_u4f12#0) goto sin16sb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f12
     bcc b2_from_b1
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f12
     bcc b2_from_b1
   !:
@@ -6574,11 +6574,11 @@ sin16sb: {
     // [87] (word) sin16sb::x#2 ← (const word) PI_u4f12#0 - (word) sin16sb::x#4 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<PI_u4f12
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f12
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     // [88] phi from sin16sb::@1 sin16sb::@5 to sin16sb::@2 [phi:sin16sb::@1/sin16sb::@5->sin16sb::@2]
   b2_from_b1:
   b2_from_b5:
@@ -6587,22 +6587,22 @@ sin16sb: {
     // sin16sb::@2
   b2:
     // [89] (word) sin16sb::x1#0 ← (word) sin16sb::x#6 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl x1
-    rol x1+1
-    asl x1
-    rol x1+1
-    asl x1
-    rol x1+1
+    asl.z x1
+    rol.z x1+1
+    asl.z x1
+    rol.z x1+1
+    asl.z x1
+    rol.z x1+1
     // [90] (word) mulu16_sel::v1#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [91] (word) mulu16_sel::v2#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [92] call mulu16_sel 
     // [122] phi from sin16sb::@2 to mulu16_sel [phi:sin16sb::@2->mulu16_sel]
   mulu16_sel_from_b2:
@@ -6616,16 +6616,16 @@ sin16sb: {
     // sin16sb::@7
   b7:
     // [94] (word) sin16sb::x2#0 ← (word) mulu16_sel::return#18 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_18
-    sta x2
-    lda mulu16_sel.return_18+1
-    sta x2+1
+    lda.z mulu16_sel.return_18
+    sta.z x2
+    lda.z mulu16_sel.return_18+1
+    sta.z x2+1
     // [95] (word) mulu16_sel::v1#6 ← (word) sin16sb::x2#0
     // [96] (word) mulu16_sel::v2#6 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [97] call mulu16_sel 
     // [122] phi from sin16sb::@7 to mulu16_sel [phi:sin16sb::@7->mulu16_sel]
   mulu16_sel_from_b7:
@@ -6635,10 +6635,10 @@ sin16sb: {
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#6 [phi:sin16sb::@7->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [98] (word) mulu16_sel::return#19 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b8
     // sin16sb::@8
   b8:
@@ -6651,9 +6651,9 @@ sin16sb: {
     ldx #1
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16sb::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#7 [phi:sin16sb::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [102] (word) mulu16_sel::return#20 ← (word) mulu16_sel::return#17
@@ -6662,19 +6662,19 @@ sin16sb: {
   b9:
     // [103] (word) sin16sb::x3_6#0 ← (word) mulu16_sel::return#20
     // [104] (word) sin16sb::usinx#0 ← (word) sin16sb::x1#0 - (word) sin16sb::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // [105] (word) mulu16_sel::v1#8 ← (word) sin16sb::x3#0
     // [106] (word) mulu16_sel::v2#8 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [107] call mulu16_sel 
     // [122] phi from sin16sb::@9 to mulu16_sel [phi:sin16sb::@9->mulu16_sel]
   mulu16_sel_from_b9:
@@ -6684,20 +6684,20 @@ sin16sb: {
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#8 [phi:sin16sb::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [108] (word) mulu16_sel::return#10 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b10
     // sin16sb::@10
   b10:
     // [109] (word) sin16sb::x4#0 ← (word) mulu16_sel::return#10
     // [110] (word) mulu16_sel::v1#9 ← (word) sin16sb::x4#0
     // [111] (word) mulu16_sel::v2#9 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [112] call mulu16_sel 
     // [122] phi from sin16sb::@10 to mulu16_sel [phi:sin16sb::@10->mulu16_sel]
   mulu16_sel_from_b10:
@@ -6712,22 +6712,22 @@ sin16sb: {
   b11:
     // [114] (word) sin16sb::x5#0 ← (word) mulu16_sel::return#11
     // [115] (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 >> (byte) 4 -- vwuz1=vwuz1_ror_4 
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // [116] (word) sin16sb::usinx#1 ← (word) sin16sb::usinx#0 + (word) sin16sb::x5_128#0 -- vwuz1=vwuz1_plus_vwuz2 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx
-    lda usinx+1
-    adc x5_128+1
-    sta usinx+1
+    adc.z x5_128
+    sta.z usinx
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx+1
     // [117] if((byte) sin16sb::isUpper#2==(byte) 0) goto sin16sb::@12 -- vbuyy_eq_0_then_la1 
     cpy #0
     beq b12
@@ -6737,11 +6737,11 @@ sin16sb: {
     // [118] (signed word) sin16sb::sinx#1 ← - (signed word)(word) sin16sb::usinx#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc sinx
-    sta sinx
+    sbc.z sinx
+    sta.z sinx
     lda #0
-    sbc sinx+1
-    sta sinx+1
+    sbc.z sinx+1
+    sta.z sinx+1
     // [119] phi from sin16sb::@12 sin16sb::@6 to sin16sb::@3 [phi:sin16sb::@12/sin16sb::@6->sin16sb::@3]
   b3_from_b12:
   b3_from_b6:
@@ -6776,10 +6776,10 @@ mulu16_sel: {
     .label return_18 = $1b
     .label return_20 = $1b
     // [123] (word) mul16u::a#1 ← (word) mulu16_sel::v1#10 -- vwuz1=vwuz2 
-    lda v1
-    sta mul16u.a
-    lda v1+1
-    sta mul16u.a+1
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
     // [124] (word) mul16u::b#0 ← (word) mulu16_sel::v2#10
     // [125] call mul16u 
     // [131] phi from mulu16_sel to mul16u [phi:mulu16_sel->mul16u]
@@ -6794,18 +6794,18 @@ mulu16_sel: {
     cpx #0
     beq !e+
   !:
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
+    asl.z _1
+    rol.z _1+1
+    rol.z _1+2
+    rol.z _1+3
     dex
     bne !-
   !e:
     // [129] (word) mulu16_sel::return#17 ← > (dword~) mulu16_sel::$1 -- vwuz1=_hi_vduz2 
-    lda _1+2
-    sta return_17
-    lda _1+3
-    sta return_17+1
+    lda.z _1+2
+    sta.z return_17
+    lda.z _1+3
+    sta.z return_17+1
     jmp breturn
     // mulu16_sel::@return
   breturn:
@@ -6824,28 +6824,28 @@ mul16u: {
     // [132] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   b1_from_mul16u:
     // [132] phi (dword) mul16u::mb#2 = (word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vwuz2 
-    lda b
-    sta mb
-    lda b+1
-    sta mb+1
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
     lda #0
-    sta mb+2
-    sta mb+3
+    sta.z mb+2
+    sta.z mb+3
     // [132] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
     lda #0
-    sta res
+    sta.z res
     lda #0
-    sta res+1
-    sta res+2
-    sta res+3
+    sta.z res+1
+    sta.z res+2
+    sta.z res+3
     // [132] phi (word) mul16u::a#2 = (word) mul16u::a#1 [phi:mul16u->mul16u::@1#2] -- register_copy 
     jmp b1
     // mul16u::@1
   b1:
     // [133] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     bne b2
-    lda a+1
+    lda.z a+1
     bne b2
     jmp breturn
     // mul16u::@return
@@ -6855,7 +6855,7 @@ mul16u: {
     // mul16u::@2
   b2:
     // [135] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
-    lda a
+    lda.z a
     and #1
     // [136] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
@@ -6864,19 +6864,19 @@ mul16u: {
     // mul16u::@4
   b4:
     // [137] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
-    lda res+2
-    adc mb+2
-    sta res+2
-    lda res+3
-    adc mb+3
-    sta res+3
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
     // [138] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -6885,13 +6885,13 @@ mul16u: {
     // mul16u::@3
   b3:
     // [139] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr a+1
-    ror a
+    lsr.z a+1
+    ror.z a
     // [140] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
-    asl mb
-    rol mb+1
-    rol mb+2
-    rol mb+3
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
     // [132] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
   b1_from_b3:
     // [132] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
@@ -6911,33 +6911,33 @@ div32u16u: {
   divr16u_from_div32u16u:
     // [151] phi (word) divr16u::dividend#5 = >(const dword) PI2_u4f28#0 [phi:div32u16u->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28>>$10
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (byte) 0 [phi:div32u16u->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
-    sta divr16u.rem
+    sta.z divr16u.rem
     lda #>0
-    sta divr16u.rem+1
+    sta.z divr16u.rem+1
     jsr divr16u
     // [143] (word) divr16u::return#2 ← (word) divr16u::return#0
     jmp b1
     // div32u16u::@1
   b1:
     // [144] (word) div32u16u::quotient_hi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
-    lda divr16u.return
-    sta quotient_hi
-    lda divr16u.return+1
-    sta quotient_hi+1
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
     // [145] (word) divr16u::rem#4 ← (word) rem16u#1
     // [146] call divr16u 
     // [151] phi from div32u16u::@1 to divr16u [phi:div32u16u::@1->divr16u]
   divr16u_from_b1:
     // [151] phi (word) divr16u::dividend#5 = <(const dword) PI2_u4f28#0 [phi:div32u16u::@1->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28&$ffff
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:div32u16u::@1->divr16u#1] -- register_copy 
     jsr divr16u
     // [147] (word) divr16u::return#3 ← (word) divr16u::return#0
@@ -6946,14 +6946,14 @@ div32u16u: {
   b2:
     // [148] (word) div32u16u::quotient_lo#0 ← (word) divr16u::return#3
     // [149] (dword) div32u16u::return#0 ← (word) div32u16u::quotient_hi#0 dw= (word) div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
-    lda quotient_hi
-    sta return+2
-    lda quotient_hi+1
-    sta return+3
-    lda quotient_lo
-    sta return
-    lda quotient_lo+1
-    sta return+1
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
     jmp breturn
     // div32u16u::@return
   breturn:
@@ -6977,9 +6977,9 @@ divr16u: {
     ldx #0
     // [152] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta quotient
+    sta.z quotient
     lda #>0
-    sta quotient+1
+    sta.z quotient+1
     // [152] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
     // [152] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
     jmp b1
@@ -6993,10 +6993,10 @@ divr16u: {
     // divr16u::@1
   b1:
     // [153] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl rem
-    rol rem+1
+    asl.z rem
+    rol.z rem+1
     // [154] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
-    lda dividend+1
+    lda.z dividend+1
     // [155] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
     // [156] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
@@ -7007,8 +7007,8 @@ divr16u: {
   b4:
     // [157] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
     // [158] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
@@ -7017,17 +7017,17 @@ divr16u: {
     // divr16u::@2
   b2:
     // [159] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl dividend
-    rol dividend+1
+    asl.z dividend
+    rol.z dividend+1
     // [160] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl quotient
-    rol quotient+1
+    asl.z quotient
+    rol.z quotient+1
     // [161] if((word) divr16u::rem#6<(const word) main::wavelength#0) goto divr16u::@3 -- vwuz1_lt_vwuc1_then_la1 
-    lda rem+1
+    lda.z rem+1
     cmp #>main.wavelength
     bcc b3_from_b2
     bne !+
-    lda rem
+    lda.z rem
     cmp #<main.wavelength
     bcc b3_from_b2
   !:
@@ -7035,18 +7035,18 @@ divr16u: {
     // divr16u::@5
   b5:
     // [162] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
     // [163] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) main::wavelength#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda rem
+    lda.z rem
     sec
     sbc #<main.wavelength
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>main.wavelength
-    sta rem+1
+    sta.z rem+1
     // [164] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
   b3_from_b2:
   b3_from_b5:
@@ -7094,21 +7094,21 @@ sin16s_gen: {
   b2_from_b3:
     // [173] phi (signed word*) sin16s_gen::sintab#7 = (const signed word[$78]) main::sintab1#0 [phi:sin16s_gen::@3->sin16s_gen::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
-    sta sintab
+    sta.z sintab
     lda #>main.sintab1
-    sta sintab+1
+    sta.z sintab+1
     // [173] phi (dword) sin16s_gen::x#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     lda #0
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [173] phi (word) sin16s_gen::i#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#2] -- vwuz1=vbuc1 
     lda #<0
-    sta i
+    sta.z i
     lda #>0
-    sta i+1
+    sta.z i+1
     jmp b2
     // [173] phi from sin16s_gen::@1 to sin16s_gen::@2 [phi:sin16s_gen::@1->sin16s_gen::@2]
   b2_from_b1:
@@ -7119,14 +7119,14 @@ sin16s_gen: {
     // sin16s_gen::@2
   b2:
     // [174] (dword) sin16s::x#0 ← (dword) sin16s_gen::x#5 -- vduz1=vduz2 
-    lda x
-    sta sin16s.x
-    lda x+1
-    sta sin16s.x+1
-    lda x+2
-    sta sin16s.x+2
-    lda x+3
-    sta sin16s.x+3
+    lda.z x
+    sta.z sin16s.x
+    lda.z x+1
+    sta.z sin16s.x+1
+    lda.z x+2
+    sta.z sin16s.x+2
+    lda.z x+3
+    sta.z sin16s.x+3
     // [175] call sin16s 
     jsr sin16s
     // [176] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1
@@ -7136,48 +7136,48 @@ sin16s_gen: {
     // [177] (signed word~) sin16s_gen::$2 ← (signed word) sin16s::return#0
     // [178] *((signed word*) sin16s_gen::sintab#7) ← (signed word~) sin16s_gen::$2 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _2
+    lda.z _2
     sta (sintab),y
     iny
-    lda _2+1
+    lda.z _2+1
     sta (sintab),y
     // [179] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // [180] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#5 + (dword) sin16s_gen::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // [181] (word) sin16s_gen::i#1 ← ++ (word) sin16s_gen::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
     jmp b1
   // u[4.28]
     // sin16s_gen::@1
   b1:
     // [182] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2_from_b1
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2_from_b1
   !:
@@ -7207,19 +7207,19 @@ sin16s: {
     .label sinx = $15
     .label isUpper = $10
     // [184] if((dword) sin16s::x#0<(const dword) PI_u4f28#0) goto sin16s::@1 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b1_from_sin16s
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_u4f28>>$10
     bcc b1_from_sin16s
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f28
     bcc b1_from_sin16s
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f28
     bcc b1_from_sin16s
   !:
@@ -7227,49 +7227,49 @@ sin16s: {
     // sin16s::@4
   b4:
     // [185] (dword) sin16s::x#1 ← (dword) sin16s::x#0 - (const dword) PI_u4f28#0 -- vduz1=vduz1_minus_vduc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f28
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f28
-    sta x+1
-    lda x+2
+    sta.z x+1
+    lda.z x+2
     sbc #<PI_u4f28>>$10
-    sta x+2
-    lda x+3
+    sta.z x+2
+    lda.z x+3
     sbc #>PI_u4f28>>$10
-    sta x+3
+    sta.z x+3
     // [186] phi from sin16s::@4 to sin16s::@1 [phi:sin16s::@4->sin16s::@1]
   b1_from_b4:
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 1 [phi:sin16s::@4->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #1
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#1 [phi:sin16s::@4->sin16s::@1#1] -- register_copy 
     jmp b1
     // [186] phi from sin16s to sin16s::@1 [phi:sin16s->sin16s::@1]
   b1_from_sin16s:
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 0 [phi:sin16s->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#0 [phi:sin16s->sin16s::@1#1] -- register_copy 
     jmp b1
     // sin16s::@1
   b1:
     // [187] if((dword) sin16s::x#4<(const dword) PI_HALF_u4f28#0) goto sin16s::@2 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
     bcc b2_from_b1
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
     bcc b2_from_b1
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f28
     bcc b2_from_b1
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f28
     bcc b2_from_b1
   !:
@@ -7279,17 +7279,17 @@ sin16s: {
     // [188] (dword) sin16s::x#2 ← (const dword) PI_u4f28#0 - (dword) sin16s::x#4 -- vduz1=vduc1_minus_vduz1 
     lda #<PI_u4f28
     sec
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f28
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     lda #<PI_u4f28>>$10
-    sbc x+2
-    sta x+2
+    sbc.z x+2
+    sta.z x+2
     lda #>PI_u4f28>>$10
-    sbc x+3
-    sta x+3
+    sbc.z x+3
+    sta.z x+3
     // [189] phi from sin16s::@1 sin16s::@5 to sin16s::@2 [phi:sin16s::@1/sin16s::@5->sin16s::@2]
   b2_from_b1:
   b2_from_b5:
@@ -7300,27 +7300,27 @@ sin16s: {
     // [190] (dword~) sin16s::$4 ← (dword) sin16s::x#6 << (byte) 3 -- vduz1=vduz1_rol_3 
     ldy #3
   !:
-    asl _4
-    rol _4+1
-    rol _4+2
-    rol _4+3
+    asl.z _4
+    rol.z _4+1
+    rol.z _4+2
+    rol.z _4+3
     dey
     bne !-
     // [191] (word) sin16s::x1#0 ← > (dword~) sin16s::$4 -- vwuz1=_hi_vduz2 
-    lda _4+2
-    sta x1
-    lda _4+3
-    sta x1+1
+    lda.z _4+2
+    sta.z x1
+    lda.z _4+3
+    sta.z x1+1
     // [192] (word) mulu16_sel::v1#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [193] (word) mulu16_sel::v2#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [194] call mulu16_sel 
     // [122] phi from sin16s::@2 to mulu16_sel [phi:sin16s::@2->mulu16_sel]
   mulu16_sel_from_b2:
@@ -7330,20 +7330,20 @@ sin16s: {
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#0 [phi:sin16s::@2->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [195] (word) mulu16_sel::return#0 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b7
     // sin16s::@7
   b7:
     // [196] (word) sin16s::x2#0 ← (word) mulu16_sel::return#0
     // [197] (word) mulu16_sel::v1#1 ← (word) sin16s::x2#0
     // [198] (word) mulu16_sel::v2#1 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [199] call mulu16_sel 
     // [122] phi from sin16s::@7 to mulu16_sel [phi:sin16s::@7->mulu16_sel]
   mulu16_sel_from_b7:
@@ -7353,10 +7353,10 @@ sin16s: {
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#1 [phi:sin16s::@7->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [200] (word) mulu16_sel::return#1 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b8
     // sin16s::@8
   b8:
@@ -7369,9 +7369,9 @@ sin16s: {
     ldx #1
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16s::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#2 [phi:sin16s::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [204] (word) mulu16_sel::return#14 ← (word) mulu16_sel::return#17
@@ -7380,19 +7380,19 @@ sin16s: {
   b9:
     // [205] (word) sin16s::x3_6#0 ← (word) mulu16_sel::return#14
     // [206] (word) sin16s::usinx#0 ← (word) sin16s::x1#0 - (word) sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // [207] (word) mulu16_sel::v1#3 ← (word) sin16s::x3#0
     // [208] (word) mulu16_sel::v2#3 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [209] call mulu16_sel 
     // [122] phi from sin16s::@9 to mulu16_sel [phi:sin16s::@9->mulu16_sel]
   mulu16_sel_from_b9:
@@ -7402,20 +7402,20 @@ sin16s: {
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#3 [phi:sin16s::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // [210] (word) mulu16_sel::return#15 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     jmp b10
     // sin16s::@10
   b10:
     // [211] (word) sin16s::x4#0 ← (word) mulu16_sel::return#15
     // [212] (word) mulu16_sel::v1#4 ← (word) sin16s::x4#0
     // [213] (word) mulu16_sel::v2#4 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [214] call mulu16_sel 
     // [122] phi from sin16s::@10 to mulu16_sel [phi:sin16s::@10->mulu16_sel]
   mulu16_sel_from_b10:
@@ -7430,24 +7430,24 @@ sin16s: {
   b11:
     // [216] (word) sin16s::x5#0 ← (word) mulu16_sel::return#16
     // [217] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte) 4 -- vwuz1=vwuz1_ror_4 
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // [218] (word) sin16s::usinx#1 ← (word) sin16s::usinx#0 + (word) sin16s::x5_128#0 -- vwuz1=vwuz1_plus_vwuz2 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx
-    lda usinx+1
-    adc x5_128+1
-    sta usinx+1
+    adc.z x5_128
+    sta.z usinx
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx+1
     // [219] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@12 -- vbuz1_eq_0_then_la1 
-    lda isUpper
+    lda.z isUpper
     cmp #0
     beq b12
     jmp b6
@@ -7456,11 +7456,11 @@ sin16s: {
     // [220] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc sinx
-    sta sinx
+    sbc.z sinx
+    sta.z sinx
     lda #0
-    sbc sinx+1
-    sta sinx+1
+    sbc.z sinx+1
+    sta.z sinx+1
     // [221] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
   b3_from_b12:
   b3_from_b6:
@@ -7559,7 +7559,7 @@ Removing instruction jmp b6
 Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda sw+1
+Removing instruction lda.z sw+1
 Removing instruction ldy #0
 Removing instruction lda #0
 Removing instruction lda #<0
@@ -8194,19 +8194,19 @@ main: {
     ldx #0
     // [10] phi (byte*) print_char_cursor#52 = (const byte*) print_line_cursor#0 [phi:main::@5->main::@1#1] -- pbuz1=pbuc1 
     lda #<print_line_cursor
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>print_line_cursor
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2#0 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
-    sta st2
+    sta.z st2
     lda #>sintab2
-    sta st2+1
+    sta.z st2+1
     // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1#0 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
-    sta st1
+    sta.z st1
     lda #>sintab1
-    sta st1+1
+    sta.z st1+1
     // [10] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
     // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
     // [10] phi (byte*) print_char_cursor#52 = (byte*) print_char_cursor#2 [phi:main::@7->main::@1#1] -- register_copy 
@@ -8220,11 +8220,11 @@ main: {
     sec
     lda (st1),y
     sbc (st2),y
-    sta sw
+    sta.z sw
     iny
     lda (st1),y
     sbc (st2),y
-    sta sw+1
+    sta.z sw+1
     // if(sw>=0)
     // [12] if((signed word) main::sw#0<(signed byte) 0) goto main::@2 -- vwsz1_lt_0_then_la1 
     bmi b2
@@ -8236,9 +8236,9 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#52 [phi:main::@3->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@3->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     // [15] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
     // [15] phi (byte*) print_char_cursor#51 = (byte*) print_char_cursor#52 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
@@ -8256,28 +8256,28 @@ main: {
     // [25] phi (byte*) print_char_cursor#54 = (byte*) print_char_cursor#13 [phi:main::@6->print_str#0] -- register_copy 
     // [25] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     // main::@7
     // st1++;
     // [20] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st1
-    sta st1
+    adc.z st1
+    sta.z st1
     bcc !+
-    inc st1+1
+    inc.z st1+1
   !:
     // st2++;
     // [21] (signed word*) main::st2#1 ← (signed word*) main::st2#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc st2
-    sta st2
+    adc.z st2
+    sta.z st2
     bcc !+
-    inc st2+1
+    inc.z st2+1
   !:
     // for( byte i: 0..119)
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -8325,14 +8325,14 @@ print_str: {
     sta (print_char_cursor),y
     // *(print_char_cursor++) = *(str++);
     // [30] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [31] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#3 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -8343,7 +8343,7 @@ print_sword: {
     .label w = $1d
     // if(w<0)
     // [32] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1
     // [33] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
     // print_sword::@3
@@ -8381,11 +8381,11 @@ print_sword: {
     // [41] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
   // print_char
@@ -8398,9 +8398,9 @@ print_char: {
     sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
     // [44] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#35 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // print_char::@return
     // }
@@ -8414,8 +8414,8 @@ print_word: {
     .label w = $1d
     // print_byte(>w)
     // [46] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [47] call print_byte 
     // [51] phi from print_word to print_byte [phi:print_word->print_byte]
     // [51] phi (byte) print_byte::b#2 = (byte) print_byte::b#0 [phi:print_word->print_byte#0] -- register_copy 
@@ -8423,8 +8423,8 @@ print_word: {
     // print_word::@1
     // print_byte(<w)
     // [48] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [49] call print_byte 
     // [51] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
     // [51] phi (byte) print_byte::b#2 = (byte) print_byte::b#1 [phi:print_word::@1->print_byte#0] -- register_copy 
@@ -8441,7 +8441,7 @@ print_byte: {
     .label b = $10
     // b>>4
     // [52] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -8459,7 +8459,7 @@ print_byte: {
     // b&$f
     // [55] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
-    and b
+    and.z b
     // print_char(print_hextab[b&$f])
     // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
@@ -8497,9 +8497,9 @@ memset: {
     // [63] phi from memset to memset::@2 [phi:memset->memset::@2]
     // [63] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     // [63] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
     // [63] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
     // memset::@2
@@ -8511,16 +8511,16 @@ memset: {
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
     // [65] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     // memset::@1
     // [66] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     // memset::@return
@@ -8551,18 +8551,18 @@ sin16s_genb: {
     // [72] phi from sin16s_genb::@3 to sin16s_genb::@2 [phi:sin16s_genb::@3->sin16s_genb::@2]
     // [72] phi (signed word*) sin16s_genb::sintab#7 = (const signed word[$78]) main::sintab2#0 [phi:sin16s_genb::@3->sin16s_genb::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
-    sta sintab
+    sta.z sintab
     lda #>main.sintab2
-    sta sintab+1
+    sta.z sintab+1
     // [72] phi (dword) sin16s_genb::x#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [72] phi (word) sin16s_genb::i#5 = (byte) 0 [phi:sin16s_genb::@3->sin16s_genb::@2#2] -- vwuz1=vbuc1 
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
     // [72] phi from sin16s_genb::@1 to sin16s_genb::@2 [phi:sin16s_genb::@1->sin16s_genb::@2]
     // [72] phi (signed word*) sin16s_genb::sintab#7 = (signed word*) sin16s_genb::sintab#0 [phi:sin16s_genb::@1->sin16s_genb::@2#0] -- register_copy 
     // [72] phi (dword) sin16s_genb::x#5 = (dword) sin16s_genb::x#1 [phi:sin16s_genb::@1->sin16s_genb::@2#1] -- register_copy 
@@ -8571,10 +8571,10 @@ sin16s_genb: {
   b2:
     // sin16sb(>x)
     // [73] (word) sin16sb::x#0 ← > (dword) sin16s_genb::x#5 -- vwuz1=_hi_vduz2 
-    lda x+2
-    sta sin16sb.x
-    lda x+3
-    sta sin16sb.x+1
+    lda.z x+2
+    sta.z sin16sb.x
+    lda.z x+3
+    sta.z sin16sb.x+1
     // [74] call sin16sb 
     jsr sin16sb
     // [75] (signed word) sin16sb::return#0 ← (signed word) sin16sb::return#1
@@ -8583,49 +8583,49 @@ sin16s_genb: {
     // *sintab++ = sin16sb(>x)
     // [77] *((signed word*) sin16s_genb::sintab#7) ← (signed word~) sin16s_genb::$3 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _3
+    lda.z _3
     sta (sintab),y
     iny
-    lda _3+1
+    lda.z _3+1
     sta (sintab),y
     // *sintab++ = sin16sb(>x);
     // [78] (signed word*) sin16s_genb::sintab#0 ← (signed word*) sin16s_genb::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // x = x + step
     // [79] (dword) sin16s_genb::x#1 ← (dword) sin16s_genb::x#5 + (dword) sin16s_genb::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // for( word i=0; i<wavelength; i++)
     // [80] (word) sin16s_genb::i#1 ← ++ (word) sin16s_genb::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
   // u[4.28]
     // sin16s_genb::@1
     // [81] if((word) sin16s_genb::i#1<(const word) main::wavelength#0) goto sin16s_genb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2
   !:
@@ -8653,24 +8653,24 @@ sin16sb: {
     .label sinx = $1f
     // if(x >= PI_u4f12 )
     // [83] if((word) sin16sb::x#0<(const word) PI_u4f12#0) goto sin16sb::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f12
     bcc b4
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f12
     bcc b4
   !:
     // sin16sb::@4
     // x = x - PI_u4f12
     // [84] (word) sin16sb::x#1 ← (word) sin16sb::x#0 - (const word) PI_u4f12#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f12
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f12
-    sta x+1
+    sta.z x+1
     // [85] phi from sin16sb::@4 to sin16sb::@1 [phi:sin16sb::@4->sin16sb::@1]
     // [85] phi (byte) sin16sb::isUpper#2 = (byte) 1 [phi:sin16sb::@4->sin16sb::@1#0] -- vbuyy=vbuc1 
     ldy #1
@@ -8685,11 +8685,11 @@ sin16sb: {
   b1:
     // if(x >= PI_HALF_u4f12 )
     // [86] if((word) sin16sb::x#4<(const word) PI_HALF_u4f12#0) goto sin16sb::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f12
     bcc b2
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f12
     bcc b2
   !:
@@ -8698,34 +8698,34 @@ sin16sb: {
     // [87] (word) sin16sb::x#2 ← (const word) PI_u4f12#0 - (word) sin16sb::x#4 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<PI_u4f12
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f12
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     // [88] phi from sin16sb::@1 sin16sb::@5 to sin16sb::@2 [phi:sin16sb::@1/sin16sb::@5->sin16sb::@2]
     // [88] phi (word) sin16sb::x#6 = (word) sin16sb::x#4 [phi:sin16sb::@1/sin16sb::@5->sin16sb::@2#0] -- register_copy 
     // sin16sb::@2
   b2:
     // x1 = x*8
     // [89] (word) sin16sb::x1#0 ← (word) sin16sb::x#6 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl x1
-    rol x1+1
-    asl x1
-    rol x1+1
-    asl x1
-    rol x1+1
+    asl.z x1
+    rol.z x1+1
+    asl.z x1
+    rol.z x1+1
+    asl.z x1
+    rol.z x1+1
     // mulu16_sel(x1, x1, 0)
     // [90] (word) mulu16_sel::v1#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [91] (word) mulu16_sel::v2#5 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [92] call mulu16_sel 
     // [122] phi from sin16sb::@2 to mulu16_sel [phi:sin16sb::@2->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@2->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -8738,17 +8738,17 @@ sin16sb: {
     // sin16sb::@7
     // x2 = mulu16_sel(x1, x1, 0)
     // [94] (word) sin16sb::x2#0 ← (word) mulu16_sel::return#18 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_18
-    sta x2
-    lda mulu16_sel.return_18+1
-    sta x2+1
+    lda.z mulu16_sel.return_18
+    sta.z x2
+    lda.z mulu16_sel.return_18+1
+    sta.z x2+1
     // mulu16_sel(x2, x1, 1)
     // [95] (word) mulu16_sel::v1#6 ← (word) sin16sb::x2#0
     // [96] (word) mulu16_sel::v2#6 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [97] call mulu16_sel 
     // [122] phi from sin16sb::@7 to mulu16_sel [phi:sin16sb::@7->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16sb::@7->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -8758,10 +8758,10 @@ sin16sb: {
     jsr mulu16_sel
     // mulu16_sel(x2, x1, 1)
     // [98] (word) mulu16_sel::return#19 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     // sin16sb::@8
     // x3 = mulu16_sel(x2, x1, 1)
     // [99] (word) sin16sb::x3#0 ← (word) mulu16_sel::return#19
@@ -8773,9 +8773,9 @@ sin16sb: {
     ldx #1
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16sb::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#7 [phi:sin16sb::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
@@ -8785,20 +8785,20 @@ sin16sb: {
     // [103] (word) sin16sb::x3_6#0 ← (word) mulu16_sel::return#20
     // usinx = x1 - x3_6
     // [104] (word) sin16sb::usinx#0 ← (word) sin16sb::x1#0 - (word) sin16sb::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // mulu16_sel(x3, x1, 0)
     // [105] (word) mulu16_sel::v1#8 ← (word) sin16sb::x3#0
     // [106] (word) mulu16_sel::v2#8 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [107] call mulu16_sel 
     // [122] phi from sin16sb::@9 to mulu16_sel [phi:sin16sb::@9->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@9->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -8808,20 +8808,20 @@ sin16sb: {
     jsr mulu16_sel
     // mulu16_sel(x3, x1, 0)
     // [108] (word) mulu16_sel::return#10 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     // sin16sb::@10
     // x4 = mulu16_sel(x3, x1, 0)
     // [109] (word) sin16sb::x4#0 ← (word) mulu16_sel::return#10
     // mulu16_sel(x4, x1, 0)
     // [110] (word) mulu16_sel::v1#9 ← (word) sin16sb::x4#0
     // [111] (word) mulu16_sel::v2#9 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [112] call mulu16_sel 
     // [122] phi from sin16sb::@10 to mulu16_sel [phi:sin16sb::@10->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16sb::@10->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -8836,23 +8836,23 @@ sin16sb: {
     // [114] (word) sin16sb::x5#0 ← (word) mulu16_sel::return#11
     // x5_128 = x5/$10
     // [115] (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 >> (byte) 4 -- vwuz1=vwuz1_ror_4 
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // usinx = usinx + x5_128
     // [116] (word) sin16sb::usinx#1 ← (word) sin16sb::usinx#0 + (word) sin16sb::x5_128#0 -- vwuz1=vwuz1_plus_vwuz2 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx
-    lda usinx+1
-    adc x5_128+1
-    sta usinx+1
+    adc.z x5_128
+    sta.z usinx
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx+1
     // if(isUpper!=0)
     // [117] if((byte) sin16sb::isUpper#2==(byte) 0) goto sin16sb::@12 -- vbuyy_eq_0_then_la1 
     cpy #0
@@ -8862,11 +8862,11 @@ sin16sb: {
     // [118] (signed word) sin16sb::sinx#1 ← - (signed word)(word) sin16sb::usinx#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc sinx
-    sta sinx
+    sbc.z sinx
+    sta.z sinx
     lda #0
-    sbc sinx+1
-    sta sinx+1
+    sbc.z sinx+1
+    sta.z sinx+1
     // [119] phi from sin16sb::@12 sin16sb::@6 to sin16sb::@3 [phi:sin16sb::@12/sin16sb::@6->sin16sb::@3]
     // [119] phi (signed word) sin16sb::return#1 = (signed word~) sin16sb::return#5 [phi:sin16sb::@12/sin16sb::@6->sin16sb::@3#0] -- register_copy 
     // sin16sb::@3
@@ -8896,10 +8896,10 @@ mulu16_sel: {
     .label return_20 = $1b
     // mul16u(v1, v2)
     // [123] (word) mul16u::a#1 ← (word) mulu16_sel::v1#10 -- vwuz1=vwuz2 
-    lda v1
-    sta mul16u.a
-    lda v1+1
-    sta mul16u.a+1
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
     // [124] (word) mul16u::b#0 ← (word) mulu16_sel::v2#10
     // [125] call mul16u 
     // [131] phi from mulu16_sel to mul16u [phi:mulu16_sel->mul16u]
@@ -8913,19 +8913,19 @@ mulu16_sel: {
     cpx #0
     beq !e+
   !:
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
+    asl.z _1
+    rol.z _1+1
+    rol.z _1+2
+    rol.z _1+3
     dex
     bne !-
   !e:
     // >mul16u(v1, v2)<<select
     // [129] (word) mulu16_sel::return#17 ← > (dword~) mulu16_sel::$1 -- vwuz1=_hi_vduz2 
-    lda _1+2
-    sta return_17
-    lda _1+3
-    sta return_17+1
+    lda.z _1+2
+    sta.z return_17
+    lda.z _1+3
+    sta.z return_17+1
     // mulu16_sel::@return
     // }
     // [130] return 
@@ -8942,26 +8942,26 @@ mul16u: {
     .label return = $11
     // [132] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
     // [132] phi (dword) mul16u::mb#2 = (word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vwuz2 
-    lda b
-    sta mb
-    lda b+1
-    sta mb+1
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
     lda #0
-    sta mb+2
-    sta mb+3
+    sta.z mb+2
+    sta.z mb+3
     // [132] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    sta res
-    sta res+1
-    sta res+2
-    sta res+3
+    sta.z res
+    sta.z res+1
+    sta.z res+2
+    sta.z res+3
     // [132] phi (word) mul16u::a#2 = (word) mul16u::a#1 [phi:mul16u->mul16u::@1#2] -- register_copy 
     // mul16u::@1
   b1:
     // while(a!=0)
     // [133] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     bne b2
-    lda a+1
+    lda.z a+1
     bne b2
     // mul16u::@return
     // }
@@ -8971,7 +8971,7 @@ mul16u: {
   b2:
     // a&1
     // [135] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
-    lda a
+    lda.z a
     and #1
     // if( (a&1) != 0)
     // [136] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
@@ -8980,33 +8980,33 @@ mul16u: {
     // mul16u::@4
     // res = res + mb
     // [137] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
-    lda res+2
-    adc mb+2
-    sta res+2
-    lda res+3
-    adc mb+3
-    sta res+3
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
     // [138] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
     // [138] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
     // mul16u::@3
   b3:
     // a = a>>1
     // [139] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr a+1
-    ror a
+    lsr.z a+1
+    ror.z a
     // mb = mb<<1
     // [140] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
-    asl mb
-    rol mb+1
-    rol mb+2
-    rol mb+3
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
     // [132] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
     // [132] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
     // [132] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
@@ -9025,32 +9025,32 @@ div32u16u: {
     // [151] phi from div32u16u to divr16u [phi:div32u16u->divr16u]
     // [151] phi (word) divr16u::dividend#5 = >(const dword) PI2_u4f28#0 [phi:div32u16u->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28>>$10
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (byte) 0 [phi:div32u16u->divr16u#1] -- vwuz1=vbuc1 
     lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
     jsr divr16u
     // divr16u(>dividend, divisor, 0)
     // [143] (word) divr16u::return#2 ← (word) divr16u::return#0
     // div32u16u::@1
     // quotient_hi = divr16u(>dividend, divisor, 0)
     // [144] (word) div32u16u::quotient_hi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
-    lda divr16u.return
-    sta quotient_hi
-    lda divr16u.return+1
-    sta quotient_hi+1
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
     // divr16u(<dividend, divisor, rem16u)
     // [145] (word) divr16u::rem#4 ← (word) rem16u#1
     // [146] call divr16u 
     // [151] phi from div32u16u::@1 to divr16u [phi:div32u16u::@1->divr16u]
     // [151] phi (word) divr16u::dividend#5 = <(const dword) PI2_u4f28#0 [phi:div32u16u::@1->divr16u#0] -- vwuz1=vwuc1 
     lda #<PI2_u4f28&$ffff
-    sta divr16u.dividend
+    sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
-    sta divr16u.dividend+1
+    sta.z divr16u.dividend+1
     // [151] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:div32u16u::@1->divr16u#1] -- register_copy 
     jsr divr16u
     // divr16u(<dividend, divisor, rem16u)
@@ -9060,14 +9060,14 @@ div32u16u: {
     // [148] (word) div32u16u::quotient_lo#0 ← (word) divr16u::return#3
     // quotient = { quotient_hi, quotient_lo}
     // [149] (dword) div32u16u::return#0 ← (word) div32u16u::quotient_hi#0 dw= (word) div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
-    lda quotient_hi
-    sta return+2
-    lda quotient_hi+1
-    sta return+3
-    lda quotient_lo
-    sta return
-    lda quotient_lo+1
-    sta return+1
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
     // div32u16u::@return
     // }
     // [150] return 
@@ -9089,8 +9089,8 @@ divr16u: {
     ldx #0
     // [152] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
     txa
-    sta quotient
-    sta quotient+1
+    sta.z quotient
+    sta.z quotient+1
     // [152] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#5 [phi:divr16u->divr16u::@1#2] -- register_copy 
     // [152] phi (word) divr16u::rem#5 = (word) divr16u::rem#10 [phi:divr16u->divr16u::@1#3] -- register_copy 
     // [152] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
@@ -9102,11 +9102,11 @@ divr16u: {
   b1:
     // rem = rem << 1
     // [153] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl rem
-    rol rem+1
+    asl.z rem
+    rol.z rem+1
     // >dividend
     // [154] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuaa=_hi_vwuz1 
-    lda dividend+1
+    lda.z dividend+1
     // >dividend & $80
     // [155] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
@@ -9118,46 +9118,46 @@ divr16u: {
     // rem = rem | 1
     // [157] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
     // [158] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
     // [158] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     // divr16u::@2
   b2:
     // dividend = dividend << 1
     // [159] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl dividend
-    rol dividend+1
+    asl.z dividend
+    rol.z dividend+1
     // quotient = quotient << 1
     // [160] (word) divr16u::quotient#1 ← (word) divr16u::quotient#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl quotient
-    rol quotient+1
+    asl.z quotient
+    rol.z quotient+1
     // if(rem>=divisor)
     // [161] if((word) divr16u::rem#6<(const word) main::wavelength#0) goto divr16u::@3 -- vwuz1_lt_vwuc1_then_la1 
-    lda rem+1
+    lda.z rem+1
     cmp #>main.wavelength
     bcc b3
     bne !+
-    lda rem
+    lda.z rem
     cmp #<main.wavelength
     bcc b3
   !:
     // divr16u::@5
     // quotient++;
     // [162] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
     // rem = rem - divisor
     // [163] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) main::wavelength#0 -- vwuz1=vwuz1_minus_vwuc1 
-    lda rem
+    lda.z rem
     sec
     sbc #<main.wavelength
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>main.wavelength
-    sta rem+1
+    sta.z rem+1
     // [164] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
     // [164] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [164] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
@@ -9200,18 +9200,18 @@ sin16s_gen: {
     // [173] phi from sin16s_gen::@3 to sin16s_gen::@2 [phi:sin16s_gen::@3->sin16s_gen::@2]
     // [173] phi (signed word*) sin16s_gen::sintab#7 = (const signed word[$78]) main::sintab1#0 [phi:sin16s_gen::@3->sin16s_gen::@2#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
-    sta sintab
+    sta.z sintab
     lda #>main.sintab1
-    sta sintab+1
+    sta.z sintab+1
     // [173] phi (dword) sin16s_gen::x#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#1] -- vduz1=vbuc1 
     lda #0
-    sta x
-    sta x+1
-    sta x+2
-    sta x+3
+    sta.z x
+    sta.z x+1
+    sta.z x+2
+    sta.z x+3
     // [173] phi (word) sin16s_gen::i#5 = (byte) 0 [phi:sin16s_gen::@3->sin16s_gen::@2#2] -- vwuz1=vbuc1 
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
     // [173] phi from sin16s_gen::@1 to sin16s_gen::@2 [phi:sin16s_gen::@1->sin16s_gen::@2]
     // [173] phi (signed word*) sin16s_gen::sintab#7 = (signed word*) sin16s_gen::sintab#0 [phi:sin16s_gen::@1->sin16s_gen::@2#0] -- register_copy 
     // [173] phi (dword) sin16s_gen::x#5 = (dword) sin16s_gen::x#1 [phi:sin16s_gen::@1->sin16s_gen::@2#1] -- register_copy 
@@ -9220,14 +9220,14 @@ sin16s_gen: {
   b2:
     // sin16s(x)
     // [174] (dword) sin16s::x#0 ← (dword) sin16s_gen::x#5 -- vduz1=vduz2 
-    lda x
-    sta sin16s.x
-    lda x+1
-    sta sin16s.x+1
-    lda x+2
-    sta sin16s.x+2
-    lda x+3
-    sta sin16s.x+3
+    lda.z x
+    sta.z sin16s.x
+    lda.z x+1
+    sta.z sin16s.x+1
+    lda.z x+2
+    sta.z sin16s.x+2
+    lda.z x+3
+    sta.z sin16s.x+3
     // [175] call sin16s 
     jsr sin16s
     // [176] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1
@@ -9236,49 +9236,49 @@ sin16s_gen: {
     // *sintab++ = sin16s(x)
     // [178] *((signed word*) sin16s_gen::sintab#7) ← (signed word~) sin16s_gen::$2 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _2
+    lda.z _2
     sta (sintab),y
     iny
-    lda _2+1
+    lda.z _2+1
     sta (sintab),y
     // *sintab++ = sin16s(x);
     // [179] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#7 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
     clc
-    adc sintab
-    sta sintab
+    adc.z sintab
+    sta.z sintab
     bcc !+
-    inc sintab+1
+    inc.z sintab+1
   !:
     // x = x + step
     // [180] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#5 + (dword) sin16s_gen::step#0 -- vduz1=vduz1_plus_vduz2 
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    lda x+2
-    adc step+2
-    sta x+2
-    lda x+3
-    adc step+3
-    sta x+3
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    lda.z x+2
+    adc.z step+2
+    sta.z x+2
+    lda.z x+3
+    adc.z step+3
+    sta.z x+3
     // for( word i=0; i<wavelength; i++)
     // [181] (word) sin16s_gen::i#1 ← ++ (word) sin16s_gen::i#5 -- vwuz1=_inc_vwuz1 
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
   // u[4.28]
     // sin16s_gen::@1
     // [182] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
+    lda.z i+1
     cmp #>main.wavelength
     bcc b2
     bne !+
-    lda i
+    lda.z i
     cmp #<main.wavelength
     bcc b2
   !:
@@ -9308,67 +9308,67 @@ sin16s: {
     .label isUpper = $10
     // if(x >= PI_u4f28 )
     // [184] if((dword) sin16s::x#0<(const dword) PI_u4f28#0) goto sin16s::@1 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b4
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_u4f28>>$10
     bcc b4
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f28
     bcc b4
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f28
     bcc b4
   !:
     // sin16s::@4
     // x = x - PI_u4f28
     // [185] (dword) sin16s::x#1 ← (dword) sin16s::x#0 - (const dword) PI_u4f28#0 -- vduz1=vduz1_minus_vduc1 
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f28
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f28
-    sta x+1
-    lda x+2
+    sta.z x+1
+    lda.z x+2
     sbc #<PI_u4f28>>$10
-    sta x+2
-    lda x+3
+    sta.z x+2
+    lda.z x+3
     sbc #>PI_u4f28>>$10
-    sta x+3
+    sta.z x+3
     // [186] phi from sin16s::@4 to sin16s::@1 [phi:sin16s::@4->sin16s::@1]
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 1 [phi:sin16s::@4->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #1
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#1 [phi:sin16s::@4->sin16s::@1#1] -- register_copy 
     jmp b1
     // [186] phi from sin16s to sin16s::@1 [phi:sin16s->sin16s::@1]
   b4:
     // [186] phi (byte) sin16s::isUpper#2 = (byte) 0 [phi:sin16s->sin16s::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta isUpper
+    sta.z isUpper
     // [186] phi (dword) sin16s::x#4 = (dword) sin16s::x#0 [phi:sin16s->sin16s::@1#1] -- register_copy 
     // sin16s::@1
   b1:
     // if(x >= PI_HALF_u4f28 )
     // [187] if((dword) sin16s::x#4<(const dword) PI_HALF_u4f28#0) goto sin16s::@2 -- vduz1_lt_vduc1_then_la1 
-    lda x+3
+    lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
     bcc b2
     bne !+
-    lda x+2
+    lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
     bcc b2
     bne !+
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f28
     bcc b2
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f28
     bcc b2
   !:
@@ -9377,17 +9377,17 @@ sin16s: {
     // [188] (dword) sin16s::x#2 ← (const dword) PI_u4f28#0 - (dword) sin16s::x#4 -- vduz1=vduc1_minus_vduz1 
     lda #<PI_u4f28
     sec
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f28
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
     lda #<PI_u4f28>>$10
-    sbc x+2
-    sta x+2
+    sbc.z x+2
+    sta.z x+2
     lda #>PI_u4f28>>$10
-    sbc x+3
-    sta x+3
+    sbc.z x+3
+    sta.z x+3
     // [189] phi from sin16s::@1 sin16s::@5 to sin16s::@2 [phi:sin16s::@1/sin16s::@5->sin16s::@2]
     // [189] phi (dword) sin16s::x#6 = (dword) sin16s::x#4 [phi:sin16s::@1/sin16s::@5->sin16s::@2#0] -- register_copy 
     // sin16s::@2
@@ -9396,29 +9396,29 @@ sin16s: {
     // [190] (dword~) sin16s::$4 ← (dword) sin16s::x#6 << (byte) 3 -- vduz1=vduz1_rol_3 
     ldy #3
   !:
-    asl _4
-    rol _4+1
-    rol _4+2
-    rol _4+3
+    asl.z _4
+    rol.z _4+1
+    rol.z _4+2
+    rol.z _4+3
     dey
     bne !-
     // x1 = >x<<3
     // [191] (word) sin16s::x1#0 ← > (dword~) sin16s::$4 -- vwuz1=_hi_vduz2 
-    lda _4+2
-    sta x1
-    lda _4+3
-    sta x1+1
+    lda.z _4+2
+    sta.z x1
+    lda.z _4+3
+    sta.z x1+1
     // mulu16_sel(x1, x1, 0)
     // [192] (word) mulu16_sel::v1#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v1
-    lda x1+1
-    sta mulu16_sel.v1+1
+    lda.z x1
+    sta.z mulu16_sel.v1
+    lda.z x1+1
+    sta.z mulu16_sel.v1+1
     // [193] (word) mulu16_sel::v2#0 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [194] call mulu16_sel 
     // [122] phi from sin16s::@2 to mulu16_sel [phi:sin16s::@2->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@2->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -9428,20 +9428,20 @@ sin16s: {
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
     // [195] (word) mulu16_sel::return#0 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     // sin16s::@7
     // x2 = mulu16_sel(x1, x1, 0)
     // [196] (word) sin16s::x2#0 ← (word) mulu16_sel::return#0
     // mulu16_sel(x2, x1, 1)
     // [197] (word) mulu16_sel::v1#1 ← (word) sin16s::x2#0
     // [198] (word) mulu16_sel::v2#1 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [199] call mulu16_sel 
     // [122] phi from sin16s::@7 to mulu16_sel [phi:sin16s::@7->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 1 [phi:sin16s::@7->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -9451,10 +9451,10 @@ sin16s: {
     jsr mulu16_sel
     // mulu16_sel(x2, x1, 1)
     // [200] (word) mulu16_sel::return#1 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     // sin16s::@8
     // x3 = mulu16_sel(x2, x1, 1)
     // [201] (word) sin16s::x3#0 ← (word) mulu16_sel::return#1
@@ -9466,9 +9466,9 @@ sin16s: {
     ldx #1
     // [122] phi (word) mulu16_sel::v2#10 = (word)(number) $10000/(number) 6 [phi:sin16s::@8->mulu16_sel#1] -- vwuz1=vwuc1 
     lda #<$10000/6
-    sta mulu16_sel.v2
+    sta.z mulu16_sel.v2
     lda #>$10000/6
-    sta mulu16_sel.v2+1
+    sta.z mulu16_sel.v2+1
     // [122] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#2 [phi:sin16s::@8->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
@@ -9478,20 +9478,20 @@ sin16s: {
     // [205] (word) sin16s::x3_6#0 ← (word) mulu16_sel::return#14
     // usinx = x1 - x3_6
     // [206] (word) sin16s::usinx#0 ← (word) sin16s::x1#0 - (word) sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
-    lda x1
+    lda.z x1
     sec
-    sbc x3_6
-    sta usinx
-    lda x1+1
-    sbc x3_6+1
-    sta usinx+1
+    sbc.z x3_6
+    sta.z usinx
+    lda.z x1+1
+    sbc.z x3_6+1
+    sta.z usinx+1
     // mulu16_sel(x3, x1, 0)
     // [207] (word) mulu16_sel::v1#3 ← (word) sin16s::x3#0
     // [208] (word) mulu16_sel::v2#3 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [209] call mulu16_sel 
     // [122] phi from sin16s::@9 to mulu16_sel [phi:sin16s::@9->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@9->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -9501,20 +9501,20 @@ sin16s: {
     jsr mulu16_sel
     // mulu16_sel(x3, x1, 0)
     // [210] (word) mulu16_sel::return#15 ← (word) mulu16_sel::return#17 -- vwuz1=vwuz2 
-    lda mulu16_sel.return_17
-    sta mulu16_sel.return
-    lda mulu16_sel.return_17+1
-    sta mulu16_sel.return+1
+    lda.z mulu16_sel.return_17
+    sta.z mulu16_sel.return
+    lda.z mulu16_sel.return_17+1
+    sta.z mulu16_sel.return+1
     // sin16s::@10
     // x4 = mulu16_sel(x3, x1, 0)
     // [211] (word) sin16s::x4#0 ← (word) mulu16_sel::return#15
     // mulu16_sel(x4, x1, 0)
     // [212] (word) mulu16_sel::v1#4 ← (word) sin16s::x4#0
     // [213] (word) mulu16_sel::v2#4 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
-    lda x1
-    sta mulu16_sel.v2
-    lda x1+1
-    sta mulu16_sel.v2+1
+    lda.z x1
+    sta.z mulu16_sel.v2
+    lda.z x1+1
+    sta.z mulu16_sel.v2+1
     // [214] call mulu16_sel 
     // [122] phi from sin16s::@10 to mulu16_sel [phi:sin16s::@10->mulu16_sel]
     // [122] phi (byte) mulu16_sel::select#10 = (byte) 0 [phi:sin16s::@10->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -9529,26 +9529,26 @@ sin16s: {
     // [216] (word) sin16s::x5#0 ← (word) mulu16_sel::return#16
     // x5_128 = x5>>4
     // [217] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte) 4 -- vwuz1=vwuz1_ror_4 
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
-    lsr x5_128+1
-    ror x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
+    lsr.z x5_128+1
+    ror.z x5_128
     // usinx = usinx + x5_128
     // [218] (word) sin16s::usinx#1 ← (word) sin16s::usinx#0 + (word) sin16s::x5_128#0 -- vwuz1=vwuz1_plus_vwuz2 
-    lda usinx
+    lda.z usinx
     clc
-    adc x5_128
-    sta usinx
-    lda usinx+1
-    adc x5_128+1
-    sta usinx+1
+    adc.z x5_128
+    sta.z usinx
+    lda.z usinx+1
+    adc.z x5_128+1
+    sta.z usinx+1
     // if(isUpper!=0)
     // [219] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@12 -- vbuz1_eq_0_then_la1 
-    lda isUpper
+    lda.z isUpper
     cmp #0
     beq b3
     // sin16s::@6
@@ -9556,11 +9556,11 @@ sin16s: {
     // [220] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc sinx
-    sta sinx
+    sbc.z sinx
+    sta.z sinx
     lda #0
-    sbc sinx+1
-    sta sinx+1
+    sbc.z sinx+1
+    sta.z sinx+1
     // [221] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
     // [221] phi (signed word) sin16s::return#1 = (signed word~) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
     // sin16s::@3

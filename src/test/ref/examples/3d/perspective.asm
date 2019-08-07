@@ -34,49 +34,49 @@ do_perspective: {
     .label y = -$47
     .label z = $36
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx #x
     jsr print_sbyte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx #y
     jsr print_sbyte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx #z
     jsr print_sbyte
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr perspective
     ldx xr
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx yr
     jsr print_byte
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_ln
     rts
@@ -92,23 +92,23 @@ do_perspective: {
 // Print a newline
 print_ln: {
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -127,13 +127,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -159,9 +159,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -227,21 +227,21 @@ memset: {
     .label end = str+num
     .label dst = 4
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts
@@ -252,22 +252,22 @@ mulf_init: {
     .label sqr = 2
     .label add = 4
     lda #<1
-    sta add
+    sta.z add
     lda #>1
-    sta add+1
+    sta.z add+1
     tay
-    sta sqr
-    sta sqr+1
+    sta.z sqr
+    sta.z sqr+1
   b1:
-    lda sqr+1
-    sta val
+    lda.z sqr+1
+    sta.z val
     sta mulf_sqr1,y
     sta mulf_sqr1+$100,y
     tya
     eor #$ff
     tax
     inx
-    lda val
+    lda.z val
     sta mulf_sqr1,x
     sta mulf_sqr1+$100,x
     sta mulf_sqr2+1,y
@@ -276,27 +276,27 @@ mulf_init: {
     eor #$ff
     tax
     axs #-1-1
-    lda val
+    lda.z val
     sta mulf_sqr2,x
     tya
     eor #$ff
     tax
     axs #-1-1
-    lda val
+    lda.z val
     sta mulf_sqr2+$100,x
-    lda sqr
+    lda.z sqr
     clc
-    adc add
-    sta sqr
-    lda sqr+1
-    adc add+1
-    sta sqr+1
-    lda add
+    adc.z add
+    sta.z sqr
+    lda.z sqr+1
+    adc.z add+1
+    sta.z sqr+1
+    lda.z add
     clc
     adc #2
-    sta add
+    sta.z add
     bcc !+
-    inc add+1
+    inc.z add+1
   !:
     iny
     cpy #$81

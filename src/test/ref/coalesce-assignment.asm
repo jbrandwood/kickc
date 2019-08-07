@@ -8,27 +8,27 @@ main: {
     .label a = 2
     ldx #0
     txa
-    sta a
+    sta.z a
   b1:
     ldy #0
   b2:
     tya
     clc
-    adc a
-    sta e
+    adc.z a
+    sta.z e
     tya
     clc
-    adc a
+    adc.z a
     clc
-    adc e
+    adc.z e
     sta SCREEN,x
     inx
     iny
     cpy #6
     bne b2
-    inc a
+    inc.z a
     lda #6
-    cmp a
+    cmp.z a
     bne b1
     rts
 }

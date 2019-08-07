@@ -182,7 +182,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@2 main::@3 to main::@1 [phi:main::@2/main::@3->main::@1]
   b1_from_b2:
@@ -192,9 +192,9 @@ main: {
     // main::@1
   b1:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [7] if((byte) main::i#1<(byte)(number) $28*(number) 6) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$28*6
     bcc b2
     jmp breturn
@@ -205,7 +205,7 @@ main: {
     // main::@2
   b2:
     // [9] if(*((const byte*) SCREEN#0 + (byte) main::i#1)==(byte) ' ') goto main::@1 -- pbuc1_derefidx_vbuz1_eq_vbuc2_then_la1 
-    ldy i
+    ldy.z i
     lda SCREEN,y
     cmp #' '
     beq b1_from_b2
@@ -213,7 +213,7 @@ main: {
     // main::@3
   b3:
     // [10] *((const byte*) SCREEN#0 + (byte) main::i#1) ← ++ *((const byte*) SCREEN#0 + (byte) main::i#1) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
-    ldx i
+    ldx.z i
     inc SCREEN,x
     jmp b1_from_b3
 }

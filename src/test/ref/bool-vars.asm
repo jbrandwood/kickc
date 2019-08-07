@@ -19,7 +19,7 @@ bool_complex: {
     lda #0
     rol
     eor #1
-    sta o1
+    sta.z o1
     txa
     and #1
     eor #0
@@ -27,20 +27,20 @@ bool_complex: {
     lda #1
   !:
     eor #1
-    sta o2
-    lda o1
+    sta.z o2
+    lda.z o1
     cmp #0
     bne b6
     jmp b5
   b6:
-    lda o2
+    lda.z o2
     cmp #0
     bne b2
   b5:
-    lda o1
+    lda.z o1
     cmp #0
     bne b4
-    lda o2
+    lda.z o2
     cmp #0
     bne b4
   b2:

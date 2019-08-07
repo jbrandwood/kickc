@@ -24,27 +24,27 @@ main: {
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
     lda #0
-    sta i
+    sta.z i
     tax
     lda #<circles
-    sta ptr
+    sta.z ptr
     lda #>circles
-    sta ptr+1
+    sta.z ptr+1
   b1:
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
-    sta x
+    sta.z x
     tya
     clc
-    adc ptr
-    sta _14
+    adc.z ptr
+    sta.z _14
     lda #0
-    adc ptr+1
-    sta _14+1
+    adc.z ptr+1
+    sta.z _14+1
     ldy #OFFSET_STRUCT_POINT_Y
     lda (_14),y
     tay
-    lda x
+    lda.z x
     sta SCREEN,x
     inx
     tya
@@ -52,14 +52,14 @@ main: {
     inx
     lda #SIZEOF_STRUCT_CIRCLE
     clc
-    adc ptr
-    sta ptr
+    adc.z ptr
+    sta.z ptr
     bcc !+
-    inc ptr+1
+    inc.z ptr+1
   !:
-    inc i
+    inc.z i
     lda #2
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

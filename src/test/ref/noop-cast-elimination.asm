@@ -6,31 +6,31 @@ main: {
     .label screen = $400
     .label sw = 2
     lda #<$1234
-    sta sw
+    sta.z sw
     lda #>$1234
-    sta sw+1
+    sta.z sw+1
     ldx #0
   b1:
     txa
-    sta $fe
+    sta.z $fe
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta $ff
+    sta.z $ff
     clc
-    lda sw
-    adc $fe
-    sta sw
-    lda sw+1
-    adc $ff
-    sta sw+1
+    lda.z sw
+    adc.z $fe
+    sta.z sw
+    lda.z sw+1
+    adc.z $ff
+    sta.z sw+1
     txa
     asl
     tay
-    lda sw
+    lda.z sw
     sta screen,y
-    lda sw+1
+    lda.z sw+1
     sta screen+1,y
     inx
     cpx #$b

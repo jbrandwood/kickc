@@ -5,16 +5,16 @@
   .label x = 2
 bbegin:
   lda #$c
-  sta x
+  sta.z x
   jsr main
   rts
 main: {
   b1:
-    inc x
-    lda x
+    inc.z x
+    lda.z x
     cmp #$32
     bcc b1
     lda #0
-    sta x
+    sta.z x
     rts
 }

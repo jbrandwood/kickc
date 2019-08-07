@@ -9,16 +9,16 @@ main: {
     ldx #0
   b1:
     txa
-    sta getValue.index
+    sta.z getValue.index
     lda #0
-    sta getValue.index+1
+    sta.z getValue.index+1
     jsr getValue
     txa
     asl
     tay
-    lda _0
+    lda.z _0
     sta SCREEN,y
-    lda _0+1
+    lda.z _0+1
     sta SCREEN+1,y
     inx
     cpx #$81
@@ -29,16 +29,16 @@ main: {
 getValue: {
     .label index = 2
     .label return = 4
-    lda index
+    lda.z index
     and #$7f
     asl
     tay
     lda #$ff
     and arr16,y
     lsr
-    sta return
+    sta.z return
     lda #0
-    sta return+1
+    sta.z return+1
     rts
 }
   arr16: .fill 2*$80, 0

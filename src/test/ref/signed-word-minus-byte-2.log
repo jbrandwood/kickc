@@ -199,12 +199,12 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (signed word) main::w1#2 = (signed word) $4d2 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<$4d2
-    sta w1
+    sta.z w1
     lda #>$4d2
-    sta w1+1
+    sta.z w1+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -214,28 +214,28 @@ main: {
     // main::@1
   b1:
     // [6] (signed word) main::w1#1 ← (signed word) main::w1#2 - (signed byte) $29 -- vwsz1=vwsz1_minus_vbsc1 
-    lda w1
+    lda.z w1
     sec
     sbc #$29
-    sta w1
-    lda w1+1
+    sta.z w1
+    lda.z w1+1
     sbc #>$29
-    sta w1+1
+    sta.z w1+1
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _2
+    sta.z _2
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::w1#1 -- pwsc1_derefidx_vbuz1=vwsz2 
-    ldy _2
-    lda w1
+    ldy.z _2
+    lda.z w1
     sta screen,y
-    lda w1+1
+    lda.z w1+1
     sta screen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // main::@return
@@ -298,9 +298,9 @@ main: {
     ldx #0
     // [5] phi (signed word) main::w1#2 = (signed word) $4d2 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<$4d2
-    sta w1
+    sta.z w1
     lda #>$4d2
-    sta w1+1
+    sta.z w1+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -310,21 +310,21 @@ main: {
     // main::@1
   b1:
     // [6] (signed word) main::w1#1 ← (signed word) main::w1#2 - (signed byte) $29 -- vwsz1=vwsz1_minus_vbsc1 
-    lda w1
+    lda.z w1
     sec
     sbc #$29
-    sta w1
-    lda w1+1
+    sta.z w1
+    lda.z w1+1
     sbc #>$29
-    sta w1+1
+    sta.z w1+1
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::w1#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
-    lda w1
+    lda.z w1
     sta screen,y
-    lda w1+1
+    lda.z w1+1
     sta screen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -412,9 +412,9 @@ main: {
     ldx #0
     // [5] phi (signed word) main::w1#2 = (signed word) $4d2 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<$4d2
-    sta w1
+    sta.z w1
     lda #>$4d2
-    sta w1+1
+    sta.z w1+1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (signed word) main::w1#2 = (signed word) main::w1#1 [phi:main::@1->main::@1#1] -- register_copy 
@@ -422,22 +422,22 @@ main: {
   b1:
     // w1 = w1 - 41
     // [6] (signed word) main::w1#1 ← (signed word) main::w1#2 - (signed byte) $29 -- vwsz1=vwsz1_minus_vbsc1 
-    lda w1
+    lda.z w1
     sec
     sbc #$29
-    sta w1
-    lda w1+1
+    sta.z w1
+    lda.z w1+1
     sbc #>$29
-    sta w1+1
+    sta.z w1+1
     // screen[i] = w1
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::w1#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
-    lda w1
+    lda.z w1
     sta screen,y
-    lda w1+1
+    lda.z w1+1
     sta screen+1,y
     // for( byte i: 0..10 )
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

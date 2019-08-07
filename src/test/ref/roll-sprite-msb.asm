@@ -8,19 +8,19 @@
 main: {
     .label xpos = 2
     lda #<$c8
-    sta xpos
+    sta.z xpos
     lda #>$c8
-    sta xpos+1
+    sta.z xpos+1
     ldx #0
   b1:
-    stx position_sprite.spriteno
+    stx.z position_sprite.spriteno
     jsr position_sprite
     lda #$a
     clc
-    adc xpos
-    sta xpos
+    adc.z xpos
+    sta.z xpos
     bcc !+
-    inc xpos+1
+    inc.z xpos+1
   !:
     inx
     cpx #8
@@ -32,22 +32,22 @@ position_sprite: {
     .const y = $32
     .label spriteno = 4
     .label x = 2
-    lda spriteno
+    lda.z spriteno
     asl
     tay
     lda #y
     sta SPRITES_YPOS,y
-    lda x
+    lda.z x
     sta SPRITES_XPOS,y
-    lda x+1
+    lda.z x+1
     bne b1
-    lda x
+    lda.z x
     cmp #$ff
     beq !+
     bcs b1
   !:
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -61,7 +61,7 @@ position_sprite: {
     rts
   b1:
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:

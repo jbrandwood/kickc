@@ -5356,18 +5356,18 @@ b1:
 malloc_from_b1:
   // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
-  sta heap_head
+  sta.z heap_head
   lda #>HEAP_TOP
-  sta heap_head+1
+  sta.z heap_head+1
   jsr malloc
   jmp b3
   // @3
 b3:
   // [3] (void*) SCREEN_COPY#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-  lda malloc.mem
-  sta SCREEN_COPY
-  lda malloc.mem+1
-  sta SCREEN_COPY+1
+  lda.z malloc.mem
+  sta.z SCREEN_COPY
+  lda.z malloc.mem+1
+  sta.z SCREEN_COPY+1
   // [4] call malloc 
   // [243] phi from @3 to malloc [phi:@3->malloc]
 malloc_from_b3:
@@ -5377,10 +5377,10 @@ malloc_from_b3:
   // @4
 b4:
   // [5] (void*) SCREEN_DIST#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-  lda malloc.mem
-  sta SCREEN_DIST
-  lda malloc.mem+1
-  sta SCREEN_DIST+1
+  lda.z malloc.mem
+  sta.z SCREEN_DIST
+  lda.z malloc.mem+1
+  sta.z SCREEN_DIST+1
   // [6] phi from @4 to @2 [phi:@4->@2]
 b2_from_b4:
   jmp b2
@@ -5407,28 +5407,28 @@ main: {
     .label _28 = $3c
     .label _29 = $3d
     // [9] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta init_angle_screen.screen
-    lda SCREEN_DIST+1
-    sta init_angle_screen.screen+1
+    lda.z SCREEN_DIST
+    sta.z init_angle_screen.screen
+    lda.z SCREEN_DIST+1
+    sta.z init_angle_screen.screen+1
     // [10] call init_angle_screen 
     jsr init_angle_screen
     jmp b9
     // main::@9
   b9:
     // [11] (byte*) main::dst#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta dst
-    lda SCREEN_COPY+1
-    sta dst+1
+    lda.z SCREEN_COPY
+    sta.z dst
+    lda.z SCREEN_COPY+1
+    sta.z dst+1
     // [12] phi from main::@9 to main::@2 [phi:main::@9->main::@2]
   b2_from_b9:
     // [12] phi (byte*) main::dst#4 = (byte*) main::dst#0 [phi:main::@9->main::@2#0] -- register_copy 
     // [12] phi (byte*) main::src#4 = (const byte*) SCREEN#0 [phi:main::@9->main::@2#1] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta src
+    sta.z src
     lda #>SCREEN
-    sta src+1
+    sta.z src+1
     jmp b2
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -5443,31 +5443,31 @@ main: {
     ldy #0
     sta (dst),y
     // [14] (byte*) main::src#1 ← ++ (byte*) main::src#4 -- pbuz1=_inc_pbuz1 
-    inc src
+    inc.z src
     bne !+
-    inc src+1
+    inc.z src+1
   !:
     // [15] (byte*) main::dst#1 ← ++ (byte*) main::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
   // Copy screen to screen copy
     // main::@1
   b1:
     // [16] if((byte*) main::src#1!=(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda src+1
+    lda.z src+1
     cmp #>SCREEN+$3e8
     bne b2_from_b1
-    lda src
+    lda.z src
     cmp #<SCREEN+$3e8
     bne b2_from_b1
     // [17] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
   // Init processing array
     // [17] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
@@ -5477,78 +5477,78 @@ main: {
     // main::@3
   b3:
     // [18] (byte) main::$26 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _26
+    sta.z _26
     // [19] (byte) main::$27 ← (byte) main::$26 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _26
+    lda.z _26
     clc
-    adc i
-    sta _27
+    adc.z i
+    sta.z _27
     // [20] (byte) main::$28 ← (byte) main::$27 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _27
+    lda.z _27
     asl
-    sta _28
+    sta.z _28
     // [21] (byte) main::$29 ← (byte) main::$28 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _28
+    lda.z _28
     clc
-    adc i
-    sta _29
+    adc.z i
+    sta.z _29
     // [22] (byte~) main::$16 ← (byte) main::$29 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _29
+    lda.z _29
     asl
-    sta _16
+    sta.z _16
     // [23] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) main::$16) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda _16
+    lda.z _16
     ldx #0
     tay
     txa
     sta PROCESSING,y
     // [24] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y + (byte~) main::$16) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda _16
+    lda.z _16
     ldx #0
     tay
     txa
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,y
     // [25] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX + (byte~) main::$16) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda _16
+    lda.z _16
     ldx #0
     tay
     txa
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,y
     // [26] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY + (byte~) main::$16) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda _16
+    lda.z _16
     ldx #0
     tay
     txa
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,y
     // [27] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID + (byte~) main::$16) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
-    ldy _16
+    ldy.z _16
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,y
     // [28] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR + (byte~) main::$16) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
-    ldy _16
+    ldy.z _16
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,y
     // [29] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL + (byte~) main::$16) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
-    ldy _16
+    ldy.z _16
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,y
     // [30] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) main::$16) ← (const byte) STATUS_FREE -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #STATUS_FREE
-    ldy _16
+    ldy.z _16
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
     // [31] *((byte**)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR + (byte~) main::$16) ← (byte*) 0 -- pptc1_derefidx_vbuz1=pbuc2 
-    ldy _16
+    ldy.z _16
     lda #<0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,y
     lda #>0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,y
     // [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [33] if((byte) main::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b3_from_b3
     // [34] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -5576,29 +5576,29 @@ main: {
     // [39] call getCharToProcess 
     jsr getCharToProcess
     // [40] (byte) getCharToProcess::return_x#0 ← (byte) getCharToProcess::return_x#1 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_x_1
-    sta getCharToProcess.return_x
+    lda.z getCharToProcess.return_x_1
+    sta.z getCharToProcess.return_x
     // [41] (byte) getCharToProcess::return_y#0 ← (byte) getCharToProcess::return_y#1 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_y_1
-    sta getCharToProcess.return_y
+    lda.z getCharToProcess.return_y_1
+    sta.z getCharToProcess.return_y
     // [42] (byte) getCharToProcess::return_dist#0 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_dist_1
-    sta getCharToProcess.return_dist
+    lda.z getCharToProcess.return_dist_1
+    sta.z getCharToProcess.return_dist
     jmp b11
     // main::@11
   b11:
     // [43] (byte) main::center_x#0 ← (byte) getCharToProcess::return_x#0 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_x
-    sta center_x
+    lda.z getCharToProcess.return_x
+    sta.z center_x
     // [44] (byte) main::center_y#0 ← (byte) getCharToProcess::return_y#0 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_y
-    sta center_y
+    lda.z getCharToProcess.return_y
+    sta.z center_y
     // [45] (byte) main::center_dist#0 ← (byte) getCharToProcess::return_dist#0 -- vbuz1=vbuz2 
-    lda getCharToProcess.return_dist
-    sta center_dist
+    lda.z getCharToProcess.return_dist
+    sta.z center_dist
     // [46] if((byte) main::center_dist#0!=(const byte) NOT_FOUND#0) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #NOT_FOUND
-    cmp center_dist
+    cmp.z center_dist
     bne b6
     jmp b7
     // main::@7
@@ -5615,11 +5615,11 @@ main: {
     // main::@6
   b6:
     // [49] (byte) startProcessing::center_x#0 ← (byte) main::center_x#0 -- vbuz1=vbuz2 
-    lda center_x
-    sta startProcessing.center_x
+    lda.z center_x
+    sta.z startProcessing.center_x
     // [50] (byte) startProcessing::center_y#0 ← (byte) main::center_y#0 -- vbuz1=vbuz2 
-    lda center_y
-    sta startProcessing.center_y
+    lda.z center_y
+    sta.z startProcessing.center_y
     // [51] call startProcessing 
     // [52] phi from main::@6 to startProcessing [phi:main::@6->startProcessing]
   startProcessing_from_b6:
@@ -5677,7 +5677,7 @@ startProcessing: {
   b1_from_startProcessing:
     // [53] phi (byte) startProcessing::freeIdx#6 = (byte) $ff [phi:startProcessing->startProcessing::@1#0] -- vbuz1=vbuc1 
     lda #$ff
-    sta freeIdx_6
+    sta.z freeIdx_6
     jmp b1
     // startProcessing::@1
   b1:
@@ -5685,7 +5685,7 @@ startProcessing: {
   b2_from_b1:
     // [54] phi (byte) startProcessing::i#2 = (byte) 0 [phi:startProcessing::@1->startProcessing::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b2
     // [54] phi from startProcessing::@3 to startProcessing::@2 [phi:startProcessing::@3->startProcessing::@2]
   b2_from_b3:
@@ -5694,30 +5694,30 @@ startProcessing: {
     // startProcessing::@2
   b2:
     // [55] (byte) startProcessing::$42 ← (byte) startProcessing::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _42
+    sta.z _42
     // [56] (byte) startProcessing::$43 ← (byte) startProcessing::$42 + (byte) startProcessing::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _42
+    lda.z _42
     clc
-    adc i
-    sta _43
+    adc.z i
+    sta.z _43
     // [57] (byte) startProcessing::$44 ← (byte) startProcessing::$43 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _43
+    lda.z _43
     asl
-    sta _44
+    sta.z _44
     // [58] (byte) startProcessing::$45 ← (byte) startProcessing::$44 + (byte) startProcessing::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _44
+    lda.z _44
     clc
-    adc i
-    sta _45
+    adc.z i
+    sta.z _45
     // [59] (byte~) startProcessing::$30 ← (byte) startProcessing::$45 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _45
+    lda.z _45
     asl
-    sta _30
+    sta.z _30
     // [60] if(*((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$30)!=(const byte) STATUS_FREE) goto startProcessing::@3 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
     lda #STATUS_FREE
-    ldy _30
+    ldy.z _30
     cmp PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
     bne b3
     // [61] phi from startProcessing::@2 startProcessing::@9 to startProcessing::@4 [phi:startProcessing::@2/startProcessing::@9->startProcessing::@4]
@@ -5729,130 +5729,130 @@ startProcessing: {
   b4:
     // [62] if((byte) startProcessing::freeIdx#2==(byte) $ff) goto startProcessing::@8 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
-    cmp freeIdx
+    cmp.z freeIdx
     beq b8
     jmp b5
     // startProcessing::@5
   b5:
     // [63] (word~) startProcessing::$0 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _0
+    lda.z center_y
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [64] (word) startProcessing::$47 ← (word~) startProcessing::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _0
+    lda.z _0
     asl
-    sta _47
-    lda _0+1
+    sta.z _47
+    lda.z _0+1
     rol
-    sta _47+1
-    asl _47
-    rol _47+1
+    sta.z _47+1
+    asl.z _47
+    rol.z _47+1
     // [65] (word) startProcessing::$48 ← (word) startProcessing::$47 + (word~) startProcessing::$0 -- vwuz1=vwuz2_plus_vwuz3 
-    lda _47
+    lda.z _47
     clc
-    adc _0
-    sta _48
-    lda _47+1
-    adc _0+1
-    sta _48+1
+    adc.z _0
+    sta.z _48
+    lda.z _47+1
+    adc.z _0+1
+    sta.z _48+1
     // [66] (word~) startProcessing::$1 ← (word) startProcessing::$48 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _48
+    lda.z _48
     asl
-    sta _1
-    lda _48+1
+    sta.z _1
+    lda.z _48+1
     rol
-    sta _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    sta.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [67] (word) startProcessing::offset#0 ← (word~) startProcessing::$1 + (byte) startProcessing::center_x#0 -- vwuz1=vwuz2_plus_vbuz3 
-    lda center_x
+    lda.z center_x
     clc
-    adc _1
-    sta offset
+    adc.z _1
+    sta.z offset
     lda #0
-    adc _1+1
-    sta offset+1
+    adc.z _1+1
+    sta.z offset+1
     // [68] (byte*) startProcessing::colPtr#0 ← (const byte*) COLS#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz2 
-    lda offset
+    lda.z offset
     clc
     adc #<COLS
-    sta colPtr
-    lda offset+1
+    sta.z colPtr
+    lda.z offset+1
     adc #>COLS
-    sta colPtr+1
+    sta.z colPtr+1
     // [69] (byte) startProcessing::spriteCol#0 ← *((byte*) startProcessing::colPtr#0) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (colPtr),y
-    sta spriteCol
+    sta.z spriteCol
     // [70] (byte*) startProcessing::screenPtr#0 ← (const byte*) SCREEN#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz2 
-    lda offset
+    lda.z offset
     clc
     adc #<SCREEN
-    sta screenPtr
-    lda offset+1
+    sta.z screenPtr
+    lda.z offset+1
     adc #>SCREEN
-    sta screenPtr+1
+    sta.z screenPtr+1
     // [71] (word~) startProcessing::$5 ← (word)(byte) startProcessing::freeIdx#2 -- vwuz1=_word_vbuz2 
-    lda freeIdx
-    sta _5
+    lda.z freeIdx
+    sta.z _5
     lda #0
-    sta _5+1
+    sta.z _5+1
     // [72] (word~) startProcessing::$6 ← (word~) startProcessing::$5 << (byte) 6 -- vwuz1=vwuz2_rol_6 
-    lda _5
+    lda.z _5
     asl
-    sta _6
-    lda _5+1
+    sta.z _6
+    lda.z _5+1
     rol
-    sta _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
+    sta.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
     // [73] (byte*) startProcessing::spriteData#0 ← (const byte*) SPRITE_DATA#0 + (word~) startProcessing::$6 -- pbuz1=pbuc1_plus_vwuz2 
-    lda _6
+    lda.z _6
     clc
     adc #<SPRITE_DATA
-    sta spriteData
-    lda _6+1
+    sta.z spriteData
+    lda.z _6+1
     adc #>SPRITE_DATA
-    sta spriteData+1
+    sta.z spriteData+1
     // [74] (byte) startProcessing::ch#0 ← *((byte*) startProcessing::screenPtr#0) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (screenPtr),y
-    sta ch
+    sta.z ch
     // [75] (word~) startProcessing::$8 ← (word)(byte) startProcessing::ch#0 -- vwuz1=_word_vbuz2 
-    lda ch
-    sta _8
+    lda.z ch
+    sta.z _8
     lda #0
-    sta _8+1
+    sta.z _8+1
     // [76] (word~) startProcessing::$9 ← (word~) startProcessing::$8 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _8
+    lda.z _8
     asl
-    sta _9
-    lda _8+1
+    sta.z _9
+    lda.z _8+1
     rol
-    sta _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    sta.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // [77] (byte*) startProcessing::chargenData#0 ← (const byte*) CHARGEN#0 + (word~) startProcessing::$9 -- pbuz1=pbuc1_plus_vwuz2 
-    lda _9
+    lda.z _9
     clc
     adc #<CHARGEN
-    sta chargenData
-    lda _9+1
+    sta.z chargenData
+    lda.z _9+1
     adc #>CHARGEN
-    sta chargenData+1
+    sta.z chargenData+1
     // asm { sei  }
     sei
     // [79] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
@@ -5862,7 +5862,7 @@ startProcessing: {
   b6_from_b5:
     // [80] phi (byte) startProcessing::i1#2 = (byte) 0 [phi:startProcessing::@5->startProcessing::@6#0] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     // [80] phi (byte*) startProcessing::spriteData#2 = (byte*) startProcessing::spriteData#0 [phi:startProcessing::@5->startProcessing::@6#1] -- register_copy 
     // [80] phi (byte*) startProcessing::chargenData#2 = (byte*) startProcessing::chargenData#0 [phi:startProcessing::@5->startProcessing::@6#2] -- register_copy 
     jmp b6
@@ -5882,21 +5882,21 @@ startProcessing: {
     // [82] (byte*) startProcessing::spriteData#1 ← (byte*) startProcessing::spriteData#2 + (byte) 3 -- pbuz1=pbuz1_plus_vbuc1 
     lda #3
     clc
-    adc spriteData
-    sta spriteData
+    adc.z spriteData
+    sta.z spriteData
     bcc !+
-    inc spriteData+1
+    inc.z spriteData+1
   !:
     // [83] (byte*) startProcessing::chargenData#1 ← ++ (byte*) startProcessing::chargenData#2 -- pbuz1=_inc_pbuz1 
-    inc chargenData
+    inc.z chargenData
     bne !+
-    inc chargenData+1
+    inc.z chargenData+1
   !:
     // [84] (byte) startProcessing::i1#1 ← ++ (byte) startProcessing::i1#2 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     // [85] if((byte) startProcessing::i1#1!=(byte) 8) goto startProcessing::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp i1
+    cmp.z i1
     bne b6_from_b6
     jmp b7
     // startProcessing::@7
@@ -5907,161 +5907,161 @@ startProcessing: {
     // asm { cli  }
     cli
     // [88] (word~) startProcessing::$11 ← (word)(byte) startProcessing::center_x#0 -- vwuz1=_word_vbuz2 
-    lda center_x
-    sta _11
+    lda.z center_x
+    sta.z _11
     lda #0
-    sta _11+1
+    sta.z _11+1
     // [89] (word~) startProcessing::$12 ← (word~) startProcessing::$11 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _11
+    lda.z _11
     asl
-    sta _12
-    lda _11+1
+    sta.z _12
+    lda.z _11+1
     rol
-    sta _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
+    sta.z _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
     // [90] (word~) startProcessing::$13 ← (const byte) BORDER_XPOS_LEFT#0 + (word~) startProcessing::$12 -- vwuz1=vbuc1_plus_vwuz2 
     lda #BORDER_XPOS_LEFT
     clc
-    adc _12
-    sta _13
+    adc.z _12
+    sta.z _13
     lda #0
-    adc _12+1
-    sta _13+1
+    adc.z _12+1
+    sta.z _13+1
     // [91] (word) startProcessing::spriteX#0 ← (word~) startProcessing::$13 << (byte) 4 -- vwuz1=vwuz2_rol_4 
-    lda _13
+    lda.z _13
     asl
-    sta spriteX
-    lda _13+1
+    sta.z spriteX
+    lda.z _13+1
     rol
-    sta spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
+    sta.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
     // [92] (word~) startProcessing::$15 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _15
+    lda.z center_y
+    sta.z _15
     lda #0
-    sta _15+1
+    sta.z _15+1
     // [93] (word~) startProcessing::$16 ← (word~) startProcessing::$15 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _15
+    lda.z _15
     asl
-    sta _16
-    lda _15+1
+    sta.z _16
+    lda.z _15+1
     rol
-    sta _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
+    sta.z _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
     // [94] (word~) startProcessing::$17 ← (const byte) BORDER_YPOS_TOP#0 + (word~) startProcessing::$16 -- vwuz1=vbuc1_plus_vwuz2 
     lda #BORDER_YPOS_TOP
     clc
-    adc _16
-    sta _17
+    adc.z _16
+    sta.z _17
     lda #0
-    adc _16+1
-    sta _17+1
+    adc.z _16+1
+    sta.z _17+1
     // [95] (word) startProcessing::spriteY#0 ← (word~) startProcessing::$17 << (byte) 4 -- vwuz1=vwuz2_rol_4 
-    lda _17
+    lda.z _17
     asl
-    sta spriteY
-    lda _17+1
+    sta.z spriteY
+    lda.z _17+1
     rol
-    sta spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
+    sta.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
     // [96] (byte) startProcessing::spritePtr#0 ← (byte)(const byte*) SPRITE_DATA#0/(byte) $40 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuc1_plus_vbuz2 
-    lax freeIdx
+    lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
-    stx spritePtr
+    stx.z spritePtr
     // [97] (byte~) startProcessing::$22 ← (byte) startProcessing::freeIdx#2 << (byte) 3 -- vbuz1=vbuz2_rol_3 
-    lda freeIdx
+    lda.z freeIdx
     asl
     asl
     asl
-    sta _22
+    sta.z _22
     // [98] (word~) startProcessing::$23 ← (word)(byte~) startProcessing::$22 -- vwuz1=_word_vbuz2 
-    lda _22
-    sta _23
+    lda.z _22
+    sta.z _23
     lda #0
-    sta _23+1
+    sta.z _23+1
     // [99] (byte) startProcessing::$50 ← (byte) startProcessing::freeIdx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda freeIdx
+    lda.z freeIdx
     asl
-    sta _50
+    sta.z _50
     // [100] (byte) startProcessing::$51 ← (byte) startProcessing::$50 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _50
+    lda.z _50
     clc
-    adc freeIdx
-    sta _51
+    adc.z freeIdx
+    sta.z _51
     // [101] (byte) startProcessing::$52 ← (byte) startProcessing::$51 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _51
+    lda.z _51
     asl
-    sta _52
+    sta.z _52
     // [102] (byte) startProcessing::$53 ← (byte) startProcessing::$52 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _52
+    lda.z _52
     clc
-    adc freeIdx
-    sta _53
+    adc.z freeIdx
+    sta.z _53
     // [103] (byte~) startProcessing::$31 ← (byte) startProcessing::$53 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _53
+    lda.z _53
     asl
-    sta _31
+    sta.z _31
     // [104] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) startProcessing::$31) ← (word) startProcessing::spriteX#0 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _31
-    lda spriteX
+    ldy.z _31
+    lda.z spriteX
     sta PROCESSING,y
-    lda spriteX+1
+    lda.z spriteX+1
     sta PROCESSING+1,y
     // [105] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y + (byte~) startProcessing::$31) ← (word) startProcessing::spriteY#0 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _31
-    lda spriteY
+    ldy.z _31
+    lda.z spriteY
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,y
-    lda spriteY+1
+    lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,y
     // [106] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX + (byte~) startProcessing::$31) ← (word~) startProcessing::$23 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _31
-    lda _23
+    ldy.z _31
+    lda.z _23
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,y
-    lda _23+1
+    lda.z _23+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,y
     // [107] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY + (byte~) startProcessing::$31) ← (byte) $3c -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda _31
+    lda.z _31
     ldx #$3c
     tay
     txa
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,y
     // [108] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID + (byte~) startProcessing::$31) ← (byte) startProcessing::freeIdx#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda freeIdx
-    ldy _31
+    lda.z freeIdx
+    ldy.z _31
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,y
     // [109] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR + (byte~) startProcessing::$31) ← (byte) startProcessing::spritePtr#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spritePtr
-    ldy _31
+    lda.z spritePtr
+    ldy.z _31
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,y
     // [110] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL + (byte~) startProcessing::$31) ← (byte) startProcessing::spriteCol#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spriteCol
-    ldy _31
+    lda.z spriteCol
+    ldy.z _31
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,y
     // [111] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$31) ← (const byte) STATUS_NEW -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #STATUS_NEW
-    ldy _31
+    ldy.z _31
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
     // [112] *((byte**)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR + (byte~) startProcessing::$31) ← (byte*) startProcessing::screenPtr#0 -- pptc1_derefidx_vbuz1=pbuz2 
-    ldy _31
-    lda screenPtr
+    ldy.z _31
+    lda.z screenPtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,y
-    lda screenPtr+1
+    lda.z screenPtr+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,y
     jmp breturn
     // startProcessing::@return
@@ -6071,8 +6071,8 @@ startProcessing: {
     // startProcessing::@8
   b8:
     // [114] (byte~) startProcessing::freeIdx#7 ← (byte) startProcessing::freeIdx#2 -- vbuz1=vbuz2 
-    lda freeIdx
-    sta freeIdx_7
+    lda.z freeIdx
+    sta.z freeIdx_7
     // [53] phi from startProcessing::@8 to startProcessing::@1 [phi:startProcessing::@8->startProcessing::@1]
   b1_from_b8:
     // [53] phi (byte) startProcessing::freeIdx#6 = (byte~) startProcessing::freeIdx#7 [phi:startProcessing::@8->startProcessing::@1#0] -- register_copy 
@@ -6080,17 +6080,17 @@ startProcessing: {
     // startProcessing::@3
   b3:
     // [115] (byte) startProcessing::i#1 ← ++ (byte) startProcessing::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [116] if((byte) startProcessing::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto startProcessing::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b2_from_b3
     jmp b9
     // startProcessing::@9
   b9:
     // [117] (byte~) startProcessing::freeIdx#8 ← (byte) startProcessing::freeIdx#6 -- vbuz1=vbuz2 
-    lda freeIdx_6
-    sta freeIdx
+    lda.z freeIdx_6
+    sta.z freeIdx
     jmp b4_from_b9
 }
   // getCharToProcess
@@ -6121,29 +6121,29 @@ getCharToProcess: {
     .label return_x_7 = $15
     .label return_y_7 = $16
     // [118] (byte*) getCharToProcess::screen_line#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta screen_line
-    lda SCREEN_COPY+1
-    sta screen_line+1
+    lda.z SCREEN_COPY
+    sta.z screen_line
+    lda.z SCREEN_COPY+1
+    sta.z screen_line+1
     // [119] (byte*) getCharToProcess::dist_line#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta dist_line
-    lda SCREEN_DIST+1
-    sta dist_line+1
+    lda.z SCREEN_DIST
+    sta.z dist_line
+    lda.z SCREEN_DIST+1
+    sta.z dist_line+1
     // [120] phi from getCharToProcess to getCharToProcess::@1 [phi:getCharToProcess->getCharToProcess::@1]
   b1_from_getCharToProcess:
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta closest_y
+    sta.z closest_y
     // [120] phi (byte) getCharToProcess::closest_x#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta closest_x
+    sta.z closest_x
     // [120] phi (byte) getCharToProcess::y#7 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [120] phi (byte) getCharToProcess::closest_dist#8 = (const byte) NOT_FOUND#0 [phi:getCharToProcess->getCharToProcess::@1#3] -- vbuz1=vbuc1 
     lda #NOT_FOUND
-    sta closest_dist
+    sta.z closest_dist
     // [120] phi (byte*) getCharToProcess::dist_line#6 = (byte*) getCharToProcess::dist_line#0 [phi:getCharToProcess->getCharToProcess::@1#4] -- register_copy 
     // [120] phi (byte*) getCharToProcess::screen_line#4 = (byte*) getCharToProcess::screen_line#0 [phi:getCharToProcess->getCharToProcess::@1#5] -- register_copy 
     jmp b1
@@ -6156,12 +6156,12 @@ getCharToProcess: {
     // [121] phi (byte) getCharToProcess::closest_dist#2 = (byte) getCharToProcess::closest_dist#8 [phi:getCharToProcess::@1->getCharToProcess::@2#2] -- register_copy 
     // [121] phi (byte) getCharToProcess::x#2 = (byte) 0 [phi:getCharToProcess::@1->getCharToProcess::@2#3] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b2
     // getCharToProcess::@2
   b2:
     // [122] if(*((byte*) getCharToProcess::screen_line#4 + (byte) getCharToProcess::x#2)==(byte) ' ') goto getCharToProcess::@11 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
-    ldy x
+    ldy.z x
     lda (screen_line),y
     cmp #' '
     beq b11
@@ -6169,22 +6169,22 @@ getCharToProcess: {
     // getCharToProcess::@4
   b4:
     // [123] (byte) getCharToProcess::dist#0 ← *((byte*) getCharToProcess::dist_line#6 + (byte) getCharToProcess::x#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    ldy x
+    ldy.z x
     lda (dist_line),y
-    sta dist
+    sta.z dist
     // [124] if((byte) getCharToProcess::dist#0>=(byte) getCharToProcess::closest_dist#2) goto getCharToProcess::@12 -- vbuz1_ge_vbuz2_then_la1 
-    lda dist
-    cmp closest_dist
+    lda.z dist
+    cmp.z closest_dist
     bcs b12
     jmp b5
     // getCharToProcess::@5
   b5:
     // [125] (byte~) getCharToProcess::return_x#7 ← (byte) getCharToProcess::x#2 -- vbuz1=vbuz2 
-    lda x
-    sta return_x_7
+    lda.z x
+    sta.z return_x_7
     // [126] (byte~) getCharToProcess::return_y#7 ← (byte) getCharToProcess::y#7 -- vbuz1=vbuz2 
-    lda y
-    sta return_y_7
+    lda.z y
+    sta.z return_y_7
     // [127] phi from getCharToProcess::@11 getCharToProcess::@12 getCharToProcess::@5 to getCharToProcess::@3 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3]
   b3_from_b11:
   b3_from_b12:
@@ -6196,10 +6196,10 @@ getCharToProcess: {
     // getCharToProcess::@3
   b3:
     // [128] (byte) getCharToProcess::x#1 ← ++ (byte) getCharToProcess::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [129] if((byte) getCharToProcess::x#1!=(byte) $28) goto getCharToProcess::@10 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
-    cmp x
+    cmp.z x
     bne b10
     jmp b6
     // getCharToProcess::@6
@@ -6207,80 +6207,80 @@ getCharToProcess: {
     // [130] (byte*) getCharToProcess::screen_line#1 ← (byte*) getCharToProcess::screen_line#4 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_line
-    sta screen_line
+    adc.z screen_line
+    sta.z screen_line
     bcc !+
-    inc screen_line+1
+    inc.z screen_line+1
   !:
     // [131] (byte*) getCharToProcess::dist_line#1 ← (byte*) getCharToProcess::dist_line#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc dist_line
-    sta dist_line
+    adc.z dist_line
+    sta.z dist_line
     bcc !+
-    inc dist_line+1
+    inc.z dist_line+1
   !:
     // [132] (byte) getCharToProcess::y#1 ← ++ (byte) getCharToProcess::y#7 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [133] if((byte) getCharToProcess::y#1!=(byte) $19) goto getCharToProcess::@9 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
-    cmp y
+    cmp.z y
     bne b9
     jmp b7
     // getCharToProcess::@7
   b7:
     // [134] if((byte) getCharToProcess::return_dist#1==(const byte) NOT_FOUND#0) goto getCharToProcess::@return -- vbuz1_eq_vbuc1_then_la1 
     lda #NOT_FOUND
-    cmp return_dist_1
+    cmp.z return_dist_1
     beq breturn
     jmp b8
     // getCharToProcess::@8
   b8:
     // [135] (word~) getCharToProcess::$8 ← (word)(byte) getCharToProcess::return_y#1 -- vwuz1=_word_vbuz2 
-    lda return_y_1
-    sta _8
+    lda.z return_y_1
+    sta.z _8
     lda #0
-    sta _8+1
+    sta.z _8+1
     // [136] (word) getCharToProcess::$12 ← (word~) getCharToProcess::$8 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _8
+    lda.z _8
     asl
-    sta _12
-    lda _8+1
+    sta.z _12
+    lda.z _8+1
     rol
-    sta _12+1
-    asl _12
-    rol _12+1
+    sta.z _12+1
+    asl.z _12
+    rol.z _12+1
     // [137] (word) getCharToProcess::$13 ← (word) getCharToProcess::$12 + (word~) getCharToProcess::$8 -- vwuz1=vwuz2_plus_vwuz3 
-    lda _12
+    lda.z _12
     clc
-    adc _8
-    sta _13
-    lda _12+1
-    adc _8+1
-    sta _13+1
+    adc.z _8
+    sta.z _13
+    lda.z _12+1
+    adc.z _8+1
+    sta.z _13+1
     // [138] (word~) getCharToProcess::$9 ← (word) getCharToProcess::$13 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _13
+    lda.z _13
     asl
-    sta _9
-    lda _13+1
+    sta.z _9
+    lda.z _13+1
     rol
-    sta _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    sta.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // [139] (byte*~) getCharToProcess::$10 ← (byte*)(void*) SCREEN_COPY#0 + (word~) getCharToProcess::$9 -- pbuz1=pbuz2_plus_vwuz3 
-    lda SCREEN_COPY
+    lda.z SCREEN_COPY
     clc
-    adc _9
-    sta _10
-    lda SCREEN_COPY+1
-    adc _9+1
-    sta _10+1
+    adc.z _9
+    sta.z _10
+    lda.z SCREEN_COPY+1
+    adc.z _9+1
+    sta.z _10+1
     // [140] *((byte*~) getCharToProcess::$10 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     // clear the found char on the screen copy
     lda #' '
-    ldy return_x_1
+    ldy.z return_x_1
     sta (_10),y
     jmp breturn
     // getCharToProcess::@return
@@ -6290,8 +6290,8 @@ getCharToProcess: {
     // getCharToProcess::@9
   b9:
     // [142] (byte~) getCharToProcess::closest_dist#10 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuz2 
-    lda return_dist_1
-    sta closest_dist
+    lda.z return_dist_1
+    sta.z closest_dist
     // [120] phi from getCharToProcess::@9 to getCharToProcess::@1 [phi:getCharToProcess::@9->getCharToProcess::@1]
   b1_from_b9:
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@9->getCharToProcess::@1#0] -- register_copy 
@@ -6304,8 +6304,8 @@ getCharToProcess: {
     // getCharToProcess::@10
   b10:
     // [143] (byte~) getCharToProcess::closest_dist#12 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuz2 
-    lda return_dist_1
-    sta closest_dist
+    lda.z return_dist_1
+    sta.z closest_dist
     // [121] phi from getCharToProcess::@10 to getCharToProcess::@2 [phi:getCharToProcess::@10->getCharToProcess::@2]
   b2_from_b10:
     // [121] phi (byte) getCharToProcess::closest_y#7 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@10->getCharToProcess::@2#0] -- register_copy 
@@ -6316,14 +6316,14 @@ getCharToProcess: {
     // getCharToProcess::@12
   b12:
     // [144] (byte~) getCharToProcess::return_dist#6 ← (byte) getCharToProcess::closest_dist#2 -- vbuz1=vbuz2 
-    lda closest_dist
-    sta return_dist_6
+    lda.z closest_dist
+    sta.z return_dist_6
     jmp b3_from_b12
     // getCharToProcess::@11
   b11:
     // [145] (byte~) getCharToProcess::return_dist#5 ← (byte) getCharToProcess::closest_dist#2 -- vbuz1=vbuz2 
-    lda closest_dist
-    sta return_dist_5
+    lda.z closest_dist
+    sta.z return_dist_5
     jmp b3_from_b11
 }
   // setupRasterIrq
@@ -6383,9 +6383,9 @@ initSprites: {
   b2_from_initSprites:
     // [157] phi (byte*) initSprites::sp#4 = (const byte*) SPRITE_DATA#0 [phi:initSprites->initSprites::@2#0] -- pbuz1=pbuc1 
     lda #<SPRITE_DATA
-    sta sp
+    sta.z sp
     lda #>SPRITE_DATA
-    sta sp+1
+    sta.z sp+1
     jmp b2
     // [157] phi from initSprites::@1 to initSprites::@2 [phi:initSprites::@1->initSprites::@2]
   b2_from_b1:
@@ -6398,20 +6398,20 @@ initSprites: {
     ldy #0
     sta (sp),y
     // [159] (byte*) initSprites::sp#1 ← ++ (byte*) initSprites::sp#4 -- pbuz1=_inc_pbuz1 
-    inc sp
+    inc.z sp
     bne !+
-    inc sp+1
+    inc.z sp+1
   !:
     jmp b1
   // Clear sprite data
     // initSprites::@1
   b1:
     // [160] if((byte*) initSprites::sp#1<(const byte*) SPRITE_DATA#0+(const byte) NUM_PROCESSING#0*(byte) $40) goto initSprites::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sp+1
+    lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2_from_b1
     bne !+
-    lda sp
+    lda.z sp
     cmp #<SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2_from_b1
   !:
@@ -6419,7 +6419,7 @@ initSprites: {
   b3_from_b1:
     // [161] phi (byte) initSprites::i#2 = (byte) 0 [phi:initSprites::@1->initSprites::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
   // Initialize sprite registers
     // [161] phi from initSprites::@3 to initSprites::@3 [phi:initSprites::@3->initSprites::@3]
@@ -6430,13 +6430,13 @@ initSprites: {
   b3:
     // [162] *((const byte*) SPRITES_COLS#0 + (byte) initSprites::i#2) ← (const byte) LIGHT_BLUE#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #LIGHT_BLUE
-    ldy i
+    ldy.z i
     sta SPRITES_COLS,y
     // [163] (byte) initSprites::i#1 ← ++ (byte) initSprites::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [164] if((byte) initSprites::i#1!=(byte) 8) goto initSprites::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp i
+    cmp.z i
     bne b3_from_b3
     jmp b4
     // initSprites::@4
@@ -6479,28 +6479,28 @@ init_angle_screen: {
     .label xb = $21
     .label y = $1b
     // [169] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz2_plus_vwuc1 
-    lda screen
+    lda.z screen
     clc
     adc #<$28*$c
-    sta screen_topline
-    lda screen+1
+    sta.z screen_topline
+    lda.z screen+1
     adc #>$28*$c
-    sta screen_topline+1
+    sta.z screen_topline+1
     // [170] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz2_plus_vwuc1 
-    lda screen
+    lda.z screen
     clc
     adc #<$28*$c
-    sta screen_bottomline
-    lda screen+1
+    sta.z screen_bottomline
+    lda.z screen+1
     adc #>$28*$c
-    sta screen_bottomline+1
+    sta.z screen_bottomline+1
     // [171] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   b1_from_init_angle_screen:
     // [171] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#0 [phi:init_angle_screen->init_angle_screen::@1#0] -- register_copy 
     // [171] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#0 [phi:init_angle_screen->init_angle_screen::@1#1] -- register_copy 
     // [171] phi (byte) init_angle_screen::y#5 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b1
     // [171] phi from init_angle_screen::@4 to init_angle_screen::@1 [phi:init_angle_screen::@4->init_angle_screen::@1]
   b1_from_b4:
@@ -6514,10 +6514,10 @@ init_angle_screen: {
   b3_from_b1:
     // [172] phi (byte) init_angle_screen::xb#5 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@3#0] -- vbuz1=vbuc1 
     lda #$27
-    sta xb
+    sta.z xb
     // [172] phi (byte) init_angle_screen::x#5 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b3
     // [172] phi from init_angle_screen::@2 to init_angle_screen::@3 [phi:init_angle_screen::@2->init_angle_screen::@3]
   b3_from_b2:
@@ -6527,130 +6527,130 @@ init_angle_screen: {
     // init_angle_screen::@3
   b3:
     // [173] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#5 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda x
+    lda.z x
     asl
-    sta _3
+    sta.z _3
     // [174] (byte~) init_angle_screen::$4 ← (byte) $27 - (byte~) init_angle_screen::$3 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$27
     sec
-    sbc _3
-    sta _4
+    sbc.z _3
+    sta.z _4
     // [175] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$4 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
-    lda _4
+    lda.z _4
     ldy #0
-    sta xw+1
-    sty xw
+    sta.z xw+1
+    sty.z xw
     // [176] (byte~) init_angle_screen::$7 ← (byte) init_angle_screen::y#5 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda y
+    lda.z y
     asl
-    sta _7
+    sta.z _7
     // [177] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$7 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
-    lda _7
+    lda.z _7
     ldy #0
-    sta yw+1
-    sty yw
+    sta.z yw+1
+    sty.z yw
     // [178] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0 -- vwsz1=vwsz2 
-    lda xw
-    sta atan2_16.x
-    lda xw+1
-    sta atan2_16.x+1
+    lda.z xw
+    sta.z atan2_16.x
+    lda.z xw+1
+    sta.z atan2_16.x+1
     // [179] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0 -- vwsz1=vwsz2 
-    lda yw
-    sta atan2_16.y
-    lda yw+1
-    sta atan2_16.y+1
+    lda.z yw
+    sta.z atan2_16.y
+    lda.z yw+1
+    sta.z atan2_16.y+1
     // [180] call atan2_16 
     jsr atan2_16
     // [181] (word) atan2_16::return#2 ← (word) atan2_16::return#0 -- vwuz1=vwuz2 
-    lda atan2_16.return
-    sta atan2_16.return_2
-    lda atan2_16.return+1
-    sta atan2_16.return_2+1
+    lda.z atan2_16.return
+    sta.z atan2_16.return_2
+    lda.z atan2_16.return+1
+    sta.z atan2_16.return_2+1
     jmp b5
     // init_angle_screen::@5
   b5:
     // [182] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2 -- vwuz1=vwuz2 
-    lda atan2_16.return_2
-    sta angle_w
-    lda atan2_16.return_2+1
-    sta angle_w+1
+    lda.z atan2_16.return_2
+    sta.z angle_w
+    lda.z atan2_16.return_2+1
+    sta.z angle_w+1
     // [183] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz2_plus_vbuc1 
     lda #$80
     clc
-    adc angle_w
-    sta _11
+    adc.z angle_w
+    sta.z _11
     lda #0
-    adc angle_w+1
-    sta _11+1
+    adc.z angle_w+1
+    sta.z _11+1
     // [184] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda _11+1
-    sta ang_w
+    lda.z _11+1
+    sta.z ang_w
     // [185] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#5) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ang_w
-    ldy xb
+    lda.z ang_w
+    ldy.z xb
     sta (screen_bottomline),y
     // [186] (byte~) init_angle_screen::$13 ← - (byte) init_angle_screen::ang_w#0 -- vbuz1=_neg_vbuz2 
-    lda ang_w
+    lda.z ang_w
     eor #$ff
     clc
     adc #1
-    sta _13
+    sta.z _13
     // [187] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::xb#5) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _13
-    ldy xb
+    lda.z _13
+    ldy.z xb
     sta (screen_topline),y
     // [188] (byte~) init_angle_screen::$14 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax ang_w
+    lax.z ang_w
     axs #-[$80]
-    stx _14
+    stx.z _14
     // [189] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _14
-    ldy x
+    lda.z _14
+    ldy.z x
     sta (screen_topline),y
     // [190] (byte~) init_angle_screen::$15 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$80
     sec
-    sbc ang_w
-    sta _15
+    sbc.z ang_w
+    sta.z _15
     // [191] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$15 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _15
-    ldy x
+    lda.z _15
+    ldy.z x
     sta (screen_bottomline),y
     // [192] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#5 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [193] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#5 -- vbuz1=_dec_vbuz1 
-    dec xb
+    dec.z xb
     jmp b2
     // init_angle_screen::@2
   b2:
     // [194] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$13+1
     bcc b3_from_b2
     jmp b4
     // init_angle_screen::@4
   b4:
     // [195] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
-    lda screen_topline
+    lda.z screen_topline
     sec
     sbc #<$28
-    sta screen_topline
-    lda screen_topline+1
+    sta.z screen_topline
+    lda.z screen_topline+1
     sbc #>$28
-    sta screen_topline+1
+    sta.z screen_topline+1
     // [196] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_bottomline
-    sta screen_bottomline
+    adc.z screen_bottomline
+    sta.z screen_bottomline
     bcc !+
-    inc screen_bottomline+1
+    inc.z screen_bottomline+1
   !:
     // [197] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [198] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1_from_b4
     jmp breturn
     // init_angle_screen::@return
@@ -6685,7 +6685,7 @@ atan2_16: {
     .label angle_12 = $27
     .label angle_13 = $27
     // [200] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bpl b1
     jmp b2
     // atan2_16::@2
@@ -6693,11 +6693,11 @@ atan2_16: {
     // [201] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc y
-    sta _2
+    sbc.z y
+    sta.z _2
     lda #0
-    sbc y+1
-    sta _2+1
+    sbc.z y+1
+    sta.z _2+1
     // [202] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
   b3_from_b1:
   b3_from_b2:
@@ -6706,7 +6706,7 @@ atan2_16: {
     // atan2_16::@3
   b3:
     // [203] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bpl b4
     jmp b5
     // atan2_16::@5
@@ -6714,11 +6714,11 @@ atan2_16: {
     // [204] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc x
-    sta _7
+    sbc.z x
+    sta.z _7
     lda #0
-    sbc x+1
-    sta _7+1
+    sbc.z x+1
+    sta.z _7+1
     // [205] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
   b6_from_b4:
   b6_from_b5:
@@ -6730,21 +6730,21 @@ atan2_16: {
   b10_from_b6:
     // [206] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
-    sta angle_12
+    sta.z angle_12
     lda #>0
-    sta angle_12+1
+    sta.z angle_12+1
     // [206] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [206] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
     // [206] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
     jmp b10
     // atan2_16::@10
   b10:
     // [207] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bne b11
-    lda yi
+    lda.z yi
     bne b11
     // [208] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
   b12_from_b10:
@@ -6754,14 +6754,14 @@ atan2_16: {
     // atan2_16::@12
   b12:
     // [209] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
-    lda angle_6+1
+    lda.z angle_6+1
     lsr
-    sta angle+1
-    lda angle_6
+    sta.z angle+1
+    lda.z angle_6
     ror
-    sta angle
+    sta.z angle
     // [210] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bpl b7_from_b12
     jmp b21
     // atan2_16::@21
@@ -6769,11 +6769,11 @@ atan2_16: {
     // [211] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #>$8000
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [212] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
   b7_from_b12:
   b7_from_b21:
@@ -6782,7 +6782,7 @@ atan2_16: {
     // atan2_16::@7
   b7:
     // [213] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bpl b8_from_b7
     jmp b9
     // atan2_16::@9
@@ -6790,11 +6790,11 @@ atan2_16: {
     // [214] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #0
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [215] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
   b8_from_b7:
   b8_from_b9:
@@ -6810,18 +6810,18 @@ atan2_16: {
     // atan2_16::@11
   b11:
     // [217] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta shift
+    lda.z i
+    sta.z shift
     // [218] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
-    lda xi
-    sta xd
-    lda xi+1
-    sta xd+1
+    lda.z xi
+    sta.z xd
+    lda.z xi+1
+    sta.z xd+1
     // [219] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
-    lda yi
-    sta yd
-    lda yi+1
-    sta yd+1
+    lda.z yi
+    sta.z yd
+    lda.z yi+1
+    sta.z yd+1
     // [220] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
   b13_from_b11:
   b13_from_b14:
@@ -6832,7 +6832,7 @@ atan2_16: {
     // atan2_16::@13
   b13:
     // [221] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuz1_ge_vbuc1_then_la1 
-    lda shift
+    lda.z shift
     cmp #2
     bcs b14
     jmp b15
@@ -6840,21 +6840,21 @@ atan2_16: {
   b15:
     // [222] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
-    cmp shift
+    cmp.z shift
     beq b17_from_b15
     jmp b16
     // atan2_16::@16
   b16:
     // [223] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // [224] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // [225] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
   b17_from_b15:
   b17_from_b16:
@@ -6864,40 +6864,40 @@ atan2_16: {
     // atan2_16::@17
   b17:
     // [226] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bpl b18
     jmp b20
     // atan2_16::@20
   b20:
     // [227] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda xi
+    lda.z xi
     sec
-    sbc yd
-    sta xi
-    lda xi+1
-    sbc yd+1
-    sta xi+1
+    sbc.z yd
+    sta.z xi
+    lda.z xi+1
+    sbc.z yd+1
+    sta.z xi+1
     // [228] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda yi
+    lda.z yi
     clc
-    adc xd
-    sta yi
-    lda yi+1
-    adc xd+1
-    sta yi+1
+    adc.z xd
+    sta.z yi
+    lda.z yi+1
+    adc.z xd+1
+    sta.z yi+1
     // [229] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _24
+    sta.z _24
     // [230] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
-    ldy _24
+    ldy.z _24
     sec
-    lda angle_3
+    lda.z angle_3
     sbc CORDIC_ATAN2_ANGLES_16,y
-    sta angle_3
-    lda angle_3+1
+    sta.z angle_3
+    lda.z angle_3+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle_3+1
+    sta.z angle_3+1
     // [231] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
   b19_from_b18:
   b19_from_b20:
@@ -6908,10 +6908,10 @@ atan2_16: {
     // atan2_16::@19
   b19:
     // [232] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [233] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16#0-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_16-1+1
-    cmp i
+    cmp.z i
     beq b12_from_b19
     // [206] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
   b10_from_b19:
@@ -6923,74 +6923,74 @@ atan2_16: {
     // atan2_16::@18
   b18:
     // [234] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda xi
+    lda.z xi
     clc
-    adc yd
-    sta xi
-    lda xi+1
-    adc yd+1
-    sta xi+1
+    adc.z yd
+    sta.z xi
+    lda.z xi+1
+    adc.z yd+1
+    sta.z xi+1
     // [235] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda yi
+    lda.z yi
     sec
-    sbc xd
-    sta yi
-    lda yi+1
-    sbc xd+1
-    sta yi+1
+    sbc.z xd
+    sta.z yi
+    lda.z yi+1
+    sbc.z xd+1
+    sta.z yi+1
     // [236] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _23
+    sta.z _23
     // [237] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
-    ldy _23
+    ldy.z _23
     clc
-    lda angle_2
+    lda.z angle_2
     adc CORDIC_ATAN2_ANGLES_16,y
-    sta angle_2
-    lda angle_2+1
+    sta.z angle_2
+    lda.z angle_2+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle_2+1
+    sta.z angle_2+1
     jmp b19_from_b18
     // atan2_16::@14
   b14:
     // [238] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda xd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // [239] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
-    lda yd+1
+    ror.z yd+1
+    ror.z yd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // [240] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
-    dec shift
-    dec shift
+    dec.z shift
+    dec.z shift
     jmp b13_from_b14
     // atan2_16::@4
   b4:
     // [241] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
-    lda x
-    sta xi
-    lda x+1
-    sta xi+1
+    lda.z x
+    sta.z xi
+    lda.z x+1
+    sta.z xi+1
     jmp b6_from_b4
     // atan2_16::@1
   b1:
     // [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
-    lda y
-    sta yi
-    lda y+1
-    sta yi+1
+    lda.z y
+    sta.z yi
+    lda.z y+1
+    sta.z yi+1
     jmp b3_from_b1
 }
   // malloc
@@ -6999,18 +6999,18 @@ atan2_16: {
 malloc: {
     .label mem = $9e
     // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$3e8
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$3e8
-    sta mem+1
+    sta.z mem+1
     // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     jmp breturn
     // malloc::@return
   breturn:
@@ -7092,10 +7092,10 @@ processChars: {
   b1_from_processChars:
     // [255] phi (byte) processChars::numActive#10 = (byte) 0 [phi:processChars->processChars::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta numActive
+    sta.z numActive
     // [255] phi (byte) processChars::i#10 = (byte) 0 [phi:processChars->processChars::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [255] phi from processChars::@2 to processChars::@1 [phi:processChars::@2->processChars::@1]
   b1_from_b2:
@@ -7105,35 +7105,35 @@ processChars: {
     // processChars::@1
   b1:
     // [256] (byte) processChars::$67 ← (byte) processChars::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _67
+    sta.z _67
     // [257] (byte) processChars::$68 ← (byte) processChars::$67 + (byte) processChars::i#10 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _67
+    lda.z _67
     clc
-    adc i
-    sta _68
+    adc.z i
+    sta.z _68
     // [258] (byte) processChars::$69 ← (byte) processChars::$68 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _68
+    lda.z _68
     asl
-    sta _69
+    sta.z _69
     // [259] (byte) processChars::$70 ← (byte) processChars::$69 + (byte) processChars::i#10 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _69
+    lda.z _69
     clc
-    adc i
-    sta _70
+    adc.z i
+    sta.z _70
     // [260] (byte~) processChars::$37 ← (byte) processChars::$70 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda _70
+    lda.z _70
     asl
-    sta _37
+    sta.z _37
     // [261] (struct ProcessingSprite*) processChars::processing#0 ← (const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) processChars::$37 -- pssz1=pssc1_plus_vbuz2 
-    lda _37
+    lda.z _37
     clc
     adc #<PROCESSING
-    sta processing
+    sta.z processing
     lda #>PROCESSING
     adc #0
-    sta processing+1
+    sta.z processing+1
     // [262] (byte) processChars::bitmask#0 ← (byte) 1 << *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID) -- vbuz1=vbuc1_rol_pbuz2_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
     lda (processing),y
@@ -7146,7 +7146,7 @@ processChars: {
     dex
     bne !-
   !e:
-    sta bitmask
+    sta.z bitmask
     // [263] if(*((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)==(const byte) STATUS_FREE) goto processChars::@2 -- pbuz1_derefidx_vbuc1_eq_vbuc2_then_la1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     lda (processing),y
@@ -7178,7 +7178,7 @@ processChars: {
     // [266] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     // Enable the sprite
     lda SPRITES_ENABLE
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_ENABLE
     // [267] *((const byte*) SPRITES_COLS#0 + *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID)) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL) -- pbuc1_derefidx_pbuz1_derefidx_vbuc2=pbuz1_derefidx_vbuc3 
     // Set the sprite color
@@ -7211,72 +7211,72 @@ processChars: {
     // [270] (word) processChars::xpos#0 ← *((word*)(struct ProcessingSprite*) processChars::processing#0) >> (byte) 4 -- vwuz1=_deref_pwuz2_ror_4 
     ldy #0
     lda (processing),y
-    sta xpos
+    sta.z xpos
     iny
     lda (processing),y
-    sta xpos+1
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
+    sta.z xpos+1
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
     // [271] (byte~) processChars::$11 ← > (word) processChars::xpos#0 -- vbuz1=_hi_vwuz2 
-    lda xpos+1
-    sta _11
+    lda.z xpos+1
+    sta.z _11
     // [272] if((byte) 0!=(byte~) processChars::$11) goto processChars::@4 -- vbuc1_neq_vbuz1_then_la1 
     // Set sprite position
     lda #0
-    cmp _11
+    cmp.z _11
     bne b4
     jmp b8
     // processChars::@8
   b8:
     // [273] (byte~) processChars::$12 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuz1=vbuc1_bxor_vbuz2 
     lda #$ff
-    eor bitmask
-    sta _12
+    eor.z bitmask
+    sta.z _12
     // [274] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) processChars::$12 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     lda SPRITES_XMSB
-    and _12
+    and.z _12
     sta SPRITES_XMSB
     jmp b5
     // processChars::@5
   b5:
     // [275] (byte~) processChars::$17 ← (byte) processChars::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _17
+    sta.z _17
     // [276] (byte~) processChars::$14 ← (byte)(word) processChars::xpos#0 -- vbuz1=_byte_vwuz2 
-    lda xpos
-    sta _14
+    lda.z xpos
+    sta.z _14
     // [277] *((const byte*) SPRITES_XPOS#0 + (byte~) processChars::$17) ← (byte~) processChars::$14 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _14
-    ldy _17
+    lda.z _14
+    ldy.z _17
     sta SPRITES_XPOS,y
     // [278] (word~) processChars::$15 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) >> (byte) 4 -- vwuz1=pwuz2_derefidx_vbuc1_ror_4 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _15
+    sta.z _15
     iny
     lda (processing),y
-    sta _15+1
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
+    sta.z _15+1
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
     // [279] (byte) processChars::ypos#0 ← (byte)(word~) processChars::$15 -- vbuz1=_byte_vwuz2 
-    lda _15
-    sta ypos
+    lda.z _15
+    sta.z ypos
     // [280] *((const byte*) SPRITES_YPOS#0 + (byte~) processChars::$17) ← (byte) processChars::ypos#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda ypos
-    ldy _17
+    lda.z ypos
+    ldy.z _17
     sta SPRITES_YPOS,y
     // [281] if(*((word*)(struct ProcessingSprite*) processChars::processing#0)<(const word) XPOS_LEFTMOST#0) goto processChars::@6 -- _deref_pwuz1_lt_vwuc1_then_la1 
     // Move sprite
@@ -7338,29 +7338,29 @@ processChars: {
     // processChars::@9
   b9:
     // [285] (word~) processChars::$25 ← (word) processChars::xpos#0 >> (byte) 3 -- vwuz1=vwuz2_ror_3 
-    lda xpos+1
+    lda.z xpos+1
     lsr
-    sta _25+1
-    lda xpos
+    sta.z _25+1
+    lda.z xpos
     ror
-    sta _25
-    lsr _25+1
-    ror _25
-    lsr _25+1
-    ror _25
+    sta.z _25
+    lsr.z _25+1
+    ror.z _25
+    lsr.z _25+1
+    ror.z _25
     // [286] (byte~) processChars::$26 ← (byte)(word~) processChars::$25 -- vbuz1=_byte_vwuz2 
-    lda _25
-    sta _26
+    lda.z _25
+    sta.z _26
     // [287] (byte) processChars::xchar#0 ← (byte~) processChars::$26 - (const byte) BORDER_XPOS_LEFT#0/(byte) 8 -- vbuz1=vbuz2_minus_vbuc1 
-    lax _26
+    lax.z _26
     axs #BORDER_XPOS_LEFT/8
-    stx xchar
+    stx.z xchar
     // [288] (byte~) processChars::$38 ← (byte) processChars::xchar#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda xchar
+    lda.z xchar
     asl
-    sta _38
+    sta.z _38
     // [289] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) + *((const word[$28]) VXSIN#0 + (byte~) processChars::$38) -- pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_pwuc2_derefidx_vbuz2 
-    ldx _38
+    ldx.z _38
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     clc
     lda (processing),y
@@ -7372,34 +7372,34 @@ processChars: {
     sta (processing),y
     // [290] *((word*)(struct ProcessingSprite*) processChars::processing#0) ← *((word*)(struct ProcessingSprite*) processChars::processing#0) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) -- _deref_pwuz1=_deref_pwuz1_plus_pwuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
-    sty $ff
+    sty.z $ff
     clc
     lda (processing),y
     ldy #0
     adc (processing),y
     sta (processing),y
-    ldy $ff
+    ldy.z $ff
     iny
     lda (processing),y
     ldy #1
     adc (processing),y
     sta (processing),y
     // [291] (byte~) processChars::$30 ← (byte) processChars::ypos#0 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
-    lda ypos
+    lda.z ypos
     lsr
     lsr
     lsr
-    sta _30
+    sta.z _30
     // [292] (byte) processChars::ychar#0 ← (byte~) processChars::$30 - (const byte) BORDER_YPOS_TOP#0/(byte) 8 -- vbuz1=vbuz2_minus_vbuc1 
-    lax _30
+    lax.z _30
     axs #BORDER_YPOS_TOP/8
-    stx ychar
+    stx.z ychar
     // [293] (byte~) processChars::$39 ← (byte) processChars::ychar#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda ychar
+    lda.z ychar
     asl
-    sta _39
+    sta.z _39
     // [294] *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY) ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY) + *((const word[$19]) VYSIN#0 + (byte~) processChars::$39) -- pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_pwuc2_derefidx_vbuz2 
-    ldx _39
+    ldx.z _39
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     clc
     lda (processing),y
@@ -7425,7 +7425,7 @@ processChars: {
     // processChars::@7
   b7:
     // [296] (byte) processChars::numActive#1 ← ++ (byte) processChars::numActive#10 -- vbuz1=_inc_vbuz1 
-    inc numActive
+    inc.z numActive
     // [297] phi from processChars::@1 processChars::@7 to processChars::@2 [phi:processChars::@1/processChars::@7->processChars::@2]
   b2_from_b1:
   b2_from_b7:
@@ -7434,10 +7434,10 @@ processChars: {
     // processChars::@2
   b2:
     // [298] (byte) processChars::i#1 ← ++ (byte) processChars::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [299] if((byte) processChars::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto processChars::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // processChars::@return
@@ -7453,19 +7453,19 @@ processChars: {
     sta (processing),y
     // [302] (byte~) processChars::$33 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuz1=vbuc1_bxor_vbuz2 
     lda #$ff
-    eor bitmask
-    sta _33
+    eor.z bitmask
+    sta.z _33
     // [303] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) & (byte~) processChars::$33 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     // Disable the sprite
     lda SPRITES_ENABLE
-    and _33
+    and.z _33
     sta SPRITES_ENABLE
     jmp b7
     // processChars::@4
   b4:
     // [304] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_XMSB
     jmp b5
 }
@@ -8415,18 +8415,18 @@ b1:
 malloc_from_b1:
   // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
-  sta heap_head
+  sta.z heap_head
   lda #>HEAP_TOP
-  sta heap_head+1
+  sta.z heap_head+1
   jsr malloc
   jmp b3
   // @3
 b3:
   // [3] (void*) SCREEN_COPY#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-  lda malloc.mem
-  sta SCREEN_COPY
-  lda malloc.mem+1
-  sta SCREEN_COPY+1
+  lda.z malloc.mem
+  sta.z SCREEN_COPY
+  lda.z malloc.mem+1
+  sta.z SCREEN_COPY+1
   // [4] call malloc 
   // [243] phi from @3 to malloc [phi:@3->malloc]
 malloc_from_b3:
@@ -8455,28 +8455,28 @@ main: {
     .label i = 2
     .label center_y = $b
     // [9] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta init_angle_screen.screen
-    lda SCREEN_DIST+1
-    sta init_angle_screen.screen+1
+    lda.z SCREEN_DIST
+    sta.z init_angle_screen.screen
+    lda.z SCREEN_DIST+1
+    sta.z init_angle_screen.screen+1
     // [10] call init_angle_screen 
     jsr init_angle_screen
     jmp b9
     // main::@9
   b9:
     // [11] (byte*) main::dst#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta dst
-    lda SCREEN_COPY+1
-    sta dst+1
+    lda.z SCREEN_COPY
+    sta.z dst
+    lda.z SCREEN_COPY+1
+    sta.z dst+1
     // [12] phi from main::@9 to main::@2 [phi:main::@9->main::@2]
   b2_from_b9:
     // [12] phi (byte*) main::dst#4 = (byte*) main::dst#0 [phi:main::@9->main::@2#0] -- register_copy 
     // [12] phi (byte*) main::src#4 = (const byte*) SCREEN#0 [phi:main::@9->main::@2#1] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta src
+    sta.z src
     lda #>SCREEN
-    sta src+1
+    sta.z src+1
     jmp b2
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -8491,31 +8491,31 @@ main: {
     ldy #0
     sta (dst),y
     // [14] (byte*) main::src#1 ← ++ (byte*) main::src#4 -- pbuz1=_inc_pbuz1 
-    inc src
+    inc.z src
     bne !+
-    inc src+1
+    inc.z src+1
   !:
     // [15] (byte*) main::dst#1 ← ++ (byte*) main::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
   // Copy screen to screen copy
     // main::@1
   b1:
     // [16] if((byte*) main::src#1!=(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda src+1
+    lda.z src+1
     cmp #>SCREEN+$3e8
     bne b2_from_b1
-    lda src
+    lda.z src
     cmp #<SCREEN+$3e8
     bne b2_from_b1
     // [17] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
   // Init processing array
     // [17] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
@@ -8525,16 +8525,16 @@ main: {
     // main::@3
   b3:
     // [18] (byte) main::$26 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [19] (byte) main::$27 ← (byte) main::$26 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [20] (byte) main::$28 ← (byte) main::$27 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [21] (byte) main::$29 ← (byte) main::$28 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [22] (byte~) main::$16 ← (byte) main::$29 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
@@ -8576,10 +8576,10 @@ main: {
     lda #>0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     // [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [33] if((byte) main::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b3_from_b3
     // [34] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -8607,16 +8607,16 @@ main: {
     // [39] call getCharToProcess 
     jsr getCharToProcess
     // [40] (byte) getCharToProcess::return_x#0 ← (byte) getCharToProcess::return_x#1 -- vbuyy=vbuz1 
-    ldy getCharToProcess.return_x
+    ldy.z getCharToProcess.return_x
     // [41] (byte) getCharToProcess::return_y#0 ← (byte) getCharToProcess::return_y#1 -- vbuaa=vbuz1 
-    lda getCharToProcess.return_y
+    lda.z getCharToProcess.return_y
     // [42] (byte) getCharToProcess::return_dist#0 ← (byte) getCharToProcess::return_dist#1
     jmp b11
     // main::@11
   b11:
     // [43] (byte) main::center_x#0 ← (byte) getCharToProcess::return_x#0
     // [44] (byte) main::center_y#0 ← (byte) getCharToProcess::return_y#0 -- vbuz1=vbuaa 
-    sta center_y
+    sta.z center_y
     // [45] (byte) main::center_dist#0 ← (byte) getCharToProcess::return_dist#0 -- vbuaa=vbuxx 
     txa
     // [46] if((byte) main::center_dist#0!=(const byte) NOT_FOUND#0) goto main::@6 -- vbuaa_neq_vbuc1_then_la1 
@@ -8637,7 +8637,7 @@ main: {
     // main::@6
   b6:
     // [49] (byte) startProcessing::center_x#0 ← (byte) main::center_x#0 -- vbuz1=vbuyy 
-    sty startProcessing.center_x
+    sty.z startProcessing.center_x
     // [50] (byte) startProcessing::center_y#0 ← (byte) main::center_y#0
     // [51] call startProcessing 
     // [52] phi from main::@6 to startProcessing [phi:main::@6->startProcessing]
@@ -8688,7 +8688,7 @@ startProcessing: {
   b2_from_b1:
     // [54] phi (byte) startProcessing::i#2 = (byte) 0 [phi:startProcessing::@1->startProcessing::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b2
     // [54] phi from startProcessing::@3 to startProcessing::@2 [phi:startProcessing::@3->startProcessing::@2]
   b2_from_b3:
@@ -8697,16 +8697,16 @@ startProcessing: {
     // startProcessing::@2
   b2:
     // [55] (byte) startProcessing::$42 ← (byte) startProcessing::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [56] (byte) startProcessing::$43 ← (byte) startProcessing::$42 + (byte) startProcessing::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [57] (byte) startProcessing::$44 ← (byte) startProcessing::$43 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [58] (byte) startProcessing::$45 ← (byte) startProcessing::$44 + (byte) startProcessing::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [59] (byte~) startProcessing::$30 ← (byte) startProcessing::$45 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [60] if(*((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$30)!=(const byte) STATUS_FREE) goto startProcessing::@3 -- pbuc1_derefidx_vbuaa_neq_vbuc2_then_la1 
@@ -8723,116 +8723,116 @@ startProcessing: {
   b4:
     // [62] if((byte) startProcessing::freeIdx#2==(byte) $ff) goto startProcessing::@8 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
-    cmp freeIdx
+    cmp.z freeIdx
     beq b8
     jmp b5
     // startProcessing::@5
   b5:
     // [63] (word~) startProcessing::$0 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _0
+    lda.z center_y
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [64] (word) startProcessing::$47 ← (word~) startProcessing::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _0
+    lda.z _0
     asl
-    sta _47
-    lda _0+1
+    sta.z _47
+    lda.z _0+1
     rol
-    sta _47+1
-    asl _47
-    rol _47+1
+    sta.z _47+1
+    asl.z _47
+    rol.z _47+1
     // [65] (word) startProcessing::$48 ← (word) startProcessing::$47 + (word~) startProcessing::$0 -- vwuz1=vwuz2_plus_vwuz1 
-    lda _48
+    lda.z _48
     clc
-    adc _47
-    sta _48
-    lda _48+1
-    adc _47+1
-    sta _48+1
+    adc.z _47
+    sta.z _48
+    lda.z _48+1
+    adc.z _47+1
+    sta.z _48+1
     // [66] (word~) startProcessing::$1 ← (word) startProcessing::$48 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [67] (word) startProcessing::offset#0 ← (word~) startProcessing::$1 + (byte) startProcessing::center_x#0 -- vwuz1=vwuz1_plus_vbuz2 
-    lda center_x
+    lda.z center_x
     clc
-    adc offset
-    sta offset
+    adc.z offset
+    sta.z offset
     bcc !+
-    inc offset+1
+    inc.z offset+1
   !:
     // [68] (byte*) startProcessing::colPtr#0 ← (const byte*) COLS#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz2 
-    lda offset
+    lda.z offset
     clc
     adc #<COLS
-    sta colPtr
-    lda offset+1
+    sta.z colPtr
+    lda.z offset+1
     adc #>COLS
-    sta colPtr+1
+    sta.z colPtr+1
     // [69] (byte) startProcessing::spriteCol#0 ← *((byte*) startProcessing::colPtr#0) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (colPtr),y
-    sta spriteCol
+    sta.z spriteCol
     // [70] (byte*) startProcessing::screenPtr#0 ← (const byte*) SCREEN#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda screenPtr
+    lda.z screenPtr
     adc #<SCREEN
-    sta screenPtr
-    lda screenPtr+1
+    sta.z screenPtr
+    lda.z screenPtr+1
     adc #>SCREEN
-    sta screenPtr+1
+    sta.z screenPtr+1
     // [71] (word~) startProcessing::$5 ← (word)(byte) startProcessing::freeIdx#2 -- vwuz1=_word_vbuz2 
-    lda freeIdx
-    sta _5
+    lda.z freeIdx
+    sta.z _5
     lda #0
-    sta _5+1
+    sta.z _5+1
     // [72] (word~) startProcessing::$6 ← (word~) startProcessing::$5 << (byte) 6 -- vwuz1=vwuz1_rol_6 
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
     // [73] (byte*) startProcessing::spriteData#0 ← (const byte*) SPRITE_DATA#0 + (word~) startProcessing::$6 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda spriteData
+    lda.z spriteData
     adc #<SPRITE_DATA
-    sta spriteData
-    lda spriteData+1
+    sta.z spriteData
+    lda.z spriteData+1
     adc #>SPRITE_DATA
-    sta spriteData+1
+    sta.z spriteData+1
     // [74] (byte) startProcessing::ch#0 ← *((byte*) startProcessing::screenPtr#0) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (screenPtr),y
     // [75] (word~) startProcessing::$8 ← (word)(byte) startProcessing::ch#0 -- vwuz1=_word_vbuaa 
-    sta _8
+    sta.z _8
     lda #0
-    sta _8+1
+    sta.z _8+1
     // [76] (word~) startProcessing::$9 ← (word~) startProcessing::$8 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // [77] (byte*) startProcessing::chargenData#0 ← (const byte*) CHARGEN#0 + (word~) startProcessing::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargenData
+    lda.z chargenData
     adc #<CHARGEN
-    sta chargenData
-    lda chargenData+1
+    sta.z chargenData
+    lda.z chargenData+1
     adc #>CHARGEN
-    sta chargenData+1
+    sta.z chargenData+1
     // asm { sei  }
     sei
     // [79] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
@@ -8861,15 +8861,15 @@ startProcessing: {
     // [82] (byte*) startProcessing::spriteData#1 ← (byte*) startProcessing::spriteData#2 + (byte) 3 -- pbuz1=pbuz1_plus_vbuc1 
     lda #3
     clc
-    adc spriteData
-    sta spriteData
+    adc.z spriteData
+    sta.z spriteData
     bcc !+
-    inc spriteData+1
+    inc.z spriteData+1
   !:
     // [83] (byte*) startProcessing::chargenData#1 ← ++ (byte*) startProcessing::chargenData#2 -- pbuz1=_inc_pbuz1 
-    inc chargenData
+    inc.z chargenData
     bne !+
-    inc chargenData+1
+    inc.z chargenData+1
   !:
     // [84] (byte) startProcessing::i1#1 ← ++ (byte) startProcessing::i1#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -8885,104 +8885,104 @@ startProcessing: {
     // asm { cli  }
     cli
     // [88] (word~) startProcessing::$11 ← (word)(byte) startProcessing::center_x#0 -- vwuz1=_word_vbuz2 
-    lda center_x
-    sta _11
+    lda.z center_x
+    sta.z _11
     lda #0
-    sta _11+1
+    sta.z _11+1
     // [89] (word~) startProcessing::$12 ← (word~) startProcessing::$11 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
     // [90] (word~) startProcessing::$13 ← (const byte) BORDER_XPOS_LEFT#0 + (word~) startProcessing::$12 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_XPOS_LEFT
     clc
-    adc _13
-    sta _13
+    adc.z _13
+    sta.z _13
     bcc !+
-    inc _13+1
+    inc.z _13+1
   !:
     // [91] (word) startProcessing::spriteX#0 ← (word~) startProcessing::$13 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
     // [92] (word~) startProcessing::$15 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _15
+    lda.z center_y
+    sta.z _15
     lda #0
-    sta _15+1
+    sta.z _15+1
     // [93] (word~) startProcessing::$16 ← (word~) startProcessing::$15 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
     // [94] (word~) startProcessing::$17 ← (const byte) BORDER_YPOS_TOP#0 + (word~) startProcessing::$16 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_YPOS_TOP
     clc
-    adc _17
-    sta _17
+    adc.z _17
+    sta.z _17
     bcc !+
-    inc _17+1
+    inc.z _17+1
   !:
     // [95] (word) startProcessing::spriteY#0 ← (word~) startProcessing::$17 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
     // [96] (byte) startProcessing::spritePtr#0 ← (byte)(const byte*) SPRITE_DATA#0/(byte) $40 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuc1_plus_vbuz2 
-    lax freeIdx
+    lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
-    stx spritePtr
+    stx.z spritePtr
     // [97] (byte~) startProcessing::$22 ← (byte) startProcessing::freeIdx#2 << (byte) 3 -- vbuaa=vbuz1_rol_3 
-    lda freeIdx
+    lda.z freeIdx
     asl
     asl
     asl
     // [98] (word~) startProcessing::$23 ← (word)(byte~) startProcessing::$22 -- vwuz1=_word_vbuaa 
-    sta _23
+    sta.z _23
     lda #0
-    sta _23+1
+    sta.z _23+1
     // [99] (byte) startProcessing::$50 ← (byte) startProcessing::freeIdx#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda freeIdx
+    lda.z freeIdx
     asl
     // [100] (byte) startProcessing::$51 ← (byte) startProcessing::$50 + (byte) startProcessing::freeIdx#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc freeIdx
+    adc.z freeIdx
     // [101] (byte) startProcessing::$52 ← (byte) startProcessing::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [102] (byte) startProcessing::$53 ← (byte) startProcessing::$52 + (byte) startProcessing::freeIdx#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc freeIdx
+    adc.z freeIdx
     // [103] (byte~) startProcessing::$31 ← (byte) startProcessing::$53 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
     // [104] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) startProcessing::$31) ← (word) startProcessing::spriteX#0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda spriteX
+    lda.z spriteX
     sta PROCESSING,x
-    lda spriteX+1
+    lda.z spriteX+1
     sta PROCESSING+1,x
     // [105] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y + (byte~) startProcessing::$31) ← (word) startProcessing::spriteY#0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda spriteY
+    lda.z spriteY
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
-    lda spriteY+1
+    lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
     // [106] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX + (byte~) startProcessing::$31) ← (word~) startProcessing::$23 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda _23
+    lda.z _23
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda _23+1
+    lda.z _23+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     // [107] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY + (byte~) startProcessing::$31) ← (byte) $3c -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #$3c
@@ -8990,21 +8990,21 @@ startProcessing: {
     lda #0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     // [108] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID + (byte~) startProcessing::$31) ← (byte) startProcessing::freeIdx#2 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda freeIdx
+    lda.z freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     // [109] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR + (byte~) startProcessing::$31) ← (byte) startProcessing::spritePtr#0 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda spritePtr
+    lda.z spritePtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
     // [110] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL + (byte~) startProcessing::$31) ← (byte) startProcessing::spriteCol#0 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda spriteCol
+    lda.z spriteCol
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
     // [111] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$31) ← (const byte) STATUS_NEW -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STATUS_NEW
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
     // [112] *((byte**)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR + (byte~) startProcessing::$31) ← (byte*) startProcessing::screenPtr#0 -- pptc1_derefidx_vbuxx=pbuz1 
-    lda screenPtr
+    lda.z screenPtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
-    lda screenPtr+1
+    lda.z screenPtr+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     jmp breturn
     // startProcessing::@return
@@ -9014,7 +9014,7 @@ startProcessing: {
     // startProcessing::@8
   b8:
     // [114] (byte~) startProcessing::freeIdx#7 ← (byte) startProcessing::freeIdx#2 -- vbuxx=vbuz1 
-    ldx freeIdx
+    ldx.z freeIdx
     // [53] phi from startProcessing::@8 to startProcessing::@1 [phi:startProcessing::@8->startProcessing::@1]
   b1_from_b8:
     // [53] phi (byte) startProcessing::freeIdx#6 = (byte~) startProcessing::freeIdx#7 [phi:startProcessing::@8->startProcessing::@1#0] -- register_copy 
@@ -9022,16 +9022,16 @@ startProcessing: {
     // startProcessing::@3
   b3:
     // [115] (byte) startProcessing::i#1 ← ++ (byte) startProcessing::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [116] if((byte) startProcessing::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto startProcessing::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b2_from_b3
     jmp b9
     // startProcessing::@9
   b9:
     // [117] (byte~) startProcessing::freeIdx#8 ← (byte) startProcessing::freeIdx#6 -- vbuz1=vbuxx 
-    stx freeIdx
+    stx.z freeIdx
     jmp b4_from_b9
 }
   // getCharToProcess
@@ -9052,29 +9052,29 @@ getCharToProcess: {
     .label _12 = $1a
     .label _13 = $18
     // [118] (byte*) getCharToProcess::screen_line#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta screen_line
-    lda SCREEN_COPY+1
-    sta screen_line+1
+    lda.z SCREEN_COPY
+    sta.z screen_line
+    lda.z SCREEN_COPY+1
+    sta.z screen_line+1
     // [119] (byte*) getCharToProcess::dist_line#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta dist_line
-    lda SCREEN_DIST+1
-    sta dist_line+1
+    lda.z SCREEN_DIST
+    sta.z dist_line
+    lda.z SCREEN_DIST+1
+    sta.z dist_line+1
     // [120] phi from getCharToProcess to getCharToProcess::@1 [phi:getCharToProcess->getCharToProcess::@1]
   b1_from_getCharToProcess:
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta closest_y
+    sta.z closest_y
     // [120] phi (byte) getCharToProcess::closest_x#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta closest_x
+    sta.z closest_x
     // [120] phi (byte) getCharToProcess::y#7 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [120] phi (byte) getCharToProcess::closest_dist#8 = (const byte) NOT_FOUND#0 [phi:getCharToProcess->getCharToProcess::@1#3] -- vbuz1=vbuc1 
     lda #NOT_FOUND
-    sta closest_dist
+    sta.z closest_dist
     // [120] phi (byte*) getCharToProcess::dist_line#6 = (byte*) getCharToProcess::dist_line#0 [phi:getCharToProcess->getCharToProcess::@1#4] -- register_copy 
     // [120] phi (byte*) getCharToProcess::screen_line#4 = (byte*) getCharToProcess::screen_line#0 [phi:getCharToProcess->getCharToProcess::@1#5] -- register_copy 
     jmp b1
@@ -9101,16 +9101,16 @@ getCharToProcess: {
     lda (dist_line),y
     tax
     // [124] if((byte) getCharToProcess::dist#0>=(byte) getCharToProcess::closest_dist#2) goto getCharToProcess::@12 -- vbuxx_ge_vbuz1_then_la1 
-    cpx closest_dist
+    cpx.z closest_dist
     bcs b12
     jmp b5
     // getCharToProcess::@5
   b5:
     // [125] (byte~) getCharToProcess::return_x#7 ← (byte) getCharToProcess::x#2 -- vbuz1=vbuyy 
-    sty return_x
+    sty.z return_x
     // [126] (byte~) getCharToProcess::return_y#7 ← (byte) getCharToProcess::y#7 -- vbuz1=vbuz2 
-    lda y
-    sta return_y
+    lda.z y
+    sta.z return_y
     // [127] phi from getCharToProcess::@11 getCharToProcess::@12 getCharToProcess::@5 to getCharToProcess::@3 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3]
   b3_from_b11:
   b3_from_b12:
@@ -9132,24 +9132,24 @@ getCharToProcess: {
     // [130] (byte*) getCharToProcess::screen_line#1 ← (byte*) getCharToProcess::screen_line#4 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_line
-    sta screen_line
+    adc.z screen_line
+    sta.z screen_line
     bcc !+
-    inc screen_line+1
+    inc.z screen_line+1
   !:
     // [131] (byte*) getCharToProcess::dist_line#1 ← (byte*) getCharToProcess::dist_line#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc dist_line
-    sta dist_line
+    adc.z dist_line
+    sta.z dist_line
     bcc !+
-    inc dist_line+1
+    inc.z dist_line+1
   !:
     // [132] (byte) getCharToProcess::y#1 ← ++ (byte) getCharToProcess::y#7 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [133] if((byte) getCharToProcess::y#1!=(byte) $19) goto getCharToProcess::@9 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
-    cmp y
+    cmp.z y
     bne b9
     jmp b7
     // getCharToProcess::@7
@@ -9161,46 +9161,46 @@ getCharToProcess: {
     // getCharToProcess::@8
   b8:
     // [135] (word~) getCharToProcess::$8 ← (word)(byte) getCharToProcess::return_y#1 -- vwuz1=_word_vbuz2 
-    lda return_y
-    sta _8
+    lda.z return_y
+    sta.z _8
     lda #0
-    sta _8+1
+    sta.z _8+1
     // [136] (word) getCharToProcess::$12 ← (word~) getCharToProcess::$8 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _8
+    lda.z _8
     asl
-    sta _12
-    lda _8+1
+    sta.z _12
+    lda.z _8+1
     rol
-    sta _12+1
-    asl _12
-    rol _12+1
+    sta.z _12+1
+    asl.z _12
+    rol.z _12+1
     // [137] (word) getCharToProcess::$13 ← (word) getCharToProcess::$12 + (word~) getCharToProcess::$8 -- vwuz1=vwuz2_plus_vwuz1 
-    lda _13
+    lda.z _13
     clc
-    adc _12
-    sta _13
-    lda _13+1
-    adc _12+1
-    sta _13+1
+    adc.z _12
+    sta.z _13
+    lda.z _13+1
+    adc.z _12+1
+    sta.z _13+1
     // [138] (word~) getCharToProcess::$9 ← (word) getCharToProcess::$13 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // [139] (byte*~) getCharToProcess::$10 ← (byte*)(void*) SCREEN_COPY#0 + (word~) getCharToProcess::$9 -- pbuz1=pbuz2_plus_vwuz1 
-    lda _10
+    lda.z _10
     clc
-    adc SCREEN_COPY
-    sta _10
-    lda _10+1
-    adc SCREEN_COPY+1
-    sta _10+1
+    adc.z SCREEN_COPY
+    sta.z _10
+    lda.z _10+1
+    adc.z SCREEN_COPY+1
+    sta.z _10+1
     // [140] *((byte*~) getCharToProcess::$10 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     // clear the found char on the screen copy
     lda #' '
-    ldy return_x
+    ldy.z return_x
     sta (_10),y
     jmp breturn
     // getCharToProcess::@return
@@ -9210,7 +9210,7 @@ getCharToProcess: {
     // getCharToProcess::@9
   b9:
     // [142] (byte~) getCharToProcess::closest_dist#10 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuxx 
-    stx closest_dist
+    stx.z closest_dist
     // [120] phi from getCharToProcess::@9 to getCharToProcess::@1 [phi:getCharToProcess::@9->getCharToProcess::@1]
   b1_from_b9:
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@9->getCharToProcess::@1#0] -- register_copy 
@@ -9223,7 +9223,7 @@ getCharToProcess: {
     // getCharToProcess::@10
   b10:
     // [143] (byte~) getCharToProcess::closest_dist#12 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuxx 
-    stx closest_dist
+    stx.z closest_dist
     // [121] phi from getCharToProcess::@10 to getCharToProcess::@2 [phi:getCharToProcess::@10->getCharToProcess::@2]
   b2_from_b10:
     // [121] phi (byte) getCharToProcess::closest_y#7 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@10->getCharToProcess::@2#0] -- register_copy 
@@ -9234,12 +9234,12 @@ getCharToProcess: {
     // getCharToProcess::@12
   b12:
     // [144] (byte~) getCharToProcess::return_dist#6 ← (byte) getCharToProcess::closest_dist#2 -- vbuxx=vbuz1 
-    ldx closest_dist
+    ldx.z closest_dist
     jmp b3_from_b12
     // getCharToProcess::@11
   b11:
     // [145] (byte~) getCharToProcess::return_dist#5 ← (byte) getCharToProcess::closest_dist#2 -- vbuxx=vbuz1 
-    ldx closest_dist
+    ldx.z closest_dist
     jmp b3_from_b11
 }
   // setupRasterIrq
@@ -9298,9 +9298,9 @@ initSprites: {
   b2_from_initSprites:
     // [157] phi (byte*) initSprites::sp#4 = (const byte*) SPRITE_DATA#0 [phi:initSprites->initSprites::@2#0] -- pbuz1=pbuc1 
     lda #<SPRITE_DATA
-    sta sp
+    sta.z sp
     lda #>SPRITE_DATA
-    sta sp+1
+    sta.z sp+1
     jmp b2
     // [157] phi from initSprites::@1 to initSprites::@2 [phi:initSprites::@1->initSprites::@2]
   b2_from_b1:
@@ -9313,20 +9313,20 @@ initSprites: {
     ldy #0
     sta (sp),y
     // [159] (byte*) initSprites::sp#1 ← ++ (byte*) initSprites::sp#4 -- pbuz1=_inc_pbuz1 
-    inc sp
+    inc.z sp
     bne !+
-    inc sp+1
+    inc.z sp+1
   !:
     jmp b1
   // Clear sprite data
     // initSprites::@1
   b1:
     // [160] if((byte*) initSprites::sp#1<(const byte*) SPRITE_DATA#0+(const byte) NUM_PROCESSING#0*(byte) $40) goto initSprites::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sp+1
+    lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2_from_b1
     bne !+
-    lda sp
+    lda.z sp
     cmp #<SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2_from_b1
   !:
@@ -9385,28 +9385,28 @@ init_angle_screen: {
     .label xb = $17
     .label y = 2
     // [169] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz2_plus_vwuc1 
-    lda screen
+    lda.z screen
     clc
     adc #<$28*$c
-    sta screen_topline
-    lda screen+1
+    sta.z screen_topline
+    lda.z screen+1
     adc #>$28*$c
-    sta screen_topline+1
+    sta.z screen_topline+1
     // [170] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda screen_bottomline
+    lda.z screen_bottomline
     adc #<$28*$c
-    sta screen_bottomline
-    lda screen_bottomline+1
+    sta.z screen_bottomline
+    lda.z screen_bottomline+1
     adc #>$28*$c
-    sta screen_bottomline+1
+    sta.z screen_bottomline+1
     // [171] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   b1_from_init_angle_screen:
     // [171] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#0 [phi:init_angle_screen->init_angle_screen::@1#0] -- register_copy 
     // [171] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#0 [phi:init_angle_screen->init_angle_screen::@1#1] -- register_copy 
     // [171] phi (byte) init_angle_screen::y#5 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b1
     // [171] phi from init_angle_screen::@4 to init_angle_screen::@1 [phi:init_angle_screen::@4->init_angle_screen::@1]
   b1_from_b4:
@@ -9420,10 +9420,10 @@ init_angle_screen: {
   b3_from_b1:
     // [172] phi (byte) init_angle_screen::xb#5 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@3#0] -- vbuz1=vbuc1 
     lda #$27
-    sta xb
+    sta.z xb
     // [172] phi (byte) init_angle_screen::x#5 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b3
     // [172] phi from init_angle_screen::@2 to init_angle_screen::@3 [phi:init_angle_screen::@2->init_angle_screen::@3]
   b3_from_b2:
@@ -9433,7 +9433,7 @@ init_angle_screen: {
     // init_angle_screen::@3
   b3:
     // [173] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#5 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda x
+    lda.z x
     asl
     // [174] (byte~) init_angle_screen::$4 ← (byte) $27 - (byte~) init_angle_screen::$3 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
@@ -9441,15 +9441,15 @@ init_angle_screen: {
     adc #$27+1
     // [175] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$4 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
-    sta xw+1
-    sty xw
+    sta.z xw+1
+    sty.z xw
     // [176] (byte~) init_angle_screen::$7 ← (byte) init_angle_screen::y#5 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda y
+    lda.z y
     asl
     // [177] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$7 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
-    sta yw+1
-    sty yw
+    sta.z yw+1
+    sty.z yw
     // [178] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
     // [179] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
     // [180] call atan2_16 
@@ -9462,75 +9462,75 @@ init_angle_screen: {
     // [183] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc _11
-    sta _11
+    adc.z _11
+    sta.z _11
     bcc !+
-    inc _11+1
+    inc.z _11+1
   !:
     // [184] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda _11+1
-    sta ang_w
+    lda.z _11+1
+    sta.z ang_w
     // [185] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#5) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ang_w
-    ldy xb
+    lda.z ang_w
+    ldy.z xb
     sta (screen_bottomline),y
     // [186] (byte~) init_angle_screen::$13 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
-    lda ang_w
+    lda.z ang_w
     eor #$ff
     clc
     adc #1
     // [187] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::xb#5) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy xb
+    ldy.z xb
     sta (screen_topline),y
     // [188] (byte~) init_angle_screen::$14 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
     lda #$80
     clc
-    adc ang_w
+    adc.z ang_w
     // [189] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy x
+    ldy.z x
     sta (screen_topline),y
     // [190] (byte~) init_angle_screen::$15 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
     lda #$80
     sec
-    sbc ang_w
+    sbc.z ang_w
     // [191] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$15 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy x
+    ldy.z x
     sta (screen_bottomline),y
     // [192] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#5 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [193] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#5 -- vbuz1=_dec_vbuz1 
-    dec xb
+    dec.z xb
     jmp b2
     // init_angle_screen::@2
   b2:
     // [194] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$13+1
     bcc b3_from_b2
     jmp b4
     // init_angle_screen::@4
   b4:
     // [195] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
-    lda screen_topline
+    lda.z screen_topline
     sec
     sbc #<$28
-    sta screen_topline
-    lda screen_topline+1
+    sta.z screen_topline
+    lda.z screen_topline+1
     sbc #>$28
-    sta screen_topline+1
+    sta.z screen_topline+1
     // [196] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_bottomline
-    sta screen_bottomline
+    adc.z screen_bottomline
+    sta.z screen_bottomline
     bcc !+
-    inc screen_bottomline+1
+    inc.z screen_bottomline+1
   !:
     // [197] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [198] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1_from_b4
     jmp breturn
     // init_angle_screen::@return
@@ -9555,7 +9555,7 @@ atan2_16: {
     .label x = $1a
     .label y = $1c
     // [200] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bpl b1
     jmp b2
     // atan2_16::@2
@@ -9563,11 +9563,11 @@ atan2_16: {
     // [201] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc y
-    sta _2
+    sbc.z y
+    sta.z _2
     lda #0
-    sbc y+1
-    sta _2+1
+    sbc.z y+1
+    sta.z _2+1
     // [202] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
   b3_from_b1:
   b3_from_b2:
@@ -9576,7 +9576,7 @@ atan2_16: {
     // atan2_16::@3
   b3:
     // [203] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bpl b4
     jmp b5
     // atan2_16::@5
@@ -9584,11 +9584,11 @@ atan2_16: {
     // [204] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc x
-    sta _7
+    sbc.z x
+    sta.z _7
     lda #0
-    sbc x+1
-    sta _7+1
+    sbc.z x+1
+    sta.z _7+1
     // [205] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
   b6_from_b4:
   b6_from_b5:
@@ -9600,9 +9600,9 @@ atan2_16: {
   b10_from_b6:
     // [206] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
-    sta angle
+    sta.z angle
     lda #>0
-    sta angle+1
+    sta.z angle+1
     // [206] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
     ldx #0
     // [206] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
@@ -9611,9 +9611,9 @@ atan2_16: {
     // atan2_16::@10
   b10:
     // [207] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bne b11
-    lda yi
+    lda.z yi
     bne b11
     // [208] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
   b12_from_b10:
@@ -9623,10 +9623,10 @@ atan2_16: {
     // atan2_16::@12
   b12:
     // [209] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr angle+1
-    ror angle
+    lsr.z angle+1
+    ror.z angle
     // [210] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bpl b7_from_b12
     jmp b21
     // atan2_16::@21
@@ -9634,11 +9634,11 @@ atan2_16: {
     // [211] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #>$8000
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [212] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
   b7_from_b12:
   b7_from_b21:
@@ -9647,7 +9647,7 @@ atan2_16: {
     // atan2_16::@7
   b7:
     // [213] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bpl b8_from_b7
     jmp b9
     // atan2_16::@9
@@ -9655,11 +9655,11 @@ atan2_16: {
     // [214] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #0
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [215] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
   b8_from_b7:
   b8_from_b9:
@@ -9678,15 +9678,15 @@ atan2_16: {
     txa
     tay
     // [218] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
-    lda xi
-    sta xd
-    lda xi+1
-    sta xd+1
+    lda.z xi
+    sta.z xd
+    lda.z xi+1
+    sta.z xd+1
     // [219] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
-    lda yi
-    sta yd
-    lda yi+1
-    sta yd+1
+    lda.z yi
+    sta.z yd
+    lda.z yi+1
+    sta.z yd+1
     // [220] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
   b13_from_b11:
   b13_from_b14:
@@ -9709,15 +9709,15 @@ atan2_16: {
     // atan2_16::@16
   b16:
     // [223] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // [224] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // [225] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
   b17_from_b15:
   b17_from_b16:
@@ -9727,39 +9727,39 @@ atan2_16: {
     // atan2_16::@17
   b17:
     // [226] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bpl b18
     jmp b20
     // atan2_16::@20
   b20:
     // [227] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda xi
+    lda.z xi
     sec
-    sbc yd
-    sta xi
-    lda xi+1
-    sbc yd+1
-    sta xi+1
+    sbc.z yd
+    sta.z xi
+    lda.z xi+1
+    sbc.z yd+1
+    sta.z xi+1
     // [228] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda yi
+    lda.z yi
     clc
-    adc xd
-    sta yi
-    lda yi+1
-    adc xd+1
-    sta yi+1
+    adc.z xd
+    sta.z yi
+    lda.z yi+1
+    adc.z xd+1
+    sta.z yi+1
     // [229] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [230] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
-    lda angle
+    lda.z angle
     sbc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
     // [231] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
   b19_from_b18:
   b19_from_b20:
@@ -9784,54 +9784,54 @@ atan2_16: {
     // atan2_16::@18
   b18:
     // [234] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda xi
+    lda.z xi
     clc
-    adc yd
-    sta xi
-    lda xi+1
-    adc yd+1
-    sta xi+1
+    adc.z yd
+    sta.z xi
+    lda.z xi+1
+    adc.z yd+1
+    sta.z xi+1
     // [235] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda yi
+    lda.z yi
     sec
-    sbc xd
-    sta yi
-    lda yi+1
-    sbc xd+1
-    sta yi+1
+    sbc.z xd
+    sta.z yi
+    lda.z yi+1
+    sbc.z xd+1
+    sta.z yi+1
     // [236] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [237] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
-    lda angle
+    lda.z angle
     adc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
     jmp b19_from_b18
     // atan2_16::@14
   b14:
     // [238] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda xd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // [239] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
-    lda yd+1
+    ror.z yd+1
+    ror.z yd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // [240] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
     dey
@@ -9839,18 +9839,18 @@ atan2_16: {
     // atan2_16::@4
   b4:
     // [241] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
-    lda x
-    sta xi
-    lda x+1
-    sta xi+1
+    lda.z x
+    sta.z xi
+    lda.z x+1
+    sta.z xi+1
     jmp b6_from_b4
     // atan2_16::@1
   b1:
     // [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
-    lda y
-    sta yi
-    lda y+1
-    sta yi+1
+    lda.z y
+    sta.z yi
+    lda.z y+1
+    sta.z yi+1
     jmp b3_from_b1
 }
   // malloc
@@ -9859,18 +9859,18 @@ atan2_16: {
 malloc: {
     .label mem = 9
     // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$3e8
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$3e8
-    sta mem+1
+    sta.z mem+1
     // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     jmp breturn
     // malloc::@return
   breturn:
@@ -9936,10 +9936,10 @@ processChars: {
   b1_from_processChars:
     // [255] phi (byte) processChars::numActive#10 = (byte) 0 [phi:processChars->processChars::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta numActive
+    sta.z numActive
     // [255] phi (byte) processChars::i#10 = (byte) 0 [phi:processChars->processChars::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [255] phi from processChars::@2 to processChars::@1 [phi:processChars::@2->processChars::@1]
   b1_from_b2:
@@ -9949,25 +9949,25 @@ processChars: {
     // processChars::@1
   b1:
     // [256] (byte) processChars::$67 ← (byte) processChars::i#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [257] (byte) processChars::$68 ← (byte) processChars::$67 + (byte) processChars::i#10 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [258] (byte) processChars::$69 ← (byte) processChars::$68 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [259] (byte) processChars::$70 ← (byte) processChars::$69 + (byte) processChars::i#10 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [260] (byte~) processChars::$37 ← (byte) processChars::$70 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [261] (struct ProcessingSprite*) processChars::processing#0 ← (const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) processChars::$37 -- pssz1=pssc1_plus_vbuaa 
     clc
     adc #<PROCESSING
-    sta processing
+    sta.z processing
     lda #>PROCESSING
     adc #0
-    sta processing+1
+    sta.z processing+1
     // [262] (byte) processChars::bitmask#0 ← (byte) 1 << *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID) -- vbuz1=vbuc1_rol_pbuz2_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
     lda (processing),y
@@ -9980,7 +9980,7 @@ processChars: {
     dex
     bne !-
   !e:
-    sta bitmask
+    sta.z bitmask
     // [263] if(*((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)==(const byte) STATUS_FREE) goto processChars::@2 -- pbuz1_derefidx_vbuc1_eq_vbuc2_then_la1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     lda (processing),y
@@ -10012,7 +10012,7 @@ processChars: {
     // [266] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     // Enable the sprite
     lda SPRITES_ENABLE
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_ENABLE
     // [267] *((const byte*) SPRITES_COLS#0 + *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID)) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL) -- pbuc1_derefidx_pbuz1_derefidx_vbuc2=pbuz1_derefidx_vbuc3 
     // Set the sprite color
@@ -10045,20 +10045,20 @@ processChars: {
     // [270] (word) processChars::xpos#0 ← *((word*)(struct ProcessingSprite*) processChars::processing#0) >> (byte) 4 -- vwuz1=_deref_pwuz2_ror_4 
     ldy #0
     lda (processing),y
-    sta xpos
+    sta.z xpos
     iny
     lda (processing),y
-    sta xpos+1
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
+    sta.z xpos+1
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
     // [271] (byte~) processChars::$11 ← > (word) processChars::xpos#0 -- vbuaa=_hi_vwuz1 
-    lda xpos+1
+    lda.z xpos+1
     // [272] if((byte) 0!=(byte~) processChars::$11) goto processChars::@4 -- vbuc1_neq_vbuaa_then_la1 
     // Set sprite position
     cmp #0
@@ -10068,7 +10068,7 @@ processChars: {
   b8:
     // [273] (byte~) processChars::$12 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
-    eor bitmask
+    eor.z bitmask
     // [274] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) processChars::$12 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
@@ -10076,33 +10076,33 @@ processChars: {
     // processChars::@5
   b5:
     // [275] (byte~) processChars::$17 ← (byte) processChars::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     tax
     // [276] (byte~) processChars::$14 ← (byte)(word) processChars::xpos#0 -- vbuaa=_byte_vwuz1 
-    lda xpos
+    lda.z xpos
     // [277] *((const byte*) SPRITES_XPOS#0 + (byte~) processChars::$17) ← (byte~) processChars::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SPRITES_XPOS,x
     // [278] (word~) processChars::$15 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) >> (byte) 4 -- vwuz1=pwuz2_derefidx_vbuc1_ror_4 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _15
+    sta.z _15
     iny
     lda (processing),y
-    sta _15+1
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
+    sta.z _15+1
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
     // [279] (byte) processChars::ypos#0 ← (byte)(word~) processChars::$15 -- vbuz1=_byte_vwuz2 
-    lda _15
-    sta ypos
+    lda.z _15
+    sta.z ypos
     // [280] *((const byte*) SPRITES_YPOS#0 + (byte~) processChars::$17) ← (byte) processChars::ypos#0 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda ypos
+    lda.z ypos
     sta SPRITES_YPOS,x
     // [281] if(*((word*)(struct ProcessingSprite*) processChars::processing#0)<(const word) XPOS_LEFTMOST#0) goto processChars::@6 -- _deref_pwuz1_lt_vwuc1_then_la1 
     // Move sprite
@@ -10164,14 +10164,14 @@ processChars: {
     // processChars::@9
   b9:
     // [285] (word~) processChars::$25 ← (word) processChars::xpos#0 >> (byte) 3 -- vwuz1=vwuz1_ror_3 
-    lsr _25+1
-    ror _25
-    lsr _25+1
-    ror _25
-    lsr _25+1
-    ror _25
+    lsr.z _25+1
+    ror.z _25
+    lsr.z _25+1
+    ror.z _25
+    lsr.z _25+1
+    ror.z _25
     // [286] (byte~) processChars::$26 ← (byte)(word~) processChars::$25 -- vbuaa=_byte_vwuz1 
-    lda _25
+    lda.z _25
     // [287] (byte) processChars::xchar#0 ← (byte~) processChars::$26 - (const byte) BORDER_XPOS_LEFT#0/(byte) 8 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #BORDER_XPOS_LEFT/8
@@ -10190,20 +10190,20 @@ processChars: {
     sta (processing),y
     // [290] *((word*)(struct ProcessingSprite*) processChars::processing#0) ← *((word*)(struct ProcessingSprite*) processChars::processing#0) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) -- _deref_pwuz1=_deref_pwuz1_plus_pwuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
-    sty $ff
+    sty.z $ff
     clc
     lda (processing),y
     ldy #0
     adc (processing),y
     sta (processing),y
-    ldy $ff
+    ldy.z $ff
     iny
     lda (processing),y
     ldy #1
     adc (processing),y
     sta (processing),y
     // [291] (byte~) processChars::$30 ← (byte) processChars::ypos#0 >> (byte) 3 -- vbuaa=vbuz1_ror_3 
-    lda ypos
+    lda.z ypos
     lsr
     lsr
     lsr
@@ -10239,7 +10239,7 @@ processChars: {
     // processChars::@7
   b7:
     // [296] (byte) processChars::numActive#1 ← ++ (byte) processChars::numActive#10 -- vbuz1=_inc_vbuz1 
-    inc numActive
+    inc.z numActive
     // [297] phi from processChars::@1 processChars::@7 to processChars::@2 [phi:processChars::@1/processChars::@7->processChars::@2]
   b2_from_b1:
   b2_from_b7:
@@ -10248,10 +10248,10 @@ processChars: {
     // processChars::@2
   b2:
     // [298] (byte) processChars::i#1 ← ++ (byte) processChars::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [299] if((byte) processChars::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto processChars::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // processChars::@return
@@ -10267,7 +10267,7 @@ processChars: {
     sta (processing),y
     // [302] (byte~) processChars::$33 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
-    eor bitmask
+    eor.z bitmask
     // [303] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) & (byte~) processChars::$33 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     // Disable the sprite
     and SPRITES_ENABLE
@@ -10277,7 +10277,7 @@ processChars: {
   b4:
     // [304] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_XMSB
     jmp b5
 }
@@ -10443,14 +10443,14 @@ Replacing instruction ldy #0 with TAY
 Removing instruction lda #0
 Removing instruction lda #0
 Removing instruction ldy #0
-Removing instruction lda ang_w
-Removing instruction lda ang_w
-Removing instruction ldy xb
-Removing instruction ldy x
+Removing instruction lda.z ang_w
+Removing instruction lda.z ang_w
+Removing instruction ldy.z xb
+Removing instruction ldy.z x
 Removing instruction lda #>0
 Replacing instruction ldx #0 with TAX
 Removing instruction lda #0
-Removing instruction lda ypos
+Removing instruction lda.z ypos
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b2_from_b1 with b2
 Replacing label b2_from_b1 with b2
@@ -11320,17 +11320,17 @@ bbegin:
   // [243] phi from @1 to malloc [phi:@1->malloc]
   // [243] phi (byte*) heap_head#5 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#0] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
-  sta heap_head
+  sta.z heap_head
   lda #>HEAP_TOP
-  sta heap_head+1
+  sta.z heap_head+1
   jsr malloc
   // @3
   // malloc(1000)
   // [3] (void*) SCREEN_COPY#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-  lda malloc.mem
-  sta SCREEN_COPY
-  lda malloc.mem+1
-  sta SCREEN_COPY+1
+  lda.z malloc.mem
+  sta.z SCREEN_COPY
+  lda.z malloc.mem+1
+  sta.z SCREEN_COPY+1
   // [4] call malloc 
   // [243] phi from @3 to malloc [phi:@3->malloc]
   // [243] phi (byte*) heap_head#5 = (byte*) heap_head#1 [phi:@3->malloc#0] -- register_copy 
@@ -11353,26 +11353,26 @@ main: {
     .label center_y = $b
     // init_angle_screen(SCREEN_DIST)
     // [9] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta init_angle_screen.screen
-    lda SCREEN_DIST+1
-    sta init_angle_screen.screen+1
+    lda.z SCREEN_DIST
+    sta.z init_angle_screen.screen
+    lda.z SCREEN_DIST+1
+    sta.z init_angle_screen.screen+1
     // [10] call init_angle_screen 
     jsr init_angle_screen
     // main::@9
     // dst=SCREEN_COPY
     // [11] (byte*) main::dst#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta dst
-    lda SCREEN_COPY+1
-    sta dst+1
+    lda.z SCREEN_COPY
+    sta.z dst
+    lda.z SCREEN_COPY+1
+    sta.z dst+1
     // [12] phi from main::@9 to main::@2 [phi:main::@9->main::@2]
     // [12] phi (byte*) main::dst#4 = (byte*) main::dst#0 [phi:main::@9->main::@2#0] -- register_copy 
     // [12] phi (byte*) main::src#4 = (const byte*) SCREEN#0 [phi:main::@9->main::@2#1] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta src
+    sta.z src
     lda #>SCREEN
-    sta src+1
+    sta.z src+1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [12] phi (byte*) main::dst#4 = (byte*) main::dst#1 [phi:main::@1->main::@2#0] -- register_copy 
     // [12] phi (byte*) main::src#4 = (byte*) main::src#1 [phi:main::@1->main::@2#1] -- register_copy 
@@ -11385,28 +11385,28 @@ main: {
     sta (dst),y
     // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     // [14] (byte*) main::src#1 ← ++ (byte*) main::src#4 -- pbuz1=_inc_pbuz1 
-    inc src
+    inc.z src
     bne !+
-    inc src+1
+    inc.z src+1
   !:
     // [15] (byte*) main::dst#1 ← ++ (byte*) main::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
   // Copy screen to screen copy
     // main::@1
     // [16] if((byte*) main::src#1!=(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda src+1
+    lda.z src+1
     cmp #>SCREEN+$3e8
     bne b2
-    lda src
+    lda.z src
     cmp #<SCREEN+$3e8
     bne b2
     // [17] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
   // Init processing array
     // [17] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
     // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
@@ -11414,16 +11414,16 @@ main: {
   b3:
     // PROCESSING[i] = { 0, 0, 0, 0, 0, 0, 0, STATUS_FREE, 0}
     // [18] (byte) main::$26 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [19] (byte) main::$27 ← (byte) main::$26 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [20] (byte) main::$28 ← (byte) main::$27 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [21] (byte) main::$29 ← (byte) main::$28 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [22] (byte~) main::$16 ← (byte) main::$29 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
@@ -11455,10 +11455,10 @@ main: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     // for( byte i: 0..NUM_PROCESSING-1 )
     // [32] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [33] if((byte) main::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     bne b3
     // [34] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
@@ -11479,15 +11479,15 @@ main: {
     // [39] call getCharToProcess 
     jsr getCharToProcess
     // [40] (byte) getCharToProcess::return_x#0 ← (byte) getCharToProcess::return_x#1 -- vbuyy=vbuz1 
-    ldy getCharToProcess.return_x
+    ldy.z getCharToProcess.return_x
     // [41] (byte) getCharToProcess::return_y#0 ← (byte) getCharToProcess::return_y#1 -- vbuaa=vbuz1 
-    lda getCharToProcess.return_y
+    lda.z getCharToProcess.return_y
     // [42] (byte) getCharToProcess::return_dist#0 ← (byte) getCharToProcess::return_dist#1
     // main::@11
     // center = getCharToProcess()
     // [43] (byte) main::center_x#0 ← (byte) getCharToProcess::return_x#0
     // [44] (byte) main::center_y#0 ← (byte) getCharToProcess::return_y#0 -- vbuz1=vbuaa 
-    sta center_y
+    sta.z center_y
     // [45] (byte) main::center_dist#0 ← (byte) getCharToProcess::return_dist#0 -- vbuaa=vbuxx 
     txa
     // if(center.dist==NOT_FOUND)
@@ -11509,7 +11509,7 @@ main: {
   b6:
     // startProcessing(center)
     // [49] (byte) startProcessing::center_x#0 ← (byte) main::center_x#0 -- vbuz1=vbuyy 
-    sty startProcessing.center_x
+    sty.z startProcessing.center_x
     // [50] (byte) startProcessing::center_y#0 ← (byte) main::center_y#0
     // [51] call startProcessing 
     // [52] phi from main::@6 to startProcessing [phi:main::@6->startProcessing]
@@ -11556,23 +11556,23 @@ startProcessing: {
     // [54] phi from startProcessing::@1 to startProcessing::@2 [phi:startProcessing::@1->startProcessing::@2]
     // [54] phi (byte) startProcessing::i#2 = (byte) 0 [phi:startProcessing::@1->startProcessing::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [54] phi from startProcessing::@3 to startProcessing::@2 [phi:startProcessing::@3->startProcessing::@2]
     // [54] phi (byte) startProcessing::i#2 = (byte) startProcessing::i#1 [phi:startProcessing::@3->startProcessing::@2#0] -- register_copy 
     // startProcessing::@2
   b2:
     // PROCESSING[i].status==STATUS_FREE
     // [55] (byte) startProcessing::$42 ← (byte) startProcessing::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [56] (byte) startProcessing::$43 ← (byte) startProcessing::$42 + (byte) startProcessing::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [57] (byte) startProcessing::$44 ← (byte) startProcessing::$43 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [58] (byte) startProcessing::$45 ← (byte) startProcessing::$44 + (byte) startProcessing::i#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [59] (byte~) startProcessing::$30 ← (byte) startProcessing::$45 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // if(PROCESSING[i].status==STATUS_FREE)
@@ -11590,128 +11590,128 @@ startProcessing: {
     // while (freeIdx==0xff)
     // [62] if((byte) startProcessing::freeIdx#2==(byte) $ff) goto startProcessing::@8 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
-    cmp freeIdx
+    cmp.z freeIdx
     bne !b8+
     jmp b8
   !b8:
     // startProcessing::@5
     // (word)center.y
     // [63] (word~) startProcessing::$0 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _0
+    lda.z center_y
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // (word)center.y*40
     // [64] (word) startProcessing::$47 ← (word~) startProcessing::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _0
+    lda.z _0
     asl
-    sta _47
-    lda _0+1
+    sta.z _47
+    lda.z _0+1
     rol
-    sta _47+1
-    asl _47
-    rol _47+1
+    sta.z _47+1
+    asl.z _47
+    rol.z _47+1
     // [65] (word) startProcessing::$48 ← (word) startProcessing::$47 + (word~) startProcessing::$0 -- vwuz1=vwuz2_plus_vwuz1 
-    lda _48
+    lda.z _48
     clc
-    adc _47
-    sta _48
-    lda _48+1
-    adc _47+1
-    sta _48+1
+    adc.z _47
+    sta.z _48
+    lda.z _48+1
+    adc.z _47+1
+    sta.z _48+1
     // [66] (word~) startProcessing::$1 ← (word) startProcessing::$48 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // offset = (word)center.y*40+center.x
     // [67] (word) startProcessing::offset#0 ← (word~) startProcessing::$1 + (byte) startProcessing::center_x#0 -- vwuz1=vwuz1_plus_vbuz2 
-    lda center_x
+    lda.z center_x
     clc
-    adc offset
-    sta offset
+    adc.z offset
+    sta.z offset
     bcc !+
-    inc offset+1
+    inc.z offset+1
   !:
     // colPtr = COLS+offset
     // [68] (byte*) startProcessing::colPtr#0 ← (const byte*) COLS#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz2 
-    lda offset
+    lda.z offset
     clc
     adc #<COLS
-    sta colPtr
-    lda offset+1
+    sta.z colPtr
+    lda.z offset+1
     adc #>COLS
-    sta colPtr+1
+    sta.z colPtr+1
     // spriteCol = *colPtr
     // [69] (byte) startProcessing::spriteCol#0 ← *((byte*) startProcessing::colPtr#0) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (colPtr),y
-    sta spriteCol
+    sta.z spriteCol
     // screenPtr = SCREEN+offset
     // [70] (byte*) startProcessing::screenPtr#0 ← (const byte*) SCREEN#0 + (word) startProcessing::offset#0 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda screenPtr
+    lda.z screenPtr
     adc #<SCREEN
-    sta screenPtr
-    lda screenPtr+1
+    sta.z screenPtr
+    lda.z screenPtr+1
     adc #>SCREEN
-    sta screenPtr+1
+    sta.z screenPtr+1
     // (word)spriteIdx
     // [71] (word~) startProcessing::$5 ← (word)(byte) startProcessing::freeIdx#2 -- vwuz1=_word_vbuz2 
-    lda freeIdx
-    sta _5
+    lda.z freeIdx
+    sta.z _5
     tya
-    sta _5+1
+    sta.z _5+1
     // (word)spriteIdx*64
     // [72] (word~) startProcessing::$6 ← (word~) startProcessing::$5 << (byte) 6 -- vwuz1=vwuz1_rol_6 
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
+    asl.z _6
+    rol.z _6+1
     // spriteData = SPRITE_DATA+(word)spriteIdx*64
     // [73] (byte*) startProcessing::spriteData#0 ← (const byte*) SPRITE_DATA#0 + (word~) startProcessing::$6 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda spriteData
+    lda.z spriteData
     adc #<SPRITE_DATA
-    sta spriteData
-    lda spriteData+1
+    sta.z spriteData
+    lda.z spriteData+1
     adc #>SPRITE_DATA
-    sta spriteData+1
+    sta.z spriteData+1
     // ch = (*screenPtr)
     // [74] (byte) startProcessing::ch#0 ← *((byte*) startProcessing::screenPtr#0) -- vbuaa=_deref_pbuz1 
     lda (screenPtr),y
     // (word)ch
     // [75] (word~) startProcessing::$8 ← (word)(byte) startProcessing::ch#0 -- vwuz1=_word_vbuaa 
-    sta _8
+    sta.z _8
     tya
-    sta _8+1
+    sta.z _8+1
     // (word)ch*8
     // [76] (word~) startProcessing::$9 ← (word~) startProcessing::$8 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // chargenData = CHARGEN+(word)ch*8
     // [77] (byte*) startProcessing::chargenData#0 ← (const byte*) CHARGEN#0 + (word~) startProcessing::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargenData
+    lda.z chargenData
     adc #<CHARGEN
-    sta chargenData
-    lda chargenData+1
+    sta.z chargenData
+    lda.z chargenData+1
     adc #>CHARGEN
-    sta chargenData+1
+    sta.z chargenData+1
     // asm
     // asm { sei  }
     sei
@@ -11739,16 +11739,16 @@ startProcessing: {
     // [82] (byte*) startProcessing::spriteData#1 ← (byte*) startProcessing::spriteData#2 + (byte) 3 -- pbuz1=pbuz1_plus_vbuc1 
     lda #3
     clc
-    adc spriteData
-    sta spriteData
+    adc.z spriteData
+    sta.z spriteData
     bcc !+
-    inc spriteData+1
+    inc.z spriteData+1
   !:
     // chargenData++;
     // [83] (byte*) startProcessing::chargenData#1 ← ++ (byte*) startProcessing::chargenData#2 -- pbuz1=_inc_pbuz1 
-    inc chargenData
+    inc.z chargenData
     bne !+
-    inc chargenData+1
+    inc.z chargenData+1
   !:
     // for( byte i: 0..7)
     // [84] (byte) startProcessing::i1#1 ← ++ (byte) startProcessing::i1#2 -- vbuxx=_inc_vbuxx 
@@ -11766,115 +11766,115 @@ startProcessing: {
     cli
     // (word)center.x
     // [88] (word~) startProcessing::$11 ← (word)(byte) startProcessing::center_x#0 -- vwuz1=_word_vbuz2 
-    lda center_x
-    sta _11
+    lda.z center_x
+    sta.z _11
     lda #0
-    sta _11+1
+    sta.z _11+1
     // (word)center.x*8
     // [89] (word~) startProcessing::$12 ← (word~) startProcessing::$11 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
     // BORDER_XPOS_LEFT + (word)center.x*8
     // [90] (word~) startProcessing::$13 ← (const byte) BORDER_XPOS_LEFT#0 + (word~) startProcessing::$12 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_XPOS_LEFT
     clc
-    adc _13
-    sta _13
+    adc.z _13
+    sta.z _13
     bcc !+
-    inc _13+1
+    inc.z _13+1
   !:
     // spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4
     // [91] (word) startProcessing::spriteX#0 ← (word~) startProcessing::$13 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
-    asl spriteX
-    rol spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
+    asl.z spriteX
+    rol.z spriteX+1
     // (word)center.y
     // [92] (word~) startProcessing::$15 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
-    lda center_y
-    sta _15
+    lda.z center_y
+    sta.z _15
     lda #0
-    sta _15+1
+    sta.z _15+1
     // (word)center.y*8
     // [93] (word~) startProcessing::$16 ← (word~) startProcessing::$15 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
+    asl.z _16
+    rol.z _16+1
     // BORDER_YPOS_TOP + (word)center.y*8
     // [94] (word~) startProcessing::$17 ← (const byte) BORDER_YPOS_TOP#0 + (word~) startProcessing::$16 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_YPOS_TOP
     clc
-    adc _17
-    sta _17
+    adc.z _17
+    sta.z _17
     bcc !+
-    inc _17+1
+    inc.z _17+1
   !:
     // spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4
     // [95] (word) startProcessing::spriteY#0 ← (word~) startProcessing::$17 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
-    asl spriteY
-    rol spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
+    asl.z spriteY
+    rol.z spriteY+1
     // spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx
     // [96] (byte) startProcessing::spritePtr#0 ← (byte)(const byte*) SPRITE_DATA#0/(byte) $40 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuc1_plus_vbuz2 
-    lax freeIdx
+    lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
-    stx spritePtr
+    stx.z spritePtr
     // spriteIdx*8
     // [97] (byte~) startProcessing::$22 ← (byte) startProcessing::freeIdx#2 << (byte) 3 -- vbuaa=vbuz1_rol_3 
-    lda freeIdx
+    lda.z freeIdx
     asl
     asl
     asl
     // (word)(spriteIdx*8)
     // [98] (word~) startProcessing::$23 ← (word)(byte~) startProcessing::$22 -- vwuz1=_word_vbuaa 
-    sta _23
+    sta.z _23
     lda #0
-    sta _23+1
+    sta.z _23+1
     // PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
     // [99] (byte) startProcessing::$50 ← (byte) startProcessing::freeIdx#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda freeIdx
+    lda.z freeIdx
     asl
     // [100] (byte) startProcessing::$51 ← (byte) startProcessing::$50 + (byte) startProcessing::freeIdx#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc freeIdx
+    adc.z freeIdx
     // [101] (byte) startProcessing::$52 ← (byte) startProcessing::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [102] (byte) startProcessing::$53 ← (byte) startProcessing::$52 + (byte) startProcessing::freeIdx#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc freeIdx
+    adc.z freeIdx
     // [103] (byte~) startProcessing::$31 ← (byte) startProcessing::$53 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
     // [104] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) startProcessing::$31) ← (word) startProcessing::spriteX#0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda spriteX
+    lda.z spriteX
     sta PROCESSING,x
-    lda spriteX+1
+    lda.z spriteX+1
     sta PROCESSING+1,x
     // [105] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y + (byte~) startProcessing::$31) ← (word) startProcessing::spriteY#0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda spriteY
+    lda.z spriteY
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
-    lda spriteY+1
+    lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
     // [106] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX + (byte~) startProcessing::$31) ← (word~) startProcessing::$23 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda _23
+    lda.z _23
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda _23+1
+    lda.z _23+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     // [107] *((word*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VY + (byte~) startProcessing::$31) ← (byte) $3c -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #$3c
@@ -11882,21 +11882,21 @@ startProcessing: {
     lda #0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     // [108] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID + (byte~) startProcessing::$31) ← (byte) startProcessing::freeIdx#2 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda freeIdx
+    lda.z freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     // [109] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR + (byte~) startProcessing::$31) ← (byte) startProcessing::spritePtr#0 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda spritePtr
+    lda.z spritePtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
     // [110] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL + (byte~) startProcessing::$31) ← (byte) startProcessing::spriteCol#0 -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda spriteCol
+    lda.z spriteCol
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
     // [111] *((byte*)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$31) ← (const byte) STATUS_NEW -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STATUS_NEW
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
     // [112] *((byte**)(const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR + (byte~) startProcessing::$31) ← (byte*) startProcessing::screenPtr#0 -- pptc1_derefidx_vbuxx=pbuz1 
-    lda screenPtr
+    lda.z screenPtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
-    lda screenPtr+1
+    lda.z screenPtr+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     // startProcessing::@return
     // }
@@ -11905,7 +11905,7 @@ startProcessing: {
     // startProcessing::@8
   b8:
     // [114] (byte~) startProcessing::freeIdx#7 ← (byte) startProcessing::freeIdx#2 -- vbuxx=vbuz1 
-    ldx freeIdx
+    ldx.z freeIdx
     // [53] phi from startProcessing::@8 to startProcessing::@1 [phi:startProcessing::@8->startProcessing::@1]
     // [53] phi (byte) startProcessing::freeIdx#6 = (byte~) startProcessing::freeIdx#7 [phi:startProcessing::@8->startProcessing::@1#0] -- register_copy 
     jmp b1
@@ -11913,16 +11913,16 @@ startProcessing: {
   b3:
     // for( byte i: 0..NUM_PROCESSING-1 )
     // [115] (byte) startProcessing::i#1 ← ++ (byte) startProcessing::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [116] if((byte) startProcessing::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto startProcessing::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     beq !b2+
     jmp b2
   !b2:
     // startProcessing::@9
     // [117] (byte~) startProcessing::freeIdx#8 ← (byte) startProcessing::freeIdx#6 -- vbuz1=vbuxx 
-    stx freeIdx
+    stx.z freeIdx
     jmp b4
 }
   // getCharToProcess
@@ -11944,27 +11944,27 @@ getCharToProcess: {
     .label _13 = $18
     // screen_line = SCREEN_COPY
     // [118] (byte*) getCharToProcess::screen_line#0 ← (byte*)(void*) SCREEN_COPY#0 -- pbuz1=pbuz2 
-    lda SCREEN_COPY
-    sta screen_line
-    lda SCREEN_COPY+1
-    sta screen_line+1
+    lda.z SCREEN_COPY
+    sta.z screen_line
+    lda.z SCREEN_COPY+1
+    sta.z screen_line+1
     // dist_line = SCREEN_DIST
     // [119] (byte*) getCharToProcess::dist_line#0 ← (byte*)(void*) SCREEN_DIST#0 -- pbuz1=pbuz2 
-    lda SCREEN_DIST
-    sta dist_line
-    lda SCREEN_DIST+1
-    sta dist_line+1
+    lda.z SCREEN_DIST
+    sta.z dist_line
+    lda.z SCREEN_DIST+1
+    sta.z dist_line+1
     // [120] phi from getCharToProcess to getCharToProcess::@1 [phi:getCharToProcess->getCharToProcess::@1]
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta closest_y
+    sta.z closest_y
     // [120] phi (byte) getCharToProcess::closest_x#9 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#1] -- vbuz1=vbuc1 
-    sta closest_x
+    sta.z closest_x
     // [120] phi (byte) getCharToProcess::y#7 = (byte) 0 [phi:getCharToProcess->getCharToProcess::@1#2] -- vbuz1=vbuc1 
-    sta y
+    sta.z y
     // [120] phi (byte) getCharToProcess::closest_dist#8 = (const byte) NOT_FOUND#0 [phi:getCharToProcess->getCharToProcess::@1#3] -- vbuz1=vbuc1 
     lda #NOT_FOUND
-    sta closest_dist
+    sta.z closest_dist
     // [120] phi (byte*) getCharToProcess::dist_line#6 = (byte*) getCharToProcess::dist_line#0 [phi:getCharToProcess->getCharToProcess::@1#4] -- register_copy 
     // [120] phi (byte*) getCharToProcess::screen_line#4 = (byte*) getCharToProcess::screen_line#0 [phi:getCharToProcess->getCharToProcess::@1#5] -- register_copy 
     // getCharToProcess::@1
@@ -11991,14 +11991,14 @@ getCharToProcess: {
     tax
     // if(dist<closest.dist)
     // [124] if((byte) getCharToProcess::dist#0>=(byte) getCharToProcess::closest_dist#2) goto getCharToProcess::@12 -- vbuxx_ge_vbuz1_then_la1 
-    cpx closest_dist
+    cpx.z closest_dist
     bcs b12
     // getCharToProcess::@5
     // [125] (byte~) getCharToProcess::return_x#7 ← (byte) getCharToProcess::x#2 -- vbuz1=vbuyy 
-    sty return_x
+    sty.z return_x
     // [126] (byte~) getCharToProcess::return_y#7 ← (byte) getCharToProcess::y#7 -- vbuz1=vbuz2 
-    lda y
-    sta return_y
+    lda.z y
+    sta.z return_y
     // [127] phi from getCharToProcess::@11 getCharToProcess::@12 getCharToProcess::@5 to getCharToProcess::@3 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3]
     // [127] phi (byte) getCharToProcess::return_y#1 = (byte) getCharToProcess::closest_y#7 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3#0] -- register_copy 
     // [127] phi (byte) getCharToProcess::return_x#1 = (byte) getCharToProcess::closest_x#7 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3#1] -- register_copy 
@@ -12016,26 +12016,26 @@ getCharToProcess: {
     // [130] (byte*) getCharToProcess::screen_line#1 ← (byte*) getCharToProcess::screen_line#4 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_line
-    sta screen_line
+    adc.z screen_line
+    sta.z screen_line
     bcc !+
-    inc screen_line+1
+    inc.z screen_line+1
   !:
     // dist_line += 40
     // [131] (byte*) getCharToProcess::dist_line#1 ← (byte*) getCharToProcess::dist_line#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc dist_line
-    sta dist_line
+    adc.z dist_line
+    sta.z dist_line
     bcc !+
-    inc dist_line+1
+    inc.z dist_line+1
   !:
     // for( byte y: 0..24)
     // [132] (byte) getCharToProcess::y#1 ← ++ (byte) getCharToProcess::y#7 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [133] if((byte) getCharToProcess::y#1!=(byte) $19) goto getCharToProcess::@9 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
-    cmp y
+    cmp.z y
     bne b9
     // getCharToProcess::@7
     // if(closest.dist != NOT_FOUND)
@@ -12045,49 +12045,49 @@ getCharToProcess: {
     // getCharToProcess::@8
     // (word)closest.y
     // [135] (word~) getCharToProcess::$8 ← (word)(byte) getCharToProcess::return_y#1 -- vwuz1=_word_vbuz2 
-    lda return_y
-    sta _8
+    lda.z return_y
+    sta.z _8
     lda #0
-    sta _8+1
+    sta.z _8+1
     // (word)closest.y*40
     // [136] (word) getCharToProcess::$12 ← (word~) getCharToProcess::$8 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda _8
+    lda.z _8
     asl
-    sta _12
-    lda _8+1
+    sta.z _12
+    lda.z _8+1
     rol
-    sta _12+1
-    asl _12
-    rol _12+1
+    sta.z _12+1
+    asl.z _12
+    rol.z _12+1
     // [137] (word) getCharToProcess::$13 ← (word) getCharToProcess::$12 + (word~) getCharToProcess::$8 -- vwuz1=vwuz2_plus_vwuz1 
-    lda _13
+    lda.z _13
     clc
-    adc _12
-    sta _13
-    lda _13+1
-    adc _12+1
-    sta _13+1
+    adc.z _12
+    sta.z _13
+    lda.z _13+1
+    adc.z _12+1
+    sta.z _13+1
     // [138] (word~) getCharToProcess::$9 ← (word) getCharToProcess::$13 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
-    asl _9
-    rol _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
+    asl.z _9
+    rol.z _9+1
     // SCREEN_COPY+(word)closest.y*40
     // [139] (byte*~) getCharToProcess::$10 ← (byte*)(void*) SCREEN_COPY#0 + (word~) getCharToProcess::$9 -- pbuz1=pbuz2_plus_vwuz1 
-    lda _10
+    lda.z _10
     clc
-    adc SCREEN_COPY
-    sta _10
-    lda _10+1
-    adc SCREEN_COPY+1
-    sta _10+1
+    adc.z SCREEN_COPY
+    sta.z _10
+    lda.z _10+1
+    adc.z SCREEN_COPY+1
+    sta.z _10+1
     // *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' '
     // [140] *((byte*~) getCharToProcess::$10 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     // clear the found char on the screen copy
     lda #' '
-    ldy return_x
+    ldy.z return_x
     sta (_10),y
     // getCharToProcess::@return
   breturn:
@@ -12097,7 +12097,7 @@ getCharToProcess: {
     // getCharToProcess::@9
   b9:
     // [142] (byte~) getCharToProcess::closest_dist#10 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuxx 
-    stx closest_dist
+    stx.z closest_dist
     // [120] phi from getCharToProcess::@9 to getCharToProcess::@1 [phi:getCharToProcess::@9->getCharToProcess::@1]
     // [120] phi (byte) getCharToProcess::closest_y#9 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@9->getCharToProcess::@1#0] -- register_copy 
     // [120] phi (byte) getCharToProcess::closest_x#9 = (byte) getCharToProcess::return_x#1 [phi:getCharToProcess::@9->getCharToProcess::@1#1] -- register_copy 
@@ -12109,7 +12109,7 @@ getCharToProcess: {
     // getCharToProcess::@10
   b10:
     // [143] (byte~) getCharToProcess::closest_dist#12 ← (byte) getCharToProcess::return_dist#1 -- vbuz1=vbuxx 
-    stx closest_dist
+    stx.z closest_dist
     // [121] phi from getCharToProcess::@10 to getCharToProcess::@2 [phi:getCharToProcess::@10->getCharToProcess::@2]
     // [121] phi (byte) getCharToProcess::closest_y#7 = (byte) getCharToProcess::return_y#1 [phi:getCharToProcess::@10->getCharToProcess::@2#0] -- register_copy 
     // [121] phi (byte) getCharToProcess::closest_x#7 = (byte) getCharToProcess::return_x#1 [phi:getCharToProcess::@10->getCharToProcess::@2#1] -- register_copy 
@@ -12119,12 +12119,12 @@ getCharToProcess: {
     // getCharToProcess::@12
   b12:
     // [144] (byte~) getCharToProcess::return_dist#6 ← (byte) getCharToProcess::closest_dist#2 -- vbuxx=vbuz1 
-    ldx closest_dist
+    ldx.z closest_dist
     jmp b3
     // getCharToProcess::@11
   b11:
     // [145] (byte~) getCharToProcess::return_dist#5 ← (byte) getCharToProcess::closest_dist#2 -- vbuxx=vbuz1 
-    ldx closest_dist
+    ldx.z closest_dist
     jmp b3
 }
   // setupRasterIrq
@@ -12186,9 +12186,9 @@ initSprites: {
     // [157] phi from initSprites to initSprites::@2 [phi:initSprites->initSprites::@2]
     // [157] phi (byte*) initSprites::sp#4 = (const byte*) SPRITE_DATA#0 [phi:initSprites->initSprites::@2#0] -- pbuz1=pbuc1 
     lda #<SPRITE_DATA
-    sta sp
+    sta.z sp
     lda #>SPRITE_DATA
-    sta sp+1
+    sta.z sp+1
     // [157] phi from initSprites::@1 to initSprites::@2 [phi:initSprites::@1->initSprites::@2]
     // [157] phi (byte*) initSprites::sp#4 = (byte*) initSprites::sp#1 [phi:initSprites::@1->initSprites::@2#0] -- register_copy 
     // initSprites::@2
@@ -12200,18 +12200,18 @@ initSprites: {
     sta (sp),y
     // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     // [159] (byte*) initSprites::sp#1 ← ++ (byte*) initSprites::sp#4 -- pbuz1=_inc_pbuz1 
-    inc sp
+    inc.z sp
     bne !+
-    inc sp+1
+    inc.z sp+1
   !:
   // Clear sprite data
     // initSprites::@1
     // [160] if((byte*) initSprites::sp#1<(const byte*) SPRITE_DATA#0+(const byte) NUM_PROCESSING#0*(byte) $40) goto initSprites::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sp+1
+    lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2
     bne !+
-    lda sp
+    lda.z sp
     cmp #<SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2
   !:
@@ -12267,28 +12267,28 @@ init_angle_screen: {
     .label y = 2
     // screen_topline = screen+40*12
     // [169] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz2_plus_vwuc1 
-    lda screen
+    lda.z screen
     clc
     adc #<$28*$c
-    sta screen_topline
-    lda screen+1
+    sta.z screen_topline
+    lda.z screen+1
     adc #>$28*$c
-    sta screen_topline+1
+    sta.z screen_topline+1
     // screen_bottomline = screen+40*12
     // [170] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda screen_bottomline
+    lda.z screen_bottomline
     adc #<$28*$c
-    sta screen_bottomline
-    lda screen_bottomline+1
+    sta.z screen_bottomline
+    lda.z screen_bottomline+1
     adc #>$28*$c
-    sta screen_bottomline+1
+    sta.z screen_bottomline+1
     // [171] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
     // [171] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#0 [phi:init_angle_screen->init_angle_screen::@1#0] -- register_copy 
     // [171] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#0 [phi:init_angle_screen->init_angle_screen::@1#1] -- register_copy 
     // [171] phi (byte) init_angle_screen::y#5 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [171] phi from init_angle_screen::@4 to init_angle_screen::@1 [phi:init_angle_screen::@4->init_angle_screen::@1]
     // [171] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#0] -- register_copy 
     // [171] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#1] -- register_copy 
@@ -12298,10 +12298,10 @@ init_angle_screen: {
     // [172] phi from init_angle_screen::@1 to init_angle_screen::@3 [phi:init_angle_screen::@1->init_angle_screen::@3]
     // [172] phi (byte) init_angle_screen::xb#5 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@3#0] -- vbuz1=vbuc1 
     lda #$27
-    sta xb
+    sta.z xb
     // [172] phi (byte) init_angle_screen::x#5 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [172] phi from init_angle_screen::@2 to init_angle_screen::@3 [phi:init_angle_screen::@2->init_angle_screen::@3]
     // [172] phi (byte) init_angle_screen::xb#5 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@2->init_angle_screen::@3#0] -- register_copy 
     // [172] phi (byte) init_angle_screen::x#5 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@2->init_angle_screen::@3#1] -- register_copy 
@@ -12309,7 +12309,7 @@ init_angle_screen: {
   b3:
     // x*2
     // [173] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#5 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda x
+    lda.z x
     asl
     // 39-x*2
     // [174] (byte~) init_angle_screen::$4 ← (byte) $27 - (byte~) init_angle_screen::$3 -- vbuaa=vbuc1_minus_vbuaa 
@@ -12319,16 +12319,16 @@ init_angle_screen: {
     // (word){ 39-x*2, 0 }
     // [175] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$4 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
-    sta xw+1
-    sty xw
+    sta.z xw+1
+    sty.z xw
     // y*2
     // [176] (byte~) init_angle_screen::$7 ← (byte) init_angle_screen::y#5 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda y
+    lda.z y
     asl
     // (word){ y*2, 0 }
     // [177] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$7 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
-    sta yw+1
-    sty yw
+    sta.z yw+1
+    sty.z yw
     // atan2_16(xw, yw)
     // [178] (signed word) atan2_16::x#0 ← (signed word)(word) init_angle_screen::xw#0
     // [179] (signed word) atan2_16::y#0 ← (signed word)(word) init_angle_screen::yw#0
@@ -12342,18 +12342,18 @@ init_angle_screen: {
     // [183] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc _11
-    sta _11
+    adc.z _11
+    sta.z _11
     bcc !+
-    inc _11+1
+    inc.z _11+1
   !:
     // ang_w = >(angle_w+0x0080)
     // [184] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda _11+1
-    sta ang_w
+    lda.z _11+1
+    sta.z ang_w
     // screen_bottomline[xb] = ang_w
     // [185] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#5) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
-    ldy xb
+    ldy.z xb
     sta (screen_bottomline),y
     // -ang_w
     // [186] (byte~) init_angle_screen::$13 ← - (byte) init_angle_screen::ang_w#0 -- vbuaa=_neg_vbuz1 
@@ -12367,54 +12367,54 @@ init_angle_screen: {
     // [188] (byte~) init_angle_screen::$14 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_plus_vbuz1 
     lda #$80
     clc
-    adc ang_w
+    adc.z ang_w
     // screen_topline[x] = 0x80+ang_w
     // [189] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuaa 
-    ldy x
+    ldy.z x
     sta (screen_topline),y
     // 0x80-ang_w
     // [190] (byte~) init_angle_screen::$15 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuaa=vbuc1_minus_vbuz1 
     lda #$80
     sec
-    sbc ang_w
+    sbc.z ang_w
     // screen_bottomline[x] = 0x80-ang_w
     // [191] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::x#5) ← (byte~) init_angle_screen::$15 -- pbuz1_derefidx_vbuz2=vbuaa 
     sta (screen_bottomline),y
     // for( byte x=0,xb=39; x<=19; x++, xb--)
     // [192] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#5 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [193] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#5 -- vbuz1=_dec_vbuz1 
-    dec xb
+    dec.z xb
     // init_angle_screen::@2
     // [194] if((byte) init_angle_screen::x#1<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$13+1
     bcc b3
     // init_angle_screen::@4
     // screen_topline -= 40
     // [195] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
-    lda screen_topline
+    lda.z screen_topline
     sec
     sbc #<$28
-    sta screen_topline
-    lda screen_topline+1
+    sta.z screen_topline
+    lda.z screen_topline+1
     sbc #>$28
-    sta screen_topline+1
+    sta.z screen_topline+1
     // screen_bottomline += 40
     // [196] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen_bottomline
-    sta screen_bottomline
+    adc.z screen_bottomline
+    sta.z screen_bottomline
     bcc !+
-    inc screen_bottomline+1
+    inc.z screen_bottomline+1
   !:
     // for(byte y: 0..12)
     // [197] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [198] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
-    cmp y
+    cmp.z y
     bne b1
     // init_angle_screen::@return
     // }
@@ -12439,7 +12439,7 @@ atan2_16: {
     .label y = $1c
     // (y>=0)?y:-y
     // [200] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bmi !b1+
     jmp b1
   !b1:
@@ -12447,18 +12447,18 @@ atan2_16: {
     // [201] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc y
-    sta _2
+    sbc.z y
+    sta.z _2
     lda #0
-    sbc y+1
-    sta _2+1
+    sbc.z y+1
+    sta.z _2+1
     // [202] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
     // [202] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
     // atan2_16::@3
   b3:
     // (x>=0)?x:-x
     // [203] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bmi !b4+
     jmp b4
   !b4:
@@ -12466,11 +12466,11 @@ atan2_16: {
     // [204] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc x
-    sta _7
+    sbc.z x
+    sta.z _7
     lda #0
-    sbc x+1
-    sta _7+1
+    sbc.z x+1
+    sta.z _7+1
     // [205] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
     // [205] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
     // atan2_16::@6
@@ -12478,8 +12478,8 @@ atan2_16: {
     // [206] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
     // [206] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
-    sta angle
-    sta angle+1
+    sta.z angle
+    sta.z angle+1
     // [206] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuxx=vbuc1 
     tax
     // [206] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
@@ -12488,9 +12488,9 @@ atan2_16: {
   b10:
     // if(yi==0)
     // [207] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bne b11
-    lda yi
+    lda.z yi
     bne b11
     // [208] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
     // [208] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
@@ -12498,40 +12498,40 @@ atan2_16: {
   b12:
     // angle /=2
     // [209] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr angle+1
-    ror angle
+    lsr.z angle+1
+    ror.z angle
     // if(x<0)
     // [210] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
-    lda x+1
+    lda.z x+1
     bpl b7
     // atan2_16::@21
     // angle = 0x8000-angle
     // [211] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #>$8000
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [212] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
     // [212] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
     // atan2_16::@7
   b7:
     // if(y<0)
     // [213] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
-    lda y+1
+    lda.z y+1
     bpl b8
     // atan2_16::@9
     // angle = -angle
     // [214] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #0
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
     // [215] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
     // [215] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
     // atan2_16::@8
@@ -12546,15 +12546,15 @@ atan2_16: {
     txa
     tay
     // [218] (signed word~) atan2_16::xd#10 ← (signed word) atan2_16::xi#3 -- vwsz1=vwsz2 
-    lda xi
-    sta xd
-    lda xi+1
-    sta xd+1
+    lda.z xi
+    sta.z xd
+    lda.z xi+1
+    sta.z xd+1
     // [219] (signed word~) atan2_16::yd#10 ← (signed word) atan2_16::yi#3 -- vwsz1=vwsz2 
-    lda yi
-    sta yd
-    lda yi+1
-    sta yd+1
+    lda.z yi
+    sta.z yd
+    lda.z yi+1
+    sta.z yd+1
     // [220] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
     // [220] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
     // [220] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
@@ -12573,16 +12573,16 @@ atan2_16: {
     // atan2_16::@16
     // xd >>= 1
     // [223] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // yd >>= 1
     // [224] (signed word) atan2_16::yd#2 ← (signed word) atan2_16::yd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // [225] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
     // [225] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
     // [225] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
@@ -12590,27 +12590,27 @@ atan2_16: {
   b17:
     // if(yi>=0)
     // [226] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
-    lda yi+1
+    lda.z yi+1
     bpl b18
     // atan2_16::@20
     // xi -= yd
     // [227] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda xi
+    lda.z xi
     sec
-    sbc yd
-    sta xi
-    lda xi+1
-    sbc yd+1
-    sta xi+1
+    sbc.z yd
+    sta.z xi
+    lda.z xi+1
+    sbc.z yd+1
+    sta.z xi+1
     // yi += xd
     // [228] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda yi
+    lda.z yi
     clc
-    adc xd
-    sta yi
-    lda yi+1
-    adc xd+1
-    sta yi+1
+    adc.z xd
+    sta.z yi
+    lda.z yi+1
+    adc.z xd+1
+    sta.z yi+1
     // angle -= CORDIC_ATAN2_ANGLES_16[i]
     // [229] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
@@ -12618,12 +12618,12 @@ atan2_16: {
     // [230] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
-    lda angle
+    lda.z angle
     sbc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
     // [231] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
     // [231] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
     // [231] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
@@ -12648,22 +12648,22 @@ atan2_16: {
   b18:
     // xi += yd
     // [234] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
-    lda xi
+    lda.z xi
     clc
-    adc yd
-    sta xi
-    lda xi+1
-    adc yd+1
-    sta xi+1
+    adc.z yd
+    sta.z xi
+    lda.z xi+1
+    adc.z yd+1
+    sta.z xi+1
     // yi -= xd
     // [235] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 -- vwsz1=vwsz1_minus_vwsz2 
-    lda yi
+    lda.z yi
     sec
-    sbc xd
-    sta yi
-    lda yi+1
-    sbc xd+1
-    sta yi+1
+    sbc.z xd
+    sta.z yi
+    lda.z yi+1
+    sbc.z xd+1
+    sta.z yi+1
     // angle += CORDIC_ATAN2_ANGLES_16[i]
     // [236] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
@@ -12671,35 +12671,35 @@ atan2_16: {
     // [237] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16#0]) CORDIC_ATAN2_ANGLES_16#0 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
-    lda angle
+    lda.z angle
     adc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
     jmp b19
     // atan2_16::@14
   b14:
     // xd >>= 2
     // [238] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda xd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
+    ror.z xd+1
+    ror.z xd
     // yd >>= 2
     // [239] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
-    lda yd+1
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
-    lda yd+1
+    ror.z yd+1
+    ror.z yd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     // shift -=2
     // [240] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
@@ -12708,18 +12708,18 @@ atan2_16: {
     // atan2_16::@4
   b4:
     // [241] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
-    lda x
-    sta xi
-    lda x+1
-    sta xi+1
+    lda.z x
+    sta.z xi
+    lda.z x+1
+    sta.z xi+1
     jmp b6
     // atan2_16::@1
   b1:
     // [242] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
-    lda y
-    sta yi
-    lda y+1
-    sta yi+1
+    lda.z y
+    sta.z yi
+    lda.z y+1
+    sta.z yi+1
     jmp b3
 }
   // malloc
@@ -12729,19 +12729,19 @@ malloc: {
     .label mem = 9
     // mem = heap_head-size
     // [244] (byte*) malloc::mem#0 ← (byte*) heap_head#5 - (word) $3e8 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$3e8
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$3e8
-    sta mem+1
+    sta.z mem+1
     // heap_head = mem
     // [245] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     // malloc::@return
     // }
     // [246] return 
@@ -12802,9 +12802,9 @@ processChars: {
     // [255] phi from processChars to processChars::@1 [phi:processChars->processChars::@1]
     // [255] phi (byte) processChars::numActive#10 = (byte) 0 [phi:processChars->processChars::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta numActive
+    sta.z numActive
     // [255] phi (byte) processChars::i#10 = (byte) 0 [phi:processChars->processChars::@1#1] -- vbuz1=vbuc1 
-    sta i
+    sta.z i
     // [255] phi from processChars::@2 to processChars::@1 [phi:processChars::@2->processChars::@1]
     // [255] phi (byte) processChars::numActive#10 = (byte) processChars::numActive#3 [phi:processChars::@2->processChars::@1#0] -- register_copy 
     // [255] phi (byte) processChars::i#10 = (byte) processChars::i#1 [phi:processChars::@2->processChars::@1#1] -- register_copy 
@@ -12812,26 +12812,26 @@ processChars: {
   b1:
     // PROCESSING+i
     // [256] (byte) processChars::$67 ← (byte) processChars::i#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [257] (byte) processChars::$68 ← (byte) processChars::$67 + (byte) processChars::i#10 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [258] (byte) processChars::$69 ← (byte) processChars::$68 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [259] (byte) processChars::$70 ← (byte) processChars::$69 + (byte) processChars::i#10 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc i
+    adc.z i
     // [260] (byte~) processChars::$37 ← (byte) processChars::$70 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // processing = PROCESSING+i
     // [261] (struct ProcessingSprite*) processChars::processing#0 ← (const struct ProcessingSprite[NUM_PROCESSING#0]) PROCESSING#0 + (byte~) processChars::$37 -- pssz1=pssc1_plus_vbuaa 
     clc
     adc #<PROCESSING
-    sta processing
+    sta.z processing
     lda #>PROCESSING
     adc #0
-    sta processing+1
+    sta.z processing+1
     // bitmask = 1<<processing->id
     // [262] (byte) processChars::bitmask#0 ← (byte) 1 << *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID) -- vbuz1=vbuc1_rol_pbuz2_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
@@ -12845,7 +12845,7 @@ processChars: {
     dex
     bne !-
   !e:
-    sta bitmask
+    sta.z bitmask
     // if(processing->status!=STATUS_FREE)
     // [263] if(*((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS)==(const byte) STATUS_FREE) goto processChars::@2 -- pbuz1_derefidx_vbuc1_eq_vbuc2_then_la1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
@@ -12878,7 +12878,7 @@ processChars: {
     // [266] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     // Enable the sprite
     lda SPRITES_ENABLE
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_ENABLE
     // SPRITES_COLS[processing->id] = processing->col
     // [267] *((const byte*) SPRITES_COLS#0 + *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID)) ← *((byte*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL) -- pbuc1_derefidx_pbuz1_derefidx_vbuc2=pbuz1_derefidx_vbuc3 
@@ -12914,21 +12914,21 @@ processChars: {
     // [270] (word) processChars::xpos#0 ← *((word*)(struct ProcessingSprite*) processChars::processing#0) >> (byte) 4 -- vwuz1=_deref_pwuz2_ror_4 
     ldy #0
     lda (processing),y
-    sta xpos
+    sta.z xpos
     iny
     lda (processing),y
-    sta xpos+1
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
-    lsr xpos+1
-    ror xpos
+    sta.z xpos+1
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
+    lsr.z xpos+1
+    ror.z xpos
     // >xpos
     // [271] (byte~) processChars::$11 ← > (word) processChars::xpos#0 -- vbuaa=_hi_vwuz1 
-    lda xpos+1
+    lda.z xpos+1
     // if(>xpos)
     // [272] if((byte) 0!=(byte~) processChars::$11) goto processChars::@4 -- vbuc1_neq_vbuaa_then_la1 
     // Set sprite position
@@ -12940,7 +12940,7 @@ processChars: {
     // 0xff ^ bitmask
     // [273] (byte~) processChars::$12 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
-    eor bitmask
+    eor.z bitmask
     // *SPRITES_XMSB &= 0xff ^ bitmask
     // [274] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) processChars::$12 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
@@ -12949,12 +12949,12 @@ processChars: {
   b5:
     // i*2
     // [275] (byte~) processChars::$17 ← (byte) processChars::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     tax
     // (byte)xpos
     // [276] (byte~) processChars::$14 ← (byte)(word) processChars::xpos#0 -- vbuaa=_byte_vwuz1 
-    lda xpos
+    lda.z xpos
     // SPRITES_XPOS[i*2] = (byte)xpos
     // [277] *((const byte*) SPRITES_XPOS#0 + (byte~) processChars::$17) ← (byte~) processChars::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SPRITES_XPOS,x
@@ -12962,22 +12962,22 @@ processChars: {
     // [278] (word~) processChars::$15 ← *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_Y) >> (byte) 4 -- vwuz1=pwuz2_derefidx_vbuc1_ror_4 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _15
+    sta.z _15
     iny
     lda (processing),y
-    sta _15+1
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
-    lsr _15+1
-    ror _15
+    sta.z _15+1
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
+    lsr.z _15+1
+    ror.z _15
     // ypos = (byte)(processing->y>>4)
     // [279] (byte) processChars::ypos#0 ← (byte)(word~) processChars::$15 -- vbuz1=_byte_vwuz2 
-    lda _15
-    sta ypos
+    lda.z _15
+    sta.z ypos
     // SPRITES_YPOS[i*2] = ypos
     // [280] *((const byte*) SPRITES_YPOS#0 + (byte~) processChars::$17) ← (byte) processChars::ypos#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta SPRITES_YPOS,x
@@ -13049,15 +13049,15 @@ processChars: {
     // processChars::@9
     // xpos/8
     // [285] (word~) processChars::$25 ← (word) processChars::xpos#0 >> (byte) 3 -- vwuz1=vwuz1_ror_3 
-    lsr _25+1
-    ror _25
-    lsr _25+1
-    ror _25
-    lsr _25+1
-    ror _25
+    lsr.z _25+1
+    ror.z _25
+    lsr.z _25+1
+    ror.z _25
+    lsr.z _25+1
+    ror.z _25
     // (byte)(xpos/8)
     // [286] (byte~) processChars::$26 ← (byte)(word~) processChars::$25 -- vbuaa=_byte_vwuz1 
-    lda _25
+    lda.z _25
     // xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8
     // [287] (byte) processChars::xchar#0 ← (byte~) processChars::$26 - (const byte) BORDER_XPOS_LEFT#0/(byte) 8 -- vbuaa=vbuaa_minus_vbuc1 
     sec
@@ -13079,13 +13079,13 @@ processChars: {
     // processing->x += processing->vx
     // [290] *((word*)(struct ProcessingSprite*) processChars::processing#0) ← *((word*)(struct ProcessingSprite*) processChars::processing#0) + *((word*)(struct ProcessingSprite*) processChars::processing#0 + (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_VX) -- _deref_pwuz1=_deref_pwuz1_plus_pwuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
-    sty $ff
+    sty.z $ff
     clc
     lda (processing),y
     ldy #0
     adc (processing),y
     sta (processing),y
-    ldy $ff
+    ldy.z $ff
     iny
     lda (processing),y
     ldy #1
@@ -13093,7 +13093,7 @@ processChars: {
     sta (processing),y
     // (byte)(ypos/8)
     // [291] (byte~) processChars::$30 ← (byte) processChars::ypos#0 >> (byte) 3 -- vbuaa=vbuz1_ror_3 
-    lda ypos
+    lda.z ypos
     lsr
     lsr
     lsr
@@ -13132,17 +13132,17 @@ processChars: {
   b7:
     // numActive++;
     // [296] (byte) processChars::numActive#1 ← ++ (byte) processChars::numActive#10 -- vbuz1=_inc_vbuz1 
-    inc numActive
+    inc.z numActive
     // [297] phi from processChars::@1 processChars::@7 to processChars::@2 [phi:processChars::@1/processChars::@7->processChars::@2]
     // [297] phi (byte) processChars::numActive#3 = (byte) processChars::numActive#10 [phi:processChars::@1/processChars::@7->processChars::@2#0] -- register_copy 
     // processChars::@2
   b2:
     // for( byte i: 0..NUM_PROCESSING-1 )
     // [298] (byte) processChars::i#1 ← ++ (byte) processChars::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [299] if((byte) processChars::i#1!=(const byte) NUM_PROCESSING#0-(byte) 1+(byte) 1) goto processChars::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_PROCESSING-1+1
-    cmp i
+    cmp.z i
     beq !b1+
     jmp b1
   !b1:
@@ -13161,7 +13161,7 @@ processChars: {
     // 0xff ^ bitmask
     // [302] (byte~) processChars::$33 ← (byte) $ff ^ (byte) processChars::bitmask#0 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
-    eor bitmask
+    eor.z bitmask
     // *SPRITES_ENABLE &= 0xff ^ bitmask
     // [303] *((const byte*) SPRITES_ENABLE#0) ← *((const byte*) SPRITES_ENABLE#0) & (byte~) processChars::$33 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     // Disable the sprite
@@ -13173,7 +13173,7 @@ processChars: {
     // *SPRITES_XMSB |= bitmask
     // [304] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) processChars::bitmask#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
-    ora bitmask
+    ora.z bitmask
     sta SPRITES_XMSB
     jmp b5
 }

@@ -16,16 +16,16 @@ main: {
     lda #4
     sta points+OFFSET_STRUCT_POINT_Y+1*SIZEOF_STRUCT_POINT
     lda #0
-    sta idx
+    sta.z idx
     tax
   b1:
     txa
     asl
     tay
     lda points,y
-    sta print.p_x
+    sta.z print.p_x
     lda points+OFFSET_STRUCT_POINT_Y,y
-    sta print.p_y
+    sta.z print.p_y
     jsr print
     inx
     cpx #2
@@ -36,14 +36,14 @@ main: {
 print: {
     .label p_x = 3
     .label p_y = 4
-    lda p_x
-    ldy idx
+    lda.z p_x
+    ldy.z idx
     sta SCREEN,y
     iny
-    lda p_y
+    lda.z p_y
     sta SCREEN,y
     iny
-    sty idx
+    sty.z idx
     rts
 }
   points: .fill 2*2, 0

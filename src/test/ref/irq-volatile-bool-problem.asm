@@ -15,7 +15,7 @@
   .label framedone = 2
 bbegin:
   lda #0
-  sta framedone
+  sta.z framedone
   jsr main
   rts
 main: {
@@ -43,7 +43,7 @@ main: {
     cmp #$14
     bcs b2
     lda #1
-    sta framedone
+    sta.z framedone
     jmp b2
 }
 irq: {
@@ -54,7 +54,7 @@ irq: {
     cmp #$32+1
     bcc b1
     lda #0
-    sta framedone
+    sta.z framedone
   b1:
     dec BGCOL
     jmp $ea81

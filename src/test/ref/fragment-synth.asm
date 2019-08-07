@@ -10,16 +10,16 @@ main: {
     lda #$f
     sta $450+3
     lda #<$450
-    sta fct.z
+    sta.z fct.z
     lda #>$450
-    sta fct.z+1
+    sta.z fct.z+1
     ldx #$aa
     jsr fct
     sta screen
     lda #<$450+1
-    sta fct.z
+    sta.z fct.z
     lda #>$450+1
-    sta fct.z+1
+    sta.z fct.z+1
     ldx #$55
     jsr fct
     sta screen+1

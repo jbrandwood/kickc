@@ -6,10 +6,10 @@ main: {
     .label screen = $400
     .label b = 2
     lda #0
-    sta b
+    sta.z b
   b1:
     lda #$55
-    ldy b
+    ldy.z b
     cpy #0
     beq !e+
   !:
@@ -17,11 +17,11 @@ main: {
     dey
     bne !-
   !e:
-    ldy b
+    ldy.z b
     sta screen,y
-    inc b
+    inc.z b
     lda #8
-    cmp b
+    cmp.z b
     bne b1
     rts
 }

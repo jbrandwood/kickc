@@ -6,9 +6,9 @@ main: {
     .label nxt = 2
     ldx #0
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b1:
     ldy #0
     lda (nxt),y
@@ -17,16 +17,16 @@ main: {
     bne b2
     ldy TEXT
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b2:
     inx
     tya
     sta SCREEN,x
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     jmp b1
 }

@@ -309,7 +309,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -319,32 +319,32 @@ main: {
   b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and i
-    sta _0
+    and.z i
+    sta.z _0
     // [7] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
-    lda _0
+    lda.z _0
     eor #0
     beq !+
     lda #1
   !:
     eor #1
-    sta isSet.b
+    sta.z isSet.b
     // [8] (byte) isSet::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta isSet.i
+    lda.z i
+    sta.z isSet.i
     // [9] call isSet 
     jsr isSet
     // [10] (bool) isSet::return#0 ← (bool) isSet::return#1 -- vboz1=vboz2 
-    lda isSet.return_1
-    sta isSet.return
+    lda.z isSet.return_1
+    sta.z isSet.return
     jmp b5
     // main::@5
   b5:
     // [11] (bool~) main::$2 ← (bool) isSet::return#0 -- vboz1=vboz2 
-    lda isSet.return
-    sta _2
+    lda.z isSet.return
+    sta.z _2
     // [12] if((bool~) main::$2) goto main::@2 -- vboz1_then_la1 
-    lda _2
+    lda.z _2
     cmp #0
     bne b2
     jmp b4
@@ -352,16 +352,16 @@ main: {
   b4:
     // [13] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
-    ldy i
+    ldy.z i
     sta screen,y
     jmp b3
     // main::@3
   b3:
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -372,7 +372,7 @@ main: {
   b2:
     // [17] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
-    ldy i
+    ldy.z i
     sta screen,y
     jmp b3
 }
@@ -389,19 +389,19 @@ isSet: {
     .label return_1 = $a
     // [18] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8 -- vbuz1=vbuz2_band_vbuc1 
     lda #8
-    and i
-    sta _0
+    and.z i
+    sta.z _0
     // [19] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 -- vboz1=vbuz2_neq_vbuc1 
-    lda _0
+    lda.z _0
     eor #0
     beq !+
     lda #1
   !:
-    sta _1
+    sta.z _1
     // [20] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboz1=vboz2_or_vboz3 
-    lda b
-    ora _1
-    sta return_1
+    lda.z b
+    ora.z _1
+    sta.z return_1
     jmp breturn
     // isSet::@return
   breturn:
@@ -492,7 +492,7 @@ main: {
     lda #1
   !:
     eor #1
-    sta isSet.b
+    sta.z isSet.b
     // [8] (byte) isSet::i#0 ← (byte) main::i#2
     // [9] call isSet 
     jsr isSet
@@ -545,7 +545,7 @@ isSet: {
     lda #1
   !:
     // [20] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboaa=vboz1_or_vboaa 
-    ora b
+    ora.z b
     jmp breturn
     // isSet::@return
   breturn:
@@ -665,7 +665,7 @@ main: {
     lda #1
   !:
     eor #1
-    sta isSet.b
+    sta.z isSet.b
     // [8] (byte) isSet::i#0 ← (byte) main::i#2
     // [9] call isSet 
     jsr isSet
@@ -719,7 +719,7 @@ isSet: {
   !:
     // b || ((i&8)!=0)
     // [20] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboaa=vboz1_or_vboaa 
-    ora b
+    ora.z b
     // isSet::@return
     // }
     // [21] return 

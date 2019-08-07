@@ -7,33 +7,33 @@
   .label idx = 5
 bbegin:
   lda #<0
-  sta msg
-  sta msg+1
-  sta idx
+  sta.z msg
+  sta.z msg+1
+  sta.z idx
   jsr main
   rts
 main: {
     lda #<msg1
-    sta msg
+    sta.z msg
     lda #>msg1
-    sta msg+1
+    sta.z msg+1
     jsr do10
     lda #<msg2
-    sta msg
+    sta.z msg
     lda #>msg2
-    sta msg+1
+    sta.z msg+1
     jsr do10
     rts
 }
 do10: {
     .label i = 2
     lda #0
-    sta i
+    sta.z i
   b1:
     jsr hello
-    inc i
+    inc.z i
     lda #$a
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
@@ -41,9 +41,9 @@ hello: {
     ldy #0
   b1:
     lda (msg),y
-    ldx idx
+    ldx.z idx
     sta SCREEN,x
-    inc idx
+    inc.z idx
     iny
     lda (msg),y
     cmp #0

@@ -26,22 +26,22 @@
 main: {
     jsr init
     lda #<$64
-    sta yvel_init
+    sta.z yvel_init
     lda #>$64
-    sta yvel_init+1
+    sta.z yvel_init+1
     lda #<$c8
-    sta xvel
+    sta.z xvel
     lda #>$c8
-    sta xvel+1
+    sta.z xvel+1
     lda #<0
-    sta ypos
-    sta ypos+1
-    sta xpos
-    sta xpos+1
+    sta.z ypos
+    sta.z ypos+1
+    sta.z xpos
+    sta.z xpos+1
     lda #<$64
-    sta yvel_12
+    sta.z yvel_12
     lda #>$64
-    sta yvel_12+1
+    sta.z yvel_12+1
   b1:
     lda #$ff
     cmp RASTER
@@ -54,117 +54,117 @@ anim: {
     .label _7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
-    lda ypos+1
+    lda.z ypos+1
     bpl b1
     sec
     lda #0
-    sbc xvel
-    sta xvel
+    sbc.z xvel
+    sta.z xvel
     lda #0
-    sbc xvel+1
-    sta xvel+1
-    lda yvel_init
+    sbc.z xvel+1
+    sta.z xvel+1
+    lda.z yvel_init
     sec
     sbc #$a
-    sta yvel_init
-    lda yvel_init+1
+    sta.z yvel_init
+    lda.z yvel_init+1
     sbc #>$a
-    sta yvel_init+1
-    lda yvel_init
+    sta.z yvel_init+1
+    lda.z yvel_init
     cmp #<-$c8
-    lda yvel_init+1
+    lda.z yvel_init+1
     sbc #>-$c8
     bvc !+
     eor #$80
   !:
     bpl b3
     lda #<$c8
-    sta yvel
+    sta.z yvel
     lda #>$c8
-    sta yvel+1
+    sta.z yvel+1
   b3:
-    lda yvel
-    sta yvel_21
-    lda yvel+1
-    sta yvel_21+1
+    lda.z yvel
+    sta.z yvel_21
+    lda.z yvel+1
+    sta.z yvel_21+1
     lda #<0
-    sta ypos
-    sta ypos+1
-    sta xpos
-    sta xpos+1
+    sta.z ypos
+    sta.z ypos+1
+    sta.z xpos
+    sta.z xpos+1
   b1:
     clc
-    lda yvel_10
+    lda.z yvel_10
     adc #<g
-    sta yvel_10
-    lda yvel_10+1
+    sta.z yvel_10
+    lda.z yvel_10+1
     adc #>g
-    sta yvel_10+1
-    lda xpos
+    sta.z yvel_10+1
+    lda.z xpos
     clc
-    adc xvel
-    sta xpos
-    lda xpos+1
-    adc xvel+1
-    sta xpos+1
-    lda ypos
+    adc.z xvel
+    sta.z xpos
+    lda.z xpos+1
+    adc.z xvel+1
+    sta.z xpos+1
+    lda.z ypos
     clc
-    adc yvel_10
-    sta ypos
-    lda ypos+1
-    adc yvel_10+1
-    sta ypos+1
-    lda xpos
-    sta $ff
-    lda xpos+1
-    sta _5
+    adc.z yvel_10
+    sta.z ypos
+    lda.z ypos+1
+    adc.z yvel_10+1
+    sta.z ypos+1
+    lda.z xpos
+    sta.z $ff
+    lda.z xpos+1
+    sta.z _5
     lda #0
-    bit xpos+1
+    bit.z xpos+1
     bpl !+
     lda #$ff
   !:
-    sta _5+1
-    rol $ff
-    rol _5
-    rol _5+1
+    sta.z _5+1
+    rol.z $ff
+    rol.z _5
+    rol.z _5+1
     clc
-    lda sprite_x
+    lda.z sprite_x
     adc #<$a0
-    sta sprite_x
-    lda sprite_x+1
+    sta.z sprite_x
+    lda.z sprite_x+1
     adc #>$a0
-    sta sprite_x+1
-    lda ypos
-    sta $ff
-    lda ypos+1
-    sta _7
+    sta.z sprite_x+1
+    lda.z ypos
+    sta.z $ff
+    lda.z ypos+1
+    sta.z _7
     lda #0
-    bit ypos+1
+    bit.z ypos+1
     bpl !+
     lda #$ff
   !:
-    sta _7+1
-    rol $ff
-    rol _7
-    rol _7+1
-    rol $ff
-    rol _7
-    rol _7+1
-    rol $ff
-    rol _7
-    rol _7+1
+    sta.z _7+1
+    rol.z $ff
+    rol.z _7
+    rol.z _7+1
+    rol.z $ff
+    rol.z _7
+    rol.z _7+1
+    rol.z $ff
+    rol.z _7
+    rol.z _7+1
     lda #<$e6
     sec
-    sbc sprite_y
-    sta sprite_y
+    sbc.z sprite_y
+    sta.z sprite_y
     lda #>$e6
-    sbc sprite_y+1
-    sta sprite_y+1
-    lda sprite_x
+    sbc.z sprite_y+1
+    sta.z sprite_y+1
+    lda.z sprite_x
     sta SPRITES_XPOS
-    lda sprite_y
+    lda.z sprite_y
     sta SPRITES_YPOS
-    lda sprite_x+1
+    lda.z sprite_x+1
     sta SPRITES_XMSB
     rts
 }
@@ -184,21 +184,21 @@ init: {
     lda #SPRITE/$40
     sta SPRITES_PTR
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bne b2
     ldx #0

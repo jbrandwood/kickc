@@ -23,7 +23,7 @@
   .label irq_idx = 2
 bbegin:
   lda #0
-  sta irq_idx
+  sta.z irq_idx
   jsr main
   rts
 main: {
@@ -52,10 +52,10 @@ main: {
 }
 table_driven_irq: {
   b1:
-    ldy irq_idx
+    ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
     ldx IRQ_CHANGE_VAL,y
-    inc irq_idx
+    inc.z irq_idx
     cmp #VIC_SIZE
     bcc b2
     cmp #VIC_SIZE+8
@@ -64,13 +64,13 @@ table_driven_irq: {
     sta IRQ_STATUS
     stx RASTER
     ldy RASTER
-    sty $ff
-    cpx $ff
+    sty.z $ff
+    cpx.z $ff
     bcc !_ea81+
     jmp $ea81
   !_ea81:
     lda #0
-    sta irq_idx
+    sta.z irq_idx
     jmp $ea81
   b3:
     tay

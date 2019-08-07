@@ -566,34 +566,34 @@ main: {
   get_from_main:
     // [25] phi (byte) get::i#2 = (byte) 0 [phi:main->get#0] -- vbuz1=vbuc1 
     lda #0
-    sta get.i
+    sta.z get.i
     jsr get
     // [6] (byte) get::return_x#0 ← (byte) get::return_x#5 -- vbuz1=vbuz2 
-    lda get.return_x_5
-    sta get.return_x
+    lda.z get.return_x_5
+    sta.z get.return_x
     // [7] (byte) get::return_y#0 ← (byte) get::return_y#5 -- vbuz1=vbuz2 
-    lda get.return_y_5
-    sta get.return_y
+    lda.z get.return_y_5
+    sta.z get.return_y
     jmp b2
     // main::@2
   b2:
     // [8] (byte) main::$0_x ← (byte) get::return_x#0 -- vbuz1=vbuz2 
-    lda get.return_x
-    sta _0_x
+    lda.z get.return_x
+    sta.z _0_x
     // [9] (byte) main::$0_y ← (byte) get::return_y#0 -- vbuz1=vbuz2 
-    lda get.return_y
-    sta _0_y
+    lda.z get.return_y
+    sta.z _0_y
     // [10] *((byte*)(const struct Point*) SCREEN#0) ← (byte) main::$0_x -- _deref_pbuc1=vbuz1 
-    lda _0_x
+    lda.z _0_x
     sta SCREEN
     // [11] *((byte*)(const struct Point*) SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) main::$0_y -- _deref_pbuc1=vbuz1 
-    lda _0_y
+    lda.z _0_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y
     // [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     // [12] phi (byte) main::i#2 = (byte) 1 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #1
-    sta i
+    sta.z i
     jmp b1
     // [12] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -602,45 +602,45 @@ main: {
     // main::@1
   b1:
     // [13] (byte) get::i#1 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta get.i
+    lda.z i
+    sta.z get.i
     // [14] call get 
     // [25] phi from main::@1 to get [phi:main::@1->get]
   get_from_b1:
     // [25] phi (byte) get::i#2 = (byte) get::i#1 [phi:main::@1->get#0] -- register_copy 
     jsr get
     // [15] (byte) get::return_x#1 ← (byte) get::return_x#5 -- vbuz1=vbuz2 
-    lda get.return_x_5
-    sta get.return_x_1
+    lda.z get.return_x_5
+    sta.z get.return_x_1
     // [16] (byte) get::return_y#1 ← (byte) get::return_y#5 -- vbuz1=vbuz2 
-    lda get.return_y_5
-    sta get.return_y_1
+    lda.z get.return_y_5
+    sta.z get.return_y_1
     jmp b3
     // main::@3
   b3:
     // [17] (byte) main::$1_x ← (byte) get::return_x#1 -- vbuz1=vbuz2 
-    lda get.return_x_1
-    sta _1_x
+    lda.z get.return_x_1
+    sta.z _1_x
     // [18] (byte) main::$1_y ← (byte) get::return_y#1 -- vbuz1=vbuz2 
-    lda get.return_y_1
-    sta _1_y
+    lda.z get.return_y_1
+    sta.z _1_y
     // [19] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _3
+    sta.z _3
     // [20] *((byte*)(const struct Point*) SCREEN#0 + (byte~) main::$3) ← (byte) main::$1_x -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _1_x
-    ldy _3
+    lda.z _1_x
+    ldy.z _3
     sta SCREEN,y
     // [21] *((byte*)(const struct Point*) SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$3) ← (byte) main::$1_y -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _1_y
-    ldy _3
+    lda.z _1_y
+    ldy.z _3
     sta SCREEN+OFFSET_STRUCT_POINT_Y,y
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [23] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -665,7 +665,7 @@ get: {
     .label return_x_5 = 4
     .label return_y_5 = 5
     // [26] if((byte) get::i#2==(byte) 0) goto get::@1 -- vbuz1_eq_0_then_la1 
-    lda i
+    lda.z i
     cmp #0
     beq b1
     jmp b3
@@ -673,17 +673,17 @@ get: {
   b3:
     // [27] if((byte) get::i#2==(byte) 1) goto get::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
-    cmp i
+    cmp.z i
     beq b2
     jmp b4
     // get::@4
   b4:
     // [28] (byte) get::return_x#4 ← *((byte*)(const struct Point*) p2#0) -- vbuz1=_deref_pbuc1 
     lda p2
-    sta return_x_4
+    sta.z return_x_4
     // [29] (byte) get::return_y#4 ← *((byte*)(const struct Point*) p2#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p2+OFFSET_STRUCT_POINT_Y
-    sta return_y_4
+    sta.z return_y_4
     // [30] phi from get::@1 get::@2 get::@4 to get::@return [phi:get::@1/get::@2/get::@4->get::@return]
   breturn_from_b1:
   breturn_from_b2:
@@ -699,19 +699,19 @@ get: {
   b2:
     // [32] (byte) get::return_x#3 ← *((byte*)(const struct Point*) p1#0) -- vbuz1=_deref_pbuc1 
     lda p1
-    sta return_x_3
+    sta.z return_x_3
     // [33] (byte) get::return_y#3 ← *((byte*)(const struct Point*) p1#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p1+OFFSET_STRUCT_POINT_Y
-    sta return_y_3
+    sta.z return_y_3
     jmp breturn_from_b2
     // get::@1
   b1:
     // [34] (byte) get::return_x#2 ← *((byte*)(const struct Point*) p0#0) -- vbuz1=_deref_pbuc1 
     lda p0
-    sta return_x_2
+    sta.z return_x_2
     // [35] (byte) get::return_y#2 ← *((byte*)(const struct Point*) p0#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p0+OFFSET_STRUCT_POINT_Y
-    sta return_y_2
+    sta.z return_y_2
     jmp breturn_from_b1
 }
   // File Data
@@ -814,7 +814,7 @@ main: {
     jsr get
     // [6] (byte) get::return_x#0 ← (byte) get::return_x#5
     // [7] (byte) get::return_y#0 ← (byte) get::return_y#5 -- vbuaa=vbuz1 
-    lda get.return_y
+    lda.z get.return_y
     jmp b2
     // main::@2
   b2:
@@ -844,23 +844,23 @@ main: {
     jsr get
     // [15] (byte) get::return_x#1 ← (byte) get::return_x#5
     // [16] (byte) get::return_y#1 ← (byte) get::return_y#5 -- vbuaa=vbuz1 
-    lda get.return_y
+    lda.z get.return_y
     jmp b3
     // main::@3
   b3:
     // [17] (byte) main::$1_x ← (byte) get::return_x#1 -- vbuz1=vbuxx 
-    stx _1_x
+    stx.z _1_x
     // [18] (byte) main::$1_y ← (byte) get::return_y#1 -- vbuz1=vbuaa 
-    sta _1_y
+    sta.z _1_y
     // [19] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
     tax
     // [20] *((byte*)(const struct Point*) SCREEN#0 + (byte~) main::$3) ← (byte) main::$1_x -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda _1_x
+    lda.z _1_x
     sta SCREEN,x
     // [21] *((byte*)(const struct Point*) SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$3) ← (byte) main::$1_y -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda _1_y
+    lda.z _1_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -893,7 +893,7 @@ get: {
     ldx p2
     // [29] (byte) get::return_y#4 ← *((byte*)(const struct Point*) p2#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p2+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     // [30] phi from get::@1 get::@2 get::@4 to get::@return [phi:get::@1/get::@2/get::@4->get::@return]
   breturn_from_b1:
   breturn_from_b2:
@@ -911,7 +911,7 @@ get: {
     ldx p1
     // [33] (byte) get::return_y#3 ← *((byte*)(const struct Point*) p1#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p1+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     jmp breturn_from_b2
     // get::@1
   b1:
@@ -919,7 +919,7 @@ get: {
     ldx p0
     // [35] (byte) get::return_y#2 ← *((byte*)(const struct Point*) p0#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p0+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     jmp breturn_from_b1
 }
   // File Data
@@ -1073,7 +1073,7 @@ main: {
     // get(0)
     // [6] (byte) get::return_x#0 ← (byte) get::return_x#5
     // [7] (byte) get::return_y#0 ← (byte) get::return_y#5 -- vbuaa=vbuz1 
-    lda get.return_y
+    lda.z get.return_y
     // main::@2
     // [8] (byte) main::$0_x ← (byte) get::return_x#0
     // [9] (byte) main::$0_y ← (byte) get::return_y#0
@@ -1099,22 +1099,22 @@ main: {
     // get(i)
     // [15] (byte) get::return_x#1 ← (byte) get::return_x#5
     // [16] (byte) get::return_y#1 ← (byte) get::return_y#5 -- vbuaa=vbuz1 
-    lda get.return_y
+    lda.z get.return_y
     // main::@3
     // [17] (byte) main::$1_x ← (byte) get::return_x#1 -- vbuz1=vbuxx 
-    stx _1_x
+    stx.z _1_x
     // [18] (byte) main::$1_y ← (byte) get::return_y#1 -- vbuz1=vbuaa 
-    sta _1_y
+    sta.z _1_y
     // SCREEN[i] = get(i)
     // [19] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
     tax
     // [20] *((byte*)(const struct Point*) SCREEN#0 + (byte~) main::$3) ← (byte) main::$1_x -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda _1_x
+    lda.z _1_x
     sta SCREEN,x
     // [21] *((byte*)(const struct Point*) SCREEN#0+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$3) ← (byte) main::$1_y -- pbuc1_derefidx_vbuxx=vbuz1 
-    lda _1_y
+    lda.z _1_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x
     // for ( char i: 1..2)
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
@@ -1146,7 +1146,7 @@ get: {
     ldx p2
     // [29] (byte) get::return_y#4 ← *((byte*)(const struct Point*) p2#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p2+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     // [30] phi from get::@1 get::@2 get::@4 to get::@return [phi:get::@1/get::@2/get::@4->get::@return]
     // [30] phi (byte) get::return_y#5 = (byte) get::return_y#2 [phi:get::@1/get::@2/get::@4->get::@return#0] -- register_copy 
     // [30] phi (byte) get::return_x#5 = (byte) get::return_x#2 [phi:get::@1/get::@2/get::@4->get::@return#1] -- register_copy 
@@ -1161,7 +1161,7 @@ get: {
     ldx p1
     // [33] (byte) get::return_y#3 ← *((byte*)(const struct Point*) p1#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p1+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     rts
     // get::@1
   b1:
@@ -1170,7 +1170,7 @@ get: {
     ldx p0
     // [35] (byte) get::return_y#2 ← *((byte*)(const struct Point*) p0#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda p0+OFFSET_STRUCT_POINT_Y
-    sta return_y
+    sta.z return_y
     rts
 }
   // File Data

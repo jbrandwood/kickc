@@ -5,23 +5,23 @@
   .label screen = 2
 main: {
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     lda #<msg1
-    sta print.msg
+    sta.z print.msg
     lda #>msg1
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     lda #<msg2
-    sta print.msg
+    sta.z print.msg
     lda #>msg2
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     lda #<msg
-    sta print.msg
+    sta.z print.msg
     lda #>msg
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     rts
     msg: .text "message 3 "
@@ -42,13 +42,13 @@ print: {
     ldy #0
     lda (msg),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     jmp b1
 }

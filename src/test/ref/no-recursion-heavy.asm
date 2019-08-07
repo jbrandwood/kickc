@@ -16,169 +16,169 @@
   .label bb_108 = 4
 main: {
     lda #0
-    sta ba
+    sta.z ba
     tay
     tax
-    sta bb
+    sta.z bb
   b2:
     jsr f0
-    inc ba
+    inc.z ba
     jmp b2
 }
 f0: {
-    lda ba
+    lda.z ba
     cmp #0
     bne b1
-    inc bb
-    lda bb
-    sta bb_100
+    inc.z bb
+    lda.z bb
+    sta.z bb_100
     jsr fa
   b1:
     lda #1
-    cmp ba
+    cmp.z ba
     bne b2
-    inc bb
-    lda bb
-    sta bb_101
+    inc.z bb
+    lda.z bb
+    sta.z bb_101
     jsr fa
   b2:
     lda #2
-    cmp ba
+    cmp.z ba
     bne b3
-    inc bb
-    lda bb
-    sta bb_102
+    inc.z bb
+    lda.z bb
+    sta.z bb_102
     jsr fa
   b3:
     lda #3
-    cmp ba
+    cmp.z ba
     bne b4
-    inc bb
-    lda bb
-    sta bb_103
+    inc.z bb
+    lda.z bb
+    sta.z bb_103
     jsr fa
   b4:
     lda #4
-    cmp ba
+    cmp.z ba
     bne b5
-    inc bb
-    lda bb
-    sta bb_104
+    inc.z bb
+    lda.z bb
+    sta.z bb_104
     jsr fa
   b5:
     lda #5
-    cmp ba
+    cmp.z ba
     bne b6
-    inc bb
-    lda bb
-    sta bb_105
+    inc.z bb
+    lda.z bb
+    sta.z bb_105
     jsr fa
   b6:
     lda #6
-    cmp ba
+    cmp.z ba
     bne b7
-    inc bb
-    lda bb
-    sta bb_106
+    inc.z bb
+    lda.z bb
+    sta.z bb_106
     jsr fa
   b7:
     lda #7
-    cmp ba
+    cmp.z ba
     bne b8
-    inc bb
-    lda bb
-    sta bb_107
+    inc.z bb
+    lda.z bb
+    sta.z bb_107
     jsr fa
   b8:
     lda #8
-    cmp ba
+    cmp.z ba
     bne b9
-    inc bb
-    lda bb
-    sta bb_108
+    inc.z bb
+    lda.z bb
+    sta.z bb_108
     jsr fa
   b9:
     lda #9
-    cmp ba
+    cmp.z ba
     bne breturn
     lda #0
-    sta bb_27
+    sta.z bb_27
     jsr fa
     lda #0
-    sta bb
+    sta.z bb
     rts
   breturn:
     rts
 }
 fa: {
-    lda bb_27
+    lda.z bb_27
     cmp #0
     bne b1
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b1:
     lda #1
-    cmp bb_27
+    cmp.z bb_27
     bne b2
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b2:
     lda #2
-    cmp bb_27
+    cmp.z bb_27
     bne b3
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b3:
     lda #3
-    cmp bb_27
+    cmp.z bb_27
     bne b4
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b4:
     lda #4
-    cmp bb_27
+    cmp.z bb_27
     bne b5
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b5:
     lda #5
-    cmp bb_27
+    cmp.z bb_27
     bne b6
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b6:
     lda #6
-    cmp bb_27
+    cmp.z bb_27
     bne b7
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b7:
     lda #7
-    cmp bb_27
+    cmp.z bb_27
     bne b8
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b8:
     lda #8
-    cmp bb_27
+    cmp.z bb_27
     bne b9
     inx
-    stx bc
+    stx.z bc
     jsr fb
   b9:
     lda #9
-    cmp bb_27
+    cmp.z bb_27
     bne breturn
     lda #0
-    sta bc
+    sta.z bc
     jsr fb
     ldx #0
     rts
@@ -186,7 +186,7 @@ fa: {
     rts
 }
 fb: {
-    lda bc
+    lda.z bc
     cmp #0
     bne b1
     iny
@@ -194,63 +194,63 @@ fb: {
     jsr fc
   b1:
     lda #1
-    cmp bc
+    cmp.z bc
     bne b2
     iny
     tya
     jsr fc
   b2:
     lda #2
-    cmp bc
+    cmp.z bc
     bne b3
     iny
     tya
     jsr fc
   b3:
     lda #3
-    cmp bc
+    cmp.z bc
     bne b4
     iny
     tya
     jsr fc
   b4:
     lda #4
-    cmp bc
+    cmp.z bc
     bne b5
     iny
     tya
     jsr fc
   b5:
     lda #5
-    cmp bc
+    cmp.z bc
     bne b6
     iny
     tya
     jsr fc
   b6:
     lda #6
-    cmp bc
+    cmp.z bc
     bne b7
     iny
     tya
     jsr fc
   b7:
     lda #7
-    cmp bc
+    cmp.z bc
     bne b8
     iny
     tya
     jsr fc
   b8:
     lda #8
-    cmp bc
+    cmp.z bc
     bne b9
     iny
     tya
     jsr fc
   b9:
     lda #9
-    cmp bc
+    cmp.z bc
     bne breturn
     lda #0
     jsr fc

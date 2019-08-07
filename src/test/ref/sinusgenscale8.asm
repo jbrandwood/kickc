@@ -36,143 +36,143 @@ sin8u_table: {
     .label i = $b
     jsr div16u
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda step
-    sta print_word.w
-    lda step+1
-    sta print_word.w+1
+    lda.z step
+    sta.z print_word.w
+    lda.z step+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #min
-    sta print_byte.b
+    sta.z print_byte.b
     jsr print_byte
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #max
-    sta print_byte.b
+    sta.z print_byte.b
     jsr print_byte
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #amplitude
-    sta print_byte.b
+    sta.z print_byte.b
     jsr print_byte
     lda #<str4
-    sta print_str.str
+    sta.z print_str.str
     lda #>str4
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #mid
-    sta print_byte.b
+    sta.z print_byte.b
     jsr print_byte
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
     lda #<main.sintab
-    sta sintab
+    sta.z sintab
     lda #>main.sintab
-    sta sintab+1
+    sta.z sintab+1
     lda #<0
-    sta x
-    sta x+1
-    sta i
-    sta i+1
+    sta.z x
+    sta.z x+1
+    sta.z i
+    sta.z i+1
   b2:
-    lda x
-    sta sin8s.x
-    lda x+1
-    sta sin8s.x+1
+    lda.z x
+    sta.z sin8s.x
+    lda.z x+1
+    sta.z sin8s.x+1
     jsr sin8s
-    sta sinx
+    sta.z sinx
     tay
     jsr mul8su
-    lda sinx_sc+1
+    lda.z sinx_sc+1
     tax
     axs #-[mid]
     txa
     ldy #0
     sta (sintab),y
-    inc sintab
+    inc.z sintab
     bne !+
-    inc sintab+1
+    inc.z sintab+1
   !:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda x
-    sta print_word.w
-    lda x+1
-    sta print_word.w+1
+    lda.z x
+    sta.z print_word.w
+    lda.z x+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str6
-    sta print_str.str
+    sta.z print_str.str
     lda #>str6
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda sinx
-    sta print_sbyte.b
+    lda.z sinx
+    sta.z print_sbyte.b
     jsr print_sbyte
     lda #<str7
-    sta print_str.str
+    sta.z print_str.str
     lda #>str7
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda sinx_sc
-    sta print_sword.w
-    lda sinx_sc+1
-    sta print_sword.w+1
+    lda.z sinx_sc
+    sta.z print_sword.w
+    lda.z sinx_sc+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #<str8
-    sta print_str.str
+    sta.z print_str.str
     lda #>str8
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    stx print_byte.b
+    stx.z print_byte.b
     jsr print_byte
     jsr print_ln
-    lda x
+    lda.z x
     clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    inc i
+    adc.z step
+    sta.z x
+    lda.z x+1
+    adc.z step+1
+    sta.z x+1
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
   // u[4.12]
-    lda i+1
+    lda.z i+1
     cmp #>main.tabsize
     bcs !b2+
     jmp b2
   !b2:
     bne !+
-    lda i
+    lda.z i
     cmp #<main.tabsize
     bcs !b2+
     jmp b2
@@ -203,17 +203,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -222,7 +222,7 @@ print_ln: {
 // print_byte(byte zeropage(8) b)
 print_byte: {
     .label b = 8
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -231,7 +231,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -242,9 +242,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -262,13 +262,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -276,7 +276,7 @@ print_str: {
 // print_sword(signed word zeropage(4) w)
 print_sword: {
     .label w = 4
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -288,22 +288,22 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 // Print a word as HEX
 // print_word(word zeropage(4) w)
 print_word: {
     .label w = 4
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -311,7 +311,7 @@ print_word: {
 // print_sbyte(signed byte zeropage(8) b)
 print_sbyte: {
     .label b = 8
-    lda b
+    lda.z b
     bmi b1
     lda #' '
     jsr print_char
@@ -321,11 +321,11 @@ print_sbyte: {
   b1:
     lda #'-'
     jsr print_char
-    lda b
+    lda.z b
     eor #$ff
     clc
     adc #1
-    sta b
+    sta.z b
     jmp b2
 }
 // Multiply a signed byte and an unsigned byte (into a signed word)
@@ -337,16 +337,16 @@ mul8su: {
     tya
     tax
     lda #<b
-    sta mul8u.mb
+    sta.z mul8u.mb
     lda #>b
-    sta mul8u.mb+1
+    sta.z mul8u.mb+1
     jsr mul8u
     cpy #0
     bpl b1
-    lda m+1
+    lda.z m+1
     sec
     sbc #b
-    sta m+1
+    sta.z m+1
   b1:
     rts
 }
@@ -357,8 +357,8 @@ mul8u: {
     .label res = 9
     .label return = 9
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -368,19 +368,19 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }
 // Calculate signed byte sinus sin(x)
@@ -396,94 +396,94 @@ sin8s: {
     .label x3 = $15
     .label usinx = $16
     .label isUpper = 8
-    lda x+1
+    lda.z x+1
     cmp #>PI_u4f12
     bcc b5
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_u4f12
     bcc b5
   !:
-    lda x
+    lda.z x
     sec
     sbc #<PI_u4f12
-    sta x
-    lda x+1
+    sta.z x
+    lda.z x+1
     sbc #>PI_u4f12
-    sta x+1
+    sta.z x+1
     lda #1
-    sta isUpper
+    sta.z isUpper
     jmp b1
   b5:
     lda #0
-    sta isUpper
+    sta.z isUpper
   b1:
-    lda x+1
+    lda.z x+1
     cmp #>PI_HALF_u4f12
     bcc b2
     bne !+
-    lda x
+    lda.z x
     cmp #<PI_HALF_u4f12
     bcc b2
   !:
     sec
     lda #<PI_u4f12
-    sbc x
-    sta x
+    sbc.z x
+    sta.z x
     lda #>PI_u4f12
-    sbc x+1
-    sta x+1
+    sbc.z x+1
+    sta.z x+1
   b2:
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    lda _4+1
-    sta x1
+    asl.z _4
+    rol.z _4+1
+    asl.z _4
+    rol.z _4+1
+    asl.z _4
+    rol.z _4+1
+    lda.z _4+1
+    sta.z x1
     tax
     tay
     lda #0
-    sta mulu8_sel.select
+    sta.z mulu8_sel.select
     jsr mulu8_sel
     tax
-    ldy x1
+    ldy.z x1
     lda #1
-    sta mulu8_sel.select
+    sta.z mulu8_sel.select
     jsr mulu8_sel
-    sta x3
+    sta.z x3
     tax
     lda #1
-    sta mulu8_sel.select
+    sta.z mulu8_sel.select
     ldy #DIV_6
     jsr mulu8_sel
     eor #$ff
     sec
-    adc x1
-    sta usinx
-    ldx x3
-    ldy x1
+    adc.z x1
+    sta.z usinx
+    ldx.z x3
+    ldy.z x1
     lda #0
-    sta mulu8_sel.select
+    sta.z mulu8_sel.select
     jsr mulu8_sel
     tax
-    ldy x1
+    ldy.z x1
     lda #0
-    sta mulu8_sel.select
+    sta.z mulu8_sel.select
     jsr mulu8_sel
     lsr
     lsr
     lsr
     lsr
     clc
-    adc usinx
+    adc.z usinx
     tax
     cpx #$80
     bcc b3
     dex
   b3:
-    lda isUpper
+    lda.z isUpper
     cmp #0
     beq b14
     txa
@@ -503,19 +503,19 @@ mulu8_sel: {
     .label _1 = 9
     .label select = $13
     tya
-    sta mul8u.mb
+    sta.z mul8u.mb
     lda #0
-    sta mul8u.mb+1
+    sta.z mul8u.mb+1
     jsr mul8u
-    ldy select
+    ldy.z select
     beq !e+
   !:
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
     dey
     bne !-
   !e:
-    lda _1+1
+    lda.z _1+1
     rts
 }
 // Performs division on two 16 bit unsigned words
@@ -539,49 +539,49 @@ divr16u: {
     .label return = $f
     ldx #0
     txa
-    sta quotient
-    sta quotient+1
+    sta.z quotient
+    sta.z quotient+1
     lda #<PI2_u4f12
-    sta dividend
+    sta.z dividend
     lda #>PI2_u4f12
-    sta dividend+1
+    sta.z dividend+1
     txa
-    sta rem
-    sta rem+1
+    sta.z rem
+    sta.z rem+1
   b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
+    asl.z rem
+    rol.z rem+1
+    lda.z dividend+1
     and #$80
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    ora.z rem
+    sta.z rem
   b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
+    asl.z dividend
+    rol.z dividend+1
+    asl.z quotient
+    rol.z quotient+1
+    lda.z rem+1
     cmp #>main.tabsize
     bcc b3
     bne !+
-    lda rem
+    lda.z rem
     cmp #<main.tabsize
     bcc b3
   !:
-    inc quotient
+    inc.z quotient
     bne !+
-    inc quotient+1
+    inc.z quotient+1
   !:
-    lda rem
+    lda.z rem
     sec
     sbc #<main.tabsize
-    sta rem
-    lda rem+1
+    sta.z rem
+    lda.z rem+1
     sbc #>main.tabsize
-    sta rem+1
+    sta.z rem+1
   b3:
     inx
     cpx #$10
@@ -601,21 +601,21 @@ memset: {
     .label end = str+num
     .label dst = $11
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

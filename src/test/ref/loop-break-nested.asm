@@ -5,9 +5,9 @@
 main: {
     .label line = 2
     lda #<$400
-    sta line
+    sta.z line
     lda #>$400
-    sta line+1
+    sta.z line+1
   b2:
     ldy #0
     lda (line),y
@@ -29,16 +29,16 @@ main: {
   b5:
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
-    lda line+1
+    lda.z line+1
     cmp #>$400+$28*$19
     bcc !+
     bne breturn
-    lda line
+    lda.z line
     cmp #<$400+$28*$19
     bcs breturn
   !:

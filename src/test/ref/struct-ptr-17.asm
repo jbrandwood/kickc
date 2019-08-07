@@ -15,11 +15,11 @@ main: {
   b1:
     tya
     jsr get
-    sta _1_x
+    sta.z _1_x
     tya
     asl
     tax
-    lda _1_x
+    lda.z _1_x
     sta SCREEN,x
     lda #get.p_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x

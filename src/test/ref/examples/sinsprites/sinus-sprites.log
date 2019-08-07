@@ -3653,10 +3653,10 @@ main: {
   b1_from_main:
     // [6] phi (byte) sin_idx_y#13 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     // [6] phi (byte) sin_idx_x#13 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
     jmp b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   b1_from_b1:
@@ -3693,23 +3693,23 @@ anim: {
     // [10] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [11] (byte) anim::xidx#0 ← (byte) sin_idx_x#13 -- vbuz1=vbuz2 
-    lda sin_idx_x
-    sta xidx
+    lda.z sin_idx_x
+    sta.z xidx
     // [12] (byte) anim::yidx#0 ← (byte) sin_idx_y#13 -- vbuz1=vbuz2 
-    lda sin_idx_y
-    sta yidx
+    lda.z sin_idx_y
+    sta.z yidx
     // [13] phi from anim to anim::@3 [phi:anim->anim::@3]
   b3_from_anim:
     // [13] phi (byte) anim::j#2 = (byte) 0 [phi:anim->anim::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [13] phi (byte) anim::yidx#3 = (byte) anim::yidx#0 [phi:anim->anim::@3#1] -- register_copy 
     // [13] phi (byte) anim::j2#2 = (byte) $c [phi:anim->anim::@3#2] -- vbuz1=vbuc1 
     lda #$c
-    sta j2
+    sta.z j2
     // [13] phi (byte) anim::x_msb#2 = (byte) 0 [phi:anim->anim::@3#3] -- vbuz1=vbuc1 
     lda #0
-    sta x_msb
+    sta.z x_msb
     // [13] phi (byte) anim::xidx#3 = (byte) anim::xidx#0 [phi:anim->anim::@3#4] -- register_copy 
     jmp b3
     // [13] phi from anim::@5 to anim::@3 [phi:anim::@5->anim::@3]
@@ -3723,52 +3723,52 @@ anim: {
     // anim::@3
   b3:
     // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x#0 + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
-    ldy xidx
+    ldy.z xidx
     lda sintab_x,y
     clc
     adc #<$1e
-    sta x
+    sta.z x
     lda #>$1e
     adc #0
-    sta x+1
+    sta.z x+1
     // [15] (byte~) anim::$6 ← (byte) anim::x_msb#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda x_msb
+    lda.z x_msb
     asl
-    sta _6
+    sta.z _6
     // [16] (byte~) anim::$7 ← > (word) anim::x#0 -- vbuz1=_hi_vwuz2 
-    lda x+1
-    sta _7
+    lda.z x+1
+    sta.z _7
     // [17] (byte) anim::x_msb#1 ← (byte~) anim::$6 | (byte~) anim::$7 -- vbuz1=vbuz2_bor_vbuz3 
-    lda _6
-    ora _7
-    sta x_msb
+    lda.z _6
+    ora.z _7
+    sta.z x_msb
     // [18] (byte~) anim::$9 ← < (word) anim::x#0 -- vbuz1=_lo_vwuz2 
-    lda x
-    sta _9
+    lda.z x
+    sta.z _9
     // [19] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#2) ← (byte~) anim::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _9
-    ldy j2
+    lda.z _9
+    ldy.z j2
     sta SPRITES_XPOS,y
     // [20] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y#0 + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy yidx
+    ldy.z yidx
     lda sintab_y,y
-    ldy j2
+    ldy.z j2
     sta SPRITES_YPOS,y
     // [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a -- vbuz1=vbuz1_plus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #-[$a]
-    stx xidx
+    stx.z xidx
     // [22] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda xidx
+    lda.z xidx
     cmp #sinlen_x
     bcc b4_from_b3
     jmp b6
     // anim::@6
   b6:
     // [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #sinlen_x
-    stx xidx
+    stx.z xidx
     // [24] phi from anim::@3 anim::@6 to anim::@4 [phi:anim::@3/anim::@6->anim::@4]
   b4_from_b3:
   b4_from_b6:
@@ -3777,20 +3777,20 @@ anim: {
     // anim::@4
   b4:
     // [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 -- vbuz1=vbuz1_plus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #-[8]
-    stx yidx
+    stx.z yidx
     // [26] if((byte) anim::yidx#1<(const byte) sinlen_y#0) goto anim::@5 -- vbuz1_lt_vbuc1_then_la1 
-    lda yidx
+    lda.z yidx
     cmp #sinlen_y
     bcc b5_from_b4
     jmp b7
     // anim::@7
   b7:
     // [27] (byte) anim::yidx#2 ← (byte) anim::yidx#1 - (const byte) sinlen_y#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #sinlen_y
-    stx yidx
+    stx.z yidx
     // [28] phi from anim::@4 anim::@7 to anim::@5 [phi:anim::@4/anim::@7->anim::@5]
   b5_from_b4:
   b5_from_b7:
@@ -3799,31 +3799,31 @@ anim: {
     // anim::@5
   b5:
     // [29] (byte) anim::j2#1 ← (byte) anim::j2#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
-    dec j2
-    dec j2
+    dec.z j2
+    dec.z j2
     // [30] (byte) anim::j#1 ← ++ (byte) anim::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [31] if((byte) anim::j#1!=(byte) 7) goto anim::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b3_from_b5
     jmp b8
     // anim::@8
   b8:
     // [32] *((const byte*) SPRITES_XMSB#0) ← (byte) anim::x_msb#1 -- _deref_pbuc1=vbuz1 
-    lda x_msb
+    lda.z x_msb
     sta SPRITES_XMSB
     // [33] (byte) sin_idx_x#3 ← ++ (byte) sin_idx_x#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_x
+    inc.z sin_idx_x
     // [34] if((byte) sin_idx_x#3<(const byte) sinlen_x#0) goto anim::@9 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_x
+    lda.z sin_idx_x
     cmp #sinlen_x
     bcc b9_from_b8
     // [36] phi from anim::@8 to anim::@1 [phi:anim::@8->anim::@1]
   b1_from_b8:
     // [36] phi (byte) sin_idx_x#11 = (byte) 0 [phi:anim::@8->anim::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
     jmp b1
     // [35] phi from anim::@8 to anim::@9 [phi:anim::@8->anim::@9]
   b9_from_b8:
@@ -3837,16 +3837,16 @@ anim: {
     // anim::@1
   b1:
     // [37] (byte) sin_idx_y#3 ← ++ (byte) sin_idx_y#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_y
+    inc.z sin_idx_y
     // [38] if((byte) sin_idx_y#3<(const byte) sinlen_y#0) goto anim::@10 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_y
+    lda.z sin_idx_y
     cmp #sinlen_y
     bcc b10_from_b1
     // [40] phi from anim::@1 to anim::@2 [phi:anim::@1->anim::@2]
   b2_from_b1:
     // [40] phi (byte) sin_idx_y#11 = (byte) 0 [phi:anim::@1->anim::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     jmp b2
     // [39] phi from anim::@1 to anim::@10 [phi:anim::@1->anim::@10]
   b10_from_b1:
@@ -3878,7 +3878,7 @@ init: {
   b1_from_init:
     // [45] phi (byte) init::i#2 = (byte) 0 [phi:init->init::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [45] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
   b1_from_b1:
@@ -3888,17 +3888,17 @@ init: {
   b1:
     // [46] *((const byte*) COLS#0 + (byte) init::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
-    ldy i
+    ldy.z i
     sta COLS,y
     // [47] *((const byte*) COLS#0+(byte) $28 + (byte) init::i#2) ← (byte) $b -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$b
-    ldy i
+    ldy.z i
     sta COLS+$28,y
     // [48] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [49] if((byte) init::i#1!=(byte) $28) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
-    cmp i
+    cmp.z i
     bne b1_from_b1
     // [50] phi from init::@1 to init::@2 [phi:init::@1->init::@2]
   b2_from_b1:
@@ -3926,9 +3926,9 @@ init: {
   progress_init_from_b4:
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0 [phi:init::@4->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [56] phi from init::@4 to init::@5 [phi:init::@4->init::@5]
   b5_from_b4:
@@ -3940,18 +3940,18 @@ init: {
   gen_sintab_from_b5:
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x#0 [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_x
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_x#0 [phi:init::@5->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_x
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) 0 [phi:init::@5->gen_sintab#2] -- vbuz1=vbuc1 
     lda #0
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $ff [phi:init::@5->gen_sintab#3] -- vbuz1=vbuc1 
     lda #$ff
-    sta gen_sintab.max
+    sta.z gen_sintab.max
     jsr gen_sintab
     // [58] phi from init::@5 to init::@6 [phi:init::@5->init::@6]
   b6_from_b5:
@@ -3963,9 +3963,9 @@ init: {
   progress_init_from_b6:
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0+(byte) $28 [phi:init::@6->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN+$28
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [60] phi from init::@6 to init::@7 [phi:init::@6->init::@7]
   b7_from_b6:
@@ -3977,18 +3977,18 @@ init: {
   gen_sintab_from_b7:
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y#0 [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_y
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_y#0 [phi:init::@7->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_y
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) $32 [phi:init::@7->gen_sintab#2] -- vbuz1=vbuc1 
     lda #$32
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $d0 [phi:init::@7->gen_sintab#3] -- vbuz1=vbuc1 
     lda #$d0
-    sta gen_sintab.max
+    sta.z gen_sintab.max
     jsr gen_sintab
     // [62] phi from init::@7 to init::@8 [phi:init::@7->init::@8]
   b8_from_b7:
@@ -4012,9 +4012,9 @@ clear_screen: {
   b2_from_clear_screen:
     // [66] phi (byte*) clear_screen::sc#4 = (const byte*) SCREEN#0 [phi:clear_screen->clear_screen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     jmp b2
     // [66] phi from clear_screen::@1 to clear_screen::@2 [phi:clear_screen::@1->clear_screen::@2]
   b2_from_b1:
@@ -4027,19 +4027,19 @@ clear_screen: {
     ldy #0
     sta (sc),y
     // [68] (byte*) clear_screen::sc#1 ← ++ (byte*) clear_screen::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     jmp b1
     // clear_screen::@1
   b1:
     // [69] if((byte*) clear_screen::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto clear_screen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -4067,10 +4067,10 @@ gen_sintab: {
     .label length = $11
     .label sintab = $13
     // [72] (word) setFAC::w#0 ← (word)(byte) gen_sintab::max#2 -- vwuz1=_word_vbuz2 
-    lda max
-    sta setFAC.w
+    lda.z max
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [73] call setFAC 
     // [153] phi from gen_sintab to setFAC [phi:gen_sintab->setFAC]
   setFAC_from_gen_sintab:
@@ -4087,10 +4087,10 @@ gen_sintab: {
     // gen_sintab::@4
   b4:
     // [76] (word) setFAC::w#1 ← (word)(byte) gen_sintab::min#2 -- vwuz1=_word_vbuz2 
-    lda min
-    sta setFAC.w
+    lda.z min
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [77] call setFAC 
     // [153] phi from gen_sintab::@4 to setFAC [phi:gen_sintab::@4->setFAC]
   setFAC_from_b4:
@@ -4106,9 +4106,9 @@ gen_sintab: {
   setMEMtoFAC_from_b5:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [80] phi from gen_sintab::@5 to gen_sintab::@6 [phi:gen_sintab::@5->gen_sintab::@6]
   b6_from_b5:
@@ -4127,9 +4127,9 @@ gen_sintab: {
   setMEMtoFAC_from_b7:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [84] phi from gen_sintab::@7 to gen_sintab::@8 [phi:gen_sintab::@7->gen_sintab::@8]
   b8_from_b7:
@@ -4141,9 +4141,9 @@ gen_sintab: {
   setFAC_from_b8:
     // [153] phi (word) setFAC::w#5 = (byte) 2 [phi:gen_sintab::@8->setFAC#0] -- vwuz1=vbuc1 
     lda #<2
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>2
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     // [86] phi from gen_sintab::@8 to gen_sintab::@9 [phi:gen_sintab::@8->gen_sintab::@9]
   b9_from_b8:
@@ -4155,9 +4155,9 @@ gen_sintab: {
   divMEMbyFAC_from_b9:
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_amp
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [88] phi from gen_sintab::@9 to gen_sintab::@10 [phi:gen_sintab::@9->gen_sintab::@10]
   b10_from_b9:
@@ -4169,9 +4169,9 @@ gen_sintab: {
   setMEMtoFAC_from_b10:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [90] phi from gen_sintab::@10 to gen_sintab::@11 [phi:gen_sintab::@10->gen_sintab::@11]
   b11_from_b10:
@@ -4192,26 +4192,26 @@ gen_sintab: {
   setMEMtoFAC_from_b12:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [94] phi from gen_sintab::@12 to gen_sintab::@1 [phi:gen_sintab::@12->gen_sintab::@1]
   b1_from_b12:
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_init::line#2 [phi:gen_sintab::@12->gen_sintab::@1#0] -- register_copy 
     // [94] phi (byte) progress_idx#14 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     // [94] phi (byte) gen_sintab::i#10 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
   // f_min = min + (max - min) / 2
     // gen_sintab::@1
   b1:
     // [95] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2 -- vbuz1_lt_vbuz2_then_la1 
-    lda i
-    cmp length
+    lda.z i
+    cmp.z length
     bcc b2
     jmp breturn
     // gen_sintab::@return
@@ -4221,10 +4221,10 @@ gen_sintab: {
     // gen_sintab::@2
   b2:
     // [97] (word) setFAC::w#3 ← (word)(byte) gen_sintab::i#10 -- vwuz1=_word_vbuz2 
-    lda i
-    sta setFAC.w
+    lda.z i
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [98] call setFAC 
     // [153] phi from gen_sintab::@2 to setFAC [phi:gen_sintab::@2->setFAC]
   setFAC_from_b2:
@@ -4240,9 +4240,9 @@ gen_sintab: {
   mulFACbyMEM_from_b13:
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_2pi#0 [phi:gen_sintab::@13->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_2pi
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [101] phi from gen_sintab::@13 to gen_sintab::@14 [phi:gen_sintab::@13->gen_sintab::@14]
   b14_from_b13:
@@ -4254,18 +4254,18 @@ gen_sintab: {
   setMEMtoFAC_from_b14:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_i
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     jmp b15
     // gen_sintab::@15
   b15:
     // [103] (word) setFAC::w#4 ← (word)(byte) gen_sintab::length#10 -- vwuz1=_word_vbuz2 
-    lda length
-    sta setFAC.w
+    lda.z length
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [104] call setFAC 
     // [153] phi from gen_sintab::@15 to setFAC [phi:gen_sintab::@15->setFAC]
   setFAC_from_b15:
@@ -4281,9 +4281,9 @@ gen_sintab: {
   divMEMbyFAC_from_b16:
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_i
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [107] phi from gen_sintab::@16 to gen_sintab::@17 [phi:gen_sintab::@16->gen_sintab::@17]
   b17_from_b16:
@@ -4302,9 +4302,9 @@ gen_sintab: {
   mulFACbyMEM_from_b18:
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_amp
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [111] phi from gen_sintab::@18 to gen_sintab::@19 [phi:gen_sintab::@18->gen_sintab::@19]
   b19_from_b18:
@@ -4323,25 +4323,25 @@ gen_sintab: {
     // [114] call getFAC 
     jsr getFAC
     // [115] (word) getFAC::return#2 ← (word) getFAC::return#0 -- vwuz1=vwuz2 
-    lda getFAC.return
-    sta getFAC.return_2
-    lda getFAC.return+1
-    sta getFAC.return_2+1
+    lda.z getFAC.return
+    sta.z getFAC.return_2
+    lda.z getFAC.return+1
+    sta.z getFAC.return_2+1
     jmp b21
     // gen_sintab::@21
   b21:
     // [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2 -- vwuz1=vwuz2 
-    lda getFAC.return_2
-    sta _24
-    lda getFAC.return_2+1
-    sta _24+1
+    lda.z getFAC.return_2
+    sta.z _24
+    lda.z getFAC.return_2+1
+    sta.z _24+1
     // [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 -- vbuz1=_byte_vwuz2 
-    lda _24
-    sta _25
+    lda.z _24
+    sta.z _25
     // [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 -- pbuz1_derefidx_vbuz2=vbuz3 
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
-    lda _25
-    ldy i
+    lda.z _25
+    ldy.z i
     sta (sintab),y
     // [119] call progress_inc 
     jsr progress_inc
@@ -4349,7 +4349,7 @@ gen_sintab: {
     // gen_sintab::@22
   b22:
     // [120] (byte) gen_sintab::i#1 ← ++ (byte) gen_sintab::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [94] phi from gen_sintab::@22 to gen_sintab::@1 [phi:gen_sintab::@22->gen_sintab::@1]
   b1_from_b22:
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_cursor#11 [phi:gen_sintab::@22->gen_sintab::@1#0] -- register_copy 
@@ -4367,10 +4367,10 @@ gen_sintab: {
 // Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
     // [121] (byte) progress_idx#10 ← ++ (byte) progress_idx#14 -- vbuz1=_inc_vbuz1 
-    inc progress_idx
+    inc.z progress_idx
     // [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp progress_idx
+    cmp.z progress_idx
     bne b1_from_progress_inc
     jmp b2
     // progress_inc::@2
@@ -4380,16 +4380,16 @@ progress_inc: {
     ldy #0
     sta (progress_cursor),y
     // [124] (byte*) progress_cursor#10 ← ++ (byte*) progress_cursor#13 -- pbuz1=_inc_pbuz1 
-    inc progress_cursor
+    inc.z progress_cursor
     bne !+
-    inc progress_cursor+1
+    inc.z progress_cursor+1
   !:
     // [125] phi from progress_inc::@2 to progress_inc::@1 [phi:progress_inc::@2->progress_inc::@1]
   b1_from_b2:
     // [125] phi (byte*) progress_cursor#11 = (byte*) progress_cursor#10 [phi:progress_inc::@2->progress_inc::@1#0] -- register_copy 
     // [125] phi (byte) progress_idx#12 = (byte) 0 [phi:progress_inc::@2->progress_inc::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     jmp b1
     // [125] phi from progress_inc to progress_inc::@1 [phi:progress_inc->progress_inc::@1]
   b1_from_progress_inc:
@@ -4399,7 +4399,7 @@ progress_inc: {
     // progress_inc::@1
   b1:
     // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars#0 + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy progress_idx
+    ldy.z progress_idx
     lda progress_chars,y
     ldy #0
     sta (progress_cursor),y
@@ -4421,13 +4421,13 @@ getFAC: {
     // asm { jsr$b1aa sty$fe sta$ff  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty $fe
-    sta $ff
+    sty.z $fe
+    sta.z $ff
     // [129] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memLo
-    sta return
+    sta.z return
     lda memHi
-    sta return+1
+    sta.z return+1
     jmp breturn
     // getFAC::@return
   breturn:
@@ -4444,16 +4444,16 @@ addMEMtoFAC: {
   prepareMEM_from_addMEMtoFAC:
     // [135] phi (byte*) prepareMEM::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
     lda #<gen_sintab.f_min
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>gen_sintab.f_min
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
     jmp b1
     // addMEMtoFAC::@1
   b1:
     // asm { lda$fe ldy$ff jsr$b867  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $b867
     jmp breturn
     // addMEMtoFAC::@return
@@ -4469,16 +4469,16 @@ prepareMEM: {
     .label _1 = $41
     .label mem = $19
     // [136] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuz1=_lo_pbuz2 
-    lda mem
-    sta _0
+    lda.z mem
+    sta.z _0
     // [137] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuz1 
-    lda _0
+    lda.z _0
     sta memLo
     // [138] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuz1=_hi_pbuz2 
-    lda mem+1
-    sta _1
+    lda.z mem+1
+    sta.z _1
     // [139] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuz1 
-    lda _1
+    lda.z _1
     sta memHi
     jmp breturn
     // prepareMEM::@return
@@ -4494,10 +4494,10 @@ prepareMEM: {
 mulFACbyMEM: {
     .label mem = $1b
     // [142] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
-    lda mem
-    sta prepareMEM.mem
-    lda mem+1
-    sta prepareMEM.mem+1
+    lda.z mem
+    sta.z prepareMEM.mem
+    lda.z mem+1
+    sta.z prepareMEM.mem+1
     // [143] call prepareMEM 
     // [135] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
   prepareMEM_from_mulFACbyMEM:
@@ -4507,8 +4507,8 @@ mulFACbyMEM: {
     // mulFACbyMEM::@1
   b1:
     // asm { lda$fe ldy$ff jsr$ba28  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $ba28
     jmp breturn
     // mulFACbyMEM::@return
@@ -4537,10 +4537,10 @@ sinFAC: {
 divMEMbyFAC: {
     .label mem = $1d
     // [149] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2 -- pbuz1=pbuz2 
-    lda mem
-    sta prepareMEM.mem
-    lda mem+1
-    sta prepareMEM.mem+1
+    lda.z mem
+    sta.z prepareMEM.mem
+    lda.z mem+1
+    sta.z prepareMEM.mem+1
     // [150] call prepareMEM 
     // [135] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
   prepareMEM_from_divMEMbyFAC:
@@ -4550,8 +4550,8 @@ divMEMbyFAC: {
     // divMEMbyFAC::@1
   b1:
     // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $bb0f
     jmp breturn
     // divMEMbyFAC::@return
@@ -4566,10 +4566,10 @@ divMEMbyFAC: {
 setFAC: {
     .label w = $1f
     // [154] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#5 -- pbuz1=pbuz2 
-    lda w
-    sta prepareMEM.mem
-    lda w+1
-    sta prepareMEM.mem+1
+    lda.z w
+    sta.z prepareMEM.mem
+    lda.z w+1
+    sta.z prepareMEM.mem+1
     // [155] call prepareMEM 
     // [135] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
   prepareMEM_from_setFAC:
@@ -4580,8 +4580,8 @@ setFAC: {
   b1:
     // asm { ldy$fe lda$ff jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy $fe
-    lda $ff
+    ldy.z $fe
+    lda.z $ff
     jsr $b391
     jmp breturn
     // setFAC::@return
@@ -4597,10 +4597,10 @@ setFAC: {
 setMEMtoFAC: {
     .label mem = $21
     // [159] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5 -- pbuz1=pbuz2 
-    lda mem
-    sta prepareMEM.mem
-    lda mem+1
-    sta prepareMEM.mem+1
+    lda.z mem
+    sta.z prepareMEM.mem
+    lda.z mem+1
+    sta.z prepareMEM.mem+1
     // [160] call prepareMEM 
     // [135] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
   prepareMEM_from_setMEMtoFAC:
@@ -4610,8 +4610,8 @@ setMEMtoFAC: {
     // setMEMtoFAC::@1
   b1:
     // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx $fe
-    ldy $ff
+    ldx.z $fe
+    ldy.z $ff
     jsr $bbd4
     jmp breturn
     // setMEMtoFAC::@return
@@ -4662,12 +4662,12 @@ gen_sprites: {
   b1_from_gen_sprites:
     // [170] phi (byte*) gen_sprites::spr#2 = (const byte*) sprites#0 [phi:gen_sprites->gen_sprites::@1#0] -- pbuz1=pbuc1 
     lda #<sprites
-    sta spr
+    sta.z spr
     lda #>sprites
-    sta spr+1
+    sta.z spr+1
     // [170] phi (byte) gen_sprites::i#2 = (byte) 0 [phi:gen_sprites->gen_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [170] phi from gen_sprites::@2 to gen_sprites::@1 [phi:gen_sprites::@2->gen_sprites::@1]
   b1_from_b2:
@@ -4677,14 +4677,14 @@ gen_sprites: {
     // gen_sprites::@1
   b1:
     // [171] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml#0 + (byte) gen_sprites::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda cml,y
-    sta gen_chargen_sprite.ch
+    sta.z gen_chargen_sprite.ch
     // [172] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2 -- pbuz1=pbuz2 
-    lda spr
-    sta gen_chargen_sprite.sprite
-    lda spr+1
-    sta gen_chargen_sprite.sprite+1
+    lda.z spr
+    sta.z gen_chargen_sprite.sprite
+    lda.z spr+1
+    sta.z gen_chargen_sprite.sprite+1
     // [173] call gen_chargen_sprite 
     jsr gen_chargen_sprite
     jmp b2
@@ -4693,16 +4693,16 @@ gen_sprites: {
     // [174] (byte*) gen_sprites::spr#1 ← (byte*) gen_sprites::spr#2 + (byte) $40 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$40
     clc
-    adc spr
-    sta spr
+    adc.z spr
+    sta.z spr
     bcc !+
-    inc spr+1
+    inc.z spr+1
   !:
     // [175] (byte) gen_sprites::i#1 ← ++ (byte) gen_sprites::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [176] if((byte) gen_sprites::i#1!=(byte) 7) goto gen_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // gen_sprites::@return
@@ -4732,29 +4732,29 @@ gen_chargen_sprite: {
     .label y = $26
     .label c = $29
     // [178] (word~) gen_chargen_sprite::$0 ← (word)(byte) gen_chargen_sprite::ch#0 -- vwuz1=_word_vbuz2 
-    lda ch
-    sta _0
+    lda.z ch
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [179] (word~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _0
+    lda.z _0
     asl
-    sta _1
-    lda _0+1
+    sta.z _1
+    lda.z _0+1
     rol
-    sta _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    sta.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [180] (byte*) gen_chargen_sprite::chargen#0 ← (const byte*) CHARGEN#0 + (word~) gen_chargen_sprite::$1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda _1
+    lda.z _1
     clc
     adc #<CHARGEN
-    sta chargen
-    lda _1+1
+    sta.z chargen
+    lda.z _1+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // asm { sei  }
     sei
     // [182] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
@@ -4765,7 +4765,7 @@ gen_chargen_sprite: {
     // [183] phi (byte*) gen_chargen_sprite::sprite#11 = (byte*) gen_chargen_sprite::sprite#0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#0] -- register_copy 
     // [183] phi (byte) gen_chargen_sprite::y#2 = (byte) 0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b1
     // [183] phi from gen_chargen_sprite::@8 to gen_chargen_sprite::@1 [phi:gen_chargen_sprite::@8->gen_chargen_sprite::@1]
   b1_from_b8:
@@ -4776,21 +4776,21 @@ gen_chargen_sprite: {
   b1:
     // [184] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     // current chargen line
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [185] phi from gen_chargen_sprite::@1 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2]
   b2_from_b1:
     // [185] phi (byte) gen_chargen_sprite::x#6 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [185] phi (byte*) gen_chargen_sprite::sprite#10 = (byte*) gen_chargen_sprite::sprite#11 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#1] -- register_copy 
     // [185] phi (byte) gen_chargen_sprite::s_gen_cnt#4 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#2] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen_cnt
+    sta.z s_gen_cnt
     // [185] phi (byte) gen_chargen_sprite::s_gen#5 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#3] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen
+    sta.z s_gen
     // [185] phi (byte) gen_chargen_sprite::bits#2 = (byte) gen_chargen_sprite::bits#0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#4] -- register_copy 
     jmp b2
     // [185] phi from gen_chargen_sprite::@7 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@7->gen_chargen_sprite::@2]
@@ -4805,10 +4805,10 @@ gen_chargen_sprite: {
   b2:
     // [186] (byte~) gen_chargen_sprite::$3 ← (byte) gen_chargen_sprite::bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and bits
-    sta _3
+    and.z bits
+    sta.z _3
     // [187] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3 -- vbuz1_eq_0_then_la1 
-    lda _3
+    lda.z _3
     cmp #0
     beq b3_from_b2
     // [188] phi from gen_chargen_sprite::@2 to gen_chargen_sprite::@10 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@10]
@@ -4820,13 +4820,13 @@ gen_chargen_sprite: {
   b3_from_b10:
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 1 [phi:gen_chargen_sprite::@10->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta c
+    sta.z c
     jmp b3
     // [189] phi from gen_chargen_sprite::@2 to gen_chargen_sprite::@3 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3]
   b3_from_b2:
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 0 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     jmp b3
     // gen_chargen_sprite::@3
   b3:
@@ -4835,7 +4835,7 @@ gen_chargen_sprite: {
     // [190] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#10 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#0] -- register_copy 
     // [190] phi (byte) gen_chargen_sprite::b#2 = (byte) 0 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#1] -- vbuz1=vbuc1 
     lda #0
-    sta b
+    sta.z b
     // [190] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
     // [190] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
     jmp b4
@@ -4850,49 +4850,49 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@4
   b4:
     // [191] (byte~) gen_chargen_sprite::$6 ← (byte) gen_chargen_sprite::s_gen#3 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda s_gen
+    lda.z s_gen
     asl
-    sta _6
+    sta.z _6
     // [192] (byte) gen_chargen_sprite::s_gen#1 ← (byte~) gen_chargen_sprite::$6 | (byte) gen_chargen_sprite::c#3 -- vbuz1=vbuz2_bor_vbuz3 
-    lda _6
-    ora c
-    sta s_gen
+    lda.z _6
+    ora.z c
+    sta.z s_gen
     // [193] (byte) gen_chargen_sprite::s_gen_cnt#1 ← ++ (byte) gen_chargen_sprite::s_gen_cnt#3 -- vbuz1=_inc_vbuz1 
-    inc s_gen_cnt
+    inc.z s_gen_cnt
     // [194] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp s_gen_cnt
+    cmp.z s_gen_cnt
     bne b5_from_b4
     jmp b6
     // gen_chargen_sprite::@6
   b6:
     // [195] *((byte*) gen_chargen_sprite::sprite#3) ← (byte) gen_chargen_sprite::s_gen#1 -- _deref_pbuz1=vbuz2 
     // sprite byte filled - store and move to next byte
-    lda s_gen
+    lda.z s_gen
     ldy #0
     sta (sprite),y
     // [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 3) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda s_gen
+    lda.z s_gen
     ldy #3
     sta (sprite),y
     // [197] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 6) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda s_gen
+    lda.z s_gen
     ldy #6
     sta (sprite),y
     // [198] (byte*) gen_chargen_sprite::sprite#1 ← ++ (byte*) gen_chargen_sprite::sprite#3 -- pbuz1=_inc_pbuz1 
-    inc sprite
+    inc.z sprite
     bne !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // [199] phi from gen_chargen_sprite::@6 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5]
   b5_from_b6:
     // [199] phi (byte*) gen_chargen_sprite::sprite#4 = (byte*) gen_chargen_sprite::sprite#1 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#0] -- register_copy 
     // [199] phi (byte) gen_chargen_sprite::s_gen_cnt#5 = (byte) 0 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#1] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen_cnt
+    sta.z s_gen_cnt
     // [199] phi (byte) gen_chargen_sprite::s_gen#6 = (byte) 0 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#2] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen
+    sta.z s_gen
     jmp b5
     // [199] phi from gen_chargen_sprite::@4 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5]
   b5_from_b4:
@@ -4903,21 +4903,21 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@5
   b5:
     // [200] (byte) gen_chargen_sprite::b#1 ← ++ (byte) gen_chargen_sprite::b#2 -- vbuz1=_inc_vbuz1 
-    inc b
+    inc.z b
     // [201] if((byte) gen_chargen_sprite::b#1!=(byte) 3) goto gen_chargen_sprite::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp b
+    cmp.z b
     bne b4_from_b5
     jmp b7
     // gen_chargen_sprite::@7
   b7:
     // [202] (byte) gen_chargen_sprite::bits#1 ← (byte) gen_chargen_sprite::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // [203] (byte) gen_chargen_sprite::x#1 ← ++ (byte) gen_chargen_sprite::x#6 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [204] if((byte) gen_chargen_sprite::x#1!=(byte) 8) goto gen_chargen_sprite::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp x
+    cmp.z x
     bne b2_from_b7
     jmp b8
     // gen_chargen_sprite::@8
@@ -4925,16 +4925,16 @@ gen_chargen_sprite: {
     // [205] (byte*) gen_chargen_sprite::sprite#2 ← (byte*) gen_chargen_sprite::sprite#4 + (byte) 6 -- pbuz1=pbuz1_plus_vbuc1 
     lda #6
     clc
-    adc sprite
-    sta sprite
+    adc.z sprite
+    sta.z sprite
     bcc !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // [206] (byte) gen_chargen_sprite::y#1 ← ++ (byte) gen_chargen_sprite::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [207] if((byte) gen_chargen_sprite::y#1!=(byte) 8) goto gen_chargen_sprite::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b1_from_b8
     jmp b9
     // gen_chargen_sprite::@9
@@ -4973,19 +4973,19 @@ place_sprites: {
   b1_from_place_sprites:
     // [214] phi (byte) place_sprites::col#2 = (byte) 5 [phi:place_sprites->place_sprites::@1#0] -- vbuz1=vbuc1 
     lda #5
-    sta col
+    sta.z col
     // [214] phi (byte) place_sprites::j2#3 = (byte) 0 [phi:place_sprites->place_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta j2_3
+    sta.z j2_3
     // [214] phi (byte) place_sprites::spr_x#2 = (byte) $3c [phi:place_sprites->place_sprites::@1#2] -- vbuz1=vbuc1 
     lda #$3c
-    sta spr_x
+    sta.z spr_x
     // [214] phi (byte) place_sprites::j#2 = (byte) 0 [phi:place_sprites->place_sprites::@1#3] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [214] phi (byte) place_sprites::spr_id#2 = (byte)(word)(const byte*) sprites#0/(byte) $40 [phi:place_sprites->place_sprites::@1#4] -- vbuz1=vbuc1 
     lda #sprites/$40
-    sta spr_id
+    sta.z spr_id
     jmp b1
     // [214] phi from place_sprites::@1 to place_sprites::@1 [phi:place_sprites::@1->place_sprites::@1]
   b1_from_b1:
@@ -4998,44 +4998,44 @@ place_sprites: {
     // place_sprites::@1
   b1:
     // [215] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_id
-    ldy j
+    lda.z spr_id
+    ldy.z j
     sta sprites_ptr,y
     // [216] (byte) place_sprites::spr_id#1 ← ++ (byte) place_sprites::spr_id#2 -- vbuz1=_inc_vbuz1 
-    inc spr_id
+    inc.z spr_id
     // [217] *((const byte*) SPRITES_XPOS#0 + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_x
-    ldy j2_3
+    lda.z spr_x
+    ldy.z j2_3
     sta SPRITES_XPOS,y
     // [218] *((const byte*) SPRITES_YPOS#0 + (byte) place_sprites::j2#3) ← (byte) $50 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$50
-    ldy j2_3
+    ldy.z j2_3
     sta SPRITES_YPOS,y
     // [219] *((const byte*) SPRITES_COLS#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda col
-    ldy j
+    lda.z col
+    ldy.z j
     sta SPRITES_COLS,y
     // [220] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte) $20 -- vbuz1=vbuz1_plus_vbuc1 
-    lax spr_x
+    lax.z spr_x
     axs #-[$20]
-    stx spr_x
+    stx.z spr_x
     // [221] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5 -- vbuz1=vbuz1_bxor_vbuc1 
     lda #7^5
-    eor col
-    sta col
+    eor.z col
+    sta.z col
     // [222] (byte) place_sprites::j2#1 ← ++ (byte) place_sprites::j2#3 -- vbuz1=_inc_vbuz2 
-    ldy j2_3
+    ldy.z j2_3
     iny
-    sty j2
+    sty.z j2
     // [223] (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1 -- vbuz1=_inc_vbuz2 
-    ldy j2
+    ldy.z j2
     iny
-    sty j2_2
+    sty.z j2_2
     // [224] (byte) place_sprites::j#1 ← ++ (byte) place_sprites::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [225] if((byte) place_sprites::j#1!=(byte) 7) goto place_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b1_from_b1
     jmp breturn
     // place_sprites::@return
@@ -5521,10 +5521,10 @@ main: {
   b1_from_main:
     // [6] phi (byte) sin_idx_y#13 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     // [6] phi (byte) sin_idx_x#13 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
     jmp b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   b1_from_b1:
@@ -5559,23 +5559,23 @@ anim: {
     // [10] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [11] (byte) anim::xidx#0 ← (byte) sin_idx_x#13 -- vbuz1=vbuz2 
-    lda sin_idx_x
-    sta xidx
+    lda.z sin_idx_x
+    sta.z xidx
     // [12] (byte) anim::yidx#0 ← (byte) sin_idx_y#13 -- vbuz1=vbuz2 
-    lda sin_idx_y
-    sta yidx
+    lda.z sin_idx_y
+    sta.z yidx
     // [13] phi from anim to anim::@3 [phi:anim->anim::@3]
   b3_from_anim:
     // [13] phi (byte) anim::j#2 = (byte) 0 [phi:anim->anim::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [13] phi (byte) anim::yidx#3 = (byte) anim::yidx#0 [phi:anim->anim::@3#1] -- register_copy 
     // [13] phi (byte) anim::j2#2 = (byte) $c [phi:anim->anim::@3#2] -- vbuz1=vbuc1 
     lda #$c
-    sta j2
+    sta.z j2
     // [13] phi (byte) anim::x_msb#2 = (byte) 0 [phi:anim->anim::@3#3] -- vbuz1=vbuc1 
     lda #0
-    sta x_msb
+    sta.z x_msb
     // [13] phi (byte) anim::xidx#3 = (byte) anim::xidx#0 [phi:anim->anim::@3#4] -- register_copy 
     jmp b3
     // [13] phi from anim::@5 to anim::@3 [phi:anim::@5->anim::@3]
@@ -5589,46 +5589,46 @@ anim: {
     // anim::@3
   b3:
     // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x#0 + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
-    ldy xidx
+    ldy.z xidx
     lda sintab_x,y
     clc
     adc #<$1e
-    sta x
+    sta.z x
     lda #>$1e
     adc #0
-    sta x+1
+    sta.z x+1
     // [15] (byte~) anim::$6 ← (byte) anim::x_msb#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl _6
+    asl.z _6
     // [16] (byte~) anim::$7 ← > (word) anim::x#0 -- vbuaa=_hi_vwuz1 
-    lda x+1
+    lda.z x+1
     // [17] (byte) anim::x_msb#1 ← (byte~) anim::$6 | (byte~) anim::$7 -- vbuz1=vbuz1_bor_vbuaa 
-    ora x_msb
-    sta x_msb
+    ora.z x_msb
+    sta.z x_msb
     // [18] (byte~) anim::$9 ← < (word) anim::x#0 -- vbuaa=_lo_vwuz1 
-    lda x
+    lda.z x
     // [19] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#2) ← (byte~) anim::$9 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy j2
+    ldy.z j2
     sta SPRITES_XPOS,y
     // [20] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y#0 + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy yidx
+    ldy.z yidx
     lda sintab_y,y
-    ldy j2
+    ldy.z j2
     sta SPRITES_YPOS,y
     // [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a -- vbuz1=vbuz1_plus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #-[$a]
-    stx xidx
+    stx.z xidx
     // [22] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda xidx
+    lda.z xidx
     cmp #sinlen_x
     bcc b4_from_b3
     jmp b6
     // anim::@6
   b6:
     // [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #sinlen_x
-    stx xidx
+    stx.z xidx
     // [24] phi from anim::@3 anim::@6 to anim::@4 [phi:anim::@3/anim::@6->anim::@4]
   b4_from_b3:
   b4_from_b6:
@@ -5637,20 +5637,20 @@ anim: {
     // anim::@4
   b4:
     // [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 -- vbuz1=vbuz1_plus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #-[8]
-    stx yidx
+    stx.z yidx
     // [26] if((byte) anim::yidx#1<(const byte) sinlen_y#0) goto anim::@5 -- vbuz1_lt_vbuc1_then_la1 
-    lda yidx
+    lda.z yidx
     cmp #sinlen_y
     bcc b5_from_b4
     jmp b7
     // anim::@7
   b7:
     // [27] (byte) anim::yidx#2 ← (byte) anim::yidx#1 - (const byte) sinlen_y#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #sinlen_y
-    stx yidx
+    stx.z yidx
     // [28] phi from anim::@4 anim::@7 to anim::@5 [phi:anim::@4/anim::@7->anim::@5]
   b5_from_b4:
   b5_from_b7:
@@ -5659,31 +5659,31 @@ anim: {
     // anim::@5
   b5:
     // [29] (byte) anim::j2#1 ← (byte) anim::j2#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
-    dec j2
-    dec j2
+    dec.z j2
+    dec.z j2
     // [30] (byte) anim::j#1 ← ++ (byte) anim::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [31] if((byte) anim::j#1!=(byte) 7) goto anim::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b3_from_b5
     jmp b8
     // anim::@8
   b8:
     // [32] *((const byte*) SPRITES_XMSB#0) ← (byte) anim::x_msb#1 -- _deref_pbuc1=vbuz1 
-    lda x_msb
+    lda.z x_msb
     sta SPRITES_XMSB
     // [33] (byte) sin_idx_x#3 ← ++ (byte) sin_idx_x#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_x
+    inc.z sin_idx_x
     // [34] if((byte) sin_idx_x#3<(const byte) sinlen_x#0) goto anim::@9 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_x
+    lda.z sin_idx_x
     cmp #sinlen_x
     bcc b9_from_b8
     // [36] phi from anim::@8 to anim::@1 [phi:anim::@8->anim::@1]
   b1_from_b8:
     // [36] phi (byte) sin_idx_x#11 = (byte) 0 [phi:anim::@8->anim::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
     jmp b1
     // [35] phi from anim::@8 to anim::@9 [phi:anim::@8->anim::@9]
   b9_from_b8:
@@ -5697,16 +5697,16 @@ anim: {
     // anim::@1
   b1:
     // [37] (byte) sin_idx_y#3 ← ++ (byte) sin_idx_y#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_y
+    inc.z sin_idx_y
     // [38] if((byte) sin_idx_y#3<(const byte) sinlen_y#0) goto anim::@10 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_y
+    lda.z sin_idx_y
     cmp #sinlen_y
     bcc b10_from_b1
     // [40] phi from anim::@1 to anim::@2 [phi:anim::@1->anim::@2]
   b2_from_b1:
     // [40] phi (byte) sin_idx_y#11 = (byte) 0 [phi:anim::@1->anim::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     jmp b2
     // [39] phi from anim::@1 to anim::@10 [phi:anim::@1->anim::@10]
   b10_from_b1:
@@ -5781,9 +5781,9 @@ init: {
   progress_init_from_b4:
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0 [phi:init::@4->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [56] phi from init::@4 to init::@5 [phi:init::@4->init::@5]
   b5_from_b4:
@@ -5795,15 +5795,15 @@ init: {
   gen_sintab_from_b5:
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x#0 [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_x
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_x#0 [phi:init::@5->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_x
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) 0 [phi:init::@5->gen_sintab#2] -- vbuz1=vbuc1 
     lda #0
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $ff [phi:init::@5->gen_sintab#3] -- vbuxx=vbuc1 
     ldx #$ff
     jsr gen_sintab
@@ -5817,9 +5817,9 @@ init: {
   progress_init_from_b6:
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0+(byte) $28 [phi:init::@6->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN+$28
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [60] phi from init::@6 to init::@7 [phi:init::@6->init::@7]
   b7_from_b6:
@@ -5831,15 +5831,15 @@ init: {
   gen_sintab_from_b7:
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y#0 [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_y
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_y#0 [phi:init::@7->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_y
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) $32 [phi:init::@7->gen_sintab#2] -- vbuz1=vbuc1 
     lda #$32
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $d0 [phi:init::@7->gen_sintab#3] -- vbuxx=vbuc1 
     ldx #$d0
     jsr gen_sintab
@@ -5865,9 +5865,9 @@ clear_screen: {
   b2_from_clear_screen:
     // [66] phi (byte*) clear_screen::sc#4 = (const byte*) SCREEN#0 [phi:clear_screen->clear_screen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     jmp b2
     // [66] phi from clear_screen::@1 to clear_screen::@2 [phi:clear_screen::@1->clear_screen::@2]
   b2_from_b1:
@@ -5880,19 +5880,19 @@ clear_screen: {
     ldy #0
     sta (sc),y
     // [68] (byte*) clear_screen::sc#1 ← ++ (byte*) clear_screen::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     jmp b1
     // clear_screen::@1
   b1:
     // [69] if((byte*) clear_screen::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto clear_screen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -5919,9 +5919,9 @@ gen_sintab: {
     .label sintab = $13
     // [72] (word) setFAC::w#0 ← (word)(byte) gen_sintab::max#2 -- vwuz1=_word_vbuxx 
     txa
-    sta setFAC.w
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [73] call setFAC 
     // [153] phi from gen_sintab to setFAC [phi:gen_sintab->setFAC]
   setFAC_from_gen_sintab:
@@ -5938,10 +5938,10 @@ gen_sintab: {
     // gen_sintab::@4
   b4:
     // [76] (word) setFAC::w#1 ← (word)(byte) gen_sintab::min#2 -- vwuz1=_word_vbuz2 
-    lda min
-    sta setFAC.w
+    lda.z min
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [77] call setFAC 
     // [153] phi from gen_sintab::@4 to setFAC [phi:gen_sintab::@4->setFAC]
   setFAC_from_b4:
@@ -5957,9 +5957,9 @@ gen_sintab: {
   setMEMtoFAC_from_b5:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [80] phi from gen_sintab::@5 to gen_sintab::@6 [phi:gen_sintab::@5->gen_sintab::@6]
   b6_from_b5:
@@ -5978,9 +5978,9 @@ gen_sintab: {
   setMEMtoFAC_from_b7:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [84] phi from gen_sintab::@7 to gen_sintab::@8 [phi:gen_sintab::@7->gen_sintab::@8]
   b8_from_b7:
@@ -5992,9 +5992,9 @@ gen_sintab: {
   setFAC_from_b8:
     // [153] phi (word) setFAC::w#5 = (byte) 2 [phi:gen_sintab::@8->setFAC#0] -- vwuz1=vbuc1 
     lda #<2
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>2
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     // [86] phi from gen_sintab::@8 to gen_sintab::@9 [phi:gen_sintab::@8->gen_sintab::@9]
   b9_from_b8:
@@ -6006,9 +6006,9 @@ gen_sintab: {
   divMEMbyFAC_from_b9:
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_amp
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [88] phi from gen_sintab::@9 to gen_sintab::@10 [phi:gen_sintab::@9->gen_sintab::@10]
   b10_from_b9:
@@ -6020,9 +6020,9 @@ gen_sintab: {
   setMEMtoFAC_from_b10:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [90] phi from gen_sintab::@10 to gen_sintab::@11 [phi:gen_sintab::@10->gen_sintab::@11]
   b11_from_b10:
@@ -6043,26 +6043,26 @@ gen_sintab: {
   setMEMtoFAC_from_b12:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [94] phi from gen_sintab::@12 to gen_sintab::@1 [phi:gen_sintab::@12->gen_sintab::@1]
   b1_from_b12:
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_init::line#2 [phi:gen_sintab::@12->gen_sintab::@1#0] -- register_copy 
     // [94] phi (byte) progress_idx#14 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     // [94] phi (byte) gen_sintab::i#10 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
   // f_min = min + (max - min) / 2
     // gen_sintab::@1
   b1:
     // [95] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2 -- vbuz1_lt_vbuz2_then_la1 
-    lda i
-    cmp length
+    lda.z i
+    cmp.z length
     bcc b2
     jmp breturn
     // gen_sintab::@return
@@ -6072,10 +6072,10 @@ gen_sintab: {
     // gen_sintab::@2
   b2:
     // [97] (word) setFAC::w#3 ← (word)(byte) gen_sintab::i#10 -- vwuz1=_word_vbuz2 
-    lda i
-    sta setFAC.w
+    lda.z i
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [98] call setFAC 
     // [153] phi from gen_sintab::@2 to setFAC [phi:gen_sintab::@2->setFAC]
   setFAC_from_b2:
@@ -6091,9 +6091,9 @@ gen_sintab: {
   mulFACbyMEM_from_b13:
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_2pi#0 [phi:gen_sintab::@13->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_2pi
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [101] phi from gen_sintab::@13 to gen_sintab::@14 [phi:gen_sintab::@13->gen_sintab::@14]
   b14_from_b13:
@@ -6105,18 +6105,18 @@ gen_sintab: {
   setMEMtoFAC_from_b14:
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_i
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     jmp b15
     // gen_sintab::@15
   b15:
     // [103] (word) setFAC::w#4 ← (word)(byte) gen_sintab::length#10 -- vwuz1=_word_vbuz2 
-    lda length
-    sta setFAC.w
+    lda.z length
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [104] call setFAC 
     // [153] phi from gen_sintab::@15 to setFAC [phi:gen_sintab::@15->setFAC]
   setFAC_from_b15:
@@ -6132,9 +6132,9 @@ gen_sintab: {
   divMEMbyFAC_from_b16:
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_i
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [107] phi from gen_sintab::@16 to gen_sintab::@17 [phi:gen_sintab::@16->gen_sintab::@17]
   b17_from_b16:
@@ -6153,9 +6153,9 @@ gen_sintab: {
   mulFACbyMEM_from_b18:
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_amp
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [111] phi from gen_sintab::@18 to gen_sintab::@19 [phi:gen_sintab::@18->gen_sintab::@19]
   b19_from_b18:
@@ -6179,10 +6179,10 @@ gen_sintab: {
   b21:
     // [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2
     // [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 -- vbuaa=_byte_vwuz1 
-    lda _24
+    lda.z _24
     // [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 -- pbuz1_derefidx_vbuz2=vbuaa 
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
-    ldy i
+    ldy.z i
     sta (sintab),y
     // [119] call progress_inc 
     jsr progress_inc
@@ -6190,7 +6190,7 @@ gen_sintab: {
     // gen_sintab::@22
   b22:
     // [120] (byte) gen_sintab::i#1 ← ++ (byte) gen_sintab::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [94] phi from gen_sintab::@22 to gen_sintab::@1 [phi:gen_sintab::@22->gen_sintab::@1]
   b1_from_b22:
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_cursor#11 [phi:gen_sintab::@22->gen_sintab::@1#0] -- register_copy 
@@ -6208,10 +6208,10 @@ gen_sintab: {
 // Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
     // [121] (byte) progress_idx#10 ← ++ (byte) progress_idx#14 -- vbuz1=_inc_vbuz1 
-    inc progress_idx
+    inc.z progress_idx
     // [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp progress_idx
+    cmp.z progress_idx
     bne b1_from_progress_inc
     jmp b2
     // progress_inc::@2
@@ -6221,16 +6221,16 @@ progress_inc: {
     ldy #0
     sta (progress_cursor),y
     // [124] (byte*) progress_cursor#10 ← ++ (byte*) progress_cursor#13 -- pbuz1=_inc_pbuz1 
-    inc progress_cursor
+    inc.z progress_cursor
     bne !+
-    inc progress_cursor+1
+    inc.z progress_cursor+1
   !:
     // [125] phi from progress_inc::@2 to progress_inc::@1 [phi:progress_inc::@2->progress_inc::@1]
   b1_from_b2:
     // [125] phi (byte*) progress_cursor#11 = (byte*) progress_cursor#10 [phi:progress_inc::@2->progress_inc::@1#0] -- register_copy 
     // [125] phi (byte) progress_idx#12 = (byte) 0 [phi:progress_inc::@2->progress_inc::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     jmp b1
     // [125] phi from progress_inc to progress_inc::@1 [phi:progress_inc->progress_inc::@1]
   b1_from_progress_inc:
@@ -6240,7 +6240,7 @@ progress_inc: {
     // progress_inc::@1
   b1:
     // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars#0 + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy progress_idx
+    ldy.z progress_idx
     lda progress_chars,y
     ldy #0
     sta (progress_cursor),y
@@ -6261,13 +6261,13 @@ getFAC: {
     // asm { jsr$b1aa sty$fe sta$ff  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty $fe
-    sta $ff
+    sty.z $fe
+    sta.z $ff
     // [129] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memLo
-    sta return
+    sta.z return
     lda memHi
-    sta return+1
+    sta.z return+1
     jmp breturn
     // getFAC::@return
   breturn:
@@ -6284,16 +6284,16 @@ addMEMtoFAC: {
   prepareMEM_from_addMEMtoFAC:
     // [135] phi (byte*) prepareMEM::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
     lda #<gen_sintab.f_min
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>gen_sintab.f_min
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
     jmp b1
     // addMEMtoFAC::@1
   b1:
     // asm { lda$fe ldy$ff jsr$b867  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $b867
     jmp breturn
     // addMEMtoFAC::@return
@@ -6307,11 +6307,11 @@ addMEMtoFAC: {
 prepareMEM: {
     .label mem = $f
     // [136] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
-    lda mem
+    lda.z mem
     // [137] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuaa 
     sta memLo
     // [138] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuaa=_hi_pbuz1 
-    lda mem+1
+    lda.z mem+1
     // [139] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuaa 
     sta memHi
     jmp breturn
@@ -6337,8 +6337,8 @@ mulFACbyMEM: {
     // mulFACbyMEM::@1
   b1:
     // asm { lda$fe ldy$ff jsr$ba28  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $ba28
     jmp breturn
     // mulFACbyMEM::@return
@@ -6376,8 +6376,8 @@ divMEMbyFAC: {
     // divMEMbyFAC::@1
   b1:
     // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $bb0f
     jmp breturn
     // divMEMbyFAC::@return
@@ -6402,8 +6402,8 @@ setFAC: {
   b1:
     // asm { ldy$fe lda$ff jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy $fe
-    lda $ff
+    ldy.z $fe
+    lda.z $ff
     jsr $b391
     jmp breturn
     // setFAC::@return
@@ -6428,8 +6428,8 @@ setMEMtoFAC: {
     // setMEMtoFAC::@1
   b1:
     // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx $fe
-    ldy $ff
+    ldx.z $fe
+    ldy.z $ff
     jsr $bbd4
     jmp breturn
     // setMEMtoFAC::@return
@@ -6480,12 +6480,12 @@ gen_sprites: {
   b1_from_gen_sprites:
     // [170] phi (byte*) gen_sprites::spr#2 = (const byte*) sprites#0 [phi:gen_sprites->gen_sprites::@1#0] -- pbuz1=pbuc1 
     lda #<sprites
-    sta spr
+    sta.z spr
     lda #>sprites
-    sta spr+1
+    sta.z spr+1
     // [170] phi (byte) gen_sprites::i#2 = (byte) 0 [phi:gen_sprites->gen_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [170] phi from gen_sprites::@2 to gen_sprites::@1 [phi:gen_sprites::@2->gen_sprites::@1]
   b1_from_b2:
@@ -6495,13 +6495,13 @@ gen_sprites: {
     // gen_sprites::@1
   b1:
     // [171] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml#0 + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy i
+    ldy.z i
     ldx cml,y
     // [172] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2 -- pbuz1=pbuz2 
-    lda spr
-    sta gen_chargen_sprite.sprite
-    lda spr+1
-    sta gen_chargen_sprite.sprite+1
+    lda.z spr
+    sta.z gen_chargen_sprite.sprite
+    lda.z spr+1
+    sta.z gen_chargen_sprite.sprite+1
     // [173] call gen_chargen_sprite 
     jsr gen_chargen_sprite
     jmp b2
@@ -6510,16 +6510,16 @@ gen_sprites: {
     // [174] (byte*) gen_sprites::spr#1 ← (byte*) gen_sprites::spr#2 + (byte) $40 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$40
     clc
-    adc spr
-    sta spr
+    adc.z spr
+    sta.z spr
     bcc !+
-    inc spr+1
+    inc.z spr+1
   !:
     // [175] (byte) gen_sprites::i#1 ← ++ (byte) gen_sprites::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [176] if((byte) gen_sprites::i#1!=(byte) 7) goto gen_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // gen_sprites::@return
@@ -6545,24 +6545,24 @@ gen_chargen_sprite: {
     .label c = 8
     // [178] (word~) gen_chargen_sprite::$0 ← (word)(byte) gen_chargen_sprite::ch#0 -- vwuz1=_word_vbuxx 
     txa
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [179] (word~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [180] (byte*) gen_chargen_sprite::chargen#0 ← (const byte*) CHARGEN#0 + (word~) gen_chargen_sprite::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // asm { sei  }
     sei
     // [182] *((const byte*) PROCPORT#0) ← (byte) $32 -- _deref_pbuc1=vbuc2 
@@ -6573,7 +6573,7 @@ gen_chargen_sprite: {
     // [183] phi (byte*) gen_chargen_sprite::sprite#11 = (byte*) gen_chargen_sprite::sprite#0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#0] -- register_copy 
     // [183] phi (byte) gen_chargen_sprite::y#2 = (byte) 0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b1
     // [183] phi from gen_chargen_sprite::@8 to gen_chargen_sprite::@1 [phi:gen_chargen_sprite::@8->gen_chargen_sprite::@1]
   b1_from_b8:
@@ -6584,20 +6584,20 @@ gen_chargen_sprite: {
   b1:
     // [184] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     // current chargen line
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [185] phi from gen_chargen_sprite::@1 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2]
   b2_from_b1:
     // [185] phi (byte) gen_chargen_sprite::x#6 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [185] phi (byte*) gen_chargen_sprite::sprite#10 = (byte*) gen_chargen_sprite::sprite#11 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#1] -- register_copy 
     // [185] phi (byte) gen_chargen_sprite::s_gen_cnt#4 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#2] -- vbuyy=vbuc1 
     ldy #0
     // [185] phi (byte) gen_chargen_sprite::s_gen#5 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#3] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen
+    sta.z s_gen
     // [185] phi (byte) gen_chargen_sprite::bits#2 = (byte) gen_chargen_sprite::bits#0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#4] -- register_copy 
     jmp b2
     // [185] phi from gen_chargen_sprite::@7 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@7->gen_chargen_sprite::@2]
@@ -6612,7 +6612,7 @@ gen_chargen_sprite: {
   b2:
     // [186] (byte~) gen_chargen_sprite::$3 ← (byte) gen_chargen_sprite::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
-    and bits
+    and.z bits
     // [187] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
@@ -6625,13 +6625,13 @@ gen_chargen_sprite: {
   b3_from_b10:
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 1 [phi:gen_chargen_sprite::@10->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta c
+    sta.z c
     jmp b3
     // [189] phi from gen_chargen_sprite::@2 to gen_chargen_sprite::@3 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3]
   b3_from_b2:
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 0 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     jmp b3
     // gen_chargen_sprite::@3
   b3:
@@ -6654,11 +6654,11 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@4
   b4:
     // [191] (byte~) gen_chargen_sprite::$6 ← (byte) gen_chargen_sprite::s_gen#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda s_gen
+    lda.z s_gen
     asl
     // [192] (byte) gen_chargen_sprite::s_gen#1 ← (byte~) gen_chargen_sprite::$6 | (byte) gen_chargen_sprite::c#3 -- vbuz1=vbuaa_bor_vbuz2 
-    ora c
-    sta s_gen
+    ora.z c
+    sta.z s_gen
     // [193] (byte) gen_chargen_sprite::s_gen_cnt#1 ← ++ (byte) gen_chargen_sprite::s_gen_cnt#3 -- vbuyy=_inc_vbuyy 
     iny
     // [194] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5 -- vbuyy_neq_vbuc1_then_la1 
@@ -6669,21 +6669,21 @@ gen_chargen_sprite: {
   b6:
     // [195] *((byte*) gen_chargen_sprite::sprite#3) ← (byte) gen_chargen_sprite::s_gen#1 -- _deref_pbuz1=vbuz2 
     // sprite byte filled - store and move to next byte
-    lda s_gen
+    lda.z s_gen
     ldy #0
     sta (sprite),y
     // [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 3) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda s_gen
+    lda.z s_gen
     ldy #3
     sta (sprite),y
     // [197] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 6) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda s_gen
+    lda.z s_gen
     ldy #6
     sta (sprite),y
     // [198] (byte*) gen_chargen_sprite::sprite#1 ← ++ (byte*) gen_chargen_sprite::sprite#3 -- pbuz1=_inc_pbuz1 
-    inc sprite
+    inc.z sprite
     bne !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // [199] phi from gen_chargen_sprite::@6 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5]
   b5_from_b6:
@@ -6692,7 +6692,7 @@ gen_chargen_sprite: {
     ldy #0
     // [199] phi (byte) gen_chargen_sprite::s_gen#6 = (byte) 0 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#2] -- vbuz1=vbuc1 
     lda #0
-    sta s_gen
+    sta.z s_gen
     jmp b5
     // [199] phi from gen_chargen_sprite::@4 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5]
   b5_from_b4:
@@ -6711,12 +6711,12 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@7
   b7:
     // [202] (byte) gen_chargen_sprite::bits#1 ← (byte) gen_chargen_sprite::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // [203] (byte) gen_chargen_sprite::x#1 ← ++ (byte) gen_chargen_sprite::x#6 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [204] if((byte) gen_chargen_sprite::x#1!=(byte) 8) goto gen_chargen_sprite::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp x
+    cmp.z x
     bne b2_from_b7
     jmp b8
     // gen_chargen_sprite::@8
@@ -6724,16 +6724,16 @@ gen_chargen_sprite: {
     // [205] (byte*) gen_chargen_sprite::sprite#2 ← (byte*) gen_chargen_sprite::sprite#4 + (byte) 6 -- pbuz1=pbuz1_plus_vbuc1 
     lda #6
     clc
-    adc sprite
-    sta sprite
+    adc.z sprite
+    sta.z sprite
     bcc !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // [206] (byte) gen_chargen_sprite::y#1 ← ++ (byte) gen_chargen_sprite::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [207] if((byte) gen_chargen_sprite::y#1!=(byte) 8) goto gen_chargen_sprite::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b1_from_b8
     jmp b9
     // gen_chargen_sprite::@9
@@ -6770,19 +6770,19 @@ place_sprites: {
   b1_from_place_sprites:
     // [214] phi (byte) place_sprites::col#2 = (byte) 5 [phi:place_sprites->place_sprites::@1#0] -- vbuz1=vbuc1 
     lda #5
-    sta col
+    sta.z col
     // [214] phi (byte) place_sprites::j2#3 = (byte) 0 [phi:place_sprites->place_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta j2
+    sta.z j2
     // [214] phi (byte) place_sprites::spr_x#2 = (byte) $3c [phi:place_sprites->place_sprites::@1#2] -- vbuz1=vbuc1 
     lda #$3c
-    sta spr_x
+    sta.z spr_x
     // [214] phi (byte) place_sprites::j#2 = (byte) 0 [phi:place_sprites->place_sprites::@1#3] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [214] phi (byte) place_sprites::spr_id#2 = (byte)(word)(const byte*) sprites#0/(byte) $40 [phi:place_sprites->place_sprites::@1#4] -- vbuz1=vbuc1 
     lda #sprites/$40
-    sta spr_id
+    sta.z spr_id
     jmp b1
     // [214] phi from place_sprites::@1 to place_sprites::@1 [phi:place_sprites::@1->place_sprites::@1]
   b1_from_b1:
@@ -6795,42 +6795,42 @@ place_sprites: {
     // place_sprites::@1
   b1:
     // [215] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_id
-    ldy j
+    lda.z spr_id
+    ldy.z j
     sta sprites_ptr,y
     // [216] (byte) place_sprites::spr_id#1 ← ++ (byte) place_sprites::spr_id#2 -- vbuz1=_inc_vbuz1 
-    inc spr_id
+    inc.z spr_id
     // [217] *((const byte*) SPRITES_XPOS#0 + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_x
-    ldy j2
+    lda.z spr_x
+    ldy.z j2
     sta SPRITES_XPOS,y
     // [218] *((const byte*) SPRITES_YPOS#0 + (byte) place_sprites::j2#3) ← (byte) $50 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$50
-    ldy j2
+    ldy.z j2
     sta SPRITES_YPOS,y
     // [219] *((const byte*) SPRITES_COLS#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda col
-    ldy j
+    lda.z col
+    ldy.z j
     sta SPRITES_COLS,y
     // [220] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte) $20 -- vbuz1=vbuz1_plus_vbuc1 
-    lax spr_x
+    lax.z spr_x
     axs #-[$20]
-    stx spr_x
+    stx.z spr_x
     // [221] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5 -- vbuz1=vbuz1_bxor_vbuc1 
     lda #7^5
-    eor col
-    sta col
+    eor.z col
+    sta.z col
     // [222] (byte) place_sprites::j2#1 ← ++ (byte) place_sprites::j2#3 -- vbuxx=_inc_vbuz1 
-    ldx j2
+    ldx.z j2
     inx
     // [223] (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1 -- vbuz1=_inc_vbuxx 
     inx
-    stx j2
+    stx.z j2
     // [224] (byte) place_sprites::j#1 ← ++ (byte) place_sprites::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [225] if((byte) place_sprites::j#1!=(byte) 7) goto place_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b1_from_b1
     jmp breturn
     // place_sprites::@return
@@ -6929,18 +6929,18 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
-Removing instruction lda x+1
-Replacing instruction lda xidx with TXA
-Replacing instruction lda yidx with TXA
+Removing instruction lda.z x+1
+Replacing instruction lda.z xidx with TXA
+Replacing instruction lda.z yidx with TXA
 Removing instruction lda #0
 Replacing instruction ldy #0 with TAY
 Removing instruction lda #0
-Removing instruction lda s_gen
-Removing instruction lda s_gen
+Removing instruction lda.z s_gen
+Removing instruction lda.z s_gen
 Replacing instruction lda #0 with TYA
 Removing instruction lda #$7f
 Removing instruction lda #$7f
-Removing instruction ldy j2
+Removing instruction ldy.z j2
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
@@ -7140,7 +7140,7 @@ Removing instruction jmp b4
 Removing instruction jmp b5
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda s_gen
+Removing instruction lda.z s_gen
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -7538,9 +7538,9 @@ main: {
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // [6] phi (byte) sin_idx_y#13 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     // [6] phi (byte) sin_idx_x#13 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
-    sta sin_idx_x
+    sta.z sin_idx_x
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
     // [6] phi (byte) sin_idx_y#13 = (byte) sin_idx_y#13 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     // [6] phi (byte) sin_idx_x#13 = (byte) sin_idx_x#13 [phi:main::@1/main::@2->main::@1#1] -- register_copy 
@@ -7572,23 +7572,23 @@ anim: {
     inc BORDERCOL
     // xidx = sin_idx_x
     // [11] (byte) anim::xidx#0 ← (byte) sin_idx_x#13 -- vbuz1=vbuz2 
-    lda sin_idx_x
-    sta xidx
+    lda.z sin_idx_x
+    sta.z xidx
     // yidx = sin_idx_y
     // [12] (byte) anim::yidx#0 ← (byte) sin_idx_y#13 -- vbuz1=vbuz2 
-    lda sin_idx_y
-    sta yidx
+    lda.z sin_idx_y
+    sta.z yidx
     // [13] phi from anim to anim::@3 [phi:anim->anim::@3]
     // [13] phi (byte) anim::j#2 = (byte) 0 [phi:anim->anim::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [13] phi (byte) anim::yidx#3 = (byte) anim::yidx#0 [phi:anim->anim::@3#1] -- register_copy 
     // [13] phi (byte) anim::j2#2 = (byte) $c [phi:anim->anim::@3#2] -- vbuz1=vbuc1 
     lda #$c
-    sta j2
+    sta.z j2
     // [13] phi (byte) anim::x_msb#2 = (byte) 0 [phi:anim->anim::@3#3] -- vbuz1=vbuc1 
     lda #0
-    sta x_msb
+    sta.z x_msb
     // [13] phi (byte) anim::xidx#3 = (byte) anim::xidx#0 [phi:anim->anim::@3#4] -- register_copy 
     // [13] phi from anim::@5 to anim::@3 [phi:anim::@5->anim::@3]
     // [13] phi (byte) anim::j#2 = (byte) anim::j#1 [phi:anim::@5->anim::@3#0] -- register_copy 
@@ -7600,41 +7600,41 @@ anim: {
   b3:
     // x = (word)$1e + sintab_x[xidx]
     // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x#0 + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
-    ldy xidx
+    ldy.z xidx
     lda sintab_x,y
     clc
     adc #<$1e
-    sta x
+    sta.z x
     lda #>$1e
     adc #0
-    sta x+1
+    sta.z x+1
     // x_msb*2
     // [15] (byte~) anim::$6 ← (byte) anim::x_msb#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl _6
+    asl.z _6
     // >x
     // [16] (byte~) anim::$7 ← > (word) anim::x#0 -- vbuaa=_hi_vwuz1 
     // x_msb = x_msb*2 | >x
     // [17] (byte) anim::x_msb#1 ← (byte~) anim::$6 | (byte~) anim::$7 -- vbuz1=vbuz1_bor_vbuaa 
-    ora x_msb
-    sta x_msb
+    ora.z x_msb
+    sta.z x_msb
     // <x
     // [18] (byte~) anim::$9 ← < (word) anim::x#0 -- vbuaa=_lo_vwuz1 
-    lda x
+    lda.z x
     // SPRITES_XPOS[j2] = <x
     // [19] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#2) ← (byte~) anim::$9 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy j2
+    ldy.z j2
     sta SPRITES_XPOS,y
     // SPRITES_YPOS[j2] = sintab_y[yidx]
     // [20] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y#0 + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy yidx
+    ldy.z yidx
     lda sintab_y,y
-    ldy j2
+    ldy.z j2
     sta SPRITES_YPOS,y
     // xidx = xidx+10
     // [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a -- vbuz1=vbuz1_plus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #-[$a]
-    stx xidx
+    stx.z xidx
     // if(xidx>=sinlen_x)
     // [22] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@4 -- vbuz1_lt_vbuc1_then_la1 
     txa
@@ -7643,18 +7643,18 @@ anim: {
     // anim::@6
     // xidx = xidx-sinlen_x
     // [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax xidx
+    lax.z xidx
     axs #sinlen_x
-    stx xidx
+    stx.z xidx
     // [24] phi from anim::@3 anim::@6 to anim::@4 [phi:anim::@3/anim::@6->anim::@4]
     // [24] phi (byte) anim::xidx#5 = (byte) anim::xidx#1 [phi:anim::@3/anim::@6->anim::@4#0] -- register_copy 
     // anim::@4
   b4:
     // yidx = yidx+8
     // [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 -- vbuz1=vbuz1_plus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #-[8]
-    stx yidx
+    stx.z yidx
     // if(yidx>=sinlen_y)
     // [26] if((byte) anim::yidx#1<(const byte) sinlen_y#0) goto anim::@5 -- vbuz1_lt_vbuc1_then_la1 
     txa
@@ -7663,40 +7663,40 @@ anim: {
     // anim::@7
     // yidx = yidx-sinlen_y
     // [27] (byte) anim::yidx#2 ← (byte) anim::yidx#1 - (const byte) sinlen_y#0 -- vbuz1=vbuz1_minus_vbuc1 
-    lax yidx
+    lax.z yidx
     axs #sinlen_y
-    stx yidx
+    stx.z yidx
     // [28] phi from anim::@4 anim::@7 to anim::@5 [phi:anim::@4/anim::@7->anim::@5]
     // [28] phi (byte) anim::yidx#6 = (byte) anim::yidx#1 [phi:anim::@4/anim::@7->anim::@5#0] -- register_copy 
     // anim::@5
   b5:
     // j2 = j2-2
     // [29] (byte) anim::j2#1 ← (byte) anim::j2#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
-    dec j2
-    dec j2
+    dec.z j2
+    dec.z j2
     // for( byte j : 0..6)
     // [30] (byte) anim::j#1 ← ++ (byte) anim::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [31] if((byte) anim::j#1!=(byte) 7) goto anim::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b3
     // anim::@8
     // *SPRITES_XMSB = x_msb
     // [32] *((const byte*) SPRITES_XMSB#0) ← (byte) anim::x_msb#1 -- _deref_pbuc1=vbuz1 
-    lda x_msb
+    lda.z x_msb
     sta SPRITES_XMSB
     // if(++sin_idx_x>=sinlen_x)
     // [33] (byte) sin_idx_x#3 ← ++ (byte) sin_idx_x#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_x
+    inc.z sin_idx_x
     // [34] if((byte) sin_idx_x#3<(const byte) sinlen_x#0) goto anim::@9 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_x
+    lda.z sin_idx_x
     cmp #sinlen_x
     bcc b1
     // [36] phi from anim::@8 to anim::@1 [phi:anim::@8->anim::@1]
     // [36] phi (byte) sin_idx_x#11 = (byte) 0 [phi:anim::@8->anim::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
     // [35] phi from anim::@8 to anim::@9 [phi:anim::@8->anim::@9]
     // anim::@9
     // [36] phi from anim::@9 to anim::@1 [phi:anim::@9->anim::@1]
@@ -7705,15 +7705,15 @@ anim: {
   b1:
     // if(++sin_idx_y>=sinlen_y)
     // [37] (byte) sin_idx_y#3 ← ++ (byte) sin_idx_y#13 -- vbuz1=_inc_vbuz1 
-    inc sin_idx_y
+    inc.z sin_idx_y
     // [38] if((byte) sin_idx_y#3<(const byte) sinlen_y#0) goto anim::@10 -- vbuz1_lt_vbuc1_then_la1 
-    lda sin_idx_y
+    lda.z sin_idx_y
     cmp #sinlen_y
     bcc b2
     // [40] phi from anim::@1 to anim::@2 [phi:anim::@1->anim::@2]
     // [40] phi (byte) sin_idx_y#11 = (byte) 0 [phi:anim::@1->anim::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
     // [39] phi from anim::@1 to anim::@10 [phi:anim::@1->anim::@10]
     // anim::@10
     // [40] phi from anim::@10 to anim::@2 [phi:anim::@10->anim::@2]
@@ -7773,9 +7773,9 @@ init: {
     // [167] phi from init::@4 to progress_init [phi:init::@4->progress_init]
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0 [phi:init::@4->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [56] phi from init::@4 to init::@5 [phi:init::@4->init::@5]
     // init::@5
@@ -7784,15 +7784,15 @@ init: {
     // [71] phi from init::@5 to gen_sintab [phi:init::@5->gen_sintab]
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x#0 [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_x
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_x#0 [phi:init::@5->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_x
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) 0 [phi:init::@5->gen_sintab#2] -- vbuz1=vbuc1 
     lda #0
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $ff [phi:init::@5->gen_sintab#3] -- vbuxx=vbuc1 
     ldx #$ff
     jsr gen_sintab
@@ -7803,9 +7803,9 @@ init: {
     // [167] phi from init::@6 to progress_init [phi:init::@6->progress_init]
     // [167] phi (byte*) progress_init::line#2 = (const byte*) SCREEN#0+(byte) $28 [phi:init::@6->progress_init#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN+$28
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     // [60] phi from init::@6 to init::@7 [phi:init::@6->init::@7]
     // init::@7
@@ -7814,15 +7814,15 @@ init: {
     // [71] phi from init::@7 to gen_sintab [phi:init::@7->gen_sintab]
     // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y#0 [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_y
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     // [71] phi (byte) gen_sintab::length#10 = (const byte) sinlen_y#0 [phi:init::@7->gen_sintab#1] -- vbuz1=vbuc1 
     lda #sinlen_y
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     // [71] phi (byte) gen_sintab::min#2 = (byte) $32 [phi:init::@7->gen_sintab#2] -- vbuz1=vbuc1 
     lda #$32
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     // [71] phi (byte) gen_sintab::max#2 = (byte) $d0 [phi:init::@7->gen_sintab#3] -- vbuxx=vbuc1 
     ldx #$d0
     jsr gen_sintab
@@ -7843,9 +7843,9 @@ clear_screen: {
     // [66] phi from clear_screen to clear_screen::@2 [phi:clear_screen->clear_screen::@2]
     // [66] phi (byte*) clear_screen::sc#4 = (const byte*) SCREEN#0 [phi:clear_screen->clear_screen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     // [66] phi from clear_screen::@1 to clear_screen::@2 [phi:clear_screen::@1->clear_screen::@2]
     // [66] phi (byte*) clear_screen::sc#4 = (byte*) clear_screen::sc#1 [phi:clear_screen::@1->clear_screen::@2#0] -- register_copy 
     // clear_screen::@2
@@ -7857,17 +7857,17 @@ clear_screen: {
     sta (sc),y
     // for(byte* sc = SCREEN; sc<SCREEN+1000; sc++)
     // [68] (byte*) clear_screen::sc#1 ← ++ (byte*) clear_screen::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // clear_screen::@1
     // [69] if((byte*) clear_screen::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto clear_screen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2
   !:
@@ -7894,9 +7894,9 @@ gen_sintab: {
     // setFAC((word)max)
     // [72] (word) setFAC::w#0 ← (word)(byte) gen_sintab::max#2 -- vwuz1=_word_vbuxx 
     txa
-    sta setFAC.w
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [73] call setFAC 
     // [153] phi from gen_sintab to setFAC [phi:gen_sintab->setFAC]
     // [153] phi (word) setFAC::w#5 = (word) setFAC::w#0 [phi:gen_sintab->setFAC#0] -- register_copy 
@@ -7909,10 +7909,10 @@ gen_sintab: {
     // gen_sintab::@4
     // setFAC((word)min)
     // [76] (word) setFAC::w#1 ← (word)(byte) gen_sintab::min#2 -- vwuz1=_word_vbuz2 
-    lda min
-    sta setFAC.w
+    lda.z min
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [77] call setFAC 
     // [153] phi from gen_sintab::@4 to setFAC [phi:gen_sintab::@4->setFAC]
     // [153] phi (word) setFAC::w#5 = (word) setFAC::w#1 [phi:gen_sintab::@4->setFAC#0] -- register_copy 
@@ -7924,9 +7924,9 @@ gen_sintab: {
     // [158] phi from gen_sintab::@5 to setMEMtoFAC [phi:gen_sintab::@5->setMEMtoFAC]
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [80] phi from gen_sintab::@5 to gen_sintab::@6 [phi:gen_sintab::@5->gen_sintab::@6]
     // gen_sintab::@6
@@ -7940,9 +7940,9 @@ gen_sintab: {
     // [158] phi from gen_sintab::@7 to setMEMtoFAC [phi:gen_sintab::@7->setMEMtoFAC]
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [84] phi from gen_sintab::@7 to gen_sintab::@8 [phi:gen_sintab::@7->gen_sintab::@8]
     // gen_sintab::@8
@@ -7951,9 +7951,9 @@ gen_sintab: {
     // [153] phi from gen_sintab::@8 to setFAC [phi:gen_sintab::@8->setFAC]
     // [153] phi (word) setFAC::w#5 = (byte) 2 [phi:gen_sintab::@8->setFAC#0] -- vwuz1=vbuc1 
     lda #<2
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>2
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     // [86] phi from gen_sintab::@8 to gen_sintab::@9 [phi:gen_sintab::@8->gen_sintab::@9]
     // gen_sintab::@9
@@ -7962,9 +7962,9 @@ gen_sintab: {
     // [148] phi from gen_sintab::@9 to divMEMbyFAC [phi:gen_sintab::@9->divMEMbyFAC]
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_amp
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [88] phi from gen_sintab::@9 to gen_sintab::@10 [phi:gen_sintab::@9->gen_sintab::@10]
     // gen_sintab::@10
@@ -7973,9 +7973,9 @@ gen_sintab: {
     // [158] phi from gen_sintab::@10 to setMEMtoFAC [phi:gen_sintab::@10->setMEMtoFAC]
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [90] phi from gen_sintab::@10 to gen_sintab::@11 [phi:gen_sintab::@10->gen_sintab::@11]
     // gen_sintab::@11
@@ -7990,24 +7990,24 @@ gen_sintab: {
     // [158] phi from gen_sintab::@12 to setMEMtoFAC [phi:gen_sintab::@12->setMEMtoFAC]
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // [94] phi from gen_sintab::@12 to gen_sintab::@1 [phi:gen_sintab::@12->gen_sintab::@1]
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_init::line#2 [phi:gen_sintab::@12->gen_sintab::@1#0] -- register_copy 
     // [94] phi (byte) progress_idx#14 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     // [94] phi (byte) gen_sintab::i#10 = (byte) 0 [phi:gen_sintab::@12->gen_sintab::@1#2] -- vbuz1=vbuc1 
-    sta i
+    sta.z i
   // f_min = min + (max - min) / 2
     // gen_sintab::@1
   b1:
     // for(byte i =0; i<length; i++)
     // [95] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2 -- vbuz1_lt_vbuz2_then_la1 
-    lda i
-    cmp length
+    lda.z i
+    cmp.z length
     bcc b2
     // gen_sintab::@return
     // }
@@ -8017,10 +8017,10 @@ gen_sintab: {
   b2:
     // setFAC((word)i)
     // [97] (word) setFAC::w#3 ← (word)(byte) gen_sintab::i#10 -- vwuz1=_word_vbuz2 
-    lda i
-    sta setFAC.w
+    lda.z i
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [98] call setFAC 
     // [153] phi from gen_sintab::@2 to setFAC [phi:gen_sintab::@2->setFAC]
     // [153] phi (word) setFAC::w#5 = (word) setFAC::w#3 [phi:gen_sintab::@2->setFAC#0] -- register_copy 
@@ -8032,9 +8032,9 @@ gen_sintab: {
     // [141] phi from gen_sintab::@13 to mulFACbyMEM [phi:gen_sintab::@13->mulFACbyMEM]
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_2pi#0 [phi:gen_sintab::@13->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_2pi
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [101] phi from gen_sintab::@13 to gen_sintab::@14 [phi:gen_sintab::@13->gen_sintab::@14]
     // gen_sintab::@14
@@ -8043,17 +8043,17 @@ gen_sintab: {
     // [158] phi from gen_sintab::@14 to setMEMtoFAC [phi:gen_sintab::@14->setMEMtoFAC]
     // [158] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_i
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // gen_sintab::@15
     // setFAC((word)length)
     // [103] (word) setFAC::w#4 ← (word)(byte) gen_sintab::length#10 -- vwuz1=_word_vbuz2 
-    lda length
-    sta setFAC.w
+    lda.z length
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     // [104] call setFAC 
     // [153] phi from gen_sintab::@15 to setFAC [phi:gen_sintab::@15->setFAC]
     // [153] phi (word) setFAC::w#5 = (word) setFAC::w#4 [phi:gen_sintab::@15->setFAC#0] -- register_copy 
@@ -8065,9 +8065,9 @@ gen_sintab: {
     // [148] phi from gen_sintab::@16 to divMEMbyFAC [phi:gen_sintab::@16->divMEMbyFAC]
     // [148] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i#0 [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_i
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // [107] phi from gen_sintab::@16 to gen_sintab::@17 [phi:gen_sintab::@16->gen_sintab::@17]
     // gen_sintab::@17
@@ -8081,9 +8081,9 @@ gen_sintab: {
     // [141] phi from gen_sintab::@18 to mulFACbyMEM [phi:gen_sintab::@18->mulFACbyMEM]
     // [141] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp#0 [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_amp
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // [111] phi from gen_sintab::@18 to gen_sintab::@19 [phi:gen_sintab::@18->gen_sintab::@19]
     // gen_sintab::@19
@@ -8101,11 +8101,11 @@ gen_sintab: {
     // [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2
     // (byte)getFAC()
     // [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 -- vbuaa=_byte_vwuz1 
-    lda _24
+    lda.z _24
     // sintab[i] = (byte)getFAC()
     // [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 -- pbuz1_derefidx_vbuz2=vbuaa 
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
-    ldy i
+    ldy.z i
     sta (sintab),y
     // progress_inc()
     // [119] call progress_inc 
@@ -8113,7 +8113,7 @@ gen_sintab: {
     // gen_sintab::@22
     // for(byte i =0; i<length; i++)
     // [120] (byte) gen_sintab::i#1 ← ++ (byte) gen_sintab::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [94] phi from gen_sintab::@22 to gen_sintab::@1 [phi:gen_sintab::@22->gen_sintab::@1]
     // [94] phi (byte*) progress_cursor#13 = (byte*) progress_cursor#11 [phi:gen_sintab::@22->gen_sintab::@1#0] -- register_copy 
     // [94] phi (byte) progress_idx#14 = (byte) progress_idx#12 [phi:gen_sintab::@22->gen_sintab::@1#1] -- register_copy 
@@ -8131,10 +8131,10 @@ gen_sintab: {
 progress_inc: {
     // if(++progress_idx==8)
     // [121] (byte) progress_idx#10 ← ++ (byte) progress_idx#14 -- vbuz1=_inc_vbuz1 
-    inc progress_idx
+    inc.z progress_idx
     // [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp progress_idx
+    cmp.z progress_idx
     bne b1
     // progress_inc::@2
     // *progress_cursor = progress_chars[8]
@@ -8144,15 +8144,15 @@ progress_inc: {
     sta (progress_cursor),y
     // progress_cursor++;
     // [124] (byte*) progress_cursor#10 ← ++ (byte*) progress_cursor#13 -- pbuz1=_inc_pbuz1 
-    inc progress_cursor
+    inc.z progress_cursor
     bne !+
-    inc progress_cursor+1
+    inc.z progress_cursor+1
   !:
     // [125] phi from progress_inc::@2 to progress_inc::@1 [phi:progress_inc::@2->progress_inc::@1]
     // [125] phi (byte*) progress_cursor#11 = (byte*) progress_cursor#10 [phi:progress_inc::@2->progress_inc::@1#0] -- register_copy 
     // [125] phi (byte) progress_idx#12 = (byte) 0 [phi:progress_inc::@2->progress_inc::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta progress_idx
+    sta.z progress_idx
     // [125] phi from progress_inc to progress_inc::@1 [phi:progress_inc->progress_inc::@1]
     // [125] phi (byte*) progress_cursor#11 = (byte*) progress_cursor#13 [phi:progress_inc->progress_inc::@1#0] -- register_copy 
     // [125] phi (byte) progress_idx#12 = (byte) progress_idx#10 [phi:progress_inc->progress_inc::@1#1] -- register_copy 
@@ -8160,7 +8160,7 @@ progress_inc: {
   b1:
     // *progress_cursor = progress_chars[progress_idx]
     // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars#0 + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy progress_idx
+    ldy.z progress_idx
     lda progress_chars,y
     ldy #0
     sta (progress_cursor),y
@@ -8181,14 +8181,14 @@ getFAC: {
     // asm { jsr$b1aa sty$fe sta$ff  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty $fe
-    sta $ff
+    sty.z $fe
+    sta.z $ff
     // w = { *memHi, *memLo}
     // [129] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memLo
-    sta return
+    sta.z return
     lda memHi
-    sta return+1
+    sta.z return+1
     // getFAC::@return
     // }
     // [130] return 
@@ -8204,15 +8204,15 @@ addMEMtoFAC: {
     // [135] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
     // [135] phi (byte*) prepareMEM::mem#5 = (const byte[]) gen_sintab::f_min#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
     lda #<gen_sintab.f_min
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>gen_sintab.f_min
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
     // addMEMtoFAC::@1
     // asm
     // asm { lda$fe ldy$ff jsr$b867  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $b867
     // addMEMtoFAC::@return
     // }
@@ -8226,13 +8226,13 @@ prepareMEM: {
     .label mem = $f
     // <mem
     // [136] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
-    lda mem
+    lda.z mem
     // *memLo = <mem
     // [137] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuaa 
     sta memLo
     // >mem
     // [138] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuaa=_hi_pbuz1 
-    lda mem+1
+    lda.z mem+1
     // *memHi = >mem
     // [139] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuaa 
     sta memHi
@@ -8257,8 +8257,8 @@ mulFACbyMEM: {
     // mulFACbyMEM::@1
     // asm
     // asm { lda$fe ldy$ff jsr$ba28  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $ba28
     // mulFACbyMEM::@return
     // }
@@ -8294,8 +8294,8 @@ divMEMbyFAC: {
     // divMEMbyFAC::@1
     // asm
     // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $bb0f
     // divMEMbyFAC::@return
     // }
@@ -8318,8 +8318,8 @@ setFAC: {
     // asm
     // asm { ldy$fe lda$ff jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy $fe
-    lda $ff
+    ldy.z $fe
+    lda.z $ff
     jsr $b391
     // setFAC::@return
     // }
@@ -8342,8 +8342,8 @@ setMEMtoFAC: {
     // setMEMtoFAC::@1
     // asm
     // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx $fe
-    ldy $ff
+    ldx.z $fe
+    ldy.z $ff
     jsr $bbd4
     // setMEMtoFAC::@return
     // }
@@ -8390,12 +8390,12 @@ gen_sprites: {
     // [170] phi from gen_sprites to gen_sprites::@1 [phi:gen_sprites->gen_sprites::@1]
     // [170] phi (byte*) gen_sprites::spr#2 = (const byte*) sprites#0 [phi:gen_sprites->gen_sprites::@1#0] -- pbuz1=pbuc1 
     lda #<sprites
-    sta spr
+    sta.z spr
     lda #>sprites
-    sta spr+1
+    sta.z spr+1
     // [170] phi (byte) gen_sprites::i#2 = (byte) 0 [phi:gen_sprites->gen_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [170] phi from gen_sprites::@2 to gen_sprites::@1 [phi:gen_sprites::@2->gen_sprites::@1]
     // [170] phi (byte*) gen_sprites::spr#2 = (byte*) gen_sprites::spr#1 [phi:gen_sprites::@2->gen_sprites::@1#0] -- register_copy 
     // [170] phi (byte) gen_sprites::i#2 = (byte) gen_sprites::i#1 [phi:gen_sprites::@2->gen_sprites::@1#1] -- register_copy 
@@ -8403,13 +8403,13 @@ gen_sprites: {
   b1:
     // gen_chargen_sprite(cml[i], spr)
     // [171] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml#0 + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy i
+    ldy.z i
     ldx cml,y
     // [172] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2 -- pbuz1=pbuz2 
-    lda spr
-    sta gen_chargen_sprite.sprite
-    lda spr+1
-    sta gen_chargen_sprite.sprite+1
+    lda.z spr
+    sta.z gen_chargen_sprite.sprite
+    lda.z spr+1
+    sta.z gen_chargen_sprite.sprite+1
     // [173] call gen_chargen_sprite 
     jsr gen_chargen_sprite
     // gen_sprites::@2
@@ -8417,17 +8417,17 @@ gen_sprites: {
     // [174] (byte*) gen_sprites::spr#1 ← (byte*) gen_sprites::spr#2 + (byte) $40 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$40
     clc
-    adc spr
-    sta spr
+    adc.z spr
+    sta.z spr
     bcc !+
-    inc spr+1
+    inc.z spr+1
   !:
     // for( byte i : 0..6 )
     // [175] (byte) gen_sprites::i#1 ← ++ (byte) gen_sprites::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [176] if((byte) gen_sprites::i#1!=(byte) 7) goto gen_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp i
+    cmp.z i
     bne b1
     // gen_sprites::@return
     // }
@@ -8453,26 +8453,26 @@ gen_chargen_sprite: {
     // (word)ch
     // [178] (word~) gen_chargen_sprite::$0 ← (word)(byte) gen_chargen_sprite::ch#0 -- vwuz1=_word_vbuxx 
     txa
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // ((word)ch)*8
     // [179] (word~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // chargen = CHARGEN+((word)ch)*8
     // [180] (byte*) gen_chargen_sprite::chargen#0 ← (const byte*) CHARGEN#0 + (word~) gen_chargen_sprite::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // asm
     // asm { sei  }
     sei
@@ -8484,7 +8484,7 @@ gen_chargen_sprite: {
     // [183] phi (byte*) gen_chargen_sprite::sprite#11 = (byte*) gen_chargen_sprite::sprite#0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#0] -- register_copy 
     // [183] phi (byte) gen_chargen_sprite::y#2 = (byte) 0 [phi:gen_chargen_sprite->gen_chargen_sprite::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [183] phi from gen_chargen_sprite::@8 to gen_chargen_sprite::@1 [phi:gen_chargen_sprite::@8->gen_chargen_sprite::@1]
     // [183] phi (byte*) gen_chargen_sprite::sprite#11 = (byte*) gen_chargen_sprite::sprite#2 [phi:gen_chargen_sprite::@8->gen_chargen_sprite::@1#0] -- register_copy 
     // [183] phi (byte) gen_chargen_sprite::y#2 = (byte) gen_chargen_sprite::y#1 [phi:gen_chargen_sprite::@8->gen_chargen_sprite::@1#1] -- register_copy 
@@ -8493,18 +8493,18 @@ gen_chargen_sprite: {
     // bits = chargen[y]
     // [184] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     // current chargen line
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [185] phi from gen_chargen_sprite::@1 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2]
     // [185] phi (byte) gen_chargen_sprite::x#6 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [185] phi (byte*) gen_chargen_sprite::sprite#10 = (byte*) gen_chargen_sprite::sprite#11 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#1] -- register_copy 
     // [185] phi (byte) gen_chargen_sprite::s_gen_cnt#4 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#2] -- vbuyy=vbuc1 
     tay
     // [185] phi (byte) gen_chargen_sprite::s_gen#5 = (byte) 0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#3] -- vbuz1=vbuc1 
-    sta s_gen
+    sta.z s_gen
     // [185] phi (byte) gen_chargen_sprite::bits#2 = (byte) gen_chargen_sprite::bits#0 [phi:gen_chargen_sprite::@1->gen_chargen_sprite::@2#4] -- register_copy 
     // [185] phi from gen_chargen_sprite::@7 to gen_chargen_sprite::@2 [phi:gen_chargen_sprite::@7->gen_chargen_sprite::@2]
     // [185] phi (byte) gen_chargen_sprite::x#6 = (byte) gen_chargen_sprite::x#1 [phi:gen_chargen_sprite::@7->gen_chargen_sprite::@2#0] -- register_copy 
@@ -8517,7 +8517,7 @@ gen_chargen_sprite: {
     // bits & $80
     // [186] (byte~) gen_chargen_sprite::$3 ← (byte) gen_chargen_sprite::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
-    and bits
+    and.z bits
     // if((bits & $80) != 0)
     // [187] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
@@ -8527,13 +8527,13 @@ gen_chargen_sprite: {
     // [189] phi from gen_chargen_sprite::@10 to gen_chargen_sprite::@3 [phi:gen_chargen_sprite::@10->gen_chargen_sprite::@3]
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 1 [phi:gen_chargen_sprite::@10->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #1
-    sta c
+    sta.z c
     jmp b3
     // [189] phi from gen_chargen_sprite::@2 to gen_chargen_sprite::@3 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3]
   b6:
     // [189] phi (byte) gen_chargen_sprite::c#3 = (byte) 0 [phi:gen_chargen_sprite::@2->gen_chargen_sprite::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // gen_chargen_sprite::@3
   b3:
     // [190] phi from gen_chargen_sprite::@3 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4]
@@ -8552,12 +8552,12 @@ gen_chargen_sprite: {
   b4:
     // s_gen*2
     // [191] (byte~) gen_chargen_sprite::$6 ← (byte) gen_chargen_sprite::s_gen#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda s_gen
+    lda.z s_gen
     asl
     // s_gen = s_gen*2 | c
     // [192] (byte) gen_chargen_sprite::s_gen#1 ← (byte~) gen_chargen_sprite::$6 | (byte) gen_chargen_sprite::c#3 -- vbuz1=vbuaa_bor_vbuz2 
-    ora c
-    sta s_gen
+    ora.z c
+    sta.z s_gen
     // if(++s_gen_cnt==8)
     // [193] (byte) gen_chargen_sprite::s_gen_cnt#1 ← ++ (byte) gen_chargen_sprite::s_gen_cnt#3 -- vbuyy=_inc_vbuyy 
     iny
@@ -8580,9 +8580,9 @@ gen_chargen_sprite: {
     sta (sprite),y
     // sprite++;
     // [198] (byte*) gen_chargen_sprite::sprite#1 ← ++ (byte*) gen_chargen_sprite::sprite#3 -- pbuz1=_inc_pbuz1 
-    inc sprite
+    inc.z sprite
     bne !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // [199] phi from gen_chargen_sprite::@6 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5]
     // [199] phi (byte*) gen_chargen_sprite::sprite#4 = (byte*) gen_chargen_sprite::sprite#1 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#0] -- register_copy 
@@ -8590,7 +8590,7 @@ gen_chargen_sprite: {
     ldy #0
     // [199] phi (byte) gen_chargen_sprite::s_gen#6 = (byte) 0 [phi:gen_chargen_sprite::@6->gen_chargen_sprite::@5#2] -- vbuz1=vbuc1 
     tya
-    sta s_gen
+    sta.z s_gen
     // [199] phi from gen_chargen_sprite::@4 to gen_chargen_sprite::@5 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5]
     // [199] phi (byte*) gen_chargen_sprite::sprite#4 = (byte*) gen_chargen_sprite::sprite#3 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5#0] -- register_copy 
     // [199] phi (byte) gen_chargen_sprite::s_gen_cnt#5 = (byte) gen_chargen_sprite::s_gen_cnt#1 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5#1] -- register_copy 
@@ -8606,30 +8606,30 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@7
     // bits = bits*2
     // [202] (byte) gen_chargen_sprite::bits#1 ← (byte) gen_chargen_sprite::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // for(byte x:0..7)
     // [203] (byte) gen_chargen_sprite::x#1 ← ++ (byte) gen_chargen_sprite::x#6 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [204] if((byte) gen_chargen_sprite::x#1!=(byte) 8) goto gen_chargen_sprite::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp x
+    cmp.z x
     bne b2
     // gen_chargen_sprite::@8
     // sprite = sprite + 6
     // [205] (byte*) gen_chargen_sprite::sprite#2 ← (byte*) gen_chargen_sprite::sprite#4 + (byte) 6 -- pbuz1=pbuz1_plus_vbuc1 
     lda #6
     clc
-    adc sprite
-    sta sprite
+    adc.z sprite
+    sta.z sprite
     bcc !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     // for(byte y:0..7)
     // [206] (byte) gen_chargen_sprite::y#1 ← ++ (byte) gen_chargen_sprite::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [207] if((byte) gen_chargen_sprite::y#1!=(byte) 8) goto gen_chargen_sprite::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b1
     // gen_chargen_sprite::@9
     // *PROCPORT = $37
@@ -8665,19 +8665,19 @@ place_sprites: {
     // [214] phi from place_sprites to place_sprites::@1 [phi:place_sprites->place_sprites::@1]
     // [214] phi (byte) place_sprites::col#2 = (byte) 5 [phi:place_sprites->place_sprites::@1#0] -- vbuz1=vbuc1 
     lda #5
-    sta col
+    sta.z col
     // [214] phi (byte) place_sprites::j2#3 = (byte) 0 [phi:place_sprites->place_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta j2
+    sta.z j2
     // [214] phi (byte) place_sprites::spr_x#2 = (byte) $3c [phi:place_sprites->place_sprites::@1#2] -- vbuz1=vbuc1 
     lda #$3c
-    sta spr_x
+    sta.z spr_x
     // [214] phi (byte) place_sprites::j#2 = (byte) 0 [phi:place_sprites->place_sprites::@1#3] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     // [214] phi (byte) place_sprites::spr_id#2 = (byte)(word)(const byte*) sprites#0/(byte) $40 [phi:place_sprites->place_sprites::@1#4] -- vbuz1=vbuc1 
     lda #sprites/$40
-    sta spr_id
+    sta.z spr_id
     // [214] phi from place_sprites::@1 to place_sprites::@1 [phi:place_sprites::@1->place_sprites::@1]
     // [214] phi (byte) place_sprites::col#2 = (byte) place_sprites::col#1 [phi:place_sprites::@1->place_sprites::@1#0] -- register_copy 
     // [214] phi (byte) place_sprites::j2#3 = (byte) place_sprites::j2#2 [phi:place_sprites::@1->place_sprites::@1#1] -- register_copy 
@@ -8688,16 +8688,16 @@ place_sprites: {
   b1:
     // sprites_ptr[j] = spr_id++
     // [215] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_id
-    ldy j
+    lda.z spr_id
+    ldy.z j
     sta sprites_ptr,y
     // sprites_ptr[j] = spr_id++;
     // [216] (byte) place_sprites::spr_id#1 ← ++ (byte) place_sprites::spr_id#2 -- vbuz1=_inc_vbuz1 
-    inc spr_id
+    inc.z spr_id
     // SPRITES_XPOS[j2] = spr_x
     // [217] *((const byte*) SPRITES_XPOS#0 + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda spr_x
-    ldy j2
+    lda.z spr_x
+    ldy.z j2
     sta SPRITES_XPOS,y
     // SPRITES_YPOS[j2] = 80
     // [218] *((const byte*) SPRITES_YPOS#0 + (byte) place_sprites::j2#3) ← (byte) $50 -- pbuc1_derefidx_vbuz1=vbuc2 
@@ -8705,32 +8705,32 @@ place_sprites: {
     sta SPRITES_YPOS,y
     // SPRITES_COLS[j] = col
     // [219] *((const byte*) SPRITES_COLS#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda col
-    ldy j
+    lda.z col
+    ldy.z j
     sta SPRITES_COLS,y
     // spr_x = spr_x + 32
     // [220] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte) $20 -- vbuz1=vbuz1_plus_vbuc1 
-    lax spr_x
+    lax.z spr_x
     axs #-[$20]
-    stx spr_x
+    stx.z spr_x
     // col = col^($7^$5)
     // [221] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5 -- vbuz1=vbuz1_bxor_vbuc1 
     lda #7^5
-    eor col
-    sta col
+    eor.z col
+    sta.z col
     // j2++;
     // [222] (byte) place_sprites::j2#1 ← ++ (byte) place_sprites::j2#3 -- vbuxx=_inc_vbuz1 
-    ldx j2
+    ldx.z j2
     inx
     // [223] (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1 -- vbuz1=_inc_vbuxx 
     inx
-    stx j2
+    stx.z j2
     // for( byte j : 0..6)
     // [224] (byte) place_sprites::j#1 ← ++ (byte) place_sprites::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [225] if((byte) place_sprites::j#1!=(byte) 7) goto place_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp j
+    cmp.z j
     bne b1
     // place_sprites::@return
     // }

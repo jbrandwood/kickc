@@ -267,9 +267,9 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::line#12 = (byte*) 1024 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta line
+    sta.z line
     lda #>$400
-    sta line+1
+    sta.z line+1
     jmp b2
     // main::@2
   b2:
@@ -287,7 +287,7 @@ main: {
   b3_from_b2:
     // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b3
     // [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   b3_from_b4:
@@ -296,7 +296,7 @@ main: {
     // main::@3
   b3:
     // [9] if(*((byte*) main::line#12 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
-    ldy i
+    ldy.z i
     lda (line),y
     cmp #'a'
     beq b5
@@ -305,13 +305,13 @@ main: {
   b4:
     // [10] *((byte*) main::line#12 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'a'
-    ldy i
+    ldy.z i
     sta (line),y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [12] if((byte) main::i#1!=(byte) $28) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
-    cmp i
+    cmp.z i
     bne b3_from_b4
     jmp b5
     // main::@5
@@ -319,20 +319,20 @@ main: {
     // [13] (byte*) main::line#1 ← (byte*) main::line#12 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     jmp b1
     // main::@1
   b1:
     // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
-    lda line+1
+    lda.z line+1
     cmp #>$400+$28*$19
     bcc !+
     bne breturn
-    lda line
+    lda.z line
     cmp #<$400+$28*$19
     bcs breturn
   !:
@@ -396,9 +396,9 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::line#12 = (byte*) 1024 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta line
+    sta.z line
     lda #>$400
-    sta line+1
+    sta.z line+1
     jmp b2
     // main::@2
   b2:
@@ -444,20 +444,20 @@ main: {
     // [13] (byte*) main::line#1 ← (byte*) main::line#12 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     jmp b1
     // main::@1
   b1:
     // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
-    lda line+1
+    lda.z line+1
     cmp #>$400+$28*$19
     bcc !+
     bne breturn
-    lda line
+    lda.z line
     cmp #<$400+$28*$19
     bcs breturn
   !:
@@ -546,9 +546,9 @@ main: {
     // [5] phi from main to main::@2 [phi:main->main::@2]
     // [5] phi (byte*) main::line#12 = (byte*) 1024 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta line
+    sta.z line
     lda #>$400
-    sta line+1
+    sta.z line+1
     // main::@2
   b2:
     // if(*line=='a')
@@ -592,19 +592,19 @@ main: {
     // [13] (byte*) main::line#1 ← (byte*) main::line#12 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     // main::@1
     // for(byte* line = $400; line<$400+40*25;line+=40 )
     // [14] if((byte*) main::line#1>=(word)(number) $400+(number) $28*(number) $19) goto main::@return -- pbuz1_ge_vwuc1_then_la1 
-    lda line+1
+    lda.z line+1
     cmp #>$400+$28*$19
     bcc !+
     bne breturn
-    lda line
+    lda.z line
     cmp #<$400+$28*$19
     bcs breturn
   !:

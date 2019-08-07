@@ -30,9 +30,9 @@ main: {
     sta entry1
     ldx #0
     lda #<ENTRIES
-    sta entry
+    sta.z entry
     lda #>ENTRIES
-    sta entry+1
+    sta.z entry+1
   b2:
     lda #'0'
     clc
@@ -56,13 +56,13 @@ main: {
     pha
     iny
     lda (entry),y
-    sta entry+1
+    sta.z entry+1
     pla
-    sta entry
-    lda entry+1
+    sta.z entry
+    lda.z entry+1
     cmp #>0
     bne b2
-    lda entry
+    lda.z entry
     cmp #<0
     bne b2
     rts

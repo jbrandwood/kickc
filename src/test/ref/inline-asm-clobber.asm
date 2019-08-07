@@ -22,15 +22,15 @@ main: {
   // Then loop with clobbering A&X
   b4:
     lda #0
-    sta l
+    sta.z l
   b5:
     eor #$55
     tax
-    lda l
+    lda.z l
     sta SCREEN,y
-    inc l
+    inc.z l
     lda #$65
-    cmp l
+    cmp.z l
     bne b5
     iny
     cpy #$65

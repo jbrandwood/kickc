@@ -764,17 +764,17 @@ main: {
   memset_from_b3:
     // [21] phi (byte) memset::c#4 = (const byte) BLACK#0 [phi:main::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
-    sta memset.c
+    sta.z memset.c
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@3->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -786,23 +786,23 @@ main: {
   memset_from_b4:
     // [21] phi (byte) memset::c#4 = (const byte) WHITE#0|(byte) 8 [phi:main::@4->memset#0] -- vbuz1=vbuc1 
     lda #WHITE|8
-    sta memset.c
+    sta.z memset.c
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) COLS#0 [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
-    sta memset.str
+    sta.z memset.str
     lda #>COLS
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@4->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
     // [15] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta ch
+    sta.z ch
     jmp b1
     // [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -811,14 +811,14 @@ main: {
     // main::@1
   b1:
     // [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy ch
+    ldy.z ch
     tya
     sta SCREEN,y
     // [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
-    inc ch
+    inc.z ch
     // [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$f0
-    cmp ch
+    cmp.z ch
     bne b1_from_b1
     jmp b2
     // main::@2
@@ -839,27 +839,27 @@ memset: {
     .label str = 5
     .label c = 7
     // [22] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
     jmp b1
     // memset::@1
   b1:
     // [23] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz3 
-    lda str
+    lda.z str
     clc
-    adc num
-    sta end
-    lda str+1
-    adc num+1
-    sta end+1
+    adc.z num
+    sta.z end
+    lda.z str+1
+    adc.z num+1
+    sta.z end+1
     // [24] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
-    lda str
-    sta dst
-    lda str+1
-    sta dst+1
+    lda.z str
+    sta.z dst
+    lda.z str+1
+    sta.z dst+1
     // [25] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
   b2_from_b3:
@@ -868,11 +868,11 @@ memset: {
     // memset::@2
   b2:
     // [26] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     jmp breturn
     // memset::@return
@@ -882,13 +882,13 @@ memset: {
     // memset::@3
   b3:
     // [28] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
-    lda c
+    lda.z c
     ldy #0
     sta (dst),y
     // [29] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2_from_b3
 }
@@ -1023,14 +1023,14 @@ main: {
     ldx #BLACK
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@3->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -1044,14 +1044,14 @@ main: {
     ldx #WHITE|8
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) COLS#0 [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
-    sta memset.str
+    sta.z memset.str
     lda #>COLS
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@4->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
@@ -1090,22 +1090,22 @@ memset: {
     .label num = 2
     .label str = 4
     // [22] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
     jmp b1
     // memset::@1
   b1:
     // [23] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
     // [24] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [25] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
@@ -1115,11 +1115,11 @@ memset: {
     // memset::@2
   b2:
     // [26] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     jmp breturn
     // memset::@return
@@ -1133,9 +1133,9 @@ memset: {
     ldy #0
     sta (dst),y
     // [29] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2_from_b3
 }
@@ -1342,14 +1342,14 @@ main: {
     ldx #BLACK
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@3->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
@@ -1360,14 +1360,14 @@ main: {
     ldx #WHITE|8
     // [21] phi (void*) memset::str#3 = (void*)(const byte*) COLS#0 [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
-    sta memset.str
+    sta.z memset.str
     lda #>COLS
-    sta memset.str+1
+    sta.z memset.str+1
     // [21] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:main::@4->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
-    sta memset.num
+    sta.z memset.num
     lda #>$28*$19
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [15] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
@@ -1406,21 +1406,21 @@ memset: {
     .label str = 4
     // if(num>0)
     // [22] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
     // memset::@1
     // end = (char*)str + num
     // [23] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
     // [24] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [25] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
     // [25] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
@@ -1428,11 +1428,11 @@ memset: {
   b2:
     // for(char* dst = str; dst!=end; dst++)
     // [26] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     // memset::@return
   breturn:
@@ -1448,9 +1448,9 @@ memset: {
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
     // [29] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }

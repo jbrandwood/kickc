@@ -17,11 +17,11 @@ testSignedVals: {
     .const sbc1 = -$78
     .label sbv1 = 5
     lda #-$78
-    sta sbv1
+    sta.z sbv1
     sta SSCREEN+$28*3
     lda #sbc1
     sta SSCREEN+$28*3+1
-    lda sbv1
+    lda.z sbv1
     sta SSCREEN+$28*3+1+1
     lda #-$46+-$32
     sta SSCREEN+$28*3+1+1+1
@@ -31,21 +31,21 @@ testSignedVals: {
     sta SSCREEN+$28*3+1+1+1+1+1
     lda #-$78
     clc
-    adc sbv1
+    adc.z sbv1
     sta SSCREEN+$28*3+1+1+1+1+1+1
     lda #-$78
     clc
-    adc sbv1
+    adc.z sbv1
     sta SSCREEN+$28*3+1+1+1+1+1+1+1
     lda #sbc1
     clc
-    adc sbv1
+    adc.z sbv1
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1
     lda #sbc1
     clc
-    adc sbv1
+    adc.z sbv1
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1
-    lda sbv1
+    lda.z sbv1
     asl
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
     rts
@@ -53,7 +53,7 @@ testSignedVals: {
 testSigned: {
     .label sbv1 = 4
     lda #-$78
-    sta sbv1
+    sta.z sbv1
     lda #0
     sta SCREEN+$28*2
     lda #TYPEID_SIGNED_BYTE
@@ -75,11 +75,11 @@ testUnsignedVals: {
     .const ubc1 = $fa
     .label ubv1 = 3
     lda #$fa
-    sta ubv1
+    sta.z ubv1
     sta SCREEN+$28
     lda #ubc1
     sta SCREEN+$29
-    lda ubv1
+    lda.z ubv1
     sta SCREEN+$2a
     lda #$78+$82
     sta SCREEN+$2b
@@ -87,21 +87,21 @@ testUnsignedVals: {
     sta SCREEN+$2c
     lda #$fa+ubc1
     sta SCREEN+$2d
-    lax ubv1
+    lax.z ubv1
     axs #-[$fa]
     stx SCREEN+$2e
-    lax ubv1
+    lax.z ubv1
     axs #-[$fa]
     stx SCREEN+$2f
     lda #ubc1
     clc
-    adc ubv1
+    adc.z ubv1
     sta SCREEN+$30
     lda #ubc1
     clc
-    adc ubv1
+    adc.z ubv1
     sta SCREEN+$31
-    lda ubv1
+    lda.z ubv1
     asl
     sta SCREEN+$32
     rts
@@ -109,7 +109,7 @@ testUnsignedVals: {
 testUnsigned: {
     .label ubv1 = 2
     lda #$fa
-    sta ubv1
+    sta.z ubv1
     lda #0
     sta SCREEN
     lda #TYPEID_BYTE

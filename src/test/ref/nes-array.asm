@@ -11,32 +11,32 @@ main: {
     .label y1 = 4
     .label y2 = 6
     lda #<$1234
-    sta y1
+    sta.z y1
     lda #>$1234
-    sta y1+1
+    sta.z y1+1
     lda #<$1234
-    sta y2
+    sta.z y2
     lda #>$1234
-    sta y2+1
+    sta.z y2+1
     lda #<y1
-    sta foo.y
+    sta.z foo.y
     lda #>y1
-    sta foo.y+1
+    sta.z foo.y+1
     ldx #1
     jsr foo
-    lda _1
+    lda.z _1
     sta SCREEN
-    lda _1+1
+    lda.z _1+1
     sta SCREEN+1
     lda #<y2
-    sta foo.y
+    sta.z foo.y
     lda #>y2
-    sta foo.y+1
+    sta.z foo.y+1
     ldx #2
     jsr foo
-    lda _3
+    lda.z _3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda _3+1
+    lda.z _3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     rts
 }
@@ -55,9 +55,9 @@ foo: {
     iny
     lda wow+1,x
     adc (return),y
-    sta return+1
+    sta.z return+1
     pla
-    sta return
+    sta.z return
     rts
 }
   wow: .word $cafe, $babe, $1234, $5678

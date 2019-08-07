@@ -6,15 +6,15 @@ main: {
     .label SCREEN = $400
     .label i = 4
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     jsr sub1
-    ldy i
+    ldy.z i
     sta SCREEN,y
-    inc i
+    inc.z i
     lda #3
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

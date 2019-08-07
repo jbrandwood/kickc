@@ -24,21 +24,21 @@ mode_ctrl: {
 print_cls: {
     .label sc = 2
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bne b2
     rts

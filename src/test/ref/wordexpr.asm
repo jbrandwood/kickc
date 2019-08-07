@@ -6,16 +6,16 @@ main: {
     .label b = 2
     ldx #0
     txa
-    sta b
-    sta b+1
+    sta.z b
+    sta.z b+1
   b1:
     clc
-    lda b
+    lda.z b
     adc #<$28*8
-    sta b
-    lda b+1
+    sta.z b
+    lda.z b+1
     adc #>$28*8
-    sta b+1
+    sta.z b+1
     inx
     cpx #$b
     bne b1

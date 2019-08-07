@@ -8,9 +8,9 @@ main: {
     .label i = 2
     ldx #0
     txa
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tay
     lda words,y
@@ -19,9 +19,9 @@ main: {
     lda words+1,y
     sta SCREEN,x
     inx
-    inc i
+    inc.z i
     lda #3
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

@@ -6,21 +6,21 @@
   .label idx = 2
 bbegin:
   lda #0
-  sta idx
+  sta.z idx
   jsr main
   rts
 main: {
     jsr fn1
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     jsr fn1
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     rts
 }
 fn1: {
-    inc idx
+    inc.z idx
     rts
 }

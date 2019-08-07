@@ -599,12 +599,12 @@ main: {
   b1_from_main:
     // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #7
-    sta scroll
+    sta.z scroll
     jmp b1
   // Wait for raster
     // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
@@ -632,16 +632,16 @@ main: {
     // [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuz1=_dec_vbuz1 
-    dec scroll
+    dec.z scroll
     // [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
-    cmp scroll
+    cmp.z scroll
     bne b4_from_b3
     // [12] phi from main::@3 to main::@6 [phi:main::@3->main::@6]
   b6_from_b3:
     // [12] phi (byte) main::i#4 = (byte) 0 [phi:main::@3->main::@6#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b6
     // [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   b6_from_b5:
@@ -650,18 +650,18 @@ main: {
     // main::@6
   b6:
     // [13] *((const byte[]) main::line#0 + (byte) main::i#4) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#4) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy i
+    ldy.z i
     lda line+1,y
     sta line,y
     // [14] (byte) main::i#1 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     jmp b5
   // Hard scroll
     // main::@5
   b5:
     // [15] if((byte) main::i#1!=(byte) $27) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #$27
-    cmp i
+    cmp.z i
     bne b6_from_b5
     jmp b7
     // main::@7
@@ -670,9 +670,9 @@ main: {
     // Render next char
     ldy #0
     lda (nxt),y
-    sta c
+    sta.z c
     // [17] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b9_from_b7
     jmp b8
@@ -680,14 +680,14 @@ main: {
   b8:
     // [18] (byte) main::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
     lda TEXT
-    sta c
+    sta.z c
     // [19] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
   b9_from_b8:
     // [19] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [19] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
     jmp b9
     // [19] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
@@ -698,19 +698,19 @@ main: {
     // main::@9
   b9:
     // [20] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
-    lda c
+    lda.z c
     sta line+$27
     // [21] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [22] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
   b4_from_b9:
     // [22] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
     // [22] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuz1=vbuc1 
     lda #7
-    sta scroll
+    sta.z scroll
     jmp b4
     // [22] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -720,7 +720,7 @@ main: {
     // main::@4
   b4:
     // [23] *((const byte*) SCROLL#0) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuz1 
-    lda scroll
+    lda.z scroll
     sta SCROLL
     // [24] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
@@ -734,9 +734,9 @@ fillscreen: {
   b2_from_fillscreen:
     // [26] phi (byte*) fillscreen::cursor#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
     jmp b2
     // [26] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
   b2_from_b1:
@@ -749,19 +749,19 @@ fillscreen: {
     ldy #0
     sta (cursor),y
     // [28] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#4 -- pbuz1=_inc_pbuz1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     jmp b1
     // fillscreen::@1
   b1:
     // [29] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -846,9 +846,9 @@ main: {
   b1_from_main:
     // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #7
     jmp b1
@@ -925,9 +925,9 @@ main: {
   b9_from_b8:
     // [19] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [19] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
     jmp b9
     // [19] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
@@ -940,9 +940,9 @@ main: {
     // [20] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // [21] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [22] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
   b4_from_b9:
@@ -971,9 +971,9 @@ fillscreen: {
   b2_from_fillscreen:
     // [26] phi (byte*) fillscreen::cursor#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
     jmp b2
     // [26] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
   b2_from_b1:
@@ -986,19 +986,19 @@ fillscreen: {
     ldy #0
     sta (cursor),y
     // [28] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#4 -- pbuz1=_inc_pbuz1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     jmp b1
     // fillscreen::@1
   b1:
     // [29] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -1162,9 +1162,9 @@ main: {
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #7
   // Wait for raster
@@ -1232,9 +1232,9 @@ main: {
     // [19] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
     // [19] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [19] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
     // [19] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
     // [19] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
@@ -1246,9 +1246,9 @@ main: {
     stx line+$27
     // nxt++;
     // [21] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [22] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
     // [22] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
@@ -1274,9 +1274,9 @@ fillscreen: {
     // [26] phi from fillscreen to fillscreen::@2 [phi:fillscreen->fillscreen::@2]
     // [26] phi (byte*) fillscreen::cursor#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
     // [26] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
     // [26] phi (byte*) fillscreen::cursor#4 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@2#0] -- register_copy 
     // fillscreen::@2
@@ -1288,17 +1288,17 @@ fillscreen: {
     sta (cursor),y
     // for( byte* cursor = screen; cursor < screen+1000; cursor++)
     // [28] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#4 -- pbuz1=_inc_pbuz1 
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     // fillscreen::@1
     // [29] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b2
   !:

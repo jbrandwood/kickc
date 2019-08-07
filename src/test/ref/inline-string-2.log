@@ -382,12 +382,12 @@ main: {
   print_msg_from_main:
     // [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuz1=vbuc1 
     lda #1
-    sta print_msg.idx
+    sta.z print_msg.idx
     jsr print_msg
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -400,7 +400,7 @@ main: {
     // [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
     // [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuz1=vbuc1 
     lda #2
-    sta print_msg.idx
+    sta.z print_msg.idx
     jsr print_msg
     jmp breturn
     // main::@return
@@ -415,15 +415,15 @@ print_msg: {
     .label msg = 5
     // [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
-    cmp idx
+    cmp.z idx
     beq b1_from_print_msg
     // [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
   b2_from_print_msg:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
-    sta msg
+    sta.z msg
     lda #>msg_2
-    sta msg+1
+    sta.z msg+1
     jmp b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
   b1_from_print_msg:
@@ -434,17 +434,17 @@ print_msg: {
   b2_from_b1:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
-    sta msg
+    sta.z msg
     lda #>msg_1
-    sta msg+1
+    sta.z msg+1
     jmp b2
     // print_msg::@2
   b2:
     // [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 -- pbuz1=pbuz2 
-    lda msg
-    sta print.msg
-    lda msg+1
-    sta print.msg+1
+    lda.z msg
+    sta.z print.msg
+    lda.z msg+1
+    sta.z print.msg+1
     // [14] call print 
     // [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
   print_from_b2:
@@ -489,14 +489,14 @@ print: {
     ldy #0
     sta (screen),y
     // [21] (byte*) screen#6 ← ++ (byte*) screen#14 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [22] (byte*) print::msg#1 ← ++ (byte*) print::msg#2 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     jmp b1_from_b2
 }
@@ -557,9 +557,9 @@ main: {
   print_msg_from_main:
     // [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
     ldx #1
     jsr print_msg
@@ -592,9 +592,9 @@ print_msg: {
   b2_from_print_msg:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
-    sta msg
+    sta.z msg
     lda #>msg_2
-    sta msg+1
+    sta.z msg+1
     jmp b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
   b1_from_print_msg:
@@ -605,9 +605,9 @@ print_msg: {
   b2_from_b1:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
-    sta msg
+    sta.z msg
     lda #>msg_1
-    sta msg+1
+    sta.z msg+1
     jmp b2
     // print_msg::@2
   b2:
@@ -656,14 +656,14 @@ print: {
     ldy #0
     sta (screen),y
     // [21] (byte*) screen#6 ← ++ (byte*) screen#14 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [22] (byte*) print::msg#1 ← ++ (byte*) print::msg#2 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     jmp b1_from_b2
 }
@@ -770,9 +770,9 @@ main: {
     // [9] phi from main to print_msg [phi:main->print_msg]
     // [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
     ldx #1
     jsr print_msg
@@ -801,9 +801,9 @@ print_msg: {
     // [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
-    sta msg
+    sta.z msg
     lda #>msg_2
-    sta msg+1
+    sta.z msg+1
     jmp b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
     // print_msg::@1
@@ -811,9 +811,9 @@ print_msg: {
     // [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
-    sta msg
+    sta.z msg
     lda #>msg_1
-    sta msg+1
+    sta.z msg+1
     // print_msg::@2
   b2:
     // print(msg)
@@ -858,14 +858,14 @@ print: {
     sta (screen),y
     // *(screen++) = *(msg++);
     // [21] (byte*) screen#6 ← ++ (byte*) screen#14 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [22] (byte*) print::msg#1 ← ++ (byte*) print::msg#2 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     jmp b1
 }

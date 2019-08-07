@@ -41,17 +41,17 @@
 bbegin:
   // The index in the PLEX tables of the next sprite to show
   lda #0
-  sta plex_show_idx
+  sta.z plex_show_idx
   // The index the next sprite to use for showing (sprites are used round-robin)
-  sta plex_sprite_idx
+  sta.z plex_sprite_idx
   // The MSB bit of the next sprite to use for showing
   lda #1
-  sta plex_sprite_msb
+  sta.z plex_sprite_msb
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   lda #0
-  sta plex_free_next
+  sta.z plex_free_next
   lda #1
-  sta framedone
+  sta.z framedone
   jsr main
   rts
 main: {
@@ -64,16 +64,16 @@ main: {
 loop: {
     .label sin_idx = 2
     lda #0
-    sta sin_idx
+    sta.z sin_idx
   b2:
-    lda framedone
+    lda.z framedone
     cmp #0
     bne b3
     jmp b2
   b3:
     lda #RED
     sta BORDERCOL
-    ldx sin_idx
+    ldx.z sin_idx
     ldy #0
   b4:
     lda YSIN,x
@@ -83,13 +83,13 @@ loop: {
     iny
     cpy #PLEX_COUNT-1+1
     bne b4
-    inc sin_idx
+    inc.z sin_idx
     inc BORDERCOL
     jsr plexSort
     lda #GREEN
     sta BORDERCOL
     lda #0
-    sta framedone
+    sta.z framedone
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
@@ -111,15 +111,15 @@ plexSort: {
     .label nxt_y = $c
     .label m = 3
     lda #0
-    sta m
+    sta.z m
   b1:
-    ldy m
+    ldy.z m
     lda PLEX_SORTED_IDX+1,y
-    sta nxt_idx
+    sta.z nxt_idx
     tay
     lda PLEX_YPOS,y
-    sta nxt_y
-    ldx m
+    sta.z nxt_y
+    ldx.z m
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcs b2
@@ -129,25 +129,25 @@ plexSort: {
     dex
     cpx #$ff
     beq b4
-    lda nxt_y
+    lda.z nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3
   b4:
     inx
-    lda nxt_idx
+    lda.z nxt_idx
     sta PLEX_SORTED_IDX,x
   b2:
-    inc m
+    inc.z m
     lda #PLEX_COUNT-2+1
-    cmp m
+    cmp.z m
     bne b1
     // Prepare for showing the sprites
     lda #0
-    sta plex_show_idx
-    sta plex_sprite_idx
+    sta.z plex_show_idx
+    sta.z plex_sprite_idx
     lda #1
-    sta plex_sprite_msb
+    sta.z plex_sprite_msb
     ldx #0
   plexFreePrepare1_b1:
     lda #0
@@ -155,7 +155,7 @@ plexSort: {
     inx
     cpx #8
     bne plexFreePrepare1_b1
-    sta plex_free_next
+    sta.z plex_free_next
     rts
 }
 // Initialize the program
@@ -165,9 +165,9 @@ init: {
     sta D011
     jsr plexInit
     lda #<$20
-    sta xp
+    sta.z xp
     lda #>$20
-    sta xp+1
+    sta.z xp+1
     ldx #0
   b1:
     lda #SPRITE/$40
@@ -175,16 +175,16 @@ init: {
     txa
     asl
     tay
-    lda xp
+    lda.z xp
     sta PLEX_XPOS,y
-    lda xp+1
+    lda.z xp+1
     sta PLEX_XPOS+1,y
     lda #9
     clc
-    adc xp
-    sta xp
+    adc.z xp
+    sta.z xp
     bcc !+
-    inc xp+1
+    inc.z xp+1
   !:
     inx
     cpx #PLEX_COUNT-1+1
@@ -230,25 +230,25 @@ plex_irq: {
     sta BORDERCOL
   b3:
     jsr plexShowSprite
-    ldy plexShowSprite.plexFreeAdd1__2
+    ldy.z plexShowSprite.plexFreeAdd1__2
     ldx PLEX_FREE_YPOS,y
     lda RASTER
     clc
     adc #2
-    sta _4
-    lda plex_show_idx
+    sta.z _4
+    lda.z plex_show_idx
     cmp #PLEX_COUNT
     bcs b4
-    cpx _4
+    cpx.z _4
     bcc b3
   b4:
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    lda plex_show_idx
+    lda.z plex_show_idx
     cmp #PLEX_COUNT
     bcc b1
     lda #1
-    sta framedone
+    sta.z framedone
   b2:
     lda #0
     sta BORDERCOL
@@ -263,58 +263,58 @@ plexShowSprite: {
     .label _6 = 6
     .label plex_sprite_idx2 = $d
     .label plexFreeAdd1__2 = 8
-    lda plex_sprite_idx
+    lda.z plex_sprite_idx
     asl
-    sta plex_sprite_idx2
-    ldx plex_show_idx
+    sta.z plex_sprite_idx2
+    ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
-    ldy plex_sprite_idx2
+    ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
     clc
     adc #$15
-    ldy plex_free_next
+    ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
-    ldx plex_free_next
+    ldx.z plex_free_next
     inx
     lda #7
-    sax plexFreeAdd1__2
-    ldx plex_show_idx
+    sax.z plexFreeAdd1__2
+    ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
-    ldx plex_sprite_idx
+    ldx.z plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-    ldy plex_show_idx
+    ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
     asl
     tax
     lda PLEX_XPOS,x
-    ldy plex_sprite_idx2
+    ldy.z plex_sprite_idx2
     sta SPRITES_XPOS,y
     lda PLEX_XPOS+1,x
     cmp #0
     bne b1
     lda #$ff
-    eor plex_sprite_msb
+    eor.z plex_sprite_msb
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:
-    ldx plex_sprite_idx
+    ldx.z plex_sprite_idx
     inx
     lda #7
-    sax _6
-    inc plex_show_idx
-    asl plex_sprite_msb
-    lda plex_sprite_msb
+    sax.z _6
+    inc.z plex_show_idx
+    asl.z plex_sprite_msb
+    lda.z plex_sprite_msb
     cmp #0
     bne breturn
     lda #1
-    sta plex_sprite_msb
+    sta.z plex_sprite_msb
   breturn:
     rts
   b1:
     lda SPRITES_XMSB
-    ora plex_sprite_msb
+    ora.z plex_sprite_msb
     sta SPRITES_XMSB
     jmp b2
 }

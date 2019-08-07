@@ -6,7 +6,7 @@
   .label idx = 3
 bbegin:
   lda #0
-  sta idx
+  sta.z idx
   jsr main
   rts
 main: {
@@ -16,12 +16,12 @@ main: {
 do10: {
     .label i = 2
     lda #0
-    sta i
+    sta.z i
   b1:
     jsr hello
-    inc i
+    inc.z i
     lda #$a
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
@@ -29,9 +29,9 @@ hello: {
     ldx #0
   b1:
     lda msg,x
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
-    inc idx
+    inc.z idx
     inx
     txa
     tay

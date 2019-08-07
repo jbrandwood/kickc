@@ -10,13 +10,13 @@ main: {
   b2:
     clc
     adc #1
-    stx $ff
-    cmp $ff
+    stx.z $ff
+    cmp.z $ff
     bcs b3
     tax
   b3:
-    sta $ff
-    cpy $ff
+    sta.z $ff
+    cpy.z $ff
     bcs b4
     tay
   b4:

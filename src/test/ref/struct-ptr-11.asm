@@ -13,16 +13,16 @@ main: {
     eor #$ff
     clc
     adc #1
-    sta _2
+    sta.z _2
     txa
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     txa
     sta points,y
-    lda _2
+    lda.z _2
     sta points+OFFSET_STRUCT_POINT_Y,y
     txa
     sta points+OFFSET_STRUCT_POINT_Z,y
@@ -33,9 +33,9 @@ main: {
   b2:
     txa
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tay
     lda points,y
     sta SCREEN,y

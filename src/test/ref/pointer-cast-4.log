@@ -187,7 +187,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -196,25 +196,25 @@ main: {
     // main::@1
   b1:
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
-    lda i
-    sta _1
+    lda.z i
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _3
+    sta.z _3
     // [8] *((const word*) main::wscreen#0 + (byte~) main::$3) ← (word~) main::$1 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _3
-    lda _1
+    ldy.z _3
+    lda.z _1
     sta wscreen,y
-    lda _1+1
+    lda.z _1+1
     sta wscreen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // main::@return
@@ -286,17 +286,17 @@ main: {
   b1:
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const word*) main::wscreen#0 + (byte~) main::$3) ← (word~) main::$1 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda _1
+    lda.z _1
     sta wscreen,y
-    lda _1+1
+    lda.z _1+1
     sta wscreen+1,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -390,18 +390,18 @@ main: {
     // (word)i
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // wscreen[i] = (word)i
     // [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [8] *((const word*) main::wscreen#0 + (byte~) main::$3) ← (word~) main::$1 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda _1
+    lda.z _1
     sta wscreen,y
-    lda _1+1
+    lda.z _1+1
     sta wscreen+1,y
     // for(byte i: 0..2)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

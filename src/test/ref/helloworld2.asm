@@ -4,14 +4,14 @@
   .label screen = $400
 main: {
     lda #<screen
-    sta print2.at
+    sta.z print2.at
     lda #>screen
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     lda #<screen+$50
-    sta print2.at
+    sta.z print2.at
     lda #>screen+$50
-    sta print2.at+1
+    sta.z print2.at+1
     jsr print2
     rts
     hello: .text "hello world!"
@@ -22,7 +22,7 @@ print2: {
     .label j = 4
     .label at = 2
     lda #0
-    sta j
+    sta.z j
     tax
   b1:
     txa
@@ -33,12 +33,12 @@ print2: {
     rts
   b2:
     lda main.hello,x
-    ldy j
+    ldy.z j
     sta (at),y
     tya
     clc
     adc #2
-    sta j
+    sta.z j
     inx
     jmp b1
 }

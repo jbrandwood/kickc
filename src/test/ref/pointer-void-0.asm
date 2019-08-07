@@ -9,9 +9,9 @@ main: {
     .label bp = vp
     .label w = 2
     lda #<$4d2
-    sta w
+    sta.z w
     lda #>$4d2
-    sta w+1
+    sta.z w+1
     lda bp
     sta SCREEN
     rts

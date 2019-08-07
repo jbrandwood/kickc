@@ -9,38 +9,38 @@ main: {
     .label i = 3
     jsr print_cls
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #0
-    sta i
+    sta.z i
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #7
-    sta a
+    sta.z a
   b1:
     lda #$ce
     sec
-    sbc a
-    sta b
-    lda a
-    cmp b
+    sbc.z a
+    sta.z b
+    lda.z a
+    cmp.z b
     bcs b22
     ldx #'+'
     jmp b2
   b22:
     ldx #'-'
   b2:
-    lda b
-    sta printu.b
+    lda.z b
+    sta.z printu.b
     lda #<op
-    sta printu.op
+    sta.z printu.op
     lda #>op
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
+    lda.z a
     cmp #$37
     bcs b23
     ldx #'+'
@@ -49,14 +49,14 @@ main: {
     ldx #'-'
   b3:
     lda #$37
-    sta printu.b
+    sta.z printu.b
     lda #<op
-    sta printu.op
+    sta.z printu.op
     lda #>op
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    ldy i
+    lda.z a
+    ldy.z i
     cmp cs,y
     bcs b24
     ldx #'+'
@@ -64,50 +64,50 @@ main: {
   b24:
     ldx #'-'
   b4:
-    ldy i
+    ldy.z i
     lda cs,y
-    sta printu.b
+    sta.z printu.b
     lda #<op
-    sta printu.op
+    sta.z printu.op
     lda #>op
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    cmp a
+    lda.z a
+    cmp.z a
     bcs b25
     ldx #'+'
     jmp b5
   b25:
     ldx #'-'
   b5:
-    lda a
-    sta printu.b
+    lda.z a
+    sta.z printu.b
     lda #<op
-    sta printu.op
+    sta.z printu.op
     lda #>op
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     jsr print_ln
-    lda b
-    cmp a
+    lda.z b
+    cmp.z a
     bcs b26
     ldx #'+'
     jmp b6
   b26:
     ldx #'-'
   b6:
-    lda b
-    sta printu.b
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z b
+    sta.z printu.b
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<op4
-    sta printu.op
+    sta.z printu.op
     lda #>op4
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
+    lda.z a
     cmp #$37+1
     bcc b27
     ldx #'+'
@@ -116,65 +116,65 @@ main: {
     ldx #'-'
   b7:
     lda #$37
-    sta printu.b
+    sta.z printu.b
     lda #<op4
-    sta printu.op
+    sta.z printu.op
     lda #>op4
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    ldy i
+    ldy.z i
     lda cs,y
-    cmp a
+    cmp.z a
     bcs b28
     ldx #'+'
     jmp b8
   b28:
     ldx #'-'
   b8:
-    ldy i
+    ldy.z i
     lda cs,y
-    sta printu.b
+    sta.z printu.b
     lda #<op4
-    sta printu.op
+    sta.z printu.op
     lda #>op4
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    cmp a
+    lda.z a
+    cmp.z a
     bcs b29
     ldx #'+'
     jmp b9
   b29:
     ldx #'-'
   b9:
-    lda a
-    sta printu.b
+    lda.z a
+    sta.z printu.b
     lda #<op4
-    sta printu.op
+    sta.z printu.op
     lda #>op4
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     jsr print_ln
-    lda b
-    cmp a
+    lda.z b
+    cmp.z a
     bcc b30
     ldx #'+'
     jmp b10
   b30:
     ldx #'-'
   b10:
-    lda b
-    sta printu.b
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z b
+    sta.z printu.b
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<op8
-    sta printu.op
+    sta.z printu.op
     lda #>op8
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
+    lda.z a
     cmp #$37+1
     bcs b31
     ldx #'+'
@@ -183,65 +183,65 @@ main: {
     ldx #'-'
   b11:
     lda #$37
-    sta printu.b
+    sta.z printu.b
     lda #<op8
-    sta printu.op
+    sta.z printu.op
     lda #>op8
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    ldy i
+    ldy.z i
     lda cs,y
-    cmp a
+    cmp.z a
     bcc b32
     ldx #'+'
     jmp b12
   b32:
     ldx #'-'
   b12:
-    ldy i
+    ldy.z i
     lda cs,y
-    sta printu.b
+    sta.z printu.b
     lda #<op8
-    sta printu.op
+    sta.z printu.op
     lda #>op8
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    cmp a
+    lda.z a
+    cmp.z a
     bcc b33
     ldx #'+'
     jmp b13
   b33:
     ldx #'-'
   b13:
-    lda a
-    sta printu.b
+    lda.z a
+    sta.z printu.b
     lda #<op8
-    sta printu.op
+    sta.z printu.op
     lda #>op8
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     jsr print_ln
-    lda a
-    cmp b
+    lda.z a
+    cmp.z b
     bcc b34
     ldx #'+'
     jmp b14
   b34:
     ldx #'-'
   b14:
-    lda b
-    sta printu.b
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z b
+    sta.z printu.b
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<op12
-    sta printu.op
+    sta.z printu.op
     lda #>op12
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
+    lda.z a
     cmp #$37
     bcc b35
     ldx #'+'
@@ -250,14 +250,14 @@ main: {
     ldx #'-'
   b15:
     lda #$37
-    sta printu.b
+    sta.z printu.b
     lda #<op12
-    sta printu.op
+    sta.z printu.op
     lda #>op12
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    ldy i
+    lda.z a
+    ldy.z i
     cmp cs,y
     bcc b36
     ldx #'+'
@@ -265,51 +265,51 @@ main: {
   b36:
     ldx #'-'
   b16:
-    ldy i
+    ldy.z i
     lda cs,y
-    sta printu.b
+    sta.z printu.b
     lda #<op12
-    sta printu.op
+    sta.z printu.op
     lda #>op12
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    cmp a
+    lda.z a
+    cmp.z a
     bcc b37
     ldx #'+'
     jmp b17
   b37:
     ldx #'-'
   b17:
-    lda a
-    sta printu.b
+    lda.z a
+    sta.z printu.b
     lda #<op12
-    sta printu.op
+    sta.z printu.op
     lda #>op12
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     jsr print_ln
-    lda a
-    cmp b
+    lda.z a
+    cmp.z b
     bne b38
     ldx #'+'
     jmp b18
   b38:
     ldx #'-'
   b18:
-    lda b
-    sta printu.b
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z b
+    sta.z printu.b
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<op16
-    sta printu.op
+    sta.z printu.op
     lda #>op16
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     lda #$37
-    cmp a
+    cmp.z a
     bne b39
     ldx #'+'
     jmp b19
@@ -317,14 +317,14 @@ main: {
     ldx #'-'
   b19:
     lda #$37
-    sta printu.b
+    sta.z printu.b
     lda #<op16
-    sta printu.op
+    sta.z printu.op
     lda #>op16
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    ldy i
+    lda.z a
+    ldy.z i
     cmp cs,y
     bne b40
     ldx #'+'
@@ -332,44 +332,44 @@ main: {
   b40:
     ldx #'-'
   b20:
-    ldy i
+    ldy.z i
     lda cs,y
-    sta printu.b
+    sta.z printu.b
     lda #<op16
-    sta printu.op
+    sta.z printu.op
     lda #>op16
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
-    lda a
-    cmp a
+    lda.z a
+    cmp.z a
     bne b41
     ldx #'+'
     jmp b21
   b41:
     ldx #'-'
   b21:
-    lda a
-    sta printu.b
+    lda.z a
+    sta.z printu.b
     lda #<op16
-    sta printu.op
+    sta.z printu.op
     lda #>op16
-    sta printu.op+1
+    sta.z printu.op+1
     jsr printu
     jsr print_ln
-    lax a
+    lax.z a
     axs #-[$30]
-    stx a
-    inc i
+    stx.z a
+    inc.z i
     lda #5
-    cmp i
+    cmp.z i
     bne b68
   b42:
     jmp b42
   b68:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     op: .text "< "
     .byte 0
@@ -388,17 +388,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -410,12 +410,12 @@ printu: {
     .label op = 4
     lda #' '
     jsr print_char
-    lda a
-    sta print_byte.b
+    lda.z a
+    sta.z print_byte.b
     jsr print_byte
     jsr print_str
-    lda b
-    sta print_byte.b
+    lda.z b
+    sta.z print_byte.b
     jsr print_byte
     lda #' '
     jsr print_char
@@ -428,9 +428,9 @@ printu: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -438,7 +438,7 @@ print_char: {
 // print_byte(byte zeropage(9) b)
 print_byte: {
     .label b = 9
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -447,7 +447,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -467,13 +467,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -490,21 +490,21 @@ memset: {
     .label end = str+num
     .label dst = $a
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

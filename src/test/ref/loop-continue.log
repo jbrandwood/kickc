@@ -176,7 +176,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -185,7 +185,7 @@ main: {
     // main::@1
   b1:
     // [6] if(*((const byte*) SCREEN#0 + (byte) main::i#2)==(byte) ' ') goto main::@3 -- pbuc1_derefidx_vbuz1_eq_vbuc2_then_la1 
-    ldy i
+    ldy.z i
     lda SCREEN,y
     cmp #' '
     beq b3
@@ -193,16 +193,16 @@ main: {
     // main::@2
   b2:
     // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++ *((const byte*) SCREEN#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
-    ldx i
+    ldx.z i
     inc SCREEN,x
     jmp b3
     // main::@3
   b3:
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [9] if((byte) main::i#1!=(byte)(number) $28*(number) 6+(number) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28*6+1
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return

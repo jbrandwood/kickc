@@ -333,70 +333,70 @@ main: {
   sum_from_main:
     // [18] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuz1=vbuc1 
     lda #2
-    sta sum.b
+    sta.z sum.b
     // [18] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuz1=vbuc1 
     lda #1
-    sta sum.a
+    sta.z sum.a
     jsr sum
     // [6] (byte) sum::return#0 ← (byte) sum::return#3 -- vbuz1=vbuz2 
-    lda sum.return_3
-    sta sum.return
+    lda.z sum.return_3
+    sta.z sum.return
     jmp b1
     // main::@1
   b1:
     // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
-    lda sum.return
-    sta s1
+    lda.z sum.return
+    sta.z s1
     // [8] call sum 
     // [18] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from_b1:
     // [18] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuz1=vbuc1 
     lda #4
-    sta sum.b
+    sta.z sum.b
     // [18] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuz1=vbuc1 
     lda #3
-    sta sum.a
+    sta.z sum.a
     jsr sum
     // [9] (byte) sum::return#1 ← (byte) sum::return#3 -- vbuz1=vbuz2 
-    lda sum.return_3
-    sta sum.return_1
+    lda.z sum.return_3
+    sta.z sum.return_1
     jmp b2
     // main::@2
   b2:
     // [10] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
-    lda sum.return_1
-    sta s2
+    lda.z sum.return_1
+    sta.z s2
     // [11] call sum 
     // [18] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from_b2:
     // [18] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuz1=vbuc1 
     lda #$d
-    sta sum.b
+    sta.z sum.b
     // [18] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuz1=vbuc1 
     lda #9
-    sta sum.a
+    sta.z sum.a
     jsr sum
     // [12] (byte) sum::return#2 ← (byte) sum::return#3 -- vbuz1=vbuz2 
-    lda sum.return_3
-    sta sum.return_2
+    lda.z sum.return_3
+    sta.z sum.return_2
     jmp b3
     // main::@3
   b3:
     // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuz2 
-    lda sum.return_2
-    sta s3
+    lda.z sum.return_2
+    sta.z s3
     // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda s1
+    lda.z s1
     clc
-    adc s2
-    sta _3
+    adc.z s2
+    sta.z _3
     // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _3
+    lda.z _3
     clc
-    adc s3
-    sta s4
+    adc.z s3
+    sta.z s4
     // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuz1 
-    lda s4
+    lda.z s4
     sta screen
     jmp breturn
     // main::@return
@@ -414,10 +414,10 @@ sum: {
     .label a = 2
     .label b = 3
     // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuz1=vbuz2_plus_vbuz3 
-    lda a
+    lda.z a
     clc
-    adc b
-    sta return_3
+    adc.z b
+    sta.z return_3
     jmp breturn
     // sum::@return
   breturn:
@@ -512,7 +512,7 @@ main: {
     // main::@1
   b1:
     // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
-    sta s1
+    sta.z s1
     // [8] call sum 
     // [18] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from_b1:
@@ -540,14 +540,14 @@ main: {
     // main::@3
   b3:
     // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
-    sta s3
+    sta.z s3
     // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc s1
+    adc.z s1
     // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc s3
+    adc.z s3
     // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
     jmp breturn
@@ -560,9 +560,9 @@ main: {
 // sum(byte register(Y) a, byte register(A) b)
 sum: {
     // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     jmp breturn
     // sum::@return
   breturn:
@@ -680,7 +680,7 @@ main: {
     // main::@1
     // s1=sum(1,2)
     // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
-    sta s1
+    sta.z s1
     // sum(3,4)
     // [8] call sum 
     // [18] phi from main::@1 to sum [phi:main::@1->sum]
@@ -708,16 +708,16 @@ main: {
     // main::@3
     // s3=sum(9,13)
     // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
-    sta s3
+    sta.z s3
     // s1+s2
     // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc s1
+    adc.z s1
     // s4=s1+s2+s3
     // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc s3
+    adc.z s3
     // *screen = s4
     // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
@@ -731,9 +731,9 @@ main: {
 sum: {
     // a+b
     // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // sum::@return
     // }
     // [20] return 

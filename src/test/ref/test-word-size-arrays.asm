@@ -11,39 +11,39 @@ main: {
     .label _8 = 4
     .label _9 = 8
     lda #<0
-    sta line
-    sta line+1
+    sta.z line
+    sta.z line+1
   b2:
     ldx #0
   b4:
     txa
     clc
-    adc line
-    sta _2
+    adc.z line
+    sta.z _2
     lda #0
-    adc line+1
-    sta _2+1
+    adc.z line+1
+    sta.z _2+1
     txa
     clc
-    adc line
-    sta _4
+    adc.z line
+    sta.z _4
     lda #0
-    adc line+1
-    sta _4+1
+    adc.z line+1
+    sta.z _4+1
     clc
-    lda _7
+    lda.z _7
     adc #<screen+$28
-    sta _7
-    lda _7+1
+    sta.z _7
+    lda.z _7+1
     adc #>screen+$28
-    sta _7+1
+    sta.z _7+1
     clc
-    lda _8
+    lda.z _8
     adc #<screen
-    sta _8
-    lda _8+1
+    sta.z _8
+    lda.z _8+1
     adc #>screen
-    sta _8+1
+    sta.z _8+1
     ldy #0
     lda (_7),y
     sta (_8),y
@@ -52,16 +52,16 @@ main: {
     bcc b4
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
-    lda line+1
+    lda.z line+1
     cmp #>$28*$18
     bcc b2
     bne !+
-    lda line
+    lda.z line
     cmp #<$28*$18
     bcc b2
   !:
@@ -69,18 +69,18 @@ main: {
   b7:
     txa
     clc
-    adc line
-    sta _6
+    adc.z line
+    sta.z _6
     lda #0
-    adc line+1
-    sta _6+1
+    adc.z line+1
+    sta.z _6+1
     clc
-    lda _9
+    lda.z _9
     adc #<screen
-    sta _9
-    lda _9+1
+    sta.z _9
+    lda.z _9+1
     adc #>screen
-    sta _9+1
+    sta.z _9+1
     lda #' '
     ldy #0
     sta (_9),y

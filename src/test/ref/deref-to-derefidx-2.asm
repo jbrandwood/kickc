@@ -6,23 +6,23 @@
   .label screen_idx = 4
 main: {
     lda #0
-    sta screen_idx
+    sta.z screen_idx
     lda #<msg1
-    sta print.m
+    sta.z print.m
     lda #>msg1
-    sta print.m+1
+    sta.z print.m+1
     jsr print
     lda #<msg2
-    sta print.m
+    sta.z print.m
     lda #>msg2
-    sta print.m+1
+    sta.z print.m+1
     jsr print
     rts
 }
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-    lda screen_idx
+    lda.z screen_idx
     asl
     ldy #2
     tax
@@ -31,7 +31,7 @@ print: {
     iny
     lda (m),y
     sta SCREEN+1,x
-    inc screen_idx
+    inc.z screen_idx
     rts
 }
   msg1: .byte 'a', 'b', 'c', 'd'

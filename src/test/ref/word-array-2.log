@@ -263,7 +263,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -272,54 +272,54 @@ main: {
     // main::@1
   b1:
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
-    lda i
-    sta _1
+    lda.z i
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuz2 
-    lda i
-    sta _2
+    lda.z i
+    sta.z _2
     lda #0
-    sta _2+1
+    sta.z _2+1
     // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz2_rol_8 
-    lda _2
-    sta _3+1
+    lda.z _2
+    sta.z _3+1
     lda #0
-    sta _3
+    sta.z _3
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz2_plus_vbuz3 
-    lda i
+    lda.z i
     clc
-    adc _3
-    sta _4
+    adc.z _3
+    sta.z _4
     lda #0
-    adc _3+1
-    sta _4+1
+    adc.z _3+1
+    sta.z _4+1
     // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz2_rol_1 
-    lda _1
+    lda.z _1
     asl
-    sta _6
-    lda _1+1
+    sta.z _6
+    lda.z _1+1
     rol
-    sta _6+1
+    sta.z _6+1
     // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
-    lda _6
+    lda.z _6
     clc
     adc #<words
-    sta _9
-    lda _6+1
+    sta.z _9
+    lda.z _6+1
     adc #>words
-    sta _9+1
+    sta.z _9+1
     // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
-    lda _4
+    lda.z _4
     sta (_9),y
     iny
-    lda _4+1
+    lda.z _4+1
     sta (_9),y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [14] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda i
+    lda.z i
     cmp #0
     bne b1_from_b1
     jmp b2
@@ -426,44 +426,44 @@ main: {
   b1:
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _2
+    sta.z _2
     lda #0
-    sta _2+1
+    sta.z _2+1
     // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_8 
-    lda _3
-    sta _3+1
+    lda.z _3
+    sta.z _3+1
     lda #0
-    sta _3
+    sta.z _3
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
-    adc _4
-    sta _4
+    adc.z _4
+    sta.z _4
     bcc !+
-    inc _4+1
+    inc.z _4+1
   !:
     // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl _6
-    rol _6+1
+    asl.z _6
+    rol.z _6+1
     // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
-    lda _9
+    lda.z _9
     adc #<words
-    sta _9
-    lda _9+1
+    sta.z _9
+    lda.z _9+1
     adc #>words
-    sta _9+1
+    sta.z _9+1
     // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
-    lda _4
+    lda.z _4
     sta (_9),y
     iny
-    lda _4+1
+    lda.z _4+1
     sta (_9),y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -579,47 +579,47 @@ main: {
     // (word)i
     // [6] (word~) main::$1 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _1
+    sta.z _1
     lda #0
-    sta _1+1
+    sta.z _1+1
     // [7] (word~) main::$2 ← (word)(byte) main::i#2 -- vwuz1=_word_vbuxx 
     txa
-    sta _2
+    sta.z _2
     lda #0
-    sta _2+1
+    sta.z _2+1
     // ((word)i)*0x100
     // [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 -- vwuz1=vwuz1_rol_8 
-    lda _3
-    sta _3+1
+    lda.z _3
+    sta.z _3+1
     lda #0
-    sta _3
+    sta.z _3
     // ((word)i)*0x100+i
     // [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
-    adc _4
-    sta _4
+    adc.z _4
+    sta.z _4
     bcc !+
-    inc _4+1
+    inc.z _4+1
   !:
     // words[(word)i] = ((word)i)*0x100+i
     // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl _6
-    rol _6+1
+    asl.z _6
+    rol.z _6+1
     // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
-    lda _9
+    lda.z _9
     adc #<words
-    sta _9
-    lda _9+1
+    sta.z _9
+    lda.z _9+1
     adc #>words
-    sta _9+1
+    sta.z _9+1
     // [12] *((word*~) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
     ldy #0
-    lda _4
+    lda.z _4
     sta (_9),y
     iny
-    lda _4+1
+    lda.z _4+1
     sta (_9),y
     // for(byte i: 0..0xff)
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

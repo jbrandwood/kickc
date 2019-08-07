@@ -22,44 +22,44 @@ test_sbytes: {
     .const bd = bc-4
     .const be = -bd
     lda #0
-    sta assert_sbyte.c
+    sta.z assert_sbyte.c
     ldx #bb
     lda #<msg
-    sta assert_sbyte.msg
+    sta.z assert_sbyte.msg
     lda #>msg
-    sta assert_sbyte.msg+1
+    sta.z assert_sbyte.msg+1
     jsr assert_sbyte
     lda #2
-    sta assert_sbyte.c
+    sta.z assert_sbyte.c
     ldx #bc
     lda #<msg1
-    sta assert_sbyte.msg
+    sta.z assert_sbyte.msg
     lda #>msg1
-    sta assert_sbyte.msg+1
+    sta.z assert_sbyte.msg+1
     jsr assert_sbyte
     lda #-2
-    sta assert_sbyte.c
+    sta.z assert_sbyte.c
     ldx #bd
     lda #<msg2
-    sta assert_sbyte.msg
+    sta.z assert_sbyte.msg
     lda #>msg2
-    sta assert_sbyte.msg+1
+    sta.z assert_sbyte.msg+1
     jsr assert_sbyte
     lda #2
-    sta assert_sbyte.c
+    sta.z assert_sbyte.c
     ldx #be
     lda #<msg3
-    sta assert_sbyte.msg
+    sta.z assert_sbyte.msg
     lda #>msg3
-    sta assert_sbyte.msg+1
+    sta.z assert_sbyte.msg+1
     jsr assert_sbyte
     lda #2
-    sta assert_sbyte.c
+    sta.z assert_sbyte.c
     ldx #bf
     lda #<msg4
-    sta assert_sbyte.msg
+    sta.z assert_sbyte.msg
     lda #>msg4
-    sta assert_sbyte.msg+1
+    sta.z assert_sbyte.msg+1
     jsr assert_sbyte
     rts
     msg2: .text "0+2-4=-2"
@@ -73,22 +73,22 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 7
     .label c = 6
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_str
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    cpx c
+    cpx.z c
     bne b1
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
   b2:
     jsr print_ln
@@ -97,9 +97,9 @@ assert_sbyte: {
     lda #RED
     sta BGCOL
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jmp b2
 }
@@ -117,13 +117,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -132,17 +132,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -153,44 +153,44 @@ test_bytes: {
     .const bc = 2
     .const bd = bc-4
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #0
-    sta assert_byte.c
+    sta.z assert_byte.c
     ldx #bb
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<msg
-    sta assert_byte.msg
+    sta.z assert_byte.msg
     lda #>msg
-    sta assert_byte.msg+1
+    sta.z assert_byte.msg+1
     jsr assert_byte
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #2
-    sta assert_byte.c
+    sta.z assert_byte.c
     ldx #bc
     lda #<msg1
-    sta assert_byte.msg
+    sta.z assert_byte.msg
     lda #>msg1
-    sta assert_byte.msg+1
+    sta.z assert_byte.msg+1
     jsr assert_byte
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #$fe
-    sta assert_byte.c
+    sta.z assert_byte.c
     ldx #bd
     lda #<msg2
-    sta assert_byte.msg
+    sta.z assert_byte.msg
     lda #>msg2
-    sta assert_byte.msg+1
+    sta.z assert_byte.msg+1
     jsr assert_byte
     rts
     msg2: .text "0+2-4=254"
@@ -202,16 +202,16 @@ assert_byte: {
     .label c = 6
     jsr print_str
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    cpx c
+    cpx.z c
     bne b1
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
   b2:
     jsr print_ln
@@ -220,9 +220,9 @@ assert_byte: {
     lda #RED
     sta BGCOL
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jmp b2
 }
@@ -239,21 +239,21 @@ memset: {
     .label end = str+num
     .label dst = 7
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

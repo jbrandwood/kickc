@@ -159,7 +159,7 @@ Target platform is c64basic
 bbegin:
   // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta idx
+  sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -180,13 +180,13 @@ main: {
     jsr fn1
     // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
     // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     jmp breturn
     // main::@return
@@ -197,7 +197,7 @@ main: {
   // fn1
 fn1: {
     // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // fn1::@return
   breturn:
@@ -237,7 +237,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 bbegin:
   // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta idx
+  sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -258,13 +258,13 @@ main: {
     jsr fn1
     // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
     // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     jmp breturn
     // main::@return
@@ -275,7 +275,7 @@ main: {
   // fn1
 fn1: {
     // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // fn1::@return
   breturn:
@@ -337,7 +337,7 @@ bbegin:
   // idx = 0
   // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta idx
+  sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
@@ -354,7 +354,7 @@ main: {
     // SCREEN[idx] = 'a'
     // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // (*f)()
     // [7] call fn1 
@@ -362,7 +362,7 @@ main: {
     // SCREEN[idx] = 'a'
     // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // main::@return
     // }
@@ -373,7 +373,7 @@ main: {
 fn1: {
     // idx++;
     // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // fn1::@return
     // }
     // [11] return 

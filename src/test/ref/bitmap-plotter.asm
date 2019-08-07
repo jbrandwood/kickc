@@ -35,9 +35,9 @@ plots: {
     ldx #0
   b2:
     lda plots_x,x
-    sta plot.x
+    sta.z plot.x
     lda plots_y,x
-    sta plot.y
+    sta.z plot.y
     jsr plot
     inx
     cpx #plots_cnt
@@ -51,30 +51,30 @@ plot: {
     .label plotter_x = 3
     .label plotter_y = 5
     .label plotter = 3
-    ldy x
+    ldy.z x
     lda plot_xhi,y
-    sta plotter_x+1
+    sta.z plotter_x+1
     lda #<0
-    sta plotter_x
+    sta.z plotter_x
     lda plot_xlo,y
-    sta plotter_x
-    ldy y
+    sta.z plotter_x
+    ldy.z y
     lda plot_yhi,y
-    sta plotter_y+1
+    sta.z plotter_y+1
     lda #<0
-    sta plotter_y
+    sta.z plotter_y
     lda plot_ylo,y
-    sta plotter_y
-    lda plotter
+    sta.z plotter_y
+    lda.z plotter
     clc
-    adc plotter_y
-    sta plotter
-    lda plotter+1
-    adc plotter_y+1
-    sta plotter+1
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
     ldy #0
     lda (plotter),y
-    ldy x
+    ldy.z x
     ora plot_bit,y
     ldy #0
     sta (plotter),y
@@ -104,27 +104,27 @@ init_plot_tables: {
     cpx #0
     bne b1
     lda #<0
-    sta yoffs
-    sta yoffs+1
+    sta.z yoffs
+    sta.z yoffs+1
     tax
   b3:
     lda #7
-    sax _10
-    lda yoffs
-    ora _10
+    sax.z _10
+    lda.z yoffs
+    ora.z _10
     sta plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta plot_yhi,x
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0
@@ -135,39 +135,39 @@ init_screen: {
     .label b = 5
     .label c = 3
     lda #<BITMAP
-    sta b
+    sta.z b
     lda #>BITMAP
-    sta b+1
+    sta.z b+1
   b2:
     lda #0
     tay
     sta (b),y
-    inc b
+    inc.z b
     bne !+
-    inc b+1
+    inc.z b+1
   !:
-    lda b+1
+    lda.z b+1
     cmp #>BITMAP+$2000
     bne b2
-    lda b
+    lda.z b
     cmp #<BITMAP+$2000
     bne b2
     lda #<SCREEN
-    sta c
+    sta.z c
     lda #>SCREEN
-    sta c+1
+    sta.z c+1
   b4:
     lda #$14
     ldy #0
     sta (c),y
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
-    lda c+1
+    lda.z c+1
     cmp #>SCREEN+$400
     bne b4
-    lda c
+    lda.z c
     cmp #<SCREEN+$400
     bne b4
     rts

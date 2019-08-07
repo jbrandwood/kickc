@@ -78,32 +78,32 @@ render: {
     .label colline = 6
     .label y = 2
     lda #<COLORS
-    sta colline
+    sta.z colline
     lda #>COLORS
-    sta colline+1
+    sta.z colline+1
     lda #0
-    sta y
+    sta.z y
   b1:
     lda #0
-    sta x
+    sta.z x
   b2:
     jsr findcol
-    lda findcol.return
-    ldy x
+    lda.z findcol.return
+    ldy.z x
     sta (colline),y
-    inc x
+    inc.z x
     lda #$28
-    cmp x
+    cmp.z x
     bne b2
     clc
-    adc colline
-    sta colline
+    adc.z colline
+    sta.z colline
     bcc !+
-    inc colline+1
+    inc.z colline+1
   !:
-    inc y
+    inc.z y
     lda #$19
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -116,94 +116,94 @@ findcol: {
     .label mincol = 5
     .label mindiff = 4
     lda #$ff
-    sta mindiff
+    sta.z mindiff
     lda #0
-    sta mincol
+    sta.z mincol
     tay
   b2:
     ldx XPOS,y
     lda YPOS,y
-    sta yp
-    cpx x
+    sta.z yp
+    cpx.z x
     bne b3
-    lda y
-    cmp yp
+    lda.z y
+    cmp.z yp
     bne b3
     lda #0
-    sta return
+    sta.z return
     rts
   b3:
     txa
-    cmp x
+    cmp.z x
     beq !+
     bcs b4
   !:
     txa
     eor #$ff
     sec
-    adc x
+    adc.z x
     tax
   b5:
-    lda y
-    cmp yp
+    lda.z y
+    cmp.z yp
     bcc b6
     sec
-    sbc yp
-    stx $ff
+    sbc.z yp
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tax
   b7:
-    cpx mindiff
+    cpx.z mindiff
     bcs b14
     lda COLS,y
-    sta mincol
+    sta.z mincol
   b8:
     iny
     cpy #numpoints
     bcc b13
     rts
   b13:
-    stx mindiff
+    stx.z mindiff
     jmp b2
   b14:
-    ldx mindiff
+    ldx.z mindiff
     jmp b8
   b6:
-    lda yp
+    lda.z yp
     sec
-    sbc y
-    stx $ff
+    sbc.z y
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     tax
     jmp b7
   b4:
     txa
     sec
-    sbc x
+    sbc.z x
     tax
     jmp b5
 }
 initscreen: {
     .label screen = 6
     lda #<SCREEN
-    sta screen
+    sta.z screen
     lda #>SCREEN
-    sta screen+1
+    sta.z screen+1
   b2:
     lda #FILL
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    lda screen+1
+    lda.z screen+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda screen
+    lda.z screen
     cmp #<SCREEN+$3e8
     bcc b2
   !:

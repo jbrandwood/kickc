@@ -5,9 +5,9 @@
   .label screen = 2
 main: {
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     jsr print
     jsr print
     jsr print
@@ -17,9 +17,9 @@ main: {
 print: {
     .label string = 4
     lda #<rex1
-    sta string
+    sta.z string
     lda #>rex1
-    sta string+1
+    sta.z string+1
   b1:
     ldy #0
     lda (string),y
@@ -30,13 +30,13 @@ print: {
     ldy #0
     lda (string),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc string
+    inc.z string
     bne !+
-    inc string+1
+    inc.z string+1
   !:
     jmp b1
 }

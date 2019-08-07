@@ -354,12 +354,12 @@ main: {
   print_from_main:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     // [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
@@ -371,16 +371,16 @@ main: {
   print_from_b2:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p
+    sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -389,17 +389,17 @@ main: {
     // main::@1
   b1:
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _7
+    sta.z _7
     // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuz2 
-    lda _7
+    lda.z _7
     clc
     adc #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
     adc #0
-    sta print.p+1
+    sta.z print.p+1
     // [11] call print 
     // [15] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
@@ -410,10 +410,10 @@ main: {
     // main::@3
   b3:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -427,11 +427,11 @@ print: {
     .label _0 = 7
     .label p = 4
     // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda idx
+    lda.z idx
     asl
-    sta _0
+    sta.z _0
     // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuz1=_deref_pwsz2 
-    ldx _0
+    ldx.z _0
     ldy #0
     lda (p),y
     sta SCREEN,x
@@ -439,7 +439,7 @@ print: {
     lda (p),y
     sta SCREEN+1,x
     // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // print::@return
   breturn:
@@ -516,12 +516,12 @@ main: {
   print_from_main:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     // [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
@@ -533,16 +533,16 @@ main: {
   print_from_b2:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p
+    sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     jmp b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -551,15 +551,15 @@ main: {
     // main::@1
   b1:
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
     adc #0
-    sta print.p+1
+    sta.z print.p+1
     // [11] call print 
     // [15] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
@@ -570,10 +570,10 @@ main: {
     // main::@3
   b3:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -586,7 +586,7 @@ main: {
 print: {
     .label p = 4
     // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda idx
+    lda.z idx
     asl
     // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuaa=_deref_pwsz1 
     tax
@@ -597,7 +597,7 @@ print: {
     lda (p),y
     sta SCREEN+1,x
     // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // print::@return
   breturn:
@@ -705,12 +705,12 @@ main: {
     // [15] phi from main to print [phi:main->print]
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0 [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     // [6] phi from main to main::@2 [phi:main->main::@2]
     // main::@2
@@ -719,31 +719,31 @@ main: {
     // [15] phi from main::@2 to print [phi:main::@2->print]
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS#0+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p
+    sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p+1
+    sta.z print.p+1
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #2
-    sta i
+    sta.z i
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
   b1:
     // &VALS[i]
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     // print(&VALS[i])
     // [10] (signed word*) print::p#2 ← (const signed word[]) VALS#0 + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
     adc #0
-    sta print.p+1
+    sta.z print.p+1
     // [11] call print 
     // [15] phi from main::@1 to print [phi:main::@1->print]
     // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
@@ -752,10 +752,10 @@ main: {
     // main::@3
     // for(char i:2..3)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1
     // main::@return
     // }
@@ -768,7 +768,7 @@ print: {
     .label p = 4
     // SCREEN[idx++] = *p
     // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda idx
+    lda.z idx
     asl
     // [17] *((const signed word*) SCREEN#0 + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuaa=_deref_pwsz1 
     tax
@@ -780,7 +780,7 @@ print: {
     sta SCREEN+1,x
     // SCREEN[idx++] = *p;
     // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // print::@return
     // }
     // [19] return 

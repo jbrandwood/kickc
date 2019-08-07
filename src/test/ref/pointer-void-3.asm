@@ -8,14 +8,14 @@ main: {
     .label buf1 = 4
     .label buf2 = 6
     lda #<$c000
-    sta heap_head
+    sta.z heap_head
     lda #>$c000
-    sta heap_head+1
+    sta.z heap_head+1
     jsr malloc
-    lda malloc.return_2
-    sta malloc.return
-    lda malloc.return_2+1
-    sta malloc.return+1
+    lda.z malloc.return_2
+    sta.z malloc.return
+    lda.z malloc.return_2+1
+    sta.z malloc.return+1
     jsr malloc
     lda #'a'
     ldy #0
@@ -32,13 +32,13 @@ malloc: {
     .label return = 4
     .label return_1 = 6
     .label return_2 = 6
-    inc heap_head
+    inc.z heap_head
     bne !+
-    inc heap_head+1
+    inc.z heap_head+1
   !:
-    lda heap_head
-    sta return_2
-    lda heap_head+1
-    sta return_2+1
+    lda.z heap_head
+    sta.z return_2
+    lda.z heap_head+1
+    sta.z return_2+1
     rts
 }

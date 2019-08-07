@@ -16,96 +16,96 @@ main: {
     .label _15 = $10
     .label _16 = $a
     lda #<0
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
   b1:
-    lda i
+    lda.z i
     tax
     asl
-    sta _3
-    lda i+1
+    sta.z _3
+    lda.z i+1
     rol
-    sta _3+1
-    lda _3
+    sta.z _3+1
+    lda.z _3
     clc
     adc #<points
-    sta _11
-    lda _3+1
+    sta.z _11
+    lda.z _3+1
     adc #>points
-    sta _11+1
+    sta.z _11+1
     lda #2
     ldy #0
     sta (_11),y
     clc
-    lda _12
+    lda.z _12
     adc #<points+OFFSET_STRUCT_POINT_Y
-    sta _12
-    lda _12+1
+    sta.z _12
+    lda.z _12+1
     adc #>points+OFFSET_STRUCT_POINT_Y
-    sta _12+1
+    sta.z _12+1
     txa
     sta (_12),y
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$1f4
     bne b1
-    lda i
+    lda.z i
     cmp #<$1f4
     bne b1
     lda #<0
-    sta i1
-    sta i1+1
+    sta.z i1
+    sta.z i1+1
   b2:
-    lda i1
+    lda.z i1
     asl
-    sta _4
-    lda i1+1
+    sta.z _4
+    lda.z i1+1
     rol
-    sta _4+1
-    lda _4
+    sta.z _4+1
+    lda.z _4
     clc
     adc #<points
-    sta _13
-    lda _4+1
+    sta.z _13
+    lda.z _4+1
     adc #>points
-    sta _13+1
-    lda _4
+    sta.z _13+1
+    lda.z _4
     clc
     adc #<SCREEN
-    sta _14
-    lda _4+1
+    sta.z _14
+    lda.z _4+1
     adc #>SCREEN
-    sta _14+1
+    sta.z _14+1
     ldy #0
     lda (_13),y
     sta (_14),y
-    lda _4
+    lda.z _4
     clc
     adc #<points+OFFSET_STRUCT_POINT_Y
-    sta _15
-    lda _4+1
+    sta.z _15
+    lda.z _4+1
     adc #>points+OFFSET_STRUCT_POINT_Y
-    sta _15+1
+    sta.z _15+1
     clc
-    lda _16
+    lda.z _16
     adc #<SCREEN+OFFSET_STRUCT_POINT_Y
-    sta _16
-    lda _16+1
+    sta.z _16
+    lda.z _16+1
     adc #>SCREEN+OFFSET_STRUCT_POINT_Y
-    sta _16+1
+    sta.z _16+1
     lda (_15),y
     sta (_16),y
-    inc i1
+    inc.z i1
     bne !+
-    inc i1+1
+    inc.z i1+1
   !:
-    lda i1+1
+    lda.z i1+1
     cmp #>$1f4
     bne b2
-    lda i1
+    lda.z i1
     cmp #<$1f4
     bne b2
     rts

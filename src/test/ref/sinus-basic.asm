@@ -10,68 +10,68 @@ main: {
     .label f_2pi = $e2e5
     .label i = 2
     lda #<$4fb
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>$4fb
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     jsr divFACby10
     lda #<f_127
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_127
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #1
-    sta i
+    sta.z i
   b1:
-    lda i
-    sta setFAC.w
+    lda.z i
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     lda #<f_2pi
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_2pi
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     lda #<f_i
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_i
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #<$19
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>$19
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     jsr divMEMbyFAC
     jsr sinFAC
     lda #<f_127
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_127
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     jsr addMEMtoFAC
     jsr getFAC
     jsr print_word
     jsr print_ln
-    inc i
+    inc.z i
     lda #$1a
-    cmp i
+    cmp.z i
     bne b15
     rts
   b15:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
@@ -81,17 +81,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -100,10 +100,10 @@ print_ln: {
 // print_word(word zeropage(7) w)
 print_word: {
     .label w = 7
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -130,9 +130,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -143,12 +143,12 @@ getFAC: {
     .label return = 7
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty $fe
-    sta $ff
+    sty.z $fe
+    sta.z $ff
     lda memLo
-    sta return
+    sta.z return
     lda memHi
-    sta return+1
+    sta.z return+1
     rts
 }
 // FAC = MEM+FAC
@@ -156,12 +156,12 @@ getFAC: {
 // Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<main.f_127
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>main.f_127
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $b867
     rts
 }
@@ -169,9 +169,9 @@ addMEMtoFAC: {
 // prepareMEM(byte* zeropage(7) mem)
 prepareMEM: {
     .label mem = 7
-    lda mem
+    lda.z mem
     sta memLo
-    lda mem+1
+    lda.z mem+1
     sta memHi
     rts
 }
@@ -182,8 +182,8 @@ prepareMEM: {
 mulFACbyMEM: {
     .label mem = 7
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $ba28
     rts
 }
@@ -199,12 +199,12 @@ sinFAC: {
 // Reads 5 bytes from memory
 divMEMbyFAC: {
     lda #<main.f_i
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>main.f_i
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $bb0f
     rts
 }
@@ -215,8 +215,8 @@ setFAC: {
     .label w = 7
     jsr prepareMEM
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy $fe
-    lda $ff
+    ldy.z $fe
+    lda.z $ff
     jsr $b391
     rts
 }
@@ -227,8 +227,8 @@ setFAC: {
 setMEMtoFAC: {
     .label mem = 7
     jsr prepareMEM
-    ldx $fe
-    ldy $ff
+    ldx.z $fe
+    ldy.z $ff
     jsr $bbd4
     rts
 }

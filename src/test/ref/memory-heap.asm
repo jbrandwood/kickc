@@ -10,14 +10,14 @@ main: {
     .label buf1 = 4
     .label buf2 = 6
     lda #<HEAP_TOP
-    sta heap_head
+    sta.z heap_head
     lda #>HEAP_TOP
-    sta heap_head+1
+    sta.z heap_head+1
     jsr malloc
-    lda malloc.mem
-    sta buf1
-    lda malloc.mem+1
-    sta buf1+1
+    lda.z malloc.mem
+    sta.z buf1
+    lda.z malloc.mem+1
+    sta.z buf1+1
     jsr malloc
     ldy #0
   b1:
@@ -49,16 +49,16 @@ free: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 6
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$64
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$64
-    sta mem+1
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    sta.z mem+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     rts
 }

@@ -27,11 +27,11 @@ plot: {
     .label line = 2
     .label y = 4
     lda #$10
-    sta y
+    sta.z y
     lda #<SCREEN+5*$28+$c
-    sta line
+    sta.z line
     lda #>SCREEN+5*$28+$c
-    sta line+1
+    sta.z line+1
     ldx #0
   b1:
     ldy #0
@@ -44,13 +44,13 @@ plot: {
     bcc b3
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
-    dec y
-    lda y
+    dec.z y
+    lda.z y
     cmp #0
     bne b1
     rts
@@ -60,25 +60,25 @@ flip: {
     .label c = 5
     .label r = 4
     lda #$10
-    sta r
+    sta.z r
     ldx #$f
     ldy #0
   b1:
     lda #$10
-    sta c
+    sta.z c
   b2:
     lda buffer1,y
     sta buffer2,x
     iny
     txa
     axs #-[$10]
-    dec c
-    lda c
+    dec.z c
+    lda.z c
     cmp #0
     bne b2
     dex
-    dec r
-    lda r
+    dec.z r
+    lda.z r
     cmp #0
     bne b1
     ldx #0

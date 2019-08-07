@@ -230,55 +230,55 @@ gfx_init_plane_charset8: {
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     lda #0
-    sta ch
-    sta col
+    sta.z ch
+    sta.z col
     lda #<$4000
-    sta gfxa
+    sta.z gfxa
     lda #>$4000
-    sta gfxa+1
+    sta.z gfxa+1
     lda #<CHARGEN+1
-    sta chargen
+    sta.z chargen
     lda #>CHARGEN+1
-    sta chargen+1
+    sta.z chargen+1
   b1:
     lda #0
-    sta cr
+    sta.z cr
   b2:
     ldy #0
     lda (chargen),y
-    sta bits
-    inc chargen
+    sta.z bits
+    inc.z chargen
     bne !+
-    inc chargen+1
+    inc.z chargen+1
   !:
     ldx #0
   b3:
     lda #$80
-    and bits
+    and.z bits
     cmp #0
     beq b5
-    lda col
+    lda.z col
     jmp b4
   b5:
     lda #0
   b4:
     ldy #0
     sta (gfxa),y
-    inc gfxa
+    inc.z gfxa
     bne !+
-    inc gfxa+1
+    inc.z gfxa+1
   !:
-    asl bits
-    inc col
+    asl.z bits
+    inc.z col
     inx
     cpx #8
     bne b3
-    inc cr
+    inc.z cr
     lda #8
-    cmp cr
+    cmp.z cr
     bne b2
-    inc ch
-    lda ch
+    inc.z ch
+    lda.z ch
     cmp #0
     bne b1
     lda #PROCPORT_RAM_IO
@@ -296,7 +296,7 @@ dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd
-    lda $ff
+    lda.z $ff
     .byte $32, $00
     rts
 }
@@ -306,36 +306,36 @@ gfx_init_screen0: {
     .label ch = 7
     .label cy = 6
     lda #<SCREEN
-    sta ch
+    sta.z ch
     lda #>SCREEN
-    sta ch+1
+    sta.z ch+1
     lda #0
-    sta cy
+    sta.z cy
   b1:
     ldx #0
   b2:
     lda #$f
-    and cy
+    and.z cy
     asl
     asl
     asl
     asl
-    sta _1
+    sta.z _1
     txa
     and #$f
-    ora _1
+    ora.z _1
     ldy #0
     sta (ch),y
-    inc ch
+    inc.z ch
     bne !+
-    inc ch+1
+    inc.z ch+1
   !:
     inx
     cpx #$28
     bne b2
-    inc cy
+    inc.z cy
     lda #$19
-    cmp cy
+    cmp.z cy
     bne b1
     rts
 }

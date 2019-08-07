@@ -7,16 +7,16 @@ main: {
     .label colors = 4
     .label row = 6
     lda #0
-    sta row
+    sta.z row
     lda #<$d800
-    sta colors
+    sta.z colors
     lda #>$d800
-    sta colors+1
+    sta.z colors+1
     ldx #1
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
   b1:
     ldy #0
   b2:
@@ -35,21 +35,21 @@ main: {
     tax
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     lda #$28
     clc
-    adc colors
-    sta colors
+    adc.z colors
+    sta.z colors
     bcc !+
-    inc colors+1
+    inc.z colors+1
   !:
-    inc row
+    inc.z row
     lda #8
-    cmp row
+    cmp.z row
     bne b1
     rts
 }

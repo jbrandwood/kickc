@@ -22,63 +22,63 @@ main: {
     .label i = 2
     jsr print_cls
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #0
-    sta s
+    sta.z s
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tay
     lda swords,y
-    sta w1
+    sta.z w1
     lda swords+1,y
-    sta w1+1
+    sta.z w1+1
     lda #0
-    sta j
+    sta.z j
   b2:
-    lda j
+    lda.z j
     asl
     tay
     lda swords,y
-    sta w2
+    sta.z w2
     lda swords+1,y
-    sta w2+1
+    sta.z w2+1
     ldx #0
   b3:
-    lda w1
-    sta compare.w1
-    lda w1+1
-    sta compare.w1+1
+    lda.z w1
+    sta.z compare.w1
+    lda.z w1+1
+    sta.z compare.w1+1
     jsr compare
-    inc s
+    inc.z s
     lda #3
-    cmp s
+    cmp.z s
     bne b4
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #0
-    sta s
+    sta.z s
   b4:
     inx
     cpx #6
     bne b3
-    inc j
+    inc.z j
     lda #3
-    cmp j
+    cmp.z j
     bne b2
-    inc i
-    cmp i
+    inc.z i
+    cmp.z i
     bne b1
   b5:
   // loop forever
@@ -89,17 +89,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -124,83 +124,81 @@ compare: {
     jmp b3
   !b3:
     cpx #GE
-    bne !b4+
-    jmp b4
-  !b4:
+    beq b4
     cpx #EQ
     beq b5
     cpx #NE
     bne b10
-    lda w1
-    cmp w2
+    lda.z w1
+    cmp.z w2
     bne !+
-    lda w1+1
-    cmp w2+1
+    lda.z w1+1
+    cmp.z w2+1
     beq b9
   !:
     lda #TT
-    sta r
+    sta.z r
     jmp b23
   b9:
     lda #FF
-    sta r
+    sta.z r
   b23:
     lda #<ops_1
-    sta ops
+    sta.z ops
     lda #>ops_1
-    sta ops+1
+    sta.z ops+1
     jmp b6
   b10:
     lda #FF
-    sta r
+    sta.z r
     lda #<0
-    sta ops
-    sta ops+1
+    sta.z ops
+    sta.z ops+1
   b6:
-    lda w1+1
+    lda.z w1+1
     bmi b7
     lda #' '
     jsr print_char
   b7:
     jsr print_sword
     jsr print_str
-    lda w2+1
+    lda.z w2+1
     bmi b8
     lda #' '
     jsr print_char
   b8:
-    lda w2
-    sta print_sword.w
-    lda w2+1
-    sta print_sword.w+1
+    lda.z w2
+    sta.z print_sword.w
+    lda.z w2+1
+    sta.z print_sword.w+1
     jsr print_sword
-    lda r
+    lda.z r
     jsr print_char
     rts
   b5:
-    lda w1+1
-    cmp w2+1
+    lda.z w1+1
+    cmp.z w2+1
     bne b11
-    lda w1
-    cmp w2
+    lda.z w1
+    cmp.z w2
     bne b11
     lda #TT
-    sta r
+    sta.z r
     jmp b24
   b11:
     lda #FF
-    sta r
+    sta.z r
   b24:
     lda #<ops_2
-    sta ops
+    sta.z ops
     lda #>ops_2
-    sta ops+1
+    sta.z ops+1
     jmp b6
   b4:
-    lda w2
-    cmp w1
-    lda w2+1
-    sbc w1+1
+    lda.z w2
+    cmp.z w1
+    lda.z w2+1
+    sbc.z w1+1
     bvc !+
     eor #$80
   !:
@@ -208,43 +206,43 @@ compare: {
     bpl b12
   !e:
     lda #TT
-    sta r
+    sta.z r
     jmp b25
   b12:
     lda #FF
-    sta r
+    sta.z r
   b25:
     lda #<ops_3
-    sta ops
+    sta.z ops
     lda #>ops_3
-    sta ops+1
+    sta.z ops+1
     jmp b6
   b3:
-    lda w2
-    cmp w1
-    lda w2+1
-    sbc w1+1
+    lda.z w2
+    cmp.z w1
+    lda.z w2+1
+    sbc.z w1+1
     bvc !+
     eor #$80
   !:
     bpl b13
     lda #TT
-    sta r
+    sta.z r
     jmp b26
   b13:
     lda #FF
-    sta r
+    sta.z r
   b26:
     lda #<ops_4
-    sta ops
+    sta.z ops
     lda #>ops_4
-    sta ops+1
+    sta.z ops+1
     jmp b6
   b2:
-    lda w1
-    cmp w2
-    lda w1+1
-    sbc w2+1
+    lda.z w1
+    cmp.z w2
+    lda.z w1+1
+    sbc.z w2+1
     bvc !+
     eor #$80
   !:
@@ -252,37 +250,37 @@ compare: {
     bpl b14
   !e:
     lda #TT
-    sta r
+    sta.z r
     jmp b27
   b14:
     lda #FF
-    sta r
+    sta.z r
   b27:
     lda #<ops_5
-    sta ops
+    sta.z ops
     lda #>ops_5
-    sta ops+1
+    sta.z ops+1
     jmp b6
   b1:
-    lda w1
-    cmp w2
-    lda w1+1
-    sbc w2+1
+    lda.z w1
+    cmp.z w2
+    lda.z w1+1
+    sbc.z w2+1
     bvc !+
     eor #$80
   !:
     bpl b15
     lda #TT
-    sta r
+    sta.z r
     jmp b28
   b15:
     lda #FF
-    sta r
+    sta.z r
   b28:
     lda #<ops_6
-    sta ops
+    sta.z ops
     lda #>ops_6
-    sta ops+1
+    sta.z ops+1
     jmp b6
     ops_1: .text "!="
     .byte 0
@@ -302,9 +300,9 @@ compare: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -312,7 +310,7 @@ print_char: {
 // print_sword(signed word zeropage($a) w)
 print_sword: {
     .label w = $a
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -324,22 +322,22 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 // Print a word as HEX
 // print_word(word zeropage($a) w)
 print_word: {
     .label w = $a
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     jsr print_byte
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     jsr print_byte
     rts
 }
@@ -347,7 +345,7 @@ print_word: {
 // print_byte(byte zeropage($c) b)
 print_byte: {
     .label b = $c
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -356,7 +354,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and b
+    and.z b
     tay
     lda print_hextab,y
     jsr print_char
@@ -376,13 +374,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -399,21 +397,21 @@ memset: {
     .label end = str+num
     .label dst = $d
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

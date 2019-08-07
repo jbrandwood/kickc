@@ -6,12 +6,12 @@ main: {
     .label screen = 2
     .label i = 4
     lda #<0
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
   b1:
     ldy #0
     lda (screen),y
@@ -21,18 +21,18 @@ main: {
     bne !+
     inc CHAR_COUNTS+1,x
   !:
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$3e8
     bne b1
-    lda i
+    lda.z i
     cmp #<$3e8
     bne b1
     rts

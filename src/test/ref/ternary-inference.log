@@ -240,7 +240,7 @@ main: {
   b2_from_main:
     // [5] phi (byte) main::i#7 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b2
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -253,24 +253,24 @@ main: {
     // [6] phi (byte) main::i#6 = (byte) main::i#7 [phi:main::@2->main::@3#0] -- register_copy 
     // [6] phi (byte~) main::$3 = (byte) $57 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #$57
-    sta _3
+    sta.z _3
     jmp b3
     // main::@3
   b3:
     // [7] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#6 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _3
+    lda.z _3
     clc
-    adc i
-    sta _4
+    adc.z i
+    sta.z _4
     // [8] *((const byte*) main::screen#0 + (byte) main::i#6) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _4
-    ldy i
+    lda.z _4
+    ldy.z i
     sta screen,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#6 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     jmp breturn
     // main::@return
@@ -280,7 +280,7 @@ main: {
     // main::@1
   b1:
     // [12] if((byte) main::i#1<(byte) 5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #5
     bcc b2_from_b1
     // [6] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
@@ -288,7 +288,7 @@ main: {
     // [6] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@1->main::@3#0] -- register_copy 
     // [6] phi (byte~) main::$3 = (byte) '0' [phi:main::@1->main::@3#1] -- vbuz1=vbuc1 
     lda #'0'
-    sta _3
+    sta.z _3
     jmp b3
 }
   // File Data
@@ -355,9 +355,9 @@ main: {
     // main::@3
   b3:
     // [7] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#6 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // [8] *((const byte*) main::screen#0 + (byte) main::i#6) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#6 -- vbuxx=_inc_vbuxx 
@@ -470,9 +470,9 @@ main: {
   b3:
     // (i<5?0x57:'0')+i
     // [7] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#6 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // screen[i] = (i<5?0x57:'0')+i
     // [8] *((const byte*) main::screen#0 + (byte) main::i#6) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x

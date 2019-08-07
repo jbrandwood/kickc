@@ -13,19 +13,19 @@ main: {
     lda #$32
     sta PROCPORT
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     lda #0
-    sta y
+    sta.z y
   b1:
-    ldy y
+    ldy.z y
     lda CHAR_A,y
-    sta bits
+    sta.z bits
     ldx #0
   b2:
     lda #$80
-    and bits
+    and.z bits
     cmp #0
     beq b4
     lda #'*'
@@ -35,24 +35,24 @@ main: {
   b3:
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    asl bits
+    asl.z bits
     inx
     cpx #8
     bne b2
     lda #$20
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
-    inc y
+    inc.z y
     lda #8
-    cmp y
+    cmp.z y
     bne b1
     lda #$37
     sta PROCPORT

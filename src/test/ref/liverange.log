@@ -308,45 +308,45 @@ main: {
   inci_from_main:
     // [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jsr inci
     // [6] (byte) inci::return#0 ← (byte) inci::return#2 -- vbuz1=vbuz2 
-    lda inci.return_2
-    sta inci.return
+    lda.z inci.return_2
+    sta.z inci.return
     jmp b1
     // main::@1
   b1:
     // [7] (byte~) main::$0 ← (byte) inci::return#0 -- vbuz1=vbuz2 
-    lda inci.return
-    sta _0
+    lda.z inci.return
+    sta.z _0
     // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax _0
+    lax.z _0
     axs #-[4]
-    stx a
+    stx.z a
     // [9] call inci 
     // [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
     // [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
     // [10] (byte) inci::return#1 ← (byte) inci::return#2 -- vbuz1=vbuz2 
-    lda inci.return_2
-    sta inci.return_1
+    lda.z inci.return_2
+    sta.z inci.return_1
     jmp b2
     // main::@2
   b2:
     // [11] (byte~) main::$2 ← (byte) inci::return#1 -- vbuz1=vbuz2 
-    lda inci.return_1
-    sta _2
+    lda.z inci.return_1
+    sta.z _2
     // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda a
+    lda.z a
     clc
-    adc _2
-    sta a_2
+    adc.z _2
+    sta.z a_2
     // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuz1 
-    lda i
+    lda.z i
     sta SCREEN
     // [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
-    lda a_2
+    lda.z a_2
     sta SCREEN+1
     jmp breturn
     // main::@return
@@ -360,12 +360,12 @@ inci: {
     .label return_1 = 6
     .label return_2 = 9
     // [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
-    lax i
+    lax.z i
     axs #-[7]
-    stx i
+    stx.z i
     // [18] (byte) inci::return#2 ← (byte) i#11 -- vbuz1=vbuz2 
-    lda i
-    sta return_2
+    lda.z i
+    sta.z return_2
     jmp breturn
     // inci::@return
   breturn:
@@ -444,7 +444,7 @@ main: {
     // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
-    sta a
+    sta.z a
     // [9] call inci 
     // [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
@@ -457,7 +457,7 @@ main: {
     // [11] (byte~) main::$2 ← (byte) inci::return#1
     // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
     clc
-    adc a
+    adc.z a
     tax
     // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN
@@ -582,7 +582,7 @@ main: {
     // [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
-    sta a
+    sta.z a
     // inci()
     // [9] call inci 
     // [16] phi from main::@1 to inci [phi:main::@1->inci]
@@ -595,7 +595,7 @@ main: {
     // a=a+inci()
     // [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 -- vbuxx=vbuz1_plus_vbuaa 
     clc
-    adc a
+    adc.z a
     tax
     // *SCREEN = i
     // [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 

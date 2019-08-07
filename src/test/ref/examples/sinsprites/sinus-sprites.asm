@@ -30,8 +30,8 @@
 main: {
     jsr init
     lda #0
-    sta sin_idx_y
-    sta sin_idx_x
+    sta.z sin_idx_y
+    sta.z sin_idx_x
   b1:
     lda #$ff
     cmp RASTER
@@ -48,76 +48,76 @@ anim: {
     .label j2 = $b
     .label j = 5
     inc BORDERCOL
-    lda sin_idx_x
-    sta xidx
-    lda sin_idx_y
-    sta yidx
+    lda.z sin_idx_x
+    sta.z xidx
+    lda.z sin_idx_y
+    sta.z yidx
     lda #0
-    sta j
+    sta.z j
     lda #$c
-    sta j2
+    sta.z j2
     lda #0
-    sta x_msb
+    sta.z x_msb
   b3:
-    ldy xidx
+    ldy.z xidx
     lda sintab_x,y
     clc
     adc #<$1e
-    sta x
+    sta.z x
     lda #>$1e
     adc #0
-    sta x+1
-    asl _6
-    ora x_msb
-    sta x_msb
-    lda x
-    ldy j2
+    sta.z x+1
+    asl.z _6
+    ora.z x_msb
+    sta.z x_msb
+    lda.z x
+    ldy.z j2
     sta SPRITES_XPOS,y
-    ldy yidx
+    ldy.z yidx
     lda sintab_y,y
-    ldy j2
+    ldy.z j2
     sta SPRITES_YPOS,y
-    lax xidx
+    lax.z xidx
     axs #-[$a]
-    stx xidx
+    stx.z xidx
     txa
     cmp #sinlen_x
     bcc b4
-    lax xidx
+    lax.z xidx
     axs #sinlen_x
-    stx xidx
+    stx.z xidx
   b4:
-    lax yidx
+    lax.z yidx
     axs #-[8]
-    stx yidx
+    stx.z yidx
     txa
     cmp #sinlen_y
     bcc b5
-    lax yidx
+    lax.z yidx
     axs #sinlen_y
-    stx yidx
+    stx.z yidx
   b5:
-    dec j2
-    dec j2
-    inc j
+    dec.z j2
+    dec.z j2
+    inc.z j
     lda #7
-    cmp j
+    cmp.z j
     bne b3
-    lda x_msb
+    lda.z x_msb
     sta SPRITES_XMSB
-    inc sin_idx_x
-    lda sin_idx_x
+    inc.z sin_idx_x
+    lda.z sin_idx_x
     cmp #sinlen_x
     bcc b1
     lda #0
-    sta sin_idx_x
+    sta.z sin_idx_x
   b1:
-    inc sin_idx_y
-    lda sin_idx_y
+    inc.z sin_idx_y
+    lda.z sin_idx_y
     cmp #sinlen_y
     bcc b2
     lda #0
-    sta sin_idx_y
+    sta.z sin_idx_y
   b2:
     dec BORDERCOL
     rts
@@ -136,33 +136,33 @@ init: {
     jsr place_sprites
     jsr gen_sprites
     lda #<SCREEN
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     lda #<sintab_x
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_x
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     lda #sinlen_x
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     lda #0
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     ldx #$ff
     jsr gen_sintab
     lda #<SCREEN+$28
-    sta progress_init.line
+    sta.z progress_init.line
     lda #>SCREEN+$28
-    sta progress_init.line+1
+    sta.z progress_init.line+1
     jsr progress_init
     lda #<sintab_y
-    sta gen_sintab.sintab
+    sta.z gen_sintab.sintab
     lda #>sintab_y
-    sta gen_sintab.sintab+1
+    sta.z gen_sintab.sintab+1
     lda #sinlen_y
-    sta gen_sintab.length
+    sta.z gen_sintab.length
     lda #$32
-    sta gen_sintab.min
+    sta.z gen_sintab.min
     ldx #$d0
     jsr gen_sintab
     jsr clear_screen
@@ -171,22 +171,22 @@ init: {
 clear_screen: {
     .label sc = $13
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2
   !:
@@ -207,97 +207,97 @@ gen_sintab: {
     .label length = 8
     .label sintab = $13
     txa
-    sta setFAC.w
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     jsr setARGtoFAC
-    lda min
-    sta setFAC.w
+    lda.z min
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     jsr subFACfromARG
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #<2
-    sta setFAC.w
+    sta.z setFAC.w
     lda #>2
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     lda #<f_amp
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_amp
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     lda #<f_amp
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_amp
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     jsr addMEMtoFAC
     lda #<f_min
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_min
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #0
-    sta progress_idx
-    sta i
+    sta.z progress_idx
+    sta.z i
   // f_min = min + (max - min) / 2
   b1:
-    lda i
-    cmp length
+    lda.z i
+    cmp.z length
     bcc b2
     rts
   b2:
-    lda i
-    sta setFAC.w
+    lda.z i
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     lda #<f_2pi
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_2pi
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     lda #<f_i
-    sta setMEMtoFAC.mem
+    sta.z setMEMtoFAC.mem
     lda #>f_i
-    sta setMEMtoFAC.mem+1
+    sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda length
-    sta setFAC.w
+    lda.z length
+    sta.z setFAC.w
     lda #0
-    sta setFAC.w+1
+    sta.z setFAC.w+1
     jsr setFAC
     lda #<f_i
-    sta divMEMbyFAC.mem
+    sta.z divMEMbyFAC.mem
     lda #>f_i
-    sta divMEMbyFAC.mem+1
+    sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     jsr sinFAC
     lda #<f_amp
-    sta mulFACbyMEM.mem
+    sta.z mulFACbyMEM.mem
     lda #>f_amp
-    sta mulFACbyMEM.mem+1
+    sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     jsr addMEMtoFAC
     jsr getFAC
-    lda _24
+    lda.z _24
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
-    ldy i
+    ldy.z i
     sta (sintab),y
     jsr progress_inc
-    inc i
+    inc.z i
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
@@ -308,21 +308,21 @@ gen_sintab: {
 // Increase PETSCII progress one bit
 // Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
-    inc progress_idx
+    inc.z progress_idx
     lda #8
-    cmp progress_idx
+    cmp.z progress_idx
     bne b1
     lda progress_chars+8
     ldy #0
     sta (progress_cursor),y
-    inc progress_cursor
+    inc.z progress_cursor
     bne !+
-    inc progress_cursor+1
+    inc.z progress_cursor+1
   !:
     lda #0
-    sta progress_idx
+    sta.z progress_idx
   b1:
-    ldy progress_idx
+    ldy.z progress_idx
     lda progress_chars,y
     ldy #0
     sta (progress_cursor),y
@@ -337,12 +337,12 @@ getFAC: {
     .label return = $f
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty $fe
-    sta $ff
+    sty.z $fe
+    sta.z $ff
     lda memLo
-    sta return
+    sta.z return
     lda memHi
-    sta return+1
+    sta.z return+1
     rts
 }
 // FAC = MEM+FAC
@@ -350,12 +350,12 @@ getFAC: {
 // Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<gen_sintab.f_min
-    sta prepareMEM.mem
+    sta.z prepareMEM.mem
     lda #>gen_sintab.f_min
-    sta prepareMEM.mem+1
+    sta.z prepareMEM.mem+1
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $b867
     rts
 }
@@ -363,9 +363,9 @@ addMEMtoFAC: {
 // prepareMEM(byte* zeropage($f) mem)
 prepareMEM: {
     .label mem = $f
-    lda mem
+    lda.z mem
     sta memLo
-    lda mem+1
+    lda.z mem+1
     sta memHi
     rts
 }
@@ -376,8 +376,8 @@ prepareMEM: {
 mulFACbyMEM: {
     .label mem = $f
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $ba28
     rts
 }
@@ -395,8 +395,8 @@ sinFAC: {
 divMEMbyFAC: {
     .label mem = $f
     jsr prepareMEM
-    lda $fe
-    ldy $ff
+    lda.z $fe
+    ldy.z $ff
     jsr $bb0f
     rts
 }
@@ -407,8 +407,8 @@ setFAC: {
     .label w = $f
     jsr prepareMEM
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy $fe
-    lda $ff
+    ldy.z $fe
+    lda.z $ff
     jsr $b391
     rts
 }
@@ -419,8 +419,8 @@ setFAC: {
 setMEMtoFAC: {
     .label mem = $f
     jsr prepareMEM
-    ldx $fe
-    ldy $ff
+    ldx.z $fe
+    ldy.z $ff
     jsr $bbd4
     rts
 }
@@ -446,29 +446,29 @@ gen_sprites: {
     .label spr = 2
     .label i = $b
     lda #<sprites
-    sta spr
+    sta.z spr
     lda #>sprites
-    sta spr+1
+    sta.z spr+1
     lda #0
-    sta i
+    sta.z i
   b1:
-    ldy i
+    ldy.z i
     ldx cml,y
-    lda spr
-    sta gen_chargen_sprite.sprite
-    lda spr+1
-    sta gen_chargen_sprite.sprite+1
+    lda.z spr
+    sta.z gen_chargen_sprite.sprite
+    lda.z spr+1
+    sta.z gen_chargen_sprite.sprite+1
     jsr gen_chargen_sprite
     lda #$40
     clc
-    adc spr
-    sta spr
+    adc.z spr
+    sta.z spr
     bcc !+
-    inc spr+1
+    inc.z spr+1
   !:
-    inc i
+    inc.z i
     lda #7
-    cmp i
+    cmp.z i
     bne b1
     rts
     cml: .text "camelot"
@@ -488,55 +488,55 @@ gen_chargen_sprite: {
     .label y = 4
     .label c = 8
     txa
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    sta.z _0+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     sei
     lda #$32
     sta PROCPORT
     lda #0
-    sta y
+    sta.z y
   b1:
     // current chargen line
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     lda #0
-    sta x
+    sta.z x
     tay
-    sta s_gen
+    sta.z s_gen
   b2:
     lda #$80
-    and bits
+    and.z bits
     cmp #0
     beq b6
     lda #1
-    sta c
+    sta.z c
     jmp b3
   b6:
     lda #0
-    sta c
+    sta.z c
   b3:
     ldx #0
   // generate 3 pixels in the sprite byte (s_gen)
   b4:
-    lda s_gen
+    lda.z s_gen
     asl
-    ora c
-    sta s_gen
+    ora.z c
+    sta.z s_gen
     iny
     cpy #8
     bne b5
@@ -547,32 +547,32 @@ gen_chargen_sprite: {
     sta (sprite),y
     ldy #6
     sta (sprite),y
-    inc sprite
+    inc.z sprite
     bne !+
-    inc sprite+1
+    inc.z sprite+1
   !:
     ldy #0
     tya
-    sta s_gen
+    sta.z s_gen
   b5:
     inx
     cpx #3
     bne b4
-    asl bits
-    inc x
+    asl.z bits
+    inc.z x
     lda #8
-    cmp x
+    cmp.z x
     bne b2
     lda #6
     clc
-    adc sprite
-    sta sprite
+    adc.z sprite
+    sta.z sprite
     bcc !+
-    inc sprite+1
+    inc.z sprite+1
   !:
-    inc y
+    inc.z y
     lda #8
-    cmp y
+    cmp.z y
     bne b1
     lda #$37
     sta PROCPORT
@@ -591,41 +591,41 @@ place_sprites: {
     sta SPRITES_EXPAND_X
     sta SPRITES_EXPAND_Y
     lda #5
-    sta col
+    sta.z col
     lda #0
-    sta j2
+    sta.z j2
     lda #$3c
-    sta spr_x
+    sta.z spr_x
     lda #0
-    sta j
+    sta.z j
     lda #sprites/$40
-    sta spr_id
+    sta.z spr_id
   b1:
-    lda spr_id
-    ldy j
+    lda.z spr_id
+    ldy.z j
     sta sprites_ptr,y
-    inc spr_id
-    lda spr_x
-    ldy j2
+    inc.z spr_id
+    lda.z spr_x
+    ldy.z j2
     sta SPRITES_XPOS,y
     lda #$50
     sta SPRITES_YPOS,y
-    lda col
-    ldy j
+    lda.z col
+    ldy.z j
     sta SPRITES_COLS,y
-    lax spr_x
+    lax.z spr_x
     axs #-[$20]
-    stx spr_x
+    stx.z spr_x
     lda #7^5
-    eor col
-    sta col
-    ldx j2
+    eor.z col
+    sta.z col
+    ldx.z j2
     inx
     inx
-    stx j2
-    inc j
+    stx.z j2
+    inc.z j
     lda #7
-    cmp j
+    cmp.z j
     bne b1
     rts
 }

@@ -199,57 +199,57 @@ gfx_init_chunky: {
     jsr dtvSetCpuBankSegment1
     ldx #($ff&CHUNKY/$4000)+1
     lda #0
-    sta y
+    sta.z y
     lda #<$4000
-    sta gfxb
+    sta.z gfxb
     lda #>$4000
-    sta gfxb+1
+    sta.z gfxb+1
   b1:
     lda #<0
-    sta x
-    sta x+1
+    sta.z x
+    sta.z x+1
   b2:
-    lda gfxb+1
+    lda.z gfxb+1
     cmp #>$8000
     bne b3
-    lda gfxb
+    lda.z gfxb
     cmp #<$8000
     bne b3
     txa
     jsr dtvSetCpuBankSegment1
     inx
     lda #<$4000
-    sta gfxb
+    sta.z gfxb
     lda #>$4000
-    sta gfxb+1
+    sta.z gfxb+1
   b3:
-    lda y
+    lda.z y
     clc
-    adc x
-    sta _8
+    adc.z x
+    sta.z _8
     lda #0
-    adc x+1
-    sta _8+1
-    lda _8
+    adc.z x+1
+    sta.z _8+1
+    lda.z _8
     ldy #0
     sta (gfxb),y
-    inc gfxb
+    inc.z gfxb
     bne !+
-    inc gfxb+1
+    inc.z gfxb+1
   !:
-    inc x
+    inc.z x
     bne !+
-    inc x+1
+    inc.z x+1
   !:
-    lda x+1
+    lda.z x+1
     cmp #>$140
     bne b2
-    lda x
+    lda.z x
     cmp #<$140
     bne b2
-    inc y
+    inc.z y
     lda #$33
-    cmp y
+    cmp.z y
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -264,7 +264,7 @@ dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd
-    lda $ff
+    lda.z $ff
     .byte $32, $00
     rts
 }

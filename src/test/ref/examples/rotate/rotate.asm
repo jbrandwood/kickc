@@ -55,7 +55,7 @@ anim: {
     .label angle = 7
     .label cyclecount = $13
     lda #0
-    sta angle
+    sta.z angle
   b2:
     lda #$ff
     cmp RASTER
@@ -63,113 +63,113 @@ anim: {
     inc BORDERCOL
     jsr clock_start
     lda #0
-    sta sprite_msb
-    sta i
+    sta.z sprite_msb
+    sta.z i
   b4:
-    ldy i
+    ldy.z i
     lda xs,y
-    sta x
+    sta.z x
     // signed fixed[7.0]
     lda ys,y
-    sta y
-    ldy angle
+    sta.z y
+    ldy.z angle
     lda COS,y
     jsr mulf8u_prepare
-    ldy x
+    ldy.z x
     jsr mulf8s_prepared
-    lda _5
+    lda.z _5
     asl
-    sta xr
-    lda _5+1
+    sta.z xr
+    lda.z _5+1
     rol
-    sta xr+1
-    ldy y
+    sta.z xr+1
+    ldy.z y
     jsr mulf8s_prepared
-    lda _7
+    lda.z _7
     asl
-    sta yr
-    lda _7+1
+    sta.z yr
+    lda.z _7+1
     rol
-    sta yr+1
-    ldy angle
+    sta.z yr+1
+    ldy.z angle
     lda SIN,y
     jsr mulf8u_prepare
-    ldy y
+    ldy.z y
     jsr mulf8s_prepared
-    asl _11
-    rol _11+1
-    lda xr
+    asl.z _11
+    rol.z _11+1
+    lda.z xr
     sec
-    sbc _11
-    sta xr
-    lda xr+1
-    sbc _11+1
-    sta xr+1
-    ldy x
+    sbc.z _11
+    sta.z xr
+    lda.z xr+1
+    sbc.z _11+1
+    sta.z xr+1
+    ldy.z x
     jsr mulf8s_prepared
-    asl _13
-    rol _13+1
+    asl.z _13
+    rol.z _13+1
     // signed fixed[8.8]
-    lda yr
+    lda.z yr
     clc
-    adc _13
-    sta yr
-    lda yr+1
-    adc _13+1
-    sta yr+1
-    lda xr+1
+    adc.z _13
+    sta.z yr
+    lda.z yr+1
+    adc.z _13+1
+    sta.z yr+1
+    lda.z xr+1
     tax
     clc
     adc #<$18+$95
-    sta xpos
+    sta.z xpos
     txa
     ora #$7f
     bmi !+
     lda #0
   !:
     adc #>$18+$95
-    sta xpos+1
-    lsr sprite_msb
+    sta.z xpos+1
+    lsr.z sprite_msb
     cmp #0
     beq b5
     lda #$80
-    ora sprite_msb
-    sta sprite_msb
+    ora.z sprite_msb
+    sta.z sprite_msb
   b5:
-    lda yr+1
+    lda.z yr+1
     clc
     adc #$59+$33
     tay
-    lda i
+    lda.z i
     asl
     tax
-    lda xpos
+    lda.z xpos
     sta SPRITES_XPOS,x
     tya
     sta SPRITES_YPOS,x
-    inc i
+    inc.z i
     lda #8
-    cmp i
+    cmp.z i
     beq !b4+
     jmp b4
   !b4:
-    lda sprite_msb
+    lda.z sprite_msb
     sta SPRITES_XMSB
-    inc angle
+    inc.z angle
     jsr clock
-    lda cyclecount
+    lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
-    sta cyclecount
-    lda cyclecount+1
+    sta.z cyclecount
+    lda.z cyclecount+1
     sbc #>CLOCKS_PER_INIT
-    sta cyclecount+1
-    lda cyclecount+2
+    sta.z cyclecount+1
+    lda.z cyclecount+2
     sbc #<CLOCKS_PER_INIT>>$10
-    sta cyclecount+2
-    lda cyclecount+3
+    sta.z cyclecount+2
+    lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
-    sta cyclecount+3
+    sta.z cyclecount+3
     jsr print_dword_at
     lda #LIGHT_BLUE
     sta BORDERCOL
@@ -179,23 +179,23 @@ anim: {
 // print_dword_at(dword zeropage($13) dw)
 print_dword_at: {
     .label dw = $13
-    lda dw+2
-    sta print_word_at.w
-    lda dw+3
-    sta print_word_at.w+1
+    lda.z dw+2
+    sta.z print_word_at.w
+    lda.z dw+3
+    sta.z print_word_at.w+1
     lda #<SCREEN
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>SCREEN
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
-    lda dw
-    sta print_word_at.w
-    lda dw+1
-    sta print_word_at.w+1
+    lda.z dw
+    sta.z print_word_at.w
+    lda.z dw+1
+    sta.z print_word_at.w+1
     lda #<SCREEN+4
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>SCREEN+4
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
     rts
 }
@@ -204,17 +204,17 @@ print_dword_at: {
 print_word_at: {
     .label w = 3
     .label at = 5
-    lda w+1
-    sta print_byte_at.b
+    lda.z w+1
+    sta.z print_byte_at.b
     jsr print_byte_at
-    lda w
-    sta print_byte_at.b
-    lda print_byte_at.at
+    lda.z w
+    sta.z print_byte_at.b
+    lda.z print_byte_at.at
     clc
     adc #2
-    sta print_byte_at.at
+    sta.z print_byte_at.at
     bcc !+
-    inc print_byte_at.at+1
+    inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
@@ -224,28 +224,28 @@ print_word_at: {
 print_byte_at: {
     .label b = 2
     .label at = 5
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
     tay
     ldx print_hextab,y
-    lda at
-    sta print_char_at.at
-    lda at+1
-    sta print_char_at.at+1
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
     jsr print_char_at
     lda #$f
-    and b
+    and.z b
     tay
-    lda at
+    lda.z at
     clc
     adc #1
-    sta print_char_at.at
-    lda at+1
+    sta.z print_char_at.at
+    lda.z at+1
     adc #0
-    sta print_char_at.at+1
+    sta.z print_char_at.at+1
     ldx print_hextab,y
     jsr print_char_at
     rts
@@ -266,16 +266,16 @@ clock: {
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
-    sta return
+    sta.z return
     lda #>$ffffffff
     sbc CIA2_TIMER_AB+1
-    sta return+1
+    sta.z return+1
     lda #<$ffffffff>>$10
     sbc CIA2_TIMER_AB+2
-    sta return+2
+    sta.z return+2
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
@@ -289,18 +289,18 @@ mulf8s_prepared: {
     lda memA
     cmp #0
     bpl b1
-    lda m+1
-    sty $ff
+    lda.z m+1
+    sty.z $ff
     sec
-    sbc $ff
-    sta m+1
+    sbc.z $ff
+    sta.z m+1
   b1:
     cpy #0
     bpl b2
-    lda m+1
+    lda.z m+1
     sec
     sbc memA
-    sta m+1
+    sta.z m+1
   b2:
     rts
 }
@@ -325,9 +325,9 @@ mulf8u_prepared: {
     sbc mulf_sqr2_hi,x
     sta memB
     lda resL
-    sta return
+    sta.z return
     lda memB
-    sta return+1
+    sta.z return+1
     rts
 }
 // Prepare for fast multiply with an unsigned byte to a word result
@@ -391,40 +391,40 @@ mulf_init: {
     .label dir = $a
     ldx #0
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     txa
-    sta sqr
-    sta sqr+1
-    sta c
+    sta.z sqr
+    sta.z sqr+1
+    sta.z c
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
   b1:
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     lda #$ff
-    sta dir
+    sta.z dir
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     ldx #-1
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
   b5:
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     // Set the very last value g(511) = f(256)
@@ -439,55 +439,55 @@ mulf_init: {
     sta (sqr2_lo),y
     lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     cpx #0
     bne b8
     lda #1
-    sta dir
+    sta.z dir
   b8:
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     jmp b5
   b2:
-    inc c
+    inc.z c
     lda #1
-    and c
+    and.z c
     cmp #0
     bne b3
     inx
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
   b3:
-    lda sqr
+    lda.z sqr
     ldy #0
     sta (sqr1_lo),y
-    lda sqr+1
+    lda.z sqr+1
     sta (sqr1_hi),y
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     jmp b1
 }

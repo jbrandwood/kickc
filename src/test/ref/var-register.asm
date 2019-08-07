@@ -8,15 +8,15 @@ main: {
     ldx #0
   b2:
     lda #0
-    sta a
+    sta.z a
   b3:
     tya
     clc
-    adc a
+    adc.z a
     jsr print
-    inc a
+    inc.z a
     lda #$65
-    cmp a
+    cmp.z a
     bne b3
     inx
     cpx #$65

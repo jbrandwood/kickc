@@ -14,15 +14,15 @@
 main: {
     jsr fillscreen
     lda #<CHARGEN
-    sta current_chargen
+    sta.z current_chargen
     lda #>CHARGEN
-    sta current_chargen+1
+    sta.z current_chargen+1
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     lda #1
-    sta current_bit
+    sta.z current_bit
     ldx #7
   // Wait for raster
   b1:
@@ -52,45 +52,45 @@ scroll_bit: {
     .label _7 = 7
     .label c = 7
     .label sc = 3
-    lsr current_bit
-    lda current_bit
+    lsr.z current_bit
+    lda.z current_bit
     cmp #0
     bne b1
     jsr next_char
     txa
-    sta c
+    sta.z c
     lda #0
-    sta c+1
-    asl _7
-    rol _7+1
-    asl _7
-    rol _7+1
-    asl _7
-    rol _7+1
+    sta.z c+1
+    asl.z _7
+    rol.z _7+1
+    asl.z _7
+    rol.z _7+1
+    asl.z _7
+    rol.z _7+1
     clc
-    lda current_chargen
+    lda.z current_chargen
     adc #<CHARGEN
-    sta current_chargen
-    lda current_chargen+1
+    sta.z current_chargen
+    lda.z current_chargen+1
     adc #>CHARGEN
-    sta current_chargen+1
+    sta.z current_chargen+1
     lda #$80
-    sta current_bit
+    sta.z current_bit
   b1:
     jsr scroll_hard
     sei
     lda #$32
     sta PROCPORT
     lda #<SCREEN+$28+$27
-    sta sc
+    sta.z sc
     lda #>SCREEN+$28+$27
-    sta sc+1
+    sta.z sc+1
     ldx #0
   b3:
     txa
     tay
     lda (current_chargen),y
-    and current_bit
+    and.z current_bit
     cmp #0
     beq b2
     lda #$80+' '
@@ -102,10 +102,10 @@ scroll_bit: {
     sta (sc),y
     lda #$28
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
     inx
     cpx #8
@@ -149,13 +149,13 @@ next_char: {
     bne b1
     ldx TEXT
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b1:
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     rts
 }
@@ -164,22 +164,22 @@ fillscreen: {
     .const fill = $20
     .label cursor = 7
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
   b2:
     lda #fill
     ldy #0
     sta (cursor),y
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b2
   !:

@@ -189,7 +189,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -198,31 +198,31 @@ main: {
     // main::@1
   b1:
     // [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 -- vduz1=vduc1_plus_vbuz2 
-    lda i
+    lda.z i
     clc
     adc #<a
-    sta b
+    sta.z b
     lda #>a
     adc #0
-    sta b+1
+    sta.z b+1
     lda #<a>>$10
     adc #0
-    sta b+2
+    sta.z b+2
     lda #>a>>$10
     adc #0
-    sta b+3
+    sta.z b+3
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuz1=_byte_vduz2 
-    lda b
-    sta c
+    lda.z b
+    sta.z c
     // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda c
-    ldy i
+    lda.z c
+    ldy.z i
     sta SCREEN,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // main::@return
@@ -293,18 +293,18 @@ main: {
     txa
     clc
     adc #<a
-    sta b
+    sta.z b
     lda #>a
     adc #0
-    sta b+1
+    sta.z b+1
     lda #<a>>$10
     adc #0
-    sta b+2
+    sta.z b+2
     lda #>a>>$10
     adc #0
-    sta b+3
+    sta.z b+3
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuaa=_byte_vduz1 
-    lda b
+    lda.z b
     // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -402,19 +402,19 @@ main: {
     txa
     clc
     adc #<a
-    sta b
+    sta.z b
     lda #>a
     adc #0
-    sta b+1
+    sta.z b+1
     lda #<a>>$10
     adc #0
-    sta b+2
+    sta.z b+2
     lda #>a>>$10
     adc #0
-    sta b+3
+    sta.z b+3
     // c = (byte) b
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuaa=_byte_vduz1 
-    lda b
+    lda.z b
     // SCREEN[i] = c
     // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x

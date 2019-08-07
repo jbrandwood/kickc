@@ -6,17 +6,17 @@ main: {
     .label i = 2
     .label f = 3
     lda #0
-    sta i
+    sta.z i
   b2:
-    inc i
+    inc.z i
     lda #1
-    and i
+    and.z i
     asl
     tay
     lda fns,y
-    sta f
+    sta.z f
     lda fns+1,y
-    sta f+1
+    sta.z f+1
     jsr bi_f
     jmp b2
   bi_f:

@@ -18,73 +18,73 @@ main: {
     .label i_17 = 8
     jsr memset
     lda #<sieve+2
-    sta sieve_i
+    sta.z sieve_i
     lda #>sieve+2
-    sta sieve_i+1
+    sta.z sieve_i+1
     lda #<2
-    sta i_17
+    sta.z i_17
     lda #>2
-    sta i_17+1
+    sta.z i_17+1
   b2:
     ldy #0
     lda (sieve_i),y
     cmp #0
     bne b3
-    lda i_17
+    lda.z i_17
     asl
-    sta j
-    lda i_17+1
+    sta.z j
+    lda.z i_17+1
     rol
-    sta j+1
-    lda j
+    sta.z j+1
+    lda.z j
     clc
     adc #<sieve
-    sta s
-    lda j+1
+    sta.z s
+    lda.z j+1
     adc #>sieve
-    sta s+1
+    sta.z s+1
   b4:
-    lda j+1
+    lda.z j+1
     cmp #>COUNT
     bcc b5
     bne !+
-    lda j
+    lda.z j
     cmp #<COUNT
     bcc b5
   !:
   b3:
-    inc i_12
+    inc.z i_12
     bne !+
-    inc i_12+1
+    inc.z i_12+1
   !:
-    inc sieve_i
+    inc.z sieve_i
     bne !+
-    inc sieve_i+1
+    inc.z sieve_i+1
   !:
-    lda i_12+1
+    lda.z i_12+1
     cmp #>SQRT_COUNT
     bcc b2
     bne !+
-    lda i_12
+    lda.z i_12
     cmp #<SQRT_COUNT
     bcc b2
   !:
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<2
-    sta i
+    sta.z i
     lda #>2
-    sta i+1
+    sta.z i+1
   b8:
-    lda i
+    lda.z i
     clc
     adc #<sieve
-    sta _18
-    lda i+1
+    sta.z _18
+    lda.z i+1
     adc #>sieve
-    sta _18+1
+    sta.z _18+1
     ldy #0
     lda (_18),y
     cmp #0
@@ -93,15 +93,15 @@ main: {
     lda #' '
     jsr print_char
   b9:
-    inc i
+    inc.z i
     bne !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$4c7
     bcc b8
     bne !+
-    lda i
+    lda.z i
     cmp #<$4c7
     bcc b8
   !:
@@ -112,20 +112,20 @@ main: {
     lda #1
     ldy #0
     sta (s),y
-    lda s
+    lda.z s
     clc
-    adc i_17
-    sta s
-    lda s+1
-    adc i_17+1
-    sta s+1
-    lda j
+    adc.z i_17
+    sta.z s
+    lda.z s+1
+    adc.z i_17+1
+    sta.z s+1
+    lda.z j
     clc
-    adc i_17
-    sta j
-    lda j+1
-    adc i_17+1
-    sta j+1
+    adc.z i_17
+    sta.z j
+    lda.z j+1
+    adc.z i_17+1
+    sta.z j+1
     jmp b4
 }
 // Print a single char
@@ -133,9 +133,9 @@ main: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -143,10 +143,10 @@ print_char: {
 // print_word(word zeropage(6) w)
 print_word: {
     .label w = 6
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -175,21 +175,21 @@ memset: {
     .label end = str+COUNT
     .label dst = $a
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

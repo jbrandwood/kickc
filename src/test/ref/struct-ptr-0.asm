@@ -10,7 +10,7 @@ main: {
   b1:
     txa
     asl
-    sta _5
+    sta.z _5
     tay
     txa
     sta points,y
@@ -18,7 +18,7 @@ main: {
     tay
     iny
     tya
-    ldy _5
+    ldy.z _5
     sta points+OFFSET_STRUCT_POINT_Y,y
     inx
     cpx #5

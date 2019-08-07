@@ -378,12 +378,12 @@ main: {
   b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen_3
+    sta.z screen_3
     lda #>$400
-    sta screen_3+1
+    sta.z screen_3+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   b1_from_b7:
@@ -394,20 +394,20 @@ main: {
   b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and i
-    sta _0
+    and.z i
+    sta.z _0
     // [7] if((byte) 0!=(byte~) main::$0) goto main::@2 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp _0
+    cmp.z _0
     bne b2
     jmp b3
     // main::@3
   b3:
     // [8] (byte~) main::$2 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
-    lda i
+    lda.z i
     asl
     asl
-    sta _2
+    sta.z _2
     // [9] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
   b4_from_b2:
   b4_from_b3:
@@ -416,33 +416,33 @@ main: {
     // main::@4
   b4:
     // [10] *((byte*) main::screen#3) ← (byte~) main::$5 -- _deref_pbuz1=vbuz2 
-    lda _5
+    lda.z _5
     ldy #0
     sta (screen_3),y
     // [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
-    lda screen_3
+    lda.z screen_3
     clc
     adc #1
-    sta screen
-    lda screen_3+1
+    sta.z screen
+    lda.z screen_3+1
     adc #0
-    sta screen+1
+    sta.z screen+1
     // [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and i
-    sta _6
+    and.z i
+    sta.z _6
     // [13] if((byte) 0!=(byte~) main::$6) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp _6
+    cmp.z _6
     bne b5
     jmp b6
     // main::@6
   b6:
     // [14] (byte~) main::$8 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
-    lda i
+    lda.z i
     asl
     asl
-    sta _8
+    sta.z _8
     // [15] phi from main::@5 main::@6 to main::@7 [phi:main::@5/main::@6->main::@7]
   b7_from_b5:
   b7_from_b6:
@@ -451,22 +451,22 @@ main: {
     // main::@7
   b7:
     // [16] *((byte*) main::screen#1) ← (byte~) main::$11 -- _deref_pbuz1=vbuz2 
-    lda _11
+    lda.z _11
     ldy #0
     sta (screen),y
     // [17] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
-    lda screen
+    lda.z screen
     clc
     adc #1
-    sta screen_2
-    lda screen+1
+    sta.z screen_2
+    lda.z screen+1
     adc #0
-    sta screen_2+1
+    sta.z screen_2+1
     // [18] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [19] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
-    cmp i
+    cmp.z i
     bne b1_from_b7
     jmp breturn
     // main::@return
@@ -476,16 +476,16 @@ main: {
     // main::@5
   b5:
     // [21] (byte~) main::$10 ← (byte) main::i#2 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
-    lax i
+    lax.z i
     axs #-[3]
-    stx _10
+    stx.z _10
     jmp b7_from_b5
     // main::@2
   b2:
     // [22] (byte~) main::$4 ← (byte) main::i#2 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
-    lax i
+    lax.z i
     axs #-[3]
-    stx _4
+    stx.z _4
     jmp b4_from_b2
 }
   // File Data
@@ -563,9 +563,9 @@ main: {
   b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -600,9 +600,9 @@ main: {
     ldy #0
     sta (screen),y
     // [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
@@ -628,9 +628,9 @@ main: {
     ldy #0
     sta (screen),y
     // [17] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [18] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -756,9 +756,9 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
@@ -789,9 +789,9 @@ main: {
     sta (screen),y
     // *screen++ = (i&1)?i+3:i*4;
     // [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // i&1
     // [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
@@ -816,9 +816,9 @@ main: {
     sta (screen),y
     // *screen++ = (i&1)?i+3:i*4;
     // [17] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // for( byte i: 0..2)
     // [18] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

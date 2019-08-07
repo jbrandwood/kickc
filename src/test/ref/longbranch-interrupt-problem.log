@@ -255,7 +255,7 @@ Target platform is c64basic
 bbegin:
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -287,7 +287,7 @@ main: {
     // main::@2
   b2:
     // [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
@@ -295,7 +295,7 @@ main: {
   b3:
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b1_from_b3
 }
   // irq
@@ -304,17 +304,17 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     beq breturn_from_irq
     jmp b1
     // irq::@1
   b1:
     // [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     // [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
   breturn_from_irq:
   breturn_from_b1:
@@ -363,7 +363,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 bbegin:
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
@@ -395,7 +395,7 @@ main: {
     // main::@2
   b2:
     // [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
@@ -403,7 +403,7 @@ main: {
   b3:
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b1_from_b3
 }
   // irq
@@ -412,17 +412,17 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     beq breturn_from_irq
     jmp b1
     // irq::@1
   b1:
     // [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     // [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
   breturn_from_irq:
   breturn_from_b1:
@@ -512,7 +512,7 @@ bbegin:
   // col = 0
   // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta col
+  sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
@@ -535,14 +535,14 @@ main: {
   b2:
     // if(col>10)
     // [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda col
+    lda.z col
     cmp #$a+1
     bcc b2
     // main::@3
     // col = 0
     // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
-    sta col
+    sta.z col
     jmp b2
 }
   // irq
@@ -553,11 +553,11 @@ irq: {
     lda $dc0d
     // *BGCOL = col
     // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
-    lda col
+    lda.z col
     sta BGCOL
     // if(col!=0)
     // [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
-    lda col
+    lda.z col
     cmp #0
     bne !_ea81+
     jmp $ea81
@@ -565,7 +565,7 @@ irq: {
     // irq::@1
     // col++;
     // [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
-    inc col
+    inc.z col
     // [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
     // [12] phi (byte) col#10 = (byte) col#0 [phi:irq/irq::@1->irq::@return#0] -- register_copy 
     // irq::@return

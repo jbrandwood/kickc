@@ -1255,7 +1255,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
   b1_from_b6:
@@ -1264,52 +1264,52 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sub::idx#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sub.idx
+    lda.z i
+    sta.z sub.idx
     // [7] call sub 
     // [67] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from_b1:
     // [67] phi (byte) sub::s#3 = (byte) $80 [phi:main::@1->sub#0] -- vbuz1=vbuc1 
     lda #$80
-    sta sub.s
+    sta.z sub.s
     // [67] phi (byte) sub::idx#3 = (byte) sub::idx#0 [phi:main::@1->sub#1] -- register_copy 
     jsr sub
     jmp b4
     // main::@4
   b4:
     // [8] (byte) sub::idx#1 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sub.idx
+    lda.z i
+    sta.z sub.idx
     // [9] call sub 
     // [67] phi from main::@4 to sub [phi:main::@4->sub]
   sub_from_b4:
     // [67] phi (byte) sub::s#3 = (byte) $40 [phi:main::@4->sub#0] -- vbuz1=vbuc1 
     lda #$40
-    sta sub.s
+    sta.z sub.s
     // [67] phi (byte) sub::idx#3 = (byte) sub::idx#1 [phi:main::@4->sub#1] -- register_copy 
     jsr sub
     jmp b5
     // main::@5
   b5:
     // [10] (byte) sub::idx#2 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sub.idx
+    lda.z i
+    sta.z sub.idx
     // [11] call sub 
     // [67] phi from main::@5 to sub [phi:main::@5->sub]
   sub_from_b5:
     // [67] phi (byte) sub::s#3 = (byte) $40 [phi:main::@5->sub#0] -- vbuz1=vbuc1 
     lda #$40
-    sta sub.s
+    sta.z sub.s
     // [67] phi (byte) sub::idx#3 = (byte) sub::idx#2 [phi:main::@5->sub#1] -- register_copy 
     jsr sub
     jmp b6
     // main::@6
   b6:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [13] if((byte) main::i#1!=(byte) 9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
-    cmp i
+    cmp.z i
     bne b1_from_b6
     // [14] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   b2_from_b6:
@@ -1324,30 +1324,30 @@ main: {
   b3_from_b2:
     // [16] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [16] phi (byte*) print_char_cursor#49 = (byte*) 1024 [phi:main::@2->main::@3#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi (byte) main::j#2 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuz1=vbuc1 
     lda #0
-    sta j
+    sta.z j
     jmp b3
     // main::@3
   b3:
     // [17] (byte~) main::$8 ← (byte) main::j#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda j
+    lda.z j
     asl
-    sta _8
+    sta.z _8
     // [18] (signed word) print_sword::w#1 ← *((const signed word[]) words#0 + (byte~) main::$8) -- vwsz1=pwsc1_derefidx_vbuz2 
-    ldy _8
+    ldy.z _8
     lda words,y
-    sta print_sword.w
+    sta.z print_sword.w
     lda words+1,y
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     // [19] call print_sword 
     jsr print_sword
     // [20] phi from main::@3 to main::@7 [phi:main::@3->main::@7]
@@ -1363,10 +1363,10 @@ main: {
     // main::@8
   b8:
     // [22] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
-    inc j
+    inc.z j
     // [23] if((byte) main::j#1!=(byte) 9) goto main::@9 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
-    cmp j
+    cmp.z j
     bne b9
     jmp breturn
     // main::@return
@@ -1376,10 +1376,10 @@ main: {
     // main::@9
   b9:
     // [25] (byte*~) print_char_cursor#63 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   b3_from_b9:
     // [16] phi (byte*) print_line_cursor#19 = (byte*) print_line_cursor#1 [phi:main::@9->main::@3#0] -- register_copy 
@@ -1400,18 +1400,18 @@ print_ln: {
     // [28] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // [29] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#13) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1_from_b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1_from_b1
   !:
     jmp breturn
@@ -1426,7 +1426,7 @@ print_ln: {
 print_sword: {
     .label w = 6
     // [31] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1_from_print_sword
     // [32] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
   b3_from_print_sword:
@@ -1439,7 +1439,7 @@ print_sword: {
     // [41] phi (byte*) print_char_cursor#34 = (byte*) print_char_cursor#49 [phi:print_sword::@3->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sword::@3->print_char#1] -- vbuz1=vbuc1 
     lda #' '
-    sta print_char.ch
+    sta.z print_char.ch
     jsr print_char
     // [34] phi from print_sword::@3 print_sword::@4 to print_sword::@2 [phi:print_sword::@3/print_sword::@4->print_sword::@2]
   b2_from_b3:
@@ -1449,10 +1449,10 @@ print_sword: {
     // print_sword::@2
   b2:
     // [35] (word) print_word::w#0 ← (word)(signed word) print_sword::w#4 -- vwuz1=vwuz2 
-    lda w
-    sta print_word.w
-    lda w+1
-    sta print_word.w+1
+    lda.z w
+    sta.z print_word.w
+    lda.z w+1
+    sta.z print_word.w+1
     // [36] call print_word 
     jsr print_word
     jmp breturn
@@ -1471,7 +1471,7 @@ print_sword: {
     // [41] phi (byte*) print_char_cursor#34 = (byte*) print_char_cursor#49 [phi:print_sword::@1->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sword::@1->print_char#1] -- vbuz1=vbuc1 
     lda #'-'
-    sta print_char.ch
+    sta.z print_char.ch
     jsr print_char
     jmp b4
     // print_sword::@4
@@ -1479,11 +1479,11 @@ print_sword: {
     // [40] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2_from_b4
 }
   // print_char
@@ -1492,13 +1492,13 @@ print_sword: {
 print_char: {
     .label ch = 8
     // [42] *((byte*) print_char_cursor#34) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuz2 
-    lda ch
+    lda.z ch
     ldy #0
     sta (print_char_cursor),y
     // [43] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#34 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -1512,8 +1512,8 @@ print_char: {
 print_word: {
     .label w = $11
     // [45] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [46] call print_byte 
     // [50] phi from print_word to print_byte [phi:print_word->print_byte]
   print_byte_from_print_word:
@@ -1523,8 +1523,8 @@ print_word: {
     // print_word::@1
   b1:
     // [47] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [48] call print_byte 
     // [50] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
   print_byte_from_b1:
@@ -1544,16 +1544,16 @@ print_byte: {
     .label _2 = $14
     .label b = $b
     // [51] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
-    sta _0
+    sta.z _0
     // [52] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _0
+    ldy.z _0
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [53] call print_char 
     // [41] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
@@ -1565,12 +1565,12 @@ print_byte: {
   b1:
     // [54] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
-    and b
-    sta _2
+    and.z b
+    sta.z _2
     // [55] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _2
+    ldy.z _2
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [56] call print_char 
     // [41] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -1608,9 +1608,9 @@ memset: {
   b2_from_memset:
     // [62] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [62] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -1623,18 +1623,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [64] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [65] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -1650,14 +1650,14 @@ sub: {
     .label idx = $e
     .label s = $f
     // [68] (byte~) sub::$0 ← (byte) sub::idx#3 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda idx
+    lda.z idx
     asl
-    sta _0
+    sta.z _0
     // [69] *((const signed word[]) words#0 + (byte~) sub::$0) ← *((const signed word[]) words#0 + (byte~) sub::$0) - (byte) sub::s#3 -- pwsc1_derefidx_vbuz1=pwsc1_derefidx_vbuz1_minus_vbuz2 
-    ldx _0
+    ldx.z _0
     sec
     lda words,x
-    sbc s
+    sbc.z s
     sta words,x
     bcs !+
     dec words+1,x
@@ -1855,14 +1855,14 @@ main: {
   b3_from_b2:
     // [16] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [16] phi (byte*) print_char_cursor#49 = (byte*) 1024 [phi:main::@2->main::@3#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi (byte) main::j#2 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
@@ -1874,9 +1874,9 @@ main: {
     // [18] (signed word) print_sword::w#1 ← *((const signed word[]) words#0 + (byte~) main::$8) -- vwsz1=pwsc1_derefidx_vbuaa 
     tay
     lda words,y
-    sta print_sword.w
+    sta.z print_sword.w
     lda words+1,y
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     // [19] call print_sword 
     jsr print_sword
     // [20] phi from main::@3 to main::@7 [phi:main::@3->main::@7]
@@ -1904,10 +1904,10 @@ main: {
     // main::@9
   b9:
     // [25] (byte*~) print_char_cursor#63 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   b3_from_b9:
     // [16] phi (byte*) print_line_cursor#19 = (byte*) print_line_cursor#1 [phi:main::@9->main::@3#0] -- register_copy 
@@ -1928,18 +1928,18 @@ print_ln: {
     // [28] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // [29] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#13) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1_from_b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1_from_b1
   !:
     jmp breturn
@@ -1954,7 +1954,7 @@ print_ln: {
 print_sword: {
     .label w = 2
     // [31] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1_from_print_sword
     // [32] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
   b3_from_print_sword:
@@ -2001,11 +2001,11 @@ print_sword: {
     // [40] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2_from_b4
 }
   // print_char
@@ -2016,9 +2016,9 @@ print_char: {
     ldy #0
     sta (print_char_cursor),y
     // [43] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#34 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -2032,8 +2032,8 @@ print_char: {
 print_word: {
     .label w = 2
     // [45] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [46] call print_byte 
     // [50] phi from print_word to print_byte [phi:print_word->print_byte]
   print_byte_from_print_word:
@@ -2043,8 +2043,8 @@ print_word: {
     // print_word::@1
   b1:
     // [47] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [48] call print_byte 
     // [50] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
   print_byte_from_b1:
@@ -2062,7 +2062,7 @@ print_word: {
 print_byte: {
     .label b = 6
     // [51] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -2081,7 +2081,7 @@ print_byte: {
   b1:
     // [54] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
-    and b
+    and.z b
     // [55] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
@@ -2122,9 +2122,9 @@ memset: {
   b2_from_memset:
     // [62] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [62] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -2137,18 +2137,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [64] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [65] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -2164,10 +2164,10 @@ sub: {
     asl
     // [69] *((const signed word[]) words#0 + (byte~) sub::$0) ← *((const signed word[]) words#0 + (byte~) sub::$0) - (byte) sub::s#3 -- pwsc1_derefidx_vbuaa=pwsc1_derefidx_vbuaa_minus_vbuxx 
     sec
-    stx $ff
+    stx.z $ff
     tax
     lda words,x
-    sbc $ff
+    sbc.z $ff
     sta words,x
     bcs !+
     dec words+1,x
@@ -2471,14 +2471,14 @@ main: {
     // [16] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // [16] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [16] phi (byte*) print_char_cursor#49 = (byte*) 1024 [phi:main::@2->main::@3#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi (byte) main::j#2 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuxx=vbuc1 
     ldx #0
     // main::@3
@@ -2490,9 +2490,9 @@ main: {
     // [18] (signed word) print_sword::w#1 ← *((const signed word[]) words#0 + (byte~) main::$8) -- vwsz1=pwsc1_derefidx_vbuaa 
     tay
     lda words,y
-    sta print_sword.w
+    sta.z print_sword.w
     lda words+1,y
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     // [19] call print_sword 
     jsr print_sword
     // [20] phi from main::@3 to main::@7 [phi:main::@3->main::@7]
@@ -2515,10 +2515,10 @@ main: {
     // main::@9
   b9:
     // [25] (byte*~) print_char_cursor#63 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [16] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
     // [16] phi (byte*) print_line_cursor#19 = (byte*) print_line_cursor#1 [phi:main::@9->main::@3#0] -- register_copy 
     // [16] phi (byte*) print_char_cursor#49 = (byte*~) print_char_cursor#63 [phi:main::@9->main::@3#1] -- register_copy 
@@ -2536,19 +2536,19 @@ print_ln: {
     // [28] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // while (print_line_cursor<print_char_cursor)
     // [29] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#13) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     // print_ln::@return
@@ -2563,7 +2563,7 @@ print_sword: {
     .label w = 2
     // if(w<0)
     // [31] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
-    lda w+1
+    lda.z w+1
     bmi b1
     // [32] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
     // print_sword::@3
@@ -2601,11 +2601,11 @@ print_sword: {
     // [40] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
   // print_char
@@ -2618,9 +2618,9 @@ print_char: {
     sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
     // [43] (byte*) print_char_cursor#13 ← ++ (byte*) print_char_cursor#34 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // print_char::@return
     // }
@@ -2634,8 +2634,8 @@ print_word: {
     .label w = 2
     // print_byte(>w)
     // [45] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [46] call print_byte 
     // [50] phi from print_word to print_byte [phi:print_word->print_byte]
     // [50] phi (byte) print_byte::b#2 = (byte) print_byte::b#0 [phi:print_word->print_byte#0] -- register_copy 
@@ -2643,8 +2643,8 @@ print_word: {
     // print_word::@1
     // print_byte(<w)
     // [47] (byte) print_byte::b#1 ← < (word) print_word::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [48] call print_byte 
     // [50] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
     // [50] phi (byte) print_byte::b#2 = (byte) print_byte::b#1 [phi:print_word::@1->print_byte#0] -- register_copy 
@@ -2661,7 +2661,7 @@ print_byte: {
     .label b = 6
     // b>>4
     // [51] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
@@ -2679,7 +2679,7 @@ print_byte: {
     // b&$f
     // [54] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
-    and b
+    and.z b
     // print_char(print_hextab[b&$f])
     // [55] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
@@ -2717,9 +2717,9 @@ memset: {
     // [62] phi from memset to memset::@2 [phi:memset->memset::@2]
     // [62] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     // [62] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
     // [62] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
     // memset::@2
@@ -2731,16 +2731,16 @@ memset: {
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
     // [64] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     // memset::@1
     // [65] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     // memset::@return
@@ -2756,10 +2756,10 @@ sub: {
     asl
     // [69] *((const signed word[]) words#0 + (byte~) sub::$0) ← *((const signed word[]) words#0 + (byte~) sub::$0) - (byte) sub::s#3 -- pwsc1_derefidx_vbuaa=pwsc1_derefidx_vbuaa_minus_vbuxx 
     sec
-    stx $ff
+    stx.z $ff
     tax
     lda words,x
-    sbc $ff
+    sbc.z $ff
     sta words,x
     bcs !+
     dec words+1,x

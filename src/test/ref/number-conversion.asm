@@ -16,145 +16,145 @@
 main: {
     ldx #0
     lda #TYPEID_SIGNED_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_SIGNED_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     ldx #$28
     lda #TYPEID_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     ldx #$50
     lda #TYPEID_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_BYTE
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_WORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     tay
     jsr assertType
     lda #TYPEID_DWORD
-    sta assertType.t2
+    sta.z assertType.t2
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     rts
@@ -166,7 +166,7 @@ main: {
 assertType: {
     .label t2 = 2
     tya
-    cmp t2
+    cmp.z t2
     beq b1
     lda #RED
     sta COLS,x

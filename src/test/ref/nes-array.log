@@ -320,73 +320,73 @@ main: {
     .label y2 = 7
     // [4] (signed word) main::y1#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y1
+    sta.z y1
     lda #>$1234
-    sta y1+1
+    sta.z y1+1
     // [5] (signed word) main::y2#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y2
+    sta.z y2
     lda #>$1234
-    sta y2+1
+    sta.z y2+1
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
   foo_from_main:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1#0 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
-    sta foo.y
+    sta.z foo.y
     lda #>y1
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 1 [phi:main->foo#1] -- vbuz1=vbuc1 
     lda #1
-    sta foo.x
+    sta.z foo.x
     jsr foo
     // [7] (signed word) foo::return#2 ← (signed word) foo::return#0 -- vwsz1=vwsz2 
-    lda foo.return
-    sta foo.return_2
-    lda foo.return+1
-    sta foo.return_2+1
+    lda.z foo.return
+    sta.z foo.return_2
+    lda.z foo.return+1
+    sta.z foo.return_2+1
     jmp b1
     // main::@1
   b1:
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2 -- vwsz1=vwsz2 
-    lda foo.return_2
-    sta _1
-    lda foo.return_2+1
-    sta _1+1
+    lda.z foo.return_2
+    sta.z _1
+    lda.z foo.return_2+1
+    sta.z _1+1
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda _1
+    lda.z _1
     sta SCREEN
-    lda _1+1
+    lda.z _1+1
     sta SCREEN+1
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
   foo_from_b1:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2#0 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
-    sta foo.y
+    sta.z foo.y
     lda #>y2
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 2 [phi:main::@1->foo#1] -- vbuz1=vbuc1 
     lda #2
-    sta foo.x
+    sta.z foo.x
     jsr foo
     // [11] (signed word) foo::return#3 ← (signed word) foo::return#0 -- vwsz1=vwsz2 
-    lda foo.return
-    sta foo.return_3
-    lda foo.return+1
-    sta foo.return_3+1
+    lda.z foo.return
+    sta.z foo.return_3
+    lda.z foo.return+1
+    sta.z foo.return_3+1
     jmp b2
     // main::@2
   b2:
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3 -- vwsz1=vwsz2 
-    lda foo.return_3
-    sta _3
-    lda foo.return_3+1
-    sta _3+1
+    lda.z foo.return_3
+    sta.z _3
+    lda.z foo.return_3+1
+    sta.z _3+1
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda _3
+    lda.z _3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda _3+1
+    lda.z _3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     jmp breturn
     // main::@return
@@ -404,20 +404,20 @@ foo: {
     .label x = 2
     .label y = 3
     // [16] (byte~) foo::$1 ← (byte) foo::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda x
+    lda.z x
     asl
-    sta _1
+    sta.z _1
     // [17] (signed word) foo::return#0 ← *((const signed word[4]) wow#0 + (byte~) foo::$1) + *((signed word*) foo::y#2) -- vwsz1=pwsc1_derefidx_vbuz2_plus__deref_pwsz3 
-    ldx _1
+    ldx.z _1
     clc
     ldy #0
     lda wow,x
     adc (y),y
-    sta return
+    sta.z return
     iny
     lda wow+1,x
     adc (y),y
-    sta return+1
+    sta.z return+1
     jmp breturn
     // foo::@return
   breturn:
@@ -499,22 +499,22 @@ main: {
     .label y2 = 6
     // [4] (signed word) main::y1#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y1
+    sta.z y1
     lda #>$1234
-    sta y1+1
+    sta.z y1+1
     // [5] (signed word) main::y2#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y2
+    sta.z y2
     lda #>$1234
-    sta y2+1
+    sta.z y2+1
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
   foo_from_main:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1#0 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
-    sta foo.y
+    sta.z foo.y
     lda #>y1
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 1 [phi:main->foo#1] -- vbuxx=vbuc1 
     ldx #1
     jsr foo
@@ -524,18 +524,18 @@ main: {
   b1:
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda _1
+    lda.z _1
     sta SCREEN
-    lda _1+1
+    lda.z _1+1
     sta SCREEN+1
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
   foo_from_b1:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2#0 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
-    sta foo.y
+    sta.z foo.y
     lda #>y2
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 2 [phi:main::@1->foo#1] -- vbuxx=vbuc1 
     ldx #2
     jsr foo
@@ -545,9 +545,9 @@ main: {
   b2:
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda _3
+    lda.z _3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda _3+1
+    lda.z _3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     jmp breturn
     // main::@return
@@ -573,9 +573,9 @@ foo: {
     iny
     lda wow+1,x
     adc (return),y
-    sta return+1
+    sta.z return+1
     pla
-    sta return
+    sta.z return
     jmp breturn
     // foo::@return
   breturn:
@@ -677,23 +677,23 @@ main: {
     // y1 = 0x1234
     // [4] (signed word) main::y1#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y1
+    sta.z y1
     lda #>$1234
-    sta y1+1
+    sta.z y1+1
     // y2 = 0x1234
     // [5] (signed word) main::y2#0 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
-    sta y2
+    sta.z y2
     lda #>$1234
-    sta y2+1
+    sta.z y2+1
     // foo(1, &y1)
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1#0 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
-    sta foo.y
+    sta.z foo.y
     lda #>y1
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 1 [phi:main->foo#1] -- vbuxx=vbuc1 
     ldx #1
     jsr foo
@@ -703,18 +703,18 @@ main: {
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2
     // *SCREEN++ = foo(1, &y1)
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda _1
+    lda.z _1
     sta SCREEN
-    lda _1+1
+    lda.z _1+1
     sta SCREEN+1
     // foo(2, &y2)
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2#0 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
-    sta foo.y
+    sta.z foo.y
     lda #>y2
-    sta foo.y+1
+    sta.z foo.y+1
     // [15] phi (byte) foo::x#2 = (byte) 2 [phi:main::@1->foo#1] -- vbuxx=vbuc1 
     ldx #2
     jsr foo
@@ -724,9 +724,9 @@ main: {
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3
     // *SCREEN++ = foo(2, &y2)
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda _3
+    lda.z _3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda _3+1
+    lda.z _3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     // main::@return
     // }
@@ -752,9 +752,9 @@ foo: {
     iny
     lda wow+1,x
     adc (return),y
-    sta return+1
+    sta.z return+1
     pla
-    sta return
+    sta.z return
     // foo::@return
     // }
     // [18] return 

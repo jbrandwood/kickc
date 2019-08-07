@@ -7,31 +7,31 @@ main: {
     .label i = 2
     .label _1 = 4
     lda #<0
-    sta i
-    sta i+1
+    sta.z i
+    sta.z i+1
   b2:
-    lda i
+    lda.z i
     clc
     adc #<screen
-    sta _1
-    lda i+1
+    sta.z _1
+    lda.z i+1
     adc #>screen
-    sta _1+1
+    sta.z _1+1
     lda #'a'
     ldy #0
     sta (_1),y
     lda #$28
     clc
-    adc i
-    sta i
+    adc.z i
+    sta.z i
     bcc !+
-    inc i+1
+    inc.z i+1
   !:
-    lda i+1
+    lda.z i+1
     cmp #>$3e8
     bcc b2
     bne !+
-    lda i
+    lda.z i
     cmp #<$3e8
     bcc b2
   !:

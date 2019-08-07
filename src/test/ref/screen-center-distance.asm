@@ -38,19 +38,19 @@ main: {
     jsr clock_start
     jsr init_dist_screen
     jsr clock
-    lda cyclecount
+    lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
-    sta cyclecount
-    lda cyclecount+1
+    sta.z cyclecount
+    lda.z cyclecount+1
     sbc #>CLOCKS_PER_INIT
-    sta cyclecount+1
-    lda cyclecount+2
+    sta.z cyclecount+1
+    lda.z cyclecount+2
     sbc #<CLOCKS_PER_INIT>>$10
-    sta cyclecount+2
-    lda cyclecount+3
+    sta.z cyclecount+2
+    lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
-    sta cyclecount+3
+    sta.z cyclecount+3
     jsr print_dword_at
     lda #toD0182_return
     sta D018
@@ -60,23 +60,23 @@ main: {
 // print_dword_at(dword zeropage($e) dw)
 print_dword_at: {
     .label dw = $e
-    lda dw+2
-    sta print_word_at.w
-    lda dw+3
-    sta print_word_at.w+1
+    lda.z dw+2
+    sta.z print_word_at.w
+    lda.z dw+3
+    sta.z print_word_at.w+1
     lda #<main.BASE_SCREEN
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>main.BASE_SCREEN
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
-    lda dw
-    sta print_word_at.w
-    lda dw+1
-    sta print_word_at.w+1
+    lda.z dw
+    sta.z print_word_at.w
+    lda.z dw+1
+    sta.z print_word_at.w+1
     lda #<main.BASE_SCREEN+4
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>main.BASE_SCREEN+4
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
     rts
 }
@@ -85,17 +85,17 @@ print_dword_at: {
 print_word_at: {
     .label w = 9
     .label at = 2
-    lda w+1
-    sta print_byte_at.b
+    lda.z w+1
+    sta.z print_byte_at.b
     jsr print_byte_at
-    lda w
-    sta print_byte_at.b
-    lda print_byte_at.at
+    lda.z w
+    sta.z print_byte_at.b
+    lda.z print_byte_at.at
     clc
     adc #2
-    sta print_byte_at.at
+    sta.z print_byte_at.at
     bcc !+
-    inc print_byte_at.at+1
+    inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
@@ -105,28 +105,28 @@ print_word_at: {
 print_byte_at: {
     .label b = $d
     .label at = 2
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
     tay
     ldx print_hextab,y
-    lda at
-    sta print_char_at.at
-    lda at+1
-    sta print_char_at.at+1
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
     jsr print_char_at
     lda #$f
-    and b
+    and.z b
     tay
-    lda at
+    lda.z at
     clc
     adc #1
-    sta print_char_at.at
-    lda at+1
+    sta.z print_char_at.at
+    lda.z at+1
     adc #0
-    sta print_char_at.at+1
+    sta.z print_char_at.at+1
     ldx print_hextab,y
     jsr print_char_at
     rts
@@ -147,16 +147,16 @@ clock: {
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
-    sta return
+    sta.z return
     lda #>$ffffffff
     sbc CIA2_TIMER_AB+1
-    sta return+1
+    sta.z return+1
     lda #<$ffffffff>>$10
     sbc CIA2_TIMER_AB+2
-    sta return+2
+    sta.z return+2
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
@@ -172,17 +172,17 @@ init_dist_screen: {
     .label xb = $c
     jsr init_squares
     lda #<SCREEN+$28*$18
-    sta screen_bottomline
+    sta.z screen_bottomline
     lda #>SCREEN+$28*$18
-    sta screen_bottomline+1
+    sta.z screen_bottomline+1
     lda #<SCREEN
-    sta screen_topline
+    sta.z screen_topline
     lda #>SCREEN
-    sta screen_topline+1
+    sta.z screen_topline+1
     lda #0
-    sta y
+    sta.z y
   b1:
-    lda y
+    lda.z y
     asl
     cmp #$18
     bcs b2
@@ -191,16 +191,16 @@ init_dist_screen: {
     adc #$18+1
   b4:
     jsr sqr
-    lda sqr.return
-    sta sqr.return_2
-    lda sqr.return+1
-    sta sqr.return_2+1
+    lda.z sqr.return
+    sta.z sqr.return_2
+    lda.z sqr.return+1
+    sta.z sqr.return_2+1
     lda #$27
-    sta xb
+    sta.z xb
     lda #0
-    sta x
+    sta.z x
   b6:
-    lda x
+    lda.z x
     asl
     cmp #$27
     bcs b8
@@ -209,42 +209,42 @@ init_dist_screen: {
     adc #$27+1
   b10:
     jsr sqr
-    lda ds
+    lda.z ds
     clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
+    adc.z yds
+    sta.z ds
+    lda.z ds+1
+    adc.z yds+1
+    sta.z ds+1
     jsr sqrt
-    ldy x
+    ldy.z x
     sta (screen_topline),y
     sta (screen_bottomline),y
-    ldy xb
+    ldy.z xb
     sta (screen_topline),y
     sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
+    inc.z x
+    dec.z xb
+    lda.z x
     cmp #$13+1
     bcc b6
     lda #$28
     clc
-    adc screen_topline
-    sta screen_topline
+    adc.z screen_topline
+    sta.z screen_topline
     bcc !+
-    inc screen_topline+1
+    inc.z screen_topline+1
   !:
-    lda screen_bottomline
+    lda.z screen_bottomline
     sec
     sbc #<$28
-    sta screen_bottomline
-    lda screen_bottomline+1
+    sta.z screen_bottomline
+    lda.z screen_bottomline+1
     sbc #>$28
-    sta screen_bottomline+1
-    inc y
+    sta.z screen_bottomline+1
+    inc.z y
     lda #$d
-    cmp y
+    cmp.z y
     bne b1
     rts
   b8:
@@ -266,16 +266,16 @@ sqrt: {
     .label found = 6
     .label val = $14
     jsr bsearch16u
-    lda _3
+    lda.z _3
     sec
     sbc #<SQUARES
-    sta _3
-    lda _3+1
+    sta.z _3
+    lda.z _3+1
     sbc #>SQUARES
-    sta _3+1
-    lsr _1+1
-    ror _1
-    lda _1
+    sta.z _3+1
+    lsr.z _1+1
+    ror.z _1
+    lda.z _1
     rts
 }
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
@@ -294,47 +294,47 @@ bsearch16u: {
     .label items_10 = 4
     .label items_16 = 4
     lda #<SQUARES
-    sta items_10
+    sta.z items_10
     lda #>SQUARES
-    sta items_10+1
+    sta.z items_10+1
     ldx #NUM_SQUARES
   b4:
     txa
     lsr
     asl
     clc
-    adc items_10
-    sta pivot
+    adc.z items_10
+    sta.z pivot
     lda #0
-    adc items_10+1
-    sta pivot+1
+    adc.z items_10+1
+    sta.z pivot+1
     sec
-    lda key
+    lda.z key
     ldy #0
     sbc (pivot),y
-    sta result
-    lda key+1
+    sta.z result
+    lda.z key+1
     iny
     sbc (pivot),y
-    sta result+1
+    sta.z result+1
     bne b6
-    lda result
+    lda.z result
     bne b6
   breturn:
     rts
   b6:
-    lda result+1
+    lda.z result+1
     bmi b10
     bne !+
-    lda result
+    lda.z result
     beq b10
   !:
     lda #1*SIZEOF_WORD
     clc
-    adc items
-    sta items
+    adc.z items
+    sta.z items
     bcc !+
-    inc items+1
+    inc.z items+1
   !:
     dex
   b7:
@@ -345,33 +345,33 @@ bsearch16u: {
     bne b9
     ldy #1
     lda (items),y
-    cmp key+1
+    cmp.z key+1
     bne !+
     dey
     lda (items),y
-    cmp key
+    cmp.z key
     beq breturn
   !:
     bcc breturn
-    lda _2
+    lda.z _2
     sec
     sbc #<1*SIZEOF_WORD
-    sta _2
-    lda _2+1
+    sta.z _2
+    lda.z _2+1
     sbc #>1*SIZEOF_WORD
-    sta _2+1
+    sta.z _2+1
     rts
   b9:
-    lda items
-    sta items_16
-    lda items+1
-    sta items_16+1
+    lda.z items
+    sta.z items_16
+    lda.z items+1
+    sta.z items_16+1
     jmp b4
   b10:
-    lda items_10
-    sta items
-    lda items_10+1
-    sta items+1
+    lda.z items_10
+    sta.z items
+    lda.z items_10+1
+    sta.z items+1
     jmp b7
 }
 // Find the square of a byte value
@@ -383,9 +383,9 @@ sqr: {
     asl
     tay
     lda SQUARES,y
-    sta return
+    sta.z return
     lda SQUARES+1,y
-    sta return+1
+    sta.z return+1
     rts
 }
 // Initialize squares table
@@ -396,35 +396,35 @@ init_squares: {
     jsr malloc
     ldx #0
     lda #<SQUARES
-    sta squares
+    sta.z squares
     lda #>SQUARES
-    sta squares+1
+    sta.z squares+1
     txa
-    sta sqr
-    sta sqr+1
+    sta.z sqr
+    sta.z sqr+1
   b1:
     ldy #0
-    lda sqr
+    lda.z sqr
     sta (squares),y
     iny
-    lda sqr+1
+    lda.z sqr+1
     sta (squares),y
     lda #SIZEOF_WORD
     clc
-    adc squares
-    sta squares
+    adc.z squares
+    sta.z squares
     bcc !+
-    inc squares+1
+    inc.z squares+1
   !:
     txa
     asl
     clc
     adc #1
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     inx
     cpx #NUM_SQUARES-1+1
@@ -472,28 +472,28 @@ init_font_hex: {
     .label proto_hi = 9
     .label c = $b
     lda #0
-    sta c
+    sta.z c
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
   b1:
     lda #0
-    sta c1
+    sta.z c1
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
   b2:
     lda #0
     tay
     sta (charset),y
     lda #1
-    sta idx
+    sta.z idx
     ldx #0
   b3:
     txa
@@ -503,51 +503,51 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora _0
-    ldy idx
+    ora.z _0
+    ldy.z idx
     sta (charset),y
-    inc idx
+    inc.z idx
     inx
     cpx #5
     bne b3
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     iny
     sta (charset),y
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
-    inc c1
+    inc.z c1
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
-    inc c
+    inc.z c
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     rts
 }

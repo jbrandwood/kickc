@@ -8,28 +8,28 @@ main: {
     .label i = 3
     .label a = 2
     lda #0
-    sta i
-    sta a
+    sta.z i
+    sta.z a
   b1:
     ldy #0
   b2:
-    ldx a
+    ldx.z a
     tya
     jsr mul8u
-    lda i
+    lda.z i
     asl
     tax
-    lda _0
+    lda.z _0
     sta screen,x
-    lda _0+1
+    lda.z _0+1
     sta screen+1,x
-    inc i
+    inc.z i
     iny
     cpy #6
     bne b2
-    inc a
+    inc.z a
     lda #6
-    cmp a
+    cmp.z a
     bne b1
     rts
 }
@@ -39,11 +39,11 @@ mul8u: {
     .label mb = 6
     .label res = 4
     .label return = 4
-    sta mb
+    sta.z mb
     lda #0
-    sta mb+1
-    sta res
-    sta res+1
+    sta.z mb+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -53,18 +53,18 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }

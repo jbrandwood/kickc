@@ -7,17 +7,17 @@ main: {
     .label w = 2
     ldx #0
     txa
-    sta w
-    sta w+1
+    sta.z w
+    sta.z w+1
   b1:
-    lda w
+    lda.z w
     sec
     sbc #$c
-    sta w
-    lda w+1
+    sta.z w
+    lda.z w+1
     sbc #>$c
-    sta w+1
-    lda w
+    sta.z w+1
+    lda.z w
     sta SCREEN,x
     inx
     cpx #$b

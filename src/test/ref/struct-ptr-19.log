@@ -331,23 +331,23 @@ main: {
     .label point_y = 6
     // [4] (byte) main::point_x#0 ← (byte) 1 -- vbuz1=vbuc1 
     lda #1
-    sta point_x
+    sta.z point_x
     // [5] (byte) main::point_y#0 ← (byte) 2 -- vbuz1=vbuc1 
     lda #2
-    sta point_y
+    sta.z point_y
     // [6] (byte) print::p_x#0 ← (byte) main::point_x#0 -- vbuz1=vbuz2 
-    lda point_x
-    sta print.p_x
+    lda.z point_x
+    sta.z print.p_x
     // [7] (byte) print::p_y#0 ← (byte) main::point_y#0 -- vbuz1=vbuz2 
-    lda point_y
-    sta print.p_y
+    lda.z point_y
+    sta.z print.p_y
     // [8] call print 
     // [13] phi from main to print [phi:main->print]
   print_from_main:
     // [13] phi (byte) print::p_y#2 = (byte) print::p_y#0 [phi:main->print#0] -- register_copy 
     // [13] phi (byte) idx#11 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx_11
+    sta.z idx_11
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#0 [phi:main->print#2] -- register_copy 
     jsr print
     jmp b1
@@ -355,10 +355,10 @@ main: {
   b1:
     // [9] (byte) print::p_x#1 ← *((byte*)(const struct Point*) main::ptr#0) -- vbuz1=_deref_pbuc1 
     lda ptr
-    sta print.p_x
+    sta.z print.p_x
     // [10] (byte) print::p_y#1 ← *((byte*)(const struct Point*) main::ptr#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=_deref_pbuc1 
     lda ptr+OFFSET_STRUCT_POINT_Y
-    sta print.p_y
+    sta.z print.p_y
     // [11] call print 
     // [13] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
@@ -378,21 +378,21 @@ print: {
     .label p_x = 2
     .label p_y = 4
     // [14] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda p_x
-    ldy idx_11
+    lda.z p_x
+    ldy.z idx_11
     sta SCREEN,y
     // [15] (byte) idx#4 ← ++ (byte) idx#11 -- vbuz1=_inc_vbuz2 
-    ldy idx_11
+    ldy.z idx_11
     iny
-    sty idx
+    sty.z idx
     // [16] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) print::p_y#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda p_y
-    ldy idx
+    lda.z p_y
+    ldy.z idx
     sta SCREEN,y
     // [17] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuz2 
-    ldy idx
+    ldy.z idx
     iny
-    sty idx_12
+    sty.z idx_12
     jmp breturn
     // print::@return
   breturn:
@@ -463,21 +463,21 @@ main: {
     .label point_y = 4
     // [4] (byte) main::point_x#0 ← (byte) 1 -- vbuz1=vbuc1 
     lda #1
-    sta point_x
+    sta.z point_x
     // [5] (byte) main::point_y#0 ← (byte) 2 -- vbuz1=vbuc1 
     lda #2
-    sta point_y
+    sta.z point_y
     // [6] (byte) print::p_x#0 ← (byte) main::point_x#0 -- vbuyy=vbuz1 
-    ldy point_x
+    ldy.z point_x
     // [7] (byte) print::p_y#0 ← (byte) main::point_y#0 -- vbuxx=vbuz1 
-    ldx point_y
+    ldx.z point_y
     // [8] call print 
     // [13] phi from main to print [phi:main->print]
   print_from_main:
     // [13] phi (byte) print::p_y#2 = (byte) print::p_y#0 [phi:main->print#0] -- register_copy 
     // [13] phi (byte) idx#11 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#0 [phi:main->print#2] -- register_copy 
     jsr print
     jmp b1
@@ -505,17 +505,17 @@ main: {
 print: {
     // [14] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // [15] (byte) idx#4 ← ++ (byte) idx#11 -- vbuyy=_inc_vbuz1 
-    ldy idx
+    ldy.z idx
     iny
     // [16] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) print::p_y#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta SCREEN,y
     // [17] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuyy 
     iny
-    sty idx
+    sty.z idx
     jmp breturn
     // print::@return
   breturn:
@@ -531,8 +531,8 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx point_y with TAX
-Removing instruction ldy idx
+Replacing instruction ldx.z point_y with TAX
+Removing instruction ldy.z idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
@@ -621,13 +621,13 @@ main: {
     // point = { 1, 2 }
     // [4] (byte) main::point_x#0 ← (byte) 1 -- vbuz1=vbuc1 
     lda #1
-    sta point_x
+    sta.z point_x
     // [5] (byte) main::point_y#0 ← (byte) 2 -- vbuz1=vbuc1 
     lda #2
-    sta point_y
+    sta.z point_y
     // print(point)
     // [6] (byte) print::p_x#0 ← (byte) main::point_x#0 -- vbuyy=vbuz1 
-    ldy point_x
+    ldy.z point_x
     // [7] (byte) print::p_y#0 ← (byte) main::point_y#0 -- vbuxx=vbuz1 
     tax
     // [8] call print 
@@ -635,7 +635,7 @@ main: {
     // [13] phi (byte) print::p_y#2 = (byte) print::p_y#0 [phi:main->print#0] -- register_copy 
     // [13] phi (byte) idx#11 = (byte) 0 [phi:main->print#1] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#0 [phi:main->print#2] -- register_copy 
     jsr print
     // main::@1
@@ -661,7 +661,7 @@ print: {
     // SCREEN[idx++] = p.x
     // [14] *((const byte*) SCREEN#0 + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.x;
     // [15] (byte) idx#4 ← ++ (byte) idx#11 -- vbuyy=_inc_vbuz1 
@@ -673,7 +673,7 @@ print: {
     // SCREEN[idx++] = p.y;
     // [17] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuyy 
     iny
-    sty idx
+    sty.z idx
     // print::@return
     // }
     // [18] return 

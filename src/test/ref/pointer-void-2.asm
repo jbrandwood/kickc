@@ -8,34 +8,34 @@ main: {
     .label w = 8
     .label b = $a
     lda #<$12345678
-    sta d
+    sta.z d
     lda #>$12345678
-    sta d+1
+    sta.z d+1
     lda #<$12345678>>$10
-    sta d+2
+    sta.z d+2
     lda #>$12345678>>$10
-    sta d+3
+    sta.z d+3
     lda #<$1234
-    sta w
+    sta.z w
     lda #>$1234
-    sta w+1
+    sta.z w+1
     lda #$12
-    sta b
+    sta.z b
     ldx #0
     lda #<b
-    sta print.ptr
+    sta.z print.ptr
     lda #>b
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     lda #<w
-    sta print.ptr
+    sta.z print.ptr
     lda #>w
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     lda #<d
-    sta print.ptr
+    sta.z print.ptr
     lda #>d
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     rts
 }

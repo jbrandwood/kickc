@@ -6,14 +6,14 @@
 main: {
     ldx #0
     lda #<msg1
-    sta print.m
+    sta.z print.m
     lda #>msg1
-    sta print.m+1
+    sta.z print.m+1
     jsr print
     lda #<msg2
-    sta print.m
+    sta.z print.m
     lda #>msg2
-    sta print.m+1
+    sta.z print.m+1
     jsr print
     rts
 }

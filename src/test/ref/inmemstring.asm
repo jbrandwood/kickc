@@ -5,9 +5,9 @@
 main: {
     .label cursor = 2
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
     ldx #0
   b1:
     lda TEXT,x
@@ -18,15 +18,15 @@ main: {
     bne b2
     ldx #0
   b2:
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b1
   !:

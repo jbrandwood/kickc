@@ -312,13 +312,13 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta max
+    sta.z max
     // [5] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #$ff
-    sta min
+    sta.z min
     // [5] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta pos
+    sta.z pos
     jmp b1
     // main::@1
   b1:
@@ -326,17 +326,17 @@ main: {
     // main::@2
   b2:
     // [6] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuz1=_inc_vbuz1 
-    inc pos
+    inc.z pos
     // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuz1_ge_vbuz2_then_la1 
-    lda pos
-    cmp min
+    lda.z pos
+    cmp.z min
     bcs b3_from_b2
     jmp b5
     // main::@5
   b5:
     // [8] (byte~) main::min#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
-    lda pos
-    sta min
+    lda.z pos
+    sta.z min
     // [9] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
   b3_from_b2:
   b3_from_b5:
@@ -345,15 +345,15 @@ main: {
     // main::@3
   b3:
     // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuz1_le_vbuz2_then_la1 
-    lda max
-    cmp pos
+    lda.z max
+    cmp.z pos
     bcs b4_from_b3
     jmp b6
     // main::@6
   b6:
     // [11] (byte~) main::max#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
-    lda pos
-    sta max
+    lda.z pos
+    sta.z max
     // [12] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
   b4_from_b3:
   b4_from_b6:
@@ -362,13 +362,13 @@ main: {
     // main::@4
   b4:
     // [13] *((const byte*) SCREEN#0) ← (byte) main::min#3 -- _deref_pbuc1=vbuz1 
-    lda min
+    lda.z min
     sta SCREEN
     // [14] *((const byte*) SCREEN#0+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuz1 
-    lda max
+    lda.z max
     sta SCREEN+1
     // [15] *((const byte*) SCREEN#0+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuz1 
-    lda pos
+    lda.z pos
     sta SCREEN+2
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
@@ -436,8 +436,8 @@ main: {
     clc
     adc #1
     // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
-    stx $ff
-    cmp $ff
+    stx.z $ff
+    cmp.z $ff
     bcs b3_from_b2
     jmp b5
     // main::@5
@@ -452,8 +452,8 @@ main: {
     // main::@3
   b3:
     // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
-    sta $ff
-    cpy $ff
+    sta.z $ff
+    cpy.z $ff
     bcs b4_from_b3
     jmp b6
     // main::@6
@@ -584,8 +584,8 @@ main: {
     adc #1
     // if(pos<min)
     // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
-    stx $ff
-    cmp $ff
+    stx.z $ff
+    cmp.z $ff
     bcs b3
     // main::@5
     // [8] (byte~) main::min#9 ← (byte) main::pos#1 -- vbuxx=vbuaa 
@@ -596,8 +596,8 @@ main: {
   b3:
     // if(pos>max)
     // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
-    sta $ff
-    cpy $ff
+    sta.z $ff
+    cpy.z $ff
     bcs b4
     // main::@6
     // [11] (byte~) main::max#9 ← (byte) main::pos#1 -- vbuyy=vbuaa 

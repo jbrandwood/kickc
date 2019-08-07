@@ -253,10 +253,10 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx_4
+    sta.z idx_4
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -266,46 +266,46 @@ main: {
     // main::@1
   b1:
     // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _4
+    sta.z _4
     // [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte~) main::$4) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy _4
+    ldy.z _4
     lda words,y
-    sta w
+    sta.z w
     lda words+1,y
-    sta w+1
+    sta.z w+1
     // [8] (byte~) main::$1 ← < (word) main::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta _1
+    lda.z w
+    sta.z _1
     // [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _1
-    ldy idx_4
+    lda.z _1
+    ldy.z idx_4
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuz1=_inc_vbuz2 
-    ldy idx_4
+    ldy.z idx_4
     iny
-    sty idx
+    sty.z idx
     // [11] (byte~) main::$2 ← > (word) main::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta _2
+    lda.z w+1
+    sta.z _2
     // [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _2
-    ldy idx
+    lda.z _2
+    ldy.z idx
     sta SCREEN,y
     // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
-    ldy idx
+    ldy.z idx
     iny
-    sty idx_2
+    sty.z idx_2
     // [14] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz2 
-    ldy idx_2
+    ldy.z idx_2
     iny
-    sty idx_3
+    sty.z idx_3
     // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // main::@return
@@ -387,7 +387,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -404,19 +404,19 @@ main: {
     // [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte~) main::$4) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda words,y
-    sta w
+    sta.z w
     lda words+1,y
-    sta w+1
+    sta.z w+1
     // [8] (byte~) main::$1 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
-    lda w
+    lda.z w
     // [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuyy=_inc_vbuz1 
-    ldy idx
+    ldy.z idx
     iny
     // [11] (byte~) main::$2 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
-    lda w+1
+    lda.z w+1
     // [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
     // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuaa=_inc_vbuyy 
@@ -425,7 +425,7 @@ main: {
     // [14] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
-    sta idx
+    sta.z idx
     // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -448,7 +448,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
-Removing instruction ldy idx
+Removing instruction ldy.z idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
@@ -529,7 +529,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     tax
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -545,22 +545,22 @@ main: {
     // [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte~) main::$4) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda words,y
-    sta w
+    sta.z w
     lda words+1,y
-    sta w+1
+    sta.z w+1
     // <w
     // [8] (byte~) main::$1 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
-    lda w
+    lda.z w
     // SCREEN[idx++] = <w
     // [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = <w;
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuyy=_inc_vbuz1 
     iny
     // >w
     // [11] (byte~) main::$2 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
-    lda w+1
+    lda.z w+1
     // SCREEN[idx++] = >w
     // [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
@@ -572,7 +572,7 @@ main: {
     // [14] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
-    sta idx
+    sta.z idx
     // for( byte i: 0..3)
     // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx

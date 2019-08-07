@@ -26,26 +26,26 @@ print_points: {
     .label i = 6
     jsr print_cls
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     tay
     tya
     clc
     adc #<points
-    sta point
+    sta.z point
     lda #>points
     adc #0
-    sta point+1
+    sta.z point+1
     ldx points,y
     jsr print_byte
     jsr print_str
@@ -54,16 +54,16 @@ print_points: {
     tax
     jsr print_byte
     jsr print_ln
-    inc i
+    inc.z i
     lda #NUM_POINTS-1+1
-    cmp i
+    cmp.z i
     bne b7
     rts
   b7:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     str: .text " "
     .byte 0
@@ -73,17 +73,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -110,9 +110,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -121,9 +121,9 @@ print_char: {
 print_str: {
     .label str = 2
     lda #<print_points.str
-    sta str
+    sta.z str
     lda #>print_points.str
-    sta str+1
+    sta.z str+1
   b1:
     ldy #0
     lda (str),y
@@ -134,13 +134,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -157,21 +157,21 @@ memset: {
     .label end = str+num
     .label dst = 4
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts
@@ -181,7 +181,7 @@ init_points: {
     .label getPoint1_return = 9
     .label pos = 6
     lda #$a
-    sta pos
+    sta.z pos
     ldx #0
   b1:
     txa
@@ -190,20 +190,20 @@ init_points: {
     tya
     clc
     adc #<points
-    sta getPoint1_return
+    sta.z getPoint1_return
     lda #>points
     adc #0
-    sta getPoint1_return+1
-    lda pos
+    sta.z getPoint1_return+1
+    lda.z pos
     sta points,y
     lda #$a
     clc
-    adc pos
+    adc.z pos
     ldy #1
     sta (getPoint1_return),y
     clc
     adc #$a
-    sta pos
+    sta.z pos
     inx
     cpx #NUM_POINTS-1+1
     bne b1

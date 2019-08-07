@@ -37,37 +37,37 @@ main: {
     cli
   b4:
     lda #0
-    sta i
+    sta.z i
   b1:
     lda #0
-    sta j
+    sta.z j
   b2:
     lda #0
-    sta k
+    sta.z k
   b3:
-    lda i
+    lda.z i
     clc
-    adc j
+    adc.z j
     clc
-    adc k
+    adc.z k
     sta FGCOL
     jsr sub_main
-    inc k
+    inc.z k
     lda #$b
-    cmp k
+    cmp.z k
     bne b3
-    inc j
-    cmp j
+    inc.z j
+    cmp.z j
     bne b2
-    inc i
-    cmp i
+    inc.z i
+    cmp.z i
     bne b1
     jmp b4
 }
 sub_main: {
     .label i = 5
     lda #0
-    sta i
+    sta.z i
   b1:
     ldx #0
   b2:
@@ -75,10 +75,10 @@ sub_main: {
   b3:
     txa
     clc
-    adc i
-    sty $ff
+    adc.z i
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta BGCOL
     iny
     cpy #$b
@@ -86,9 +86,9 @@ sub_main: {
     inx
     cpx #$b
     bne b2
-    inc i
+    inc.z i
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
@@ -98,30 +98,30 @@ irq: {
     .label i = 6
     inc BGCOL
     lda #0
-    sta i
+    sta.z i
   b1:
     lda #0
-    sta j
+    sta.z j
   b2:
     lda #0
-    sta k
+    sta.z k
   b3:
-    lda i
+    lda.z i
     clc
-    adc j
+    adc.z j
     clc
-    adc k
+    adc.z k
     sta FGCOL
     jsr sub_irq
-    inc k
+    inc.z k
     lda #$b
-    cmp k
+    cmp.z k
     bne b3
-    inc j
-    cmp j
+    inc.z j
+    cmp.z j
     bne b2
-    inc i
-    cmp i
+    inc.z i
+    cmp.z i
     bne b1
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -131,7 +131,7 @@ irq: {
 sub_irq: {
     .label i = 9
     lda #0
-    sta i
+    sta.z i
   b1:
     ldx #0
   b2:
@@ -139,10 +139,10 @@ sub_irq: {
   b3:
     txa
     clc
-    adc i
-    sty $ff
+    adc.z i
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     sta BGCOL
     iny
     cpy #$b
@@ -150,9 +150,9 @@ sub_irq: {
     inx
     cpx #$b
     bne b2
-    inc i
+    inc.z i
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     rts
 }

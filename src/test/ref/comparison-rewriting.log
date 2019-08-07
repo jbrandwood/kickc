@@ -610,9 +610,9 @@ main: {
   b1_from_main:
     // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta sc
+    sta.z sc
     lda #>$400
-    sta sc+1
+    sta.z sc+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -625,27 +625,27 @@ main: {
     ldy #0
     sta (sc),y
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [8] if((byte*) main::sc#1!=(byte*) 1024+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>$400+$3e8+1
     bne b1_from_b1
-    lda sc
+    lda.z sc
     cmp #<$400+$3e8+1
     bne b1_from_b1
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b2
     // main::@2
   b2:
     // [10] if(*((const byte[]) main::header#0 + (byte) main::i#2)!=(byte) 0) goto main::@3 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
-    ldy i
+    ldy.z i
     lda header,y
     cmp #0
     bne b3
@@ -659,12 +659,12 @@ main: {
   b11_from_b10_1:
     // [12] phi (byte*) main::screen#22 = (byte*) 1024+(byte) $28 [phi:main::@10_1->main::@11#0] -- pbuz1=pbuc1 
     lda #<$400+$28
-    sta screen
+    sta.z screen
     lda #>$400+$28
-    sta screen+1
+    sta.z screen+1
     // [12] phi (byte) main::i1#31 = (byte) 0 [phi:main::@10_1->main::@11#1] -- vbuz1=vbuc1 
     lda #0
-    sta i1
+    sta.z i1
     jmp b11
     // main::@11
   b11:
@@ -681,7 +681,7 @@ main: {
     // main::@6
   b6:
     // [15] if((byte) main::i1#26>=(byte) 5+(byte) 1) goto main::@7 -- vbuz1_ge_vbuc1_then_la1 
-    lda i1
+    lda.z i1
     cmp #5+1
     bcs b7
     jmp b12
@@ -696,7 +696,7 @@ main: {
   b7:
     // [17] if((byte) main::i1#26!=(byte) 5) goto main::@8 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
-    cmp i1
+    cmp.z i1
     bne b8
     jmp b13
     // main::@13
@@ -709,7 +709,7 @@ main: {
     // main::@8
   b8:
     // [19] if((byte) main::i1#26<(byte) 5) goto main::@9 -- vbuz1_lt_vbuc1_then_la1 
-    lda i1
+    lda.z i1
     cmp #5
     bcc b9
     jmp b14
@@ -723,7 +723,7 @@ main: {
     // main::@9
   b9:
     // [21] if((byte) main::i1#26<(byte) 5+(byte) 1) goto main::@10 -- vbuz1_lt_vbuc1_then_la1 
-    lda i1
+    lda.z i1
     cmp #5+1
     bcc b10
     jmp b15
@@ -737,12 +737,12 @@ main: {
     // main::@10
   b10:
     // [23] (byte) main::i1#1 ← ++ (byte) main::i1#26 -- vbuz1=_inc_vbuz1 
-    inc i1
+    inc.z i1
     jmp b4
     // main::@4
   b4:
     // [24] if((byte) main::i1#1<(byte) 9+(byte) 1) goto main::@5 -- vbuz1_lt_vbuc1_then_la1 
-    lda i1
+    lda.z i1
     cmp #9+1
     bcc b5
     jmp breturn
@@ -755,21 +755,21 @@ main: {
     // [26] (byte*) main::screen#1 ← (byte*) main::screen#19 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [27] (byte~) main::$4 ← (byte) '0' + (byte) main::i1#1 -- vbuz1=vbuc1_plus_vbuz2 
-    lax i1
+    lax.z i1
     axs #-['0']
-    stx _4
+    stx.z _4
     // [28] *((byte*) main::screen#1) ← (byte~) main::$4 -- _deref_pbuz1=vbuz2 
-    lda _4
+    lda.z _4
     ldy #0
     sta (screen),y
     // [29] if((byte) main::i1#1>=(byte) 5) goto main::@6 -- vbuz1_ge_vbuc1_then_la1 
-    lda i1
+    lda.z i1
     cmp #5
     bcs b6_from_b5
     // [12] phi from main::@5 to main::@11 [phi:main::@5->main::@11]
@@ -780,11 +780,11 @@ main: {
     // main::@3
   b3:
     // [30] *((byte*) 1024 + (byte) main::i#2) ← *((const byte[]) main::header#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy i
+    ldy.z i
     lda header,y
     sta $400,y
     // [31] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
     // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@2#0] -- register_copy 
@@ -870,9 +870,9 @@ main: {
   b1_from_main:
     // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta sc
+    sta.z sc
     lda #>$400
-    sta sc+1
+    sta.z sc+1
     jmp b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -885,15 +885,15 @@ main: {
     ldy #0
     sta (sc),y
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [8] if((byte*) main::sc#1!=(byte*) 1024+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>$400+$3e8+1
     bne b1_from_b1
-    lda sc
+    lda.z sc
     cmp #<$400+$3e8+1
     bne b1_from_b1
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -917,9 +917,9 @@ main: {
   b11_from_b10_1:
     // [12] phi (byte*) main::screen#22 = (byte*) 1024+(byte) $28 [phi:main::@10_1->main::@11#0] -- pbuz1=pbuc1 
     lda #<$400+$28
-    sta screen
+    sta.z screen
     lda #>$400+$28
-    sta screen+1
+    sta.z screen+1
     // [12] phi (byte) main::i1#31 = (byte) 0 [phi:main::@10_1->main::@11#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b11
@@ -1007,10 +1007,10 @@ main: {
     // [26] (byte*) main::screen#1 ← (byte*) main::screen#19 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [27] (byte~) main::$4 ← (byte) '0' + (byte) main::i1#1 -- vbuaa=vbuc1_plus_vbuxx 
     txa
@@ -1166,9 +1166,9 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte*) main::sc#2 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta sc
+    sta.z sc
     lda #>$400
-    sta sc+1
+    sta.z sc+1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
@@ -1180,15 +1180,15 @@ main: {
     sta (sc),y
     // for(byte* sc : screen..screen+1000)
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [8] if((byte*) main::sc#1!=(byte*) 1024+(word) $3e8+(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>$400+$3e8+1
     bne b1
-    lda sc
+    lda.z sc
     cmp #<$400+$3e8+1
     bne b1
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -1209,9 +1209,9 @@ main: {
     // [12] phi from main::@10_1 to main::@11 [phi:main::@10_1->main::@11]
     // [12] phi (byte*) main::screen#22 = (byte*) 1024+(byte) $28 [phi:main::@10_1->main::@11#0] -- pbuz1=pbuc1 
     lda #<$400+$28
-    sta screen
+    sta.z screen
     lda #>$400+$28
-    sta screen+1
+    sta.z screen+1
     // [12] phi (byte) main::i1#31 = (byte) 0 [phi:main::@10_1->main::@11#1] -- vbuxx=vbuc1 
     ldx #0
     // main::@11
@@ -1291,10 +1291,10 @@ main: {
     // [26] (byte*) main::screen#1 ← (byte*) main::screen#19 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     // '0'+i
     // [27] (byte~) main::$4 ← (byte) '0' + (byte) main::i1#1 -- vbuaa=vbuc1_plus_vbuxx 

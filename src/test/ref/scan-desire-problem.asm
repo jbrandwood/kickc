@@ -31,25 +31,25 @@ main: {
     .label x = 2
     jsr init
     lda #0
-    sta x
+    sta.z x
   b2:
     lda #0
-    sta y
+    sta.z y
   b4:
-    lda x
+    lda.z x
     clc
-    adc y
+    adc.z y
     tay
     lda level_address,y
-    ldy x
-    ldx y
+    ldy.z x
+    ldx.z y
     jsr draw_block
-    inc y
-    lda y
+    inc.z y
+    lda.z y
     cmp #9
     bcc b4
-    inc x
-    lda x
+    inc.z x
+    lda.z x
     cmp #$10
     bcc b2
   b6:
@@ -71,97 +71,97 @@ draw_block: {
     .label _18 = $15
     asl
     asl
-    sta tileno
+    sta.z tileno
     tya
     asl
-    sta x1
+    sta.z x1
     lda #0
     rol
-    sta x1+1
+    sta.z x1+1
     txa
     asl
     tax
     jsr mul8u
-    lda z_1
+    lda.z z_1
     clc
-    adc z
-    sta z_1
-    lda z_1+1
-    adc z+1
-    sta z_1+1
-    ldy tileno
+    adc.z z
+    sta.z z_1
+    lda.z z_1+1
+    adc.z z+1
+    sta.z z_1+1
+    ldy.z tileno
     ldx tileset,y
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen
-    sta _11
-    lda z_1+1
+    sta.z _11
+    lda.z z_1+1
     adc #>screen
-    sta _11+1
+    sta.z _11+1
     txa
     ldy #0
     sta (_11),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors
-    sta _12
-    lda z_1+1
+    sta.z _12
+    lda.z z_1+1
     adc #>colors
-    sta _12+1
+    sta.z _12+1
     lda #YELLOW
     sta (_12),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+1
-    sta _13
-    lda z_1+1
+    sta.z _13
+    lda.z z_1+1
     adc #>screen+1
-    sta _13+1
+    sta.z _13+1
     lda #1
     sta (_13),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+1
-    sta _14
-    lda z_1+1
+    sta.z _14
+    lda.z z_1+1
     adc #>colors+1
-    sta _14+1
+    sta.z _14+1
     lda #YELLOW
     sta (_14),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$28
-    sta _15
-    lda z_1+1
+    sta.z _15
+    lda.z z_1+1
     adc #>screen+$28
-    sta _15+1
+    sta.z _15+1
     lda #2
     sta (_15),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+$28
-    sta _16
-    lda z_1+1
+    sta.z _16
+    lda.z z_1+1
     adc #>colors+$28
-    sta _16+1
+    sta.z _16+1
     lda #YELLOW
     sta (_16),y
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$29
-    sta _17
-    lda z_1+1
+    sta.z _17
+    lda.z z_1+1
     adc #>screen+$29
-    sta _17+1
+    sta.z _17+1
     lda #3
     sta (_17),y
     clc
-    lda _18
+    lda.z _18
     adc #<colors+$29
-    sta _18
-    lda _18+1
+    sta.z _18
+    lda.z _18+1
     adc #>colors+$29
-    sta _18+1
+    sta.z _18+1
     lda #YELLOW
     sta (_18),y
     rts
@@ -174,12 +174,12 @@ mul8u: {
     .label res = 4
     .label return = 4
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -189,19 +189,19 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }
 init: {
@@ -209,15 +209,15 @@ init: {
     jsr init_sprites
     ldx #0
     lda #<screen
-    sta memset.str
+    sta.z memset.str
     lda #>screen
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     ldx #BLACK
     lda #<colors
-    sta memset.str
+    sta.z memset.str
     lda #>colors
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     lda #toD0181_return
     sta D018
@@ -240,28 +240,28 @@ memset: {
     .label end = $15
     .label dst = 4
     .label str = 4
-    lda str
+    lda.z str
     clc
     adc #<$3e8
-    sta end
-    lda str+1
+    sta.z end
+    lda.z str+1
     adc #>$3e8
-    sta end+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     rts
   b3:
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }

@@ -17,27 +17,27 @@ main: {
     sta D018
     jsr init_angle_screen
     lda #<CHARSET
-    sta clear_char
+    sta.z clear_char
     lda #>CHARSET
-    sta clear_char+1
+    sta.z clear_char+1
   b2:
     lda #$ff
     cmp RASTER
     bne b2
-    lda clear_char+1
+    lda.z clear_char+1
     cmp #>CHARSET+$800
     bcc !+
     bne b2
-    lda clear_char
+    lda.z clear_char
     cmp #<CHARSET+$800
     bcs b2
   !:
     lda #0
     tay
     sta (clear_char),y
-    inc clear_char
+    inc.z clear_char
     bne !+
-    inc clear_char+1
+    inc.z clear_char+1
   !:
     jmp b2
 }
@@ -55,82 +55,82 @@ init_angle_screen: {
     .label screen_bottomline = $a
     .label y = $c
     lda #<SCREEN+$28*$c
-    sta screen_bottomline
+    sta.z screen_bottomline
     lda #>SCREEN+$28*$c
-    sta screen_bottomline+1
+    sta.z screen_bottomline+1
     lda #<SCREEN+$28*$c
-    sta screen_topline
+    sta.z screen_topline
     lda #>SCREEN+$28*$c
-    sta screen_topline+1
+    sta.z screen_topline+1
     lda #0
-    sta y
+    sta.z y
   b1:
     lda #$27
-    sta xb
+    sta.z xb
     lda #0
-    sta x
+    sta.z x
   b3:
-    lda x
+    lda.z x
     asl
     eor #$ff
     clc
     adc #$27+1
     ldy #0
-    sta xw+1
-    sty xw
-    lda y
+    sta.z xw+1
+    sty.z xw
+    lda.z y
     asl
-    sta yw+1
-    sty yw
+    sta.z yw+1
+    sty.z yw
     jsr atan2_16
     lda #$80
     clc
-    adc _11
-    sta _11
+    adc.z _11
+    sta.z _11
     bcc !+
-    inc _11+1
+    inc.z _11+1
   !:
-    lda _11+1
-    sta ang_w
+    lda.z _11+1
+    sta.z ang_w
     lda #$80
     clc
-    adc ang_w
-    ldy x
+    adc.z ang_w
+    ldy.z x
     sta (screen_topline),y
     lda #$80
     sec
-    sbc ang_w
+    sbc.z ang_w
     sta (screen_bottomline),y
-    lda ang_w
+    lda.z ang_w
     eor #$ff
     clc
     adc #1
-    ldy xb
+    ldy.z xb
     sta (screen_topline),y
-    lda ang_w
+    lda.z ang_w
     sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
+    inc.z x
+    dec.z xb
+    lda.z x
     cmp #$13+1
     bcc b3
-    lda screen_topline
+    lda.z screen_topline
     sec
     sbc #<$28
-    sta screen_topline
-    lda screen_topline+1
+    sta.z screen_topline
+    lda.z screen_topline+1
     sbc #>$28
-    sta screen_topline+1
+    sta.z screen_topline+1
     lda #$28
     clc
-    adc screen_bottomline
-    sta screen_bottomline
+    adc.z screen_bottomline
+    sta.z screen_bottomline
     bcc !+
-    inc screen_bottomline+1
+    inc.z screen_bottomline+1
   !:
-    inc y
+    inc.z y
     lda #$d
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -149,114 +149,114 @@ atan2_16: {
     .label return = 4
     .label x = $13
     .label y = $15
-    lda y+1
+    lda.z y+1
     bmi !b1+
     jmp b1
   !b1:
     sec
     lda #0
-    sbc y
-    sta _2
+    sbc.z y
+    sta.z _2
     lda #0
-    sbc y+1
-    sta _2+1
+    sbc.z y+1
+    sta.z _2+1
   b3:
-    lda x+1
+    lda.z x+1
     bmi !b4+
     jmp b4
   !b4:
     sec
     lda #0
-    sbc x
-    sta _7
+    sbc.z x
+    sta.z _7
     lda #0
-    sbc x+1
-    sta _7+1
+    sbc.z x+1
+    sta.z _7+1
   b6:
     lda #<0
-    sta angle
-    sta angle+1
+    sta.z angle
+    sta.z angle+1
     tax
   b10:
-    lda yi+1
+    lda.z yi+1
     bne b11
-    lda yi
+    lda.z yi
     bne b11
   b12:
-    lsr angle+1
-    ror angle
-    lda x+1
+    lsr.z angle+1
+    ror.z angle
+    lda.z x+1
     bpl b7
     sec
     lda #<$8000
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #>$8000
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
   b7:
-    lda y+1
+    lda.z y+1
     bpl b8
     sec
     lda #0
-    sbc angle
-    sta angle
+    sbc.z angle
+    sta.z angle
     lda #0
-    sbc angle+1
-    sta angle+1
+    sbc.z angle+1
+    sta.z angle+1
   b8:
     rts
   b11:
     txa
     tay
-    lda xi
-    sta xd
-    lda xi+1
-    sta xd+1
-    lda yi
-    sta yd
-    lda yi+1
-    sta yd+1
+    lda.z xi
+    sta.z xd
+    lda.z xi+1
+    sta.z xd+1
+    lda.z yi
+    sta.z yd
+    lda.z yi+1
+    sta.z yd+1
   b13:
     cpy #2
     bcs b14
     cpy #0
     beq b17
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda yd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
   b17:
-    lda yi+1
+    lda.z yi+1
     bpl b18
-    lda xi
+    lda.z xi
     sec
-    sbc yd
-    sta xi
-    lda xi+1
-    sbc yd+1
-    sta xi+1
-    lda yi
+    sbc.z yd
+    sta.z xi
+    lda.z xi+1
+    sbc.z yd+1
+    sta.z xi+1
+    lda.z yi
     clc
-    adc xd
-    sta yi
-    lda yi+1
-    adc xd+1
-    sta yi+1
+    adc.z xd
+    sta.z yi
+    lda.z yi+1
+    adc.z xd+1
+    sta.z yi+1
     txa
     asl
     tay
     sec
-    lda angle
+    lda.z angle
     sbc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
   b19:
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
@@ -265,62 +265,62 @@ atan2_16: {
   !b12:
     jmp b10
   b18:
-    lda xi
+    lda.z xi
     clc
-    adc yd
-    sta xi
-    lda xi+1
-    adc yd+1
-    sta xi+1
-    lda yi
+    adc.z yd
+    sta.z xi
+    lda.z xi+1
+    adc.z yd+1
+    sta.z xi+1
+    lda.z yi
     sec
-    sbc xd
-    sta yi
-    lda yi+1
-    sbc xd+1
-    sta yi+1
+    sbc.z xd
+    sta.z yi
+    lda.z yi+1
+    sbc.z xd+1
+    sta.z yi+1
     txa
     asl
     tay
     clc
-    lda angle
+    lda.z angle
     adc CORDIC_ATAN2_ANGLES_16,y
-    sta angle
-    lda angle+1
+    sta.z angle
+    lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
-    sta angle+1
+    sta.z angle+1
     jmp b19
   b14:
-    lda xd+1
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda xd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z xd+1
     cmp #$80
-    ror xd+1
-    ror xd
-    lda yd+1
+    ror.z xd+1
+    ror.z xd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
-    lda yd+1
+    ror.z yd+1
+    ror.z yd
+    lda.z yd+1
     cmp #$80
-    ror yd+1
-    ror yd
+    ror.z yd+1
+    ror.z yd
     dey
     dey
     jmp b13
   b4:
-    lda x
-    sta xi
-    lda x+1
-    sta xi+1
+    lda.z x
+    sta.z xi
+    lda.z x+1
+    sta.z xi+1
     jmp b6
   b1:
-    lda y
-    sta yi
-    lda y+1
-    sta yi+1
+    lda.z y
+    sta.z yi
+    lda.z y+1
+    sta.z yi+1
     jmp b3
 }
 // Make charset from proto chars
@@ -334,28 +334,28 @@ init_font_hex: {
     .label proto_hi = $a
     .label c = $c
     lda #0
-    sta c
+    sta.z c
     lda #<FONT_HEX_PROTO
-    sta proto_hi
+    sta.z proto_hi
     lda #>FONT_HEX_PROTO
-    sta proto_hi+1
+    sta.z proto_hi+1
     lda #<CHARSET
-    sta charset
+    sta.z charset
     lda #>CHARSET
-    sta charset+1
+    sta.z charset+1
   b1:
     lda #0
-    sta c1
+    sta.z c1
     lda #<FONT_HEX_PROTO
-    sta proto_lo
+    sta.z proto_lo
     lda #>FONT_HEX_PROTO
-    sta proto_lo+1
+    sta.z proto_lo+1
   b2:
     lda #0
     tay
     sta (charset),y
     lda #1
-    sta idx
+    sta.z idx
     ldx #0
   b3:
     txa
@@ -365,51 +365,51 @@ init_font_hex: {
     asl
     asl
     asl
-    sta _0
+    sta.z _0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora _0
-    ldy idx
+    ora.z _0
+    ldy.z idx
     sta (charset),y
-    inc idx
+    inc.z idx
     inx
     cpx #5
     bne b3
     lda #0
-    ldy idx
+    ldy.z idx
     sta (charset),y
     iny
     sta (charset),y
     lda #5
     clc
-    adc proto_lo
-    sta proto_lo
+    adc.z proto_lo
+    sta.z proto_lo
     bcc !+
-    inc proto_lo+1
+    inc.z proto_lo+1
   !:
     lda #8
     clc
-    adc charset
-    sta charset
+    adc.z charset
+    sta.z charset
     bcc !+
-    inc charset+1
+    inc.z charset+1
   !:
-    inc c1
+    inc.z c1
     lda #$10
-    cmp c1
+    cmp.z c1
     bne b2
     lda #5
     clc
-    adc proto_hi
-    sta proto_hi
+    adc.z proto_hi
+    sta.z proto_hi
     bcc !+
-    inc proto_hi+1
+    inc.z proto_hi+1
   !:
-    inc c
+    inc.z c
     lda #$10
-    cmp c
+    cmp.z c
     bne b1
     rts
 }

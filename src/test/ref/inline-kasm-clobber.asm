@@ -7,10 +7,10 @@ main: {
     .label l = 3
     .label k = 2
     lda #0
-    sta k
+    sta.z k
   b1:
     lda #0
-    sta l
+    sta.z l
   b2:
     ldy #0
   b3:
@@ -21,12 +21,12 @@ main: {
     iny
     cpy #$b
     bne b3
-    inc l
+    inc.z l
     lda #$b
-    cmp l
+    cmp.z l
     bne b2
-    inc k
-    cmp k
+    inc.z k
+    cmp.z k
     bne b1
     rts
 }

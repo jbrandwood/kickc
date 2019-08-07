@@ -7,20 +7,20 @@ main: {
     .label SCREEN = $400
     .label sc = 2
     lda #<SCREEN+$27
-    sta sc
+    sta.z sc
     lda #>SCREEN+$27
-    sta sc+1
+    sta.z sc+1
     ldx #0
   b2:
     txa
     ldy #0
     sta (sc),y
     inx
-    lda sc
+    lda.z sc
     bne !+
-    dec sc+1
+    dec.z sc+1
   !:
-    dec sc
+    dec.z sc
     cpx #$28
     bcc b2
     rts

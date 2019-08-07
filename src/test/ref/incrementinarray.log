@@ -759,17 +759,17 @@ main: {
   b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [6] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [6] phi (byte*) print_char_cursor#25 = (byte*) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     // main::@1
   b1:
@@ -795,10 +795,10 @@ main: {
     adc #1
     sta txt+1
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [12] if((byte) main::i#1!=(byte) $b) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b4
     jmp breturn
     // main::@return
@@ -808,10 +808,10 @@ main: {
     // main::@4
   b4:
     // [14] (byte*~) print_char_cursor#31 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
@@ -832,18 +832,18 @@ print_ln: {
     // [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1_from_b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1_from_b1
   !:
     jmp breturn
@@ -862,9 +862,9 @@ print_str: {
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
     // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
-    sta str
+    sta.z str
     lda #>txt
-    sta str+1
+    sta.z str+1
     jmp b1
     // print_str::@1
   b1:
@@ -886,14 +886,14 @@ print_str: {
     ldy #0
     sta (print_char_cursor),y
     // [25] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#12 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [26] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     // [21] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
   b1_from_b2:
@@ -926,9 +926,9 @@ memset: {
   b2_from_memset:
     // [31] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [31] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -941,18 +941,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [33] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [34] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -1048,14 +1048,14 @@ main: {
     ldx #0
     // [6] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [6] phi (byte*) print_char_cursor#25 = (byte*) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     // main::@1
   b1:
@@ -1093,10 +1093,10 @@ main: {
     // main::@4
   b4:
     // [14] (byte*~) print_char_cursor#31 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
@@ -1117,18 +1117,18 @@ print_ln: {
     // [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1_from_b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1_from_b1
   !:
     jmp breturn
@@ -1147,9 +1147,9 @@ print_str: {
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
     // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
-    sta str
+    sta.z str
     lda #>txt
-    sta str+1
+    sta.z str+1
     jmp b1
     // print_str::@1
   b1:
@@ -1171,14 +1171,14 @@ print_str: {
     ldy #0
     sta (print_char_cursor),y
     // [25] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#12 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [26] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     // [21] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
   b1_from_b2:
@@ -1211,9 +1211,9 @@ memset: {
   b2_from_memset:
     // [31] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     jmp b2
     // [31] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
   b2_from_b1:
@@ -1226,18 +1226,18 @@ memset: {
     ldy #0
     sta (dst),y
     // [33] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b1
     // memset::@1
   b1:
     // [34] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2_from_b1
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2_from_b1
     jmp breturn
@@ -1401,14 +1401,14 @@ main: {
     ldx #0
     // [6] phi (byte*) print_line_cursor#19 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     // [6] phi (byte*) print_char_cursor#25 = (byte*) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // main::@1
   b1:
     // print_str(txt)
@@ -1441,10 +1441,10 @@ main: {
     // main::@4
   b4:
     // [14] (byte*~) print_char_cursor#31 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [6] phi (byte*) print_line_cursor#19 = (byte*) print_line_cursor#1 [phi:main::@4->main::@1#1] -- register_copy 
@@ -1462,19 +1462,19 @@ print_ln: {
     // [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
     // while (print_line_cursor<print_char_cursor)
     // [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     // print_ln::@return
@@ -1491,9 +1491,9 @@ print_str: {
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
     // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
-    sta str
+    sta.z str
     lda #>txt
-    sta str+1
+    sta.z str+1
     // print_str::@1
   b1:
     // while(*str)
@@ -1515,14 +1515,14 @@ print_str: {
     sta (print_char_cursor),y
     // *(print_char_cursor++) = *(str++);
     // [25] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#12 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // [26] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     // [21] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
@@ -1552,9 +1552,9 @@ memset: {
     // [31] phi from memset to memset::@2 [phi:memset->memset::@2]
     // [31] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
     // [31] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
     // [31] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
     // memset::@2
@@ -1566,16 +1566,16 @@ memset: {
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
     // [33] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     // memset::@1
     // [34] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     // memset::@return

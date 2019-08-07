@@ -5,15 +5,15 @@
 main: {
     ldx #'a'
     lda #<$400
-    sta fill.screen
+    sta.z fill.screen
     lda #>$400
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     ldx #'b'
     lda #<$2000
-    sta fill.screen
+    sta.z fill.screen
     lda #>$2000
-    sta fill.screen+1
+    sta.z fill.screen+1
     jsr fill
     rts
 }
@@ -28,20 +28,20 @@ fill: {
     sta (screen),y
     lda #1*$28
     clc
-    adc screen
-    sta _5
+    adc.z screen
+    sta.z _5
     lda #0
-    adc screen+1
-    sta _5+1
+    adc.z screen+1
+    sta.z _5+1
     txa
     sta (_5),y
     lda #2*$28
     clc
-    adc screen
-    sta _7
+    adc.z screen
+    sta.z _7
     lda #0
-    adc screen+1
-    sta _7+1
+    adc.z screen+1
+    sta.z _7+1
     txa
     sta (_7),y
     iny

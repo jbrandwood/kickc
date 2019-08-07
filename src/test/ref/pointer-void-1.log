@@ -335,32 +335,32 @@ main: {
     .label b = $b
     // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
-    sta d
+    sta.z d
     lda #>$12345678
-    sta d+1
+    sta.z d+1
     lda #<$12345678>>$10
-    sta d+2
+    sta.z d+2
     lda #>$12345678>>$10
-    sta d+3
+    sta.z d+3
     // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
-    sta w
+    sta.z w
     lda #>$1234
-    sta w+1
+    sta.z w+1
     // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
-    sta b
+    sta.z b
     // [7] call print 
     // [13] phi from main to print [phi:main->print]
   print_from_main:
     // [13] phi (byte) idx#12 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // [13] phi (void*) print::ptr#3 = (const void*) main::vb#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<vb
-    sta print.ptr
+    sta.z print.ptr
     lda #>vb
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [8] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -373,9 +373,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vw#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<vw
-    sta print.ptr
+    sta.z print.ptr
     lda #>vw
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -388,9 +388,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vd#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<vd
-    sta print.ptr
+    sta.z print.ptr
     lda #>vd
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     jmp breturn
     // main::@return
@@ -403,12 +403,12 @@ main: {
 print: {
     .label ptr = 2
     // [14] *((const byte*) SCREEN#0 + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
-    ldx idx
+    ldx.z idx
     ldy #0
     lda (ptr),y
     sta SCREEN,x
     // [15] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     jmp breturn
     // print::@return
   breturn:
@@ -481,21 +481,21 @@ main: {
     .label b = $a
     // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
-    sta d
+    sta.z d
     lda #>$12345678
-    sta d+1
+    sta.z d+1
     lda #<$12345678>>$10
-    sta d+2
+    sta.z d+2
     lda #>$12345678>>$10
-    sta d+3
+    sta.z d+3
     // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
-    sta w
+    sta.z w
     lda #>$1234
-    sta w+1
+    sta.z w+1
     // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
-    sta b
+    sta.z b
     // [7] call print 
     // [13] phi from main to print [phi:main->print]
   print_from_main:
@@ -503,9 +503,9 @@ main: {
     ldx #0
     // [13] phi (void*) print::ptr#3 = (const void*) main::vb#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<vb
-    sta print.ptr
+    sta.z print.ptr
     lda #>vb
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [8] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -518,9 +518,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vw#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<vw
-    sta print.ptr
+    sta.z print.ptr
     lda #>vw
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -533,9 +533,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vd#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<vd
-    sta print.ptr
+    sta.z print.ptr
     lda #>vd
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     jmp breturn
     // main::@return
@@ -655,23 +655,23 @@ main: {
     // d = 0x12345678
     // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
-    sta d
+    sta.z d
     lda #>$12345678
-    sta d+1
+    sta.z d+1
     lda #<$12345678>>$10
-    sta d+2
+    sta.z d+2
     lda #>$12345678>>$10
-    sta d+3
+    sta.z d+3
     // w = 0x1234
     // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
-    sta w
+    sta.z w
     lda #>$1234
-    sta w+1
+    sta.z w+1
     // b = 0x12
     // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
-    sta b
+    sta.z b
     // print(vb)
     // [7] call print 
     // [13] phi from main to print [phi:main->print]
@@ -679,9 +679,9 @@ main: {
     ldx #0
     // [13] phi (void*) print::ptr#3 = (const void*) main::vb#0 [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<vb
-    sta print.ptr
+    sta.z print.ptr
     lda #>vb
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [8] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -691,9 +691,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vw#0 [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<vw
-    sta print.ptr
+    sta.z print.ptr
     lda #>vw
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
@@ -703,9 +703,9 @@ main: {
     // [13] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#0] -- register_copy 
     // [13] phi (void*) print::ptr#3 = (const void*) main::vd#0 [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<vd
-    sta print.ptr
+    sta.z print.ptr
     lda #>vd
-    sta print.ptr+1
+    sta.z print.ptr+1
     jsr print
     // main::@return
     // }

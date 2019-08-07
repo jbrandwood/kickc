@@ -29,20 +29,20 @@ main: {
 lines: {
     .label l = 6
     lda #0
-    sta l
+    sta.z l
   b2:
-    ldy l
+    ldy.z l
     lda lines_x,y
-    sta bitmap_line.x0
+    sta.z bitmap_line.x0
     lda lines_x+1,y
-    sta bitmap_line.x1
+    sta.z bitmap_line.x1
     lda lines_y,y
-    sta bitmap_line.y0
-    ldx l
+    sta.z bitmap_line.y0
+    ldx.z l
     ldy lines_y+1,x
     jsr bitmap_line
-    inc l
-    lda l
+    inc.z l
+    lda.z l
     cmp #lines_cnt
     bcc b2
     rts
@@ -57,95 +57,95 @@ bitmap_line: {
     .label x1 = 5
     .label y0 = 2
     .label yd_11 = 4
-    lda x0
-    cmp x1
+    lda.z x0
+    cmp.z x1
     bcc b1
     sec
-    sbc x1
-    sta xd
+    sbc.z x1
+    sta.z xd
     tya
-    cmp y0
+    cmp.z y0
     beq !+
     bcs b7
   !:
     tya
     eor #$ff
     sec
-    adc y0
-    sta yd_2
-    cmp xd
+    adc.z y0
+    sta.z yd_2
+    cmp.z xd
     bcc b8
-    sty bitmap_line_ydxi.y
-    ldx x1
+    sty.z bitmap_line_ydxi.y
+    ldx.z x1
     jsr bitmap_line_ydxi
     rts
   b8:
-    ldx x1
-    sty bitmap_line_xdyi.y
+    ldx.z x1
+    sty.z bitmap_line_xdyi.y
     jsr bitmap_line_xdyi
     rts
   b7:
     tya
     sec
-    sbc y0
-    sta yd
-    cmp xd
+    sbc.z y0
+    sta.z yd
+    cmp.z xd
     bcc b9
-    lda y0
-    sta bitmap_line_ydxd.y
-    ldx x0
-    sty bitmap_line_ydxd.y1
+    lda.z y0
+    sta.z bitmap_line_ydxd.y
+    ldx.z x0
+    sty.z bitmap_line_ydxd.y1
     jsr bitmap_line_ydxd
     rts
   b9:
-    ldx x1
-    sty bitmap_line_xdyd.y
-    lda x0
-    sta bitmap_line_xdyd.x1
+    ldx.z x1
+    sty.z bitmap_line_xdyd.y
+    lda.z x0
+    sta.z bitmap_line_xdyd.x1
     jsr bitmap_line_xdyd
     rts
   b1:
-    lda x1
+    lda.z x1
     sec
-    sbc x0
-    sta xd
+    sbc.z x0
+    sta.z xd
     tya
-    cmp y0
+    cmp.z y0
     beq !+
     bcs b11
   !:
     tya
     eor #$ff
     sec
-    adc y0
-    sta yd
-    cmp xd
+    adc.z y0
+    sta.z yd
+    cmp.z xd
     bcc b12
-    sty bitmap_line_ydxd.y
-    ldx x1
+    sty.z bitmap_line_ydxd.y
+    ldx.z x1
     jsr bitmap_line_ydxd
     rts
   b12:
-    ldx x0
+    ldx.z x0
     jsr bitmap_line_xdyd
     rts
   b11:
     tya
     sec
-    sbc y0
-    sta yd_11
-    cmp xd
+    sbc.z y0
+    sta.z yd_11
+    cmp.z xd
     bcc b13
-    lda y0
-    sta bitmap_line_ydxi.y
-    ldx x0
-    sty bitmap_line_ydxi.y1
+    lda.z y0
+    sta.z bitmap_line_ydxi.y
+    ldx.z x0
+    sty.z bitmap_line_ydxi.y1
     jsr bitmap_line_ydxi
     rts
   b13:
-    ldx x0
-    lda x1
-    sta bitmap_line_xdyi.x1
+    ldx.z x0
+    lda.z x1
+    sta.z bitmap_line_xdyi.x1
     jsr bitmap_line_xdyi
     rts
 }
@@ -157,30 +157,30 @@ bitmap_line_xdyi: {
     .label xd = $d
     .label yd = 4
     .label e = $c
-    lda yd
+    lda.z yd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
     inx
-    lda e
+    lda.z e
     clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
+    adc.z yd
+    sta.z e
+    lda.z xd
+    cmp.z e
     bcs b2
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     sec
-    sbc xd
-    sta e
+    sbc.z xd
+    sta.z e
   b2:
-    ldy x1
+    ldy.z x1
     iny
-    sty _6
-    cpx _6
+    sty.z _6
+    cpx.z _6
     bne b1
     rts
 }
@@ -190,20 +190,20 @@ bitmap_plot: {
     .label plotter_y = $a
     .label plotter = 8
     lda bitmap_plot_xhi,x
-    sta plotter_x+1
+    sta.z plotter_x+1
     lda bitmap_plot_xlo,x
-    sta plotter_x
+    sta.z plotter_x
     lda bitmap_plot_yhi,y
-    sta plotter_y+1
+    sta.z plotter_y+1
     lda bitmap_plot_ylo,y
-    sta plotter_y
-    lda plotter
+    sta.z plotter_y
+    lda.z plotter
     clc
-    adc plotter_y
-    sta plotter
-    lda plotter+1
-    adc plotter_y+1
-    sta plotter+1
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -217,29 +217,29 @@ bitmap_line_ydxi: {
     .label yd = 4
     .label xd = $d
     .label e = 3
-    lda xd
+    lda.z xd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
+    adc.z xd
+    sta.z e
+    lda.z yd
+    cmp.z e
     bcs b2
     inx
-    lda e
+    lda.z e
     sec
-    sbc yd
-    sta e
+    sbc.z yd
+    sta.z e
   b2:
-    ldy y1
+    ldy.z y1
     iny
-    cpy y
+    cpy.z y
     bne b1
     rts
 }
@@ -251,30 +251,30 @@ bitmap_line_xdyd: {
     .label xd = $d
     .label yd = 7
     .label e = 4
-    lda yd
+    lda.z yd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
     inx
-    lda e
+    lda.z e
     clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
+    adc.z yd
+    sta.z e
+    lda.z xd
+    cmp.z e
     bcs b2
-    dec y
-    lda e
+    dec.z y
+    lda.z e
     sec
-    sbc xd
-    sta e
+    sbc.z xd
+    sta.z e
   b2:
-    ldy x1
+    ldy.z x1
     iny
-    sty _6
-    cpx _6
+    sty.z _6
+    cpx.z _6
     bne b1
     rts
 }
@@ -285,50 +285,50 @@ bitmap_line_ydxd: {
     .label yd = 7
     .label xd = $d
     .label e = 5
-    lda xd
+    lda.z xd
     lsr
-    sta e
+    sta.z e
   b1:
-    ldy y
+    ldy.z y
     jsr bitmap_plot
-    inc y
-    lda e
+    inc.z y
+    lda.z e
     clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
+    adc.z xd
+    sta.z e
+    lda.z yd
+    cmp.z e
     bcs b2
     dex
-    lda e
+    lda.z e
     sec
-    sbc yd
-    sta e
+    sbc.z yd
+    sta.z e
   b2:
-    ldy y1
+    ldy.z y1
     iny
-    cpy y
+    cpy.z y
     bne b1
     rts
 }
 init_screen: {
     .label c = 8
     lda #<SCREEN
-    sta c
+    sta.z c
     lda #>SCREEN
-    sta c+1
+    sta.z c+1
   b2:
     lda #$14
     ldy #0
     sta (c),y
-    inc c
+    inc.z c
     bne !+
-    inc c+1
+    inc.z c+1
   !:
-    lda c+1
+    lda.z c+1
     cmp #>SCREEN+$400
     bne b2
-    lda c
+    lda.z c
     cmp #<SCREEN+$400
     bne b2
     rts
@@ -338,27 +338,27 @@ bitmap_clear: {
     .label bitmap = 8
     .label y = 6
     lda bitmap_plot_xlo
-    sta bitmap
+    sta.z bitmap
     lda bitmap_plot_xhi
-    sta bitmap+1
+    sta.z bitmap+1
     lda #0
-    sta y
+    sta.z y
   b1:
     ldx #0
   b2:
     lda #0
     tay
     sta (bitmap),y
-    inc bitmap
+    inc.z bitmap
     bne !+
-    inc bitmap+1
+    inc.z bitmap+1
   !:
     inx
     cpx #$c8
     bne b2
-    inc y
+    inc.z y
     lda #$28
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -387,27 +387,27 @@ bitmap_init: {
     cpx #0
     bne b1
     lda #<0
-    sta yoffs
-    sta yoffs+1
+    sta.z yoffs
+    sta.z yoffs+1
     tax
   b3:
     lda #7
-    sax _10
-    lda yoffs
-    ora _10
+    sax.z _10
+    lda.z yoffs
+    ora.z _10
     sta bitmap_plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp _10
+    cmp.z _10
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0

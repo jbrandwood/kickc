@@ -53,8 +53,8 @@ main: {
 anim: {
     .label i = 5
     lda #0
-    sta sy
-    sta sx
+    sta.z sy
+    sta.z sx
   //signed byte xmin = 0;
   //signed byte xmax = 0;
   b2:
@@ -70,23 +70,23 @@ anim: {
     cmp RASTER
     bne b4
     inc BORDERCOL
-    ldx sx
+    ldx.z sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
-    sta i
+    sta.z i
   b6:
     inc BORDERCOL
-    ldy i
+    ldy.z i
     ldx xs,y
     lda ys,y
-    sta rotate_matrix.y
+    sta.z rotate_matrix.y
     lda zs,y
-    sta rotate_matrix.z
+    sta.z rotate_matrix.z
     jsr rotate_matrix
     //if(*xr<xmin) xmin = *xr;
     //if(*xr>xmax) xmax = *xr;
-    ldy i
+    ldy.z i
     lda xr
     sta xrs,y
     lda yr
@@ -110,9 +110,9 @@ anim: {
     clc
     adc yp
     sta SPRITES_YPOS,x
-    inc i
+    inc.z i
     lda #8
-    cmp i
+    cmp.z i
     bne b6
     lda #LIGHT_GREY
     sta BORDERCOL
@@ -120,11 +120,11 @@ anim: {
     lda #LIGHT_BLUE
     sta BORDERCOL
     // Increment angles        
-    inc sx
-    inc sx
-    lax sy
+    inc.z sx
+    inc.z sx
+    lax.z sy
     axs #3
-    stx sy
+    stx.z sy
     jmp b2
 }
 debug_print: {
@@ -154,149 +154,149 @@ debug_print: {
     .label at_line = SCREEN+$13*$28
     .label c = 5
     .label i = 6
-    ldx sx
+    ldx.z sx
     lda #<print_screen+print_sbyte_pos1_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos1_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
-    ldx sy
+    ldx.z sy
     lda #<print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     lda #<print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     ldx #sz
     jsr print_sbyte_at
     ldx rotation_matrix
     lda #<print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+1
     lda #<print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+2
     lda #<print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+3
     lda #<print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+4
     lda #<print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+5
     lda #<print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+6
     lda #<print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+7
     lda #<print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+8
     lda #<print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
-    sta print_sbyte_at.at+1
+    sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     lda #0
-    sta i
+    sta.z i
     lda #4
-    sta c
+    sta.z c
   b1:
-    lda c
+    lda.z c
     clc
     adc #<at_line
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx xrs,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*1
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*1
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx yrs,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*2
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*2
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx zrs,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*3
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*3
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx pps,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*4
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*4
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx xps,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*5
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*5
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx yps,y
     jsr print_sbyte_at
-    lax c
+    lax.z c
     axs #-[4]
-    stx c
-    inc i
+    stx.z c
+    inc.z i
     lda #8
-    cmp i
+    cmp.z i
     beq !b1+
     jmp b1
   !b1:
@@ -311,9 +311,9 @@ print_sbyte_at: {
     ldy #' '
     jsr print_char_at
   b2:
-    inc print_byte_at.at
+    inc.z print_byte_at.at
     bne !+
-    inc print_byte_at.at+1
+    inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
@@ -351,9 +351,9 @@ print_byte_at: {
     jsr print_char_at
     lda #$f
     axs #0
-    inc print_char_at.at
+    inc.z print_char_at.at
     bne !+
-    inc print_char_at.at+1
+    inc.z print_char_at.at+1
   !:
     ldy print_hextab,x
     jsr print_char_at
@@ -369,9 +369,9 @@ rotate_matrix: {
     .label z = 4
     txa
     sta xr
-    lda y
+    lda.z y
     sta yr
-    lda z
+    lda.z z
     sta zr
     tax
   C1:
@@ -518,134 +518,134 @@ calculate_matrix: {
     .label t7 = $a
     .label t8 = $b
     .label t9 = $c
-    lda sy
-    sta t1
-    lda sy
-    sta t2
-    stx t3
-    stx t4
+    lda.z sy
+    sta.z t1
+    lda.z sy
+    sta.z t2
+    stx.z t3
+    stx.z t4
     txa
     clc
-    adc t2
-    sta t5
+    adc.z t2
+    sta.z t5
     txa
     sec
-    sbc t1
-    sta t6
+    sbc.z t1
+    sta.z t6
     txa
     clc
-    adc t1
-    sta t7
+    adc.z t1
+    sta.z t7
     txa
     eor #$ff
     sec
-    adc t2
-    sta t8
+    adc.z t2
+    sta.z t8
     txa
     eor #$ff
     sec
-    adc sy
-    sta t9
+    adc.z sy
+    sta.z t9
     txa
     clc
-    adc sy
+    adc.z sy
     tax
-    ldy t1
+    ldy.z t1
     lda COSH,y
-    ldy t2
+    ldy.z t2
     clc
     adc COSH,y
     sta rotation_matrix
-    ldy t1
+    ldy.z t1
     lda SINH,y
-    ldy t2
+    ldy.z t2
     sec
     sbc SINH,y
     sta rotation_matrix+1
-    ldy sy
+    ldy.z sy
     clc
     lda SINH,y
     adc SINH,y
     sta rotation_matrix+2
-    ldy t3
+    ldy.z t3
     lda SINH,y
-    ldy t4
+    ldy.z t4
     sec
     sbc SINH,y
-    ldy t6
+    ldy.z t6
     clc
     adc COSQ,y
-    ldy t5
+    ldy.z t5
     sec
     sbc COSQ,y
-    ldy t8
+    ldy.z t8
     clc
     adc COSQ,y
-    ldy t7
+    ldy.z t7
     sec
     sbc COSQ,y
     sta rotation_matrix+3
-    ldy t3
+    ldy.z t3
     lda COSH,y
-    ldy t4
+    ldy.z t4
     clc
     adc COSH,y
-    ldy t5
+    ldy.z t5
     clc
     adc SINQ,y
-    ldy t6
+    ldy.z t6
     sec
     sbc SINQ,y
-    ldy t7
+    ldy.z t7
     sec
     sbc SINQ,y
-    ldy t8
+    ldy.z t8
     sec
     sbc SINQ,y
     sta rotation_matrix+4
-    ldy t9
+    ldy.z t9
     lda SINH,y
     sec
     sbc SINH,x
     sta rotation_matrix+5
-    ldy t4
+    ldy.z t4
     lda COSH,y
-    ldy t3
+    ldy.z t3
     sec
     sbc COSH,y
-    ldy t6
+    ldy.z t6
     clc
     adc SINQ,y
-    ldy t5
+    ldy.z t5
     sec
     sbc SINQ,y
-    ldy t8
+    ldy.z t8
     sec
     sbc SINQ,y
-    ldy t7
+    ldy.z t7
     sec
     sbc SINQ,y
     sta rotation_matrix+6
-    ldy t3
+    ldy.z t3
     lda SINH,y
-    ldy t4
+    ldy.z t4
     clc
     adc SINH,y
-    ldy t6
+    ldy.z t6
     clc
     adc COSQ,y
-    ldy t5
+    ldy.z t5
     sec
     sbc COSQ,y
-    ldy t7
+    ldy.z t7
     clc
     adc COSQ,y
-    ldy t8
+    ldy.z t8
     sec
     sbc COSQ,y
     sta rotation_matrix+7
     lda COSH,x
-    ldy t9
+    ldy.z t9
     clc
     adc COSH,y
     sta rotation_matrix+8
@@ -668,231 +668,231 @@ debug_print_init: {
     .label i = 3
     jsr print_cls
     lda #<SCREEN+$22
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$22
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*1+$22
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*1+$22
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str1
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str1
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*2+$22
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*2+$22
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str2
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str2
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$10
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$10
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str3
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str3
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$11
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$11
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str4
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str4
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$12
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$12
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str5
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str5
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$13
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$13
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str6
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str6
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$14
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$14
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str7
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str7
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$15
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$15
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str8
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str8
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$16
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$16
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str9
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str9
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$17
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$17
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str10
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str10
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #<SCREEN+$28*$18
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+$28*$18
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     lda #<str11
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str11
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     lda #0
-    sta i
+    sta.z i
     lda #4
-    sta c
+    sta.z c
   b1:
-    lda c
+    lda.z c
     clc
     adc #<at_line
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx xs,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*1
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*1
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx ys,y
     jsr print_sbyte_at
-    lda c
+    lda.z c
     clc
     adc #<at_line+$28*2
-    sta print_sbyte_at.at
+    sta.z print_sbyte_at.at
     lda #>at_line+$28*2
     adc #0
-    sta print_sbyte_at.at+1
-    ldy i
+    sta.z print_sbyte_at.at+1
+    ldy.z i
     ldx zs,y
     jsr print_sbyte_at
     ldy #0
   b2:
-    lax i
+    lax.z i
     axs #-[8]
-    lda c
+    lda.z c
     clc
     adc #<at_cols
-    sta _41
+    sta.z _41
     lda #>at_cols
     adc #0
-    sta _41+1
+    sta.z _41+1
     txa
     sta (_41),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*1
-    sta _44
+    sta.z _44
     lda #>at_cols+$28*1
     adc #0
-    sta _44+1
+    sta.z _44+1
     txa
     sta (_44),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*2
-    sta _47
+    sta.z _47
     lda #>at_cols+$28*2
     adc #0
-    sta _47+1
+    sta.z _47+1
     txa
     sta (_47),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*3
-    sta _50
+    sta.z _50
     lda #>at_cols+$28*3
     adc #0
-    sta _50+1
+    sta.z _50+1
     txa
     sta (_50),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*4
-    sta _53
+    sta.z _53
     lda #>at_cols+$28*4
     adc #0
-    sta _53+1
+    sta.z _53+1
     txa
     sta (_53),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*5
-    sta _56
+    sta.z _56
     lda #>at_cols+$28*5
     adc #0
-    sta _56+1
+    sta.z _56+1
     txa
     sta (_56),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*6
-    sta _59
+    sta.z _59
     lda #>at_cols+$28*6
     adc #0
-    sta _59+1
+    sta.z _59+1
     txa
     sta (_59),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*7
-    sta _62
+    sta.z _62
     lda #>at_cols+$28*7
     adc #0
-    sta _62+1
+    sta.z _62+1
     txa
     sta (_62),y
-    lda c
+    lda.z c
     clc
     adc #<at_cols+$28*8
-    sta _65
+    sta.z _65
     lda #>at_cols+$28*8
     adc #0
-    sta _65+1
+    sta.z _65+1
     txa
     sta (_65),y
     iny
@@ -900,12 +900,12 @@ debug_print_init: {
     beq !b2+
     jmp b2
   !b2:
-    lax c
+    lax.z c
     axs #-[4]
-    stx c
-    inc i
+    stx.z c
+    inc.z i
     lda #8
-    cmp i
+    cmp.z i
     beq !b1+
     jmp b1
   !b1:
@@ -950,13 +950,13 @@ print_str_at: {
     ldy #0
     lda (str),y
     sta (at),y
-    inc at
+    inc.z at
     bne !+
-    inc at+1
+    inc.z at+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -973,21 +973,21 @@ memset: {
     .label end = str+num
     .label dst = $f
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

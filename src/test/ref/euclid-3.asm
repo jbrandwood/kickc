@@ -11,62 +11,62 @@
 main: {
     jsr print_cls
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     lda #2
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #$80
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #$45
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #$a9
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #$37
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #$9b
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #3
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #$c7
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #$1a
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #$5b
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #$bb
-    sta print_euclid.b
+    sta.z print_euclid.b
     lda #$77
-    sta print_euclid.a
+    sta.z print_euclid.a
     jsr print_euclid
     rts
 }
@@ -74,17 +74,17 @@ main: {
 print_euclid: {
     .label b = 3
     .label a = 2
-    ldx a
+    ldx.z a
     jsr print_byte
     lda #' '
     jsr print_char
-    ldx b
+    ldx.z b
     jsr print_byte
     lda #' '
     jsr print_char
-    ldx b
+    ldx.z b
     jsr euclid
-    lda euclid.a
+    lda.z euclid.a
     tax
     jsr print_byte
     jsr print_ln
@@ -95,17 +95,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -132,9 +132,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -142,23 +142,23 @@ print_char: {
 euclid: {
     .label a = 2
   b1:
-    cpx a
+    cpx.z a
     bne b2
     rts
   b2:
-    cpx a
+    cpx.z a
     bcc b3
     txa
     sec
-    sbc a
+    sbc.z a
     tax
     jmp b1
   b3:
     txa
     eor #$ff
     sec
-    adc a
-    sta a
+    adc.z a
+    sta.z a
     jmp b1
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -174,21 +174,21 @@ memset: {
     .label end = str+num
     .label dst = 6
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

@@ -20,26 +20,26 @@ main: {
     sta SCREEN,x
     inx
     lda #<0
-    sta i1
-    sta i1+1
+    sta.z i1
+    sta.z i1+1
   b8:
-    inc i1
+    inc.z i1
     bne !+
-    inc i1+1
+    inc.z i1+1
   !:
-    lda i1+1
+    lda.z i1+1
     cmp #>3
     bne b7
-    lda i1
+    lda.z i1
     cmp #<3
     bne b7
     rts
   // loop word
   b7:
-    lda i1
+    lda.z i1
     cmp #<0
     bne !+
-    lda i1+1
+    lda.z i1+1
     cmp #>0
     beq b8
   !:

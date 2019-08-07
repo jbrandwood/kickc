@@ -7,24 +7,24 @@
   .label screen = 4
 bbegin:
   lda #<$400
-  sta screen
+  sta.z screen
   lda #>$400
-  sta screen+1
+  sta.z screen+1
   jsr main
   rts
 main: {
     lda #<screen1
-    sta setscreen.val
+    sta.z setscreen.val
     lda #>screen1
-    sta setscreen.val+1
+    sta.z setscreen.val+1
     jsr setscreen
     lda #'a'
     ldy #0
     sta (screen),y
     lda #<screen2
-    sta setscreen.val
+    sta.z setscreen.val
     lda #>screen2
-    sta setscreen.val+1
+    sta.z setscreen.val+1
     jsr setscreen
     lda #'a'
     ldy #0
@@ -34,9 +34,9 @@ main: {
 // setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-    lda val
+    lda.z val
     sta screen
-    lda val+1
+    lda.z val+1
     sta screen+1
     rts
 }

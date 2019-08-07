@@ -67,23 +67,23 @@ main: {
     .label row = 7
     .label ch = 6
     lda #<$400
-    sta sc
+    sta.z sc
     lda #>$400
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
   // Clear screen
-    lda sc+1
+    lda.z sc+1
     cmp #>$400+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<$400+$3e8
     bcc b2
   !:
@@ -93,14 +93,14 @@ main: {
     cmp RASTER
     bne b4
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     lda #0
-    sta row
+    sta.z row
   // Read & print keyboard matrix
   b5:
-    ldy row
+    ldy.z row
     jsr keyboard_matrix_read
     tax
     ldy #0
@@ -120,27 +120,27 @@ main: {
     bne b6
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc row
+    inc.z row
     lda #8
-    cmp row
+    cmp.z row
     bne b5
     lda #$28
     clc
-    adc screen
-    sta screen
+    adc.z screen
+    sta.z screen
     bcc !+
-    inc screen+1
+    inc.z screen+1
   !:
     ldx #0
     txa
-    sta ch
+    sta.z ch
   b12:
-    ldy ch
+    ldy.z ch
     jsr keyboard_get_keycode
     cmp #$3f
     beq b13
@@ -150,13 +150,13 @@ main: {
     beq b13
     txa
     tay
-    lda ch
+    lda.z ch
     sta (screen),y
     inx
   b13:
-    inc ch
+    inc.z ch
     lda #$40
-    cmp ch
+    cmp.z ch
     bne b12
   b1:
   // Add some spaces
@@ -182,14 +182,14 @@ keyboard_key_pressed: {
     .label colidx = 7
     tya
     and #7
-    sta colidx
+    sta.z colidx
     tya
     lsr
     lsr
     lsr
     tay
     jsr keyboard_matrix_read
-    ldy colidx
+    ldy.z colidx
     and keyboard_matrix_col_bitmask,y
     rts
 }

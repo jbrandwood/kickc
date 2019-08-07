@@ -754,7 +754,7 @@ main: {
   b1_from_b5:
     // [6] phi (byte) main::c#4 = (byte) $19 [phi:main/main::@5->main::@1#0] -- vbuz1=vbuc1 
     lda #$19
-    sta c
+    sta.z c
     jmp b1
     // [6] phi from main::@1 main::@3 to main::@1 [phi:main::@1/main::@3->main::@1]
   b1_from_b1:
@@ -778,9 +778,9 @@ main: {
     // main::@3
   b3:
     // [9] (byte) main::c#1 ← -- (byte) main::c#4 -- vbuz1=_dec_vbuz1 
-    dec c
+    dec.z c
     // [10] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b1_from_b3
     // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
@@ -814,15 +814,15 @@ plot: {
   b1_from_plot:
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta y
+    sta.z y
     // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
-    sta line
+    sta.z line
     lda #>SCREEN+5*$28+$c
-    sta line+1
+    sta.z line+1
     // [16] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [16] phi from plot::@4 to plot::@1 [phi:plot::@4->plot::@1]
   b1_from_b4:
@@ -837,7 +837,7 @@ plot: {
     // [17] phi (byte) plot::i#7 = (byte) plot::i#4 [phi:plot::@1->plot::@3#0] -- register_copy 
     // [17] phi (byte) plot::x#4 = (byte) 0 [phi:plot::@1->plot::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b3
     // [17] phi from plot::@2 to plot::@3 [phi:plot::@2->plot::@3]
   b3_from_b2:
@@ -847,19 +847,19 @@ plot: {
     // plot::@3
   b3:
     // [18] *((byte*) plot::line#5 + (byte) plot::x#4) ← *((const byte[$10*$10]) buffer1#0 + (byte) plot::i#7) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
-    ldy i
+    ldy.z i
     lda buffer1,y
-    ldy x
+    ldy.z x
     sta (line),y
     // [19] (byte) plot::i#1 ← ++ (byte) plot::i#7 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [20] (byte) plot::x#1 ← ++ (byte) plot::x#4 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     jmp b2
     // plot::@2
   b2:
     // [21] if((byte) plot::x#1<(byte) $10) goto plot::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$10
     bcc b3_from_b2
     jmp b4
@@ -868,15 +868,15 @@ plot: {
     // [22] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     // [23] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
-    dec y
+    dec.z y
     // [24] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bne b1_from_b4
     jmp breturn
@@ -897,13 +897,13 @@ flip: {
   b1_from_flip:
     // [27] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta r
+    sta.z r
     // [27] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuz1=vbuc1 
     lda #$f
-    sta dstIdx
+    sta.z dstIdx
     // [27] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuz1=vbuc1 
     lda #0
-    sta srcIdx
+    sta.z srcIdx
     jmp b1
     // [27] phi from flip::@3 to flip::@1 [phi:flip::@3->flip::@1]
   b1_from_b3:
@@ -917,7 +917,7 @@ flip: {
   b2_from_b1:
     // [28] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
     lda #$10
-    sta c
+    sta.z c
     // [28] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
     // [28] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
     jmp b2
@@ -930,38 +930,38 @@ flip: {
     // flip::@2
   b2:
     // [29] *((const byte[$10*$10]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[$10*$10]) buffer1#0 + (byte) flip::srcIdx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy srcIdx
+    ldy.z srcIdx
     lda buffer1,y
-    ldy dstIdx
+    ldy.z dstIdx
     sta buffer2,y
     // [30] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 -- vbuz1=_inc_vbuz1 
-    inc srcIdx
+    inc.z srcIdx
     // [31] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 -- vbuz1=vbuz1_plus_vbuc1 
-    lax dstIdx
+    lax.z dstIdx
     axs #-[$10]
-    stx dstIdx
+    stx.z dstIdx
     // [32] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
-    dec c
+    dec.z c
     // [33] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b2_from_b2
     jmp b3
     // flip::@3
   b3:
     // [34] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 -- vbuz1=_dec_vbuz1 
-    dec dstIdx
+    dec.z dstIdx
     // [35] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
-    dec r
+    dec.z r
     // [36] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
-    lda r
+    lda.z r
     cmp #0
     bne b1_from_b3
     // [37] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]
   b4_from_b3:
     // [37] phi (byte) flip::i#2 = (byte) 0 [phi:flip::@3->flip::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b4
     // [37] phi from flip::@4 to flip::@4 [phi:flip::@4->flip::@4]
   b4_from_b4:
@@ -970,13 +970,13 @@ flip: {
     // flip::@4
   b4:
     // [38] *((const byte[$10*$10]) buffer1#0 + (byte) flip::i#2) ← *((const byte[$10*$10]) buffer2#0 + (byte) flip::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy i
+    ldy.z i
     lda buffer2,y
     sta buffer1,y
     // [39] (byte) flip::i#1 ← ++ (byte) flip::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [40] if((byte) flip::i#1!=(byte) 0) goto flip::@4 -- vbuz1_neq_0_then_la1 
-    lda i
+    lda.z i
     cmp #0
     bne b4_from_b4
     jmp breturn
@@ -993,7 +993,7 @@ prepare: {
   b1_from_prepare:
     // [43] phi (byte) prepare::i#2 = (byte) 0 [phi:prepare->prepare::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [43] phi from prepare::@1 to prepare::@1 [phi:prepare::@1->prepare::@1]
   b1_from_b1:
@@ -1002,13 +1002,13 @@ prepare: {
     // prepare::@1
   b1:
     // [44] *((const byte[$10*$10]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy i
+    ldy.z i
     tya
     sta buffer1,y
     // [45] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [46] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 -- vbuz1_neq_0_then_la1 
-    lda i
+    lda.z i
     cmp #0
     bne b1_from_b1
     jmp breturn
@@ -1173,12 +1173,12 @@ plot: {
   b1_from_plot:
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta y
+    sta.z y
     // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
-    sta line
+    sta.z line
     lda #>SCREEN+5*$28+$c
-    sta line+1
+    sta.z line+1
     // [16] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -1222,15 +1222,15 @@ plot: {
     // [22] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     // [23] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
-    dec y
+    dec.z y
     // [24] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bne b1_from_b4
     jmp breturn
@@ -1248,7 +1248,7 @@ flip: {
   b1_from_flip:
     // [27] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta r
+    sta.z r
     // [27] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
     ldx #$f
     // [27] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
@@ -1266,7 +1266,7 @@ flip: {
   b2_from_b1:
     // [28] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
     lda #$10
-    sta c
+    sta.z c
     // [28] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
     // [28] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
     jmp b2
@@ -1287,9 +1287,9 @@ flip: {
     txa
     axs #-[$10]
     // [32] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
-    dec c
+    dec.z c
     // [33] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b2_from_b2
     jmp b3
@@ -1298,9 +1298,9 @@ flip: {
     // [34] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 -- vbuxx=_dec_vbuxx 
     dex
     // [35] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
-    dec r
+    dec.z r
     // [36] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
-    lda r
+    lda.z r
     cmp #0
     bne b1_from_b3
     // [37] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]
@@ -1597,12 +1597,12 @@ plot: {
     // [16] phi from plot to plot::@1 [phi:plot->plot::@1]
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta y
+    sta.z y
     // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
-    sta line
+    sta.z line
     lda #>SCREEN+5*$28+$c
-    sta line+1
+    sta.z line+1
     // [16] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
     ldx #0
     // [16] phi from plot::@4 to plot::@1 [phi:plot::@4->plot::@1]
@@ -1639,16 +1639,16 @@ plot: {
     // [22] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
     // for(byte y : 16..1)
     // [23] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
-    dec y
+    dec.z y
     // [24] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
-    lda y
+    lda.z y
     cmp #0
     bne b1
     // plot::@return
@@ -1664,7 +1664,7 @@ flip: {
     // [27] phi from flip to flip::@1 [phi:flip->flip::@1]
     // [27] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
     lda #$10
-    sta r
+    sta.z r
     // [27] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
     ldx #$f
     // [27] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
@@ -1678,7 +1678,7 @@ flip: {
     // [28] phi from flip::@1 to flip::@2 [phi:flip::@1->flip::@2]
     // [28] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
     lda #$10
-    sta c
+    sta.z c
     // [28] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
     // [28] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
     // [28] phi from flip::@2 to flip::@2 [phi:flip::@2->flip::@2]
@@ -1700,9 +1700,9 @@ flip: {
     axs #-[$10]
     // for( byte c : 16..1)
     // [32] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
-    dec c
+    dec.z c
     // [33] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b2
     // flip::@3
@@ -1711,9 +1711,9 @@ flip: {
     dex
     // for( byte r : 16..1)
     // [35] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
-    dec r
+    dec.z r
     // [36] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
-    lda r
+    lda.z r
     cmp #0
     bne b1
     // [37] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]

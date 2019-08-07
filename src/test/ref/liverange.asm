@@ -8,10 +8,10 @@ main: {
     jsr inci
     clc
     adc #4
-    sta a
+    sta.z a
     jsr inci
     clc
-    adc a
+    adc.z a
     tax
     sty SCREEN
     stx SCREEN+1

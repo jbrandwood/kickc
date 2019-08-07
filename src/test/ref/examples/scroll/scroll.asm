@@ -10,9 +10,9 @@ main: {
     .label nxt = 2
     jsr fillscreen
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     ldx #7
   // Wait for raster
   b1:
@@ -43,14 +43,14 @@ main: {
     bne b9
     ldx TEXT
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
   b9:
     stx line+$27
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     ldx #7
   b4:
@@ -62,22 +62,22 @@ fillscreen: {
     .const fill = $20
     .label cursor = 2
     lda #<SCREEN
-    sta cursor
+    sta.z cursor
     lda #>SCREEN
-    sta cursor+1
+    sta.z cursor+1
   b2:
     lda #fill
     ldy #0
     sta (cursor),y
-    inc cursor
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
-    lda cursor+1
+    lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda cursor
+    lda.z cursor
     cmp #<SCREEN+$3e8
     bcc b2
   !:

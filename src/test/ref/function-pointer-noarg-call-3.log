@@ -320,7 +320,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // main::@1
   b1:
@@ -328,25 +328,25 @@ main: {
     // main::@2
   b2:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuz1=vbuz2 
-    lda i
-    sta getfn.b
+    lda.z i
+    sta.z getfn.b
     // [8] call getfn 
     jsr getfn
     // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 -- pprz1=pprz2 
-    lda getfn.return_3
-    sta getfn.return
-    lda getfn.return_3+1
-    sta getfn.return+1
+    lda.z getfn.return_3
+    sta.z getfn.return
+    lda.z getfn.return_3+1
+    sta.z getfn.return+1
     jmp b3
     // main::@3
   b3:
     // [10] (void()*~) main::$1 ← (void()*) getfn::return#0 -- pprz1=pprz2 
-    lda getfn.return
-    sta _1
-    lda getfn.return+1
-    sta _1+1
+    lda.z getfn.return
+    sta.z _1
+    lda.z getfn.return+1
+    sta.z _1+1
     // [11] call (void()*~) main::$1 
     jsr bi__1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
@@ -365,19 +365,19 @@ getfn: {
     .label return_3 = 3
     // [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and b
-    sta _0
+    and.z b
+    sta.z _0
     // [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuz1_eq_0_then_la1 
-    lda _0
+    lda.z _0
     cmp #0
     beq b1_from_getfn
     // [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
   breturn_from_getfn:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
-    sta return_3
+    sta.z return_3
     lda #>fn2
-    sta return_3+1
+    sta.z return_3+1
     jmp breturn
     // [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
   b1_from_getfn:
@@ -388,9 +388,9 @@ getfn: {
   breturn_from_b1:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
-    sta return_3
+    sta.z return_3
     lda #>fn1
-    sta return_3+1
+    sta.z return_3+1
     jmp breturn
     // getfn::@return
   breturn:
@@ -487,7 +487,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // main::@1
   b1:
@@ -495,9 +495,9 @@ main: {
     // main::@2
   b2:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
-    lda i
+    lda.z i
     // [8] call getfn 
     jsr getfn
     // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
@@ -527,9 +527,9 @@ getfn: {
   breturn_from_getfn:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
-    sta return
+    sta.z return
     lda #>fn2
-    sta return+1
+    sta.z return+1
     jmp breturn
     // [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
   b1_from_getfn:
@@ -540,9 +540,9 @@ getfn: {
   breturn_from_b1:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
-    sta return
+    sta.z return
     lda #>fn1
-    sta return+1
+    sta.z return+1
     jmp breturn
     // getfn::@return
   breturn:
@@ -671,16 +671,16 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // main::@1
     // main::@2
   b2:
     // *(getfn(++i))();
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // getfn(++i)
     // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
-    lda i
+    lda.z i
     // [8] call getfn 
     jsr getfn
     // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
@@ -709,9 +709,9 @@ getfn: {
     // [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
     // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
-    sta return
+    sta.z return
     lda #>fn2
-    sta return+1
+    sta.z return+1
     rts
     // [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
     // getfn::@1
@@ -719,9 +719,9 @@ getfn: {
     // [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
     // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
-    sta return
+    sta.z return
     lda #>fn1
-    sta return+1
+    sta.z return+1
     // getfn::@return
     // }
     // [16] return 

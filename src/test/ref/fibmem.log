@@ -198,7 +198,7 @@ main: {
   b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -207,19 +207,19 @@ main: {
     // main::@1
   b1:
     // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
-    ldy i
+    ldy.z i
     lda fibs,y
     clc
     adc fibs+1,y
-    sta _2
+    sta.z _2
     // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _2
-    ldy i
+    lda.z _2
+    ldy.z i
     sta fibs+2,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #$f
     bcc b1_from_b1
     jmp breturn

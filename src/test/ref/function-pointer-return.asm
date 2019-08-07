@@ -13,17 +13,17 @@ main: {
     cmp #0
     beq b3
     lda #<fn2
-    sta f
+    sta.z f
     lda #>fn2
-    sta f+1
+    sta.z f+1
     jmp b4
   b3:
     lda #<fn1
-    sta f
+    sta.z f
     lda #>fn1
-    sta f+1
+    sta.z f+1
   b4:
-    lda f
+    lda.z f
     sta SCREEN
     jmp b2
 }

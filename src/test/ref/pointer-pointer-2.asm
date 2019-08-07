@@ -7,15 +7,15 @@ main: {
     .label text = 2
     .label screen = 5
     lda #<0
-    sta text
-    sta text+1
+    sta.z text
+    sta.z text+1
     tax
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     txa
-    sta textid
+    sta.z textid
   b1:
     jsr nexttext
   b2:
@@ -31,13 +31,13 @@ main: {
     ldy #0
     lda (text),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc text
+    inc.z text
     bne !+
-    inc text+1
+    inc.z text+1
   !:
     jmp b2
 }
@@ -45,8 +45,8 @@ main: {
 nexttext: {
     .label textp = main.text
     lda #1
-    and textid
-    inc textid
+    and.z textid
+    inc.z textid
     cmp #0
     beq b1
     lda #<text2

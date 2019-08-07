@@ -9,44 +9,44 @@ main: {
     .label _0 = 2
     .label _1 = 2
     lda #<$a
-    sta mul16u.a
+    sta.z mul16u.a
     lda #>$a
-    sta mul16u.a+1
+    sta.z mul16u.a+1
     lda #$a
-    sta mul16u.mb
+    sta.z mul16u.mb
     lda #0
-    sta mul16u.mb+1
-    sta mul16u.mb+2
-    sta mul16u.mb+3
+    sta.z mul16u.mb+1
+    sta.z mul16u.mb+2
+    sta.z mul16u.mb+3
     jsr mul16u
-    lda _0
+    lda.z _0
     sta screen
-    lda _0+1
+    lda.z _0+1
     sta screen+1
-    lda _0+2
+    lda.z _0+2
     sta screen+2
-    lda _0+3
+    lda.z _0+3
     sta screen+3
     lda #<$3e8
-    sta mul16u.a
+    sta.z mul16u.a
     lda #>$3e8
-    sta mul16u.a+1
+    sta.z mul16u.a+1
     lda #<$3e8
-    sta mul16u.mb
+    sta.z mul16u.mb
     lda #>$3e8
-    sta mul16u.mb+1
+    sta.z mul16u.mb+1
     lda #<$3e8>>$10
-    sta mul16u.mb+2
+    sta.z mul16u.mb+2
     lda #>$3e8>>$10
-    sta mul16u.mb+3
+    sta.z mul16u.mb+3
     jsr mul16u
-    lda _1
+    lda.z _1
     sta screen+1*SIZEOF_DWORD
-    lda _1+1
+    lda.z _1+1
     sta screen+1*SIZEOF_DWORD+1
-    lda _1+2
+    lda.z _1+2
     sta screen+1*SIZEOF_DWORD+2
-    lda _1+3
+    lda.z _1+3
     sta screen+1*SIZEOF_DWORD+3
     rts
 }
@@ -55,18 +55,18 @@ mul16u: {
     .label return = 2
     .label mb = 2
     .label a = 6
-    lda return
+    lda.z return
     clc
-    adc a
-    sta return
-    lda return+1
-    adc a+1
-    sta return+1
-    lda return+2
+    adc.z a
+    sta.z return
+    lda.z return+1
+    adc.z a+1
+    sta.z return+1
+    lda.z return+2
     adc #0
-    sta return+2
-    lda return+3
+    sta.z return+2
+    lda.z return+3
     adc #0
-    sta return+3
+    sta.z return+3
     rts
 }

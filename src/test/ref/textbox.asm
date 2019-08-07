@@ -7,82 +7,82 @@ main: {
     .label wait = 6
     .label x = 2
     lda #0
-    sta x
+    sta.z x
   b2:
-    lda x
+    lda.z x
     asl
     clc
     adc #1
-    sta textbox.x2
-    lax x
+    sta.z textbox.x2
+    lax.z x
     axs #-[$a]
-    stx textbox.y2
-    lda x
-    sta textbox.y1
+    stx.z textbox.y2
+    lda.z x
+    sta.z textbox.y1
     lda #<text2
-    sta textbox.text
+    sta.z textbox.text
     lda #>text2
-    sta textbox.text+1
+    sta.z textbox.text+1
     jsr textbox
     lda #<0
-    sta wait
-    sta wait+1
+    sta.z wait
+    sta.z wait+1
   b5:
-    inc wait
+    inc.z wait
     bne !+
-    inc wait+1
+    inc.z wait+1
   !:
-    lda wait+1
+    lda.z wait+1
     cmp #>$88b8
     bcc b5
     bne !+
-    lda wait
+    lda.z wait
     cmp #<$88b8
     bcc b5
   !:
-    lda x
+    lda.z x
     clc
     adc #2
-    sta x
+    sta.z x
     cmp #$f
     bcc b2
     lda #<text
-    sta textbox.text
+    sta.z textbox.text
     lda #>text
-    sta textbox.text+1
+    sta.z textbox.text+1
     lda #$18
-    sta textbox.y2
+    sta.z textbox.y2
     lda #$14
-    sta textbox.x2
+    sta.z textbox.x2
     lda #$c
-    sta textbox.y1
+    sta.z textbox.y1
     lda #0
-    sta textbox.x1
+    sta.z textbox.x1
     jsr textbox
     lda #<text
-    sta textbox.text
+    sta.z textbox.text
     lda #>text
-    sta textbox.text+1
+    sta.z textbox.text+1
     lda #9
-    sta textbox.y2
+    sta.z textbox.y2
     lda #$25
-    sta textbox.x2
+    sta.z textbox.x2
     lda #3
-    sta textbox.y1
-    sta textbox.x1
+    sta.z textbox.y1
+    sta.z textbox.x1
     jsr textbox
     lda #<text
-    sta textbox.text
+    sta.z textbox.text
     lda #>text
-    sta textbox.text+1
+    sta.z textbox.text+1
     lda #$18
-    sta textbox.y2
+    sta.z textbox.y2
     lda #$27
-    sta textbox.x2
+    sta.z textbox.x2
     lda #8
-    sta textbox.y1
+    sta.z textbox.y1
     lda #$1e
-    sta textbox.x1
+    sta.z textbox.x1
     jsr textbox
   b7:
     jmp b7
@@ -102,52 +102,52 @@ textbox: {
     .label text = 6
     .label _31 = $d
     jsr draw_window
-    inc y
-    ldy x1
+    inc.z y
+    ldy.z x1
     iny
-    sty x
-    lda y
+    sty.z x
+    lda.z y
     asl
     asl
     clc
-    adc y
-    sta z
+    adc.z y
+    sta.z z
     lda #0
-    sta z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
+    sta.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
     tya
-    cmp x2
+    cmp.z x2
     beq breturn
-    lda y
-    cmp y2
+    lda.z y
+    cmp.z y2
     beq breturn
     lda #0
-    sta i
+    sta.z i
   b1:
-    lda x
+    lda.z x
     clc
-    adc z
-    sta _8
+    adc.z z
+    sta.z _8
     lda #0
-    adc z+1
-    sta _8+1
+    adc.z z+1
+    sta.z _8+1
     clc
-    lda _31
+    lda.z _31
     adc #<screen
-    sta _31
-    lda _31+1
+    sta.z _31
+    lda.z _31+1
     adc #>screen
-    sta _31+1
-    ldy i
+    sta.z _31+1
+    ldy.z i
     lda (text),y
     ldy #0
     sta (_31),y
-    ldy i
+    ldy.z i
     lda (text),y
     cmp #$20
     bne b2
@@ -163,48 +163,48 @@ textbox: {
   b5:
     txa
     clc
-    adc x
+    adc.z x
     tay
-    lda x2
+    lda.z x2
     sec
-    sbc x1
-    sta _17
-    cpy x2
+    sbc.z x1
+    sta.z _17
+    cpy.z x2
     bcc b2
-    cpx _17
+    cpx.z _17
     bcc b6
   b2:
-    inc i
-    inc x
-    lda x
-    cmp x2
+    inc.z i
+    inc.z x
+    lda.z x
+    cmp.z x2
     bne b8
-    ldy x1
+    ldy.z x1
     iny
-    sty x
-    inc y
-    lda y
-    cmp y2
+    sty.z x
+    inc.z y
+    lda.z y
+    cmp.z y2
     bne b9
   breturn:
     rts
   b9:
-    lda y
+    lda.z y
     asl
     asl
     clc
-    adc y
-    sta z
+    adc.z y
+    sta.z z
     lda #0
-    sta z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
+    sta.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
   b8:
-    ldy i
+    ldy.z i
     lda (text),y
     cmp #0
     beq !b1+
@@ -212,28 +212,28 @@ textbox: {
   !b1:
     rts
   b6:
-    inc y
-    lda y
-    cmp y2
+    inc.z y
+    lda.z y
+    cmp.z y2
     bne b7
     rts
   b7:
-    lda y
+    lda.z y
     asl
     asl
     clc
-    adc y
-    sta z
+    adc.z y
+    sta.z z
     lda #0
-    sta z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    lda x1
-    sta x
+    sta.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    lda.z x1
+    sta.z x
     jmp b2
   b4:
     iny
@@ -269,127 +269,127 @@ draw_window: {
     .label _33 = $11
     .label _34 = $d
     .label _35 = $15
-    lda y1
+    lda.z y1
     asl
     asl
     clc
-    adc y1
-    sta z
+    adc.z y1
+    sta.z z
     lda #0
-    sta z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    asl z
-    rol z+1
-    lda y2
+    sta.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    asl.z z
+    rol.z z+1
+    lda.z y2
     asl
     asl
     clc
-    adc y2
-    sta q
+    adc.z y2
+    sta.z q
     lda #0
-    sta q+1
-    asl q
-    rol q+1
-    asl q
-    rol q+1
-    asl q
-    rol q+1
-    ldx x1
+    sta.z q+1
+    asl.z q
+    rol.z q+1
+    asl.z q
+    rol.z q+1
+    asl.z q
+    rol.z q+1
+    ldx.z x1
     inx
   b1:
   // draw horizontal lines
-    cpx x2
+    cpx.z x2
     bcs !b2+
     jmp b2
   !b2:
-    lda x1
+    lda.z x1
     clc
-    adc z
-    sta _2
+    adc.z z
+    sta.z _2
     lda #0
-    adc z+1
-    sta _2+1
+    adc.z z+1
+    sta.z _2+1
     clc
-    lda _29
+    lda.z _29
     adc #<screen
-    sta _29
-    lda _29+1
+    sta.z _29
+    lda.z _29+1
     adc #>screen
-    sta _29+1
+    sta.z _29+1
     // draw upper corners
     lda #$55
     ldy #0
     sta (_29),y
-    lda x2
+    lda.z x2
     clc
-    adc _3
-    sta _3
+    adc.z _3
+    sta.z _3
     bcc !+
-    inc _3+1
+    inc.z _3+1
   !:
     clc
-    lda _30
+    lda.z _30
     adc #<screen
-    sta _30
-    lda _30+1
+    sta.z _30
+    lda.z _30+1
     adc #>screen
-    sta _30+1
+    sta.z _30+1
     lda #$49
     ldy #0
     sta (_30),y
-    ldx y1
+    ldx.z y1
     inx
   b3:
   // draw vertical lines
-    cpx y2
+    cpx.z y2
     bcs !b5+
     jmp b5
   !b5:
-    lda x1
+    lda.z x1
     clc
-    adc q
-    sta _4
+    adc.z q
+    sta.z _4
     lda #0
-    adc q+1
-    sta _4+1
+    adc.z q+1
+    sta.z _4+1
     clc
-    lda _33
+    lda.z _33
     adc #<screen
-    sta _33
-    lda _33+1
+    sta.z _33
+    lda.z _33+1
     adc #>screen
-    sta _33+1
+    sta.z _33+1
     // draw lower corners
     lda #$4a
     ldy #0
     sta (_33),y
-    lda x2
+    lda.z x2
     clc
-    adc _5
-    sta _5
+    adc.z _5
+    sta.z _5
     bcc !+
-    inc _5+1
+    inc.z _5+1
   !:
     clc
-    lda _34
+    lda.z _34
     adc #<screen
-    sta _34
-    lda _34+1
+    sta.z _34
+    lda.z _34+1
     adc #>screen
-    sta _34+1
+    sta.z _34+1
     lda #$4b
     ldy #0
     sta (_34),y
-    lda x2
+    lda.z x2
     sec
-    sbc x1
+    sbc.z x1
     tax
-    lda y2
+    lda.z y2
     sec
-    sbc y1
+    sbc.z y1
     cpx #1+1
     bcc breturn
     cmp #1+1
@@ -397,52 +397,52 @@ draw_window: {
   breturn:
     rts
   b7:
-    ldy y1
+    ldy.z y1
     iny
-    sty y3
+    sty.z y3
   b4:
   // blank inside
-    lda y3
-    cmp y2
+    lda.z y3
+    cmp.z y2
     bcc b9
     rts
   b9:
-    lda y3
+    lda.z y3
     asl
     asl
     clc
-    adc y3
-    sta z_2
+    adc.z y3
+    sta.z z_2
     lda #0
-    sta z_2+1
-    asl z_2
-    rol z_2+1
-    asl z_2
-    rol z_2+1
-    asl z_2
-    rol z_2+1
-    ldx x1
+    sta.z z_2+1
+    asl.z z_2
+    rol.z z_2+1
+    asl.z z_2
+    rol.z z_2+1
+    asl.z z_2
+    rol.z z_2+1
+    ldx.z x1
     inx
   b10:
-    cpx x2
+    cpx.z x2
     bcc b11
-    inc y3
+    inc.z y3
     jmp b4
   b11:
     txa
     clc
-    adc z_2
-    sta _26
+    adc.z z_2
+    sta.z _26
     lda #0
-    adc z_2+1
-    sta _26+1
+    adc.z z_2+1
+    sta.z _26+1
     clc
-    lda _35
+    lda.z _35
     adc #<screen
-    sta _35
-    lda _35+1
+    sta.z _35
+    lda.z _35+1
     adc #>screen
-    sta _35+1
+    sta.z _35+1
     lda #$20
     ldy #0
     sta (_35),y
@@ -452,49 +452,49 @@ draw_window: {
     txa
     asl
     asl
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
-    sta z_1
+    adc.z $ff
+    sta.z z_1
     lda #0
-    sta z_1+1
-    asl z_1
-    rol z_1+1
-    asl z_1
-    rol z_1+1
-    asl z_1
-    rol z_1+1
-    lda x1
+    sta.z z_1+1
+    asl.z z_1
+    rol.z z_1+1
+    asl.z z_1
+    rol.z z_1+1
+    asl.z z_1
+    rol.z z_1+1
+    lda.z x1
     clc
-    adc z_1
-    sta _19
+    adc.z z_1
+    sta.z _19
     lda #0
-    adc z_1+1
-    sta _19+1
+    adc.z z_1+1
+    sta.z _19+1
     clc
-    lda _31
+    lda.z _31
     adc #<screen
-    sta _31
-    lda _31+1
+    sta.z _31
+    lda.z _31+1
     adc #>screen
-    sta _31+1
+    sta.z _31+1
     lda #$42
     ldy #0
     sta (_31),y
-    lda x2
+    lda.z x2
     clc
-    adc _20
-    sta _20
+    adc.z _20
+    sta.z _20
     bcc !+
-    inc _20+1
+    inc.z _20+1
   !:
     clc
-    lda _32
+    lda.z _32
     adc #<screen
-    sta _32
-    lda _32+1
+    sta.z _32
+    lda.z _32+1
     adc #>screen
-    sta _32+1
+    sta.z _32+1
     lda #$42
     ldy #0
     sta (_32),y
@@ -503,35 +503,35 @@ draw_window: {
   b2:
     txa
     clc
-    adc z
-    sta _14
+    adc.z z
+    sta.z _14
     lda #0
-    adc z+1
-    sta _14+1
+    adc.z z+1
+    sta.z _14+1
     clc
-    lda _27
+    lda.z _27
     adc #<screen
-    sta _27
-    lda _27+1
+    sta.z _27
+    lda.z _27+1
     adc #>screen
-    sta _27+1
+    sta.z _27+1
     lda #$43
     ldy #0
     sta (_27),y
     txa
     clc
-    adc q
-    sta _15
+    adc.z q
+    sta.z _15
     tya
-    adc q+1
-    sta _15+1
+    adc.z q+1
+    sta.z _15+1
     clc
-    lda _28
+    lda.z _28
     adc #<screen
-    sta _28
-    lda _28+1
+    sta.z _28
+    lda.z _28+1
     adc #>screen
-    sta _28+1
+    sta.z _28+1
     lda #$43
     sta (_28),y
     inx

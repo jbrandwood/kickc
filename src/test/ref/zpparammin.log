@@ -404,7 +404,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -413,64 +413,64 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sum::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
-    ldy i
+    ldy.z i
     iny
-    sty sum.b
+    sty.z sum.b
     // [7] (byte) sum::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuz1=vbuz2_plus_2 
-    lda i
+    lda.z i
     clc
     adc #2
-    sta sum.c
+    sta.z sum.c
     // [8] (byte) sum::a#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sum.a
+    lda.z i
+    sta.z sum.a
     // [9] call sum 
     jsr sum
     // [10] (byte) sum::return#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
-    lda sum.return_1
-    sta sum.return
+    lda.z sum.return_1
+    sta.z sum.return
     jmp b2
     // main::@2
   b2:
     // [11] (byte~) main::$2 ← (byte) sum::return#0 -- vbuz1=vbuz2 
-    lda sum.return
-    sta _2
+    lda.z sum.return
+    sta.z _2
     // [12] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _2
-    ldy i
+    lda.z _2
+    ldy.z i
     sta SCREEN,y
     // [13] (byte) sum2::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
-    ldy i
+    ldy.z i
     iny
-    sty sum2.b
+    sty.z sum2.b
     // [14] (byte) sum2::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuz1=vbuz2_plus_2 
-    lda i
+    lda.z i
     clc
     adc #2
-    sta sum2.c
+    sta.z sum2.c
     // [15] (byte) sum2::a#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta sum2.a
+    lda.z i
+    sta.z sum2.a
     // [16] call sum2 
     jsr sum2
     // [17] (byte) sum2::return#0 ← (byte) sum2::return#1 -- vbuz1=vbuz2 
-    lda sum2.return_1
-    sta sum2.return
+    lda.z sum2.return_1
+    sta.z sum2.return
     jmp b3
     // main::@3
   b3:
     // [18] (byte~) main::$5 ← (byte) sum2::return#0 -- vbuz1=vbuz2 
-    lda sum2.return
-    sta _5
+    lda.z sum2.return
+    sta.z _5
     // [19] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _5
-    ldy i
+    lda.z _5
+    ldy.z i
     sta SCREEN2,y
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -488,15 +488,15 @@ sum2: {
     .label return = $b
     .label return_1 = $e
     // [23] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda a
+    lda.z a
     clc
-    adc b
-    sta _0
+    adc.z b
+    sta.z _0
     // [24] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _0
+    lda.z _0
     clc
-    adc c
-    sta return_1
+    adc.z c
+    sta.z return_1
     jmp breturn
     // sum2::@return
   breturn:
@@ -513,15 +513,15 @@ sum: {
     .label return = 6
     .label return_1 = $10
     // [26] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda a
+    lda.z a
     clc
-    adc b
-    sta _0
+    adc.z b
+    sta.z _0
     // [27] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda _0
+    lda.z _0
     clc
-    adc c
-    sta return_1
+    adc.z c
+    sta.z return_1
     jmp breturn
     // sum::@return
   breturn:
@@ -613,7 +613,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -622,15 +622,15 @@ main: {
     // main::@1
   b1:
     // [6] (byte) sum::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
-    lda i
+    lda.z i
     clc
     adc #1
     // [7] (byte) sum::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuxx=vbuz1_plus_2 
-    ldx i
+    ldx.z i
     inx
     inx
     // [8] (byte) sum::a#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
-    ldy i
+    ldy.z i
     // [9] call sum 
     jsr sum
     // [10] (byte) sum::return#0 ← (byte) sum::return#1
@@ -639,18 +639,18 @@ main: {
   b2:
     // [11] (byte~) main::$2 ← (byte) sum::return#0
     // [12] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN,y
     // [13] (byte) sum2::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
-    lda i
+    lda.z i
     clc
     adc #1
     // [14] (byte) sum2::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuxx=vbuz1_plus_2 
-    ldx i
+    ldx.z i
     inx
     inx
     // [15] (byte) sum2::a#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
-    ldy i
+    ldy.z i
     // [16] call sum2 
     jsr sum2
     // [17] (byte) sum2::return#0 ← (byte) sum2::return#1
@@ -659,13 +659,13 @@ main: {
   b3:
     // [18] (byte~) main::$5 ← (byte) sum2::return#0
     // [19] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN2,y
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -677,13 +677,13 @@ main: {
 // sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum2: {
     // [23] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // [24] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     jmp breturn
     // sum2::@return
   breturn:
@@ -694,13 +694,13 @@ sum2: {
 // sum(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum: {
     // [26] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // [27] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     jmp breturn
     // sum::@return
   breturn:
@@ -719,8 +719,8 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction lda i with TYA
-Removing instruction ldy i
+Replacing instruction lda.z i with TYA
+Removing instruction ldy.z i
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b3 with b1
 Removing instruction b1_from_bbegin:
@@ -829,22 +829,22 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
   b1:
     // sum(i,i+1,i+2)
     // [6] (byte) sum::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
-    lda i
+    lda.z i
     clc
     adc #1
     // [7] (byte) sum::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuxx=vbuz1_plus_2 
-    ldx i
+    ldx.z i
     inx
     inx
     // [8] (byte) sum::a#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
-    ldy i
+    ldy.z i
     // [9] call sum 
     jsr sum
     // [10] (byte) sum::return#0 ← (byte) sum::return#1
@@ -852,7 +852,7 @@ main: {
     // [11] (byte~) main::$2 ← (byte) sum::return#0
     // SCREEN[i] = sum(i,i+1,i+2)
     // [12] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN,y
     // sum2(i,i+1,i+2)
     // [13] (byte) sum2::b#0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
@@ -860,7 +860,7 @@ main: {
     clc
     adc #1
     // [14] (byte) sum2::c#0 ← (byte) main::i#2 + (byte) 2 -- vbuxx=vbuz1_plus_2 
-    ldx i
+    ldx.z i
     inx
     inx
     // [15] (byte) sum2::a#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
@@ -871,14 +871,14 @@ main: {
     // [18] (byte~) main::$5 ← (byte) sum2::return#0
     // SCREEN2[i] = sum2(i,i+1,i+2)
     // [19] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuaa 
-    ldy i
+    ldy.z i
     sta SCREEN2,y
     // for(byte i : 0..10)
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1
     // main::@return
     // }
@@ -890,14 +890,14 @@ main: {
 sum2: {
     // a+b
     // [23] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // a+b+c
     // [24] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // sum2::@return
     // }
     // [25] return 
@@ -908,14 +908,14 @@ sum2: {
 sum: {
     // a+b
     // [26] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // a+b+c
     // [27] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
     // sum::@return
     // }
     // [28] return 

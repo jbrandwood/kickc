@@ -18,83 +18,83 @@ main: {
     .label line1_pos = 6
     .label line2_pos = 4
     lda #<$400
-    sta sc
+    sta.z sc
     lda #>$400
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #' '
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>$400+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<$400+$3e8
     bcc b2
   !:
     lda #<$400
-    sta cur_line
+    sta.z cur_line
     lda #>$400
-    sta cur_line+1
+    sta.z cur_line+1
     lda #<line1_xpos*$100
-    sta line1_pos
+    sta.z line1_pos
     lda #>line1_xpos*$100
-    sta line1_pos+1
+    sta.z line1_pos+1
     ldx #0
   line1_b2:
-    lda line1_pos+1
+    lda.z line1_pos+1
     tay
     lda #line1_ch
     sta (cur_line),y
     lda #line1_xadd
     clc
-    adc line1_pos
-    sta line1_pos
+    adc.z line1_pos
+    sta.z line1_pos
     bcc !+
-    inc line1_pos+1
+    inc.z line1_pos+1
   !:
     lda #$28
     clc
-    adc cur_line
-    sta cur_line
+    adc.z cur_line
+    sta.z cur_line
     bcc !+
-    inc cur_line+1
+    inc.z cur_line+1
   !:
     inx
     cpx #line1_ysize
     bcc line1_b2
     lda #<$400
-    sta cur_line_22
+    sta.z cur_line_22
     lda #>$400
-    sta cur_line_22+1
+    sta.z cur_line_22+1
     lda #<line2_xpos*$100
-    sta line2_pos
+    sta.z line2_pos
     lda #>line2_xpos*$100
-    sta line2_pos+1
+    sta.z line2_pos+1
     ldx #0
   line2_b2:
-    lda line2_pos+1
+    lda.z line2_pos+1
     tay
     lda #line2_ch
     sta (cur_line_22),y
     lda #line2_xadd
     clc
-    adc line2_pos
-    sta line2_pos
+    adc.z line2_pos
+    sta.z line2_pos
     bcc !+
-    inc line2_pos+1
+    inc.z line2_pos+1
   !:
     lda #$28
     clc
-    adc cur_line_10
-    sta cur_line_10
+    adc.z cur_line_10
+    sta.z cur_line_10
     bcc !+
-    inc cur_line_10+1
+    inc.z cur_line_10+1
   !:
     inx
     cpx #line2_ysize

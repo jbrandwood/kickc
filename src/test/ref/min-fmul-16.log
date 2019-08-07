@@ -1441,9 +1441,9 @@ main: {
   b1_from_b4:
     // [7] phi (byte*) print_char_cursor#16 = (byte*) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     // main::@1
   b1:
@@ -1462,37 +1462,37 @@ main: {
     // [10] call mulf16u 
     jsr mulf16u
     // [11] (dword) mulf16u::return#0 ← (dword) mulf16u::return#1 -- vduz1=vduz2 
-    lda mulf16u.return_1
-    sta mulf16u.return
-    lda mulf16u.return_1+1
-    sta mulf16u.return+1
-    lda mulf16u.return_1+2
-    sta mulf16u.return+2
-    lda mulf16u.return_1+3
-    sta mulf16u.return+3
+    lda.z mulf16u.return_1
+    sta.z mulf16u.return
+    lda.z mulf16u.return_1+1
+    sta.z mulf16u.return+1
+    lda.z mulf16u.return_1+2
+    sta.z mulf16u.return+2
+    lda.z mulf16u.return_1+3
+    sta.z mulf16u.return+3
     jmp b5
     // main::@5
   b5:
     // [12] (dword) main::r#0 ← (dword) mulf16u::return#0 -- vduz1=vduz2 
-    lda mulf16u.return
-    sta r
-    lda mulf16u.return+1
-    sta r+1
-    lda mulf16u.return+2
-    sta r+2
-    lda mulf16u.return+3
-    sta r+3
+    lda.z mulf16u.return
+    sta.z r
+    lda.z mulf16u.return+1
+    sta.z r+1
+    lda.z mulf16u.return+2
+    sta.z r+2
+    lda.z mulf16u.return+3
+    sta.z r+3
     // [13] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     // [14] (dword) print_dword::dw#0 ← (dword) main::r#0 -- vduz1=vduz2 
-    lda r
-    sta print_dword.dw
-    lda r+1
-    sta print_dword.dw+1
-    lda r+2
-    sta print_dword.dw+2
-    lda r+3
-    sta print_dword.dw+3
+    lda.z r
+    sta.z print_dword.dw
+    lda.z r+1
+    sta.z print_dword.dw+1
+    lda.z r+2
+    sta.z print_dword.dw+2
+    lda.z r+3
+    sta.z print_dword.dw+3
     // [15] call print_dword 
     jsr print_dword
     // [16] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
@@ -1508,9 +1508,9 @@ main: {
   b1_from_b6:
     // [7] phi (byte*) print_char_cursor#16 = (const byte*) SCREEN#0 [phi:main::@6->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>SCREEN
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
 }
   // print_set_screen
@@ -1528,10 +1528,10 @@ print_set_screen: {
 print_dword: {
     .label dw = $1e
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
+    lda.z dw+2
+    sta.z print_word.w
+    lda.z dw+3
+    sta.z print_word.w+1
     // [21] call print_word 
     // [25] phi from print_dword to print_word [phi:print_dword->print_word]
   print_word_from_print_dword:
@@ -1542,10 +1542,10 @@ print_dword: {
     // print_dword::@1
   b1:
     // [22] (word) print_word::w#1 ← < (dword) print_dword::dw#0 -- vwuz1=_lo_vduz2 
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
+    lda.z dw
+    sta.z print_word.w
+    lda.z dw+1
+    sta.z print_word.w+1
     // [23] call print_word 
     // [25] phi from print_dword::@1 to print_word [phi:print_dword::@1->print_word]
   print_word_from_b1:
@@ -1564,8 +1564,8 @@ print_dword: {
 print_word: {
     .label w = 2
     // [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuz1=_hi_vwuz2 
-    lda w+1
-    sta print_byte.b
+    lda.z w+1
+    sta.z print_byte.b
     // [27] call print_byte 
     // [31] phi from print_word to print_byte [phi:print_word->print_byte]
   print_byte_from_print_word:
@@ -1576,8 +1576,8 @@ print_word: {
     // print_word::@1
   b1:
     // [28] (byte) print_byte::b#1 ← < (word) print_word::w#2 -- vbuz1=_lo_vwuz2 
-    lda w
-    sta print_byte.b
+    lda.z w
+    sta.z print_byte.b
     // [29] call print_byte 
     // [31] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
   print_byte_from_b1:
@@ -1598,16 +1598,16 @@ print_byte: {
     .label _2 = $23
     .label b = 4
     // [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
-    sta _0
+    sta.z _0
     // [33] (byte) print_char::ch#0 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _0
+    ldy.z _0
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [34] call print_char 
     // [39] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
@@ -1619,12 +1619,12 @@ print_byte: {
   b1:
     // [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
-    and b
-    sta _2
+    and.z b
+    sta.z _2
     // [36] (byte) print_char::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy _2
+    ldy.z _2
     lda print_hextab,y
-    sta print_char.ch
+    sta.z print_char.ch
     // [37] call print_char 
     // [39] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -1643,13 +1643,13 @@ print_byte: {
 print_char: {
     .label ch = 5
     // [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
-    lda ch
+    lda.z ch
     ldy #0
     sta (print_char_cursor),y
     // [41] (byte*) print_char_cursor#10 ← ++ (byte*) print_char_cursor#27 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -1771,13 +1771,13 @@ mulf16u: {
   !:
     // [46] (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR#0) -- vduz1=_deref_pduc1 
     lda memR
-    sta return_1
+    sta.z return_1
     lda memR+1
-    sta return_1+1
+    sta.z return_1+1
     lda memR+2
-    sta return_1+2
+    sta.z return_1+2
     lda memR+3
-    sta return_1+3
+    sta.z return_1+3
     jmp breturn
     // mulf16u::@return
   breturn:
@@ -1803,61 +1803,61 @@ mulf_init: {
   b1_from_mulf_init:
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta x_2
+    sta.z x_2
     // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi#0+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
     lda #<0
-    sta sqr
+    sta.z sqr
     lda #>0
-    sta sqr+1
+    sta.z sqr+1
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo#0+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
     jmp b1
     // mulf_init::@1
   b1:
     // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo#0+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     // [51] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
   b5_from_b1:
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
-    sta dir
+    sta.z dir
     // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi#0 [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuz1=vbuc1 
     lda #-1
-    sta x_255
+    sta.z x_255
     // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo#0 [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
     jmp b5
     // mulf_init::@5
   b5:
     // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo#0+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     jmp b7
@@ -1878,34 +1878,34 @@ mulf_init: {
     // mulf_init::@6
   b6:
     // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo#0 + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy x_255
+    ldy.z x_255
     lda mulf_sqr1_lo,y
     ldy #0
     sta (sqr2_lo),y
     // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi#0 + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy x_255
+    ldy.z x_255
     lda mulf_sqr1_hi,y
     ldy #0
     sta (sqr2_hi),y
     // [58] (byte*) mulf_init::sqr2_hi#1 ← ++ (byte*) mulf_init::sqr2_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     // [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2 -- vbuz1=vbuz1_plus_vbuz2 
-    lda x_255
+    lda.z x_255
     clc
-    adc dir
-    sta x_255
+    adc.z dir
+    sta.z x_255
     // [60] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuz1_neq_0_then_la1 
-    lda x_255
+    lda.z x_255
     cmp #0
     bne b9_from_b6
     // [62] phi from mulf_init::@6 to mulf_init::@8 [phi:mulf_init::@6->mulf_init::@8]
   b8_from_b6:
     // [62] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
-    sta dir
+    sta.z dir
     jmp b8
     // [61] phi from mulf_init::@6 to mulf_init::@9 [phi:mulf_init::@6->mulf_init::@9]
   b9_from_b6:
@@ -1919,9 +1919,9 @@ mulf_init: {
     // mulf_init::@8
   b8:
     // [63] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     // [51] phi from mulf_init::@8 to mulf_init::@5 [phi:mulf_init::@8->mulf_init::@5]
   b5_from_b8:
@@ -1933,24 +1933,24 @@ mulf_init: {
     // mulf_init::@2
   b2:
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and c
-    sta _9
+    and.z c
+    sta.z _9
     // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuz1_neq_0_then_la1 
-    lda _9
+    lda.z _9
     cmp #0
     bne b3_from_b2
     jmp b4
     // mulf_init::@4
   b4:
     // [67] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3 -- vbuz1=_inc_vbuz1 
-    inc x_2
+    inc.z x_2
     // [68] (word) mulf_init::sqr#2 ← ++ (word) mulf_init::sqr#4 -- vwuz1=_inc_vwuz1 
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // [69] phi from mulf_init::@2 mulf_init::@4 to mulf_init::@3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3]
   b3_from_b2:
@@ -1961,36 +1961,36 @@ mulf_init: {
     // mulf_init::@3
   b3:
     // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuz1=_lo_vwuz2 
-    lda sqr
-    sta _12
+    lda.z sqr
+    sta.z _12
     // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuz2 
-    lda _12
+    lda.z _12
     ldy #0
     sta (sqr1_lo),y
     // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuz1=_hi_vwuz2 
-    lda sqr+1
-    sta _13
+    lda.z sqr+1
+    sta.z _13
     // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuz2 
-    lda _13
+    lda.z _13
     ldy #0
     sta (sqr1_hi),y
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     // [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 -- vwuz1=vwuz1_plus_vbuz2 
-    lda x_2
+    lda.z x_2
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // [76] (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     // [49] phi from mulf_init::@3 to mulf_init::@1 [phi:mulf_init::@3->mulf_init::@1]
   b1_from_b3:
@@ -2195,9 +2195,9 @@ main: {
   b1_from_b4:
     // [7] phi (byte*) print_char_cursor#16 = (byte*) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
     // main::@1
   b1:
@@ -2238,9 +2238,9 @@ main: {
   b1_from_b6:
     // [7] phi (byte*) print_char_cursor#16 = (const byte*) SCREEN#0 [phi:main::@6->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>SCREEN
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b1
 }
   // print_set_screen
@@ -2258,10 +2258,10 @@ print_set_screen: {
 print_dword: {
     .label dw = $e
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
+    lda.z dw+2
+    sta.z print_word.w
+    lda.z dw+3
+    sta.z print_word.w+1
     // [21] call print_word 
     // [25] phi from print_dword to print_word [phi:print_dword->print_word]
   print_word_from_print_dword:
@@ -2272,10 +2272,10 @@ print_dword: {
     // print_dword::@1
   b1:
     // [22] (word) print_word::w#1 ← < (dword) print_dword::dw#0 -- vwuz1=_lo_vduz2 
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
+    lda.z dw
+    sta.z print_word.w
+    lda.z dw+1
+    sta.z print_word.w+1
     // [23] call print_word 
     // [25] phi from print_dword::@1 to print_word [phi:print_dword::@1->print_word]
   print_word_from_b1:
@@ -2294,7 +2294,7 @@ print_dword: {
 print_word: {
     .label w = 2
     // [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuxx=_hi_vwuz1 
-    lda w+1
+    lda.z w+1
     tax
     // [27] call print_byte 
     // [31] phi from print_word to print_byte [phi:print_word->print_byte]
@@ -2306,7 +2306,7 @@ print_word: {
     // print_word::@1
   b1:
     // [28] (byte) print_byte::b#1 ← < (word) print_word::w#2 -- vbuxx=_lo_vwuz1 
-    lda w
+    lda.z w
     tax
     // [29] call print_byte 
     // [31] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
@@ -2367,9 +2367,9 @@ print_char: {
     ldy #0
     sta (print_char_cursor),y
     // [41] (byte*) print_char_cursor#10 ← ++ (byte*) print_char_cursor#27 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     jmp breturn
     // print_char::@return
@@ -2490,13 +2490,13 @@ mulf16u: {
   !:
     // [46] (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR#0) -- vduz1=_deref_pduc1 
     lda memR
-    sta return
+    sta.z return
     lda memR+1
-    sta return+1
+    sta.z return+1
     lda memR+2
-    sta return+2
+    sta.z return+2
     lda memR+3
-    sta return+3
+    sta.z return+3
     jmp breturn
     // mulf16u::@return
   breturn:
@@ -2519,57 +2519,57 @@ mulf_init: {
     ldx #0
     // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi#0+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
     lda #<0
-    sta sqr
+    sta.z sqr
     lda #>0
-    sta sqr+1
+    sta.z sqr+1
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
     lda #0
-    sta c
+    sta.z c
     // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo#0+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
     jmp b1
     // mulf_init::@1
   b1:
     // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo#0+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     // [51] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
   b5_from_b1:
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
-    sta dir
+    sta.z dir
     // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi#0 [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuxx=vbuc1 
     ldx #-1
     // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo#0 [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
     jmp b5
     // mulf_init::@5
   b5:
     // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo#0+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     jmp b7
@@ -2598,14 +2598,14 @@ mulf_init: {
     ldy #0
     sta (sqr2_hi),y
     // [58] (byte*) mulf_init::sqr2_hi#1 ← ++ (byte*) mulf_init::sqr2_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     // [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2 -- vbuxx=vbuxx_plus_vbuz1 
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     // [60] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuxx_neq_0_then_la1 
     cpx #0
@@ -2614,7 +2614,7 @@ mulf_init: {
   b8_from_b6:
     // [62] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
-    sta dir
+    sta.z dir
     jmp b8
     // [61] phi from mulf_init::@6 to mulf_init::@9 [phi:mulf_init::@6->mulf_init::@9]
   b9_from_b6:
@@ -2628,9 +2628,9 @@ mulf_init: {
     // mulf_init::@8
   b8:
     // [63] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     // [51] phi from mulf_init::@8 to mulf_init::@5 [phi:mulf_init::@8->mulf_init::@5]
   b5_from_b8:
@@ -2642,10 +2642,10 @@ mulf_init: {
     // mulf_init::@2
   b2:
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
-    and c
+    and.z c
     // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b3_from_b2
@@ -2655,9 +2655,9 @@ mulf_init: {
     // [67] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3 -- vbuxx=_inc_vbuxx 
     inx
     // [68] (word) mulf_init::sqr#2 ← ++ (word) mulf_init::sqr#4 -- vwuz1=_inc_vwuz1 
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // [69] phi from mulf_init::@2 mulf_init::@4 to mulf_init::@3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3]
   b3_from_b2:
@@ -2668,32 +2668,32 @@ mulf_init: {
     // mulf_init::@3
   b3:
     // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
-    lda sqr
+    lda.z sqr
     // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_lo),y
     // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
-    lda sqr+1
+    lda.z sqr+1
     // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_hi),y
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     // [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // [76] (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     // [49] phi from mulf_init::@3 to mulf_init::@1 [phi:mulf_init::@3->mulf_init::@1]
   b1_from_b3:
@@ -2997,9 +2997,9 @@ main: {
     // [7] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [7] phi (byte*) print_char_cursor#16 = (byte*) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     // main::@1
     // main::@2
   b2:
@@ -3035,9 +3035,9 @@ main: {
     // [7] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
     // [7] phi (byte*) print_char_cursor#16 = (const byte*) SCREEN#0 [phi:main::@6->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>SCREEN
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b2
 }
   // print_set_screen
@@ -3055,10 +3055,10 @@ print_dword: {
     .label dw = $e
     // print_word(>dw)
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
+    lda.z dw+2
+    sta.z print_word.w
+    lda.z dw+3
+    sta.z print_word.w+1
     // [21] call print_word 
     // [25] phi from print_dword to print_word [phi:print_dword->print_word]
     // [25] phi (byte*) print_char_cursor#34 = (byte*) print_char_cursor#16 [phi:print_dword->print_word#0] -- register_copy 
@@ -3067,10 +3067,10 @@ print_dword: {
     // print_dword::@1
     // print_word(<dw)
     // [22] (word) print_word::w#1 ← < (dword) print_dword::dw#0 -- vwuz1=_lo_vduz2 
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
+    lda.z dw
+    sta.z print_word.w
+    lda.z dw+1
+    sta.z print_word.w+1
     // [23] call print_word 
     // [25] phi from print_dword::@1 to print_word [phi:print_dword::@1->print_word]
     // [25] phi (byte*) print_char_cursor#34 = (byte*) print_char_cursor#10 [phi:print_dword::@1->print_word#0] -- register_copy 
@@ -3088,7 +3088,7 @@ print_word: {
     .label w = 2
     // print_byte(>w)
     // [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuxx=_hi_vwuz1 
-    lda w+1
+    lda.z w+1
     tax
     // [27] call print_byte 
     // [31] phi from print_word to print_byte [phi:print_word->print_byte]
@@ -3098,7 +3098,7 @@ print_word: {
     // print_word::@1
     // print_byte(<w)
     // [28] (byte) print_byte::b#1 ← < (word) print_word::w#2 -- vbuxx=_lo_vwuz1 
-    lda w
+    lda.z w
     tax
     // [29] call print_byte 
     // [31] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
@@ -3158,9 +3158,9 @@ print_char: {
     sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
     // [41] (byte*) print_char_cursor#10 ← ++ (byte*) print_char_cursor#27 -- pbuz1=_inc_pbuz1 
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     // print_char::@return
     // }
@@ -3284,13 +3284,13 @@ mulf16u: {
     // return *memR;
     // [46] (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR#0) -- vduz1=_deref_pduc1 
     lda memR
-    sta return
+    sta.z return
     lda memR+1
-    sta return+1
+    sta.z return+1
     lda memR+2
-    sta return+2
+    sta.z return+2
     lda memR+3
-    sta return+3
+    sta.z return+3
     // mulf16u::@return
     // }
     // [47] return 
@@ -3311,54 +3311,54 @@ mulf_init: {
     ldx #0
     // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi#0+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
     txa
-    sta sqr
-    sta sqr+1
+    sta.z sqr
+    sta.z sqr+1
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
-    sta c
+    sta.z c
     // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo#0+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
     // mulf_init::@1
   b1:
     // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo#0+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     // [51] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
-    sta dir
+    sta.z dir
     // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi#0 [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuxx=vbuc1 
     ldx #-1
     // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo#0 [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
     // mulf_init::@5
   b5:
     // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo#0+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     // mulf_init::@7
@@ -3388,15 +3388,15 @@ mulf_init: {
     sta (sqr2_hi),y
     // *sqr2_hi++ = mulf_sqr1_hi[x_255];
     // [58] (byte*) mulf_init::sqr2_hi#1 ← ++ (byte*) mulf_init::sqr2_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     // x_255 = x_255 + dir
     // [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2 -- vbuxx=vbuxx_plus_vbuz1 
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     // if(x_255==0)
     // [60] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuxx_neq_0_then_la1 
@@ -3405,7 +3405,7 @@ mulf_init: {
     // [62] phi from mulf_init::@6 to mulf_init::@8 [phi:mulf_init::@6->mulf_init::@8]
     // [62] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
-    sta dir
+    sta.z dir
     // [61] phi from mulf_init::@6 to mulf_init::@9 [phi:mulf_init::@6->mulf_init::@9]
     // mulf_init::@9
     // [62] phi from mulf_init::@9 to mulf_init::@8 [phi:mulf_init::@9->mulf_init::@8]
@@ -3414,9 +3414,9 @@ mulf_init: {
   b8:
     // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [63] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     // [51] phi from mulf_init::@8 to mulf_init::@5 [phi:mulf_init::@8->mulf_init::@5]
     // [51] phi (byte) mulf_init::dir#2 = (byte) mulf_init::dir#4 [phi:mulf_init::@8->mulf_init::@5#0] -- register_copy 
@@ -3428,11 +3428,11 @@ mulf_init: {
   b2:
     // if((++c&1)==0)
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // ++c&1
     // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
-    and c
+    and.z c
     // if((++c&1)==0)
     // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
@@ -3443,9 +3443,9 @@ mulf_init: {
     inx
     // sqr++;
     // [68] (word) mulf_init::sqr#2 ← ++ (word) mulf_init::sqr#4 -- vwuz1=_inc_vwuz1 
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // [69] phi from mulf_init::@2 mulf_init::@4 to mulf_init::@3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3]
     // [69] phi (byte) mulf_init::x_2#2 = (byte) mulf_init::x_2#3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#0] -- register_copy 
@@ -3454,37 +3454,37 @@ mulf_init: {
   b3:
     // <sqr
     // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
-    lda sqr
+    lda.z sqr
     // *sqr1_lo = <sqr
     // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_lo),y
     // >sqr
     // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
-    lda sqr+1
+    lda.z sqr+1
     // *sqr1_hi++ = >sqr
     // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuaa 
     sta (sqr1_hi),y
     // *sqr1_hi++ = >sqr;
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     // sqr = sqr + x_2
     // [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
     // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     // [76] (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#2 -- pbuz1=_inc_pbuz1 
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     // [49] phi from mulf_init::@3 to mulf_init::@1 [phi:mulf_init::@3->mulf_init::@1]
     // [49] phi (byte) mulf_init::x_2#3 = (byte) mulf_init::x_2#2 [phi:mulf_init::@3->mulf_init::@1#0] -- register_copy 

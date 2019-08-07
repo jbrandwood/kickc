@@ -295,7 +295,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -304,18 +304,18 @@ main: {
     // main::@1
   b1:
     // [6] (byte) move_enemy::obj_slot#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta move_enemy.obj_slot
+    lda.z i
+    sta.z move_enemy.obj_slot
     // [7] call move_enemy 
     jsr move_enemy
     jmp b2
     // main::@2
   b2:
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [9] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // main::@return
@@ -329,11 +329,11 @@ move_enemy: {
     .label _0 = 4
     .label obj_slot = 3
     // [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda obj_slot
+    lda.z obj_slot
     asl
-    sta _0
+    sta.z _0
     // [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_minus_1 
-    ldx _0
+    ldx.z _0
     lda OBJ_WORLD_X,x
     bne !+
     dec OBJ_WORLD_X+1,x

@@ -5,9 +5,9 @@ main: {
     lda #0
     ldx #$a
   b3:
-    stx $ff
+    stx.z $ff
     clc
-    adc $ff
+    adc.z $ff
   b2:
     dex
     cpx #0

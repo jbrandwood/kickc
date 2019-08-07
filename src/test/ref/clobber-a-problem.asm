@@ -9,7 +9,7 @@
   .label irq_raster_next = 2
 bbegin:
   lda #0
-  sta irq_raster_next
+  sta.z irq_raster_next
   jsr main
   rts
 main: {
@@ -24,9 +24,9 @@ irq: {
     stx regx+1
     lda #DARK_GREY
     sta BORDERCOL
-    lax irq_raster_next
+    lax.z irq_raster_next
     axs #-[$15]
-    stx irq_raster_next
+    stx.z irq_raster_next
   // Setup next interrupt
     txa
     and #7

@@ -7,27 +7,27 @@
 main: {
     ldx #2
     lda #$80
-    sta euclid.a
+    sta.z euclid.a
     jsr euclid
-    lda euclid.a
+    lda.z euclid.a
     sta SCREEN
     ldx #$45
     lda #$a9
-    sta euclid.a
+    sta.z euclid.a
     jsr euclid
-    lda euclid.a
+    lda.z euclid.a
     sta SCREEN+1
     ldx #$9b
     lda #$ff
-    sta euclid.a
+    sta.z euclid.a
     jsr euclid
-    lda euclid.a
+    lda.z euclid.a
     sta SCREEN+2
     ldx #3
     lda #$63
-    sta euclid.a
+    sta.z euclid.a
     jsr euclid
-    lda euclid.a
+    lda.z euclid.a
     sta SCREEN+3
     rts
 }
@@ -36,22 +36,22 @@ main: {
 euclid: {
     .label a = 2
   b1:
-    cpx a
+    cpx.z a
     bne b2
     rts
   b2:
-    cpx a
+    cpx.z a
     bcc b3
     txa
     sec
-    sbc a
+    sbc.z a
     tax
     jmp b1
   b3:
     txa
     eor #$ff
     sec
-    adc a
-    sta a
+    adc.z a
+    sta.z a
     jmp b1
 }

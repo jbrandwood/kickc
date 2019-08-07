@@ -7,16 +7,16 @@ main: {
     .label bp = b
     .label b = 2
     lda #0
-    sta b
+    sta.z b
   b1:
     lda bp
     clc
     adc #1
-    ldy b
+    ldy.z b
     sta SCREEN,y
-    inc b
+    inc.z b
     lda #$b
-    cmp b
+    cmp.z b
     bne b1
     rts
 }

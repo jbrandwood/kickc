@@ -16,45 +16,45 @@ testLong: {
     .const u = $222e0
     .const n = -$222e0
     .const s = -$222e0
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<u
-    sta print_dword.dw
+    sta.z print_dword.dw
     lda #>u
-    sta print_dword.dw+1
+    sta.z print_dword.dw+1
     lda #<u>>$10
-    sta print_dword.dw+2
+    sta.z print_dword.dw+2
     lda #>u>>$10
-    sta print_dword.dw+3
+    sta.z print_dword.dw+3
     jsr print_dword
     lda #' '
     jsr print_char
     lda #<n
-    sta print_sdword.dw
+    sta.z print_sdword.dw
     lda #>n
-    sta print_sdword.dw+1
+    sta.z print_sdword.dw+1
     lda #<n>>$10
-    sta print_sdword.dw+2
+    sta.z print_sdword.dw+2
     lda #>n>>$10
-    sta print_sdword.dw+3
+    sta.z print_sdword.dw+3
     jsr print_sdword
     lda #' '
     jsr print_char
     lda #<s
-    sta print_sdword.dw
+    sta.z print_sdword.dw
     lda #>s
-    sta print_sdword.dw+1
+    sta.z print_sdword.dw+1
     lda #<s>>$10
-    sta print_sdword.dw+2
+    sta.z print_sdword.dw+2
     lda #>s>>$10
-    sta print_sdword.dw+3
+    sta.z print_sdword.dw+3
     jsr print_sdword
     jsr print_ln
     rts
@@ -66,17 +66,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -85,7 +85,7 @@ print_ln: {
 // print_sdword(signed dword zeropage(2) dw)
 print_sdword: {
     .label dw = 2
-    lda dw+3
+    lda.z dw+3
     bmi b1
     lda #' '
     jsr print_char
@@ -96,22 +96,22 @@ print_sdword: {
     lda #'-'
     jsr print_char
     sec
-    lda dw
+    lda.z dw
     eor #$ff
     adc #0
-    sta dw
-    lda dw+1
+    sta.z dw
+    lda.z dw+1
     eor #$ff
     adc #0
-    sta dw+1
-    lda dw+2
+    sta.z dw+1
+    lda.z dw+2
     eor #$ff
     adc #0
-    sta dw+2
-    lda dw+3
+    sta.z dw+2
+    lda.z dw+3
     eor #$ff
     adc #0
-    sta dw+3
+    sta.z dw+3
     jmp b2
 }
 // Print a single char
@@ -119,9 +119,9 @@ print_sdword: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -129,15 +129,15 @@ print_char: {
 // print_dword(dword zeropage(2) dw)
 print_dword: {
     .label dw = 2
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
+    lda.z dw+2
+    sta.z print_word.w
+    lda.z dw+3
+    sta.z print_word.w+1
     jsr print_word
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
+    lda.z dw
+    sta.z print_word.w
+    lda.z dw+1
+    sta.z print_word.w+1
     jsr print_word
     rts
 }
@@ -145,10 +145,10 @@ print_dword: {
 // print_word(word zeropage(8) w)
 print_word: {
     .label w = 8
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -184,13 +184,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -198,33 +198,33 @@ testInt: {
     .const u = $578
     .const n = -$578
     .const s = -$578
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<u
-    sta print_word.w
+    sta.z print_word.w
     lda #>u
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #' '
     jsr print_char
     lda #<n
-    sta print_sword.w
+    sta.z print_sword.w
     lda #>n
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #' '
     jsr print_char
     lda #<s
-    sta print_sword.w
+    sta.z print_sword.w
     lda #>s
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     jsr print_sword
     jsr print_ln
     rts
@@ -235,7 +235,7 @@ testInt: {
 // print_sword(signed word zeropage(8) w)
 print_sword: {
     .label w = 8
-    lda w+1
+    lda.z w+1
     bmi b1
     lda #' '
     jsr print_char
@@ -247,44 +247,44 @@ print_sword: {
     jsr print_char
     sec
     lda #0
-    sbc w
-    sta w
+    sbc.z w
+    sta.z w
     lda #0
-    sbc w+1
-    sta w+1
+    sbc.z w+1
+    sta.z w+1
     jmp b2
 }
 testShort: {
     .const u = $578
     .const n = -$578
     .const s = -$578
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<u
-    sta print_word.w
+    sta.z print_word.w
     lda #>u
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
     lda #' '
     jsr print_char
     lda #<n
-    sta print_sword.w
+    sta.z print_sword.w
     lda #>n
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     jsr print_sword
     lda #' '
     jsr print_char
     lda #<s
-    sta print_sword.w
+    sta.z print_sword.w
     lda #>s
-    sta print_sword.w+1
+    sta.z print_sword.w+1
     jsr print_sword
     jsr print_ln
     rts
@@ -296,13 +296,13 @@ testChar: {
     .const n = $e
     .label s = -$e
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldx #u
     jsr print_byte
@@ -314,9 +314,9 @@ testChar: {
     jsr print_char
     jsr print_sbyte
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
     rts
     str: .text "char: "
@@ -344,21 +344,21 @@ memset: {
     .label end = str+num
     .label dst = $a
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

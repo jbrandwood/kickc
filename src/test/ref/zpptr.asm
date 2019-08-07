@@ -8,43 +8,43 @@ main: {
     .label i = 3
     .label j = 2
     lda #0
-    sta j
+    sta.z j
   b1:
     lda #0
-    sta i
+    sta.z i
   b2:
     ldx #0
   b3:
-    lda i
+    lda.z i
     clc
     adc #<zpptr
-    sta zpptr2
+    sta.z zpptr2
     lda #>zpptr
     adc #0
-    sta zpptr2+1
-    lda j
-    sta w
+    sta.z zpptr2+1
+    lda.z j
+    sta.z w
     lda #0
-    sta w+1
-    lda zpptr2
+    sta.z w+1
+    lda.z zpptr2
     clc
-    adc w
-    sta zpptr2
-    lda zpptr2+1
-    adc w+1
-    sta zpptr2+1
+    adc.z w
+    sta.z zpptr2
+    lda.z zpptr2+1
+    adc.z w+1
+    sta.z zpptr2+1
     txa
     ldy #0
     sta (zpptr2),y
     inx
     cpx #$b
     bne b3
-    inc i
+    inc.z i
     lda #$b
-    cmp i
+    cmp.z i
     bne b2
-    inc j
-    cmp j
+    inc.z j
+    cmp.z j
     bne b1
     rts
 }

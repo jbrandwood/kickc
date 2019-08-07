@@ -14,9 +14,9 @@ main: {
     .label points_5 = 4
     ldx #0
     lda #<POINTS
-    sta points
+    sta.z points
     lda #>POINTS
-    sta points+1
+    sta.z points+1
   b1:
     txa
     ldy #0
@@ -28,21 +28,21 @@ main: {
     sta (points),y
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points
-    sta points
+    adc.z points
+    sta.z points
     bcc !+
-    inc points+1
+    inc.z points+1
   !:
     inx
     cpx #4
     bne b1
     lda #0
-    sta i1
+    sta.z i1
     tax
     lda #<POINTS
-    sta points_5
+    sta.z points_5
     lda #>POINTS
-    sta points_5+1
+    sta.z points_5+1
   b2:
     ldy #0
     lda (points_5),y
@@ -57,14 +57,14 @@ main: {
     inx
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc points_3
-    sta points_3
+    adc.z points_3
+    sta.z points_3
     bcc !+
-    inc points_3+1
+    inc.z points_3+1
   !:
-    inc i1
+    inc.z i1
     lda #4
-    cmp i1
+    cmp.z i1
     bne b2
     rts
 }

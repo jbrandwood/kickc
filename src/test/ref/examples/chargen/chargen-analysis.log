@@ -2678,9 +2678,9 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::sc#4 = (const byte*) SCREEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     jmp b2
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -2693,20 +2693,20 @@ main: {
     ldy #0
     sta (sc),y
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     jmp b1
   // Clear screen
     // main::@1
   b1:
     // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -2720,14 +2720,14 @@ main: {
   print_str_at_from_b3:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@3->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@3->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [11] phi from main::@3 to main::@17 [phi:main::@3->main::@17]
   b17_from_b3:
@@ -2739,14 +2739,14 @@ main: {
   print_str_at_from_b17:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$a
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str1
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [13] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
   b18_from_b17:
@@ -2758,14 +2758,14 @@ main: {
   print_str_at_from_b18:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$14
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str2
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [15] phi from main::@18 to main::@19 [phi:main::@18->main::@19]
   b19_from_b18:
@@ -2777,20 +2777,20 @@ main: {
   print_str_at_from_b19:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@19->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$1e
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@19->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str3
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [17] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
   b4_from_b19:
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b4
     // [17] phi from main::@20 to main::@4 [phi:main::@20->main::@4]
   b4_from_b20:
@@ -2799,33 +2799,33 @@ main: {
     // main::@4
   b4:
     // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda i
-    sta plot_chargen.pos
+    lda.z i
+    sta.z plot_chargen.pos
     // [19] call plot_chargen 
     // [71] phi from main::@4 to plot_chargen [phi:main::@4->plot_chargen]
   plot_chargen_from_b4:
     // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@4->plot_chargen#0] -- register_copy 
     // [71] phi (byte) plot_chargen::shift#2 = (byte) 0 [phi:main::@4->plot_chargen#1] -- vbuz1=vbuc1 
     lda #0
-    sta plot_chargen.shift
+    sta.z plot_chargen.shift
     // [71] phi (byte) plot_chargen::ch#2 = (byte) $20 [phi:main::@4->plot_chargen#2] -- vbuz1=vbuc1 
     lda #$20
-    sta plot_chargen.ch
+    sta.z plot_chargen.ch
     jsr plot_chargen
     jmp b20
     // main::@20
   b20:
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) 4) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b4_from_b20
     // [22] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
   b5_from_b20:
     // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     jmp b5
     // main::@5
   b5:
@@ -2834,26 +2834,26 @@ main: {
   keyboard_key_pressed_from_b5:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1#0 [phi:main::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F1
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [24] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_2
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_2
     jmp b21
     // main::@21
   b21:
     // [25] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_2
-    sta _15
+    lda.z keyboard_key_pressed.return_2
+    sta.z _15
     // [26] if((byte~) main::$15==(byte) 0) goto main::@28 -- vbuz1_eq_0_then_la1 
-    lda _15
+    lda.z _15
     cmp #0
     beq b28_from_b21
     // [28] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
   b6_from_b21:
     // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     jmp b6
     // [27] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
   b28_from_b21:
@@ -2871,26 +2871,26 @@ main: {
   keyboard_key_pressed_from_b6:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3#0 [phi:main::@6->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F3
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [30] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_10
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_10
     jmp b22
     // main::@22
   b22:
     // [31] (byte~) main::$18 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_10
-    sta _18
+    lda.z keyboard_key_pressed.return_10
+    sta.z _18
     // [32] if((byte~) main::$18==(byte) 0) goto main::@29 -- vbuz1_eq_0_then_la1 
-    lda _18
+    lda.z _18
     cmp #0
     beq b29_from_b22
     // [34] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
   b7_from_b22:
     // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #1
-    sta cur_pos
+    sta.z cur_pos
     jmp b7
     // [33] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
   b29_from_b22:
@@ -2908,26 +2908,26 @@ main: {
   keyboard_key_pressed_from_b7:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5#0 [phi:main::@7->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F5
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [36] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_11
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_11
     jmp b23
     // main::@23
   b23:
     // [37] (byte~) main::$21 ← (byte) keyboard_key_pressed::return#11 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_11
-    sta _21
+    lda.z keyboard_key_pressed.return_11
+    sta.z _21
     // [38] if((byte~) main::$21==(byte) 0) goto main::@30 -- vbuz1_eq_0_then_la1 
-    lda _21
+    lda.z _21
     cmp #0
     beq b30_from_b23
     // [40] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
   b8_from_b23:
     // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #2
-    sta cur_pos
+    sta.z cur_pos
     jmp b8
     // [39] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
   b30_from_b23:
@@ -2945,26 +2945,26 @@ main: {
   keyboard_key_pressed_from_b8:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7#0 [phi:main::@8->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F7
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [42] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_12
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_12
     jmp b24
     // main::@24
   b24:
     // [43] (byte~) main::$24 ← (byte) keyboard_key_pressed::return#12 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_12
-    sta _24
+    lda.z keyboard_key_pressed.return_12
+    sta.z _24
     // [44] if((byte~) main::$24==(byte) 0) goto main::@31 -- vbuz1_eq_0_then_la1 
-    lda _24
+    lda.z _24
     cmp #0
     beq b31_from_b24
     // [46] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
   b9_from_b24:
     // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@24->main::@9#0] -- vbuz1=vbuc1 
     lda #3
-    sta cur_pos
+    sta.z cur_pos
     jmp b9
     // [45] phi from main::@24 to main::@31 [phi:main::@24->main::@31]
   b31_from_b24:
@@ -2982,26 +2982,26 @@ main: {
   keyboard_key_pressed_from_b9:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT#0 [phi:main::@9->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_LSHIFT
-    sta keyboard_key_pressed.key
+    sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
     // [48] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_13
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_13
     jmp b25
     // main::@25
   b25:
     // [49] (byte~) main::$27 ← (byte) keyboard_key_pressed::return#13 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_13
-    sta _27
+    lda.z keyboard_key_pressed.return_13
+    sta.z _27
     // [50] if((byte~) main::$27!=(byte) 0) goto main::@10 -- vbuz1_neq_0_then_la1 
-    lda _27
+    lda.z _27
     cmp #0
     bne b10_from_b25
     // [52] phi from main::@25 to main::@11 [phi:main::@25->main::@11]
   b11_from_b25:
     // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@25->main::@11#0] -- vbuz1=vbuc1 
     lda #0
-    sta shift
+    sta.z shift
     jmp b11
     // [51] phi from main::@25 to main::@10 [phi:main::@25->main::@10]
   b10_from_b25:
@@ -3012,7 +3012,7 @@ main: {
   b11_from_b10:
     // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #1
-    sta shift
+    sta.z shift
     jmp b11
     // main::@11
   b11:
@@ -3020,7 +3020,7 @@ main: {
   b12_from_b11:
     // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuz1=vbuc1 
     lda #0
-    sta ch
+    sta.z ch
     jmp b12
   // Check for key presses - and plot char if found
     // [53] phi from main::@14 to main::@12 [phi:main::@14->main::@12]
@@ -3030,43 +3030,43 @@ main: {
     // main::@12
   b12:
     // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
-    lda ch
-    sta keyboard_get_keycode.ch
+    lda.z ch
+    sta.z keyboard_get_keycode.ch
     // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
     // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
-    lda keyboard_get_keycode.return
-    sta keyboard_get_keycode.return_2
+    lda.z keyboard_get_keycode.return
+    sta.z keyboard_get_keycode.return_2
     jmp b26
     // main::@26
   b26:
     // [57] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
-    lda keyboard_get_keycode.return_2
-    sta key
+    lda.z keyboard_get_keycode.return_2
+    sta.z key
     // [58] if((byte) main::key#0==(byte) $3f) goto main::@13 -- vbuz1_eq_vbuc1_then_la1 
     lda #$3f
-    cmp key
+    cmp.z key
     beq b13_from_b26
     jmp b15
     // main::@15
   b15:
     // [59] (byte) keyboard_key_pressed::key#5 ← (byte) main::key#0 -- vbuz1=vbuz2 
-    lda key
-    sta keyboard_key_pressed.key
+    lda.z key
+    sta.z keyboard_key_pressed.key
     // [60] call keyboard_key_pressed 
     // [113] phi from main::@15 to keyboard_key_pressed [phi:main::@15->keyboard_key_pressed]
   keyboard_key_pressed_from_b15:
     // [113] phi (byte) keyboard_key_pressed::key#6 = (byte) keyboard_key_pressed::key#5 [phi:main::@15->keyboard_key_pressed#0] -- register_copy 
     jsr keyboard_key_pressed
     // [61] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_14
+    lda.z keyboard_key_pressed.return
+    sta.z keyboard_key_pressed.return_14
     jmp b27
     // main::@27
   b27:
     // [62] (byte) main::pressed#1 ← (byte) keyboard_key_pressed::return#14 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_14
-    sta pressed
+    lda.z keyboard_key_pressed.return_14
+    sta.z pressed
     // [63] phi from main::@27 to main::@13 [phi:main::@27->main::@13]
   b13_from_b27:
     // [63] phi (byte) main::pressed#2 = (byte) main::pressed#1 [phi:main::@27->main::@13#0] -- register_copy 
@@ -3075,26 +3075,26 @@ main: {
   b13_from_b26:
     // [63] phi (byte) main::pressed#2 = (byte) 0 [phi:main::@26->main::@13#0] -- vbuz1=vbuc1 
     lda #0
-    sta pressed
+    sta.z pressed
     jmp b13
     // main::@13
   b13:
     // [64] if((byte) main::pressed#2==(byte) 0) goto main::@14 -- vbuz1_eq_0_then_la1 
-    lda pressed
+    lda.z pressed
     cmp #0
     beq b14
     jmp b16
     // main::@16
   b16:
     // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuz1=vbuz2 
-    lda cur_pos
-    sta plot_chargen.pos
+    lda.z cur_pos
+    sta.z plot_chargen.pos
     // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuz1=vbuz2 
-    lda ch
-    sta plot_chargen.ch
+    lda.z ch
+    sta.z plot_chargen.ch
     // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuz1=vbuz2 
-    lda shift
-    sta plot_chargen.shift
+    lda.z shift
+    sta.z plot_chargen.shift
     // [68] call plot_chargen 
     // [71] phi from main::@16 to plot_chargen [phi:main::@16->plot_chargen]
   plot_chargen_from_b16:
@@ -3106,10 +3106,10 @@ main: {
     // main::@14
   b14:
     // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
-    inc ch
+    inc.z ch
     // [70] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
-    cmp ch
+    cmp.z ch
     bne b12_from_b14
     // [22] phi from main::@14 to main::@5 [phi:main::@14->main::@5]
   b5_from_b14:
@@ -3144,31 +3144,31 @@ plot_chargen: {
     // asm { sei  }
     sei
     // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuz2 
-    lda ch
-    sta _0
+    lda.z ch
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz2_rol_3 
-    lda _0
+    lda.z _0
     asl
-    sta _1
-    lda _0+1
+    sta.z _1
+    lda.z _0+1
     rol
-    sta _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    sta.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda _1
+    lda.z _1
     clc
     adc #<CHARGEN
-    sta chargen
-    lda _1+1
+    sta.z chargen
+    lda.z _1+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuz1_eq_0_then_la1 
-    lda shift
+    lda.z shift
     cmp #0
     beq b1_from_plot_chargen
     jmp b2
@@ -3176,12 +3176,12 @@ plot_chargen: {
   b2:
     // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<$800
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>$800
-    sta chargen+1
+    sta.z chargen+1
     // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
   b1_from_plot_chargen:
   b1_from_b2:
@@ -3193,39 +3193,39 @@ plot_chargen: {
     lda #$32
     sta PROCPORT
     // [80] (byte) mul8u::a#1 ← (byte) plot_chargen::pos#2 -- vbuz1=vbuz2 
-    lda pos
-    sta mul8u.a
+    lda.z pos
+    sta.z mul8u.a
     // [81] call mul8u 
     // [103] phi from plot_chargen::@1 to mul8u [phi:plot_chargen::@1->mul8u]
   mul8u_from_b1:
     jsr mul8u
     // [82] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
-    lda mul8u.res
-    sta mul8u.return
-    lda mul8u.res+1
-    sta mul8u.return+1
+    lda.z mul8u.res
+    sta.z mul8u.return
+    lda.z mul8u.res+1
+    sta.z mul8u.return+1
     jmp b9
     // plot_chargen::@9
   b9:
     // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
-    lda mul8u.return
-    sta _7
-    lda mul8u.return+1
-    sta _7+1
+    lda.z mul8u.return
+    sta.z _7
+    lda.z mul8u.return+1
+    sta.z _7+1
     // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz2 
-    lda _7
+    lda.z _7
     clc
     adc #<SCREEN+$28+1
-    sta sc
-    lda _7+1
+    sta.z sc
+    lda.z _7+1
     adc #>SCREEN+$28+1
-    sta sc+1
+    sta.z sc+1
     // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
   b3_from_b9:
     // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
     // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b3
     // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
   b3_from_b7:
@@ -3235,14 +3235,14 @@ plot_chargen: {
     // plot_chargen::@3
   b3:
     // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
   b4_from_b3:
     // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [87] phi (byte*) plot_chargen::sc#3 = (byte*) plot_chargen::sc#7 [phi:plot_chargen::@3->plot_chargen::@4#1] -- register_copy 
     // [87] phi (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#0 [phi:plot_chargen::@3->plot_chargen::@4#2] -- register_copy 
     jmp b4
@@ -3256,10 +3256,10 @@ plot_chargen: {
   b4:
     // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and bits
-    sta _10
+    and.z bits
+    sta.z _10
     // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuz1_eq_0_then_la1 
-    lda _10
+    lda.z _10
     cmp #0
     beq b5_from_b4
     // [90] phi from plot_chargen::@4 to plot_chargen::@6 [phi:plot_chargen::@4->plot_chargen::@6]
@@ -3271,32 +3271,32 @@ plot_chargen: {
   b5_from_b6:
     // [91] phi (byte) plot_chargen::c#2 = (byte) '*' [phi:plot_chargen::@6->plot_chargen::@5#0] -- vbuz1=vbuc1 
     lda #'*'
-    sta c
+    sta.z c
     jmp b5
     // [91] phi from plot_chargen::@4 to plot_chargen::@5 [phi:plot_chargen::@4->plot_chargen::@5]
   b5_from_b4:
     // [91] phi (byte) plot_chargen::c#2 = (byte) '.' [phi:plot_chargen::@4->plot_chargen::@5#0] -- vbuz1=vbuc1 
     lda #'.'
-    sta c
+    sta.z c
     jmp b5
     // plot_chargen::@5
   b5:
     // [92] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 -- _deref_pbuz1=vbuz2 
-    lda c
+    lda.z c
     ldy #0
     sta (sc),y
     // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp x
+    cmp.z x
     bne b4_from_b5
     jmp b7
     // plot_chargen::@7
@@ -3304,16 +3304,16 @@ plot_chargen: {
     // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b3_from_b7
     jmp b8
     // plot_chargen::@8
@@ -3343,20 +3343,20 @@ mul8u: {
   b1_from_mul8u:
     // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
   b1:
     // [105] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     cmp #0
     bne b2
     jmp breturn
@@ -3368,23 +3368,23 @@ mul8u: {
   b2:
     // [107] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and a
-    sta _1
+    and.z a
+    sta.z _1
     // [108] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3_from_b2
     jmp b4
     // mul8u::@4
   b4:
     // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -3393,10 +3393,10 @@ mul8u: {
     // mul8u::@3
   b3:
     // [111] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr a
+    lsr.z a
     // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -3424,33 +3424,33 @@ keyboard_key_pressed: {
     .label return_14 = $2b
     // [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
-    and key
-    sta colidx
+    and.z key
+    sta.z colidx
     // [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
-    lda key
+    lda.z key
     lsr
     lsr
     lsr
-    sta rowidx
+    sta.z rowidx
     // [116] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
-    lda rowidx
-    sta keyboard_matrix_read.rowid
+    lda.z rowidx
+    sta.z keyboard_matrix_read.rowid
     // [117] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [118] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return
-    sta keyboard_matrix_read.return_2
+    lda.z keyboard_matrix_read.return
+    sta.z keyboard_matrix_read.return_2
     jmp b1
     // keyboard_key_pressed::@1
   b1:
     // [119] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return_2
-    sta _2
+    lda.z keyboard_matrix_read.return_2
+    sta.z _2
     // [120] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
-    lda _2
-    ldy colidx
+    lda.z _2
+    ldy.z colidx
     and keyboard_matrix_col_bitmask,y
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_key_pressed::@return
   breturn:
@@ -3469,13 +3469,13 @@ keyboard_matrix_read: {
     .label rowid = $38
     .label return_2 = $39
     // [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
-    ldy rowid
+    ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
     // [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_matrix_read::@return
   breturn:
@@ -3493,9 +3493,9 @@ keyboard_get_keycode: {
     .label ch = $28
     .label return_2 = $29
     // [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy ch
+    ldy.z ch
     lda keyboard_char_keycodes,y
-    sta return
+    sta.z return
     jmp breturn
     // keyboard_get_keycode::@return
   breturn:
@@ -3534,14 +3534,14 @@ print_str_at: {
     ldy #0
     sta (at),y
     // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
-    inc at
+    inc.z at
     bne !+
-    inc at+1
+    inc.z at+1
   !:
     // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1_from_b2
 }
@@ -3842,9 +3842,9 @@ main: {
   b2_from_main:
     // [5] phi (byte*) main::sc#4 = (const byte*) SCREEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     jmp b2
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -3857,20 +3857,20 @@ main: {
     ldy #0
     sta (sc),y
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     jmp b1
   // Clear screen
     // main::@1
   b1:
     // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2_from_b1
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2_from_b1
   !:
@@ -3884,14 +3884,14 @@ main: {
   print_str_at_from_b3:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@3->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@3->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [11] phi from main::@3 to main::@17 [phi:main::@3->main::@17]
   b17_from_b3:
@@ -3903,14 +3903,14 @@ main: {
   print_str_at_from_b17:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$a
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str1
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [13] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
   b18_from_b17:
@@ -3922,14 +3922,14 @@ main: {
   print_str_at_from_b18:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$14
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str2
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [15] phi from main::@18 to main::@19 [phi:main::@18->main::@19]
   b19_from_b18:
@@ -3941,20 +3941,20 @@ main: {
   print_str_at_from_b19:
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@19->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$1e
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@19->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str3
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [17] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
   b4_from_b19:
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b4
     // [17] phi from main::@20 to main::@4 [phi:main::@20->main::@4]
   b4_from_b20:
@@ -3963,7 +3963,7 @@ main: {
     // main::@4
   b4:
     // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
-    ldy i
+    ldy.z i
     // [19] call plot_chargen 
     // [71] phi from main::@4 to plot_chargen [phi:main::@4->plot_chargen]
   plot_chargen_from_b4:
@@ -3977,16 +3977,16 @@ main: {
     // main::@20
   b20:
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) 4) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b4_from_b20
     // [22] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
   b5_from_b20:
     // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     jmp b5
     // main::@5
   b5:
@@ -4008,7 +4008,7 @@ main: {
   b6_from_b21:
     // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     jmp b6
     // [27] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
   b28_from_b21:
@@ -4039,7 +4039,7 @@ main: {
   b7_from_b22:
     // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #1
-    sta cur_pos
+    sta.z cur_pos
     jmp b7
     // [33] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
   b29_from_b22:
@@ -4070,7 +4070,7 @@ main: {
   b8_from_b23:
     // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #2
-    sta cur_pos
+    sta.z cur_pos
     jmp b8
     // [39] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
   b30_from_b23:
@@ -4101,7 +4101,7 @@ main: {
   b9_from_b24:
     // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@24->main::@9#0] -- vbuz1=vbuc1 
     lda #3
-    sta cur_pos
+    sta.z cur_pos
     jmp b9
     // [45] phi from main::@24 to main::@31 [phi:main::@24->main::@31]
   b31_from_b24:
@@ -4132,7 +4132,7 @@ main: {
   b11_from_b25:
     // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@25->main::@11#0] -- vbuz1=vbuc1 
     lda #0
-    sta shift
+    sta.z shift
     jmp b11
     // [51] phi from main::@25 to main::@10 [phi:main::@25->main::@10]
   b10_from_b25:
@@ -4143,7 +4143,7 @@ main: {
   b11_from_b10:
     // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #1
-    sta shift
+    sta.z shift
     jmp b11
     // main::@11
   b11:
@@ -4151,7 +4151,7 @@ main: {
   b12_from_b11:
     // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuz1=vbuc1 
     lda #0
-    sta ch
+    sta.z ch
     jmp b12
   // Check for key presses - and plot char if found
     // [53] phi from main::@14 to main::@12 [phi:main::@14->main::@12]
@@ -4161,7 +4161,7 @@ main: {
     // main::@12
   b12:
     // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
-    ldx ch
+    ldx.z ch
     // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
     // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
@@ -4205,11 +4205,11 @@ main: {
     // main::@16
   b16:
     // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
-    ldy cur_pos
+    ldy.z cur_pos
     // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
-    lda ch
+    lda.z ch
     // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
-    ldx shift
+    ldx.z shift
     // [68] call plot_chargen 
     // [71] phi from main::@16 to plot_chargen [phi:main::@16->plot_chargen]
   plot_chargen_from_b16:
@@ -4221,10 +4221,10 @@ main: {
     // main::@14
   b14:
     // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
-    inc ch
+    inc.z ch
     // [70] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
-    cmp ch
+    cmp.z ch
     bne b12_from_b14
     // [22] phi from main::@14 to main::@5 [phi:main::@14->main::@5]
   b5_from_b14:
@@ -4253,24 +4253,24 @@ plot_chargen: {
     // asm { sei  }
     sei
     // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
     cpx #0
     beq b1_from_plot_chargen
@@ -4279,12 +4279,12 @@ plot_chargen: {
   b2:
     // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<$800
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>$800
-    sta chargen+1
+    sta.z chargen+1
     // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
   b1_from_plot_chargen:
   b1_from_b2:
@@ -4309,18 +4309,18 @@ plot_chargen: {
     // [83] (word~) plot_chargen::$7 ← (word) mul8u::return#2
     // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda sc
+    lda.z sc
     adc #<SCREEN+$28+1
-    sta sc
-    lda sc+1
+    sta.z sc
+    lda.z sc+1
     adc #>SCREEN+$28+1
-    sta sc+1
+    sta.z sc+1
     // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
   b3_from_b9:
     // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
     // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b3
     // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
   b3_from_b7:
@@ -4330,9 +4330,9 @@ plot_chargen: {
     // plot_chargen::@3
   b3:
     // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
   b4_from_b3:
     // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
@@ -4350,7 +4350,7 @@ plot_chargen: {
   b4:
     // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
-    and bits
+    and.z bits
     // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5_from_b4
@@ -4375,12 +4375,12 @@ plot_chargen: {
     ldy #0
     sta (sc),y
     // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
     inx
     // [96] if((byte) plot_chargen::x#1!=(byte) 8) goto plot_chargen::@4 -- vbuxx_neq_vbuc1_then_la1 
@@ -4392,16 +4392,16 @@ plot_chargen: {
     // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
     // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b3_from_b7
     jmp b8
     // plot_chargen::@8
@@ -4429,14 +4429,14 @@ mul8u: {
   b1_from_mul8u:
     // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
@@ -4461,13 +4461,13 @@ mul8u: {
     // mul8u::@4
   b4:
     // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -4480,8 +4480,8 @@ mul8u: {
     lsr
     tax
     // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -4589,14 +4589,14 @@ print_str_at: {
     ldy #0
     sta (at),y
     // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
-    inc at
+    inc.z at
     bne !+
-    inc at+1
+    inc.z at+1
   !:
     // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1_from_b2
 }
@@ -5237,9 +5237,9 @@ main: {
     // [5] phi from main to main::@2 [phi:main->main::@2]
     // [5] phi (byte*) main::sc#4 = (const byte*) SCREEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
-    sta sc
+    sta.z sc
     lda #>SCREEN
-    sta sc+1
+    sta.z sc+1
     // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [5] phi (byte*) main::sc#4 = (byte*) main::sc#1 [phi:main::@1->main::@2#0] -- register_copy 
     // main::@2
@@ -5251,18 +5251,18 @@ main: {
     sta (sc),y
     // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
     // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#4 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
   // Clear screen
     // main::@1
     // [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda sc+1
+    lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2
     bne !+
-    lda sc
+    lda.z sc
     cmp #<SCREEN+$3e8
     bcc b2
   !:
@@ -5273,14 +5273,14 @@ main: {
     // [127] phi from main::@3 to print_str_at [phi:main::@3->print_str_at]
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1 [phi:main::@3->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str [phi:main::@3->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [11] phi from main::@3 to main::@17 [phi:main::@3->main::@17]
     // main::@17
@@ -5289,14 +5289,14 @@ main: {
     // [127] phi from main::@17 to print_str_at [phi:main::@17->print_str_at]
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $a [phi:main::@17->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$a
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$a
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str1 [phi:main::@17->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str1
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str1
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [13] phi from main::@17 to main::@18 [phi:main::@17->main::@18]
     // main::@18
@@ -5305,14 +5305,14 @@ main: {
     // [127] phi from main::@18 to print_str_at [phi:main::@18->print_str_at]
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $14 [phi:main::@18->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$14
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$14
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str2 [phi:main::@18->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str2
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str2
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [15] phi from main::@18 to main::@19 [phi:main::@18->main::@19]
     // main::@19
@@ -5321,26 +5321,26 @@ main: {
     // [127] phi from main::@19 to print_str_at [phi:main::@19->print_str_at]
     // [127] phi (byte*) print_str_at::at#7 = (const byte*) SCREEN#0+(byte) 1+(byte) $1e [phi:main::@19->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+1+$1e
-    sta print_str_at.at
+    sta.z print_str_at.at
     lda #>SCREEN+1+$1e
-    sta print_str_at.at+1
+    sta.z print_str_at.at+1
     // [127] phi (byte*) print_str_at::str#7 = (const string) main::str3 [phi:main::@19->print_str_at#1] -- pbuz1=pbuc1 
     lda #<str3
-    sta print_str_at.str
+    sta.z print_str_at.str
     lda #>str3
-    sta print_str_at.str+1
+    sta.z print_str_at.str+1
     jsr print_str_at
     // [17] phi from main::@19 to main::@4 [phi:main::@19->main::@4]
     // [17] phi (byte) main::i#2 = (byte) 0 [phi:main::@19->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [17] phi from main::@20 to main::@4 [phi:main::@20->main::@4]
     // [17] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@20->main::@4#0] -- register_copy 
     // main::@4
   b4:
     // plot_chargen(i, $20, 0)
     // [18] (byte) plot_chargen::pos#0 ← (byte) main::i#2 -- vbuyy=vbuz1 
-    ldy i
+    ldy.z i
     // [19] call plot_chargen 
     // [71] phi from main::@4 to plot_chargen [phi:main::@4->plot_chargen]
     // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#0 [phi:main::@4->plot_chargen#0] -- register_copy 
@@ -5352,15 +5352,15 @@ main: {
     // main::@20
     // for(byte i : 0..3 )
     // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [21] if((byte) main::i#1!=(byte) 4) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
-    cmp i
+    cmp.z i
     bne b4
     // [22] phi from main::@20 to main::@5 [phi:main::@20->main::@5]
     // [22] phi (byte) main::cur_pos#24 = (byte) 0 [phi:main::@20->main::@5#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     // main::@5
   b5:
     // keyboard_key_pressed(KEY_F1)
@@ -5380,7 +5380,7 @@ main: {
     // [28] phi from main::@21 to main::@6 [phi:main::@21->main::@6]
     // [28] phi (byte) main::cur_pos#22 = (byte) 0 [phi:main::@21->main::@6#0] -- vbuz1=vbuc1 
     lda #0
-    sta cur_pos
+    sta.z cur_pos
     // [27] phi from main::@21 to main::@28 [phi:main::@21->main::@28]
     // main::@28
     // [28] phi from main::@28 to main::@6 [phi:main::@28->main::@6]
@@ -5404,7 +5404,7 @@ main: {
     // [34] phi from main::@22 to main::@7 [phi:main::@22->main::@7]
     // [34] phi (byte) main::cur_pos#20 = (byte) 1 [phi:main::@22->main::@7#0] -- vbuz1=vbuc1 
     lda #1
-    sta cur_pos
+    sta.z cur_pos
     // [33] phi from main::@22 to main::@29 [phi:main::@22->main::@29]
     // main::@29
     // [34] phi from main::@29 to main::@7 [phi:main::@29->main::@7]
@@ -5428,7 +5428,7 @@ main: {
     // [40] phi from main::@23 to main::@8 [phi:main::@23->main::@8]
     // [40] phi (byte) main::cur_pos#18 = (byte) 2 [phi:main::@23->main::@8#0] -- vbuz1=vbuc1 
     lda #2
-    sta cur_pos
+    sta.z cur_pos
     // [39] phi from main::@23 to main::@30 [phi:main::@23->main::@30]
     // main::@30
     // [40] phi from main::@30 to main::@8 [phi:main::@30->main::@8]
@@ -5452,7 +5452,7 @@ main: {
     // [46] phi from main::@24 to main::@9 [phi:main::@24->main::@9]
     // [46] phi (byte) main::cur_pos#11 = (byte) 3 [phi:main::@24->main::@9#0] -- vbuz1=vbuc1 
     lda #3
-    sta cur_pos
+    sta.z cur_pos
     // [45] phi from main::@24 to main::@31 [phi:main::@24->main::@31]
     // main::@31
     // [46] phi from main::@31 to main::@9 [phi:main::@31->main::@9]
@@ -5476,7 +5476,7 @@ main: {
     // [52] phi from main::@25 to main::@11 [phi:main::@25->main::@11]
     // [52] phi (byte) main::shift#9 = (byte) 0 [phi:main::@25->main::@11#0] -- vbuz1=vbuc1 
     lda #0
-    sta shift
+    sta.z shift
     jmp b11
     // [51] phi from main::@25 to main::@10 [phi:main::@25->main::@10]
     // main::@10
@@ -5484,13 +5484,13 @@ main: {
     // [52] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
     // [52] phi (byte) main::shift#9 = (byte) 1 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #1
-    sta shift
+    sta.z shift
     // main::@11
   b11:
     // [53] phi from main::@11 to main::@12 [phi:main::@11->main::@12]
     // [53] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuz1=vbuc1 
     lda #0
-    sta ch
+    sta.z ch
   // Check for key presses - and plot char if found
     // [53] phi from main::@14 to main::@12 [phi:main::@14->main::@12]
     // [53] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@14->main::@12#0] -- register_copy 
@@ -5498,7 +5498,7 @@ main: {
   b12:
     // keyboard_get_keycode(ch)
     // [54] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuxx=vbuz1 
-    ldx ch
+    ldx.z ch
     // [55] call keyboard_get_keycode 
     jsr keyboard_get_keycode
     // [56] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
@@ -5538,11 +5538,11 @@ main: {
     // main::@16
     // plot_chargen(cur_pos, ch, shift)
     // [65] (byte) plot_chargen::pos#1 ← (byte) main::cur_pos#11 -- vbuyy=vbuz1 
-    ldy cur_pos
+    ldy.z cur_pos
     // [66] (byte) plot_chargen::ch#1 ← (byte) main::ch#2 -- vbuaa=vbuz1 
-    lda ch
+    lda.z ch
     // [67] (byte) plot_chargen::shift#1 ← (byte) main::shift#9 -- vbuxx=vbuz1 
-    ldx shift
+    ldx.z shift
     // [68] call plot_chargen 
     // [71] phi from main::@16 to plot_chargen [phi:main::@16->plot_chargen]
     // [71] phi (byte) plot_chargen::pos#2 = (byte) plot_chargen::pos#1 [phi:main::@16->plot_chargen#0] -- register_copy 
@@ -5553,10 +5553,10 @@ main: {
   b14:
     // for( byte ch : 0..$3f)
     // [69] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
-    inc ch
+    inc.z ch
     // [70] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
-    cmp ch
+    cmp.z ch
     bne b12
     // [22] phi from main::@14 to main::@5 [phi:main::@14->main::@5]
     // [22] phi (byte) main::cur_pos#24 = (byte) main::cur_pos#11 [phi:main::@14->main::@5#0] -- register_copy 
@@ -5586,26 +5586,26 @@ plot_chargen: {
     sei
     // (word)ch
     // [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 -- vwuz1=_word_vbuaa 
-    sta _0
+    sta.z _0
     lda #0
-    sta _0+1
+    sta.z _0+1
     // (word)ch*8
     // [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
+    asl.z _1
+    rol.z _1+1
     // chargen = CHARGEN+(word)ch*8
     // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN#0 + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<CHARGEN
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
     // if(shift!=0)
     // [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1 -- vbuxx_eq_0_then_la1 
     cpx #0
@@ -5614,12 +5614,12 @@ plot_chargen: {
     // chargen = chargen + $0800
     // [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda chargen
+    lda.z chargen
     adc #<$800
-    sta chargen
-    lda chargen+1
+    sta.z chargen
+    lda.z chargen+1
     adc #>$800
-    sta chargen+1
+    sta.z chargen+1
     // [78] phi from plot_chargen plot_chargen::@2 to plot_chargen::@1 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1]
     // [78] phi (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#0 [phi:plot_chargen/plot_chargen::@2->plot_chargen::@1#0] -- register_copy 
     // plot_chargen::@1
@@ -5642,17 +5642,17 @@ plot_chargen: {
     // sc = SCREEN+40+1+mul8u(pos, 10)
     // [84] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN#0+(byte) $28+(byte) 1 + (word~) plot_chargen::$7 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda sc
+    lda.z sc
     adc #<SCREEN+$28+1
-    sta sc
-    lda sc+1
+    sta.z sc
+    lda.z sc+1
     adc #>SCREEN+$28+1
-    sta sc+1
+    sta.z sc+1
     // [85] phi from plot_chargen::@9 to plot_chargen::@3 [phi:plot_chargen::@9->plot_chargen::@3]
     // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#0 [phi:plot_chargen::@9->plot_chargen::@3#0] -- register_copy 
     // [85] phi (byte) plot_chargen::y#2 = (byte) 0 [phi:plot_chargen::@9->plot_chargen::@3#1] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [85] phi from plot_chargen::@7 to plot_chargen::@3 [phi:plot_chargen::@7->plot_chargen::@3]
     // [85] phi (byte*) plot_chargen::sc#7 = (byte*) plot_chargen::sc#2 [phi:plot_chargen::@7->plot_chargen::@3#0] -- register_copy 
     // [85] phi (byte) plot_chargen::y#2 = (byte) plot_chargen::y#1 [phi:plot_chargen::@7->plot_chargen::@3#1] -- register_copy 
@@ -5660,9 +5660,9 @@ plot_chargen: {
   b3:
     // bits = chargen[y]
     // [86] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#5 + (byte) plot_chargen::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    ldy y
+    ldy.z y
     lda (chargen),y
-    sta bits
+    sta.z bits
     // [87] phi from plot_chargen::@3 to plot_chargen::@4 [phi:plot_chargen::@3->plot_chargen::@4]
     // [87] phi (byte) plot_chargen::x#2 = (byte) 0 [phi:plot_chargen::@3->plot_chargen::@4#0] -- vbuxx=vbuc1 
     ldx #0
@@ -5677,7 +5677,7 @@ plot_chargen: {
     // bits & $80
     // [88] (byte~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
-    and bits
+    and.z bits
     // if((bits & $80) != 0)
     // [89] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
@@ -5700,13 +5700,13 @@ plot_chargen: {
     sta (sc),y
     // sc++;
     // [93] (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3 -- pbuz1=_inc_pbuz1 
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
     // bits = bits*2
     // [94] (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl bits
+    asl.z bits
     // for(byte x:0..7)
     // [95] (byte) plot_chargen::x#1 ← ++ (byte) plot_chargen::x#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -5718,17 +5718,17 @@ plot_chargen: {
     // [97] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
-    adc sc
-    sta sc
+    adc.z sc
+    sta.z sc
     bcc !+
-    inc sc+1
+    inc.z sc+1
   !:
     // for(byte y:0..7)
     // [98] (byte) plot_chargen::y#1 ← ++ (byte) plot_chargen::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // [99] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp y
+    cmp.z y
     bne b3
     // plot_chargen::@8
     // *PROCPORT = $37
@@ -5754,13 +5754,13 @@ mul8u: {
     // [104] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
     // [104] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [104] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
     // [104] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     // mul8u::@1
   b1:
@@ -5785,13 +5785,13 @@ mul8u: {
     // mul8u::@4
     // res = res + mb
     // [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [110] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
     // [110] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     // mul8u::@3
@@ -5803,8 +5803,8 @@ mul8u: {
     tax
     // mb = mb<<1
     // [112] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [104] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
     // [104] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
     // [104] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
@@ -5911,14 +5911,14 @@ print_str_at: {
     sta (at),y
     // *(at++) = *(str++);
     // [132] (byte*) print_str_at::at#4 ← ++ (byte*) print_str_at::at#5 -- pbuz1=_inc_pbuz1 
-    inc at
+    inc.z at
     bne !+
-    inc at+1
+    inc.z at+1
   !:
     // [133] (byte*) print_str_at::str#4 ← ++ (byte*) print_str_at::str#5 -- pbuz1=_inc_pbuz1 
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }

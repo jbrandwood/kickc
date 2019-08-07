@@ -9,36 +9,36 @@
 main: {
     .label SCREEN = $400
     lda #<0
-    sta w1
-    sta w1+1
+    sta.z w1
+    sta.z w1+1
     jsr incw1
     lda #<0
-    sta w2
-    sta w2+1
+    sta.z w2
+    sta.z w2+1
     jsr incw2
     jsr incw1
     jsr incw2
-    lda w1
+    lda.z w1
     sta SCREEN
-    lda w1+1
+    lda.z w1+1
     sta SCREEN+1
-    lda w2
+    lda.z w2
     sta SCREEN+2*SIZEOF_WORD
-    lda w2+1
+    lda.z w2+1
     sta SCREEN+2*SIZEOF_WORD+1
     rts
 }
 incw2: {
-    inc w2
+    inc.z w2
     bne !+
-    inc w2+1
+    inc.z w2+1
   !:
     rts
 }
 incw1: {
-    inc w1
+    inc.z w1
     bne !+
-    inc w1+1
+    inc.z w1+1
   !:
     rts
 }

@@ -14,17 +14,17 @@ lvaluevar: {
     .const b = 4
     .label screen = 2
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     ldx #2
   b2:
     lda #b
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     inx
     cpx #$a
@@ -35,16 +35,16 @@ rvaluevar: {
     .label screen2 = $400
     .label screen = 2
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     ldx #2
   b2:
     ldy #0
     lda (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     inx
     cpx #$a

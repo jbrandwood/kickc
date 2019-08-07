@@ -6,38 +6,38 @@ main: {
     .label w = 2
     .label sw = 4
     lda #<0
-    sta w
-    sta w+1
+    sta.z w
+    sta.z w+1
   b1:
-    lda w
+    lda.z w
     sta SCREEN
-    lda w+1
+    lda.z w+1
     sta SCREEN+1
-    inc w
+    inc.z w
     bne !+
-    inc w+1
+    inc.z w+1
   !:
-    lda w
+    lda.z w
     bne b1
-    lda w+1
+    lda.z w+1
     bne b1
     lda #<-$7fff
-    sta sw
+    sta.z sw
     lda #>-$7fff
-    sta sw+1
+    sta.z sw+1
   b2:
-    lda sw
+    lda.z sw
     sta SCREEN+3
-    lda sw+1
+    lda.z sw+1
     sta SCREEN+4
-    inc sw
+    inc.z sw
     bne !+
-    inc sw+1
+    inc.z sw+1
   !:
-    lda sw+1
+    lda.z sw+1
     cmp #>$7fff
     bne b2
-    lda sw
+    lda.z sw
     cmp #<$7fff
     bne b2
     rts

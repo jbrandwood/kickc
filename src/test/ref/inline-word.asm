@@ -6,24 +6,24 @@ main: {
     .label w = 3
     .label h = 2
     lda #0
-    sta h
+    sta.z h
   // constant array
   b1:
     ldx #4
   b2:
-    ldy h
+    ldy.z h
     lda his,y
-    sta w+1
-    stx w
+    sta.z w+1
+    stx.z w
     lda #'*'
     ldy #0
     sta (w),y
     inx
     cpx #8
     bne b2
-    inc h
+    inc.z h
     lda #3
-    cmp h
+    cmp.z h
     bne b1
     rts
     his: .byte >SCREEN, >SCREEN+$100, >SCREEN+$200

@@ -233,21 +233,21 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     jmp b1
     // main::@1
   b1:
     // [6] (byte) main::c#0 ← *((byte*) main::nxt#3) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (nxt),y
-    sta c
+    sta.z c
     // [7] if((byte) main::c#0!=(byte) 0) goto main::@2 -- vbuz1_neq_0_then_la1 
-    lda c
+    lda.z c
     cmp #0
     bne b2_from_b1
     jmp b3
@@ -255,14 +255,14 @@ main: {
   b3:
     // [8] (byte) main::c#1 ← *((const byte[]) TEXT#0) -- vbuz1=_deref_pbuc1 
     lda TEXT
-    sta c
+    sta.z c
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
     // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [9] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@3->main::@2#1] -- register_copy 
     jmp b2
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -273,15 +273,15 @@ main: {
     // main::@2
   b2:
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [11] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda c
-    ldy i
+    lda.z c
+    ldy.z i
     sta SCREEN,y
     // [12] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -343,9 +343,9 @@ main: {
     ldx #0
     // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     jmp b1
     // main::@1
   b1:
@@ -365,9 +365,9 @@ main: {
   b2_from_b3:
     // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [9] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@3->main::@2#1] -- register_copy 
     jmp b2
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -383,9 +383,9 @@ main: {
     tya
     sta SCREEN,x
     // [12] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -479,9 +479,9 @@ main: {
     ldx #0
     // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // main::@1
   b1:
     // c = *nxt
@@ -500,9 +500,9 @@ main: {
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
     // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
-    sta nxt
+    sta.z nxt
     lda #>TEXT
-    sta nxt+1
+    sta.z nxt+1
     // [9] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@3->main::@2#1] -- register_copy 
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [9] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 [phi:main::@1->main::@2#0] -- register_copy 
@@ -518,9 +518,9 @@ main: {
     sta SCREEN,x
     // nxt++;
     // [12] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
-    inc nxt
+    inc.z nxt
     bne !+
-    inc nxt+1
+    inc.z nxt+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 

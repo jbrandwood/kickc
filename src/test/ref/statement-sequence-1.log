@@ -252,7 +252,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -261,29 +261,29 @@ main: {
     // main::@1
   b1:
     // [6] (byte) main::c#0 ← (byte) main::i#2 + (byte) 5 -- vbuz1=vbuz2_plus_vbuc1 
-    lax i
+    lax.z i
     axs #-[5]
-    stx c
+    stx.z c
     // [7] (byte~) main::$1 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and i
-    sta _1
+    and.z i
+    sta.z _1
     // [8] if((byte~) main::$1==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3
     jmp b4
     // main::@4
   b4:
     // [9] if((byte) main::i#2<(byte) 5+(byte) 1) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
+    lda.z i
     cmp #5+1
     bcc b2_from_b4
     jmp b3
     // main::@3
   b3:
     // [10] (byte) main::c#1 ← ++ (byte) main::c#0 -- vbuz1=_inc_vbuz1 
-    inc c
+    inc.z c
     // [11] phi from main::@3 main::@4 to main::@2 [phi:main::@3/main::@4->main::@2]
   b2_from_b3:
   b2_from_b4:
@@ -292,14 +292,14 @@ main: {
     // main::@2
   b2:
     // [12] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda c
-    ldy i
+    lda.z c
+    ldy.z i
     sta SCREEN,y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [14] if((byte) main::i#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
-    cmp i
+    cmp.z i
     bne b1_from_b2
     jmp breturn
     // main::@return

@@ -363,12 +363,12 @@ bbegin:
 b1:
   // [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
   lda #<0
-  sta msg
+  sta.z msg
   lda #>0
-  sta msg+1
+  sta.z msg+1
   // [2] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta idx
+  sta.z idx
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -385,9 +385,9 @@ bend:
 main: {
     // [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
     lda #<msg1
-    sta msg
+    sta.z msg
     lda #>msg1
-    sta msg+1
+    sta.z msg+1
     // [7] call do10 
     // [11] phi from main to do10 [phi:main->do10]
   do10_from_main:
@@ -397,9 +397,9 @@ main: {
   b1:
     // [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
     lda #<msg2
-    sta msg
+    sta.z msg
     lda #>msg2
-    sta msg+1
+    sta.z msg+1
     // [9] call do10 
     // [11] phi from main::@1 to do10 [phi:main::@1->do10]
   do10_from_b1:
@@ -417,7 +417,7 @@ do10: {
   b1_from_do10:
     // [12] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
   b1_from_b1:
@@ -428,10 +428,10 @@ do10: {
     // [13] call hello 
     jsr hello
     // [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // do10::@return
@@ -448,7 +448,7 @@ hello: {
     // [18] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
     // [18] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [18] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   b1_from_b1:
@@ -458,16 +458,16 @@ hello: {
     // hello::@1
   b1:
     // [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
-    ldx idx
-    ldy i
+    ldx.z idx
+    ldy.z i
     lda (msg),y
     sta SCREEN,x
     // [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [22] if((byte) 0!=*((byte*) msg#10 + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuz1_derefidx_vbuz2_then_la1 
-    ldy i
+    ldy.z i
     lda (msg),y
     cmp #0
     bne b1_from_b1
@@ -540,12 +540,12 @@ bbegin:
 b1:
   // [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
   lda #<0
-  sta msg
+  sta.z msg
   lda #>0
-  sta msg+1
+  sta.z msg+1
   // [2] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
-  sta idx
+  sta.z idx
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -562,9 +562,9 @@ bend:
 main: {
     // [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
     lda #<msg1
-    sta msg
+    sta.z msg
     lda #>msg1
-    sta msg+1
+    sta.z msg+1
     // [7] call do10 
     // [11] phi from main to do10 [phi:main->do10]
   do10_from_main:
@@ -574,9 +574,9 @@ main: {
   b1:
     // [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
     lda #<msg2
-    sta msg
+    sta.z msg
     lda #>msg2
-    sta msg+1
+    sta.z msg+1
     // [9] call do10 
     // [11] phi from main::@1 to do10 [phi:main::@1->do10]
   do10_from_b1:
@@ -594,7 +594,7 @@ do10: {
   b1_from_do10:
     // [12] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
   b1_from_b1:
@@ -605,10 +605,10 @@ do10: {
     // [13] call hello 
     jsr hello
     // [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
-    cmp i
+    cmp.z i
     bne b1_from_b1
     jmp breturn
     // do10::@return
@@ -634,10 +634,10 @@ hello: {
   b1:
     // [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
     lda (msg),y
-    ldx idx
+    ldx.z idx
     sta SCREEN,x
     // [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // [22] if((byte) 0!=*((byte*) msg#10 + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
@@ -758,11 +758,11 @@ bbegin:
   // msg
   // [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
   lda #<0
-  sta msg
-  sta msg+1
+  sta.z msg
+  sta.z msg+1
   // idx = 0
   // [2] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
-  sta idx
+  sta.z idx
   // [3] phi from @1 to @2 [phi:@1->@2]
   // @2
   // [4] call main 
@@ -775,9 +775,9 @@ main: {
     // msg = msg1
     // [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
     lda #<msg1
-    sta msg
+    sta.z msg
     lda #>msg1
-    sta msg+1
+    sta.z msg+1
     // do10(f)
     // [7] call do10 
     // [11] phi from main to do10 [phi:main->do10]
@@ -786,9 +786,9 @@ main: {
     // msg = msg2
     // [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
     lda #<msg2
-    sta msg
+    sta.z msg
     lda #>msg2
-    sta msg+1
+    sta.z msg+1
     // do10(f)
     // [9] call do10 
     // [11] phi from main::@1 to do10 [phi:main::@1->do10]
@@ -804,7 +804,7 @@ do10: {
     // [12] phi from do10 to do10::@1 [phi:do10->do10::@1]
     // [12] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
     // [12] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
     // do10::@1
@@ -814,10 +814,10 @@ do10: {
     jsr hello
     // for( byte i: 0..9)
     // [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
-    cmp i
+    cmp.z i
     bne b1
     // do10::@return
     // }
@@ -839,11 +839,11 @@ hello: {
     // SCREEN[idx++] = msg[i++]
     // [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
     lda (msg),y
-    ldx idx
+    ldx.z idx
     sta SCREEN,x
     // SCREEN[idx++] = msg[i++];
     // [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
-    inc idx
+    inc.z idx
     // [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // while(msg[i])

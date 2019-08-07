@@ -13,22 +13,22 @@ main: {
     lda #BLACK
     sta BGCOL
     lda #<SCREEN
-    sta memcpy.destination
+    sta.z memcpy.destination
     lda #>SCREEN
-    sta memcpy.destination+1
+    sta.z memcpy.destination+1
     lda #<MEDUSA_SCREEN
-    sta memcpy.source
+    sta.z memcpy.source
     lda #>MEDUSA_SCREEN
-    sta memcpy.source+1
+    sta.z memcpy.source+1
     jsr memcpy
     lda #<COLS
-    sta memcpy.destination
+    sta.z memcpy.destination
     lda #>COLS
-    sta memcpy.destination+1
+    sta.z memcpy.destination+1
     lda #<MEDUSA_COLORS
-    sta memcpy.source
+    sta.z memcpy.source
     lda #>MEDUSA_COLORS
-    sta memcpy.source+1
+    sta.z memcpy.source+1
     jsr memcpy
   b1:
     lda #$e
@@ -45,32 +45,32 @@ memcpy: {
     .label src = 2
     .label source = 2
     .label destination = 4
-    lda source
+    lda.z source
     clc
     adc #<$3e8
-    sta src_end
-    lda source+1
+    sta.z src_end
+    lda.z source+1
     adc #>$3e8
-    sta src_end+1
+    sta.z src_end+1
   b1:
-    lda src+1
-    cmp src_end+1
+    lda.z src+1
+    cmp.z src_end+1
     bne b2
-    lda src
-    cmp src_end
+    lda.z src
+    cmp.z src_end
     bne b2
     rts
   b2:
     ldy #0
     lda (src),y
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    inc src
+    inc.z src
     bne !+
-    inc src+1
+    inc.z src+1
   !:
     jmp b1
 }

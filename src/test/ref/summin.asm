@@ -8,7 +8,7 @@ main: {
     lda #2
     ldy #1
     jsr sum
-    sta s1
+    sta.z s1
     lda #4
     ldy #3
     jsr sum
@@ -16,19 +16,19 @@ main: {
     lda #$d
     ldy #9
     jsr sum
-    sta s3
+    sta.z s3
     txa
     clc
-    adc s1
+    adc.z s1
     clc
-    adc s3
+    adc.z s3
     sta screen
     rts
 }
 // sum(byte register(Y) a, byte register(A) b)
 sum: {
-    sty $ff
+    sty.z $ff
     clc
-    adc $ff
+    adc.z $ff
     rts
 }

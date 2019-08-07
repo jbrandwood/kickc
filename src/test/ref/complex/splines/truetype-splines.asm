@@ -39,7 +39,7 @@ main: {
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
     lda #0
-    sta angle
+    sta.z angle
   b2:
     jsr bitmap_clear
     jsr show_letter
@@ -55,9 +55,9 @@ main: {
     inx
     cpx #$3d
     bne b3
-    lax angle
+    lax.z angle
     axs #-[9]
-    stx angle
+    stx.z angle
     jmp b2
 }
 // show_letter(byte zeropage($12) angle)
@@ -79,138 +79,138 @@ show_letter: {
     .label current_x_10 = $14
     .label current_y_10 = $16
     lda #<0
-    sta current_y
-    sta current_y+1
-    sta current_x
-    sta current_x+1
-    sta i
+    sta.z current_y
+    sta.z current_y+1
+    sta.z current_x
+    sta.z current_x+1
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     asl
     asl
     clc
-    adc i
+    adc.z i
     tax
     lda letter_c+OFFSET_STRUCT_SEGMENT_TO,x
-    sta to_x
+    sta.z to_x
     lda letter_c+OFFSET_STRUCT_SEGMENT_TO+1,x
-    sta to_x+1
+    sta.z to_x+1
     lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta to_y
+    sta.z to_y
     lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta to_y+1
-    lda to_x
+    sta.z to_y+1
+    lda.z to_x
     sec
     sbc #$32
-    sta to_x
-    lda to_x+1
+    sta.z to_x
+    lda.z to_x+1
     sbc #>$32
-    sta to_x+1
-    lda to_y
+    sta.z to_x+1
+    lda.z to_y
     sec
     sbc #<$96
-    sta to_y
-    lda to_y+1
+    sta.z to_y
+    lda.z to_y+1
     sbc #>$96
-    sta to_y+1
-    ldy angle
+    sta.z to_y+1
+    ldy.z angle
     jsr rotate
-    lda to_x_2
+    lda.z to_x_2
     clc
     adc #<$64
-    sta current_x_10
-    lda to_x_2+1
+    sta.z current_x_10
+    lda.z to_x_2+1
     adc #>$64
-    sta current_x_10+1
-    lda to_y_2
+    sta.z current_x_10+1
+    lda.z to_y_2
     clc
     adc #<$64
-    sta current_y_10
-    lda to_y_2+1
+    sta.z current_y_10
+    lda.z to_y_2+1
     adc #>$64
-    sta current_y_10+1
-    lda i
+    sta.z current_y_10+1
+    lda.z i
     asl
     asl
     asl
     clc
-    adc i
+    adc.z i
     tax
     lda letter_c+OFFSET_STRUCT_SEGMENT_VIA,x
-    sta via_x
+    sta.z via_x
     lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+1,x
-    sta via_x+1
+    sta.z via_x+1
     lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta via_y
+    sta.z via_y
     lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta via_y+1
-    lda via_x
+    sta.z via_y+1
+    lda.z via_x
     sec
     sbc #$32
-    sta via_x
-    lda via_x+1
+    sta.z via_x
+    lda.z via_x+1
     sbc #>$32
-    sta via_x+1
-    lda via_y
+    sta.z via_x+1
+    lda.z via_y
     sec
     sbc #<$96
-    sta via_y
-    lda via_y+1
+    sta.z via_y
+    lda.z via_y+1
     sbc #>$96
-    sta via_y+1
-    ldy angle
+    sta.z via_y+1
+    ldy.z angle
     jsr rotate
-    lda segment_via_x
+    lda.z segment_via_x
     clc
     adc #<$64
-    sta segment_via_x
-    lda segment_via_x+1
+    sta.z segment_via_x
+    lda.z segment_via_x+1
     adc #>$64
-    sta segment_via_x+1
-    lda segment_via_y
+    sta.z segment_via_x+1
+    lda.z segment_via_y
     clc
     adc #<$64
-    sta segment_via_y
-    lda segment_via_y+1
+    sta.z segment_via_y
+    lda.z segment_via_y+1
     adc #>$64
-    sta segment_via_y+1
-    lda i
+    sta.z segment_via_y+1
+    lda.z i
     asl
     asl
     asl
     clc
-    adc i
+    adc.z i
     tay
     lda letter_c,y
     cmp #MOVE_TO
     beq b3
     cmp #SPLINE_TO
     beq b2
-    lda current_x_10
-    sta bitmap_line.x2
-    lda current_x_10+1
-    sta bitmap_line.x2+1
-    lda current_y_10
-    sta bitmap_line.y2
-    lda current_y_10+1
-    sta bitmap_line.y2+1
+    lda.z current_x_10
+    sta.z bitmap_line.x2
+    lda.z current_x_10+1
+    sta.z bitmap_line.x2+1
+    lda.z current_y_10
+    sta.z bitmap_line.y2
+    lda.z current_y_10+1
+    sta.z bitmap_line.y2+1
     jsr bitmap_line
   b3:
-    inc i
+    inc.z i
     lda #$16
-    cmp i
+    cmp.z i
     bne b9
     rts
   b9:
-    lda current_x_10
-    sta current_x
-    lda current_x_10+1
-    sta current_x+1
-    lda current_y_10
-    sta current_y
-    lda current_y_10+1
-    sta current_y+1
+    lda.z current_x_10
+    sta.z current_x
+    lda.z current_x_10+1
+    sta.z current_x+1
+    lda.z current_y_10
+    sta.z current_y
+    lda.z current_y_10+1
+    sta.z current_y+1
     jmp b1
   b2:
     jsr spline_8segB
@@ -223,44 +223,44 @@ bitmap_plot_spline_8seg: {
     .label current_y = $e
     .label n = $24
     lda SPLINE_8SEG
-    sta current_x
+    sta.z current_x
     lda SPLINE_8SEG+1
-    sta current_x+1
+    sta.z current_x+1
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y
-    sta current_y
+    sta.z current_y
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1
-    sta current_y+1
+    sta.z current_y+1
     lda #1
-    sta n
+    sta.z n
   b1:
-    lda n
+    lda.z n
     asl
     asl
     tax
     lda SPLINE_8SEG,x
-    sta bitmap_line.x2
+    sta.z bitmap_line.x2
     lda SPLINE_8SEG+1,x
-    sta bitmap_line.x2+1
+    sta.z bitmap_line.x2+1
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta bitmap_line.y2
+    sta.z bitmap_line.y2
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta bitmap_line.y2+1
+    sta.z bitmap_line.y2+1
     jsr bitmap_line
-    lda n
+    lda.z n
     asl
     asl
     tax
     lda SPLINE_8SEG,x
-    sta current_x
+    sta.z current_x
     lda SPLINE_8SEG+1,x
-    sta current_x+1
+    sta.z current_x+1
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta current_y
+    sta.z current_y
     lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta current_y+1
-    inc n
+    sta.z current_y+1
+    inc.z n
     lda #9
-    cmp n
+    cmp.z n
     bne b1
     rts
 }
@@ -279,179 +279,179 @@ bitmap_line: {
     .label y1 = $e
     .label x2 = $20
     .label y2 = $22
-    lda x2
+    lda.z x2
     sec
-    sbc x
-    sta abs_u16.w
-    lda x2+1
-    sbc x+1
-    sta abs_u16.w+1
+    sbc.z x
+    sta.z abs_u16.w
+    lda.z x2+1
+    sbc.z x+1
+    sta.z abs_u16.w+1
     jsr abs_u16
-    lda abs_u16.return
-    sta dx
-    lda abs_u16.return+1
-    sta dx+1
-    lda y2
+    lda.z abs_u16.return
+    sta.z dx
+    lda.z abs_u16.return+1
+    sta.z dx+1
+    lda.z y2
     sec
-    sbc y
-    sta abs_u16.w
-    lda y2+1
-    sbc y+1
-    sta abs_u16.w+1
+    sbc.z y
+    sta.z abs_u16.w
+    lda.z y2+1
+    sbc.z y+1
+    sta.z abs_u16.w+1
     jsr abs_u16
-    lda dx
+    lda.z dx
     bne b1
-    lda dx+1
+    lda.z dx+1
     bne b1
-    lda dy
+    lda.z dy
     bne !+
-    lda dy+1
+    lda.z dy+1
     bne !b4+
     jmp b4
   !b4:
   !:
   b1:
-    lda x2
+    lda.z x2
     sec
-    sbc x
-    sta sgn_u16.w
-    lda x2+1
-    sbc x+1
-    sta sgn_u16.w+1
+    sbc.z x
+    sta.z sgn_u16.w
+    lda.z x2+1
+    sbc.z x+1
+    sta.z sgn_u16.w+1
     jsr sgn_u16
-    lda sgn_u16.return
-    sta sx
-    lda sgn_u16.return+1
-    sta sx+1
-    lda y2
+    lda.z sgn_u16.return
+    sta.z sx
+    lda.z sgn_u16.return+1
+    sta.z sx+1
+    lda.z y2
     sec
-    sbc y
-    sta sgn_u16.w
-    lda y2+1
-    sbc y+1
-    sta sgn_u16.w+1
+    sbc.z y
+    sta.z sgn_u16.w
+    lda.z y2+1
+    sbc.z y+1
+    sta.z sgn_u16.w+1
     jsr sgn_u16
-    lda dy+1
-    cmp dx+1
+    lda.z dy+1
+    cmp.z dx+1
     bcc b2
     bne !+
-    lda dy
-    cmp dx
+    lda.z dy
+    cmp.z dx
     bcc b2
   !:
-    lda dx+1
+    lda.z dx+1
     lsr
-    sta e+1
-    lda dx
+    sta.z e+1
+    lda.z dx
     ror
-    sta e
+    sta.z e
   b6:
-    lda y
+    lda.z y
     tax
     jsr bitmap_plot
-    lda y
+    lda.z y
     clc
-    adc sy
-    sta y
-    lda y+1
-    adc sy+1
-    sta y+1
-    lda e
+    adc.z sy
+    sta.z y
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    lda.z e
     clc
-    adc dx
-    sta e
-    lda e+1
-    adc dx+1
-    sta e+1
-    cmp dy+1
+    adc.z dx
+    sta.z e
+    lda.z e+1
+    adc.z dx+1
+    sta.z e+1
+    cmp.z dy+1
     bne !+
-    lda e
-    cmp dy
+    lda.z e
+    cmp.z dy
     beq b7
   !:
     bcc b7
-    lda x
+    lda.z x
     clc
-    adc sx
-    sta x
-    lda x+1
-    adc sx+1
-    sta x+1
-    lda e
+    adc.z sx
+    sta.z x
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    lda.z e
     sec
-    sbc dy
-    sta e
-    lda e+1
-    sbc dy+1
-    sta e+1
+    sbc.z dy
+    sta.z e
+    lda.z e+1
+    sbc.z dy+1
+    sta.z e+1
   b7:
-    lda y+1
-    cmp y2+1
+    lda.z y+1
+    cmp.z y2+1
     bne b6
-    lda y
-    cmp y2
+    lda.z y
+    cmp.z y2
     bne b6
   b3:
-    lda y
+    lda.z y
     tax
     jsr bitmap_plot
     rts
   b2:
-    lda dy+1
+    lda.z dy+1
     lsr
-    sta e1+1
-    lda dy
+    sta.z e1+1
+    lda.z dy
     ror
-    sta e1
+    sta.z e1
   b9:
-    lda y
+    lda.z y
     tax
     jsr bitmap_plot
-    lda x
+    lda.z x
     clc
-    adc sx
-    sta x
-    lda x+1
-    adc sx+1
-    sta x+1
-    lda e1
+    adc.z sx
+    sta.z x
+    lda.z x+1
+    adc.z sx+1
+    sta.z x+1
+    lda.z e1
     clc
-    adc dy
-    sta e1
-    lda e1+1
-    adc dy+1
-    sta e1+1
-    cmp dx+1
+    adc.z dy
+    sta.z e1
+    lda.z e1+1
+    adc.z dy+1
+    sta.z e1+1
+    cmp.z dx+1
     bne !+
-    lda e1
-    cmp dx
+    lda.z e1
+    cmp.z dx
     beq b10
   !:
     bcc b10
-    lda y
+    lda.z y
     clc
-    adc sy
-    sta y
-    lda y+1
-    adc sy+1
-    sta y+1
-    lda e1
+    adc.z sy
+    sta.z y
+    lda.z y+1
+    adc.z sy+1
+    sta.z y+1
+    lda.z e1
     sec
-    sbc dx
-    sta e1
-    lda e1+1
-    sbc dx+1
-    sta e1+1
+    sbc.z dx
+    sta.z e1
+    lda.z e1+1
+    sbc.z dx+1
+    sta.z e1+1
   b10:
-    lda x+1
-    cmp x2+1
+    lda.z x+1
+    cmp.z x2+1
     bne b9
-    lda x
-    cmp x2
+    lda.z x
+    cmp.z x2
     bne b9
     jmp b3
   b4:
-    lda y
+    lda.z y
     tax
     jsr bitmap_plot
     rts
@@ -463,23 +463,23 @@ bitmap_plot: {
     .label plotter = $1c
     .label x = $c
     lda bitmap_plot_yhi,x
-    sta plotter+1
+    sta.z plotter+1
     lda bitmap_plot_ylo,x
-    sta plotter
-    lda x
+    sta.z plotter
+    lda.z x
     and #<$fff8
-    sta _1
-    lda x+1
+    sta.z _1
+    lda.z x+1
     and #>$fff8
-    sta _1+1
-    lda plotter
+    sta.z _1+1
+    lda.z plotter
     clc
-    adc _1
-    sta plotter
-    lda plotter+1
-    adc _1+1
-    sta plotter+1
-    lda x
+    adc.z _1
+    sta.z plotter
+    lda.z plotter+1
+    adc.z _1+1
+    sta.z plotter+1
+    lda.z x
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -493,20 +493,20 @@ bitmap_plot: {
 sgn_u16: {
     .label w = $10
     .label return = 4
-    lda w+1
+    lda.z w+1
     and #$80
     cmp #0
     bne b1
     lda #<1
-    sta return
+    sta.z return
     lda #>1
-    sta return+1
+    sta.z return+1
     rts
   b1:
     lda #<-1
-    sta return
+    sta.z return
     lda #>-1
-    sta return+1
+    sta.z return+1
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
@@ -514,7 +514,7 @@ sgn_u16: {
 abs_u16: {
     .label w = 6
     .label return = 6
-    lda w+1
+    lda.z w+1
     and #$80
     cmp #0
     bne b1
@@ -522,11 +522,11 @@ abs_u16: {
   b1:
     sec
     lda #0
-    sbc return
-    sta return
+    sbc.z return
+    sta.z return
     lda #0
-    sbc return+1
-    sta return+1
+    sbc.z return+1
+    sta.z return+1
     rts
 }
 // Generate a 8-segment quadratic spline using 16-bit fixed point 1/64-format math (6 decimal bits).
@@ -568,264 +568,264 @@ spline_8segB: {
     .label p1_y = $22
     .label p2_x = $14
     .label p2_y = $16
-    lda p1_x
+    lda.z p1_x
     asl
-    sta _0
-    lda p1_x+1
+    sta.z _0
+    lda.z p1_x+1
     rol
-    sta _0+1
-    lda p2_x
+    sta.z _0+1
+    lda.z p2_x
     sec
-    sbc _1
-    sta _1
-    lda p2_x+1
-    sbc _1+1
-    sta _1+1
-    lda a_x
+    sbc.z _1
+    sta.z _1
+    lda.z p2_x+1
+    sbc.z _1+1
+    sta.z _1+1
+    lda.z a_x
     clc
-    adc p0_x
-    sta a_x
-    lda a_x+1
-    adc p0_x+1
-    sta a_x+1
-    lda p1_y
+    adc.z p0_x
+    sta.z a_x
+    lda.z a_x+1
+    adc.z p0_x+1
+    sta.z a_x+1
+    lda.z p1_y
     asl
-    sta _3
-    lda p1_y+1
+    sta.z _3
+    lda.z p1_y+1
     rol
-    sta _3+1
-    lda p2_y
+    sta.z _3+1
+    lda.z p2_y
     sec
-    sbc _4
-    sta _4
-    lda p2_y+1
-    sbc _4+1
-    sta _4+1
-    lda a_y
+    sbc.z _4
+    sta.z _4
+    lda.z p2_y+1
+    sbc.z _4+1
+    sta.z _4+1
+    lda.z a_y
     clc
-    adc p0_y
-    sta a_y
-    lda a_y+1
-    adc p0_y+1
-    sta a_y+1
-    lda _6
+    adc.z p0_y
+    sta.z a_y
+    lda.z a_y+1
+    adc.z p0_y+1
+    sta.z a_y+1
+    lda.z _6
     sec
-    sbc p0_x
-    sta _6
-    lda _6+1
-    sbc p0_x+1
-    sta _6+1
-    asl b_x
-    rol b_x+1
-    lda _8
+    sbc.z p0_x
+    sta.z _6
+    lda.z _6+1
+    sbc.z p0_x+1
+    sta.z _6+1
+    asl.z b_x
+    rol.z b_x+1
+    lda.z _8
     sec
-    sbc p0_y
-    sta _8
-    lda _8+1
-    sbc p0_y+1
-    sta _8+1
-    asl b_y
-    rol b_y+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    lda i_x
+    sbc.z p0_y
+    sta.z _8
+    lda.z _8+1
+    sbc.z p0_y+1
+    sta.z _8+1
+    asl.z b_y
+    rol.z b_y+1
+    asl.z _10
+    rol.z _10+1
+    asl.z _10
+    rol.z _10+1
+    asl.z _10
+    rol.z _10+1
+    lda.z i_x
     clc
-    adc a_x
-    sta i_x
-    lda i_x+1
-    adc a_x+1
-    sta i_x+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    lda i_y
+    adc.z a_x
+    sta.z i_x
+    lda.z i_x+1
+    adc.z a_x+1
+    sta.z i_x+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
+    asl.z _12
+    rol.z _12+1
+    lda.z i_y
     clc
-    adc a_y
-    sta i_y
-    lda i_y+1
-    adc a_y+1
-    sta i_y+1
-    asl j_x
-    rol j_x+1
-    asl j_y
-    rol j_y+1
-    lda p_x+1
-    sta $ff
-    lda p_x
-    sta p_x+1
+    adc.z a_y
+    sta.z i_y
+    lda.z i_y+1
+    adc.z a_y+1
+    sta.z i_y+1
+    asl.z j_x
+    rol.z j_x+1
+    asl.z j_y
+    rol.z j_y+1
+    lda.z p_x+1
+    sta.z $ff
+    lda.z p_x
+    sta.z p_x+1
     lda #0
-    sta p_x
-    lsr $ff
-    ror p_x+1
-    ror p_x
-    lsr $ff
-    ror p_x+1
-    ror p_x
-    lda p_y+1
-    sta $ff
-    lda p_y
-    sta p_y+1
+    sta.z p_x
+    lsr.z $ff
+    ror.z p_x+1
+    ror.z p_x
+    lsr.z $ff
+    ror.z p_x+1
+    ror.z p_x
+    lda.z p_y+1
+    sta.z $ff
+    lda.z p_y
+    sta.z p_y+1
     lda #0
-    sta p_y
-    lsr $ff
-    ror p_y+1
-    ror p_y
-    lsr $ff
-    ror p_y+1
-    ror p_y
+    sta.z p_y
+    lsr.z $ff
+    ror.z p_y+1
+    ror.z p_y
+    lsr.z $ff
+    ror.z p_y+1
+    ror.z p_y
     tay
   b1:
-    lda p_x
+    lda.z p_x
     clc
     adc #<$20
-    sta _22
-    lda p_x+1
+    sta.z _22
+    lda.z p_x+1
     adc #>$20
-    sta _22+1
-    lda _23
-    sta $ff
-    lda _23+1
-    sta _23
+    sta.z _22+1
+    lda.z _23
+    sta.z $ff
+    lda.z _23+1
+    sta.z _23
     lda #0
-    bit _23+1
+    bit.z _23+1
     bpl !+
     lda #$ff
   !:
-    sta _23+1
-    rol $ff
-    rol _23
-    rol _23+1
-    rol $ff
-    rol _23
-    rol _23+1
-    lda p_y
+    sta.z _23+1
+    rol.z $ff
+    rol.z _23
+    rol.z _23+1
+    rol.z $ff
+    rol.z _23
+    rol.z _23+1
+    lda.z p_y
     clc
     adc #<$20
-    sta _24
-    lda p_y+1
+    sta.z _24
+    lda.z p_y+1
     adc #>$20
-    sta _24+1
-    lda _25
-    sta $ff
-    lda _25+1
-    sta _25
+    sta.z _24+1
+    lda.z _25
+    sta.z $ff
+    lda.z _25+1
+    sta.z _25
     lda #0
-    bit _25+1
+    bit.z _25+1
     bpl !+
     lda #$ff
   !:
-    sta _25+1
-    rol $ff
-    rol _25
-    rol _25+1
-    rol $ff
-    rol _25
-    rol _25+1
+    sta.z _25+1
+    rol.z $ff
+    rol.z _25
+    rol.z _25+1
+    rol.z $ff
+    rol.z _25
+    rol.z _25+1
     tya
     asl
     asl
     tax
-    lda _23
+    lda.z _23
     sta SPLINE_8SEG,x
-    lda _23+1
+    lda.z _23+1
     sta SPLINE_8SEG+1,x
-    lda _25
+    lda.z _25
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    lda _25+1
+    lda.z _25+1
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    lda p_x
+    lda.z p_x
     clc
-    adc i_x
-    sta p_x
-    lda p_x+1
-    adc i_x+1
-    sta p_x+1
-    lda p_y
+    adc.z i_x
+    sta.z p_x
+    lda.z p_x+1
+    adc.z i_x+1
+    sta.z p_x+1
+    lda.z p_y
     clc
-    adc i_y
-    sta p_y
-    lda p_y+1
-    adc i_y+1
-    sta p_y+1
-    lda i_x
+    adc.z i_y
+    sta.z p_y
+    lda.z p_y+1
+    adc.z i_y+1
+    sta.z p_y+1
+    lda.z i_x
     clc
-    adc j_x
-    sta i_x
-    lda i_x+1
-    adc j_x+1
-    sta i_x+1
-    lda i_y
+    adc.z j_x
+    sta.z i_x
+    lda.z i_x+1
+    adc.z j_x+1
+    sta.z i_x+1
+    lda.z i_y
     clc
-    adc j_y
-    sta i_y
-    lda i_y+1
-    adc j_y+1
-    sta i_y+1
+    adc.z j_y
+    sta.z i_y
+    lda.z i_y+1
+    adc.z j_y+1
+    sta.z i_y+1
     iny
     cpy #8
     beq !b1+
     jmp b1
   !b1:
-    lda _18
+    lda.z _18
     clc
     adc #<$20
-    sta _18
-    lda _18+1
+    sta.z _18
+    lda.z _18+1
     adc #>$20
-    sta _18+1
-    lda _19
-    sta $ff
-    lda _19+1
-    sta _19
+    sta.z _18+1
+    lda.z _19
+    sta.z $ff
+    lda.z _19+1
+    sta.z _19
     lda #0
-    bit _19+1
+    bit.z _19+1
     bpl !+
     lda #$ff
   !:
-    sta _19+1
-    rol $ff
-    rol _19
-    rol _19+1
-    rol $ff
-    rol _19
-    rol _19+1
-    lda _20
+    sta.z _19+1
+    rol.z $ff
+    rol.z _19
+    rol.z _19+1
+    rol.z $ff
+    rol.z _19
+    rol.z _19+1
+    lda.z _20
     clc
     adc #<$20
-    sta _20
-    lda _20+1
+    sta.z _20
+    lda.z _20+1
     adc #>$20
-    sta _20+1
-    lda _21
-    sta $ff
-    lda _21+1
-    sta _21
+    sta.z _20+1
+    lda.z _21
+    sta.z $ff
+    lda.z _21+1
+    sta.z _21
     lda #0
-    bit _21+1
+    bit.z _21+1
     bpl !+
     lda #$ff
   !:
-    sta _21+1
-    rol $ff
-    rol _21
-    rol _21+1
-    rol $ff
-    rol _21
-    rol _21+1
-    lda _19
+    sta.z _21+1
+    rol.z $ff
+    rol.z _21
+    rol.z _21+1
+    rol.z $ff
+    rol.z _21
+    rol.z _21+1
+    lda.z _19
     sta SPLINE_8SEG+8*SIZEOF_STRUCT_SPLINEVECTOR16
-    lda _19+1
+    lda.z _19+1
     sta SPLINE_8SEG+8*SIZEOF_STRUCT_SPLINEVECTOR16+1
-    lda _21
+    lda.z _21
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+8*SIZEOF_STRUCT_SPLINEVECTOR16
-    lda _21+1
+    lda.z _21+1
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+8*SIZEOF_STRUCT_SPLINEVECTOR16+1
     rts
 }
@@ -851,93 +851,93 @@ rotate: {
     .label yr = $1a
     .label sin_a = 6
     lda COS,y
-    sta cos_a
+    sta.z cos_a
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta cos_a+1
-    lda vector_x
-    sta mulf16s.b
-    lda vector_x+1
-    sta mulf16s.b+1
+    sta.z cos_a+1
+    lda.z vector_x
+    sta.z mulf16s.b
+    lda.z vector_x+1
+    sta.z mulf16s.b+1
     jsr mulf16s
-    lda _1
-    sta _2
-    lda _1+1
-    sta _2+1
-    asl xr
-    rol xr+1
-    lda vector_y
-    sta mulf16s.b
-    lda vector_y+1
-    sta mulf16s.b+1
+    lda.z _1
+    sta.z _2
+    lda.z _1+1
+    sta.z _2+1
+    asl.z xr
+    rol.z xr+1
+    lda.z vector_y
+    sta.z mulf16s.b
+    lda.z vector_y+1
+    sta.z mulf16s.b+1
     jsr mulf16s
-    lda _4
-    sta _5
-    lda _4+1
-    sta _5+1
-    asl yr
-    rol yr+1
+    lda.z _4
+    sta.z _5
+    lda.z _4+1
+    sta.z _5+1
+    asl.z yr
+    rol.z yr+1
     lda SIN,y
-    sta sin_a
+    sta.z sin_a
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta sin_a+1
-    lda vector_y
-    sta mulf16s.b
-    lda vector_y+1
-    sta mulf16s.b+1
+    sta.z sin_a+1
+    lda.z vector_y
+    sta.z mulf16s.b
+    lda.z vector_y+1
+    sta.z mulf16s.b+1
     jsr mulf16s
-    lda _8
-    sta _9
-    lda _8+1
-    sta _9+1
-    asl _10
-    rol _10+1
+    lda.z _8
+    sta.z _9
+    lda.z _8+1
+    sta.z _9+1
+    asl.z _10
+    rol.z _10+1
     // signed fixed[0.7]
-    lda xr
+    lda.z xr
     sec
-    sbc _10
-    sta xr
-    lda xr+1
-    sbc _10+1
-    sta xr+1
-    lda vector_x
-    sta mulf16s.b
-    lda vector_x+1
-    sta mulf16s.b+1
+    sbc.z _10
+    sta.z xr
+    lda.z xr+1
+    sbc.z _10+1
+    sta.z xr+1
+    lda.z vector_x
+    sta.z mulf16s.b
+    lda.z vector_x+1
+    sta.z mulf16s.b+1
     jsr mulf16s
-    lda _11
-    sta _12
-    lda _11+1
-    sta _12+1
-    asl _13
-    rol _13+1
+    lda.z _11
+    sta.z _12
+    lda.z _11+1
+    sta.z _12+1
+    asl.z _13
+    rol.z _13+1
     // signed fixed[8.8]
-    lda yr
+    lda.z yr
     clc
-    adc _13
-    sta yr
-    lda yr+1
-    adc _13+1
-    sta yr+1
-    lda xr+1
-    sta return_x
+    adc.z _13
+    sta.z yr
+    lda.z yr+1
+    adc.z _13+1
+    sta.z yr+1
+    lda.z xr+1
+    sta.z return_x
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta return_x+1
-    lda yr+1
-    sta return_y
+    sta.z return_x+1
+    lda.z yr+1
+    sta.z return_y
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta return_y+1
+    sta.z return_y+1
     rts
 }
 // Fast multiply two signed words to a signed double word result
@@ -952,50 +952,50 @@ mulf16s: {
     .label return = 8
     .label a = 6
     .label b = $10
-    lda a
-    sta mulf16u.a
-    lda a+1
-    sta mulf16u.a+1
-    lda b
-    sta mulf16u.b
-    lda b+1
-    sta mulf16u.b+1
+    lda.z a
+    sta.z mulf16u.a
+    lda.z a+1
+    sta.z mulf16u.a+1
+    lda.z b
+    sta.z mulf16u.b
+    lda.z b+1
+    sta.z mulf16u.b+1
     jsr mulf16u
-    lda a+1
+    lda.z a+1
     bpl b1
-    lda m+2
-    sta _9
-    lda m+3
-    sta _9+1
-    lda _16
+    lda.z m+2
+    sta.z _9
+    lda.z m+3
+    sta.z _9+1
+    lda.z _16
     sec
-    sbc b
-    sta _16
-    lda _16+1
-    sbc b+1
-    sta _16+1
-    lda _16
-    sta m+2
-    lda _16+1
-    sta m+3
+    sbc.z b
+    sta.z _16
+    lda.z _16+1
+    sbc.z b+1
+    sta.z _16+1
+    lda.z _16
+    sta.z m+2
+    lda.z _16+1
+    sta.z m+3
   b1:
-    lda b+1
+    lda.z b+1
     bpl b2
-    lda m+2
-    sta _13
-    lda m+3
-    sta _13+1
-    lda _17
+    lda.z m+2
+    sta.z _13
+    lda.z m+3
+    sta.z _13+1
+    lda.z _17
     sec
-    sbc a
-    sta _17
-    lda _17+1
-    sbc a+1
-    sta _17+1
-    lda _17
-    sta m+2
-    lda _17+1
-    sta m+3
+    sbc.z a
+    sta.z _17
+    lda.z _17+1
+    sbc.z a+1
+    sta.z _17+1
+    lda.z _17
+    sta.z m+2
+    lda.z _17+1
+    sta.z m+3
   b2:
     rts
 }
@@ -1009,13 +1009,13 @@ mulf16u: {
     .label return = 8
     .label a = $1e
     .label b = $20
-    lda a
+    lda.z a
     sta memA
-    lda a+1
+    lda.z a+1
     sta memA+1
-    lda b
+    lda.z b
     sta memB
-    lda b+1
+    lda.z b+1
     sta memB+1
     lda memA
     sta sm1a+1
@@ -1110,13 +1110,13 @@ mulf16u: {
     inc memR+3
   !:
     lda memR
-    sta return
+    sta.z return
     lda memR+1
-    sta return+1
+    sta.z return+1
     lda memR+2
-    sta return+2
+    sta.z return+2
     lda memR+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Clear all graphics on the bitmap
@@ -1126,23 +1126,23 @@ bitmap_clear: {
     .const col = WHITE<<4
     ldx #col
     lda #<BITMAP_SCREEN
-    sta memset.str
+    sta.z memset.str
     lda #>BITMAP_SCREEN
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$3e8
-    sta memset.num
+    sta.z memset.num
     lda #>$3e8
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     ldx #0
     lda #<BITMAP_GRAPHICS
-    sta memset.str
+    sta.z memset.str
     lda #>BITMAP_GRAPHICS
-    sta memset.str+1
+    sta.z memset.str+1
     lda #<$1f40
-    sta memset.num
+    sta.z memset.num
     lda #>$1f40
-    sta memset.num+1
+    sta.z memset.num+1
     jsr memset
     rts
 }
@@ -1153,24 +1153,24 @@ memset: {
     .label dst = $e
     .label num = $c
     .label str = $e
-    lda num
+    lda.z num
     bne !+
-    lda num+1
+    lda.z num+1
     beq breturn
   !:
-    lda end
+    lda.z end
     clc
-    adc str
-    sta end
-    lda end+1
-    adc str+1
-    sta end+1
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   b2:
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
   breturn:
     rts
@@ -1178,9 +1178,9 @@ memset: {
     txa
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }
@@ -1201,28 +1201,28 @@ bitmap_init: {
     cpx #0
     bne b1
     lda #<BITMAP_GRAPHICS
-    sta yoffs
+    sta.z yoffs
     lda #>BITMAP_GRAPHICS
-    sta yoffs+1
+    sta.z yoffs+1
     ldx #0
   b3:
     lda #7
-    sax _7
-    lda yoffs
-    ora _7
+    sax.z _7
+    lda.z yoffs
+    ora.z _7
     sta bitmap_plot_ylo,x
-    lda yoffs+1
+    lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp _7
+    cmp.z _7
     bne b4
     clc
-    lda yoffs
+    lda.z yoffs
     adc #<$28*8
-    sta yoffs
-    lda yoffs+1
+    sta.z yoffs
+    lda.z yoffs+1
     adc #>$28*8
-    sta yoffs+1
+    sta.z yoffs+1
   b4:
     inx
     cpx #0
@@ -1240,40 +1240,40 @@ mulf_init: {
     .label dir = $13
     ldx #0
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     txa
-    sta sqr
-    sta sqr+1
-    sta c
+    sta.z sqr
+    sta.z sqr+1
+    sta.z c
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
   b1:
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     lda #$ff
-    sta dir
+    sta.z dir
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     ldx #-1
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
   b5:
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     // Set the very last value g(511) = f(256)
@@ -1288,55 +1288,55 @@ mulf_init: {
     sta (sqr2_lo),y
     lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     cpx #0
     bne b8
     lda #1
-    sta dir
+    sta.z dir
   b8:
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     jmp b5
   b2:
-    inc c
+    inc.z c
     lda #1
-    and c
+    and.z c
     cmp #0
     bne b3
     inx
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
   b3:
-    lda sqr
+    lda.z sqr
     ldy #0
     sta (sqr1_lo),y
-    lda sqr+1
+    lda.z sqr+1
     sta (sqr1_hi),y
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     jmp b1
 }

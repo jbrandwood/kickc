@@ -12,33 +12,33 @@
   .label line = 2
 main: {
     lda #0
-    sta y
-    sta idx
-    sta x
-    sta line
+    sta.z y
+    sta.z idx
+    sta.z x
+    sta.z line
   b2:
-    inc x
+    inc.z x
     ldy #0
   b4:
-    lda idx
+    lda.z idx
     asl
     tax
-    lda y
+    lda.z y
     sta p+OFFSET_STRUCT_POS_Y,x
-    lda x
+    lda.z x
     sta p,x
-    inc idx
-    lax x
+    inc.z idx
+    lax.z x
     axs #-[XSPACE]
-    stx x
+    stx.z x
     iny
     cpy #8
     bcc b4
-    lax y
+    lax.z y
     axs #-[YSPACE]
-    stx y
-    inc line
-    lda line
+    stx.z y
+    inc.z line
+    lda.z line
     cmp #8
     bcc b2
     rts

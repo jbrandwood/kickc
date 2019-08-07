@@ -7,26 +7,26 @@ main: {
     .label _1 = 4
     .label screen = 2
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     ldx #0
   b1:
     txa
     asl
-    sta _1
+    sta.z _1
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    lda _1
+    lda.z _1
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     inx
     cpx #3

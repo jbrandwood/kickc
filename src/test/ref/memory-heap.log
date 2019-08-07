@@ -473,18 +473,18 @@ main: {
   malloc_from_main:
     // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_TOP#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_TOP
-    sta heap_head
+    sta.z heap_head
     lda #>HEAP_TOP
-    sta heap_head+1
+    sta.z heap_head+1
     jsr malloc
     jmp b3
     // main::@3
   b3:
     // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-    lda malloc.mem
-    sta buf1
-    lda malloc.mem+1
-    sta buf1+1
+    lda.z malloc.mem
+    sta.z buf1
+    lda.z malloc.mem+1
+    sta.z buf1+1
     // [7] call malloc 
     // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
   malloc_from_b3:
@@ -494,15 +494,15 @@ main: {
     // main::@4
   b4:
     // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-    lda malloc.mem
-    sta buf2
-    lda malloc.mem+1
-    sta buf2+1
+    lda.z malloc.mem
+    sta.z buf2
+    lda.z malloc.mem+1
+    sta.z buf2+1
     // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
     // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     jmp b1
     // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -511,23 +511,23 @@ main: {
     // main::@1
   b1:
     // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuz2=vbuz2 
-    lda i
+    lda.z i
     tay
     sta (buf1),y
     // [11] (byte~) main::$4 ← (byte) $ff - (byte) main::i#2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$ff
     sec
-    sbc i
-    sta _4
+    sbc.z i
+    sta.z _4
     // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda _4
-    ldy i
+    lda.z _4
+    ldy.z i
     sta (buf2),y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$64
-    cmp i
+    cmp.z i
     bne b1_from_b1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -580,18 +580,18 @@ free: {
 malloc: {
     .label mem = $a
     // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 - (byte) $64 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$64
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$64
-    sta mem+1
+    sta.z mem+1
     // [26] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     jmp breturn
     // malloc::@return
   breturn:
@@ -678,18 +678,18 @@ main: {
   malloc_from_main:
     // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_TOP#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_TOP
-    sta heap_head
+    sta.z heap_head
     lda #>HEAP_TOP
-    sta heap_head+1
+    sta.z heap_head+1
     jsr malloc
     jmp b3
     // main::@3
   b3:
     // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-    lda malloc.mem
-    sta buf1
-    lda malloc.mem+1
-    sta buf1+1
+    lda.z malloc.mem
+    sta.z buf1
+    lda.z malloc.mem+1
+    sta.z buf1+1
     // [7] call malloc 
     // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
   malloc_from_b3:
@@ -776,18 +776,18 @@ free: {
 malloc: {
     .label mem = 6
     // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 - (byte) $64 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$64
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$64
-    sta mem+1
+    sta.z mem+1
     // [26] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     jmp breturn
     // malloc::@return
   breturn:
@@ -921,17 +921,17 @@ main: {
     // [24] phi from main to malloc [phi:main->malloc]
     // [24] phi (byte*) heap_head#7 = (const byte*) HEAP_TOP#0 [phi:main->malloc#0] -- pbuz1=pbuc1 
     lda #<HEAP_TOP
-    sta heap_head
+    sta.z heap_head
     lda #>HEAP_TOP
-    sta heap_head+1
+    sta.z heap_head+1
     jsr malloc
     // main::@3
     // malloc(100)
     // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
-    lda malloc.mem
-    sta buf1
-    lda malloc.mem+1
-    sta buf1+1
+    lda.z malloc.mem
+    sta.z buf1
+    lda.z malloc.mem+1
+    sta.z buf1+1
     // [7] call malloc 
     // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
     // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
@@ -1007,19 +1007,19 @@ malloc: {
     .label mem = 6
     // mem = heap_head-size
     // [25] (byte*) malloc::mem#0 ← (byte*) heap_head#7 - (byte) $64 -- pbuz1=pbuz2_minus_vwuc1 
-    lda heap_head
+    lda.z heap_head
     sec
     sbc #<$64
-    sta mem
-    lda heap_head+1
+    sta.z mem
+    lda.z heap_head+1
     sbc #>$64
-    sta mem+1
+    sta.z mem+1
     // heap_head = mem
     // [26] (byte*) heap_head#1 ← (byte*) malloc::mem#0 -- pbuz1=pbuz2 
-    lda mem
-    sta heap_head
-    lda mem+1
-    sta heap_head+1
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
     // malloc::@return
     // }
     // [27] return 

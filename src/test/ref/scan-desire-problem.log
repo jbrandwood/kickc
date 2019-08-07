@@ -1478,7 +1478,7 @@ main: {
   b2_from_main:
     // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b2
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -1490,7 +1490,7 @@ main: {
   b4_from_b2:
     // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b4
     // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -1499,47 +1499,47 @@ main: {
     // main::@4
   b4:
     // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuz1=vbuz2_plus_vbuz3 
-    lda x
+    lda.z x
     clc
-    adc y
-    sta z
+    adc.z y
+    sta.z z
     // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy z
+    ldy.z z
     lda level_address,y
-    sta tile
+    sta.z tile
     // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0 -- vbuz1=vbuz2 
-    lda tile
-    sta draw_block.tileno
+    lda.z tile
+    sta.z draw_block.tileno
     // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuz1=vbuz2 
-    lda x
-    sta draw_block.x
+    lda.z x
+    sta.z draw_block.x
     // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuz1=vbuz2 
-    lda y
-    sta draw_block.y
+    lda.z y
+    sta.z draw_block.y
     // [13] call draw_block 
     jsr draw_block
     jmp b7
     // main::@7
   b7:
     // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     jmp b3
     // main::@3
   b3:
     // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
+    lda.z y
     cmp #9
     bcc b4_from_b3
     jmp b5
     // main::@5
   b5:
     // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     jmp b1
     // main::@1
   b1:
     // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$10
     bcc b2_from_b1
     // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
@@ -1571,145 +1571,145 @@ draw_block: {
     .label _17 = $2a
     .label _18 = $2c
     // [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuz2_rol_2 
-    lda tileno
+    lda.z tileno
     asl
     asl
-    sta tileno_1
+    sta.z tileno_1
     // [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuz2_rol_1 
-    lda x
+    lda.z x
     asl
-    sta x1
+    sta.z x1
     lda #0
     rol
-    sta x1+1
+    sta.z x1+1
     // [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda y
+    lda.z y
     asl
-    sta y_1
+    sta.z y_1
     // [22] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuz1=vbuz2 
-    lda y_1
-    sta mul8u.a
+    lda.z y_1
+    sta.z mul8u.a
     // [23] call mul8u 
     // [45] phi from draw_block to mul8u [phi:draw_block->mul8u]
   mul8u_from_draw_block:
     jsr mul8u
     // [24] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
-    lda mul8u.res
-    sta mul8u.return
-    lda mul8u.res+1
-    sta mul8u.return+1
+    lda.z mul8u.res
+    sta.z mul8u.return
+    lda.z mul8u.res+1
+    sta.z mul8u.return+1
     jmp b1
     // draw_block::@1
   b1:
     // [25] (word) draw_block::z#0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
-    lda mul8u.return
-    sta z
-    lda mul8u.return+1
-    sta z+1
+    lda.z mul8u.return
+    sta.z z
+    lda.z mul8u.return+1
+    sta.z z+1
     // [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz3 
-    lda z
+    lda.z z
     clc
-    adc x1
-    sta z_1
-    lda z+1
-    adc x1+1
-    sta z_1+1
+    adc.z x1
+    sta.z z_1
+    lda.z z+1
+    adc.z x1+1
+    sta.z z_1+1
     // [27] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy tileno_1
+    ldy.z tileno_1
     lda tileset,y
-    sta drawtile
+    sta.z drawtile
     // [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen
-    sta _11
-    lda z_1+1
+    sta.z _11
+    lda.z z_1+1
     adc #>screen
-    sta _11+1
+    sta.z _11+1
     // [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuz2 
-    lda drawtile
+    lda.z drawtile
     ldy #0
     sta (_11),y
     // [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors
-    sta _12
-    lda z_1+1
+    sta.z _12
+    lda.z z_1+1
     adc #>colors
-    sta _12+1
+    sta.z _12+1
     // [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_12),y
     // [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+1
-    sta _13
-    lda z_1+1
+    sta.z _13
+    lda.z z_1+1
     adc #>screen+1
-    sta _13+1
+    sta.z _13+1
     // [33] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (_13),y
     // [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+1
-    sta _14
-    lda z_1+1
+    sta.z _14
+    lda.z z_1+1
     adc #>colors+1
-    sta _14+1
+    sta.z _14+1
     // [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_14),y
     // [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$28
-    sta _15
-    lda z_1+1
+    sta.z _15
+    lda.z z_1+1
     adc #>screen+$28
-    sta _15+1
+    sta.z _15+1
     // [37] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (_15),y
     // [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+$28
-    sta _16
-    lda z_1+1
+    sta.z _16
+    lda.z z_1+1
     adc #>colors+$28
-    sta _16+1
+    sta.z _16+1
     // [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_16),y
     // [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$29
-    sta _17
-    lda z_1+1
+    sta.z _17
+    lda.z z_1+1
     adc #>screen+$29
-    sta _17+1
+    sta.z _17+1
     // [41] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     ldy #0
     sta (_17),y
     // [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+$29
-    sta _18
-    lda z_1+1
+    sta.z _18
+    lda.z z_1+1
     adc #>colors+$29
-    sta _18+1
+    sta.z _18+1
     // [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
@@ -1734,20 +1734,20 @@ mul8u: {
   b1_from_mul8u:
     // [46] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [46] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [46] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
   b1:
     // [47] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     cmp #0
     bne b2
     jmp breturn
@@ -1759,23 +1759,23 @@ mul8u: {
   b2:
     // [49] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and a
-    sta _1
+    and.z a
+    sta.z _1
     // [50] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3_from_b2
     jmp b4
     // mul8u::@4
   b4:
     // [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [52] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -1784,10 +1784,10 @@ mul8u: {
     // mul8u::@3
   b3:
     // [53] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr a
+    lsr.z a
     // [54] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [46] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [46] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -1810,12 +1810,12 @@ init: {
   memset_from_b2:
     // [70] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuz1=vbuc1 
     lda #0
-    sta memset.c
+    sta.z memset.c
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta memset.str
+    sta.z memset.str
     lda #>screen
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
@@ -1827,12 +1827,12 @@ init: {
   memset_from_b3:
     // [70] phi (byte) memset::c#4 = (const byte) BLACK#0 [phi:init::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
-    sta memset.c
+    sta.z memset.c
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta memset.str
+    sta.z memset.str
     lda #>colors
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
@@ -1881,18 +1881,18 @@ memset: {
     // memset::@1
   b1:
     // [71] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda str
+    lda.z str
     clc
     adc #<$3e8
-    sta end
-    lda str+1
+    sta.z end
+    lda.z str+1
     adc #>$3e8
-    sta end+1
+    sta.z end+1
     // [72] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
-    lda str
-    sta dst
-    lda str+1
-    sta dst+1
+    lda.z str
+    sta.z dst
+    lda.z str+1
+    sta.z dst+1
     // [73] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
   b2_from_b3:
@@ -1901,11 +1901,11 @@ memset: {
     // memset::@2
   b2:
     // [74] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     jmp breturn
     // memset::@return
@@ -1915,13 +1915,13 @@ memset: {
     // memset::@3
   b3:
     // [76] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
-    lda c
+    lda.z c
     ldy #0
     sta (dst),y
     // [77] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2_from_b3
 }
@@ -2184,7 +2184,7 @@ main: {
   b2_from_main:
     // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     jmp b2
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -2196,7 +2196,7 @@ main: {
   b4_from_b2:
     // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     jmp b4
     // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
@@ -2205,41 +2205,41 @@ main: {
     // main::@4
   b4:
     // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuaa=vbuz1_plus_vbuz2 
-    lda x
+    lda.z x
     clc
-    adc y
+    adc.z y
     // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda level_address,y
     // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0
     // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuyy=vbuz1 
-    ldy x
+    ldy.z x
     // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuxx=vbuz1 
-    ldx y
+    ldx.z y
     // [13] call draw_block 
     jsr draw_block
     jmp b7
     // main::@7
   b7:
     // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     jmp b3
     // main::@3
   b3:
     // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
+    lda.z y
     cmp #9
     bcc b4_from_b3
     jmp b5
     // main::@5
   b5:
     // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     jmp b1
     // main::@1
   b1:
     // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$10
     bcc b2_from_b1
     // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
@@ -2268,14 +2268,14 @@ draw_block: {
     // [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
-    sta tileno
+    sta.z tileno
     // [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuyy_rol_1 
     tya
     asl
-    sta x1
+    sta.z x1
     lda #0
     rol
-    sta x1+1
+    sta.z x1+1
     // [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
@@ -2291,108 +2291,108 @@ draw_block: {
   b1:
     // [25] (word) draw_block::z#0 ← (word) mul8u::return#2
     // [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
-    lda z_1
+    lda.z z_1
     clc
-    adc z
-    sta z_1
-    lda z_1+1
-    adc z+1
-    sta z_1+1
+    adc.z z
+    sta.z z_1
+    lda.z z_1+1
+    adc.z z+1
+    sta.z z_1+1
     // [27] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy tileno
+    ldy.z tileno
     ldx tileset,y
     // [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen
-    sta _11
-    lda z_1+1
+    sta.z _11
+    lda.z z_1+1
     adc #>screen
-    sta _11+1
+    sta.z _11+1
     // [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (_11),y
     // [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors
-    sta _12
-    lda z_1+1
+    sta.z _12
+    lda.z z_1+1
     adc #>colors
-    sta _12+1
+    sta.z _12+1
     // [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_12),y
     // [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+1
-    sta _13
-    lda z_1+1
+    sta.z _13
+    lda.z z_1+1
     adc #>screen+1
-    sta _13+1
+    sta.z _13+1
     // [33] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (_13),y
     // [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+1
-    sta _14
-    lda z_1+1
+    sta.z _14
+    lda.z z_1+1
     adc #>colors+1
-    sta _14+1
+    sta.z _14+1
     // [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_14),y
     // [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$28
-    sta _15
-    lda z_1+1
+    sta.z _15
+    lda.z z_1+1
     adc #>screen+$28
-    sta _15+1
+    sta.z _15+1
     // [37] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (_15),y
     // [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+$28
-    sta _16
-    lda z_1+1
+    sta.z _16
+    lda.z z_1+1
     adc #>colors+$28
-    sta _16+1
+    sta.z _16+1
     // [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (_16),y
     // [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$29
-    sta _17
-    lda z_1+1
+    sta.z _17
+    lda.z z_1+1
     adc #>screen+$29
-    sta _17+1
+    sta.z _17+1
     // [41] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     ldy #0
     sta (_17),y
     // [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda _18
+    lda.z _18
     adc #<colors+$29
-    sta _18
-    lda _18+1
+    sta.z _18
+    lda.z _18+1
     adc #>colors+$29
-    sta _18+1
+    sta.z _18+1
     // [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
@@ -2415,14 +2415,14 @@ mul8u: {
   b1_from_mul8u:
     // [46] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [46] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [46] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
@@ -2447,13 +2447,13 @@ mul8u: {
     // mul8u::@4
   b4:
     // [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [52] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -2466,8 +2466,8 @@ mul8u: {
     lsr
     tax
     // [54] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [46] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [46] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -2492,9 +2492,9 @@ init: {
     ldx #0
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta memset.str
+    sta.z memset.str
     lda #>screen
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
@@ -2508,9 +2508,9 @@ init: {
     ldx #BLACK
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta memset.str
+    sta.z memset.str
     lda #>colors
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
@@ -2558,13 +2558,13 @@ memset: {
     // memset::@1
   b1:
     // [71] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda str
+    lda.z str
     clc
     adc #<$3e8
-    sta end
-    lda str+1
+    sta.z end
+    lda.z str+1
     adc #>$3e8
-    sta end+1
+    sta.z end+1
     // [72] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [73] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
@@ -2574,11 +2574,11 @@ memset: {
     // memset::@2
   b2:
     // [74] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     jmp breturn
     // memset::@return
@@ -2592,9 +2592,9 @@ memset: {
     ldy #0
     sta (dst),y
     // [77] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2_from_b3
 }
@@ -2953,7 +2953,7 @@ main: {
     // [6] phi from main to main::@2 [phi:main->main::@2]
     // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
-    sta x
+    sta.z x
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [6] phi (byte) main::x#11 = (byte) main::x#1 [phi:main::@1->main::@2#0] -- register_copy 
     // main::@2
@@ -2961,16 +2961,16 @@ main: {
     // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
     // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
     lda #0
-    sta y
+    sta.z y
     // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // [7] phi (byte) main::y#5 = (byte) main::y#1 [phi:main::@3->main::@4#0] -- register_copy 
     // main::@4
   b4:
     // z = x+y
     // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuaa=vbuz1_plus_vbuz2 
-    lda x
+    lda.z x
     clc
-    adc y
+    adc.z y
     // tile = level_address[z]
     // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
@@ -2978,27 +2978,27 @@ main: {
     // draw_block(tile,x,y,YELLOW)
     // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0
     // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuyy=vbuz1 
-    ldy x
+    ldy.z x
     // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuxx=vbuz1 
-    ldx y
+    ldx.z y
     // [13] call draw_block 
     jsr draw_block
     // main::@7
     // for (byte y = 0; y < 9; y++)
     // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
-    inc y
+    inc.z y
     // main::@3
     // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
+    lda.z y
     cmp #9
     bcc b4
     // main::@5
     // for (byte x = 0; x < 16; x++ )
     // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
-    inc x
+    inc.z x
     // main::@1
     // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
+    lda.z x
     cmp #$10
     bcc b2
     // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
@@ -3025,15 +3025,15 @@ draw_block: {
     // [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
-    sta tileno
+    sta.z tileno
     // x1 = x << 1
     // [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuyy_rol_1 
     tya
     asl
-    sta x1
+    sta.z x1
     lda #0
     rol
-    sta x1+1
+    sta.z x1+1
     // y = y << 1
     // [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
@@ -3051,111 +3051,111 @@ draw_block: {
     // [25] (word) draw_block::z#0 ← (word) mul8u::return#2
     // z = z + x1
     // [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
-    lda z_1
+    lda.z z_1
     clc
-    adc z
-    sta z_1
-    lda z_1+1
-    adc z+1
-    sta z_1+1
+    adc.z z
+    sta.z z_1
+    lda.z z_1+1
+    adc.z z+1
+    sta.z z_1+1
     // drawtile = tileset[tileno]
     // [27] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy tileno
+    ldy.z tileno
     ldx tileset,y
     // screen[z] = drawtile
     // [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen
-    sta _11
-    lda z_1+1
+    sta.z _11
+    lda.z z_1+1
     adc #>screen
-    sta _11+1
+    sta.z _11+1
     // [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (_11),y
     // colors[z] = YELLOW
     // [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors
-    sta _12
-    lda z_1+1
+    sta.z _12
+    lda.z z_1+1
     adc #>colors
-    sta _12+1
+    sta.z _12+1
     // [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (_12),y
     // screen[z+1] = 1
     // [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+1
-    sta _13
-    lda z_1+1
+    sta.z _13
+    lda.z z_1+1
     adc #>screen+1
-    sta _13+1
+    sta.z _13+1
     // [33] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     sta (_13),y
     // colors[z+1] = YELLOW
     // [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+1
-    sta _14
-    lda z_1+1
+    sta.z _14
+    lda.z z_1+1
     adc #>colors+1
-    sta _14+1
+    sta.z _14+1
     // [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (_14),y
     // screen[z+40] = 2
     // [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$28
-    sta _15
-    lda z_1+1
+    sta.z _15
+    lda.z z_1+1
     adc #>screen+$28
-    sta _15+1
+    sta.z _15+1
     // [37] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     sta (_15),y
     // colors[z+40] = YELLOW
     // [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<colors+$28
-    sta _16
-    lda z_1+1
+    sta.z _16
+    lda.z z_1+1
     adc #>colors+$28
-    sta _16+1
+    sta.z _16+1
     // [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (_16),y
     // screen[z+41] = 3
     // [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda z_1
+    lda.z z_1
     clc
     adc #<screen+$29
-    sta _17
-    lda z_1+1
+    sta.z _17
+    lda.z z_1+1
     adc #>screen+$29
-    sta _17+1
+    sta.z _17+1
     // [41] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     sta (_17),y
     // colors[z+41] = YELLOW
     // [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda _18
+    lda.z _18
     adc #<colors+$29
-    sta _18
-    lda _18+1
+    sta.z _18
+    lda.z _18+1
     adc #>colors+$29
-    sta _18+1
+    sta.z _18+1
     // [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (_18),y
@@ -3175,13 +3175,13 @@ mul8u: {
     // [46] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
     // [46] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #<b
-    sta mb
+    sta.z mb
     lda #>b
-    sta mb+1
+    sta.z mb+1
     // [46] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
     // [46] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     // mul8u::@1
   b1:
@@ -3206,13 +3206,13 @@ mul8u: {
     // mul8u::@4
     // res = res + mb
     // [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [52] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
     // [52] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     // mul8u::@3
@@ -3224,8 +3224,8 @@ mul8u: {
     tax
     // mb = mb<<1
     // [54] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [46] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
     // [46] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
     // [46] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
@@ -3247,9 +3247,9 @@ init: {
     ldx #0
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta memset.str
+    sta.z memset.str
     lda #>screen
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
     // init::@3
@@ -3260,9 +3260,9 @@ init: {
     ldx #BLACK
     // [70] phi (void*) memset::str#3 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta memset.str
+    sta.z memset.str
     lda #>colors
-    sta memset.str+1
+    sta.z memset.str+1
     jsr memset
     // [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
     // init::toD0181
@@ -3309,13 +3309,13 @@ memset: {
     // memset::@1
     // end = (char*)str + num
     // [71] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda str
+    lda.z str
     clc
     adc #<$3e8
-    sta end
-    lda str+1
+    sta.z end
+    lda.z str+1
     adc #>$3e8
-    sta end+1
+    sta.z end+1
     // [72] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [73] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
     // [73] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
@@ -3323,11 +3323,11 @@ memset: {
   b2:
     // for(char* dst = str; dst!=end; dst++)
     // [74] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
+    lda.z dst+1
+    cmp.z end+1
     bne b3
-    lda dst
-    cmp end
+    lda.z dst
+    cmp.z end
     bne b3
     // memset::@return
     // }
@@ -3342,9 +3342,9 @@ memset: {
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
     // [77] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
     jmp b2
 }

@@ -15,51 +15,51 @@ scrollup3: {
     .label _3 = 5
     .label _4 = 7
     lda #<0
-    sta line
-    sta line+1
+    sta.z line
+    sta.z line+1
   b2:
-    lda line
-    sta l2
-    lda line+1
-    sta l2+1
+    lda.z line
+    sta.z l2
+    lda.z line+1
+    sta.z l2+1
     ldx #0
   b4:
-    lda l2
+    lda.z l2
     clc
     adc #<screen+$28
-    sta _3
-    lda l2+1
+    sta.z _3
+    lda.z l2+1
     adc #>screen+$28
-    sta _3+1
-    lda l2
+    sta.z _3+1
+    lda.z l2
     clc
     adc #<screen
-    sta _4
-    lda l2+1
+    sta.z _4
+    lda.z l2+1
     adc #>screen
-    sta _4+1
+    sta.z _4+1
     ldy #0
     lda (_3),y
     sta (_4),y
-    inc l2
+    inc.z l2
     bne !+
-    inc l2+1
+    inc.z l2+1
   !:
     inx
     cpx #$28
     bcc b4
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
-    lda line+1
+    lda.z line+1
     cmp #>$28*$18
     bcc b2
     bne !+
-    lda line
+    lda.z line
     cmp #<$28*$18
     bcc b2
   !:
@@ -70,35 +70,35 @@ scrollup2: {
     .label line2 = 9
     .label l = 2
     lda #0
-    sta l
+    sta.z l
     lda #<screen
-    sta line1
+    sta.z line1
     lda #>screen
-    sta line1+1
+    sta.z line1+1
     lda #<screen+$28
-    sta line2
+    sta.z line2
     lda #>screen+$28
-    sta line2+1
+    sta.z line2+1
   b1:
     ldx #0
   b2:
     ldy #0
     lda (line2),y
     sta (line1),y
-    inc line1
+    inc.z line1
     bne !+
-    inc line1+1
+    inc.z line1+1
   !:
-    inc line2
+    inc.z line2
     bne !+
-    inc line2+1
+    inc.z line2+1
   !:
     inx
     cpx #$28
     bne b2
-    inc l
+    inc.z l
     lda #$18
-    cmp l
+    cmp.z l
     bne b1
     rts
 }
@@ -109,39 +109,39 @@ scrollup1: {
     .label _5 = 9
     .label _6 = 7
     lda #<0
-    sta line
-    sta line+1
+    sta.z line
+    sta.z line+1
   b2:
     ldx #0
   b4:
     txa
     clc
-    adc line
-    sta _2
+    adc.z line
+    sta.z _2
     lda #0
-    adc line+1
-    sta _2+1
+    adc.z line+1
+    sta.z _2+1
     txa
     clc
-    adc line
-    sta _4
+    adc.z line
+    sta.z _4
     lda #0
-    adc line+1
-    sta _4+1
+    adc.z line+1
+    sta.z _4+1
     clc
-    lda _5
+    lda.z _5
     adc #<screen+$28
-    sta _5
-    lda _5+1
+    sta.z _5
+    lda.z _5+1
     adc #>screen+$28
-    sta _5+1
+    sta.z _5+1
     clc
-    lda _6
+    lda.z _6
     adc #<screen
-    sta _6
-    lda _6+1
+    sta.z _6
+    lda.z _6+1
     adc #>screen
-    sta _6+1
+    sta.z _6+1
     ldy #0
     lda (_5),y
     sta (_6),y
@@ -150,16 +150,16 @@ scrollup1: {
     bcc b4
     lda #$28
     clc
-    adc line
-    sta line
+    adc.z line
+    sta.z line
     bcc !+
-    inc line+1
+    inc.z line+1
   !:
-    lda line+1
+    lda.z line+1
     cmp #>$28*$18
     bcc b2
     bne !+
-    lda line
+    lda.z line
     cmp #<$28*$18
     bcc b2
   !:

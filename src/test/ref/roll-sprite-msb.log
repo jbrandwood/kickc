@@ -367,12 +367,12 @@ main: {
   b1_from_main:
     // [5] phi (word) main::xpos#2 = (byte) $c8 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<$c8
-    sta xpos
+    sta.z xpos
     lda #>$c8
-    sta xpos+1
+    sta.z xpos+1
     // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta s
+    sta.z s
     jmp b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -382,13 +382,13 @@ main: {
     // main::@1
   b1:
     // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuz2 
-    lda s
-    sta position_sprite.spriteno
+    lda.z s
+    sta.z position_sprite.spriteno
     // [7] (word) position_sprite::x#0 ← (word) main::xpos#2 -- vwuz1=vwuz2 
-    lda xpos
-    sta position_sprite.x
-    lda xpos+1
-    sta position_sprite.x+1
+    lda.z xpos
+    sta.z position_sprite.x
+    lda.z xpos+1
+    sta.z position_sprite.x+1
     // [8] call position_sprite 
     jsr position_sprite
     jmp b2
@@ -397,16 +397,16 @@ main: {
     // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
-    adc xpos
-    sta xpos
+    adc.z xpos
+    sta.z xpos
     bcc !+
-    inc xpos+1
+    inc.z xpos+1
   !:
     // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuz1=_inc_vbuz1 
-    inc s
+    inc.z s
     // [11] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
-    cmp s
+    cmp.z s
     bne b1_from_b2
     jmp breturn
     // main::@return
@@ -426,24 +426,24 @@ position_sprite: {
     .label spriteno = 5
     .label x = 6
     // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda spriteno
+    lda.z spriteno
     asl
-    sta _1
+    sta.z _1
     // [14] *((const byte*) SPRITES_YPOS#0 + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #y
-    ldy _1
+    ldy.z _1
     sta SPRITES_YPOS,y
     // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuz1=_lo_vwuz2 
-    lda x
-    sta _2
+    lda.z x
+    sta.z _2
     // [16] *((const byte*) SPRITES_XPOS#0 + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _2
-    ldy _1
+    lda.z _2
+    ldy.z _1
     sta SPRITES_XPOS,y
     // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
-    lda x+1
+    lda.z x+1
     bne b1
-    lda x
+    lda.z x
     cmp #$ff
     beq !+
     bcs b1
@@ -453,7 +453,7 @@ position_sprite: {
   b2:
     // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -461,14 +461,14 @@ position_sprite: {
     dey
     bne !-
   !e:
-    sta _4
+    sta.z _4
     // [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuz1=vbuz2_bxor_vbuc1 
     lda #$ff
-    eor _4
-    sta _5
+    eor.z _4
+    sta.z _5
     // [20] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     lda SPRITES_XMSB
-    and _5
+    and.z _5
     sta SPRITES_XMSB
     jmp breturn
     // position_sprite::@return
@@ -479,7 +479,7 @@ position_sprite: {
   b1:
     // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -487,10 +487,10 @@ position_sprite: {
     dey
     bne !-
   !e:
-    sta _6
+    sta.z _6
     // [23] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
-    ora _6
+    ora.z _6
     sta SPRITES_XMSB
     jmp breturn
 }
@@ -583,9 +583,9 @@ main: {
   b1_from_main:
     // [5] phi (word) main::xpos#2 = (byte) $c8 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<$c8
-    sta xpos
+    sta.z xpos
     lda #>$c8
-    sta xpos+1
+    sta.z xpos+1
     // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
@@ -597,7 +597,7 @@ main: {
     // main::@1
   b1:
     // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
-    stx position_sprite.spriteno
+    stx.z position_sprite.spriteno
     // [7] (word) position_sprite::x#0 ← (word) main::xpos#2
     // [8] call position_sprite 
     jsr position_sprite
@@ -607,10 +607,10 @@ main: {
     // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
-    adc xpos
-    sta xpos
+    adc.z xpos
+    sta.z xpos
     bcc !+
-    inc xpos+1
+    inc.z xpos+1
   !:
     // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -630,20 +630,20 @@ position_sprite: {
     .label spriteno = 4
     .label x = 2
     // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
-    lda spriteno
+    lda.z spriteno
     asl
     tay
     // [14] *((const byte*) SPRITES_YPOS#0 + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #y
     sta SPRITES_YPOS,y
     // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
-    lda x
+    lda.z x
     // [16] *((const byte*) SPRITES_XPOS#0 + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SPRITES_XPOS,y
     // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
-    lda x+1
+    lda.z x+1
     bne b1
-    lda x
+    lda.z x
     cmp #$ff
     beq !+
     bcs b1
@@ -653,7 +653,7 @@ position_sprite: {
   b2:
     // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -675,7 +675,7 @@ position_sprite: {
   b1:
     // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -795,9 +795,9 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (word) main::xpos#2 = (byte) $c8 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<$c8
-    sta xpos
+    sta.z xpos
     lda #>$c8
-    sta xpos+1
+    sta.z xpos+1
     // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
@@ -807,7 +807,7 @@ main: {
   b1:
     // position_sprite(s, xpos, 50)
     // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
-    stx position_sprite.spriteno
+    stx.z position_sprite.spriteno
     // [7] (word) position_sprite::x#0 ← (word) main::xpos#2
     // [8] call position_sprite 
     jsr position_sprite
@@ -816,10 +816,10 @@ main: {
     // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
-    adc xpos
-    sta xpos
+    adc.z xpos
+    sta.z xpos
     bcc !+
-    inc xpos+1
+    inc.z xpos+1
   !:
     // for(byte s: 0..7)
     // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
@@ -840,7 +840,7 @@ position_sprite: {
     .label x = 2
     // spriteno * 2
     // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
-    lda spriteno
+    lda.z spriteno
     asl
     tay
     // SPRITES_YPOS[spriteno * 2] = y
@@ -849,15 +849,15 @@ position_sprite: {
     sta SPRITES_YPOS,y
     // <x
     // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
-    lda x
+    lda.z x
     // SPRITES_XPOS[spriteno * 2] = <x
     // [16] *((const byte*) SPRITES_XPOS#0 + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SPRITES_XPOS,y
     // if (x > 255)
     // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
-    lda x+1
+    lda.z x+1
     bne b1
-    lda x
+    lda.z x
     cmp #$ff
     beq !+
     bcs b1
@@ -866,7 +866,7 @@ position_sprite: {
     // 1 << spriteno
     // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:
@@ -890,7 +890,7 @@ position_sprite: {
     // 1 << spriteno
     // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
-    ldy spriteno
+    ldy.z spriteno
     cpy #0
     beq !e+
   !:

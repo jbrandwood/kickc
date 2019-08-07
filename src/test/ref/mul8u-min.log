@@ -498,10 +498,10 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (byte) main::a#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta a
+    sta.z a
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -515,7 +515,7 @@ main: {
     // [6] phi (byte) main::i#2 = (byte) main::i#4 [phi:main::@1->main::@2#0] -- register_copy 
     // [6] phi (byte) main::b#2 = (byte) 0 [phi:main::@1->main::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta b
+    sta.z b
     jmp b2
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
@@ -525,54 +525,54 @@ main: {
     // main::@2
   b2:
     // [7] (byte) mul8u::a#1 ← (byte) main::a#4 -- vbuz1=vbuz2 
-    lda a
-    sta mul8u.a
+    lda.z a
+    sta.z mul8u.a
     // [8] (byte) mul8u::b#0 ← (byte) main::b#2 -- vbuz1=vbuz2 
-    lda b
-    sta mul8u.b
+    lda.z b
+    sta.z mul8u.b
     // [9] call mul8u 
     // [20] phi from main::@2 to mul8u [phi:main::@2->mul8u]
   mul8u_from_b2:
     jsr mul8u
     // [10] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
-    lda mul8u.res
-    sta mul8u.return
-    lda mul8u.res+1
-    sta mul8u.return+1
+    lda.z mul8u.res
+    sta.z mul8u.return
+    lda.z mul8u.res+1
+    sta.z mul8u.return+1
     jmp b4
     // main::@4
   b4:
     // [11] (word~) main::$0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
-    lda mul8u.return
-    sta _0
-    lda mul8u.return+1
-    sta _0+1
+    lda.z mul8u.return
+    sta.z _0
+    lda.z mul8u.return+1
+    sta.z _0+1
     // [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda i
+    lda.z i
     asl
-    sta _3
+    sta.z _3
     // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy _3
-    lda _0
+    ldy.z _3
+    lda.z _0
     sta screen,y
-    lda _0+1
+    lda.z _0+1
     sta screen+1,y
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
-    inc b
+    inc.z b
     // [16] if((byte) main::b#1!=(byte) 6) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
-    cmp b
+    cmp.z b
     bne b2_from_b4
     jmp b3
     // main::@3
   b3:
     // [17] (byte) main::a#1 ← ++ (byte) main::a#4 -- vbuz1=_inc_vbuz1 
-    inc a
+    inc.z a
     // [18] if((byte) main::a#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
-    cmp a
+    cmp.z a
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -593,21 +593,21 @@ mul8u: {
     // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
     // [21] phi (word) mul8u::mb#2 = (byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuz2 
-    lda b
-    sta mb
+    lda.z b
+    sta.z mb
     lda #0
-    sta mb+1
+    sta.z mb+1
     // [21] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [21] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
   b1:
     // [22] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
-    lda a
+    lda.z a
     cmp #0
     bne b2
     jmp breturn
@@ -619,23 +619,23 @@ mul8u: {
   b2:
     // [24] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
-    and a
-    sta _1
+    and.z a
+    sta.z _1
     // [25] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
-    lda _1
+    lda.z _1
     cmp #0
     beq b3_from_b2
     jmp b4
     // mul8u::@4
   b4:
     // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -644,10 +644,10 @@ mul8u: {
     // mul8u::@3
   b3:
     // [28] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr a
+    lsr.z a
     // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -738,10 +738,10 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (byte) main::a#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta a
+    sta.z a
     jmp b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -764,7 +764,7 @@ main: {
     // main::@2
   b2:
     // [7] (byte) mul8u::a#1 ← (byte) main::a#4 -- vbuxx=vbuz1 
-    ldx a
+    ldx.z a
     // [8] (byte) mul8u::b#0 ← (byte) main::b#2 -- vbuaa=vbuyy 
     tya
     // [9] call mul8u 
@@ -777,16 +777,16 @@ main: {
   b4:
     // [11] (word~) main::$0 ← (word) mul8u::return#2
     // [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     tax
     // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda _0
+    lda.z _0
     sta screen,x
-    lda _0+1
+    lda.z _0+1
     sta screen+1,x
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // [15] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
     iny
     // [16] if((byte) main::b#1!=(byte) 6) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
@@ -796,10 +796,10 @@ main: {
     // main::@3
   b3:
     // [17] (byte) main::a#1 ← ++ (byte) main::a#4 -- vbuz1=_inc_vbuz1 
-    inc a
+    inc.z a
     // [18] if((byte) main::a#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
-    cmp a
+    cmp.z a
     bne b1_from_b3
     jmp breturn
     // main::@return
@@ -817,14 +817,14 @@ mul8u: {
     // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
     // [21] phi (word) mul8u::mb#2 = (byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuaa 
-    sta mb
+    sta.z mb
     lda #0
-    sta mb+1
+    sta.z mb+1
     // [21] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #<0
-    sta res
+    sta.z res
     lda #>0
-    sta res+1
+    sta.z res+1
     // [21] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
     // mul8u::@1
@@ -849,13 +849,13 @@ mul8u: {
     // mul8u::@4
   b4:
     // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
@@ -868,8 +868,8 @@ mul8u: {
     lsr
     tax
     // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
     // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
@@ -1013,9 +1013,9 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
+    sta.z i
     // [5] phi (byte) main::a#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
-    sta a
+    sta.z a
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // [5] phi (byte) main::a#4 = (byte) main::a#1 [phi:main::@3->main::@1#1] -- register_copy 
@@ -1032,7 +1032,7 @@ main: {
   b2:
     // mul8u(a,b)
     // [7] (byte) mul8u::a#1 ← (byte) main::a#4 -- vbuxx=vbuz1 
-    ldx a
+    ldx.z a
     // [8] (byte) mul8u::b#0 ← (byte) main::b#2 -- vbuaa=vbuyy 
     tya
     // [9] call mul8u 
@@ -1044,17 +1044,17 @@ main: {
     // [11] (word~) main::$0 ← (word) mul8u::return#2
     // screen[i++] = mul8u(a,b)
     // [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
-    lda i
+    lda.z i
     asl
     tax
     // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda _0
+    lda.z _0
     sta screen,x
-    lda _0+1
+    lda.z _0+1
     sta screen+1,x
     // screen[i++] = mul8u(a,b);
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc i
+    inc.z i
     // for (byte b: 0..5)
     // [15] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -1064,10 +1064,10 @@ main: {
     // main::@3
     // for(byte a: 0..5)
     // [17] (byte) main::a#1 ← ++ (byte) main::a#4 -- vbuz1=_inc_vbuz1 
-    inc a
+    inc.z a
     // [18] if((byte) main::a#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
-    cmp a
+    cmp.z a
     bne b1
     // main::@return
     // }
@@ -1083,12 +1083,12 @@ mul8u: {
     .label return = 4
     // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
     // [21] phi (word) mul8u::mb#2 = (byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuaa 
-    sta mb
+    sta.z mb
     lda #0
-    sta mb+1
+    sta.z mb+1
     // [21] phi (word) mul8u::res#2 = (byte) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
     // [21] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     // mul8u::@1
   b1:
@@ -1113,13 +1113,13 @@ mul8u: {
     // mul8u::@4
     // res = res + mb
     // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
     // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
     // [27] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     // mul8u::@3
@@ -1131,8 +1131,8 @@ mul8u: {
     tax
     // mb = mb<<1
     // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
     // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
     // [21] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 

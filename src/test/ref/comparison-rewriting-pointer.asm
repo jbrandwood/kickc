@@ -8,44 +8,44 @@ main: {
     .label sc = 2
     .label cc = 4
     lda #<screen
-    sta sc
+    sta.z sc
     lda #>screen
-    sta sc+1
+    sta.z sc+1
   b2:
     lda #'a'
     ldy #0
     sta (sc),y
-    inc sc
+    inc.z sc
     bne !+
-    inc sc+1
+    inc.z sc+1
   !:
-    lda sc+1
+    lda.z sc+1
     cmp #>screen+$3e7
     bne !+
-    lda sc
+    lda.z sc
     cmp #<screen+$3e7
   !:
     bcc b2
     beq b2
     lda #<cols+$3e7
-    sta cc
+    sta.z cc
     lda #>cols+$3e7
-    sta cc+1
+    sta.z cc+1
   b4:
     lda #2
     ldy #0
     sta (cc),y
-    lda cc
+    lda.z cc
     bne !+
-    dec cc+1
+    dec.z cc+1
   !:
-    dec cc
+    dec.z cc
     lda #>cols-1
-    cmp cc+1
+    cmp.z cc+1
     bcc b4
     bne !+
     lda #<cols-1
-    cmp cc
+    cmp.z cc
     bcc b4
   !:
     rts

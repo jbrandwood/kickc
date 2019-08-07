@@ -13,7 +13,7 @@ main: {
     lda #1
   !:
     eor #1
-    sta isSet.b
+    sta.z isSet.b
     jsr isSet
     cmp #0
     bne b2
@@ -40,6 +40,6 @@ isSet: {
     beq !+
     lda #1
   !:
-    ora b
+    ora.z b
     rts
 }

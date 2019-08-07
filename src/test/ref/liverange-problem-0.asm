@@ -10,14 +10,14 @@
   .label SCREEN_2 = 6
 bbegin:
   lda #<$400
-  sta MEM
+  sta.z MEM
   lda #>$400
-  sta MEM+1
+  sta.z MEM+1
   jsr malloc
-  lda malloc.return
-  sta malloc.return_2
-  lda malloc.return+1
-  sta malloc.return_2+1
+  lda.z malloc.return
+  sta.z malloc.return_2
+  lda.z malloc.return+1
+  sta.z malloc.return_2+1
   jsr malloc
   jsr main
   rts
@@ -31,13 +31,13 @@ main: {
 malloc: {
     .label return = 6
     .label return_2 = 4
-    inc MEM
+    inc.z MEM
     bne !+
-    inc MEM+1
+    inc.z MEM+1
   !:
-    lda MEM
-    sta return
-    lda MEM+1
-    sta return+1
+    lda.z MEM
+    sta.z return
+    lda.z MEM+1
+    sta.z return+1
     rts
 }

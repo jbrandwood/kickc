@@ -395,30 +395,30 @@ main: {
   inccnt_from_main:
     // [17] phi (byte) cnt3#10 = (byte) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
     lda #0
-    sta cnt3
+    sta.z cnt3
     // [17] phi (byte) cnt2#10 = (byte) 0 [phi:main->inccnt#1] -- vbuz1=vbuc1 
     lda #0
-    sta cnt2
+    sta.z cnt2
     // [17] phi (byte) cnt#11 = (byte) 0 [phi:main->inccnt#2] -- vbuz1=vbuc1 
     lda #0
-    sta cnt
+    sta.z cnt
     jsr inccnt
     // [6] (byte) inccnt::return#0 ← (byte) inccnt::return#2 -- vbuz1=vbuz2 
-    lda inccnt.return_2
-    sta inccnt.return
+    lda.z inccnt.return_2
+    sta.z inccnt.return
     jmp b1
     // main::@1
   b1:
     // [7] (byte~) main::$0 ← (byte) inccnt::return#0 -- vbuz1=vbuz2 
-    lda inccnt.return
-    sta _0
+    lda.z inccnt.return
+    sta.z _0
     // [8] *((const byte[$100]) SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda _0
+    lda.z _0
     sta SCREEN
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuz1=_inc_vbuz2 
-    ldy cnt_12
+    ldy.z cnt_12
     iny
-    sty cnt
+    sty.z cnt
     // [10] call inccnt 
     // [17] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from_b1:
@@ -427,22 +427,22 @@ main: {
     // [17] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
     jsr inccnt
     // [11] (byte) inccnt::return#1 ← (byte) inccnt::return#2 -- vbuz1=vbuz2 
-    lda inccnt.return_2
-    sta inccnt.return_1
+    lda.z inccnt.return_2
+    sta.z inccnt.return_1
     jmp b2
     // main::@2
   b2:
     // [12] (byte~) main::$1 ← (byte) inccnt::return#1 -- vbuz1=vbuz2 
-    lda inccnt.return_1
-    sta _1
+    lda.z inccnt.return_1
+    sta.z _1
     // [13] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda _1
+    lda.z _1
     sta SCREEN+1
     // [14] *((const byte[$100]) SCREEN#0+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuz1 
-    lda cnt2
+    lda.z cnt2
     sta SCREEN+2
     // [15] *((const byte[$100]) SCREEN#0+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuz1 
-    lda cnt3
+    lda.z cnt3
     sta SCREEN+3
     jmp breturn
     // main::@return
@@ -456,16 +456,16 @@ inccnt: {
     .label return_1 = 7
     .label return_2 = $a
     // [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuz2 
-    ldy cnt
+    ldy.z cnt
     iny
-    sty cnt_12
+    sty.z cnt_12
     // [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuz1=_inc_vbuz1 
-    inc cnt2
+    inc.z cnt2
     // [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuz1=_inc_vbuz1 
-    inc cnt3
+    inc.z cnt3
     // [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuz1=vbuz2 
-    lda cnt_12
-    sta return_2
+    lda.z cnt_12
+    sta.z return_2
     jmp breturn
     // inccnt::@return
   breturn:
@@ -543,7 +543,7 @@ main: {
     // [8] *((const byte[$100]) SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuaa=_inc_vbuz1 
-    lda cnt
+    lda.z cnt
     clc
     adc #1
     // [10] call inccnt 
@@ -575,13 +575,13 @@ inccnt: {
     // [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
-    sta cnt
+    sta.z cnt
     // [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
     iny
     // [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuxx=_inc_vbuxx 
     inx
     // [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuaa=vbuz1 
-    lda cnt
+    lda.z cnt
     jmp breturn
     // inccnt::@return
   breturn:
@@ -599,7 +599,7 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction lda #0 with TXA
-Removing instruction lda cnt
+Removing instruction lda.z cnt
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
@@ -699,7 +699,7 @@ main: {
     sta SCREEN
     // cnt++;
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuaa=_inc_vbuz1 
-    lda cnt
+    lda.z cnt
     clc
     adc #1
     // inccnt()
@@ -733,7 +733,7 @@ inccnt: {
     // [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
-    sta cnt
+    sta.z cnt
     // ++cnt2;
     // [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
     iny

@@ -7,13 +7,13 @@
 bbegin:
   // Not an early constant (address-of is used)
   lda #'a'
-  sta A
+  sta.z A
   jsr main
   rts
 main: {
     .const B = 'b'
     .label addrA = A
-    lda A
+    lda.z A
     sta SCREEN
     lda #B
     sta SCREEN+1
@@ -26,7 +26,7 @@ sub: {
     .const C = 'c'
     lda #C
     sta SCREEN+3
-    ldx A
+    ldx.z A
     inx
     stx SCREEN+4
     rts

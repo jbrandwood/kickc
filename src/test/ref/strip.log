@@ -440,12 +440,12 @@ main: {
   strip_from_main:
     // [20] phi (byte) strip::c#3 = (byte) ' ' [phi:main->strip#0] -- vbuz1=vbuc1 
     lda #' '
-    sta strip.c
+    sta.z strip.c
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1#0 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg1
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -457,14 +457,14 @@ main: {
   print_from_b1:
     // [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg1#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta print.msg
+    sta.z print.msg
     lda #>msg1
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -476,12 +476,12 @@ main: {
   strip_from_b2:
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuz1=vbuc1 
     lda #'y'
-    sta strip.c
+    sta.z strip.c
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2#0 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg2
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
@@ -494,9 +494,9 @@ main: {
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg2#0 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta print.msg
+    sta.z print.msg
     lda #>msg2
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     jmp breturn
     // main::@return
@@ -522,14 +522,14 @@ print: {
     ldy #0
     sta (screen),y
     // [16] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (byte*) print::msg#2 ← ++ (byte*) print::msg#3 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     // [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
@@ -552,10 +552,10 @@ strip: {
     .label p_7 = 7
     .label p_8 = 7
     // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
-    lda dest
-    sta p_7
-    lda dest+1
-    sta p_7+1
+    lda.z dest
+    sta.z p_7
+    lda.z dest+1
+    sta.z p_7+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
   b1_from_strip:
   b1_from_b4:
@@ -565,7 +565,7 @@ strip: {
     // strip::@1
   b1:
     // [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 -- _deref_pbuz1_eq_vbuz2_then_la1 
-    lda c
+    lda.z c
     ldy #0
     cmp (p_4),y
     beq b2_from_b1
@@ -578,9 +578,9 @@ strip: {
     ldy #0
     sta (dest),y
     // [25] (byte*) strip::dest#1 ← ++ (byte*) strip::dest#2 -- pbuz1=_inc_pbuz1 
-    inc dest
+    inc.z dest
     bne !+
-    inc dest+1
+    inc.z dest+1
   !:
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
   b2_from_b1:
@@ -590,13 +590,13 @@ strip: {
     // strip::@2
   b2:
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
-    lda p_4
+    lda.z p_4
     clc
     adc #1
-    sta p
-    lda p_4+1
+    sta.z p
+    lda.z p_4+1
     adc #0
-    sta p+1
+    sta.z p+1
     // [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
@@ -610,10 +610,10 @@ strip: {
     // strip::@4
   b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
-    lda p
-    sta p_8
-    lda p+1
-    sta p_8+1
+    lda.z p
+    sta.z p_8
+    lda.z p+1
+    sta.z p_8+1
     jmp b1_from_b4
 }
   // File Data
@@ -698,9 +698,9 @@ main: {
     ldx #' '
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1#0 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg1
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -712,14 +712,14 @@ main: {
   print_from_b1:
     // [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg1#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta print.msg
+    sta.z print.msg
     lda #>msg1
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
@@ -733,9 +733,9 @@ main: {
     ldx #'y'
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2#0 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg2
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
@@ -748,9 +748,9 @@ main: {
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg2#0 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta print.msg
+    sta.z print.msg
     lda #>msg2
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     jmp breturn
     // main::@return
@@ -776,14 +776,14 @@ print: {
     ldy #0
     sta (screen),y
     // [16] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (byte*) print::msg#2 ← ++ (byte*) print::msg#3 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     // [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
@@ -805,10 +805,10 @@ strip: {
     .label p_7 = 4
     .label p_8 = 4
     // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
-    lda dest
-    sta p_7
-    lda dest+1
-    sta p_7+1
+    lda.z dest
+    sta.z p_7
+    lda.z dest+1
+    sta.z p_7+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
   b1_from_strip:
   b1_from_b4:
@@ -831,9 +831,9 @@ strip: {
     ldy #0
     sta (dest),y
     // [25] (byte*) strip::dest#1 ← ++ (byte*) strip::dest#2 -- pbuz1=_inc_pbuz1 
-    inc dest
+    inc.z dest
     bne !+
-    inc dest+1
+    inc.z dest+1
   !:
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
   b2_from_b1:
@@ -843,13 +843,13 @@ strip: {
     // strip::@2
   b2:
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
-    lda p_4
+    lda.z p_4
     clc
     adc #1
-    sta p
-    lda p_4+1
+    sta.z p
+    lda.z p_4+1
     adc #0
-    sta p+1
+    sta.z p+1
     // [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
@@ -863,10 +863,10 @@ strip: {
     // strip::@4
   b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
-    lda p
-    sta p_8
-    lda p+1
-    sta p_8+1
+    lda.z p
+    sta.z p_8
+    lda.z p+1
+    sta.z p_8+1
     jmp b1_from_b4
 }
   // File Data
@@ -1007,9 +1007,9 @@ main: {
     ldx #' '
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1#0 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg1
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -1018,14 +1018,14 @@ main: {
     // [13] phi from main::@1 to print [phi:main::@1->print]
     // [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg1#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
-    sta print.msg
+    sta.z print.msg
     lda #>msg1
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
@@ -1036,9 +1036,9 @@ main: {
     ldx #'y'
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2#0 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta strip.dest
+    sta.z strip.dest
     lda #>msg2
-    sta strip.dest+1
+    sta.z strip.dest+1
     jsr strip
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
@@ -1048,9 +1048,9 @@ main: {
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg2#0 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
-    sta print.msg
+    sta.z print.msg
     lda #>msg2
-    sta print.msg+1
+    sta.z print.msg+1
     jsr print
     // main::@return
     // }
@@ -1073,14 +1073,14 @@ print: {
     sta (screen),y
     // *screen++ = *msg++;
     // [16] (byte*) screen#11 ← ++ (byte*) screen#10 -- pbuz1=_inc_pbuz1 
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     // [17] (byte*) print::msg#2 ← ++ (byte*) print::msg#3 -- pbuz1=_inc_pbuz1 
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     // while(*msg!=0)
     // [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
@@ -1102,10 +1102,10 @@ strip: {
     .label p_7 = 4
     .label p_8 = 4
     // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
-    lda dest
-    sta p_7
-    lda dest+1
-    sta p_7+1
+    lda.z dest
+    sta.z p_7
+    lda.z dest+1
+    sta.z p_7+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
     // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
@@ -1124,9 +1124,9 @@ strip: {
     sta (dest),y
     // *dest++=*p;
     // [25] (byte*) strip::dest#1 ← ++ (byte*) strip::dest#2 -- pbuz1=_inc_pbuz1 
-    inc dest
+    inc.z dest
     bne !+
-    inc dest+1
+    inc.z dest+1
   !:
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
     // [26] phi (byte*) strip::dest#4 = (byte*) strip::dest#2 [phi:strip::@1/strip::@3->strip::@2#0] -- register_copy 
@@ -1134,13 +1134,13 @@ strip: {
   b2:
     // while(*p++!=0)
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
-    lda p_4
+    lda.z p_4
     clc
     adc #1
-    sta p
-    lda p_4+1
+    sta.z p
+    lda.z p_4+1
     adc #0
-    sta p+1
+    sta.z p+1
     // [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
@@ -1153,10 +1153,10 @@ strip: {
     // strip::@4
   b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
-    lda p
-    sta p_8
-    lda p+1
-    sta p_8+1
+    lda.z p
+    sta.z p_8
+    lda.z p+1
+    sta.z p_8+1
     jmp b1
 }
   // File Data

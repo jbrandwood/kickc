@@ -9,7 +9,7 @@ main: {
     txa
     jsr inccnt
     sta SCREEN
-    lda cnt
+    lda.z cnt
     clc
     adc #1
     jsr inccnt
@@ -21,7 +21,7 @@ main: {
 inccnt: {
     clc
     adc #1
-    sta cnt
+    sta.z cnt
     iny
     inx
     rts

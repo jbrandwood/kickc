@@ -8,9 +8,9 @@
 main: {
     .label cur_item = 2
     lda #<items
-    sta cur_item
+    sta.z cur_item
     lda #>items
-    sta cur_item+1
+    sta.z cur_item+1
     ldx #0
   b1:
     ldy #0
@@ -20,18 +20,18 @@ main: {
     asl
     asl
     asl
-    sty $ff
-    ora $ff
+    sty.z $ff
+    ora.z $ff
     sta (cur_item),y
     iny
     cpy #ITEM_SIZE-1+1
     bne b2
     lda #ITEM_SIZE
     clc
-    adc cur_item
-    sta cur_item
+    adc.z cur_item
+    sta.z cur_item
     bcc !+
-    inc cur_item+1
+    inc.z cur_item+1
   !:
     inx
     cpx #ITEM_COUNT-1+1

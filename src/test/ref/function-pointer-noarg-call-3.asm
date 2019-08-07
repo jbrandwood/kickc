@@ -6,10 +6,10 @@ main: {
     .label _1 = 3
     .label i = 2
     lda #0
-    sta i
+    sta.z i
   b2:
-    inc i
-    lda i
+    inc.z i
+    lda.z i
     jsr getfn
     jsr bi__1
     jmp b2
@@ -23,15 +23,15 @@ getfn: {
     cmp #0
     beq b1
     lda #<fn2
-    sta return
+    sta.z return
     lda #>fn2
-    sta return+1
+    sta.z return+1
     rts
   b1:
     lda #<fn1
-    sta return
+    sta.z return
     lda #>fn1
-    sta return+1
+    sta.z return+1
     rts
 }
 fn2: {

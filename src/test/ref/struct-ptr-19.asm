@@ -10,13 +10,13 @@ main: {
     .label point_x = 3
     .label point_y = 4
     lda #1
-    sta point_x
+    sta.z point_x
     lda #2
-    sta point_y
-    ldy point_x
+    sta.z point_y
+    ldy.z point_x
     tax
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     ldy ptr
     ldx ptr+OFFSET_STRUCT_POINT_Y
@@ -26,12 +26,12 @@ main: {
 // print(byte register(Y) p_x, byte register(X) p_y)
 print: {
     tya
-    ldy idx
+    ldy.z idx
     sta SCREEN,y
     iny
     txa
     sta SCREEN,y
     iny
-    sty idx
+    sty.z idx
     rts
 }

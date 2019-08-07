@@ -18,14 +18,14 @@ main: {
 }
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_ln
     rts
@@ -37,17 +37,17 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor
-    sta print_line_cursor
+    adc.z print_line_cursor
+    sta.z print_line_cursor
     bcc !+
-    inc print_line_cursor+1
+    inc.z print_line_cursor+1
   !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b1
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b1
   !:
     rts
@@ -66,13 +66,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -84,24 +84,24 @@ mul8u_compare: {
     .label b = $b
     .label a = 6
     lda #0
-    sta a
+    sta.z a
   b1:
     lda #0
-    sta b
+    sta.z b
   b2:
-    ldx b
+    ldx.z b
     jsr muls8u
-    lda a
-    ldx b
+    lda.z a
+    ldx.z b
     jsr mulf8u
-    ldx a
-    lda b
+    ldx.z a
+    lda.z b
     jsr mul8u
-    lda ms
-    cmp mf
+    lda.z ms
+    cmp.z mf
     bne !+
-    lda ms+1
-    cmp mf+1
+    lda.z ms+1
+    cmp.z mf+1
     beq b6
   !:
     ldx #0
@@ -109,11 +109,11 @@ mul8u_compare: {
   b6:
     ldx #1
   b3:
-    lda ms
-    cmp mn
+    lda.z ms
+    cmp.z mn
     bne !+
-    lda ms+1
-    cmp mn+1
+    lda.z ms+1
+    cmp.z mn+1
     beq b4
   !:
     ldx #0
@@ -122,22 +122,22 @@ mul8u_compare: {
     bne b5
     lda #2
     sta BGCOL
-    ldx a
+    ldx.z a
     jsr mul8u_error
     rts
   b5:
-    inc b
-    lda b
+    inc.z b
+    lda.z b
     cmp #0
     bne b2
-    inc a
-    lda a
+    inc.z a
+    lda.z a
     cmp #0
     bne b1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_ln
     rts
@@ -151,43 +151,43 @@ mul8u_error: {
     .label mn = 9
     .label mf = $e
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_byte
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    ldx b
+    ldx.z b
     jsr print_byte
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_word
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda mn
-    sta print_word.w
-    lda mn+1
-    sta print_word.w+1
+    lda.z mn
+    sta.z print_word.w
+    lda.z mn+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<str4
-    sta print_str.str
+    sta.z print_str.str
     lda #>str4
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda mf
-    sta print_word.w
-    lda mf+1
-    sta print_word.w+1
+    lda.z mf
+    sta.z print_word.w
+    lda.z mf+1
+    sta.z print_word.w+1
     jsr print_word
     jsr print_ln
     rts
@@ -198,10 +198,10 @@ mul8u_error: {
 // print_word(word zeropage(4) w)
 print_word: {
     .label w = 4
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -228,9 +228,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -240,11 +240,11 @@ mul8u: {
     .label mb = $c
     .label res = 9
     .label return = 9
-    sta mb
+    sta.z mb
     lda #0
-    sta mb+1
-    sta res
-    sta res+1
+    sta.z mb+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -254,19 +254,19 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }
 // Fast multiply two unsigned bytes to a word result
@@ -297,9 +297,9 @@ mulf8u_prepared: {
     sbc mulf_sqr2_hi,x
     sta memB
     lda resL
-    sta return
+    sta.z return
     lda memB
-    sta return+1
+    sta.z return+1
     rts
 }
 // Prepare for fast multiply with an unsigned byte to a word result
@@ -321,29 +321,29 @@ muls8u: {
     .label return = 4
     .label m = 4
     .label a = 6
-    lda a
+    lda.z a
     cmp #0
     beq b4
     lda #<0
-    sta m
-    sta m+1
+    sta.z m
+    sta.z m+1
     tay
   b2:
-    cpy a
+    cpy.z a
     bne b3
     rts
   b4:
     lda #<0
-    sta return
-    sta return+1
+    sta.z return
+    sta.z return+1
     rts
   b3:
     txa
     clc
-    adc m
-    sta m
+    adc.z m
+    sta.z m
     bcc !+
-    inc m+1
+    inc.z m+1
   !:
     iny
     jmp b2
@@ -354,40 +354,40 @@ mulf_tables_cmp: {
     .label asm_sqr = 4
     .label kc_sqr = 2
     lda #<mula_sqr1_lo
-    sta asm_sqr
+    sta.z asm_sqr
     lda #>mula_sqr1_lo
-    sta asm_sqr+1
+    sta.z asm_sqr+1
     lda #<mulf_sqr1_lo
-    sta kc_sqr
+    sta.z kc_sqr
     lda #>mulf_sqr1_lo
-    sta kc_sqr+1
+    sta.z kc_sqr+1
   b1:
-    lda kc_sqr+1
+    lda.z kc_sqr+1
     cmp #>mulf_sqr1_lo+$200*4
     bcc b2
     bne !+
-    lda kc_sqr
+    lda.z kc_sqr
     cmp #<mulf_sqr1_lo+$200*4
     bcc b2
   !:
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     rts
   b2:
     ldy #0
@@ -397,38 +397,38 @@ mulf_tables_cmp: {
     lda #2
     sta BGCOL
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     jsr print_word
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
-    lda kc_sqr
-    sta print_word.w
-    lda kc_sqr+1
-    sta print_word.w+1
+    lda.z kc_sqr
+    sta.z print_word.w
+    lda.z kc_sqr+1
+    sta.z print_word.w+1
     jsr print_word
     lda #<$400
-    sta print_line_cursor
+    sta.z print_line_cursor
     lda #>$400
-    sta print_line_cursor+1
+    sta.z print_line_cursor+1
     rts
   b4:
-    inc asm_sqr
+    inc.z asm_sqr
     bne !+
-    inc asm_sqr+1
+    inc.z asm_sqr+1
   !:
-    inc kc_sqr
+    inc.z kc_sqr
     bne !+
-    inc kc_sqr+1
+    inc.z kc_sqr+1
   !:
     jmp b1
     str: .text "multiply tables match!"
@@ -502,40 +502,40 @@ mulf_init: {
     .label dir = $b
     ldx #0
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     txa
-    sta sqr
-    sta sqr+1
-    sta c
+    sta.z sqr
+    sta.z sqr+1
+    sta.z c
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
   b1:
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     lda #$ff
-    sta dir
+    sta.z dir
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     ldx #-1
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
   b5:
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     // Set the very last value g(511) = f(256)
@@ -550,55 +550,55 @@ mulf_init: {
     sta (sqr2_lo),y
     lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     cpx #0
     bne b8
     lda #1
-    sta dir
+    sta.z dir
   b8:
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     jmp b5
   b2:
-    inc c
+    inc.z c
     lda #1
-    and c
+    and.z c
     cmp #0
     bne b3
     inx
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
   b3:
-    lda sqr
+    lda.z sqr
     ldy #0
     sta (sqr1_lo),y
-    lda sqr+1
+    lda.z sqr+1
     sta (sqr1_hi),y
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     jmp b1
 }
@@ -615,21 +615,21 @@ memset: {
     .label end = str+num
     .label dst = $c
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts

@@ -5,9 +5,9 @@
   .label screen = 2
 main: {
     lda #<$400
-    sta screen
+    sta.z screen
     lda #>$400
-    sta screen+1
+    sta.z screen+1
     ldx #1
     jsr print_msg
     ldx #2
@@ -20,15 +20,15 @@ print_msg: {
     cpx #1
     beq b1
     lda #<msg_2
-    sta msg
+    sta.z msg
     lda #>msg_2
-    sta msg+1
+    sta.z msg+1
     jmp b2
   b1:
     lda #<msg_1
-    sta msg
+    sta.z msg
     lda #>msg_1
-    sta msg+1
+    sta.z msg+1
   b2:
     jsr print
     rts
@@ -50,13 +50,13 @@ print: {
     ldy #0
     lda (msg),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc msg
+    inc.z msg
     bne !+
-    inc msg+1
+    inc.z msg+1
   !:
     jmp b1
 }

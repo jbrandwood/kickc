@@ -66,80 +66,80 @@ main: {
     jsr keyboard_init
     ldx #fileEntry1_idx
     jsr mul8u
-    lda mul8u.return
-    sta fileEntry1__0
-    lda mul8u.return+1
-    sta fileEntry1__0+1
+    lda.z mul8u.return
+    sta.z fileEntry1__0
+    lda.z mul8u.return+1
+    sta.z fileEntry1__0+1
     clc
-    lda entry1
+    lda.z entry1
     adc #<files
-    sta entry1
-    lda entry1+1
+    sta.z entry1
+    lda.z entry1+1
     adc #>files
-    sta entry1+1
+    sta.z entry1+1
     ldx #fileEntry2_idx
     jsr mul8u
     clc
-    lda entry2
+    lda.z entry2
     adc #<files
-    sta entry2
-    lda entry2+1
+    sta.z entry2
+    lda.z entry2+1
     adc #>files
-    sta entry2+1
-    lda entry1
-    sta initEntry.entry
-    lda entry1+1
-    sta initEntry.entry+1
+    sta.z entry2+1
+    lda.z entry1
+    sta.z initEntry.entry
+    lda.z entry1+1
+    sta.z initEntry.entry+1
     ldx #0
     jsr initEntry
-    lda entry2
-    sta initEntry.entry
-    lda entry2+1
-    sta initEntry.entry+1
+    lda.z entry2
+    sta.z initEntry.entry
+    lda.z entry2+1
+    sta.z initEntry.entry+1
     ldx #$11
     jsr initEntry
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor_63
+    sta.z print_line_cursor_63
     lda #>$400
-    sta print_line_cursor_63+1
+    sta.z print_line_cursor_63+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_line_cursor_157
-    lda print_line_cursor+1
-    sta print_line_cursor_157+1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_157
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_157+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_ln
     jsr printEntry
-    lda print_line_cursor
-    sta print_line_cursor_158
-    lda print_line_cursor+1
-    sta print_line_cursor_158+1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_158
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_158+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
   b1:
     jsr keyboard_key_pressed
@@ -147,50 +147,50 @@ main: {
     beq b1
     jsr print_cls
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta print_line_cursor_63
+    sta.z print_line_cursor_63
     lda #>$400
-    sta print_line_cursor_63+1
+    sta.z print_line_cursor_63+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_line_cursor_159
-    lda print_line_cursor+1
-    sta print_line_cursor_159+1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_159
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_159+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_ln
-    lda entry2
-    sta printEntry.entry
-    lda entry2+1
-    sta printEntry.entry+1
+    lda.z entry2
+    sta.z printEntry.entry
+    lda.z entry2+1
+    sta.z printEntry.entry+1
     jsr printEntry
-    lda print_line_cursor
-    sta print_line_cursor_160
-    lda print_line_cursor+1
-    sta print_line_cursor_160+1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_160
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_160+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
   b3:
     jsr keyboard_key_pressed
@@ -218,21 +218,21 @@ memset: {
     .label end = str+num
     .label dst = $a
     lda #<str
-    sta dst
+    sta.z dst
     lda #>str
-    sta dst+1
+    sta.z dst+1
   b2:
     lda #c
     ldy #0
     sta (dst),y
-    inc dst
+    inc.z dst
     bne !+
-    inc dst+1
+    inc.z dst+1
   !:
-    lda dst+1
+    lda.z dst+1
     cmp #>end
     bne b2
-    lda dst
+    lda.z dst
     cmp #<end
     bne b2
     rts
@@ -274,13 +274,13 @@ print_str: {
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
-    inc str
+    inc.z str
     bne !+
-    inc str+1
+    inc.z str+1
   !:
     jmp b1
 }
@@ -289,278 +289,278 @@ print_ln: {
   b1:
     lda #$28
     clc
-    adc print_line_cursor_32
-    sta print_line_cursor
+    adc.z print_line_cursor_32
+    sta.z print_line_cursor
     lda #0
-    adc print_line_cursor_32+1
-    sta print_line_cursor+1
-    cmp print_char_cursor+1
+    adc.z print_line_cursor_32+1
+    sta.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc b2
     bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
     bcc b2
   !:
     rts
   b2:
-    lda print_line_cursor
-    sta print_line_cursor_175
-    lda print_line_cursor+1
-    sta print_line_cursor_175+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_175
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_175+1
     jmp b1
 }
 // Print the contents of a file entry
 // printEntry(byte* zeropage(2) entry)
 printEntry: {
     .label entry = 2
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str
-    sta print_str.str
+    sta.z print_str.str
     lda #>str
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #0
     lda (entry),y
-    sta print_word.w
+    sta.z print_word.w
     iny
     lda (entry),y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
-    lda print_line_cursor
-    sta print_line_cursor_161
-    lda print_line_cursor+1
-    sta print_line_cursor_161+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_161
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_161+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str1
-    sta print_str.str
+    sta.z print_str.str
     lda #>str1
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #2
     lda (entry),y
-    sta print_word.w
+    sta.z print_word.w
     iny
     lda (entry),y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
-    lda print_line_cursor
-    sta print_line_cursor_162
-    lda print_line_cursor+1
-    sta print_line_cursor_162+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_162
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_162+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str2
-    sta print_str.str
+    sta.z print_str.str
     lda #>str2
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #4
     lda (entry),y
-    sta print_word.w
+    sta.z print_word.w
     iny
     lda (entry),y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
-    lda print_line_cursor
-    sta print_line_cursor_163
-    lda print_line_cursor+1
-    sta print_line_cursor_163+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_163
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_163+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str3
-    sta print_str.str
+    sta.z print_str.str
     lda #>str3
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #6
     lda (entry),y
-    sta print_word.w
+    sta.z print_word.w
     iny
     lda (entry),y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
-    lda print_line_cursor
-    sta print_line_cursor_164
-    lda print_line_cursor+1
-    sta print_line_cursor_164+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_164
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_164+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str4
-    sta print_str.str
+    sta.z print_str.str
     lda #>str4
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #8
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_165
-    lda print_line_cursor+1
-    sta print_line_cursor_165+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_165
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_165+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str5
-    sta print_str.str
+    sta.z print_str.str
     lda #>str5
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #9
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_166
-    lda print_line_cursor+1
-    sta print_line_cursor_166+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_166
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_166+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str6
-    sta print_str.str
+    sta.z print_str.str
     lda #>str6
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$a
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_167
-    lda print_line_cursor+1
-    sta print_line_cursor_167+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_167
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_167+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str7
-    sta print_str.str
+    sta.z print_str.str
     lda #>str7
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$b
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_168
-    lda print_line_cursor+1
-    sta print_line_cursor_168+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_168
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_168+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str8
-    sta print_str.str
+    sta.z print_str.str
     lda #>str8
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$c
     lda (entry),y
-    sta print_word.w
+    sta.z print_word.w
     iny
     lda (entry),y
-    sta print_word.w+1
+    sta.z print_word.w+1
     jsr print_word
-    lda print_line_cursor
-    sta print_line_cursor_169
-    lda print_line_cursor+1
-    sta print_line_cursor_169+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_169
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_169+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str9
-    sta print_str.str
+    sta.z print_str.str
     lda #>str9
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$e
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_170
-    lda print_line_cursor+1
-    sta print_line_cursor_170+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_170
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_170+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str10
-    sta print_str.str
+    sta.z print_str.str
     lda #>str10
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$f
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_171
-    lda print_line_cursor+1
-    sta print_line_cursor_171+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_171
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_171+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str11
-    sta print_str.str
+    sta.z print_str.str
     lda #>str11
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$10
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_172
-    lda print_line_cursor+1
-    sta print_line_cursor_172+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_172
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_172+1
     jsr print_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
     lda #<str12
-    sta print_str.str
+    sta.z print_str.str
     lda #>str12
-    sta print_str.str+1
+    sta.z print_str.str+1
     jsr print_str
     ldy #$11
     lda (entry),y
     tax
     jsr print_byte
-    lda print_line_cursor
-    sta print_line_cursor_173
-    lda print_line_cursor+1
-    sta print_line_cursor_173+1
+    lda.z print_line_cursor
+    sta.z print_line_cursor_173
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_173+1
     jsr print_ln
     rts
     str: .text "bufdisk   "
@@ -612,9 +612,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -622,10 +622,10 @@ print_char: {
 // print_word(word zeropage($a) w)
 print_word: {
     .label w = $a
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -643,54 +643,54 @@ initEntry: {
     txa
     clc
     adc #<$1111
-    sta _1
+    sta.z _1
     lda #>$1111
     adc #0
-    sta _1+1
+    sta.z _1+1
     ldy #0
-    lda _1
+    lda.z _1
     sta (entry),y
     iny
-    lda _1+1
+    lda.z _1+1
     sta (entry),y
     txa
     clc
     adc #<$2222
-    sta _3
+    sta.z _3
     lda #>$2222
     adc #0
-    sta _3+1
+    sta.z _3+1
     ldy #2
-    lda _3
+    lda.z _3
     sta (entry),y
     iny
-    lda _3+1
+    lda.z _3+1
     sta (entry),y
     txa
     clc
     adc #<$3333
-    sta _5
+    sta.z _5
     lda #>$3333
     adc #0
-    sta _5+1
+    sta.z _5+1
     ldy #4
-    lda _5
+    lda.z _5
     sta (entry),y
     iny
-    lda _5+1
+    lda.z _5+1
     sta (entry),y
     txa
     clc
     adc #<$4444
-    sta _7
+    sta.z _7
     lda #>$4444
     adc #0
-    sta _7+1
+    sta.z _7+1
     ldy #6
-    lda _7
+    lda.z _7
     sta (entry),y
     iny
-    lda _7+1
+    lda.z _7+1
     sta (entry),y
     txa
     clc
@@ -715,15 +715,15 @@ initEntry: {
     txa
     clc
     adc #<$9999
-    sta _17
+    sta.z _17
     lda #>$9999
     adc #0
-    sta _17+1
+    sta.z _17+1
     ldy #$c
-    lda _17
+    lda.z _17
     sta (entry),y
     iny
-    lda _17+1
+    lda.z _17+1
     sta (entry),y
     txa
     clc
@@ -754,12 +754,12 @@ mul8u: {
     .label res = 6
     .label return = 6
     lda #<SIZEOF_ENTRY
-    sta mb
+    sta.z mb
     lda #>SIZEOF_ENTRY
-    sta mb+1
+    sta.z mb+1
     lda #<0
-    sta res
-    sta res+1
+    sta.z res
+    sta.z res+1
   b1:
     cpx #0
     bne b2
@@ -769,19 +769,19 @@ mul8u: {
     and #1
     cmp #0
     beq b3
-    lda res
+    lda.z res
     clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
   b3:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
+    asl.z mb
+    rol.z mb+1
     jmp b1
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers

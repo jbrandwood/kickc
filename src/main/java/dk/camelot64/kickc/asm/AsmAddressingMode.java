@@ -4,9 +4,9 @@ package dk.camelot64.kickc.asm;
 public enum AsmAddressingMode {
    NON("", "%i", 1),
    IMM("#imm", "%i #%p", 2),
-   ZP("zp", "%i %p", 2),
-   ZPX("zp,x", "%i %p,x", 2),
-   ZPY("zp,y", "%i %p,y", 2),
+   ZP("zp", "%i.z %p", 2),
+   ZPX("zp,x", "%i.z %p,x", 2),
+   ZPY("zp,y", "%i.z %p,y", 2),
    ABS("abs", "%i %p", 3),
    ABX("abs,x", "%i %p,x", 3),
    ABY("abs,y", "%i %p,y", 4),

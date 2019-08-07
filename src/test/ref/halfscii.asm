@@ -18,30 +18,30 @@ main: {
     lda #$32
     sta PROCPORT
     lda #<CHARSET4
-    sta charset4
+    sta.z charset4
     lda #>CHARSET4
-    sta charset4+1
+    sta.z charset4+1
     lda #<CHARGEN
-    sta chargen
+    sta.z chargen
     lda #>CHARGEN
-    sta chargen+1
+    sta.z chargen+1
   b1:
-    lda chargen
+    lda.z chargen
     clc
     adc #1
-    sta chargen1
-    lda chargen+1
+    sta.z chargen1
+    lda.z chargen+1
     adc #0
-    sta chargen1+1
+    sta.z chargen1+1
     lda #$60
     ldy #0
     and (chargen),y
-    sta _1
+    sta.z _1
     lda #$60
     and (chargen1),y
     lsr
     lsr
-    ora _1
+    ora.z _1
     lsr
     lsr
     lsr
@@ -59,12 +59,12 @@ main: {
     lda #$18
     ldy #0
     and (chargen),y
-    sta _11
+    sta.z _11
     lda #$18
     and (chargen1),y
     lsr
     lsr
-    ora _11
+    ora.z _11
     lsr
     tay
     lda bits_count,y
@@ -79,11 +79,11 @@ main: {
     ldy #0
     and (chargen),y
     asl
-    sta _21
+    sta.z _21
     lda #6
     and (chargen1),y
     lsr
-    ora _21
+    ora.z _21
     tay
     lda bits_count,y
     cmp #2
@@ -98,10 +98,10 @@ main: {
     and (chargen),y
     asl
     asl
-    sta _30
+    sta.z _30
     lda #1
     and (chargen1),y
-    ora _30
+    ora.z _30
     tay
     lda bits_count,y
     cmp #2
@@ -112,24 +112,24 @@ main: {
     asl
     ldy #0
     sta (charset4),y
-    inc charset4
+    inc.z charset4
     bne !+
-    inc charset4+1
+    inc.z charset4+1
   !:
-    lda chargen
+    lda.z chargen
     clc
     adc #2
-    sta chargen
+    sta.z chargen
     bcc !+
-    inc chargen+1
+    inc.z chargen+1
   !:
-    lda chargen+1
+    lda.z chargen+1
     cmp #>CHARGEN+$800
     bcs !b1+
     jmp b1
   !b1:
     bne !+
-    lda chargen
+    lda.z chargen
     cmp #<CHARGEN+$800
     bcs !b1+
     jmp b1

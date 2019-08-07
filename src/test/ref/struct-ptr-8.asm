@@ -8,28 +8,28 @@ main: {
     .label i = 2
     .label i1 = 3
     lda #0
-    sta i
+    sta.z i
   b1:
-    lax i
+    lax.z i
     axs #-[2]
-    lda i
+    lda.z i
     asl
     tay
     txa
     sta points,y
     lda #3
     clc
-    adc i
+    adc.z i
     sta points+OFFSET_STRUCT_POINT_Y,y
-    inc i
+    inc.z i
     lda #2
-    cmp i
+    cmp.z i
     bne b1
     ldx #0
     txa
-    sta i1
+    sta.z i1
   b2:
-    lda i1
+    lda.z i1
     asl
     tay
     lda points,y
@@ -41,9 +41,9 @@ main: {
     lda #' '
     sta SCREEN,x
     inx
-    inc i1
+    inc.z i1
     lda #2
-    cmp i1
+    cmp.z i1
     bne b2
     rts
 }

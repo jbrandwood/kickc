@@ -14,39 +14,39 @@ main: {
     .label cursor = 2
     .label y = 5
     lda #y0
-    sta y
+    sta.z y
     ldx #yd/2
     lda #x0
-    sta x
+    sta.z x
     lda #<SCREEN+y0*$28+x0
-    sta cursor
+    sta.z cursor
     lda #>SCREEN+y0*$28+x0
-    sta cursor+1
+    sta.z cursor+1
   b1:
     lda #STAR
     ldy #0
     sta (cursor),y
-    inc x
-    inc cursor
+    inc.z x
+    inc.z cursor
     bne !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     txa
     axs #-[yd]
     cpx #xd
     bcc b2
-    inc y
+    inc.z y
     lda #$28
     clc
-    adc cursor
-    sta cursor
+    adc.z cursor
+    sta.z cursor
     bcc !+
-    inc cursor+1
+    inc.z cursor+1
   !:
     txa
     axs #xd
   b2:
-    lda x
+    lda.z x
     cmp #x1+1
     bcc b1
     rts

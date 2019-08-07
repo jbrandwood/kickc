@@ -8,39 +8,39 @@
 main: {
     .label i = 2
     lda #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
-    sta print.p+1
+    sta.z print.p+1
     lda #0
-    sta idx
+    sta.z idx
     jsr print
     lda #<VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p
+    sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
-    sta print.p+1
+    sta.z print.p+1
     jsr print
     lda #2
-    sta i
+    sta.z i
   b1:
-    lda i
+    lda.z i
     asl
     clc
     adc #<VALS
-    sta print.p
+    sta.z print.p
     lda #>VALS
     adc #0
-    sta print.p+1
+    sta.z print.p+1
     jsr print
-    inc i
+    inc.z i
     lda #4
-    cmp i
+    cmp.z i
     bne b1
     rts
 }
 // print(signed word* zeropage(4) p)
 print: {
     .label p = 4
-    lda idx
+    lda.z idx
     asl
     tax
     ldy #0
@@ -49,7 +49,7 @@ print: {
     iny
     lda (p),y
     sta SCREEN+1,x
-    inc idx
+    inc.z idx
     rts
 }
   VALS: .word 1, 2, 3, 4

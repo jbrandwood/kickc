@@ -7,27 +7,27 @@ main: {
     .label w = 3
     .label idx = 2
     lda #0
-    sta idx
+    sta.z idx
     tax
   b1:
     txa
     asl
     tay
     lda words,y
-    sta w
+    sta.z w
     lda words+1,y
-    sta w+1
-    lda w
-    ldy idx
+    sta.z w+1
+    lda.z w
+    ldy.z idx
     sta SCREEN,y
     iny
-    lda w+1
+    lda.z w+1
     sta SCREEN,y
     iny
     tya
     clc
     adc #1
-    sta idx
+    sta.z idx
     inx
     cpx #4
     bne b1

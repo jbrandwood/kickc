@@ -26,23 +26,23 @@ main: {
 // print_dword_at(dword zeropage(9) dw)
 print_dword_at: {
     .label dw = 9
-    lda dw+2
-    sta print_word_at.w
-    lda dw+3
-    sta print_word_at.w+1
+    lda.z dw+2
+    sta.z print_word_at.w
+    lda.z dw+3
+    sta.z print_word_at.w+1
     lda #<SCREEN
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>SCREEN
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
-    lda dw
-    sta print_word_at.w
-    lda dw+1
-    sta print_word_at.w+1
+    lda.z dw
+    sta.z print_word_at.w
+    lda.z dw+1
+    sta.z print_word_at.w+1
     lda #<SCREEN+4
-    sta print_word_at.at
+    sta.z print_word_at.at
     lda #>SCREEN+4
-    sta print_word_at.at+1
+    sta.z print_word_at.at+1
     jsr print_word_at
     rts
 }
@@ -51,17 +51,17 @@ print_dword_at: {
 print_word_at: {
     .label w = 2
     .label at = 4
-    lda w+1
-    sta print_byte_at.b
+    lda.z w+1
+    sta.z print_byte_at.b
     jsr print_byte_at
-    lda w
-    sta print_byte_at.b
-    lda print_byte_at.at
+    lda.z w
+    sta.z print_byte_at.b
+    lda.z print_byte_at.at
     clc
     adc #2
-    sta print_byte_at.at
+    sta.z print_byte_at.at
     bcc !+
-    inc print_byte_at.at+1
+    inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
@@ -71,28 +71,28 @@ print_word_at: {
 print_byte_at: {
     .label b = 6
     .label at = 4
-    lda b
+    lda.z b
     lsr
     lsr
     lsr
     lsr
     tay
     ldx print_hextab,y
-    lda at
-    sta print_char_at.at
-    lda at+1
-    sta print_char_at.at+1
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
     jsr print_char_at
     lda #$f
-    and b
+    and.z b
     tay
-    lda at
+    lda.z at
     clc
     adc #1
-    sta print_char_at.at
-    lda at+1
+    sta.z print_char_at.at
+    lda.z at+1
     adc #0
-    sta print_char_at.at+1
+    sta.z print_char_at.at+1
     ldx print_hextab,y
     jsr print_char_at
     rts
@@ -113,16 +113,16 @@ clock: {
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
-    sta return
+    sta.z return
     lda #>$ffffffff
     sbc CIA2_TIMER_AB+1
-    sta return+1
+    sta.z return+1
     lda #<$ffffffff>>$10
     sbc CIA2_TIMER_AB+2
-    sta return+2
+    sta.z return+2
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Reset & start the processor clock time. The value can be read using clock().

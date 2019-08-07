@@ -12,9 +12,9 @@ main: {
     jsr mulf_init
     sei
     lda #<$400
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>$400
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
   b2:
     lda #$ff
     cmp RASTER
@@ -25,9 +25,9 @@ main: {
     jsr print_dword
     jsr print_set_screen
     lda #<SCREEN
-    sta print_char_cursor
+    sta.z print_char_cursor
     lda #>SCREEN
-    sta print_char_cursor+1
+    sta.z print_char_cursor+1
     jmp b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
@@ -38,15 +38,15 @@ print_set_screen: {
 // print_dword(dword zeropage($e) dw)
 print_dword: {
     .label dw = $e
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
+    lda.z dw+2
+    sta.z print_word.w
+    lda.z dw+3
+    sta.z print_word.w+1
     jsr print_word
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
+    lda.z dw
+    sta.z print_word.w
+    lda.z dw+1
+    sta.z print_word.w+1
     jsr print_word
     rts
 }
@@ -54,10 +54,10 @@ print_dword: {
 // print_word(word zeropage(2) w)
 print_word: {
     .label w = 2
-    lda w+1
+    lda.z w+1
     tax
     jsr print_byte
-    lda w
+    lda.z w
     tax
     jsr print_byte
     rts
@@ -84,9 +84,9 @@ print_byte: {
 print_char: {
     ldy #0
     sta (print_char_cursor),y
-    inc print_char_cursor
+    inc.z print_char_cursor
     bne !+
-    inc print_char_cursor+1
+    inc.z print_char_cursor+1
   !:
     rts
 }
@@ -198,13 +198,13 @@ mulf16u: {
     inc memR+3
   !:
     lda memR
-    sta return
+    sta.z return
     lda memR+1
-    sta return+1
+    sta.z return+1
     lda memR+2
-    sta return+2
+    sta.z return+2
     lda memR+3
-    sta return+3
+    sta.z return+3
     rts
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
@@ -218,40 +218,40 @@ mulf_init: {
     .label dir = $b
     ldx #0
     lda #<mulf_sqr1_hi+1
-    sta sqr1_hi
+    sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
-    sta sqr1_hi+1
+    sta.z sqr1_hi+1
     txa
-    sta sqr
-    sta sqr+1
-    sta c
+    sta.z sqr
+    sta.z sqr+1
+    sta.z c
     lda #<mulf_sqr1_lo+1
-    sta sqr1_lo
+    sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
-    sta sqr1_lo+1
+    sta.z sqr1_lo+1
   b1:
-    lda sqr1_lo+1
+    lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne b2
-    lda sqr1_lo
+    lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
     bne b2
     lda #$ff
-    sta dir
+    sta.z dir
     lda #<mulf_sqr2_hi
-    sta sqr2_hi
+    sta.z sqr2_hi
     lda #>mulf_sqr2_hi
-    sta sqr2_hi+1
+    sta.z sqr2_hi+1
     ldx #-1
     lda #<mulf_sqr2_lo
-    sta sqr2_lo
+    sta.z sqr2_lo
     lda #>mulf_sqr2_lo
-    sta sqr2_lo+1
+    sta.z sqr2_lo+1
   b5:
-    lda sqr2_lo+1
+    lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne b6
-    lda sqr2_lo
+    lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b6
     // Set the very last value g(511) = f(256)
@@ -266,55 +266,55 @@ mulf_init: {
     sta (sqr2_lo),y
     lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
-    inc sqr2_hi
+    inc.z sqr2_hi
     bne !+
-    inc sqr2_hi+1
+    inc.z sqr2_hi+1
   !:
     txa
     clc
-    adc dir
+    adc.z dir
     tax
     cpx #0
     bne b8
     lda #1
-    sta dir
+    sta.z dir
   b8:
-    inc sqr2_lo
+    inc.z sqr2_lo
     bne !+
-    inc sqr2_lo+1
+    inc.z sqr2_lo+1
   !:
     jmp b5
   b2:
-    inc c
+    inc.z c
     lda #1
-    and c
+    and.z c
     cmp #0
     bne b3
     inx
-    inc sqr
+    inc.z sqr
     bne !+
-    inc sqr+1
+    inc.z sqr+1
   !:
   b3:
-    lda sqr
+    lda.z sqr
     ldy #0
     sta (sqr1_lo),y
-    lda sqr+1
+    lda.z sqr+1
     sta (sqr1_hi),y
-    inc sqr1_hi
+    inc.z sqr1_hi
     bne !+
-    inc sqr1_hi+1
+    inc.z sqr1_hi+1
   !:
     txa
     clc
-    adc sqr
-    sta sqr
+    adc.z sqr
+    sta.z sqr
     bcc !+
-    inc sqr+1
+    inc.z sqr+1
   !:
-    inc sqr1_lo
+    inc.z sqr1_lo
     bne !+
-    inc sqr1_lo+1
+    inc.z sqr1_lo+1
   !:
     jmp b1
 }

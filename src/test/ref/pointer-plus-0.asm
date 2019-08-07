@@ -7,17 +7,17 @@ main: {
     .label _0 = 2
     .label _2 = 2
     lda #<msg1
-    sta first.return
+    sta.z first.return
     lda #>msg1
-    sta first.return+1
+    sta.z first.return+1
     jsr first
     ldy #0
     lda (_0),y
     sta SCREEN
     lda #<msg2
-    sta first.return
+    sta.z first.return
     lda #>msg2
-    sta first.return+1
+    sta.z first.return+1
     jsr first
     ldy #0
     lda (_2),y

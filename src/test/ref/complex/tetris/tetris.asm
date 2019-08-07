@@ -160,25 +160,25 @@
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
-  sta render_screen_showing
+  sta.z render_screen_showing
   // Current score in BCD-format
-  sta score_bcd
-  sta score_bcd+1
-  sta score_bcd+2
-  sta score_bcd+3
+  sta.z score_bcd
+  sta.z score_bcd+1
+  sta.z score_bcd+2
+  sta.z score_bcd+3
 // Original Color Data
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
-  sta irq_raster_next
+  sta.z irq_raster_next
   // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
-  sta irq_sprite_ypos
+  sta.z irq_sprite_ypos
   // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
-  sta irq_sprite_ptr
+  sta.z irq_sprite_ptr
   // Counting the 10 IRQs
   lda #0
-  sta irq_cnt
+  sta.z irq_cnt
   jsr main
   rts
 main: {
@@ -189,49 +189,49 @@ main: {
     jsr sprites_irq_init
     jsr play_init
     lda #0
-    sta game_over
-    sta next_piece_idx
+    sta.z game_over
+    sta.z next_piece_idx
     jsr play_spawn_current
     jsr play_spawn_current
     ldx #$20
     jsr render_playfield
-    ldx current_ypos
-    lda current_xpos
-    sta current_xpos_119
-    ldy play_spawn_current._7
+    ldx.z current_ypos
+    lda.z current_xpos
+    sta.z current_xpos_119
+    ldy.z play_spawn_current._7
     lda PIECES,y
-    sta current_piece_gfx_112
+    sta.z current_piece_gfx_112
     lda PIECES+1,y
-    sta current_piece_gfx_112+1
-    lda current_piece_char
-    sta current_piece_char_100
+    sta.z current_piece_gfx_112+1
+    lda.z current_piece_char
+    sta.z current_piece_char_100
     lda #$20
-    sta render_screen_render_33
+    sta.z render_screen_render_33
     jsr render_moving
-    ldx play_spawn_current.piece_idx
+    ldx.z play_spawn_current.piece_idx
     lda #$20
     jsr render_next
-    ldy play_spawn_current._7
+    ldy.z play_spawn_current._7
     lda PIECES,y
-    sta current_piece
+    sta.z current_piece
     lda PIECES+1,y
-    sta current_piece+1
+    sta.z current_piece+1
     lda PIECES,y
-    sta current_piece_gfx
+    sta.z current_piece_gfx
     lda PIECES+1,y
-    sta current_piece_gfx+1
+    sta.z current_piece_gfx+1
     lda #0
-    sta level_bcd
-    sta level
-    sta lines_bcd
-    sta lines_bcd+1
-    sta current_movedown_counter
-    sta keyboard_events_size
-    sta current_orientation
+    sta.z level_bcd
+    sta.z level
+    sta.z lines_bcd
+    sta.z lines_bcd+1
+    sta.z current_movedown_counter
+    sta.z keyboard_events_size
+    sta.z current_orientation
     lda #$20
-    sta render_screen_render
+    sta.z render_screen_render
     lda #0
-    sta render_screen_show
+    sta.z render_screen_show
   b1:
   // Wait for a frame to pass
   b2:
@@ -241,34 +241,34 @@ main: {
     jsr render_show
     jsr keyboard_event_scan
     jsr keyboard_event_get
-    lda game_over
+    lda.z game_over
     cmp #0
     beq b4
   b5:
     inc BORDERCOL
     jmp b5
   b4:
-    stx play_movement.key_event
+    stx.z play_movement.key_event
     jsr play_movement
-    lda play_movement.return
+    lda.z play_movement.return
     cmp #0
     beq b1
-    ldx render_screen_render
+    ldx.z render_screen_render
     jsr render_playfield
-    ldx current_ypos
-    lda render_screen_render
-    sta render_screen_render_65
-    lda current_xpos
-    sta current_xpos_120
-    lda current_piece_gfx
-    sta current_piece_gfx_113
-    lda current_piece_gfx+1
-    sta current_piece_gfx_113+1
-    lda current_piece_char
-    sta current_piece_char_101
+    ldx.z current_ypos
+    lda.z render_screen_render
+    sta.z render_screen_render_65
+    lda.z current_xpos
+    sta.z current_xpos_120
+    lda.z current_piece_gfx
+    sta.z current_piece_gfx_113
+    lda.z current_piece_gfx+1
+    sta.z current_piece_gfx_113+1
+    lda.z current_piece_char
+    sta.z current_piece_char_101
     jsr render_moving
-    lda render_screen_render
-    ldx next_piece_idx
+    lda.z render_screen_render
+    ldx.z next_piece_idx
     jsr render_next
     jsr render_score
     jsr render_screen_swap
@@ -277,11 +277,11 @@ main: {
 // Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
     lda #$20
-    eor render_screen_render
-    sta render_screen_render
+    eor.z render_screen_render
+    sta.z render_screen_render
     lda #$20
-    eor render_screen_show
-    sta render_screen_show
+    eor.z render_screen_show
+    sta.z render_screen_show
     rts
 }
 // Show the current score
@@ -291,63 +291,63 @@ render_score: {
     .const level_offset = $28*$13+$1f
     .label score_bytes = score_bcd
     .label screen = $24
-    lda render_screen_render
+    lda.z render_screen_render
     cmp #0
     beq b1
     lda #<PLAYFIELD_SCREEN_2
-    sta screen
+    sta.z screen
     lda #>PLAYFIELD_SCREEN_2
-    sta screen+1
+    sta.z screen+1
     jmp b2
   b1:
     lda #<PLAYFIELD_SCREEN_1
-    sta screen
+    sta.z screen
     lda #>PLAYFIELD_SCREEN_1
-    sta screen+1
+    sta.z screen+1
   b2:
     ldx score_bytes+2
     ldy #0
     lda #<score_offset
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>score_offset
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
     ldx score_bytes+1
     ldy #0
     lda #<score_offset+2
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>score_offset+2
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
     ldx score_bytes
     ldy #0
     lda #<score_offset+4
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>score_offset+4
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
-    lda lines_bcd+1
+    lda.z lines_bcd+1
     tax
     ldy #1
     lda #<lines_offset
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>lines_offset
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
-    lda lines_bcd
+    lda.z lines_bcd
     tax
     ldy #0
     lda #<lines_offset+1
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>lines_offset+1
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
-    ldx level_bcd
+    ldx.z level_bcd
     ldy #0
     lda #<level_offset
-    sta render_bcd.offset
+    sta.z render_bcd.offset
     lda #>level_offset
-    sta render_bcd.offset+1
+    sta.z render_bcd.offset+1
     jsr render_bcd
     rts
 }
@@ -362,13 +362,13 @@ render_bcd: {
     .label screen = $24
     .label screen_pos = $22
     .label offset = $22
-    lda screen_pos
+    lda.z screen_pos
     clc
-    adc screen
-    sta screen_pos
-    lda screen_pos+1
-    adc screen+1
-    sta screen_pos+1
+    adc.z screen
+    sta.z screen_pos
+    lda.z screen_pos+1
+    adc.z screen+1
+    sta.z screen_pos+1
     cpy #0
     bne b1
     txa
@@ -380,9 +380,9 @@ render_bcd: {
     adc #ZERO_CHAR
     ldy #0
     sta (screen_pos),y
-    inc screen_pos
+    inc.z screen_pos
     bne !+
-    inc screen_pos+1
+    inc.z screen_pos+1
   !:
   b1:
     txa
@@ -404,35 +404,35 @@ render_next: {
     cmp #0
     beq b1
     lda #<PLAYFIELD_SCREEN_2+next_area_offset
-    sta screen_next_area
+    sta.z screen_next_area
     lda #>PLAYFIELD_SCREEN_2+next_area_offset
-    sta screen_next_area+1
+    sta.z screen_next_area+1
     jmp b2
   b1:
     lda #<PLAYFIELD_SCREEN_1+next_area_offset
-    sta screen_next_area
+    sta.z screen_next_area
     lda #>PLAYFIELD_SCREEN_1+next_area_offset
-    sta screen_next_area+1
+    sta.z screen_next_area+1
   b2:
     txa
     asl
     tay
     lda PIECES_NEXT_CHARS,x
-    sta next_piece_char
+    sta.z next_piece_char
     lda PIECES,y
-    sta next_piece_gfx
+    sta.z next_piece_gfx
     lda PIECES+1,y
-    sta next_piece_gfx+1
+    sta.z next_piece_gfx+1
     lda #0
-    sta l
+    sta.z l
   b3:
     ldx #0
   b4:
     ldy #0
     lda (next_piece_gfx),y
-    inc next_piece_gfx
+    inc.z next_piece_gfx
     bne !+
-    inc next_piece_gfx+1
+    inc.z next_piece_gfx+1
   !:
     cmp #0
     bne b5
@@ -440,27 +440,27 @@ render_next: {
     tay
     sta (screen_next_area),y
   b6:
-    inc screen_next_area
+    inc.z screen_next_area
     bne !+
-    inc screen_next_area+1
+    inc.z screen_next_area+1
   !:
     inx
     cpx #4
     bne b4
     lda #$24
     clc
-    adc screen_next_area
-    sta screen_next_area
+    adc.z screen_next_area
+    sta.z screen_next_area
     bcc !+
-    inc screen_next_area+1
+    inc.z screen_next_area+1
   !:
-    inc l
+    inc.z l
     lda #4
-    cmp l
+    cmp.z l
     bne b3
     rts
   b5:
-    lda next_piece_char
+    lda.z next_piece_char
     ldy #0
     sta (screen_next_area),y
     jmp b6
@@ -473,48 +473,48 @@ render_moving: {
     .label xpos = $21
     .label i = $20
     .label l = $12
-    stx ypos
+    stx.z ypos
     lda #0
-    sta l
-    sta i
+    sta.z l
+    sta.z i
   b1:
-    lda ypos
+    lda.z ypos
     cmp #1+1
     bcs b2
-    lax i
+    lax.z i
     axs #-[4]
-    stx i
+    stx.z i
   b3:
-    inc ypos
-    inc l
+    inc.z ypos
+    inc.z l
     lda #4
-    cmp l
+    cmp.z l
     bne b1
     rts
   b2:
-    lda render_screen_render_33
+    lda.z render_screen_render_33
     clc
-    adc ypos
+    adc.z ypos
     asl
     tay
     lda screen_lines_1,y
-    sta screen_line
+    sta.z screen_line
     lda screen_lines_1+1,y
-    sta screen_line+1
-    lda current_xpos_59
-    sta xpos
+    sta.z screen_line+1
+    lda.z current_xpos_59
+    sta.z xpos
     ldx #0
   b4:
-    ldy i
+    ldy.z i
     lda (current_piece_gfx_64),y
-    inc i
+    inc.z i
     cmp #0
     beq b5
-    lda current_piece_char_68
-    ldy xpos
+    lda.z current_piece_char_68
+    ldy.z xpos
     sta (screen_line),y
   b5:
-    inc xpos
+    inc.z xpos
     inx
     cpx #4
     bne b4
@@ -527,38 +527,38 @@ render_playfield: {
     .label c = $10
     .label l = $e
     lda #PLAYFIELD_COLS*2
-    sta i
+    sta.z i
     lda #2
-    sta l
+    sta.z l
   b1:
     txa
     clc
-    adc l
+    adc.z l
     asl
     tay
     lda screen_lines_1,y
-    sta screen_line
+    sta.z screen_line
     lda screen_lines_1+1,y
-    sta screen_line+1
+    sta.z screen_line+1
     lda #0
-    sta c
+    sta.z c
   b2:
-    ldy i
+    ldy.z i
     lda playfield,y
     ldy #0
     sta (screen_line),y
-    inc screen_line
+    inc.z screen_line
     bne !+
-    inc screen_line+1
+    inc.z screen_line+1
   !:
-    inc i
-    inc c
+    inc.z i
+    inc.z c
     lda #PLAYFIELD_COLS-1+1
-    cmp c
+    cmp.z c
     bne b2
-    inc l
+    inc.z l
     lda #PLAYFIELD_LINES-1+1
-    cmp l
+    cmp.z l
     bne b1
     rts
 }
@@ -570,25 +570,25 @@ play_movement: {
     .label render = $12
     .label return = $12
     .label key_event = $20
-    lda key_event
+    lda.z key_event
     jsr play_move_down
     txa
-    sta render
-    lda game_over
+    sta.z render
+    lda.z game_over
     cmp #0
     beq b1
     rts
   b1:
-    lda key_event
+    lda.z key_event
     jsr play_move_leftright
     clc
-    adc render
-    sta render
-    lda key_event
+    adc.z render
+    sta.z render
+    lda.z key_event
     jsr play_move_rotate
     clc
-    adc return
-    sta return
+    adc.z return
+    sta.z return
     rts
 }
 // Rotate the current piece  based on key-presses
@@ -604,38 +604,38 @@ play_move_rotate: {
     lda #0
     rts
   b2:
-    lax current_orientation
+    lax.z current_orientation
     axs #-[$10]
     lda #$3f
-    sax orientation
+    sax.z orientation
   b3:
-    lda current_xpos
-    sta play_collision.xpos
-    lda current_ypos
-    sta play_collision.ypos
-    ldx orientation
-    lda current_piece
-    sta current_piece_99
-    lda current_piece+1
-    sta current_piece_99+1
+    lda.z current_xpos
+    sta.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldx.z orientation
+    lda.z current_piece
+    sta.z current_piece_99
+    lda.z current_piece+1
+    sta.z current_piece_99+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b4
-    lda orientation
-    sta current_orientation
+    lda.z orientation
+    sta.z current_orientation
     clc
-    adc current_piece
-    sta current_piece_gfx
+    adc.z current_piece
+    sta.z current_piece_gfx
     lda #0
-    adc current_piece+1
-    sta current_piece_gfx+1
+    adc.z current_piece+1
+    sta.z current_piece_gfx+1
     lda #1
     rts
   b1:
-    lax current_orientation
+    lax.z current_orientation
     axs #$10
     lda #$3f
-    sax orientation
+    sax.z orientation
     jmp b3
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
@@ -656,77 +656,77 @@ play_collision: {
     .label i_12 = $f
     txa
     clc
-    adc piece_gfx
-    sta piece_gfx
+    adc.z piece_gfx
+    sta.z piece_gfx
     bcc !+
-    inc piece_gfx+1
+    inc.z piece_gfx+1
   !:
     lda #0
-    sta l
-    sta i_3
+    sta.z l
+    sta.z i_3
   b1:
-    lda yp
+    lda.z yp
     asl
     tay
     lda playfield_lines,y
-    sta playfield_line
+    sta.z playfield_line
     lda playfield_lines+1,y
-    sta playfield_line+1
-    lda xpos
-    sta xp
+    sta.z playfield_line+1
+    lda.z xpos
+    sta.z xp
     ldx #0
   b2:
-    ldy i_2
+    ldy.z i_2
     iny
-    sty i
-    ldy i_2
+    sty.z i
+    ldy.z i_2
     lda (piece_gfx),y
     cmp #0
     beq b3
-    lda yp
+    lda.z yp
     cmp #PLAYFIELD_LINES
     bcc b4
     lda #COLLISION_BOTTOM
     rts
   b4:
     lda #$80
-    and xp
+    and.z xp
     cmp #0
     beq b5
     lda #COLLISION_LEFT
     rts
   b5:
-    lda xp
+    lda.z xp
     cmp #PLAYFIELD_COLS
     bcc b6
     lda #COLLISION_RIGHT
     rts
   b6:
-    ldy xp
+    ldy.z xp
     lda (playfield_line),y
     cmp #0
     beq b3
     lda #COLLISION_PLAYFIELD
     rts
   b3:
-    inc xp
+    inc.z xp
     inx
     cpx #4
     bne b10
-    inc yp
-    inc l
+    inc.z yp
+    inc.z l
     lda #4
-    cmp l
+    cmp.z l
     bne b9
     lda #COLLISION_NONE
     rts
   b9:
-    lda i
-    sta i_10
+    lda.z i
+    sta.z i_10
     jmp b1
   b10:
-    lda i
-    sta i_12
+    lda.z i
+    sta.z i_12
     jmp b2
 }
 // Move left/right or rotate the current piece
@@ -738,20 +738,20 @@ play_move_leftright: {
     beq b1
     cmp #KEY_DOT
     bne b3
-    ldy current_xpos
+    ldy.z current_xpos
     iny
-    sty play_collision.xpos
-    lda current_ypos
-    sta play_collision.ypos
-    ldx current_orientation
-    lda current_piece
-    sta current_piece_98
-    lda current_piece+1
-    sta current_piece_98+1
+    sty.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldx.z current_orientation
+    lda.z current_piece
+    sta.z current_piece_98
+    lda.z current_piece+1
+    sta.z current_piece_98+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
-    inc current_xpos
+    inc.z current_xpos
   b2:
     lda #1
     rts
@@ -759,27 +759,27 @@ play_move_leftright: {
     lda #0
     rts
   b1:
-    ldx current_xpos
+    ldx.z current_xpos
     dex
-    stx play_collision.xpos
-    lda current_ypos
-    sta play_collision.ypos
-    ldx current_orientation
-    lda current_piece
-    sta current_piece_97
-    lda current_piece+1
-    sta current_piece_97+1
+    stx.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldx.z current_orientation
+    lda.z current_piece
+    sta.z current_piece_97
+    lda.z current_piece+1
+    sta.z current_piece_97+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
-    dec current_xpos
+    dec.z current_xpos
     jmp b2
 }
 // Move down the current piece
 // Return non-zero if a render is needed
 // play_move_down(byte register(A) key_event)
 play_move_down: {
-    inc current_movedown_counter
+    inc.z current_movedown_counter
     cmp #KEY_SPACE
     bne b4
     ldx #1
@@ -788,62 +788,62 @@ play_move_down: {
     ldx #0
   b1:
     lda #KEY_SPACE
-    sta keyboard_event_pressed.keycode
+    sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq b2
-    lda current_movedown_counter
+    lda.z current_movedown_counter
     cmp #current_movedown_fast
     bcc b2
     inx
   b2:
-    lda current_movedown_counter
-    cmp current_movedown_slow
+    lda.z current_movedown_counter
+    cmp.z current_movedown_slow
     bcc b3
     inx
   b3:
     cpx #0
     beq b5
-    ldy current_ypos
+    ldy.z current_ypos
     iny
-    sty play_collision.ypos
-    lda current_xpos
-    sta play_collision.xpos
-    ldx current_orientation
-    lda current_piece
-    sta current_piece_96
-    lda current_piece+1
-    sta current_piece_96+1
+    sty.z play_collision.ypos
+    lda.z current_xpos
+    sta.z play_collision.xpos
+    ldx.z current_orientation
+    lda.z current_piece
+    sta.z current_piece_96
+    lda.z current_piece+1
+    sta.z current_piece_96+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b10
     jsr play_lock_current
     jsr play_remove_lines
-    lda play_remove_lines.removed
+    lda.z play_remove_lines.removed
     tax
     jsr play_update_score
     jsr play_spawn_current
-    ldy play_spawn_current._7
+    ldy.z play_spawn_current._7
     lda PIECES,y
-    sta current_piece
+    sta.z current_piece
     lda PIECES+1,y
-    sta current_piece+1
+    sta.z current_piece+1
     lda PIECES,y
-    sta current_piece_gfx
+    sta.z current_piece_gfx
     lda PIECES+1,y
-    sta current_piece_gfx+1
+    sta.z current_piece_gfx+1
     lda #0
-    sta current_orientation
+    sta.z current_orientation
   b11:
     lda #0
-    sta current_movedown_counter
+    sta.z current_movedown_counter
     ldx #1
     rts
   b5:
     ldx #0
     rts
   b10:
-    inc current_ypos
+    inc.z current_ypos
     jmp b11
 }
 // Spawn a new piece
@@ -852,37 +852,37 @@ play_spawn_current: {
     .label _7 = $2e
     .label piece_idx = $a
     // Move next piece into current
-    ldx next_piece_idx
+    ldx.z next_piece_idx
     txa
     asl
-    sta _7
+    sta.z _7
     lda PIECES_CHARS,x
-    sta current_piece_char
+    sta.z current_piece_char
     lda PIECES_START_X,x
-    sta current_xpos
+    sta.z current_xpos
     lda PIECES_START_Y,x
-    sta current_ypos
-    lda current_xpos
-    sta play_collision.xpos
-    lda current_ypos
-    sta play_collision.ypos
-    ldy _7
+    sta.z current_ypos
+    lda.z current_xpos
+    sta.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldy.z _7
     lda PIECES,y
-    sta current_piece_100
+    sta.z current_piece_100
     lda PIECES+1,y
-    sta current_piece_100+1
+    sta.z current_piece_100+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD
     bne b1
     lda #1
-    sta game_over
+    sta.z game_over
   b1:
     lda SID_VOICE3_OSC
     and #7
-    sta piece_idx
+    sta.z piece_idx
     lda #7
-    cmp piece_idx
+    cmp.z piece_idx
     beq b1
     rts
 }
@@ -893,46 +893,46 @@ play_update_score: {
     .label add_bcd = $27
     cpx #0
     beq breturn
-    lda lines_bcd
+    lda.z lines_bcd
     and #$f0
-    sta lines_before
+    sta.z lines_before
     txa
     asl
     asl
     tay
     lda score_add_bcd,y
-    sta add_bcd
+    sta.z add_bcd
     lda score_add_bcd+1,y
-    sta add_bcd+1
+    sta.z add_bcd+1
     lda score_add_bcd+2,y
-    sta add_bcd+2
+    sta.z add_bcd+2
     lda score_add_bcd+3,y
-    sta add_bcd+3
+    sta.z add_bcd+3
     sed
     txa
     clc
-    adc lines_bcd
-    sta lines_bcd
+    adc.z lines_bcd
+    sta.z lines_bcd
     bcc !+
-    inc lines_bcd+1
+    inc.z lines_bcd+1
   !:
-    lda score_bcd
+    lda.z score_bcd
     clc
-    adc add_bcd
-    sta score_bcd
-    lda score_bcd+1
-    adc add_bcd+1
-    sta score_bcd+1
-    lda score_bcd+2
-    adc add_bcd+2
-    sta score_bcd+2
-    lda score_bcd+3
-    adc add_bcd+3
-    sta score_bcd+3
+    adc.z add_bcd
+    sta.z score_bcd
+    lda.z score_bcd+1
+    adc.z add_bcd+1
+    sta.z score_bcd+1
+    lda.z score_bcd+2
+    adc.z add_bcd+2
+    sta.z score_bcd+2
+    lda.z score_bcd+3
+    adc.z add_bcd+3
+    sta.z score_bcd+3
     cld
-    lda lines_bcd
+    lda.z lines_bcd
     and #$f0
-    cmp lines_before
+    cmp.z lines_before
     beq breturn
     jsr play_increase_level
   breturn:
@@ -940,28 +940,28 @@ play_update_score: {
 }
 // Increase the level
 play_increase_level: {
-    inc level
+    inc.z level
     // Update speed of moving tetrominos down
-    lda level
+    lda.z level
     cmp #$1d+1
     bcs b3
     tay
     lda MOVEDOWN_SLOW_SPEEDS,y
-    sta current_movedown_slow
+    sta.z current_movedown_slow
     jmp b1
   b3:
     lda #1
-    sta current_movedown_slow
+    sta.z current_movedown_slow
   b1:
-    inc level_bcd
+    inc.z level_bcd
     lda #$f
-    and level_bcd
+    and.z level_bcd
     cmp #$a
     bne b2
     // If level low nybble hits $a change to $10
-    lax level_bcd
+    lax.z level_bcd
     axs #-[6]
-    stx level_bcd
+    stx.z level_bcd
   b2:
     // Increase the score values gained
     sed
@@ -1001,42 +1001,42 @@ play_remove_lines: {
     .label removed = $d
     .label full = $f
     lda #0
-    sta removed
-    sta y
+    sta.z removed
+    sta.z y
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
   // Read all lines and rewrite them
   b1:
     lda #1
-    sta full
+    sta.z full
     lda #0
-    sta x
+    sta.z x
   b2:
     lda playfield,y
-    sta c
+    sta.z c
     dey
     cmp #0
     bne b3
     lda #0
-    sta full
+    sta.z full
   b3:
-    lda c
+    lda.z c
     sta playfield,x
     dex
-    inc x
+    inc.z x
     lda #PLAYFIELD_COLS-1+1
-    cmp x
+    cmp.z x
     bne b2
     lda #1
-    cmp full
+    cmp.z full
     bne b6
     txa
     axs #-[PLAYFIELD_COLS]
-    inc removed
+    inc.z removed
   b6:
-    inc y
+    inc.z y
     lda #PLAYFIELD_LINES-1+1
-    cmp y
+    cmp.z y
     bne b1
   b4:
   // Write zeros in the rest of the lines
@@ -1061,48 +1061,48 @@ play_lock_current: {
     .label i_7 = $11
     .label i_9 = $11
     lda #0
-    sta l
-    sta i_3
+    sta.z l
+    sta.z i_3
   b1:
-    lda yp
+    lda.z yp
     asl
     tay
     lda playfield_lines,y
-    sta playfield_line
+    sta.z playfield_line
     lda playfield_lines+1,y
-    sta playfield_line+1
-    lda current_xpos
-    sta xp
+    sta.z playfield_line+1
+    lda.z current_xpos
+    sta.z xp
     ldx #0
   b2:
-    ldy i_2
+    ldy.z i_2
     iny
-    sty i
-    ldy i_2
+    sty.z i
+    ldy.z i_2
     lda (current_piece_gfx),y
     cmp #0
     beq b3
-    lda current_piece_char
-    ldy xp
+    lda.z current_piece_char
+    ldy.z xp
     sta (playfield_line),y
   b3:
-    inc xp
+    inc.z xp
     inx
     cpx #4
     bne b7
-    inc yp
-    inc l
+    inc.z yp
+    inc.z l
     lda #4
-    cmp l
+    cmp.z l
     bne b6
     rts
   b6:
-    lda i
-    sta i_7
+    lda.z i
+    sta.z i_7
     jmp b1
   b7:
-    lda i
-    sta i_9
+    lda.z i
+    sta.z i_9
     jmp b2
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
@@ -1111,29 +1111,29 @@ play_lock_current: {
 keyboard_event_pressed: {
     .label row_bits = $2e
     .label keycode = $12
-    lda keycode
+    lda.z keycode
     lsr
     lsr
     lsr
     tay
     lda keyboard_scan_values,y
-    sta row_bits
+    sta.z row_bits
     lda #7
-    and keycode
+    and.z keycode
     tay
     lda keyboard_matrix_col_bitmask,y
-    and row_bits
+    and.z row_bits
     rts
 }
 // Get the next event from the keyboard event buffer.
 // Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
 // The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
-    lda keyboard_events_size
+    lda.z keyboard_events_size
     cmp #0
     beq b1
-    dec keyboard_events_size
-    ldy keyboard_events_size
+    dec.z keyboard_events_size
+    ldy.z keyboard_events_size
     ldx keyboard_events,y
     rts
   b1:
@@ -1149,37 +1149,37 @@ keyboard_event_scan: {
     .label keycode = $21
     .label row = $20
     lda #0
-    sta keycode
-    sta row
+    sta.z keycode
+    sta.z row
   b7:
-    ldx row
+    ldx.z row
     jsr keyboard_matrix_read
-    sta row_scan
-    ldy row
+    sta.z row_scan
+    ldy.z row
     cmp keyboard_scan_values,y
     bne b5
-    lax keycode
+    lax.z keycode
     axs #-[8]
-    stx keycode
+    stx.z keycode
   b8:
-    inc row
+    inc.z row
     lda #8
-    cmp row
+    cmp.z row
     bne b7
     lda #KEY_LSHIFT
-    sta keyboard_event_pressed.keycode
+    sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     lda #KEY_RSHIFT
-    sta keyboard_event_pressed.keycode
+    sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     lda #KEY_CTRL
-    sta keyboard_event_pressed.keycode
+    sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     lda #KEY_COMMODORE
-    sta keyboard_event_pressed.keycode
+    sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     rts
@@ -1187,41 +1187,41 @@ keyboard_event_scan: {
   b5:
     ldx #0
   b9:
-    lda row_scan
-    ldy row
+    lda.z row_scan
+    ldy.z row
     eor keyboard_scan_values,y
     and keyboard_matrix_col_bitmask,x
     cmp #0
     beq b10
     lda #8
-    cmp keyboard_events_size
+    cmp.z keyboard_events_size
     beq b10
     lda keyboard_matrix_col_bitmask,x
-    and row_scan
+    and.z row_scan
     cmp #0
     beq b11
     // Key pressed
-    lda keycode
-    ldy keyboard_events_size
+    lda.z keycode
+    ldy.z keyboard_events_size
     sta keyboard_events,y
-    inc keyboard_events_size
+    inc.z keyboard_events_size
   b10:
-    inc keycode
+    inc.z keycode
     inx
     cpx #8
     bne b9
     // Store the current keyboard status for the row to debounce
-    lda row_scan
-    ldy row
+    lda.z row_scan
+    ldy.z row
     sta keyboard_scan_values,y
     jmp b8
   b11:
     lda #$40
-    ora keycode
+    ora.z keycode
     // Key released
-    ldy keyboard_events_size
+    ldy.z keyboard_events_size
     sta keyboard_events,y
-    inc keyboard_events_size
+    inc.z keyboard_events_size
     jmp b10
 }
 // Read a single row of the keyboard matrix
@@ -1241,19 +1241,19 @@ keyboard_matrix_read: {
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    lda render_screen_show
+    lda.z render_screen_show
     cmp #0
     beq toD0181
     lda #toD0182_return
   b1:
     sta D018
-    ldy level
+    ldy.z level
     lda PIECES_COLORS_1,y
     sta BGCOL2
     lda PIECES_COLORS_2,y
     sta BGCOL3
-    lda render_screen_show
-    sta render_screen_showing
+    lda.z render_screen_show
+    sta.z render_screen_showing
     rts
   toD0181:
     lda #toD0181_return
@@ -1264,32 +1264,32 @@ play_init: {
     .label pli = $22
     .label idx = $14
     lda #0
-    sta idx
+    sta.z idx
     lda #<playfield
-    sta pli
+    sta.z pli
     lda #>playfield
-    sta pli+1
+    sta.z pli+1
     ldy #0
   b1:
     tya
     asl
     tax
-    lda pli
+    lda.z pli
     sta playfield_lines,x
-    lda pli+1
+    lda.z pli+1
     sta playfield_lines+1,x
-    lda idx
+    lda.z idx
     sta playfield_lines_idx,y
     lda #PLAYFIELD_COLS
     clc
-    adc pli
-    sta pli
+    adc.z pli
+    sta.z pli
     bcc !+
-    inc pli+1
+    inc.z pli+1
   !:
-    lax idx
+    lax.z idx
     axs #-[PLAYFIELD_COLS]
-    stx idx
+    stx.z idx
     iny
     cpy #PLAYFIELD_LINES-1+1
     bne b1
@@ -1297,7 +1297,7 @@ play_init: {
     sta playfield_lines_idx+PLAYFIELD_LINES
     // Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
-    sta current_movedown_slow
+    sta.z current_movedown_slow
     ldx #0
   // Set the initial score add values
   b3:
@@ -1360,19 +1360,19 @@ sprites_init: {
     sta SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
     lda #$18+$f*8
-    sta xpos
+    sta.z xpos
     ldy #0
   b1:
     tya
     asl
     tax
-    lda xpos
+    lda.z xpos
     sta SPRITES_XPOS,x
     lda #BLACK
     sta SPRITES_COLS,y
-    lax xpos
+    lax.z xpos
     axs #-[$18]
-    stx xpos
+    stx.z xpos
     iny
     cpy #4
     bne b1
@@ -1400,49 +1400,49 @@ render_init: {
     lda #GREY
     sta BGCOL4
     lda #<PLAYFIELD_SCREEN_1
-    sta render_screen_original.screen
+    sta.z render_screen_original.screen
     lda #>PLAYFIELD_SCREEN_1
-    sta render_screen_original.screen+1
+    sta.z render_screen_original.screen+1
     jsr render_screen_original
     lda #<PLAYFIELD_SCREEN_2
-    sta render_screen_original.screen
+    sta.z render_screen_original.screen
     lda #>PLAYFIELD_SCREEN_2
-    sta render_screen_original.screen+1
+    sta.z render_screen_original.screen+1
     jsr render_screen_original
     lda #<PLAYFIELD_SCREEN_2+2*$28+$10
-    sta li_2
+    sta.z li_2
     lda #>PLAYFIELD_SCREEN_2+2*$28+$10
-    sta li_2+1
+    sta.z li_2+1
     lda #<PLAYFIELD_SCREEN_1+2*$28+$10
-    sta li_1
+    sta.z li_1
     lda #>PLAYFIELD_SCREEN_1+2*$28+$10
-    sta li_1+1
+    sta.z li_1+1
     ldy #0
   b1:
     tya
     asl
     tax
-    lda li_1
+    lda.z li_1
     sta screen_lines_1,x
-    lda li_1+1
+    lda.z li_1+1
     sta screen_lines_1+1,x
-    lda li_2
+    lda.z li_2
     sta screen_lines_2,x
-    lda li_2+1
+    lda.z li_2+1
     sta screen_lines_2+1,x
     lda #$28
     clc
-    adc li_1
-    sta li_1
+    adc.z li_1
+    sta.z li_1
     bcc !+
-    inc li_1+1
+    inc.z li_1+1
   !:
     lda #$28
     clc
-    adc li_2
-    sta li_2
+    adc.z li_2
+    sta.z li_2
     bcc !+
-    inc li_2+1
+    inc.z li_2+1
   !:
     iny
     cpy #PLAYFIELD_LINES-1+1
@@ -1460,35 +1460,35 @@ render_screen_original: {
     .label ocols = $22
     .label y = $18
     lda #0
-    sta y
+    sta.z y
     lda #<PLAYFIELD_COLORS_ORIGINAL+$20*2
-    sta ocols
+    sta.z ocols
     lda #>PLAYFIELD_COLORS_ORIGINAL+$20*2
-    sta ocols+1
+    sta.z ocols+1
     lda #<PLAYFIELD_SCREEN_ORIGINAL+$20*2
-    sta oscr
+    sta.z oscr
     lda #>PLAYFIELD_SCREEN_ORIGINAL+$20*2
-    sta oscr+1
+    sta.z oscr+1
     lda #<COLS
-    sta cols
+    sta.z cols
     lda #>COLS
-    sta cols+1
+    sta.z cols+1
   b1:
     ldx #0
   b2:
     lda #SPACE
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     lda #BLACK
     ldy #0
     sta (cols),y
-    inc cols
+    inc.z cols
     bne !+
-    inc cols+1
+    inc.z cols+1
   !:
     inx
     cpx #4
@@ -1497,24 +1497,24 @@ render_screen_original: {
     ldy #0
     lda (oscr),y
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
-    inc oscr
+    inc.z oscr
     bne !+
-    inc oscr+1
+    inc.z oscr+1
   !:
     ldy #0
     lda (ocols),y
     sta (cols),y
-    inc cols
+    inc.z cols
     bne !+
-    inc cols+1
+    inc.z cols+1
   !:
-    inc ocols
+    inc.z ocols
     bne !+
-    inc ocols+1
+    inc.z ocols+1
   !:
     inx
     cpx #$24
@@ -1523,23 +1523,23 @@ render_screen_original: {
     lda #SPACE
     ldy #0
     sta (screen),y
-    inc screen
+    inc.z screen
     bne !+
-    inc screen+1
+    inc.z screen+1
   !:
     lda #BLACK
     ldy #0
     sta (cols),y
-    inc cols
+    inc.z cols
     bne !+
-    inc cols+1
+    inc.z cols+1
   !:
     inx
     cpx #$28
     bne b4
-    inc y
+    inc.z y
     lda #$19
-    cmp y
+    cmp.z y
     bne b1
     rts
 }
@@ -1565,21 +1565,21 @@ sprites_irq: {
     // Clear decimal flag (because it is used by the score algorithm)
     cld
     // Place the sprites
-    lda irq_sprite_ypos
+    lda.z irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
     sta SPRITES_YPOS+4
     sta SPRITES_YPOS+6
-    ldx irq_raster_next
+    ldx.z irq_raster_next
     inx
     // Wait for the y-position before changing sprite pointers
-    stx raster_sprite_gfx_modify
+    stx.z raster_sprite_gfx_modify
   b8:
     lda RASTER
-    cmp raster_sprite_gfx_modify
+    cmp.z raster_sprite_gfx_modify
     bcc b8
-    ldx irq_sprite_ptr
-    lda render_screen_showing
+    ldx.z irq_sprite_ptr
+    lda.z render_screen_showing
     cmp #0
     beq b1
     stx PLAYFIELD_SPRITE_PTRS_2
@@ -1591,25 +1591,25 @@ sprites_irq: {
     adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+3
   b2:
-    inc irq_cnt
+    inc.z irq_cnt
     lda #9
-    cmp irq_cnt
+    cmp.z irq_cnt
     beq b3
     lda #$a
-    cmp irq_cnt
+    cmp.z irq_cnt
     beq b4
-    lax irq_raster_next
+    lax.z irq_raster_next
     axs #-[$14]
-    stx irq_raster_next
-    lax irq_sprite_ypos
+    stx.z irq_raster_next
+    lax.z irq_sprite_ypos
     axs #-[$15]
-    stx irq_sprite_ypos
-    lax irq_sprite_ptr
+    stx.z irq_sprite_ypos
+    lax.z irq_sprite_ptr
     axs #-[3]
-    stx irq_sprite_ptr
+    stx.z irq_sprite_ptr
   b5:
     // Setup next interrupt
-    lda irq_raster_next
+    lda.z irq_raster_next
     sta RASTER
     // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
@@ -1621,24 +1621,24 @@ sprites_irq: {
     rti
   b4:
     lda #0
-    sta irq_cnt
+    sta.z irq_cnt
     lda #IRQ_RASTER_FIRST
-    sta irq_raster_next
-    lax irq_sprite_ypos
+    sta.z irq_raster_next
+    lax.z irq_sprite_ypos
     axs #-[$15]
-    stx irq_sprite_ypos
-    lax irq_sprite_ptr
+    stx.z irq_sprite_ypos
+    lax.z irq_sprite_ptr
     axs #-[3]
-    stx irq_sprite_ptr
+    stx.z irq_sprite_ptr
     jmp b5
   b3:
-    lax irq_raster_next
+    lax.z irq_raster_next
     axs #-[$15]
-    stx irq_raster_next
+    stx.z irq_raster_next
     lda #SPRITES_FIRST_YPOS
-    sta irq_sprite_ypos
+    sta.z irq_sprite_ypos
     lda #toSpritePtr2_return
-    sta irq_sprite_ptr
+    sta.z irq_sprite_ptr
     jmp b5
   b1:
     stx PLAYFIELD_SPRITE_PTRS_1

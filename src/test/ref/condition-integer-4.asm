@@ -28,28 +28,28 @@ main: {
   b3:
     tya
     and #1
-    sta _6
+    sta.z _6
     tya
     and #2
-    sta _7
+    sta.z _7
     lda #0
-    cmp _6
+    cmp.z _6
     beq b4
-    cmp _7
+    cmp.z _7
     beq b4
     lda #'+'
     sta SCREEN+$28*2,x
   b4:
     tya
     and #1
-    sta _11
+    sta.z _11
     tya
     and #2
-    sta _12
+    sta.z _12
     lda #0
-    cmp _11
+    cmp.z _11
     bne b9
-    cmp _12
+    cmp.z _12
     beq b5
   b9:
     lda #'+'

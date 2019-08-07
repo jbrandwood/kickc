@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNmiSamples() throws IOException, URISyntaxException {
+      compileAndCompare("examples/nmisamples/nmisamples");
+   }
+
+   @Test
    public void testEncodingLiteralChar() throws IOException, URISyntaxException {
       compileAndCompare("encoding-literal-char");
    }

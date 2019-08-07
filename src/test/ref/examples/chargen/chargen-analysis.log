@@ -1,3 +1,4 @@
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
@@ -431,7 +432,7 @@ print_str_at: scope:[print_str_at]  from main::@29 main::@3 main::@30 main::@31
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
   (byte*) print_str_at::at#6 ← phi( print_str_at/(byte*) print_str_at::at#7 print_str_at::@2/(byte*) print_str_at::at#4 )
   (byte*) print_str_at::str#5 ← phi( print_str_at/(byte*) print_str_at::str#7 print_str_at::@2/(byte*) print_str_at::str#4 )
-  (bool~) print_str_at::$0 ← *((byte*) print_str_at::str#5) != (byte) '@'
+  (bool~) print_str_at::$0 ← (number) 0 != *((byte*) print_str_at::str#5)
   if((bool~) print_str_at::$0) goto print_str_at::@2
   to:print_str_at::@return
 print_str_at::@2: scope:[print_str_at]  from print_str_at::@1
@@ -1132,6 +1133,7 @@ Adding number conversion cast (unumber) 0 in (byte) main::shift#2 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::pressed#0 ← (number) 0
 Adding number conversion cast (unumber) $3f in (bool~) main::$30 ← (byte) main::key#0 != (number) $3f
 Adding number conversion cast (unumber) 0 in (bool~) main::$33 ← (byte) main::pressed#2 != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print_str_at::$0 ← (number) 0 != *((byte*) print_str_at::str#5)
 Adding number conversion cast (unumber) 8 in (number~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (number) 8
 Adding number conversion cast (unumber) plot_chargen::$1 in (number~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (unumber)(number) 8
 Adding number conversion cast (unumber) 0 in (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (number) 0
@@ -1353,6 +1355,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $3f
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast $32
@@ -1454,6 +1457,7 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $3f
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
@@ -1579,7 +1583,7 @@ Simple Condition (bool~) main::$28 [200] if((byte~) main::$27!=(byte) 0) goto ma
 Simple Condition (bool~) main::$31 [218] if((byte) main::key#0==(byte) $3f) goto main::@17
 Simple Condition (bool~) main::$34 [222] if((byte) main::pressed#2==(byte) 0) goto main::@18
 Simple Condition (bool~) main::$36 [233] if((byte) main::ch#1!=rangelast(0,$3f)) goto main::@16
-Simple Condition (bool~) print_str_at::$0 [246] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2
+Simple Condition (bool~) print_str_at::$0 [246] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2
 Simple Condition (bool~) plot_chargen::$4 [260] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1
 Simple Condition (bool~) plot_chargen::$12 [285] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5
 Simple Condition (bool~) plot_chargen::$14 [293] if((byte) plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4
@@ -2220,7 +2224,7 @@ print_str_at: scope:[print_str_at]  from main::@17 main::@18 main::@19 main::@3
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
   [128] (byte*) print_str_at::at#5 ← phi( print_str_at/(byte*) print_str_at::at#7 print_str_at::@2/(byte*) print_str_at::at#4 )
   [128] (byte*) print_str_at::str#5 ← phi( print_str_at/(byte*) print_str_at::str#7 print_str_at::@2/(byte*) print_str_at::str#4 )
-  [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2
+  [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2
   to:print_str_at::@return
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@1
   [130] return 
@@ -3512,10 +3516,10 @@ print_str_at: {
     jmp b1
     // print_str_at::@1
   b1:
-    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str_at::@return
@@ -3585,7 +3589,7 @@ Statement [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pr
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:54 [ keyboard_key_pressed::colidx#0 ]
 Statement [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:23::keyboard_matrix_read:117 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:29::keyboard_matrix_read:117 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:117 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:41::keyboard_matrix_read:117 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:47::keyboard_matrix_read:117 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:60::keyboard_matrix_read:117 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
 Statement [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:23::keyboard_matrix_read:117 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:29::keyboard_matrix_read:117 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:117 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:41::keyboard_matrix_read:117 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:47::keyboard_matrix_read:117 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:60::keyboard_matrix_read:117 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Statement [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
+Statement [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
 Statement [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
 Statement [6] *((byte*) main::sc#4) ← (byte) ' ' [ main::sc#4 ] ( main:2 [ main::sc#4 ] ) always clobbers reg byte a reg byte y 
 Statement [8] if((byte*) main::sc#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@2 [ main::sc#1 ] ( main:2 [ main::sc#1 ] ) always clobbers reg byte a 
@@ -3606,7 +3610,7 @@ Statement [109] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
 Statement [115] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:23 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::keyboard_key_pressed:29 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::keyboard_key_pressed:35 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::keyboard_key_pressed:41 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::keyboard_key_pressed:47 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::keyboard_key_pressed:60 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
 Statement [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:23::keyboard_matrix_read:117 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:29::keyboard_matrix_read:117 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:117 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:41::keyboard_matrix_read:117 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:47::keyboard_matrix_read:117 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] main:2::keyboard_key_pressed:60::keyboard_matrix_read:117 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
 Statement [123] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:23::keyboard_matrix_read:117 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:29::keyboard_matrix_read:117 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:117 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:41::keyboard_matrix_read:117 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:47::keyboard_matrix_read:117 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:60::keyboard_matrix_read:117 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Statement [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
+Statement [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
 Statement [131] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] main:2::print_str_at:16 [ print_str_at::str#5 print_str_at::at#5 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ main::sc#4 main::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ main::i#2 main::i#1 ] : zp ZP_BYTE:4 , reg byte x , 
@@ -4567,10 +4571,10 @@ print_str_at: {
     jmp b1
     // print_str_at::@1
   b1:
-    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str_at::@return
@@ -5888,11 +5892,11 @@ print_str_at: {
     // [128] phi (byte*) print_str_at::str#5 = (byte*) print_str_at::str#7 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
     // print_str_at::@1
   b1:
-    // while(*str!='@')
-    // [129] if(*((byte*) print_str_at::str#5)!=(byte) '@') goto print_str_at::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str)
+    // [129] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print_str_at::@return
     // }

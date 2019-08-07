@@ -4,6 +4,11 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
+Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
+Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
@@ -60,7 +65,7 @@ print_str: scope:[print_str]  from main
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   (byte*) print_char_cursor#17 ← phi( print_str/(byte*) print_char_cursor#21 print_str::@2/(byte*) print_char_cursor#1 )
   (byte*) print_str::str#2 ← phi( print_str/(byte*) print_str::str#4 print_str::@2/(byte*) print_str::str#0 )
-  (bool~) print_str::$0 ← *((byte*) print_str::str#2) != (byte) '@'
+  (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
   if((bool~) print_str::$0) goto print_str::@2
   to:print_str::@return
 print_str::@2: scope:[print_str]  from print_str::@1
@@ -211,13 +216,16 @@ SYMBOL TABLE SSA
 (byte*) print_str::str#3
 (byte*) print_str::str#4
 
+Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#6 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#20 (byte*) print_line_cursor#14 
@@ -244,7 +252,7 @@ Identical Phi Values (byte*) print_char_cursor#14 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#16 (byte*) print_char_cursor#14
 Identical Phi Values (byte*) print_line_cursor#11 (byte*) print_line_cursor#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_str::$0 [6] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_str::$0 [6] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [19] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
@@ -328,7 +336,7 @@ print_str: scope:[print_str]  from main
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [15] (byte*) print_char_cursor#10 ← phi( print_str/(byte*) 1024 print_str::@2/(byte*) print_char_cursor#1 )
   [15] (byte*) print_str::str#2 ← phi( print_str/(const string) main::str print_str::@2/(byte*) print_str::str#0 )
-  [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+  [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
   [17] return 
@@ -476,10 +484,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -514,7 +522,7 @@ print_str: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte) $28 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:7 [ print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
 Statement [12] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:7 [ print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
-Statement [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#10 print_str::str#2 ] ( main:2::print_str:5 [ print_char_cursor#10 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
+Statement [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#10 print_str::str#2 ] ( main:2::print_str:5 [ print_char_cursor#10 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [18] *((byte*) print_char_cursor#10) ← *((byte*) print_str::str#2) [ print_char_cursor#10 print_str::str#2 ] ( main:2::print_str:5 [ print_char_cursor#10 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print_line_cursor#6 print_line_cursor#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ] : zp ZP_WORD:4 , 
@@ -644,10 +652,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -845,11 +853,11 @@ print_str: {
     sta str+1
     // print_str::@1
   b1:
-    // while(*str!='@')
-    // [16] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str)
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print_str::@return
     // }

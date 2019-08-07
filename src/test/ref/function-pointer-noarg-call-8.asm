@@ -46,7 +46,7 @@ hello: {
     inc idx
     iny
     lda (msg),y
-    cmp #'@'
+    cmp #0
     bne b1
     rts
 }

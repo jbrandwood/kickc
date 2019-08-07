@@ -33,8 +33,10 @@ hello: {
     sta SCREEN,y
     inc idx
     inx
-    lda msg,x
-    cmp #'@'
+    txa
+    tay
+    lda #0
+    cmp msg,y
     bne b1
     rts
 }

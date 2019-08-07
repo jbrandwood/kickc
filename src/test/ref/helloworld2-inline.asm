@@ -7,13 +7,13 @@ main: {
     ldx #0
     ldy #0
   print21_b1:
-    lda #'@'
+    lda #0
     cmp hello,y
     bne print21_b2
-    ldx #0
-    ldy #0
+    tax
+    tay
   print22_b1:
-    lda #'@'
+    lda #0
     cmp hello,y
     bne print22_b2
     rts

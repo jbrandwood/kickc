@@ -21,7 +21,7 @@ main: {
   b2:
     ldy #0
     lda (text),y
-    cmp #'@'
+    cmp #0
     bne b3
     inx
     cpx #$15

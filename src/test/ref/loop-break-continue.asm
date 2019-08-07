@@ -1,5 +1,5 @@
 // Illustrates both break & continue statements in a loop
-// Prints a message ending at '@' skipping all spaces
+// Prints a message ending at NUL skipping all spaces
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -12,7 +12,7 @@ main: {
     ldx #0
   b1:
     lda str,x
-    cmp #'@'
+    cmp #0
     bne b2
   breturn:
     rts

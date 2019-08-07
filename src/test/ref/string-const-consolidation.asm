@@ -23,7 +23,7 @@ print: {
   b1:
     ldy #0
     lda (string),y
-    cmp #'@'
+    cmp #0
     bne b2
     rts
   b2:

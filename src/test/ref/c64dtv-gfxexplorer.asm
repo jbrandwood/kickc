@@ -1123,7 +1123,7 @@ print_str_at: {
   b1:
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     rts
   b2:
@@ -1417,7 +1417,7 @@ print_str_lines: {
   b1:
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     rts
   b2:
@@ -1427,7 +1427,7 @@ print_str_lines: {
     bne !+
     inc str+1
   !:
-    cmp #'@'
+    cmp #0
     beq b3
     ldy #0
     sta (print_char_cursor),y
@@ -1436,7 +1436,7 @@ print_str_lines: {
     inc print_char_cursor+1
   !:
   b3:
-    cmp #'@'
+    cmp #0
     bne b2
     jsr print_ln
     lda print_line_cursor

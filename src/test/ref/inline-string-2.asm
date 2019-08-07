@@ -43,7 +43,7 @@ print: {
   b1:
     ldy #0
     lda (msg),y
-    cmp #'@'
+    cmp #0
     bne b2
     rts
   b2:

@@ -39,7 +39,7 @@ main: {
     ldy #0
     lda (nxt),y
     tax
-    cpx #'@'
+    cpx #0
     bne b9
     ldx TEXT
     lda #<TEXT

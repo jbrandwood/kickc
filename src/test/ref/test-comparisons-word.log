@@ -6,6 +6,11 @@ Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::dig
 Fixing pointer array-indexing *((word[]) words + (byte) main::i)
 Fixing pointer array-indexing *((word[]) words + (byte) main::j)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
+Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
+Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
@@ -128,7 +133,7 @@ print_str: scope:[print_str]  from compare::@35
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   (byte*) print_char_cursor#50 ← phi( print_str/(byte*) print_char_cursor#60 print_str::@2/(byte*) print_char_cursor#1 )
   (byte*) print_str::str#2 ← phi( print_str/(byte*) print_str::str#4 print_str::@2/(byte*) print_str::str#0 )
-  (bool~) print_str::$0 ← *((byte*) print_str::str#2) != (byte) '@'
+  (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
   if((bool~) print_str::$0) goto print_str::@2
   to:print_str::@return
 print_str::@2: scope:[print_str]  from print_str::@1
@@ -1145,6 +1150,7 @@ SYMBOL TABLE SSA
 (word[]) words#0
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
@@ -1175,6 +1181,7 @@ Inlining cast (byte) TT#0 ← (unumber)(number) $51
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
@@ -1194,6 +1201,7 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
@@ -1344,7 +1352,7 @@ Identical Phi Values (byte) main::i#10 (byte) main::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) print_str::$0 [26] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
 Simple Condition (bool~) main::$3 [122] if((byte) main::s#1!=(byte) 3) goto main::@4
 Simple Condition (bool~) main::$5 [126] if((byte) main::op#1!=rangelast(0,5)) goto main::@3
@@ -1886,7 +1894,7 @@ print_str: scope:[print_str]  from compare::@25
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [90] (byte*) print_char_cursor#2 ← phi( print_str/(byte*) print_char_cursor#11 print_str::@2/(byte*) print_char_cursor#1 )
   [90] (byte*) print_str::str#2 ← phi( print_str/(byte*) print_str::str#1 print_str::@2/(byte*) print_str::str#0 )
-  [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+  [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
   [92] return 
@@ -2823,10 +2831,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -2952,7 +2960,7 @@ Statement [78] (byte) print_byte::b#1 ← < (word) print_word::w#2 [ print_char_
 Statement [82] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_char_cursor#53 print_byte::b#2 print_byte::$0 ] ( main:2::compare:16::print_word:46::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_word::w#2 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:50::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_word::w#2 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:46::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:50::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:16 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [85] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#11 print_byte::$2 ] ( main:2::compare:16::print_word:46::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_word::w#2 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:50::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_word::w#2 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:46::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:50::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_char_cursor#11 print_byte::$2 ] ) always clobbers reg byte a 
-Statement [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
+Statement [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [93] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [101] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:5::memset:97 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
 Statement [103] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:5::memset:97 [ memset::dst#1 ] ) always clobbers reg byte a 
@@ -2979,7 +2987,7 @@ Statement [76] (byte) print_byte::b#0 ← > (word) print_word::w#2 [ print_word:
 Statement [78] (byte) print_byte::b#1 ← < (word) print_word::w#2 [ print_char_cursor#11 print_byte::b#1 ] ( main:2::compare:16::print_word:46 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_char_cursor#11 print_byte::b#1 ] main:2::compare:16::print_word:50 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_char_cursor#11 print_byte::b#1 ] ) always clobbers reg byte a 
 Statement [82] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_char_cursor#53 print_byte::b#2 print_byte::$0 ] ( main:2::compare:16::print_word:46::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_word::w#2 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:50::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_word::w#2 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:46::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] main:2::compare:16::print_word:50::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_char_cursor#53 print_byte::b#2 print_byte::$0 ] ) always clobbers reg byte a 
 Statement [85] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#11 print_byte::$2 ] ( main:2::compare:16::print_word:46::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_word::w#2 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:50::print_byte:77 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_word::w#2 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:46::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::ops#7 compare::r#10 print_char_cursor#11 print_byte::$2 ] main:2::compare:16::print_word:50::print_byte:79 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::r#10 print_char_cursor#11 print_byte::$2 ] ) always clobbers reg byte a 
-Statement [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
+Statement [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [93] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::compare:16::print_str:48 [ main::i#2 main::w1#0 main::j#2 main::w2#0 main::op#2 main::s#3 print_line_cursor#19 compare::w2#0 compare::r#10 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [101] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:5::memset:97 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
 Statement [103] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:5::memset:97 [ memset::dst#1 ] ) always clobbers reg byte a 
@@ -3752,10 +3760,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -4830,11 +4838,11 @@ print_str: {
     // [90] phi (byte*) print_str::str#2 = (byte*) print_str::str#1 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     // print_str::@1
   b1:
-    // while(*str!='@')
-    // [91] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str)
+    // [91] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print_str::@return
     // }

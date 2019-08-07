@@ -1,3 +1,4 @@
+Warning! Adding boolean cast to non-boolean condition *((byte*) print2::msg + (byte) print2::i)
 Identified constant variable (byte*) screen
 Identified constant variable (byte*) main::hello
 Culled Empty Block (label) @1
@@ -38,7 +39,7 @@ print2::@1: scope:[print2]  from print2 print2::@2
   (byte*) print2::at#3 ← phi( print2/(byte*) print2::at#4 print2::@2/(byte*) print2::at#2 )
   (byte) print2::i#2 ← phi( print2/(byte) print2::i#0 print2::@2/(byte) print2::i#1 )
   (byte*) print2::msg#2 ← phi( print2/(byte*) print2::msg#4 print2::@2/(byte*) print2::msg#3 )
-  (bool~) print2::$0 ← *((byte*) print2::msg#2 + (byte) print2::i#2) != (byte) '@'
+  (bool~) print2::$0 ← (number) 0 != *((byte*) print2::msg#2 + (byte) print2::i#2)
   if((bool~) print2::$0) goto print2::@2
   to:print2::@return
 print2::@2: scope:[print2]  from print2::@1
@@ -106,6 +107,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $50 in (byte*~) main::$1 ← (byte*) screen#0 + (number) $50
 Adding number conversion cast (unumber) 0 in (byte) print2::j#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) print2::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print2::$0 ← (number) 0 != *((byte*) print2::msg#2 + (byte) print2::i#2)
 Adding number conversion cast (unumber) 2 in (byte) print2::j#1 ← (byte) print2::j#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
@@ -116,9 +118,11 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $50
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
@@ -132,7 +136,7 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) print2::msg#2 (byte*) print2::msg#4
 Identical Phi Values (byte*) print2::at#2 (byte*) print2::at#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print2::$0 [15] if(*((byte*) print2::msg#4 + (byte) print2::i#2)!=(byte) '@') goto print2::@2
+Simple Condition (bool~) print2::$0 [15] if((byte) 0!=*((byte*) print2::msg#4 + (byte) print2::i#2)) goto print2::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) screen#0 = (byte*) 1024
 Constant (const byte*) main::hello#0 = main::$3
@@ -214,7 +218,7 @@ print2: scope:[print2]  from main main::@1
 print2::@1: scope:[print2]  from print2 print2::@2
   [10] (byte) print2::j#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::j#1 )
   [10] (byte) print2::i#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::i#1 )
-  [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2
+  [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2
   to:print2::@return
 print2::@return: scope:[print2]  from print2::@1
   [12] return 
@@ -328,8 +332,8 @@ print2: {
     jmp b1
     // print2::@1
   b1:
-    // [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
-    lda #'@'
+    // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
     ldy i
     cmp main.hello,y
     bne b2
@@ -361,11 +365,11 @@ print2: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
+Statement [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ]
 Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
-Statement [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
+Statement [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
 Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ print2::at#4 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
@@ -376,9 +380,12 @@ Uplift Scope [print2] 33: zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ] 22: zp ZP_BYT
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print2] best 447 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp ZP_WORD:2 [ print2::at#4 ] 
-Uplifting [main] best 447 combination 
-Uplifting [] best 447 combination 
+Uplifting [print2] best 607 combination reg byte x [ print2::i#2 print2::i#1 ] zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] zp ZP_WORD:2 [ print2::at#4 ] 
+Uplifting [main] best 607 combination 
+Uplifting [] best 607 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:5 [ print2::j#2 print2::j#1 ]
+Uplifting [print2] best 607 combination zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] 
+Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ print2::j#2 print2::j#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -440,19 +447,23 @@ main: {
   // print2
 // print2(byte* zeropage(2) at)
 print2: {
+    .label j = 4
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
   b1_from_print2:
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta j
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
     // print2::@1
   b1:
-    // [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
-    lda main.hello,x
-    cmp #'@'
+    // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    txa
+    tay
+    lda #0
+    cmp main.hello,y
     bne b2
     jmp breturn
     // print2::@return
@@ -461,12 +472,15 @@ print2: {
     rts
     // print2::@2
   b2:
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
     lda main.hello,x
+    ldy j
     sta (at),y
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
-    iny
-    iny
+    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    lda j
+    clc
+    adc #2
+    sta j
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
@@ -485,6 +499,8 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction ldx #0 with TAX
+Replacing instruction lda j with TYA
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -525,19 +541,19 @@ FINAL SYMBOL TABLE
 (byte) print2::i#1 reg byte x 22.0
 (byte) print2::i#2 reg byte x 11.0
 (byte) print2::j
-(byte) print2::j#1 reg byte y 11.0
-(byte) print2::j#2 reg byte y 11.0
+(byte) print2::j#1 j zp ZP_BYTE:4 11.0
+(byte) print2::j#2 j zp ZP_BYTE:4 11.0
 (byte*) print2::msg
 (byte*) screen
 (const byte*) screen#0 screen = (byte*) 1024
 
 zp ZP_WORD:2 [ print2::at#4 ]
 reg byte x [ print2::i#2 print2::i#1 ]
-reg byte y [ print2::j#2 print2::j#1 ]
+zp ZP_BYTE:4 [ print2::j#2 print2::j#1 ]
 
 
 FINAL ASSEMBLER
-Score: 369
+Score: 519
 
   // File Comments
   // Upstart
@@ -585,18 +601,22 @@ main: {
   // print2
 // print2(byte* zeropage(2) at)
 print2: {
+    .label j = 4
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta j
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
-    ldx #0
+    tax
     // print2::@1
   b1:
-    // for(byte i=0; msg[i]!='@'; i++)
-    // [11] if(*((const byte*) main::hello#0 + (byte) print2::i#2)!=(byte) '@') goto print2::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
-    lda main.hello,x
-    cmp #'@'
+    // for(byte i=0; msg[i]; i++)
+    // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    txa
+    tay
+    lda #0
+    cmp main.hello,y
     bne b2
     // print2::@return
     // }
@@ -605,14 +625,17 @@ print2: {
     // print2::@2
   b2:
     // at[j] = msg[i]
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
     lda main.hello,x
+    ldy j
     sta (at),y
     // j += 2
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
-    iny
-    iny
-    // for(byte i=0; msg[i]!='@'; i++)
+    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    tya
+    clc
+    adc #2
+    sta j
+    // for(byte i=0; msg[i]; i++)
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]

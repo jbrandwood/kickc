@@ -40,7 +40,7 @@ main::@return: scope:[main]  from main::@3
 next_char: scope:[next_char]  from main::@1
   (byte*) nxt#9 ← phi( main::@1/(byte*) nxt#13 )
   (byte) next_char::c#0 ← *((byte*) nxt#9)
-  (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) '@'
+  (bool~) next_char::$0 ← (byte) next_char::c#0 == (number) 0
   (bool~) next_char::$1 ← ! (bool~) next_char::$0
   if((bool~) next_char::$1) goto next_char::@1
   to:next_char::@2
@@ -127,11 +127,16 @@ SYMBOL TABLE SSA
 (byte*) nxt#8
 (byte*) nxt#9
 
+Adding number conversion cast (unumber) 0 in (bool~) next_char::$0 ← (byte) next_char::c#0 == (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Inversing boolean not [21] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) '@' from [20] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) '@'
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [21] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) 0 from [20] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) next_char::return#0 = (byte) next_char::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
@@ -147,7 +152,7 @@ Identical Phi Values (byte*) nxt#9 (byte*) nxt#13
 Identical Phi Values (byte*) nxt#12 (byte*) nxt#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [13] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
-Simple Condition (bool~) next_char::$1 [22] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1
+Simple Condition (bool~) next_char::$1 [22] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) TEXT#0 = $0
 Constant (const byte*) main::SCREEN#0 = (byte*) 1024
@@ -229,7 +234,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 next_char: scope:[next_char]  from main::@1
   [13] (byte) next_char::c#0 ← *((byte*) nxt#13)
-  [14] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1
+  [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
   to:next_char::@2
 next_char::@2: scope:[next_char]  from next_char
   [15] (byte) next_char::c#1 ← *((const byte*) TEXT#0)
@@ -368,9 +373,9 @@ next_char: {
     ldy #0
     lda (nxt),y
     sta c
-    // [14] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #'@'
-    cmp c
+    // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuz1_neq_0_then_la1 
+    lda c
+    cmp #0
     bne b1_from_next_char
     jmp b2
     // next_char::@2
@@ -503,8 +508,8 @@ next_char: {
     ldy #0
     lda (nxt),y
     tay
-    // [14] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #'@'
+    // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuyy_neq_0_then_la1 
+    cpy #0
     bne b1_from_next_char
     jmp b2
     // next_char::@2
@@ -679,9 +684,9 @@ next_char: {
     ldy #0
     lda (nxt),y
     tay
-    // if(c=='@')
-    // [14] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #'@'
+    // if(c==0)
+    // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuyy_neq_0_then_la1 
+    cpy #0
     bne b1
     // next_char::@2
     // c = *nxt

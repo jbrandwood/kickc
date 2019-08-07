@@ -1,3 +1,4 @@
+Warning! Adding boolean cast to non-boolean condition *((byte*) print::string)
 Culled Empty Block (label) @1
 Culled Empty Block (label) print::@4
 Culled Empty Block (label) print::@3
@@ -43,7 +44,7 @@ print: scope:[print]  from main main::@1 main::@2
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#16 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
   (byte*) print::string#4 ← phi( print/(byte*) print::string#6 print::@2/(byte*) print::string#3 )
-  (bool~) print::$0 ← *((byte*) print::string#4) != (byte) '@'
+  (bool~) print::$0 ← (number) 0 != *((byte*) print::string#4)
   if((bool~) print::$0) goto print::@2
   to:print::@return
 print::@2: scope:[print]  from print::@1
@@ -119,10 +120,15 @@ SYMBOL TABLE SSA
 (byte*) screen#8
 (byte*) screen#9
 
+Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← (number) 0 != *((byte*) print::string#4)
+Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) screen#1 = (byte*) screen#8 
 Alias (byte*) screen#2 = (byte*) screen#9 
 Alias (byte*) screen#10 = (byte*) screen#3 (byte*) screen#11 (byte*) screen#4 
@@ -137,7 +143,7 @@ Identical Phi Values (byte*) screen#2 (byte*) screen#12
 Identical Phi Values (byte*) screen#10 (byte*) screen#12
 Identical Phi Values (byte*) screen#14 (byte*) screen#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print::$0 [22] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2
+Simple Condition (bool~) print::$0 [22] if((byte) 0!=*((byte*) print::string#4)) goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) screen#0 = (byte*) 1024
 Constant (const byte[]) main::rex1#0 = main::$3
@@ -223,7 +229,7 @@ print: scope:[print]  from main main::@1 main::@2
 print::@1: scope:[print]  from print print::@2
   [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
   [12] (byte*) print::string#4 ← phi( print/(const string) main::string print::@2/(byte*) print::string#3 )
-  [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2
+  [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2
   to:print::@return
 print::@return: scope:[print]  from print::@1
   [14] return 
@@ -337,10 +343,10 @@ print: {
     jmp b1
     // print::@1
   b1:
-    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (string),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print::@return
@@ -373,7 +379,7 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 [ screen#12 print::string#4 ] ( main:2::print:5 [ screen#12 print::string#4 ] main:2::print:7 [ screen#12 print::string#4 ] main:2::print:9 [ screen#12 print::string#4 ] ) always clobbers reg byte a reg byte y 
+Statement [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2 [ screen#12 print::string#4 ] ( main:2::print:5 [ screen#12 print::string#4 ] main:2::print:7 [ screen#12 print::string#4 ] main:2::print:9 [ screen#12 print::string#4 ] ) always clobbers reg byte a reg byte y 
 Statement [15] *((byte*) screen#12) ← *((byte*) print::string#4) [ screen#12 print::string#4 ] ( main:2::print:5 [ screen#12 print::string#4 ] main:2::print:7 [ screen#12 print::string#4 ] main:2::print:9 [ screen#12 print::string#4 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ print::string#4 print::string#3 ] : zp ZP_WORD:4 , 
@@ -466,10 +472,10 @@ print: {
     jmp b1
     // print::@1
   b1:
-    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (string),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print::@return
@@ -626,11 +632,11 @@ print: {
     sta string+1
     // print::@1
   b1:
-    // while(*string!='@')
-    // [13] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*string)
+    // [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (string),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print::@return
     // }

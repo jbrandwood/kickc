@@ -4,16 +4,16 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    ldx #0
+    ldy #0
   b1:
-    lda msg,x
-    cmp #'@'
+    lda #0
+    cmp msg,y
     bne b2
     rts
   b2:
-    lda msg,x
-    sta screen,x
-    inx
+    lda msg,y
+    sta screen,y
+    iny
     jmp b1
     msg: .text "message 2 "
     .byte 0

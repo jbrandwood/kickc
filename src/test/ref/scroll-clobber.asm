@@ -13,7 +13,7 @@ main: {
     ldy #0
     lda (nxt),y
     tay
-    cpy #'@'
+    cpy #0
     bne b2
     ldy TEXT
     lda #<TEXT

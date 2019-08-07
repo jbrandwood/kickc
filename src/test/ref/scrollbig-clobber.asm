@@ -24,7 +24,7 @@ next_char: {
     ldy #0
     lda (nxt),y
     tay
-    cpy #'@'
+    cpy #0
     bne b1
     ldy TEXT
     lda #<TEXT

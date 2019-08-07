@@ -4,6 +4,11 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
+Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
+Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) BGCOL
 Inlined call call mulf8s_prepare (signed byte) mulf8s::a 
@@ -159,7 +164,7 @@ print_str: scope:[print_str]  from mul16s_compare::@1 mul16s_compare::@17 mul16s
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   (byte*) print_char_cursor#132 ← phi( print_str/(byte*) print_char_cursor#154 print_str::@2/(byte*) print_char_cursor#1 )
   (byte*) print_str::str#15 ← phi( print_str/(byte*) print_str::str#17 print_str::@2/(byte*) print_str::str#0 )
-  (bool~) print_str::$0 ← *((byte*) print_str::str#15) != (byte) '@'
+  (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#15)
   if((bool~) print_str::$0) goto print_str::@2
   to:print_str::@return
 print_str::@2: scope:[print_str]  from print_str::@1
@@ -2769,6 +2774,7 @@ SYMBOL TABLE SSA
 (word) print_word::w#6
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#15)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#22 + (number) $28
 Adding number conversion cast (snumber) 0 in (bool~) print_sword::$0 ← (signed word) print_sword::w#3 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) print_sdword::$0 ← (signed dword) print_sdword::dw#4 < (number) 0
@@ -2884,6 +2890,7 @@ Inlining cast *((byte*) BGCOL#0) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -2949,6 +2956,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized signed number type (signed byte) 0
@@ -3433,7 +3441,7 @@ Identical Phi Values (byte*) print_line_cursor#16 (byte*) print_line_cursor#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) print_str::$0 [26] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#133) goto print_ln::@1
 Simple Condition (bool~) print_sword::$0 [48] if((signed word) print_sword::w#3<(signed byte) 0) goto print_sword::@1
 Simple Condition (bool~) print_sdword::$0 [100] if((signed dword) print_sdword::dw#4<(signed byte) 0) goto print_sdword::@1
@@ -4194,7 +4202,7 @@ print_str: scope:[print_str]  from mul16s_compare::@1 mul16s_compare::@13 mul16s
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [65] (byte*) print_char_cursor#132 ← phi( print_str/(byte*) print_char_cursor#154 print_str::@2/(byte*) print_char_cursor#1 )
   [65] (byte*) print_str::str#15 ← phi( print_str/(byte*) print_str::str#17 print_str::@2/(byte*) print_str::str#0 )
-  [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2
+  [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
   [67] return 
@@ -5762,10 +5770,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -7883,7 +7891,7 @@ Statement [46] (signed dword) mul16s_error::mf#0 ← (signed dword) mul16s_compa
 Statement [55] (byte*~) print_char_cursor#183 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#183 ] ( main:2::mul16s_compare:11 [ print_line_cursor#1 print_char_cursor#183 ] ) always clobbers reg byte a 
 Statement [61] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#22 + (byte) $28 [ print_line_cursor#1 print_char_cursor#133 ] ( main:2::mul16s_compare:11::print_ln:54 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::print_ln:58 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::mul16s_error:47::print_ln:92 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:243 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:247 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::mul16u_error:236::print_ln:269 [ print_line_cursor#1 print_char_cursor#133 ] ) always clobbers reg byte a 
 Statement [62] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#133) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#133 ] ( main:2::mul16s_compare:11::print_ln:54 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::print_ln:58 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::mul16s_error:47::print_ln:92 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:243 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:247 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::mul16u_error:236::print_ln:269 [ print_line_cursor#1 print_char_cursor#133 ] ) always clobbers reg byte a 
-Statement [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2 [ print_char_cursor#132 print_str::str#15 ] ( main:2::mul16s_compare:11::print_str:15 [ print_line_cursor#1 mul16s_compare::a#6 mul16s_compare::b#6 mul16s_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::print_str:56 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:72 [ print_line_cursor#1 mul16s_error::a#0 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:76 [ print_line_cursor#1 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:80 [ print_line_cursor#1 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:84 [ print_line_cursor#1 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:88 [ print_line_cursor#1 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:204 [ mul16u_compare::a#6 mul16u_compare::b#6 mul16u_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:245 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:249 [ mul16u_error::a#0 mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:253 [ mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:257 [ mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:261 [ mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:265 [ mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] ) always clobbers reg byte a reg byte y 
+Statement [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2 [ print_char_cursor#132 print_str::str#15 ] ( main:2::mul16s_compare:11::print_str:15 [ print_line_cursor#1 mul16s_compare::a#6 mul16s_compare::b#6 mul16s_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::print_str:56 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:72 [ print_line_cursor#1 mul16s_error::a#0 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:76 [ print_line_cursor#1 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:80 [ print_line_cursor#1 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:84 [ print_line_cursor#1 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:88 [ print_line_cursor#1 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:204 [ mul16u_compare::a#6 mul16u_compare::b#6 mul16u_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:245 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:249 [ mul16u_error::a#0 mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:253 [ mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:257 [ mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:261 [ mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:265 [ mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ mul16s_compare::i#12 mul16s_compare::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:63 [ mul16u_compare::i#12 mul16u_compare::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:63 [ mul16u_compare::i#12 mul16u_compare::i#1 ]
@@ -8037,7 +8045,7 @@ Statement [52] if((byte) mul16s_compare::i#1!=(byte) $10) goto mul16s_compare::@
 Statement [55] (byte*~) print_char_cursor#183 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#183 ] ( main:2::mul16s_compare:11 [ print_line_cursor#1 print_char_cursor#183 ] ) always clobbers reg byte a 
 Statement [61] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#22 + (byte) $28 [ print_line_cursor#1 print_char_cursor#133 ] ( main:2::mul16s_compare:11::print_ln:54 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::print_ln:58 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::mul16s_error:47::print_ln:92 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:243 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:247 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::mul16u_error:236::print_ln:269 [ print_line_cursor#1 print_char_cursor#133 ] ) always clobbers reg byte a 
 Statement [62] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#133) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#133 ] ( main:2::mul16s_compare:11::print_ln:54 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::print_ln:58 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16s_compare:11::mul16s_error:47::print_ln:92 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:243 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::print_ln:247 [ print_line_cursor#1 print_char_cursor#133 ] main:2::mul16u_compare:9::mul16u_error:236::print_ln:269 [ print_line_cursor#1 print_char_cursor#133 ] ) always clobbers reg byte a 
-Statement [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2 [ print_char_cursor#132 print_str::str#15 ] ( main:2::mul16s_compare:11::print_str:15 [ print_line_cursor#1 mul16s_compare::a#6 mul16s_compare::b#6 mul16s_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::print_str:56 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:72 [ print_line_cursor#1 mul16s_error::a#0 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:76 [ print_line_cursor#1 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:80 [ print_line_cursor#1 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:84 [ print_line_cursor#1 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:88 [ print_line_cursor#1 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:204 [ mul16u_compare::a#6 mul16u_compare::b#6 mul16u_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:245 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:249 [ mul16u_error::a#0 mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:253 [ mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:257 [ mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:261 [ mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:265 [ mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] ) always clobbers reg byte a reg byte y 
+Statement [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2 [ print_char_cursor#132 print_str::str#15 ] ( main:2::mul16s_compare:11::print_str:15 [ print_line_cursor#1 mul16s_compare::a#6 mul16s_compare::b#6 mul16s_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::print_str:56 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:72 [ print_line_cursor#1 mul16s_error::a#0 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:76 [ print_line_cursor#1 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:80 [ print_line_cursor#1 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:84 [ print_line_cursor#1 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:88 [ print_line_cursor#1 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:204 [ mul16u_compare::a#6 mul16u_compare::b#6 mul16u_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:245 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:249 [ mul16u_error::a#0 mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:253 [ mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:257 [ mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:261 [ mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:265 [ mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] ) always clobbers reg byte a reg byte y 
 Statement [68] *((byte*) print_char_cursor#132) ← *((byte*) print_str::str#15) [ print_char_cursor#132 print_str::str#15 ] ( main:2::mul16s_compare:11::print_str:15 [ print_line_cursor#1 mul16s_compare::a#6 mul16s_compare::b#6 mul16s_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::print_str:56 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:72 [ print_line_cursor#1 mul16s_error::a#0 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:76 [ print_line_cursor#1 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:80 [ print_line_cursor#1 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:84 [ print_line_cursor#1 mul16s_error::mn#0 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16s_compare:11::mul16s_error:47::print_str:88 [ print_line_cursor#1 mul16s_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:204 [ mul16u_compare::a#6 mul16u_compare::b#6 mul16u_compare::i#12 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::print_str:245 [ print_line_cursor#1 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:249 [ mul16u_error::a#0 mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:253 [ mul16u_error::b#0 mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:257 [ mul16u_error::ms#0 mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:261 [ mul16u_error::mn#0 mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] main:2::mul16u_compare:9::mul16u_error:236::print_str:265 [ mul16u_error::mf#0 print_char_cursor#132 print_str::str#15 ] ) always clobbers reg byte a reg byte y 
 Statement [73] (signed word) print_sword::w#1 ← (signed word) mul16s_error::a#0 [ print_line_cursor#1 print_char_cursor#132 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_sword::w#1 ] ( main:2::mul16s_compare:11::mul16s_error:47 [ print_line_cursor#1 print_char_cursor#132 mul16s_error::b#0 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_sword::w#1 ] ) always clobbers reg byte a 
 Statement [77] (signed word) print_sword::w#2 ← (signed word) mul16s_error::b#0 [ print_line_cursor#1 print_char_cursor#132 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_sword::w#2 ] ( main:2::mul16s_compare:11::mul16s_error:47 [ print_line_cursor#1 print_char_cursor#132 mul16s_error::ms#0 mul16s_error::mn#0 mul16s_error::mf#0 print_sword::w#2 ] ) always clobbers reg byte a 
@@ -8740,10 +8748,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -11823,11 +11831,11 @@ print_str: {
     // [65] phi (byte*) print_str::str#15 = (byte*) print_str::str#17 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     // print_str::@1
   b1:
-    // while(*str!='@')
-    // [66] if(*((byte*) print_str::str#15)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str)
+    // [66] if((byte) 0!=*((byte*) print_str::str#15)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print_str::@return
     // }

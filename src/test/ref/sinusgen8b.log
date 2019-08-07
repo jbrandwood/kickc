@@ -7,6 +7,11 @@ Fixing pointer addition (signed word*~) main::$4 ← (signed word[$c0]) main::si
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
+Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
+Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
+Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (word) main::wavelength
 Culled Empty Block (label) @1
@@ -825,7 +830,7 @@ print_str: scope:[print_str]  from main::@6
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   (byte*) print_char_cursor#36 ← phi( print_str/(byte*) print_char_cursor#44 print_str::@2/(byte*) print_char_cursor#1 )
   (byte*) print_str::str#2 ← phi( print_str/(byte*) print_str::str#4 print_str::@2/(byte*) print_str::str#0 )
-  (bool~) print_str::$0 ← *((byte*) print_str::str#2) != (byte) '@'
+  (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
   if((bool~) print_str::$0) goto print_str::@2
   to:print_str::@return
 print_str::@2: scope:[print_str]  from print_str::@1
@@ -1973,6 +1978,7 @@ Adding number conversion cast (unumber) 4 in (byte~) sin8s::$12 ← (byte) sin8s
 Adding number conversion cast (unumber) $80 in (bool~) sin8s::$14 ← (byte) sin8s::usinx#1 >= (number) $80
 Adding number conversion cast (unumber) 0 in (bool~) sin8s::$17 ← (byte) sin8s::isUpper#2 != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
 Adding number conversion cast (snumber) 0 in (bool~) print_sbyte::$0 ← (signed byte) print_sbyte::b#2 < (number) 0
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#1 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#2 & (number) $f
@@ -2084,6 +2090,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast $3e8
@@ -2142,6 +2149,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized signed number type (signed byte) 0
@@ -2429,7 +2437,7 @@ Simple Condition (bool~) sin8s::$15 [337] if((byte) sin8s::usinx#1<(byte) $80) g
 Simple Condition (bool~) sin8s::$18 [346] if((byte) sin8s::isUpper#10==(byte) 0) goto sin8s::@4
 Simple Condition (bool~) memset::$1 [387] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [397] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) print_str::$0 [411] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_str::$0 [411] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_sbyte::$0 [421] if((signed byte) print_sbyte::b#1<(signed byte) 0) goto print_sbyte::@1
 Simple Condition (bool~) main::$10 [517] if((byte) main::i#1!=rangelast(0,$bf)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -2941,7 +2949,7 @@ print_str: scope:[print_str]  from main::@4
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [26] (byte*) print_char_cursor#19 ← phi( print_str/(byte*) print_char_cursor#10 print_str::@2/(byte*) print_char_cursor#1 )
   [26] (byte*) print_str::str#2 ← phi( print_str/(const string) main::str print_str::@2/(byte*) print_str::str#0 )
-  [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+  [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
   [28] return 
@@ -4159,10 +4167,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -5845,7 +5853,7 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ ma
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:70 [ main::sb#0 ]
 Statement [16] (byte~) main::$6 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ) always clobbers reg byte a 
 Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
-Statement [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
+Statement [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_char_cursor#19) ← *((byte*) print_str::str#2) [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [41] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#1 [ print_char_cursor#10 print_sbyte::b#0 ] ( main:2::print_sbyte:19 [ main::i#2 print_char_cursor#10 print_sbyte::b#0 ] ) always clobbers reg byte a 
 Statement [43] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#4 [ print_char_cursor#28 ] ( main:2::print_sbyte:19::print_char:34 [ main::i#2 print_sbyte::b#1 print_char_cursor#28 ] main:2::print_sbyte:19::print_char:40 [ main::i#2 print_sbyte::b#1 print_char_cursor#28 ] main:2::print_sbyte:19::print_byte:37::print_char:48 [ main::i#2 print_byte::b#0 print_char_cursor#28 ] main:2::print_sbyte:19::print_byte:37::print_char:51 [ main::i#2 print_char_cursor#28 ] ) always clobbers reg byte y 
@@ -5954,7 +5962,7 @@ Statement [14] (signed word*~) main::$4 ← (const signed word[$c0]) main::sinta
 Statement [15] (signed word) main::sw#0 ← *((signed word*~) main::$4) [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ) always clobbers reg byte a reg byte y 
 Statement [16] (byte~) main::$6 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ) always clobbers reg byte a 
 Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
-Statement [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
+Statement [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_char_cursor#19) ← *((byte*) print_str::str#2) [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [41] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#1 [ print_char_cursor#10 print_sbyte::b#0 ] ( main:2::print_sbyte:19 [ main::i#2 print_char_cursor#10 print_sbyte::b#0 ] ) always clobbers reg byte a 
 Statement [43] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#4 [ print_char_cursor#28 ] ( main:2::print_sbyte:19::print_char:34 [ main::i#2 print_sbyte::b#1 print_char_cursor#28 ] main:2::print_sbyte:19::print_char:40 [ main::i#2 print_sbyte::b#1 print_char_cursor#28 ] main:2::print_sbyte:19::print_byte:37::print_char:48 [ main::i#2 print_byte::b#0 print_char_cursor#28 ] main:2::print_sbyte:19::print_byte:37::print_char:51 [ main::i#2 print_char_cursor#28 ] ) always clobbers reg byte y 
@@ -6469,10 +6477,10 @@ print_str: {
     jmp b1
     // print_str::@1
   b1:
-    // [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print_str::@return
@@ -8753,11 +8761,11 @@ print_str: {
     sta str+1
     // print_str::@1
   b1:
-    // while(*str!='@')
-    // [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*str)
+    // [27] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print_str::@return
     // }

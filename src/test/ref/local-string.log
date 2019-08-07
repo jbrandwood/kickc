@@ -1,3 +1,4 @@
+Warning! Adding boolean cast to non-boolean condition *((byte[]) main::msg + (byte) main::i)
 Identified constant variable (byte*) main::screen
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
@@ -14,7 +15,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← *((byte[]) main::msg#0 + (byte) main::i#2) != (byte) '@'
+  (bool~) main::$0 ← (number) 0 != *((byte[]) main::msg#0 + (byte) main::i#2)
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -54,18 +55,21 @@ SYMBOL TABLE SSA
 (byte*) main::screen#0
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((byte[]) main::msg#0 + (byte) main::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [5] if(*((byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2
+Simple Condition (bool~) main::$0 [5] if((byte) 0!=*((byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte[]) main::msg#0 = main::$1
@@ -107,7 +111,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2
+  [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
@@ -169,8 +173,8 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
-    lda #'@'
+    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
     ldy i
     cmp msg,y
     bne b2
@@ -197,10 +201,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
@@ -208,7 +212,7 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 40.33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 333 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [main] best 333 combination reg byte y [ main::i#2 main::i#1 ] 
 Uplifting [] best 333 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -240,14 +244,14 @@ main: {
     .label screen = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
-    lda msg,x
-    cmp #'@'
+    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
+    lda #0
+    cmp msg,y
     bne b2
     jmp breturn
     // main::@return
@@ -256,11 +260,11 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda msg,x
-    sta screen,x
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
+    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    lda msg,y
+    sta screen,y
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
@@ -301,14 +305,14 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 22.0
-(byte) main::i#2 reg byte x 18.333333333333332
+(byte) main::i#1 reg byte y 22.0
+(byte) main::i#2 reg byte y 18.333333333333332
 (byte[]) main::msg
 (const byte[]) main::msg#0 msg = (string) "message 2 "
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
 
-reg byte x [ main::i#2 main::i#1 ]
+reg byte y [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
@@ -332,14 +336,14 @@ Score: 261
 main: {
     .label screen = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     // main::@1
   b1:
-    // while(msg[i]!='@')
-    // [6] if(*((const byte[]) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
-    lda msg,x
-    cmp #'@'
+    // while(msg[i])
+    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
+    lda #0
+    cmp msg,y
     bne b2
     // main::@return
     // }
@@ -348,12 +352,12 @@ main: {
     // main::@2
   b2:
     // screen[i++] = msg[i]
-    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda msg,x
-    sta screen,x
+    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    lda msg,y
+    sta screen,y
     // screen[i++] = msg[i];
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1

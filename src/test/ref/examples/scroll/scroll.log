@@ -86,7 +86,7 @@ main::@10: scope:[main]  from main::@8
   (byte) main::scroll#8 ← phi( main::@8/(byte) main::scroll#10 )
   (byte*) main::nxt#3 ← phi( main::@8/(byte*) main::nxt#5 )
   (byte) main::c#0 ← *((byte*) main::nxt#3)
-  (bool~) main::$8 ← (byte) main::c#0 == (byte) '@'
+  (bool~) main::$8 ← (byte) main::c#0 == (number) 0
   (bool~) main::$9 ← ! (bool~) main::$8
   if((bool~) main::$9) goto main::@15
   to:main::@14
@@ -243,6 +243,7 @@ Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) $27 in (bool~) main::$6 ← (byte) main::i#2 != (number) $27
 Adding number conversion cast (unumber) 1 in (number~) main::$7 ← (byte) main::i#3 + (number) 1
 Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (byte) main::i#3 + (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) main::$8 ← (byte) main::c#0 == (number) 0
 Adding number conversion cast (unumber) $27 in *((byte[]) main::line#0 + (number) $27) ← (byte) main::c#2
 Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$0 ← (byte*) fillscreen::screen#2 + (number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -269,6 +270,7 @@ Simplifying constant integer cast 7
 Simplifying constant integer cast 0
 Simplifying constant integer cast $27
 Simplifying constant integer cast 1
+Simplifying constant integer cast 0
 Simplifying constant integer cast $27
 Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
@@ -282,12 +284,13 @@ Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $27
 Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $27
 Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$7 ← (byte) main::i#3 + (byte) 1
 Inversing boolean not [22] (bool~) main::$5 ← (byte) main::scroll#1 != (byte) $ff from [21] (bool~) main::$4 ← (byte) main::scroll#1 == (byte) $ff
-Inversing boolean not [41] (bool~) main::$9 ← (byte) main::c#0 != (byte) '@' from [40] (bool~) main::$8 ← (byte) main::c#0 == (byte) '@'
+Inversing boolean not [41] (bool~) main::$9 ← (byte) main::c#0 != (byte) 0 from [40] (bool~) main::$8 ← (byte) main::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte[]) main::line#0 = (byte*~) main::$1 
 Alias (byte) main::scroll#3 = (byte) main::scroll#5 
@@ -315,7 +318,7 @@ Simple Condition (bool~) main::$2 [14] if(*((byte*) RASTER#0)!=(byte) $fe) goto 
 Simple Condition (bool~) main::$3 [17] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@4
 Simple Condition (bool~) main::$5 [23] if((byte) main::scroll#1!=(byte) $ff) goto main::@7
 Simple Condition (bool~) main::$6 [33] if((byte) main::i#2!=(byte) $27) goto main::@9
-Simple Condition (bool~) main::$9 [42] if((byte) main::c#0!=(byte) '@') goto main::@15
+Simple Condition (bool~) main::$9 [42] if((byte) main::c#0!=(byte) 0) goto main::@15
 Simple Condition (bool~) fillscreen::$1 [55] if((byte*) fillscreen::cursor#2<(byte*~) fillscreen::$0) goto fillscreen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
@@ -471,7 +474,7 @@ main::@5: scope:[main]  from main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@5
   [16] (byte) main::c#0 ← *((byte*) main::nxt#10)
-  [17] if((byte) main::c#0!=(byte) '@') goto main::@9
+  [17] if((byte) main::c#0!=(byte) 0) goto main::@9
   to:main::@8
 main::@8: scope:[main]  from main::@7
   [18] (byte) main::c#1 ← *((const byte*) TEXT#0)
@@ -668,9 +671,9 @@ main: {
     ldy #0
     lda (nxt),y
     sta c
-    // [17] if((byte) main::c#0!=(byte) '@') goto main::@9 -- vbuz1_neq_vbuc1_then_la1 
-    lda #'@'
-    cmp c
+    // [17] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
+    lda c
+    cmp #0
     bne b9_from_b7
     jmp b8
     // main::@8
@@ -910,8 +913,8 @@ main: {
     ldy #0
     lda (nxt),y
     tax
-    // [17] if((byte) main::c#0!=(byte) '@') goto main::@9 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #'@'
+    // [17] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
+    cpx #0
     bne b9_from_b7
     jmp b8
     // main::@8
@@ -1218,9 +1221,9 @@ main: {
     ldy #0
     lda (nxt),y
     tax
-    // if(c=='@')
-    // [17] if((byte) main::c#0!=(byte) '@') goto main::@9 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #'@'
+    // if(c==0)
+    // [17] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
+    cpx #0
     bne b9
     // main::@8
     // c = *nxt

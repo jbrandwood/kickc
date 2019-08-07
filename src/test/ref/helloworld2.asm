@@ -19,19 +19,26 @@ main: {
 }
 // print2(byte* zeropage(2) at)
 print2: {
+    .label j = 4
     .label at = 2
-    ldy #0
-    ldx #0
+    lda #0
+    sta j
+    tax
   b1:
-    lda main.hello,x
-    cmp #'@'
+    txa
+    tay
+    lda #0
+    cmp main.hello,y
     bne b2
     rts
   b2:
     lda main.hello,x
+    ldy j
     sta (at),y
-    iny
-    iny
+    tya
+    clc
+    adc #2
+    sta j
     inx
     jmp b1
 }

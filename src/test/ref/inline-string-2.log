@@ -1,3 +1,4 @@
+Warning! Adding boolean cast to non-boolean condition *((byte*) print::msg)
 Culled Empty Block (label) @1
 Culled Empty Block (label) print_msg::@4
 Culled Empty Block (label) print::@4
@@ -68,7 +69,7 @@ print: scope:[print]  from print_msg::@2
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#19 ← phi( print/(byte*) screen#23 print::@2/(byte*) screen#6 )
   (byte*) print::msg#2 ← phi( print/(byte*) print::msg#4 print::@2/(byte*) print::msg#1 )
-  (bool~) print::$0 ← *((byte*) print::msg#2) != (byte) '@'
+  (bool~) print::$0 ← (number) 0 != *((byte*) print::msg#2)
   if((bool~) print::$0) goto print::@2
   to:print::@return
 print::@2: scope:[print]  from print::@1
@@ -162,6 +163,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 1 in (byte) print_msg::idx#0 ← (number) 1
 Adding number conversion cast (unumber) 2 in (byte) print_msg::idx#1 ← (number) 2
 Adding number conversion cast (unumber) 1 in (bool~) print_msg::$0 ← (byte) print_msg::idx#2 == (number) 1
+Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← (number) 0 != *((byte*) print::msg#2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) print_msg::idx#0 ← (unumber)(number) 1
 Inlining cast (byte) print_msg::idx#1 ← (unumber)(number) 2
@@ -171,10 +173,12 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) screen#0 = (byte*) screen#9 
 Alias (byte*) screen#1 = (byte*) screen#10 (byte*) screen#11 (byte*) screen#2 
@@ -196,7 +200,7 @@ Identical Phi Values (byte*) screen#23 (byte*) screen#18
 Identical Phi Values (byte*) screen#16 (byte*) screen#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_msg::$0 [15] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1
-Simple Condition (bool~) print::$0 [32] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
+Simple Condition (bool~) print::$0 [32] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) print_msg::idx#0 = 1
 Constant (const byte) print_msg::idx#1 = 2
@@ -301,7 +305,7 @@ print: scope:[print]  from print_msg::@2
 print::@1: scope:[print]  from print print::@2
   [17] (byte*) screen#14 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#6 )
   [17] (byte*) print::msg#2 ← phi( print/(byte*) print::msg#0 print::@2/(byte*) print::msg#1 )
-  [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
+  [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2
   to:print::@return
 print::@return: scope:[print]  from print::@1
   [19] return 
@@ -467,10 +471,10 @@ print: {
     jmp b1
     // print::@1
   b1:
-    // [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print::@return
@@ -500,7 +504,7 @@ print: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 [ screen#18 print::msg#0 ] ( main:2::print_msg:5 [ screen#18 print::msg#0 ] main:2::print_msg:7 [ screen#18 print::msg#0 ] ) always clobbers reg byte a 
-Statement [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2 [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
+Statement [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Statement [20] *((byte*) screen#14) ← *((byte*) print::msg#2) [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ print_msg::idx#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] : zp ZP_WORD:3 , 
@@ -634,10 +638,10 @@ print: {
     jmp b1
     // print::@1
   b1:
-    // [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // print::@return
@@ -835,11 +839,11 @@ print: {
     // [17] phi (byte*) print::msg#2 = (byte*) print::msg#0 [phi:print/print::@2->print::@1#1] -- register_copy 
     // print::@1
   b1:
-    // while(*msg!='@')
-    // [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*msg)
+    // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
-    cmp #'@'
+    cmp #0
     bne b2
     // print::@return
     // }

@@ -145,7 +145,7 @@ next_char: {
     ldy #0
     lda (nxt),y
     tax
-    cpx #'@'
+    cpx #0
     bne b1
     ldx TEXT
     lda #<TEXT

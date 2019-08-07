@@ -16,7 +16,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   (byte*) main::screen#4 ← phi( main/(byte*) main::screen#0 main::@5/(byte*) main::screen#5 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#1 )
-  (bool~) main::$0 ← *((byte[]) main::str#0 + (byte) main::i#2) == (byte) '@'
+  (bool~) main::$0 ← *((byte[]) main::str#0 + (byte) main::i#2) == (number) 0
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@2
   to:main::@return
@@ -84,11 +84,16 @@ SYMBOL TABLE SSA
 (byte[]) main::str
 (byte[]) main::str#0
 
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← *((byte[]) main::str#0 + (byte) main::i#2) == (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Inversing boolean not [5] (bool~) main::$1 ← *((byte[]) main::str#0 + (byte) main::i#2) != (byte) '@' from [4] (bool~) main::$0 ← *((byte[]) main::str#0 + (byte) main::i#2) == (byte) '@'
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [5] (bool~) main::$1 ← *((byte[]) main::str#0 + (byte) main::i#2) != (byte) 0 from [4] (bool~) main::$0 ← *((byte[]) main::str#0 + (byte) main::i#2) == (byte) 0
 Inversing boolean not [9] (bool~) main::$3 ← *((byte[]) main::str#0 + (byte) main::i#3) != (byte) ' ' from [8] (bool~) main::$2 ← *((byte[]) main::str#0 + (byte) main::i#3) == (byte) ' '
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
@@ -96,7 +101,7 @@ Alias (byte*) main::screen#2 = (byte*) main::screen#3 (byte*) main::screen#4
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [6] if(*((byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2
+Simple Condition (bool~) main::$1 [6] if(*((byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2
 Simple Condition (bool~) main::$3 [10] if(*((byte[]) main::str#0 + (byte) main::i#2)!=(byte) ' ') goto main::@4
 Simple Condition (bool~) main::$4 [17] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -163,7 +168,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@4
   [5] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@4/(byte*) main::screen#5 )
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
-  [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2
+  [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@4
   [7] return 
@@ -206,7 +211,7 @@ INITIAL ASM
 Target platform is c64basic
   // File Comments
 // Illustrates both break & continue statements in a loop
-// Prints a message ending at '@' skipping all spaces
+// Prints a message ending at NUL skipping all spaces
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -245,10 +250,10 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuz1_neq_vbuc2_then_la1 
-    lda #'@'
+    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy i
-    cmp str,y
+    lda str,y
+    cmp #0
     bne b2
     jmp breturn
     // main::@return
@@ -299,12 +304,12 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] if(*((const byte[]) main::str#0 + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
 Statement [9] *((byte*) main::screen#2) ← *((const byte[]) main::str#0 + (byte) main::i#2) [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
 Statement [8] if(*((const byte[]) main::str#0 + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
 Statement [9] *((byte*) main::screen#2) ← *((const byte[]) main::str#0 + (byte) main::i#2) [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
@@ -321,7 +326,7 @@ Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::screen#2 main::screen#5 main::
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Illustrates both break & continue statements in a loop
-// Prints a message ending at '@' skipping all spaces
+// Prints a message ending at NUL skipping all spaces
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -358,9 +363,9 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
+    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda str,x
-    cmp #'@'
+    cmp #0
     bne b2
     jmp breturn
     // main::@return
@@ -463,7 +468,7 @@ Score: 651
 
   // File Comments
 // Illustrates both break & continue statements in a loop
-// Prints a message ending at '@' skipping all spaces
+// Prints a message ending at NUL skipping all spaces
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -489,10 +494,10 @@ main: {
     ldx #0
     // main::@1
   b1:
-    // if(str[i]=='@')
-    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 -- pbuc1_derefidx_vbuxx_neq_vbuc2_then_la1 
+    // if(str[i]==0)
+    // [6] if(*((const byte[]) main::str#0 + (byte) main::i#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda str,x
-    cmp #'@'
+    cmp #0
     bne b2
     // main::@return
   breturn:

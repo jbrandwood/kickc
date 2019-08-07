@@ -1,4 +1,5 @@
 Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) main::text
+Warning! Adding boolean cast to non-boolean condition *((byte*) main::text)
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@7
@@ -36,8 +37,8 @@ main::@2: scope:[main]  from main::@3 main::@9
   (byte) main::i#3 ← phi( main::@3/(byte) main::i#4 main::@9/(byte) main::i#5 )
   (byte*) main::screen#3 ← phi( main::@3/(byte*) main::screen#1 main::@9/(byte*) main::screen#4 )
   (byte*) main::text#3 ← phi( main::@3/(byte*) main::text#1 main::@9/(byte*) main::text#6 )
-  (bool~) main::$2 ← *((byte*) main::text#3) != (byte) '@'
-  if((bool~) main::$2) goto main::@3
+  (bool~) main::$3 ← (number) 0 != *((byte*) main::text#3)
+  if((bool~) main::$3) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2
   (byte) textid#18 ← phi( main::@2/(byte) textid#17 )
@@ -54,8 +55,8 @@ main::@4: scope:[main]  from main::@2
   (byte*) main::text#5 ← phi( main::@2/(byte*) main::text#3 )
   (byte) main::i#2 ← phi( main::@2/(byte) main::i#3 )
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$14)
-  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,$14)
-  if((bool~) main::$3) goto main::@1
+  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$14)
+  if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@4
   (byte) textid#7 ← phi( main::@4/(byte) textid#12 )
@@ -178,6 +179,7 @@ SYMBOL TABLE SSA
 (byte) textid#8
 (byte) textid#9
 
+Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (number) 0 != *((byte*) main::text#3)
 Adding number conversion cast (unumber) 0 in (byte) textid#2 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) nexttext::$0 ← (byte) textid#8 & (number) 1
 Adding number conversion cast (unumber) nexttext::$0 in (number~) nexttext::$0 ← (byte) textid#8 & (unumber)(number) 1
@@ -188,9 +190,11 @@ Inlining cast (byte) textid#2 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
@@ -221,8 +225,8 @@ Identical Phi Values (byte) textid#8 (byte) textid#11
 Identical Phi Values (byte**) nexttext::textp#1 (byte**) nexttext::textp#0
 Identical Phi Values (byte) textid#10 (byte) textid#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [12] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3
-Simple Condition (bool~) main::$3 [20] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
+Simple Condition (bool~) main::$3 [12] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
+Simple Condition (bool~) main::$2 [20] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
 Simple Condition (bool~) nexttext::$1 [31] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [5] (byte**) nexttext::textp#0 ← & (byte*) main::text#2
@@ -305,7 +309,7 @@ main::@1: scope:[main]  from main main::@4
 main::@2: scope:[main]  from main::@1 main::@3
   [7] (byte*) main::screen#2 ← phi( main::@3/(byte*) main::screen#1 main::@1/(byte*) main::screen#4 )
   [7] (byte*) main::text#3 ← phi( main::@3/(byte*) main::text#1 main::@1/(byte*) main::text#2 )
-  [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3
+  [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [9] (byte) main::i#1 ← ++ (byte) main::i#5
@@ -444,10 +448,10 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
-    cmp #'@'
+    cmp #0
     bne b3
     jmp b4
     // main::@4
@@ -527,7 +531,7 @@ nexttext: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte*) main::text#0 ← (byte*) 0 [ main::text#0 ] ( main:2 [ main::text#0 ] ) always clobbers reg byte a 
-Statement [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ main::i#5 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:7 [ main::i#5 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ textid#11 textid#13 ]
@@ -537,7 +541,7 @@ Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 
 Statement [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Statement [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Statement [4] (byte*) main::text#0 ← (byte*) 0 [ main::text#0 ] ( main:2 [ main::text#0 ] ) always clobbers reg byte a 
-Statement [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
 Statement [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
@@ -624,10 +628,10 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
-    cmp #'@'
+    cmp #0
     bne b3
     jmp b4
     // main::@4
@@ -839,11 +843,11 @@ main: {
     // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
     // main::@2
   b2:
-    // while(*text!='@')
-    // [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 -- _deref_pbuz1_neq_vbuc1_then_la1 
+    // while(*text)
+    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
-    cmp #'@'
+    cmp #0
     bne b3
     // main::@4
     // for(byte i: 0..20)

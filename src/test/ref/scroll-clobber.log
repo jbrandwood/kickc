@@ -15,7 +15,7 @@ main::@1: scope:[main]  from main main::@2
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← *((byte*) main::nxt#3)
-  (bool~) main::$0 ← (byte) main::c#0 == (byte) '@'
+  (bool~) main::$0 ← (byte) main::c#0 == (number) 0
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@2
   to:main::@3
@@ -78,22 +78,25 @@ SYMBOL TABLE SSA
 (byte*) main::nxt#4
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) main::c#0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [7] (bool~) main::$1 ← (byte) main::c#0 != (byte) '@' from [6] (bool~) main::$0 ← (byte) main::c#0 == (byte) '@'
+Inversing boolean not [7] (bool~) main::$1 ← (byte) main::c#0 != (byte) 0 from [6] (bool~) main::$0 ← (byte) main::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#3 = (byte) main::i#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [8] if((byte) main::c#0!=(byte) '@') goto main::@2
+Simple Condition (bool~) main::$1 [8] if((byte) main::c#0!=(byte) 0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte[]) TEXT#0 = $0
@@ -154,7 +157,7 @@ main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   [5] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 )
   [6] (byte) main::c#0 ← *((byte*) main::nxt#3)
-  [7] if((byte) main::c#0!=(byte) '@') goto main::@2
+  [7] if((byte) main::c#0!=(byte) 0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [8] (byte) main::c#1 ← *((const byte[]) TEXT#0)
@@ -243,9 +246,9 @@ main: {
     ldy #0
     lda (nxt),y
     sta c
-    // [7] if((byte) main::c#0!=(byte) '@') goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
-    lda #'@'
-    cmp c
+    // [7] if((byte) main::c#0!=(byte) 0) goto main::@2 -- vbuz1_neq_0_then_la1 
+    lda c
+    cmp #0
     bne b2_from_b1
     jmp b3
     // main::@3
@@ -350,8 +353,8 @@ main: {
     ldy #0
     lda (nxt),y
     tay
-    // [7] if((byte) main::c#0!=(byte) '@') goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #'@'
+    // [7] if((byte) main::c#0!=(byte) 0) goto main::@2 -- vbuyy_neq_0_then_la1 
+    cpy #0
     bne b2_from_b1
     jmp b3
     // main::@3
@@ -486,9 +489,9 @@ main: {
     ldy #0
     lda (nxt),y
     tay
-    // if(c=='@')
-    // [7] if((byte) main::c#0!=(byte) '@') goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #'@'
+    // if(c==0)
+    // [7] if((byte) main::c#0!=(byte) 0) goto main::@2 -- vbuyy_neq_0_then_la1 
+    cpy #0
     bne b2
     // main::@3
     // c = *nxt

@@ -8,13 +8,13 @@ main: {
     ldx #0
     ldy #0
   print1_b1:
-    lda #'@'
+    lda #0
     cmp hello,y
     bne print1_b2
-    ldx #0
-    ldy #0
+    tax
+    tay
   print2_b1:
-    lda #'@'
+    lda #0
     cmp hello,y
     bne print2_b2
     rts

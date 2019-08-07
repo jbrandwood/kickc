@@ -10,8 +10,11 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.AliasReplacer;
+import dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm;
+import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Utility for copying blocks in a program - typically to unroll loops or conditions.
@@ -57,12 +60,10 @@ public class Unroller {
    public void unroll() {
       // 0. Prepare for copying by ensuring that all variables defined in the blocks are represented in PHI-blocks of the successors
       prepare();
-
-      if(program.getLog().isVerboseSSAOptimize()) {
-         program.getLog().append("CONTROL FLOW GRAPH (PREPARED)");
+      if(program.getLog().isVerboseLoopUnroll()) {
+         program.getLog().append("CONTROL FLOW GRAPH (PREPARED FOR LOOP HEAD UNROLL)");
          program.getLog().append(program.getGraph().toString(program));
       }
-
       // 1. Create new versions of all symbols assigned inside the loop
       this.varsOriginalToCopied = copyDefinedVars(unrollBlocks, program);
       // 2. Create new labels for all blocks in the loop
@@ -72,70 +73,144 @@ public class Unroller {
    }
 
    /**
-    * Ensure that all variables defined inside the blocks to be copied has a PHI in successor blocks.
+    * Ensure that variables defined inside and used outside the blocks to be copied has different versions in different successors blocks.
     */
    private void prepare() {
       for(VariableRef origVarRef : getVarsDefinedIn(unrollBlocks, program)) {
          // Find out if the variable is ever referenced outside the loop
          if(isReferencedOutside(origVarRef, unrollBlocks, program)) {
-            //  Add any needed PHI-statements to the successors
-            for(SuccessorTransition successorTransition : getSuccessorTransitions(unrollBlocks, program.getGraph())) {
-               ControlFlowBlock successorBlock = program.getGraph().getBlock(successorTransition.successor);
-               StatementPhiBlock phiBlock = successorBlock.getPhiBlock();
-               // Create a new version of the variable
-               Variable origVar = program.getScope().getVariable(origVarRef);
-               Variable newVar;
-               if(origVar instanceof VariableVersion) {
-                  newVar = ((VariableVersion) origVar).getVersionOf().createVersion();
-               } else {
-                  newVar = origVar.getScope().addVariableIntermediate();
-               }
-               // Replace all references from the new phi and forward
-               forwardReplaceAllUsages(successorTransition.successor, origVarRef, newVar.getRef(), new LinkedHashSet<>());
-               // Create the new phi-variable in the successor phi block
-               StatementPhiBlock.PhiVariable newPhiVar = phiBlock.addPhiVariable(newVar.getRef());
-               newPhiVar.setrValue(successorTransition.predecessor, origVarRef);
-               program.getLog().append("Creating PHI for " + origVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(program, false));
-
+            // Re-version all usages of the specific variable version
+            Map<LabelRef, VariableRef> newPhis = new LinkedHashMap<>();
+            Map<LabelRef, VariableRef> varVersions = new LinkedHashMap<>();
+            reVersionAllUsages(origVarRef, newPhis, varVersions);
+            if(program.getLog().isVerboseLoopUnroll()) {
+               program.getLog().append("Created new versions for " + origVarRef + ")");
+               //program.getLog().append(program.getGraph().toString(program));
             }
+            // Recursively fill out & add PHI-functions until they have propagated everywhere needed
+            completePhiFunctions(newPhis, varVersions);
          }
       }
    }
 
    /**
-    * Introduces a new version of a variable - and replaces all uses of the old variable with the new one from a specific point in the control flow graph and forward until the old variable is defined.
-    * @param blockRef The block to replace the usage from
-    * @param origVarRef The original variable
-    * @param newVarRef The new variable replacing the original
-    * @param visited All blocks that have already been visited.
+    * Find all usages of a variable and create new versions for each usage.
+    *
+    * @param origVarRef The original variable where all usages must have new versions
+    * @param newPhis Map that will be populated with all new (empty) PHI-variables for the new versionw - these will be populated later.
+    * @param varVersions Map that will be populated with the version of the origVariable at the end of each block where it has a defined version.
     */
-   private void forwardReplaceAllUsages(LabelRef blockRef, VariableRef origVarRef, VariableRef newVarRef, Set<LabelRef> visited) {
-      VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
-      LinkedHashMap<SymbolRef, RValue> aliases = new LinkedHashMap<>();
-      aliases.put(origVarRef, newVarRef);
-      AliasReplacer aliasReplacer = new AliasReplacer(aliases);
-      ControlFlowBlock block = program.getGraph().getBlock(blockRef);
-      if(block!=null) {
+   private void reVersionAllUsages(VariableRef origVarRef, Map<LabelRef, VariableRef> newPhis, Map<LabelRef, VariableRef> varVersions) {
+
+      // First add the definition of origVar to varVersions
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
-            if(definedVars!=null && definedVars.contains(origVarRef)) {
-               // Found definition of the original variable - don't replace any more
-               return;
+            Collection<VariableRef> definedVars = PassNCalcVariableReferenceInfos.getDefinedVars(statement);
+            if(definedVars.contains(origVarRef)) {
+               varVersions.put(block.getLabel(), origVarRef);
             }
-            // Replace any usage in the statement
-            ProgramValueIterator.execute(statement, aliasReplacer, null, block);
          }
       }
-      visited.add(blockRef);
-      if(block!=null) {
-         if(block.getConditionalSuccessor() != null && !visited.contains(block.getConditionalSuccessor())) {
-            forwardReplaceAllUsages(block.getConditionalSuccessor(), origVarRef, newVarRef, visited);
+      // Next iterate the entire graph ensuring that all usages create new versions (except usages right after the definition)
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         AtomicReference<VariableRef> currentVersion = new AtomicReference<>();
+         // Set current version from map
+         currentVersion.set(varVersions.get(block.getLabel()));
+         for(Statement statement : block.getStatements()) {
+            ProgramValueIterator.execute(statement, (programValue, currentStmt, stmtIt, currentBlock) -> {
+               Value value = programValue.get();
+               if(origVarRef.equals(value)) {
+                  // Found a reference!
+                  if(statement instanceof StatementPhiBlock && programValue instanceof ProgramValue.PhiVariable) {
+                     // This is the definition - don't replace it
+                     currentVersion.set(origVarRef);
+                     varVersions.put(block.getLabel(), origVarRef);
+                  } else if(statement instanceof StatementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
+                     // This is the definition - don't replace it
+                     currentVersion.set(origVarRef);
+                     varVersions.put(block.getLabel(), origVarRef);
+                  } else if(statement instanceof StatementPhiBlock && programValue instanceof ProgramValue.PhiValue) {
+                     // The reference is inside a PHI-value - we need a version in the predecessor
+                     LabelRef predecessor = ((ProgramValue.PhiValue) programValue).getPredecessor();
+                     VariableRef predecessorVersion = varVersions.get(predecessor);
+                     if(predecessorVersion == null) {
+                        // Add a new PHI to the predecessor
+                        predecessorVersion = createNewVersion(origVarRef);
+                        varVersions.put(predecessor, predecessorVersion);
+                        newPhis.put(predecessor, predecessorVersion);
+                     }
+                     // Use the definition
+                     programValue.set(predecessorVersion);
+                  } else if(currentVersion.get() == null) {
+                     // Found a reference - no definition - create a new version
+                     VariableRef newVarRef = createNewVersion(origVarRef);
+                     currentVersion.set(newVarRef);
+                     varVersions.put(block.getLabel(), newVarRef);
+                     newPhis.put(block.getLabel(), currentVersion.get());
+                     // Use the definition
+                     programValue.set(newVarRef);
+                  } else {
+                     programValue.set(currentVersion.get());
+                  }
+               }
+            }, null, null);
          }
-         if(block.getDefaultSuccessor() != null && !visited.contains(block.getDefaultSuccessor())) {
-            forwardReplaceAllUsages(block.getDefaultSuccessor(), origVarRef, newVarRef, visited);
-         }
-         if(block.getCallSuccessor() != null && !visited.contains(block.getCallSuccessor())) {
-            forwardReplaceAllUsages(block.getCallSuccessor(), origVarRef, newVarRef, visited);
+      }
+      // Add the new empty PHI-blocks()
+      for(LabelRef blockRef : newPhis.keySet()) {
+         ControlFlowBlock block = program.getGraph().getBlock(blockRef);
+         VariableRef newVersion = newPhis.get(blockRef);
+         block.getPhiBlock().addPhiVariable(newVersion);
+      }
+
+   }
+
+   /**
+    * Create a new version of a variable
+    * @param origVarRef The original variable
+    * @return The new version
+    */
+   private VariableRef createNewVersion(VariableRef origVarRef) {
+      Variable origVar = program.getScope().getVariable(origVarRef);
+      Scope scope = origVar.getScope();
+      VariableRef newVarRef;
+      if(origVarRef.isIntermediate()) {
+         newVarRef = scope.addVariableIntermediate().getRef();
+      } else {
+         newVarRef = ((VariableVersion) origVar).getVersionOf().createVersion().getRef();
+      }
+      return newVarRef;
+   }
+
+   /**
+    * Look through all new phi-functions and fill out their parameters.
+    * Both passed maps are modified
+    *
+    * @param newPhis New (empty) PHI-variables for the new versions that need to be populated
+    * @param varVersions Map with the version of the origVariable at the end of each block where it has a defined version.
+    */
+   private void completePhiFunctions(Map<LabelRef, VariableRef> newPhis, Map<LabelRef, VariableRef> varVersions) {
+      Map<LabelRef, VariableRef> todo = newPhis;
+      while(todo.size() > 0) {
+         Map<LabelRef, VariableRef> doing = todo;
+         todo = new LinkedHashMap<>();
+         for(LabelRef blockRef : doing.keySet()) {
+            VariableRef doingVarRef = doing.get(blockRef);
+            ControlFlowBlock block = program.getGraph().getBlock(blockRef);
+            StatementPhiBlock.PhiVariable doingPhiVariable = block.getPhiBlock().getPhiVariable(doingVarRef);
+            List<ControlFlowBlock> predecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, program);
+            for(ControlFlowBlock predecessor : predecessors) {
+               VariableRef predecessorVarRef = varVersions.get(predecessor.getLabel());
+               if(predecessorVarRef == null) {
+                  // Variable has no version in the predecessor block - add a new PHI and populate later!
+                  VariableRef newVarRef = createNewVersion(doingVarRef);
+                  predecessor.getPhiBlock().addPhiVariable(newVarRef);
+                  varVersions.put(predecessor.getLabel(), newVarRef);
+                  todo.put(predecessor.getLabel(), newVarRef);
+                  predecessorVarRef = newVarRef;
+               }
+               doingPhiVariable.setrValue(predecessor.getLabel(), predecessorVarRef);
+            }
          }
       }
    }
@@ -272,7 +347,7 @@ public class Unroller {
    }
 
    /**
-    * Patch the PHI-block of an external successor block. Ensures that the PHI-block also receives data from the new coped block.
+    * Patch the PHI-block of an external successor block. Ensures that the PHI-block also receives data from the new copied block.
     *
     * @param successor The successor block's label
     * @param origBlock The label of the original block

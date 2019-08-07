@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
@@ -41,17 +42,21 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
                ConstantValue constValue1 = Pass2ConstantIdentification.getConstant(conditional.getrValue1());
                Operator operator = conditional.getOperator();
                ConstantValue constValue2 = Pass2ConstantIdentification.getConstant(conditional.getrValue2());
-               if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
-                  // Constant condition
-                  literal = constValue2.calculateLiteral(getScope());
-               } else if(conditional.getrValue1() == null && operator != null && constValue2 != null) {
-                  // Constant unary condition
-                  ConstantValue constVal = Pass2ConstantIdentification.createUnary((OperatorUnary) operator, constValue2);
-                  literal = constVal.calculateLiteral(getScope());
-               } else if(constValue1 != null && operator != null && constValue2 != null) {
-                  // Constant binary condition
-                  ConstantValue constVal = Pass2ConstantIdentification.createBinary( constValue1, (OperatorBinary) operator, constValue2, getScope());
-                  literal = constVal.calculateLiteral(getScope());
+               try {
+                  if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
+                     // Constant condition
+                     literal = constValue2.calculateLiteral(getScope());
+                  } else if(conditional.getrValue1() == null && operator != null && constValue2 != null) {
+                     // Constant unary condition
+                     ConstantValue constVal = Pass2ConstantIdentification.createUnary((OperatorUnary) operator, constValue2);
+                     literal = constVal.calculateLiteral(getScope());
+                  } else if(constValue1 != null && operator != null && constValue2 != null) {
+                     // Constant binary condition
+                     ConstantValue constVal = Pass2ConstantIdentification.createBinary(constValue1, (OperatorBinary) operator, constValue2, getScope());
+                     literal = constVal.calculateLiteral(getScope());
+                  }
+               } catch (ConstantNotLiteral e) {
+                  // not literal - keep as null
                }
                if(literal!=null && literal instanceof ConstantBool) {
                   // Condition is a constant boolean

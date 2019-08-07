@@ -433,6 +433,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -440,14 +449,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
@@ -497,22 +499,19 @@ bitmap_init: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zeropage($12) sintab)
+// sin16s_gen2(signed word* zeropage($14) sintab)
 sin16s_gen2: {
     .label wavelength = $200
     .const min = -$1001
     .const max = $1001
     .const ampl = max-min
-    .label _5 = $c
-    .label _8 = $20
+    .label _6 = $c
+    .label _9 = $20
     .label step = $1c
-    .label sintab = $12
+    .label sintab = $14
     .label x = 8
-    .label i = $14
+    .label i = $12
     jsr div32u16u
-    lda #<0
-    sta i
-    sta i+1
     lda #<SINUS
     sta sintab
     lda #>SINUS
@@ -522,8 +521,20 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
+    sta i
+    sta i+1
   // u[4.28]
   b1:
+    lda i+1
+    cmp #>wavelength
+    bcc b2
+    bne !+
+    lda i
+    cmp #<wavelength
+    bcc b2
+  !:
+    rts
+  b2:
     lda x
     sta sin16s.x
     lda x+1
@@ -538,15 +549,15 @@ sin16s_gen2: {
     lda #>ampl
     sta mul16s.b+1
     jsr mul16s
-    lda _5+2
-    sta _8
-    lda _5+3
-    sta _8+1
+    lda _6+2
+    sta _9
+    lda _6+3
+    sta _9+1
     ldy #0
-    lda _8
+    lda _9
     sta (sintab),y
     iny
-    lda _8+1
+    lda _9+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
@@ -572,15 +583,7 @@ sin16s_gen2: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp #>wavelength
-    bcc b1
-    bne !+
-    lda i
-    cmp #<wavelength
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28

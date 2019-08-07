@@ -140,7 +140,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       }
 
       getProgram().clearVariableReferenceInfos();
-      new PassNStatementIndices(getProgram()).clearStatementIndices();
+      getProgram().clearStatementIndices();
       return modified;
    }
 

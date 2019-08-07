@@ -78,20 +78,17 @@ main: {
     sta sc+1
   // Clear screen
   b1:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
     lda sc+1
     cmp #>SCREEN+$3e8
-    bcc b1
+    bcs !b2+
+    jmp b2
+  !b2:
     bne !+
     lda sc
     cmp #<SCREEN+$3e8
-    bcc b1
+    bcs !b2+
+    jmp b2
+  !b2:
   !:
     lda #<SCREEN+1
     sta print_str_at.at
@@ -131,7 +128,7 @@ main: {
     jsr print_str_at
     lda #0
     sta i
-  b3:
+  b4:
     ldy i
     ldx #0
     lda #$20
@@ -139,75 +136,84 @@ main: {
     inc i
     lda #4
     cmp i
-    bne b3
-    lda #0
-    sta cur_pos
-  b4:
-    ldx #KEY_F1
-    jsr keyboard_key_pressed
-    cmp #0
-    beq b5
+    bne b4
     lda #0
     sta cur_pos
   b5:
-    ldx #KEY_F3
+    ldx #KEY_F1
     jsr keyboard_key_pressed
     cmp #0
     beq b6
-    lda #1
+    lda #0
     sta cur_pos
   b6:
-    ldx #KEY_F5
+    ldx #KEY_F3
     jsr keyboard_key_pressed
     cmp #0
     beq b7
-    lda #2
+    lda #1
     sta cur_pos
   b7:
-    ldx #KEY_F7
+    ldx #KEY_F5
     jsr keyboard_key_pressed
     cmp #0
     beq b8
-    lda #3
+    lda #2
     sta cur_pos
   b8:
+    ldx #KEY_F7
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b9
+    lda #3
+    sta cur_pos
+  b9:
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
-    bne b9
+    bne b10
     lda #0
     sta shift
-    jmp b10
-  b9:
+    jmp b11
+  b10:
     lda #1
     sta shift
-  b10:
+  b11:
     lda #0
     sta ch
   // Check for key presses - and plot char if found
-  b11:
+  b12:
     ldx ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b2
+    beq b3
     tax
     jsr keyboard_key_pressed
-    jmp b12
-  b2:
+    jmp b13
+  b3:
     lda #0
-  b12:
+  b13:
     cmp #0
-    beq b13
+    beq b14
     ldy cur_pos
     lda ch
     ldx shift
     jsr plot_chargen
-  b13:
+  b14:
     inc ch
     lda #$40
     cmp ch
-    bne b11
-    jmp b4
+    bne b12
+    jmp b5
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    jmp b1
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"

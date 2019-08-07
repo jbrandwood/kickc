@@ -88,7 +88,7 @@ render: {
     sta x
   b2:
     jsr findcol
-    lda findcol.return
+    txa
     ldy x
     sta (colline),y
     inc x
@@ -111,79 +111,76 @@ render: {
 findcol: {
     .label x = 3
     .label y = 2
-    .label yp = 8
-    .label return = 5
-    .label mincol = 5
-    .label mindiff = 4
-    lda #0
-    sta mincol
+    .label xp = 8
+    .label yp = 9
+    .label i = 4
+    .label mindiff = 5
     lda #$ff
     sta mindiff
-    ldy #0
+    ldx #0
+    txa
+    sta i
   b1:
-    ldx XPOS,y
-    lda YPOS,y
-    sta yp
-    cpx x
-    bne b2
-    lda y
-    cmp yp
-    bne b2
-    lda #0
-    sta return
+    lda i
+    cmp #numpoints
+    bcc b2
     rts
   b2:
-    txa
-    cmp x
-    beq !+
-    bcs b3
-  !:
-    txa
-    eor #$ff
-    sec
-    adc x
-    tax
-  b4:
+    ldy i
+    lda XPOS,y
+    sta xp
+    lda YPOS,y
+    sta yp
+    lda x
+    cmp xp
+    bne b3
     lda y
     cmp yp
-    bcc b5
+    bne b3
+    ldx #0
+    rts
+  b3:
+    lda x
+    cmp xp
+    bcc b4
+    sec
+    sbc xp
+    tay
+  b5:
+    lda y
+    cmp yp
+    bcc b6
     sec
     sbc yp
-    stx $ff
+    sty $ff
     clc
     adc $ff
-    tax
-  b6:
-    cpx mindiff
-    bcs b13
-    lda COLS,y
-    sta mincol
   b7:
-    iny
-    cpy #numpoints
-    bcc b12
-    rts
-  b12:
-    stx mindiff
+    cmp mindiff
+    bcs b13
+    ldy i
+    ldx COLS,y
+  b8:
+    inc i
+    sta mindiff
     jmp b1
   b13:
-    ldx mindiff
-    jmp b7
-  b5:
+    lda mindiff
+    jmp b8
+  b6:
     lda yp
     sec
     sbc y
-    stx $ff
+    sty $ff
     clc
     adc $ff
-    tax
-    jmp b6
-  b3:
-    txa
+    jmp b7
+  b4:
+    lda xp
     sec
     sbc x
-    tax
-    jmp b4
+    tay
+    jmp b5
 }
 initscreen: {
     .label screen = 6
@@ -192,6 +189,16 @@ initscreen: {
     lda #>SCREEN
     sta screen+1
   b1:
+    lda screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda screen
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     lda #FILL
     ldy #0
     sta (screen),y
@@ -199,15 +206,7 @@ initscreen: {
     bne !+
     inc screen+1
   !:
-    lda screen+1
-    cmp #>SCREEN+$3e8
-    bcc b1
-    bne !+
-    lda screen
-    cmp #<SCREEN+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f

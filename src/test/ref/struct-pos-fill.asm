@@ -6,20 +6,33 @@
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
   .const YSPACE = $14
-  .label x = 5
+  .label x = 3
   .label idx = 4
-  .label y = 2
-  .label line = 3
+  .label y = 5
+  .label line = 2
 main: {
     lda #0
-    sta line
     sta y
     sta idx
     sta x
+    sta line
   b1:
+    lda line
+    cmp #8
+    bcc b2
+    rts
+  b2:
     inc x
     ldy #0
-  b2:
+  b3:
+    cpy #8
+    bcc b4
+    lax y
+    axs #-[YSPACE]
+    stx y
+    inc line
+    jmp b1
+  b4:
     lda idx
     asl
     tax
@@ -32,15 +45,6 @@ main: {
     axs #-[XSPACE]
     stx x
     iny
-    cpy #8
-    bcc b2
-    lax y
-    axs #-[YSPACE]
-    stx y
-    inc line
-    lda line
-    cmp #8
-    bcc b1
-    rts
+    jmp b3
 }
   p: .fill 2*$40, 0

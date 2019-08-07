@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.PointerDereference;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.Unroller;
 
 import java.util.ArrayList;
@@ -44,7 +41,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
          }
       }
       // TODO: Move to Program
-      new PassNStatementIndices(getProgram()).clearStatementIndices();
+      getProgram().clearStatementIndices();
       return false;
    }
 
@@ -73,8 +70,19 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
                      // Predecessor it outside the loop
                      if(value.getrValue() instanceof ConstantValue) {
                         // The value is constant in the predecessor!!
-                        // Optimization of the loop head is a good idea for this variable!
-                        optimizeVars.add(phiVariable.getVariable());
+                        // Make sure it can be calculated as a literal
+                        boolean isLiteral = true;
+                        try {
+                           ConstantValue constantValue = (ConstantValue) value.getrValue();
+                           constantValue.calculateLiteral(getProgram().getScope());
+                        } catch (ConstantNotLiteral e) {
+                           // Not literal
+                           isLiteral = false;
+                        }
+                        if(isLiteral) {
+                           // Optimization of the loop head is a good idea for this variable!
+                           optimizeVars.add(phiVariable.getVariable());
+                        }
                      }
                   }
                }

@@ -36,12 +36,8 @@ plot: {
   b1:
     ldy #0
   b2:
-    lda buffer1,x
-    sta (line),y
-    inx
-    iny
     cpy #$10
-    bcc b2
+    bcc b3
     lda #$28
     clc
     adc line
@@ -54,6 +50,12 @@ plot: {
     cmp #0
     bne b1
     rts
+  b3:
+    lda buffer1,x
+    sta (line),y
+    inx
+    iny
+    jmp b2
 }
 // Flip buffer
 flip: {

@@ -945,16 +945,32 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
       loopStack.push(new Loop(blockScope));
+      // Add initialization
       this.visit(ctx.forClassicInit());
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       // Add label
-      Label repeatLabel = getCurrentScope().addLabelIntermediate();
+      Label beginJumpLabel = getCurrentScope().addLabelIntermediate();
+      Label doJumpLabel = getCurrentScope().addLabelIntermediate();
+      Label endJumpLabel = getCurrentScope().addLabelIntermediate();
       List<Comment> comments = getCommentsSymbol(stmtForCtx);
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), StatementSource.forClassic(ctx), comments);
+      StatementLabel repeatTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), comments);
       sequence.addStatement(repeatTarget);
+      // Add condition
+      KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
+      PrePostModifierHandler.addPreModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
+      RValue rValue = (RValue) this.visit(conditionCtx);
+      PrePostModifierHandler.addPostModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
+      // Add jump if condition was met
+      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(doJmpStmt);
+      Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(endJmpStmt);
+      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(doJumpTarget);
+      // Reuse the begin jump target for continue.
+      loopStack.peek().setContinueLabel(beginJumpLabel);
       // Add body
       addLoopBody(stmtForCtx.stmt());
-      addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
       KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
       if(incrementCtx != null) {
@@ -962,14 +978,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.visit(incrementCtx);
          PrePostModifierHandler.addPostModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
       }
-      // Add condition
-      KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
-      PrePostModifierHandler.addPreModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
-      RValue rValue = (RValue) this.visit(conditionCtx);
-      PrePostModifierHandler.addPostModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
-      // Add jump if condition was met
-      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
-      sequence.addStatement(doJmpStmt);
+      // Jump back to beginning
+      Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(beginJmpStmt);
+      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(endJumpTarget);
       addDirectives(doJmpStmt, stmtForCtx.directive());
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();

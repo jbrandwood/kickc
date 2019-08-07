@@ -15,7 +15,10 @@ Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
-Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@7
+Culled Empty Block (label) memset::@6
+Culled Empty Block (label) memset::@8
+Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @7
 Culled Empty Block (label) bitmap_init::@8
@@ -55,7 +58,7 @@ CONTROL FLOW GRAPH SSA
   (byte) WHITE#0 ← (number) 1
   to:@8
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
-  (byte) memset::c#4 ← phi( bitmap_clear/(byte) memset::c#0 bitmap_clear::@1/(byte) memset::c#1 )
+  (byte) memset::c#5 ← phi( bitmap_clear/(byte) memset::c#0 bitmap_clear::@1/(byte) memset::c#1 )
   (void*) memset::str#4 ← phi( bitmap_clear/(void*) memset::str#0 bitmap_clear::@1/(void*) memset::str#1 )
   (word) memset::num#2 ← phi( bitmap_clear/(word) memset::num#0 bitmap_clear::@1/(word) memset::num#1 )
   (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
@@ -67,7 +70,7 @@ memset::@1: scope:[memset]  from memset memset::@4
   (void*) memset::return#0 ← (void*) memset::str#2
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
+  (byte) memset::c#4 ← phi( memset/(byte) memset::c#5 )
   (word) memset::num#3 ← phi( memset/(word) memset::num#2 )
   (void*) memset::str#3 ← phi( memset/(void*) memset::str#4 )
   (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#3
@@ -75,16 +78,22 @@ memset::@2: scope:[memset]  from memset
   (byte*) memset::end#0 ← (byte*~) memset::$3
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#3
   to:memset::@4
-memset::@4: scope:[memset]  from memset::@2 memset::@4
-  (void*) memset::str#5 ← phi( memset::@2/(void*) memset::str#3 memset::@4/(void*) memset::str#5 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@4/(byte) memset::c#2 )
-  *((byte*) memset::dst#2) ← (byte) memset::c#2
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@5
+  (byte) memset::c#3 ← phi( memset::@2/(byte) memset::c#4 memset::@5/(byte) memset::c#2 )
+  (void*) memset::str#5 ← phi( memset::@2/(void*) memset::str#3 memset::@5/(void*) memset::str#6 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
+  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@5
   to:memset::@1
+memset::@5: scope:[memset]  from memset::@4
+  (void*) memset::str#6 ← phi( memset::@4/(void*) memset::str#5 )
+  (byte*) memset::end#2 ← phi( memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#3 ← phi( memset::@4/(byte*) memset::dst#2 )
+  (byte) memset::c#2 ← phi( memset::@4/(byte) memset::c#3 )
+  *((byte*) memset::dst#3) ← (byte) memset::c#2
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  to:memset::@4
 memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#4 ← phi( memset::@1/(void*) memset::return#0 )
   (void*) memset::return#1 ← (void*) memset::return#4
@@ -796,6 +805,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
+(label) memset::@5
 (label) memset::@return
 (byte) memset::c
 (byte) memset::c#0
@@ -803,13 +813,16 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) memset::c#2
 (byte) memset::c#3
 (byte) memset::c#4
+(byte) memset::c#5
 (byte*) memset::dst
 (byte*) memset::dst#0
 (byte*) memset::dst#1
 (byte*) memset::dst#2
+(byte*) memset::dst#3
 (byte*) memset::end
 (byte*) memset::end#0
 (byte*) memset::end#1
+(byte*) memset::end#2
 (word) memset::num
 (word) memset::num#0
 (word) memset::num#1
@@ -828,6 +841,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (void*) memset::str#3
 (void*) memset::str#4
 (void*) memset::str#5
+(void*) memset::str#6
 (byte[$100]) plots_per_frame
 (byte[$100]) plots_per_frame#0
 
@@ -1028,15 +1042,19 @@ Inferred type updated to byte in (unumber~) main::toD0181_$8#0 ← (byte~) main:
 Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_plot::$0 ← (word~) bitmap_plot::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
 Inversing boolean not [22] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [21] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [53] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [52] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [73] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [72] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [202] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [201] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [54] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [53] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [74] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [73] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [203] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [202] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
 Alias (word) memset::num#2 = (word) memset::num#3 
-Alias (byte) memset::c#3 = (byte) memset::c#4 
+Alias (byte) memset::c#4 = (byte) memset::c#5 
 Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
+Alias (byte*) memset::end#1 = (byte*) memset::end#2 
+Alias (void*) memset::str#5 = (void*) memset::str#6 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#4 
 Alias (byte*) bitmap_init::gfx#4 = (byte*) bitmap_init::gfx#5 
 Alias (byte*) bitmap_gfx#30 = (byte*) bitmap_gfx#31 
@@ -1101,9 +1119,9 @@ Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#23 (byte*) bitmap_gfx#19
 Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#22 (byte*) bitmap_screen#18 
 Alias (word) main::vx#6 = (word) main::vx#7 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) memset::c#2 (byte) memset::c#3
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#5 (void*) memset::str#3
+Identical Phi Values (byte) memset::c#2 (byte) memset::c#4
 Identical Phi Values (byte*) bitmap_init::gfx#1 (byte*) bitmap_init::gfx#0
 Identical Phi Values (byte*) bitmap_init::screen#1 (byte*) bitmap_init::screen#0
 Identical Phi Values (byte*) bitmap_init::gfx#2 (byte*) bitmap_init::gfx#1
@@ -1131,29 +1149,29 @@ Identical Phi Values (byte*) bitmap_screen#10 (byte*) bitmap_screen#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [71] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [72] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) memset::$1 [23] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [35] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) bitmap_init::$1 [54] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [58] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [74] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [78] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) irq::$0 [203] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) memset::$4 [33] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) bitmap_init::$1 [55] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [59] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [75] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [79] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) irq::$0 [204] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [166] (bool~) main::$11 ← ! (bool~) main::$10
+Rewriting ! if()-condition to reversed if() [167] (bool~) main::$11 ← ! (bool~) main::$10
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s [165] (bool~) main::$10 ← (bool~) main::$8 || (bool~) main::$9
+Rewriting || if()-condition to two if()s [166] (bool~) main::$10 ← (bool~) main::$8 || (bool~) main::$9
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [172] (bool~) main::$16 ← ! (bool~) main::$15
+Rewriting ! if()-condition to reversed if() [173] (bool~) main::$16 ← ! (bool~) main::$15
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s [171] (bool~) main::$15 ← (bool~) main::$13 || (bool~) main::$14
+Rewriting || if()-condition to two if()s [172] (bool~) main::$15 ← (bool~) main::$13 || (bool~) main::$14
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [41] (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
-Constant right-side identified [42] (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
-Constant right-side identified [43] (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
-Constant right-side identified [114] (byte[$100]) plots_per_frame#0 ← { fill( $100, 0) }
-Constant right-side identified [195] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+Constant right-side identified [42] (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
+Constant right-side identified [43] (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
+Constant right-side identified [44] (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
+Constant right-side identified [115] (byte[$100]) plots_per_frame#0 ← { fill( $100, 0) }
+Constant right-side identified [196] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) PROCPORT_DDR#0 = (byte*) 0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
@@ -1206,18 +1224,18 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)bitmap_screen#1 in [90] (void*) memset::str#0 ← (void*)(const byte*) bitmap_screen#1
-Constant value identified (void*)bitmap_gfx#1 in [96] (void*) memset::str#1 ← (void*)(const byte*) bitmap_gfx#1
-Constant value identified (word)main::toD0181_screen#0 in [133] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [137] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (void*)bitmap_screen#1 in [91] (void*) memset::str#0 ← (void*)(const byte*) bitmap_screen#1
+Constant value identified (void*)bitmap_gfx#1 in [97] (void*) memset::str#1 ← (void*)(const byte*) bitmap_gfx#1
+Constant value identified (word)main::toD0181_screen#0 in [134] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [138] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [155] if(true) goto main::@2
+if() condition always true - replacing block destination [156] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [56] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [58] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [76] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [78] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Simplifying expression containing zero bitmap_clear::$0 in [88] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
+Resolved ranged next value [57] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [59] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [77] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [79] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Simplifying expression containing zero bitmap_clear::$0 in [89] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [36] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [39] (void*) memset::return#3 ← (void*) memset::str#3
@@ -1340,7 +1358,6 @@ Constant inlined main::$4 = (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined memset::c#1 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting bitmap_init::@9(between bitmap_init::@2 and bitmap_init::@1)
 Added new block during phi lifting bitmap_init::@10(between bitmap_init::@1 and bitmap_init::@2)
 Added new block during phi lifting bitmap_init::@11(between bitmap_init::@6 and bitmap_init::@5)
@@ -1380,7 +1397,7 @@ Coalesced [37] main::vx#9 ← main::vx#6
 Coalesced [38] main::vy#9 ← main::vy#8
 Coalesced (already) [39] main::vy#10 ← main::vy#2
 Coalesced (already) [40] main::vx#10 ← main::vx#2
-Coalesced [73] memset::dst#4 ← memset::dst#1
+Coalesced [73] memset::dst#5 ← memset::dst#1
 Coalesced [93] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
 Coalesced [98] bitmap_init::y#5 ← bitmap_init::y#1
 Coalesced [99] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
@@ -1400,7 +1417,6 @@ Culled Empty Block (label) main::@19
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) bitmap_clear::@2
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@6
 Culled Empty Block (label) bitmap_init::@3
 Culled Empty Block (label) bitmap_init::@4
 Culled Empty Block (label) bitmap_init::@11
@@ -1411,6 +1427,7 @@ Renumbering block @15 to @1
 Renumbering block @17 to @2
 Renumbering block memset::@2 to memset::@1
 Renumbering block memset::@4 to memset::@2
+Renumbering block memset::@5 to memset::@3
 Renumbering block bitmap_init::@5 to bitmap_init::@3
 Renumbering block bitmap_init::@6 to bitmap_init::@4
 Renumbering block bitmap_init::@7 to bitmap_init::@5
@@ -1539,24 +1556,26 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@1
   [48] return 
   to:@return
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
-  [49] (byte) memset::c#3 ← phi( bitmap_clear/(const byte) bitmap_clear::col#0 bitmap_clear::@1/(byte) 0 )
+  [49] (byte) memset::c#4 ← phi( bitmap_clear/(const byte) bitmap_clear::col#0 bitmap_clear::@1/(byte) 0 )
   [49] (void*) memset::str#3 ← phi( bitmap_clear/(void*)(const byte*) SCREEN#0 bitmap_clear::@1/(void*)(const byte*) BITMAP#0 )
   [49] (word) memset::num#2 ← phi( bitmap_clear/(word) $3e8 bitmap_clear::@1/(word) $1f40 )
   [50] if((word) memset::num#2<=(byte) 0) goto memset::@return
   to:memset::@1
 memset::@1: scope:[memset]  from memset
   [51] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2
-  [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3
+  [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
   to:memset::@2
-memset::@2: scope:[memset]  from memset::@1 memset::@2
-  [53] (byte*) memset::dst#2 ← phi( memset::@1/(byte*~) memset::dst#3 memset::@2/(byte*) memset::dst#1 )
-  [54] *((byte*) memset::dst#2) ← (byte) memset::c#3
-  [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2
+memset::@2: scope:[memset]  from memset::@1 memset::@3
+  [53] (byte*) memset::dst#2 ← phi( memset::@1/(byte*~) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
+  [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset memset::@2
-  [57] return 
+  [55] return 
   to:@return
+memset::@3: scope:[memset]  from memset::@2
+  [56] *((byte*) memset::dst#2) ← (byte) memset::c#4
+  [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@2
 bitmap_init: scope:[bitmap_init]  from main
   [58] phi()
   to:bitmap_init::@1
@@ -1712,11 +1731,11 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) main::y#2 6.6000000000000005
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
-(byte) memset::c#3 1.375
+(byte) memset::c#4 1.375
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#2 17.5
-(byte*~) memset::dst#3 4.0
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 15.333333333333332
+(byte*~) memset::dst#4 4.0
 (byte*) memset::end
 (byte*) memset::end#0 2.1666666666666665
 (word) memset::num
@@ -1733,8 +1752,8 @@ Initial phi equivalence classes
 [ main::vy#2 main::vy#8 main::vy#1 ]
 [ memset::num#2 ]
 [ memset::str#3 ]
-[ memset::c#3 ]
-[ memset::dst#2 memset::dst#3 memset::dst#1 ]
+[ memset::c#4 ]
+[ memset::dst#2 memset::dst#4 memset::dst#1 ]
 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 [ bitmap_init::x#2 bitmap_init::x#1 ]
 [ bitmap_init::y#2 bitmap_init::y#1 ]
@@ -1758,8 +1777,8 @@ Complete equivalence classes
 [ main::vy#2 main::vy#8 main::vy#1 ]
 [ memset::num#2 ]
 [ memset::str#3 ]
-[ memset::c#3 ]
-[ memset::dst#2 memset::dst#3 memset::dst#1 ]
+[ memset::c#4 ]
+[ memset::dst#2 memset::dst#4 memset::dst#1 ]
 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 [ bitmap_init::x#2 bitmap_init::x#1 ]
 [ bitmap_init::y#2 bitmap_init::y#1 ]
@@ -1782,8 +1801,8 @@ Allocated zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ]
 Allocated zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ]
 Allocated zp ZP_WORD:8 [ memset::num#2 ]
 Allocated zp ZP_WORD:10 [ memset::str#3 ]
-Allocated zp ZP_BYTE:12 [ memset::c#3 ]
-Allocated zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ]
+Allocated zp ZP_BYTE:12 [ memset::c#4 ]
+Allocated zp ZP_WORD:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
 Allocated zp ZP_BYTE:15 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 Allocated zp ZP_BYTE:16 [ bitmap_init::x#2 bitmap_init::x#1 ]
 Allocated zp ZP_BYTE:17 [ bitmap_init::y#2 bitmap_init::y#1 ]
@@ -2127,7 +2146,7 @@ bitmap_clear: {
     // [45] call memset 
     // [49] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
   memset_from_bitmap_clear:
-    // [49] phi (byte) memset::c#3 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuz1=vbuc1 
+    // [49] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuz1=vbuc1 
     lda #col
     sta memset.c
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
@@ -2149,7 +2168,7 @@ bitmap_clear: {
     // [47] call memset 
     // [49] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
   memset_from_b1:
-    // [49] phi (byte) memset::c#3 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuz1=vbuc1 
+    // [49] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuz1=vbuc1 
     lda #0
     sta memset.c
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
@@ -2195,39 +2214,42 @@ memset: {
     lda str+1
     adc num+1
     sta end+1
-    // [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
+    // [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
     lda str
     sta dst
     lda str+1
     sta dst+1
-    // [53] phi from memset::@1 memset::@2 to memset::@2 [phi:memset::@1/memset::@2->memset::@2]
+    // [53] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
-  b2_from_b2:
-    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset::@1/memset::@2->memset::@2#0] -- register_copy 
+  b2_from_b3:
+    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp b2
     // memset::@2
   b2:
-    // [54] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuz2 
+    // [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [55] return 
+    rts
+    // memset::@3
+  b3:
+    // [56] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
     lda c
     ldy #0
     sta (dst),y
-    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
-    bne b2_from_b2
-    lda dst
-    cmp end
-    bne b2_from_b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [57] return 
-    rts
+    jmp b2_from_b3
 }
   // bitmap_init
 // Initialize bitmap plotting tables
@@ -2446,13 +2468,13 @@ Statement [38] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0)
 Statement [39] *((const byte*) RASTER#0) ← (byte) 0 [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [40] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [41] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
-Statement [50] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#3 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#3 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#3 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ memset::c#3 ]
-Statement [51] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#3 memset::end#0 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::str#3 memset::c#3 memset::end#0 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::str#3 memset::c#3 memset::end#0 ] ) always clobbers reg byte a 
-Statement [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3 [ memset::c#3 memset::end#0 memset::dst#3 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#3 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#3 ] ) always clobbers reg byte a 
-Statement [54] *((byte*) memset::dst#2) ← (byte) memset::c#3 [ memset::c#3 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:12 [ memset::c#3 ]
-Statement [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2 [ memset::c#3 memset::end#0 memset::dst#1 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#1 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#1 ] ) always clobbers reg byte a 
+Statement [50] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ memset::c#4 ]
+Statement [51] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] ) always clobbers reg byte a 
+Statement [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
+Statement [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a 
+Statement [56] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:12 [ memset::c#4 ]
 Statement [75] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:6 [ frame_cnt#0 bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Statement [80] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ frame_cnt#0 ] (  [ frame_cnt#0 ] ) always clobbers reg byte a 
@@ -2485,11 +2507,11 @@ Statement [38] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0)
 Statement [39] *((const byte*) RASTER#0) ← (byte) 0 [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [40] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [41] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
-Statement [50] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#3 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#3 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#3 ] ) always clobbers reg byte a 
-Statement [51] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#3 memset::end#0 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::str#3 memset::c#3 memset::end#0 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::str#3 memset::c#3 memset::end#0 ] ) always clobbers reg byte a 
-Statement [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3 [ memset::c#3 memset::end#0 memset::dst#3 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#3 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#3 ] ) always clobbers reg byte a 
-Statement [54] *((byte*) memset::dst#2) ← (byte) memset::c#3 [ memset::c#3 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2 [ memset::c#3 memset::end#0 memset::dst#1 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#1 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#3 memset::end#0 memset::dst#1 ] ) always clobbers reg byte a 
+Statement [50] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] ) always clobbers reg byte a 
+Statement [51] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] ) always clobbers reg byte a 
+Statement [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
+Statement [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a 
+Statement [56] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:8::memset:45 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:8::memset:47 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [68] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ( main:3::bitmap_init:6 [ frame_cnt#0 bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ) always clobbers reg byte a 
 Statement [75] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:6 [ frame_cnt#0 bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Statement [80] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ frame_cnt#0 ] (  [ frame_cnt#0 ] ) always clobbers reg byte a 
@@ -2503,8 +2525,8 @@ Potential registers zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] : zp ZP_WO
 Potential registers zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] : zp ZP_BYTE:7 , 
 Potential registers zp ZP_WORD:8 [ memset::num#2 ] : zp ZP_WORD:8 , 
 Potential registers zp ZP_WORD:10 [ memset::str#3 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_BYTE:12 [ memset::c#3 ] : zp ZP_BYTE:12 , reg byte x , 
-Potential registers zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] : zp ZP_WORD:13 , 
+Potential registers zp ZP_BYTE:12 [ memset::c#4 ] : zp ZP_BYTE:12 , reg byte x , 
+Potential registers zp ZP_WORD:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp ZP_WORD:13 , 
 Potential registers zp ZP_BYTE:15 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] : zp ZP_BYTE:15 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:16 [ bitmap_init::x#2 bitmap_init::x#1 ] : zp ZP_BYTE:16 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:17 [ bitmap_init::y#2 bitmap_init::y#1 ] : zp ZP_BYTE:17 , reg byte x , reg byte y , 
@@ -2525,56 +2547,56 @@ Potential registers zp ZP_BYTE:36 [ bitmap_init::$6 ] : zp ZP_BYTE:36 , reg byte
 REGISTER UPLIFT SCOPES
 Uplift Scope [bitmap_init] 39.88: zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] 34.83: zp ZP_BYTE:15 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] 22: zp ZP_BYTE:16 [ bitmap_init::x#2 bitmap_init::x#1 ] 22: zp ZP_BYTE:17 [ bitmap_init::y#2 bitmap_init::y#1 ] 22: zp ZP_BYTE:34 [ bitmap_init::$4 ] 22: zp ZP_BYTE:35 [ bitmap_init::$5 ] 22: zp ZP_BYTE:36 [ bitmap_init::$6 ] 5.5: zp ZP_BYTE:33 [ bitmap_init::$7 ] 
 Uplift Scope [main] 42.17: zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] 33: zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] 12.25: zp ZP_WORD:2 [ main::x#2 main::x#1 ] 11: zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
+Uplift Scope [memset] 41.33: zp ZP_WORD:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 2.17: zp ZP_WORD:31 [ memset::end#0 ] 2: zp ZP_WORD:8 [ memset::num#2 ] 1.38: zp ZP_BYTE:12 [ memset::c#4 ] 0: zp ZP_WORD:10 [ memset::str#3 ] 
 Uplift Scope [] 45.11: zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
-Uplift Scope [memset] 38: zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] 2.17: zp ZP_WORD:31 [ memset::end#0 ] 2: zp ZP_WORD:8 [ memset::num#2 ] 1.38: zp ZP_BYTE:12 [ memset::c#3 ] 0: zp ZP_WORD:10 [ memset::str#3 ] 
 Uplift Scope [bitmap_plot] 15: zp ZP_BYTE:23 [ bitmap_plot::y#0 ] 4: zp ZP_WORD:26 [ bitmap_plot::$1 ] 4: zp ZP_BYTE:30 [ bitmap_plot::$2 ] 3: zp ZP_WORD:21 [ bitmap_plot::x#0 ] 3: zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] 1: zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] 
 Uplift Scope [bitmap_clear] 
 Uplift Scope [init_irq] 
 Uplift Scope [irq] 
 
-Uplifting [bitmap_init] best 4341 combination zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte a [ bitmap_init::$4 ] zp ZP_BYTE:35 [ bitmap_init::$5 ] zp ZP_BYTE:36 [ bitmap_init::$6 ] zp ZP_BYTE:33 [ bitmap_init::$7 ] 
+Uplifting [bitmap_init] best 4371 combination zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte a [ bitmap_init::$4 ] zp ZP_BYTE:35 [ bitmap_init::$5 ] zp ZP_BYTE:36 [ bitmap_init::$6 ] zp ZP_BYTE:33 [ bitmap_init::$7 ] 
 Limited combination testing to 100 combinations of 15360 possible.
-Uplifting [main] best 4341 combination zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] zp ZP_WORD:2 [ main::x#2 main::x#1 ] zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
-Uplifting [] best 4341 combination zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
-Uplifting [memset] best 4325 combination zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] zp ZP_WORD:31 [ memset::end#0 ] zp ZP_WORD:8 [ memset::num#2 ] reg byte x [ memset::c#3 ] zp ZP_WORD:10 [ memset::str#3 ] 
-Uplifting [bitmap_plot] best 4288 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:26 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:21 [ bitmap_plot::x#0 ] zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] 
-Uplifting [bitmap_clear] best 4288 combination 
-Uplifting [init_irq] best 4288 combination 
-Uplifting [irq] best 4288 combination 
+Uplifting [main] best 4371 combination zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] zp ZP_WORD:2 [ main::x#2 main::x#1 ] zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
+Uplifting [memset] best 4355 combination zp ZP_WORD:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp ZP_WORD:31 [ memset::end#0 ] zp ZP_WORD:8 [ memset::num#2 ] reg byte x [ memset::c#4 ] zp ZP_WORD:10 [ memset::str#3 ] 
+Uplifting [] best 4355 combination zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
+Uplifting [bitmap_plot] best 4318 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:26 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:21 [ bitmap_plot::x#0 ] zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] 
+Uplifting [bitmap_clear] best 4318 combination 
+Uplifting [init_irq] best 4318 combination 
+Uplifting [irq] best 4318 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-Uplifting [] best 4288 combination zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
+Uplifting [] best 4318 combination zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ]
-Uplifting [main] best 4288 combination zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] 
+Uplifting [main] best 4318 combination zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ bitmap_init::$5 ]
-Uplifting [bitmap_init] best 4228 combination reg byte a [ bitmap_init::$5 ] 
+Uplifting [bitmap_init] best 4258 combination reg byte a [ bitmap_init::$5 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:36 [ bitmap_init::$6 ]
-Uplifting [bitmap_init] best 4168 combination reg byte a [ bitmap_init::$6 ] 
+Uplifting [bitmap_init] best 4198 combination reg byte a [ bitmap_init::$6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::y#2 main::y#1 ]
-Uplifting [main] best 4168 combination zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
+Uplifting [main] best 4198 combination zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:33 [ bitmap_init::$7 ]
-Uplifting [bitmap_init] best 4168 combination zp ZP_BYTE:33 [ bitmap_init::$7 ] 
+Uplifting [bitmap_init] best 4198 combination zp ZP_BYTE:33 [ bitmap_init::$7 ] 
 Coalescing zero page register [ zp ZP_WORD:2 [ main::x#2 main::x#1 ] ] with [ zp ZP_WORD:21 [ bitmap_plot::x#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:8 [ memset::num#2 ] ] with [ zp ZP_WORD:31 [ memset::end#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:10 [ memset::str#3 ] ] with [ zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:10 [ memset::str#3 ] ] with [ zp ZP_WORD:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] ] with [ zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:8 [ memset::num#2 memset::end#0 ] ] with [ zp ZP_WORD:2 [ main::x#2 main::x#1 bitmap_plot::x#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:10 [ memset::str#3 memset::dst#2 memset::dst#3 memset::dst#1 ] ] with [ zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:10 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:24 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ] ] with [ zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:33 [ bitmap_init::$7 ] ] with [ zp ZP_BYTE:4 [ main::y#2 main::y#1 ] ]
 Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:2 [ main::vy#2 main::vy#8 main::vy#1 ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:3 [ memset::num#2 memset::end#0 main::x#2 main::x#1 bitmap_plot::x#0 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:5 [ memset::str#3 memset::dst#2 memset::dst#3 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
+Allocated (was zp ZP_WORD:10) zp ZP_WORD:5 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
 Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:7 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 Allocated (was zp ZP_WORD:24) zp ZP_WORD:8 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 Allocated (was zp ZP_WORD:26) zp ZP_WORD:10 [ bitmap_plot::$1 ]
 Allocated (was zp ZP_BYTE:33) zp ZP_BYTE:12 [ bitmap_init::$7 main::y#2 main::y#1 ]
 Interrupt procedure irq clobbers ACNZ
-Removing interrupt register storage stx regx+1 in SEG153 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage sty regy+1 in SEG153 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regx: in SEG164 [86] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldx #00 in SEG164 [86] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in SEG164 [86] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in SEG164 [86] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage stx regx+1 in SEG154 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage sty regy+1 in SEG154 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regx: in SEG165 [86] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldx #00 in SEG165 [86] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regy: in SEG165 [86] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldy #00 in SEG165 [86] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2891,7 +2913,7 @@ bitmap_clear: {
     // [45] call memset 
     // [49] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
   memset_from_bitmap_clear:
-    // [49] phi (byte) memset::c#3 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
+    // [49] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
@@ -2912,7 +2934,7 @@ bitmap_clear: {
     // [47] call memset 
     // [49] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
   memset_from_b1:
-    // [49] phi (byte) memset::c#3 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
+    // [49] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
@@ -2956,35 +2978,38 @@ memset: {
     lda end+1
     adc str+1
     sta end+1
-    // [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3
-    // [53] phi from memset::@1 memset::@2 to memset::@2 [phi:memset::@1/memset::@2->memset::@2]
+    // [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [53] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   b2_from_b1:
-  b2_from_b2:
-    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset::@1/memset::@2->memset::@2#0] -- register_copy 
+  b2_from_b3:
+    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp b2
     // memset::@2
   b2:
-    // [54] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuxx 
+    // [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [55] return 
+    rts
+    // memset::@3
+  b3:
+    // [56] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
-    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
-    bne b2_from_b2
-    lda dst
-    cmp end
-    bne b2_from_b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [57] return 
-    rts
+    jmp b2_from_b3
 }
   // bitmap_init
 // Initialize bitmap plotting tables
@@ -3187,8 +3212,7 @@ Replacing label b3_from_b11 with b3
 Replacing label b3_from_b11 with b3
 Replacing label b4_from_b12 with b4
 Replacing label b1 with b2
-Replacing label b2_from_b2 with b2
-Replacing label b2_from_b2 with b2
+Replacing label b2_from_b3 with b2
 Replacing label b6_from_b1 with b2
 Replacing label b1_from_b2 with b1
 Replacing label b4_from_b3 with b4
@@ -3210,7 +3234,7 @@ Removing instruction b4_from_b6:
 Removing instruction b1_from_bitmap_clear:
 Removing instruction memset_from_b1:
 Removing instruction b2_from_b1:
-Removing instruction b2_from_b2:
+Removing instruction b2_from_b3:
 Removing instruction b1_from_b2:
 Removing instruction b6_from_b1:
 Removing instruction b6:
@@ -3410,13 +3434,14 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
 (label) memset::@2
+(label) memset::@3
 (label) memset::@return
 (byte) memset::c
-(byte) memset::c#3 reg byte x 1.375
+(byte) memset::c#4 reg byte x 1.375
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:5 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:5 17.5
-(byte*~) memset::dst#3 dst zp ZP_WORD:5 4.0
+(byte*) memset::dst#1 dst zp ZP_WORD:5 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:5 15.333333333333332
+(byte*~) memset::dst#4 dst zp ZP_WORD:5 4.0
 (byte*) memset::end
 (byte*) memset::end#0 end zp ZP_WORD:3 2.1666666666666665
 (word) memset::num
@@ -3429,8 +3454,8 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 zp ZP_BYTE:2 [ main::vy#2 main::vy#8 main::vy#1 ]
 zp ZP_WORD:3 [ memset::num#2 memset::end#0 main::x#2 main::x#1 bitmap_plot::x#0 ]
-zp ZP_WORD:5 [ memset::str#3 memset::dst#2 memset::dst#3 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
-reg byte x [ memset::c#3 ]
+zp ZP_WORD:5 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
+reg byte x [ memset::c#4 ]
 reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ]
 reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
@@ -3446,7 +3471,7 @@ reg byte a [ bitmap_init::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 3147
+Score: 3177
 
   // File Comments
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
@@ -3744,7 +3769,7 @@ bitmap_clear: {
     // memset(bitmap_screen, col, 1000uw)
     // [45] call memset 
     // [49] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
-    // [49] phi (byte) memset::c#3 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
+    // [49] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
@@ -3762,7 +3787,7 @@ bitmap_clear: {
     // memset(bitmap_gfx, 0, 8000uw)
     // [47] call memset 
     // [49] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
-    // [49] phi (byte) memset::c#3 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
+    // [49] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
     // [49] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
@@ -3805,34 +3830,38 @@ memset: {
     lda end+1
     adc str+1
     sta end+1
-    // [52] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#3
-    // [53] phi from memset::@1 memset::@2 to memset::@2 [phi:memset::@1/memset::@2->memset::@2]
-    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset::@1/memset::@2->memset::@2#0] -- register_copy 
+    // [52] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [53] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [53] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   b2:
+    // for(char* dst = str; dst!=end; dst++)
+    // [54] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    // memset::@return
+  breturn:
+    // }
+    // [55] return 
+    rts
+    // memset::@3
+  b3:
     // *dst = c
-    // [54] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuxx 
+    // [56] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [56] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuz2_then_la1 
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-    // memset::@return
-  breturn:
-    // }
-    // [57] return 
-    rts
+    jmp b2
 }
   // bitmap_init
 // Initialize bitmap plotting tables

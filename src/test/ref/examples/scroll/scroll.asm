@@ -30,23 +30,20 @@ main: {
     ldx #0
   // Hard scroll
   b5:
-    lda line+1,x
-    sta line,x
-    inx
     cpx #$27
-    bne b5
+    bne b6
     // Render next char
     ldy #0
     lda (nxt),y
     tax
     cpx #'@'
-    bne b8
+    bne b9
     ldx TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  b8:
+  b9:
     stx line+$27
     inc nxt
     bne !+
@@ -57,6 +54,11 @@ main: {
     stx SCROLL
     dec BGCOL
     jmp b1
+  b6:
+    lda line+1,x
+    sta line,x
+    inx
+    jmp b5
 }
 fillscreen: {
     .const fill = $20
@@ -66,6 +68,16 @@ fillscreen: {
     lda #>SCREEN
     sta cursor+1
   b1:
+    lda cursor+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda cursor
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     lda #fill
     ldy #0
     sta (cursor),y
@@ -73,14 +85,6 @@ fillscreen: {
     bne !+
     inc cursor+1
   !:
-    lda cursor+1
-    cmp #>SCREEN+$3e8
-    bcc b1
-    bne !+
-    lda cursor
-    cmp #<SCREEN+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"

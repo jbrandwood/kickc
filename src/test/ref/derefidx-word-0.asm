@@ -10,6 +10,16 @@ main: {
     sta i
     sta i+1
   b1:
+    lda i+1
+    cmp #>$3e8
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     lda i
     clc
     adc #<screen
@@ -27,13 +37,5 @@ main: {
     bcc !+
     inc i+1
   !:
-    lda i+1
-    cmp #>$3e8
-    bcc b1
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }

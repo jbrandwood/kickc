@@ -34,15 +34,17 @@ main: {
 plots: {
     ldx #0
   b1:
+    cpx #plots_cnt
+    bcc b2
+    rts
+  b2:
     lda plots_x,x
     sta plot.x
     lda plots_y,x
     sta plot.y
     jsr plot
     inx
-    cpx #plots_cnt
-    bcc b1
-    rts
+    jmp b1
 }
 // plot(byte zeropage(7) x, byte zeropage(2) y)
 plot: {
@@ -139,24 +141,25 @@ init_screen: {
     lda #>BITMAP
     sta b+1
   b1:
-    lda #0
-    tay
-    sta (b),y
-    inc b
-    bne !+
-    inc b+1
-  !:
     lda b+1
     cmp #>BITMAP+$2000
-    bne b1
+    bne b2
     lda b
     cmp #<BITMAP+$2000
-    bne b1
+    bne b2
     lda #<SCREEN
     sta c
     lda #>SCREEN
     sta c+1
-  b2:
+  b3:
+    lda c+1
+    cmp #>SCREEN+$400
+    bne b4
+    lda c
+    cmp #<SCREEN+$400
+    bne b4
+    rts
+  b4:
     lda #$14
     ldy #0
     sta (c),y
@@ -164,13 +167,16 @@ init_screen: {
     bne !+
     inc c+1
   !:
-    lda c+1
-    cmp #>SCREEN+$400
-    bne b2
-    lda c
-    cmp #<SCREEN+$400
-    bne b2
-    rts
+    jmp b3
+  b2:
+    lda #0
+    tay
+    sta (b),y
+    inc b
+    bne !+
+    inc b+1
+  !:
+    jmp b1
 }
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28
   plots_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28

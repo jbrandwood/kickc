@@ -9,35 +9,37 @@ main: {
     ldx #2
   // for()
   b1:
-    txa
-    sta SCREEN,y
-    iny
-    dex
     cpx #0
-    bne b1
+    bne b2
     lda #' '
     sta SCREEN,y
     iny
     lda #3
-  b3:
+  b4:
     sec
     sbc #1
     cmp #0
-    bne b4
+    bne b5
     lda #' '
     sta SCREEN,y
     iny
     lda #2
-  b6:
+  b7:
     sta SCREEN,y
     iny
     sec
     sbc #1
     cmp #0
-    bne b6
+    bne b7
     rts
-  b4:
+  b5:
     sta SCREEN,y
     iny
-    jmp b3
+    jmp b4
+  b2:
+    txa
+    sta SCREEN,y
+    iny
+    dex
+    jmp b1
 }

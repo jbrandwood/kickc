@@ -25,15 +25,15 @@
   // Plasma screen 2
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
-  .label heap_head = 9
-  .label SQUARES = $13
+  .label heap_head = $18
+  .label SQUARES = 9
   .label print_char_cursor = 7
   // Screen containing distance to center
   .label SCREEN_DIST = $b
   // Screen containing angle to center
   .label SCREEN_ANGLE = $d
   .label sin_offset_x = 2
-  .label sin_offset_y = $11
+  .label sin_offset_y = $f
 bbegin:
   lda #<$3e8
   sta malloc.size
@@ -105,8 +105,8 @@ main: {
 doplasma: {
     .label angle = 3
     .label dist = 5
-    .label sin_x = $13
-    .label sin_y = $f
+    .label sin_x = $1a
+    .label sin_y = $10
     .label screen = 7
     .label y = $12
     lda SCREEN_ANGLE
@@ -188,7 +188,7 @@ doplasma: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zeropage(3) str, byte register(X) c)
 memset: {
-    .label end = $f
+    .label end = $1a
     .label dst = 3
     .label str = 3
     lda str
@@ -199,6 +199,14 @@ memset: {
     adc #>$3e8
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -206,23 +214,17 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-    rts
+    jmp b2
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 make_plasma_charset: {
-    .label _4 = $12
-    .label _8 = $13
-    .label _9 = $13
-    .label s = $11
+    .label _7 = $12
+    .label _10 = $10
+    .label _11 = $10
+    .label s = $f
     .label i = 2
     .label c = 5
-    .label _16 = $13
+    .label _16 = $10
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -233,45 +235,59 @@ make_plasma_charset: {
     sta c
     sta c+1
   b1:
+    lda c+1
+    cmp #>$100
+    bcc b2
+    bne !+
+    lda c
+    cmp #<$100
+    bcc b2
+  !:
+    rts
+  b2:
     lda c
     tay
     lda SINTABLE,y
     sta s
     lda #0
     sta i
-  b2:
+  b3:
+    lda i
+    cmp #8
+    bcc b4
+    lda c
+    and #7
+    cmp #0
+    bne b11
+    jsr print_char
+  b11:
+    inc c
+    bne !+
+    inc c+1
+  !:
+    jmp b1
+  b4:
     ldy #0
     ldx #0
-  b3:
-    jsr sid_rnd
-    and #$ff
-    sta _4
-    lda s
-    cmp _4
-    bcs b4
-    tya
-    ora bittab,x
-    tay
-  b4:
-    inx
+  b5:
     cpx #8
-    bcc b3
+    bcc b6
     lda c
     asl
-    sta _8
+    sta _10
     lda c+1
     rol
-    sta _8+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
+    sta _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
     lda i
     clc
-    adc _9
-    sta _9
+    adc _11
+    sta _11
     bcc !+
-    inc _9+1
+    inc _11+1
   !:
     clc
     lda _16
@@ -284,29 +300,27 @@ make_plasma_charset: {
     ldy #0
     sta (_16),y
     inc i
-    lda i
-    cmp #8
-    bcc b2
-    lda c
-    and #7
-    cmp #0
-    bne b9
-    jsr print_char
-  b9:
-    inc c
-    bne !+
-    inc c+1
-  !:
-    lda c+1
-    cmp #>$100
-    bcc b1
-    bne !+
-    lda c
-    cmp #<$100
-    bcc b1
-  !:
-    rts
+    jmp b3
+  b6:
+    jsr sid_rnd
+    and #$ff
+    sta _7
+    lda s
+    cmp _7
+    bcs b8
+    tya
+    ora bittab,x
+    tay
+  b8:
+    inx
+    jmp b5
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
+}
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+sid_rnd: {
+    lda SID_VOICE3_OSC
+    rts
 }
 // Print a single char
 print_char: {
@@ -318,12 +332,6 @@ print_char: {
     bne !+
     inc print_char_cursor+1
   !:
-    rts
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -348,19 +356,19 @@ sid_rnd_init: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(3) screen)
+// init_angle_screen(byte* zeropage(5) screen)
 init_angle_screen: {
-    .label _10 = $18
-    .label screen = 3
-    .label screen_topline = 5
-    .label screen_bottomline = 3
-    .label xw = $13
+    .label _11 = $10
+    .label screen = 5
+    .label screen_topline = 3
+    .label screen_bottomline = 5
+    .label xw = $14
     .label yw = $16
-    .label angle_w = $18
-    .label ang_w = $15
+    .label angle_w = $10
+    .label ang_w = $13
     .label x = $12
     .label xb = 2
-    .label y = $11
+    .label y = $f
     lda screen
     clc
     adc #<$28*$c
@@ -384,47 +392,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -444,21 +413,62 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($13) x, signed word zeropage($16) y)
+// atan2_16(signed word zeropage($14) x, signed word zeropage($16) y)
 atan2_16: {
     .label _2 = 7
-    .label _7 = $f
+    .label _7 = $1a
     .label yi = 7
-    .label xi = $f
-    .label angle = $18
+    .label xi = $1a
+    .label angle = $10
     .label xd = 9
-    .label yd = $1a
-    .label return = $18
-    .label x = $13
+    .label yd = $18
+    .label return = $10
+    .label x = $14
     .label y = $16
     lda y+1
     bmi !b1+
@@ -640,13 +650,13 @@ atan2_16: {
 init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 5
-    .label yds = $16
-    .label xds = $18
-    .label ds = $18
-    .label x = $11
-    .label xb = $12
+    .label yds = $14
     .label screen_topline = 3
     .label y = 2
+    .label xds = $16
+    .label ds = $16
+    .label x = $f
+    .label xb = $12
     jsr init_squares
     lda screen
     clc
@@ -677,33 +687,8 @@ init_dist_screen: {
     sta x
   b5:
     lda x
-    asl
-    cmp #$27
-    bcs b6
-    eor #$ff
-    clc
-    adc #$27+1
-  b8:
-    jsr sqr
-    lda ds
-    clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
-    jsr sqrt
-    ldy x
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    ldy xb
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b5
+    bcc b6
     lda #$28
     clc
     adc screen_topline
@@ -724,9 +709,36 @@ init_dist_screen: {
     bne b1
     rts
   b6:
+    lda x
+    asl
+    cmp #$27
+    bcs b8
+    eor #$ff
+    clc
+    adc #$27+1
+  b10:
+    jsr sqr
+    lda ds
+    clc
+    adc yds
+    sta ds
+    lda ds+1
+    adc yds+1
+    sta ds+1
+    jsr sqrt
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b5
+  b8:
     sec
     sbc #$27
-    jmp b8
+    jmp b10
   b2:
     sec
     sbc #$18
@@ -735,16 +747,16 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($18) val)
+// sqrt(word zeropage($16) val)
 sqrt: {
-    .label _1 = $f
-    .label _3 = $f
-    .label found = $f
-    .label val = $18
+    .label _1 = 7
+    .label _3 = 7
+    .label found = 7
+    .label val = $16
     lda SQUARES
-    sta bsearch16u.items_1
+    sta bsearch16u.items
     lda SQUARES+1
-    sta bsearch16u.items_1+1
+    sta bsearch16u.items+1
     jsr bsearch16u
     lda _3
     sec
@@ -763,27 +775,46 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($18) key, word* zeropage($f) items, byte register(X) num)
+// bsearch16u(word zeropage($16) key, word* zeropage(7) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $f
-    .label pivot = $f
+    .label _2 = 7
+    .label pivot = $18
     .label result = $1a
-    .label return = $f
-    .label items = $f
-    .label key = $18
-    .label items_1 = 7
-    .label items_10 = 7
-    .label items_16 = 7
+    .label return = 7
+    .label items = 7
+    .label key = $16
     ldx #NUM_SQUARES
+  b3:
+    cpx #0
+    bne b4
+    ldy #1
+    lda (items),y
+    cmp key+1
+    bne !+
+    dey
+    lda (items),y
+    cmp key
+    beq b2
+  !:
+    bcc b2
+    lda _2
+    sec
+    sbc #<1*SIZEOF_WORD
+    sta _2
+    lda _2+1
+    sbc #>1*SIZEOF_WORD
+    sta _2+1
+  b2:
+    rts
   b4:
     txa
     lsr
     asl
     clc
-    adc items_10
+    adc items
     sta pivot
     lda #0
-    adc items_10+1
+    adc items+1
     sta pivot+1
     sec
     lda key
@@ -797,66 +828,38 @@ bsearch16u: {
     bne b6
     lda result
     bne b6
-  breturn:
+    lda pivot
+    sta return
+    lda pivot+1
+    sta return+1
     rts
   b6:
     lda result+1
-    bmi b10
+    bmi b7
     bne !+
     lda result
-    beq b10
+    beq b7
   !:
     lda #1*SIZEOF_WORD
     clc
-    adc items
+    adc pivot
     sta items
-    bcc !+
-    inc items+1
-  !:
+    lda #0
+    adc pivot+1
+    sta items+1
     dex
   b7:
     txa
     lsr
     tax
-    cpx #0
-    bne b9
-    ldy #1
-    lda (items),y
-    cmp key+1
-    bne !+
-    dey
-    lda (items),y
-    cmp key
-    beq breturn
-  !:
-    bcc breturn
-    lda _2
-    sec
-    sbc #<1*SIZEOF_WORD
-    sta _2
-    lda _2+1
-    sbc #>1*SIZEOF_WORD
-    sta _2+1
-    rts
-  b9:
-    lda items
-    sta items_16
-    lda items+1
-    sta items_16+1
-    jmp b4
-  b10:
-    lda items_10
-    sta items
-    lda items_10+1
-    sta items+1
-    jmp b7
+    jmp b3
 }
 // Find the square of a byte value
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $18
-    .label return_2 = $16
+    .label return = $16
+    .label return_2 = $14
     asl
     tay
     lda (SQUARES),y
@@ -869,8 +872,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $1a
-    .label sqr = $18
+    .label squares = $10
+    .label sqr = $1a
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size
     lda #>NUM_SQUARES*SIZEOF_WORD
@@ -915,10 +918,10 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($13) size)
+// malloc(word zeropage(9) size)
 malloc: {
-    .label mem = $13
-    .label size = $13
+    .label mem = 9
+    .label size = 9
     lda heap_head
     sec
     sbc mem

@@ -158,19 +158,16 @@ menu: {
     sta c+1
   // Char Colors
   b2:
-    lda #LIGHT_GREEN
-    ldy #0
-    sta (c),y
-    inc c
-    bne !+
-    inc c+1
-  !:
     lda c+1
     cmp #>COLS+$3e8
-    bne b2
+    beq !b3+
+    jmp b3
+  !b3:
     lda c
     cmp #<COLS+$3e8
-    bne b2
+    beq !b3+
+    jmp b3
+  !b3:
     // Screen colors
     lda #0
     sta BGCOL
@@ -178,92 +175,101 @@ menu: {
     jsr print_set_screen
     jsr print_cls
     jsr print_str_lines
-  b4:
+  b5:
     ldy #KEY_1
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
+    beq b6
     jsr mode_stdchar
     rts
-  b5:
+  b6:
     ldy #KEY_2
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
+    beq b7
     jsr mode_ecmchar
     rts
-  b6:
+  b7:
     ldy #KEY_3
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
+    beq b8
     jsr mode_mcchar
     rts
-  b7:
+  b8:
     ldy #KEY_4
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
+    beq b9
     jsr mode_stdbitmap
     rts
-  b8:
+  b9:
     ldy #KEY_6
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b10
     jsr mode_hicolstdchar
     rts
-  b9:
+  b10:
     ldy #KEY_7
     jsr keyboard_key_pressed
     cmp #0
-    beq b10
+    beq b11
     jsr mode_hicolecmchar
     rts
-  b10:
+  b11:
     ldy #KEY_8
     jsr keyboard_key_pressed
     cmp #0
-    beq b11
+    beq b12
     jsr mode_hicolmcchar
     rts
-  b11:
+  b12:
     ldy #KEY_A
     jsr keyboard_key_pressed
     cmp #0
-    beq b12
+    beq b13
     jsr mode_sixsfred2
     rts
-  b12:
+  b13:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
-    beq b13
+    beq b14
     jsr mode_twoplanebitmap
     rts
-  b13:
+  b14:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b14
+    beq b15
     jsr mode_sixsfred
     rts
-  b14:
+  b15:
     ldy #KEY_D
     jsr keyboard_key_pressed
     cmp #0
-    beq b15
+    beq b16
     jsr mode_8bpppixelcell
     rts
-  b15:
+  b16:
     ldy #KEY_E
     jsr keyboard_key_pressed
     cmp #0
-    bne !b4+
-    jmp b4
-  !b4:
+    bne !b5+
+    jmp b5
+  !b5:
     jsr mode_8bppchunkybmm
     rts
+  b3:
+    lda #LIGHT_GREEN
+    ldy #0
+    sta (c),y
+    inc c
+    bne !+
+    inc c+1
+  !:
+    jmp b2
 }
 //Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
 // Resolution: 320x200
@@ -1521,6 +1527,14 @@ mode_stdbitmap: {
     lda #0
     sta l
   b7:
+    lda l
+    cmp #lines_cnt
+    bcc b8
+    lda #0
+    sta dtv_control
+    jsr mode_ctrl
+    rts
+  b8:
     ldy l
     lda lines_x,y
     sta bitmap_line.x0
@@ -1531,13 +1545,7 @@ mode_stdbitmap: {
     sta bitmap_line.y1
     jsr bitmap_line
     inc l
-    lda l
-    cmp #lines_cnt
-    bcc b7
-    lda #0
-    sta dtv_control
-    jsr mode_ctrl
-    rts
+    jmp b7
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
@@ -2307,6 +2315,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -2314,13 +2330,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
 // Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {

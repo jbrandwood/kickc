@@ -29,16 +29,4 @@ public class PassNStatementIndices extends Pass2SsaOptimization {
       return false;
    }
 
-   /**
-    * Clear index numbers for all statements in the control flow graph.
-    */
-   public void clearStatementIndices() {
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            statement.setIndex(null);
-         }
-      }
-   }
-
-
 }

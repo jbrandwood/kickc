@@ -13,14 +13,17 @@ Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
 Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@25
 Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@26
-Culled Empty Block (label) main::@13
-Culled Empty Block (label) main::@18
-Culled Empty Block (label) main::@21
-Culled Empty Block (label) main::@23
-Culled Empty Block (label) main::@24
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) main::@29
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@30
+Culled Empty Block (label) main::@17
+Culled Empty Block (label) main::@22
+Culled Empty Block (label) main::@25
+Culled Empty Block (label) main::@27
+Culled Empty Block (label) main::@28
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -85,15 +88,15 @@ CONTROL FLOW GRAPH SSA
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@12
-keyboard_init: scope:[keyboard_init]  from main::@2
+keyboard_init: scope:[keyboard_init]  from main::@3
   *((byte*) CIA1_PORT_A_DDR#0) ← (number) $ff
   *((byte*) CIA1_PORT_B_DDR#0) ← (number) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
   to:@return
-keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@8
-  (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@8/(byte) keyboard_matrix_read::rowid#1 )
+keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@12
+  (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@12/(byte) keyboard_matrix_read::rowid#1 )
   *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2)
   (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B#0)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
@@ -104,8 +107,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   (byte) keyboard_matrix_read::return#1 ← (byte) keyboard_matrix_read::return#4
   return 
   to:@return
-keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@19
-  (byte) keyboard_key_pressed::key#1 ← phi( main::@19/(byte) keyboard_key_pressed::key#0 )
+keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@23
+  (byte) keyboard_key_pressed::key#1 ← phi( main::@23/(byte) keyboard_key_pressed::key#0 )
   (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
   (byte) keyboard_key_pressed::colidx#0 ← (number~) keyboard_key_pressed::$0
   (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (number) 3
@@ -126,8 +129,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   (byte) keyboard_key_pressed::return#1 ← (byte) keyboard_key_pressed::return#3
   return 
   to:@return
-keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@16
-  (byte) keyboard_get_keycode::ch#1 ← phi( main::@16/(byte) keyboard_get_keycode::ch#0 )
+keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@20
+  (byte) keyboard_get_keycode::ch#1 ← phi( main::@20/(byte) keyboard_get_keycode::ch#0 )
   (byte) keyboard_get_keycode::return#0 ← *((byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#1)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
@@ -138,156 +141,159 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
 main: scope:[main]  from @12
   (byte*) main::sc#0 ← ((byte*)) (number) $400
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte*) main::sc#2 ← phi( main/(byte*) main::sc#0 main::@1/(byte*) main::sc#1 )
-  *((byte*) main::sc#2) ← (byte) ' '
-  (byte*) main::sc#1 ← ++ (byte*) main::sc#2
-  (bool~) main::$1 ← (byte*) main::sc#1 < (number) $400+(number) $3e8
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call keyboard_init 
-  to:main::@27
-main::@27: scope:[main]  from main::@2
+main::@1: scope:[main]  from main main::@2
+  (byte*) main::sc#2 ← phi( main/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
+  (bool~) main::$1 ← (byte*) main::sc#2 < (number) $400+(number) $3e8
+  if((bool~) main::$1) goto main::@2
   to:main::@3
-main::@3: scope:[main]  from main::@22 main::@27
-  if(true) goto main::@6
-  to:main::@return
-main::@6: scope:[main]  from main::@3 main::@6
-  (bool~) main::$2 ← *((byte*) RASTER#0) != (number) $ff
-  if((bool~) main::$2) goto main::@6
+main::@2: scope:[main]  from main::@1
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#2 )
+  *((byte*) main::sc#3) ← (byte) ' '
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  to:main::@1
+main::@3: scope:[main]  from main::@1
+  call keyboard_init 
+  to:main::@31
+main::@31: scope:[main]  from main::@3
   to:main::@7
-main::@7: scope:[main]  from main::@6
+main::@7: scope:[main]  from main::@26 main::@31
+  if(true) goto main::@10
+  to:main::@return
+main::@10: scope:[main]  from main::@10 main::@7
+  (bool~) main::$2 ← *((byte*) RASTER#0) != (number) $ff
+  if((bool~) main::$2) goto main::@10
+  to:main::@11
+main::@11: scope:[main]  from main::@10
   (byte*) main::screen#0 ← ((byte*)) (number) $400
   (byte) main::row#0 ← (byte) 0
-  to:main::@8
-main::@8: scope:[main]  from main::@14 main::@7
-  (byte*) main::screen#16 ← phi( main::@14/(byte*) main::screen#1 main::@7/(byte*) main::screen#0 )
-  (byte) main::row#2 ← phi( main::@14/(byte) main::row#1 main::@7/(byte) main::row#0 )
+  to:main::@12
+main::@12: scope:[main]  from main::@11 main::@18
+  (byte*) main::screen#16 ← phi( main::@11/(byte*) main::screen#0 main::@18/(byte*) main::screen#1 )
+  (byte) main::row#2 ← phi( main::@11/(byte) main::row#0 main::@18/(byte) main::row#1 )
   (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2
   call keyboard_matrix_read 
   (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#1
-  to:main::@28
-main::@28: scope:[main]  from main::@8
-  (byte) main::row#8 ← phi( main::@8/(byte) main::row#2 )
-  (byte*) main::screen#13 ← phi( main::@8/(byte*) main::screen#16 )
-  (byte) keyboard_matrix_read::return#6 ← phi( main::@8/(byte) keyboard_matrix_read::return#3 )
+  to:main::@32
+main::@32: scope:[main]  from main::@12
+  (byte) main::row#8 ← phi( main::@12/(byte) main::row#2 )
+  (byte*) main::screen#13 ← phi( main::@12/(byte*) main::screen#16 )
+  (byte) keyboard_matrix_read::return#6 ← phi( main::@12/(byte) keyboard_matrix_read::return#3 )
   (byte~) main::$3 ← (byte) keyboard_matrix_read::return#6
   (byte) main::row_pressed_bits#0 ← (byte~) main::$3
   (byte) main::col#0 ← (byte) 0
-  to:main::@9
-main::@9: scope:[main]  from main::@11 main::@28
-  (byte) main::row#7 ← phi( main::@11/(byte) main::row#4 main::@28/(byte) main::row#8 )
-  (byte) main::col#5 ← phi( main::@11/(byte) main::col#1 main::@28/(byte) main::col#0 )
-  (byte*) main::screen#9 ← phi( main::@11/(byte*) main::screen#10 main::@28/(byte*) main::screen#13 )
-  (byte) main::row_pressed_bits#2 ← phi( main::@11/(byte) main::row_pressed_bits#1 main::@28/(byte) main::row_pressed_bits#0 )
+  to:main::@13
+main::@13: scope:[main]  from main::@15 main::@32
+  (byte) main::row#7 ← phi( main::@15/(byte) main::row#4 main::@32/(byte) main::row#8 )
+  (byte) main::col#5 ← phi( main::@15/(byte) main::col#1 main::@32/(byte) main::col#0 )
+  (byte*) main::screen#9 ← phi( main::@15/(byte*) main::screen#10 main::@32/(byte*) main::screen#13 )
+  (byte) main::row_pressed_bits#2 ← phi( main::@15/(byte) main::row_pressed_bits#1 main::@32/(byte) main::row_pressed_bits#0 )
   (number~) main::$4 ← (byte) main::row_pressed_bits#2 & (number) $80
   (bool~) main::$5 ← (number~) main::$4 != (number) 0
-  if((bool~) main::$5) goto main::@10
-  to:main::@12
-main::@10: scope:[main]  from main::@9
-  (byte) main::row#5 ← phi( main::@9/(byte) main::row#7 )
-  (byte) main::row_pressed_bits#4 ← phi( main::@9/(byte) main::row_pressed_bits#2 )
-  (byte) main::col#2 ← phi( main::@9/(byte) main::col#5 )
-  (byte*) main::screen#3 ← phi( main::@9/(byte*) main::screen#9 )
+  if((bool~) main::$5) goto main::@14
+  to:main::@16
+main::@14: scope:[main]  from main::@13
+  (byte) main::row#5 ← phi( main::@13/(byte) main::row#7 )
+  (byte) main::row_pressed_bits#4 ← phi( main::@13/(byte) main::row_pressed_bits#2 )
+  (byte) main::col#2 ← phi( main::@13/(byte) main::col#5 )
+  (byte*) main::screen#3 ← phi( main::@13/(byte*) main::screen#9 )
   *((byte*) main::screen#3 + (byte) main::col#2) ← (byte) '1'
-  to:main::@11
-main::@12: scope:[main]  from main::@9
-  (byte) main::row#6 ← phi( main::@9/(byte) main::row#7 )
-  (byte) main::row_pressed_bits#5 ← phi( main::@9/(byte) main::row_pressed_bits#2 )
-  (byte) main::col#3 ← phi( main::@9/(byte) main::col#5 )
-  (byte*) main::screen#4 ← phi( main::@9/(byte*) main::screen#9 )
+  to:main::@15
+main::@16: scope:[main]  from main::@13
+  (byte) main::row#6 ← phi( main::@13/(byte) main::row#7 )
+  (byte) main::row_pressed_bits#5 ← phi( main::@13/(byte) main::row_pressed_bits#2 )
+  (byte) main::col#3 ← phi( main::@13/(byte) main::col#5 )
+  (byte*) main::screen#4 ← phi( main::@13/(byte*) main::screen#9 )
   *((byte*) main::screen#4 + (byte) main::col#3) ← (byte) '0'
-  to:main::@11
-main::@11: scope:[main]  from main::@10 main::@12
-  (byte) main::row#4 ← phi( main::@10/(byte) main::row#5 main::@12/(byte) main::row#6 )
-  (byte*) main::screen#10 ← phi( main::@10/(byte*) main::screen#3 main::@12/(byte*) main::screen#4 )
-  (byte) main::col#4 ← phi( main::@10/(byte) main::col#2 main::@12/(byte) main::col#3 )
-  (byte) main::row_pressed_bits#3 ← phi( main::@10/(byte) main::row_pressed_bits#4 main::@12/(byte) main::row_pressed_bits#5 )
+  to:main::@15
+main::@15: scope:[main]  from main::@14 main::@16
+  (byte) main::row#4 ← phi( main::@14/(byte) main::row#5 main::@16/(byte) main::row#6 )
+  (byte*) main::screen#10 ← phi( main::@14/(byte*) main::screen#3 main::@16/(byte*) main::screen#4 )
+  (byte) main::col#4 ← phi( main::@14/(byte) main::col#2 main::@16/(byte) main::col#3 )
+  (byte) main::row_pressed_bits#3 ← phi( main::@14/(byte) main::row_pressed_bits#4 main::@16/(byte) main::row_pressed_bits#5 )
   (number~) main::$6 ← (byte) main::row_pressed_bits#3 * (number) 2
   (byte) main::row_pressed_bits#1 ← (number~) main::$6
   (byte) main::col#1 ← (byte) main::col#4 + rangenext(0,7)
   (bool~) main::$7 ← (byte) main::col#1 != rangelast(0,7)
-  if((bool~) main::$7) goto main::@9
-  to:main::@14
-main::@14: scope:[main]  from main::@11
-  (byte) main::row#3 ← phi( main::@11/(byte) main::row#4 )
-  (byte*) main::screen#5 ← phi( main::@11/(byte*) main::screen#10 )
+  if((bool~) main::$7) goto main::@13
+  to:main::@18
+main::@18: scope:[main]  from main::@15
+  (byte) main::row#3 ← phi( main::@15/(byte) main::row#4 )
+  (byte*) main::screen#5 ← phi( main::@15/(byte*) main::screen#10 )
   (byte*~) main::$8 ← (byte*) main::screen#5 + (number) $28
   (byte*) main::screen#1 ← (byte*~) main::$8
   (byte) main::row#1 ← (byte) main::row#3 + rangenext(0,7)
   (bool~) main::$9 ← (byte) main::row#1 != rangelast(0,7)
-  if((bool~) main::$9) goto main::@8
-  to:main::@15
-main::@15: scope:[main]  from main::@14
-  (byte*) main::screen#6 ← phi( main::@14/(byte*) main::screen#1 )
+  if((bool~) main::$9) goto main::@12
+  to:main::@19
+main::@19: scope:[main]  from main::@18
+  (byte*) main::screen#6 ← phi( main::@18/(byte*) main::screen#1 )
   (byte*~) main::$10 ← (byte*) main::screen#6 + (number) $28
   (byte*) main::screen#2 ← (byte*~) main::$10
   (byte) main::i#0 ← (number) 0
   (byte) main::ch#0 ← (byte) 0
-  to:main::@16
-main::@16: scope:[main]  from main::@15 main::@17
-  (byte) main::i#9 ← phi( main::@15/(byte) main::i#0 main::@17/(byte) main::i#6 )
-  (byte*) main::screen#17 ← phi( main::@15/(byte*) main::screen#2 main::@17/(byte*) main::screen#12 )
-  (byte) main::ch#2 ← phi( main::@15/(byte) main::ch#0 main::@17/(byte) main::ch#1 )
+  to:main::@20
+main::@20: scope:[main]  from main::@19 main::@21
+  (byte) main::i#9 ← phi( main::@19/(byte) main::i#0 main::@21/(byte) main::i#6 )
+  (byte*) main::screen#17 ← phi( main::@19/(byte*) main::screen#2 main::@21/(byte*) main::screen#12 )
+  (byte) main::ch#2 ← phi( main::@19/(byte) main::ch#0 main::@21/(byte) main::ch#1 )
   (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2
   call keyboard_get_keycode 
   (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#1
-  to:main::@29
-main::@29: scope:[main]  from main::@16
-  (byte) main::i#7 ← phi( main::@16/(byte) main::i#9 )
-  (byte*) main::screen#14 ← phi( main::@16/(byte*) main::screen#17 )
-  (byte) main::ch#5 ← phi( main::@16/(byte) main::ch#2 )
-  (byte) keyboard_get_keycode::return#4 ← phi( main::@16/(byte) keyboard_get_keycode::return#2 )
+  to:main::@33
+main::@33: scope:[main]  from main::@20
+  (byte) main::i#7 ← phi( main::@20/(byte) main::i#9 )
+  (byte*) main::screen#14 ← phi( main::@20/(byte*) main::screen#17 )
+  (byte) main::ch#5 ← phi( main::@20/(byte) main::ch#2 )
+  (byte) keyboard_get_keycode::return#4 ← phi( main::@20/(byte) keyboard_get_keycode::return#2 )
   (byte~) main::$11 ← (byte) keyboard_get_keycode::return#4
   (byte) main::key#0 ← (byte~) main::$11
   (bool~) main::$12 ← (byte) main::key#0 != (number) $3f
   (bool~) main::$13 ← ! (bool~) main::$12
-  if((bool~) main::$13) goto main::@17
-  to:main::@19
-main::@17: scope:[main]  from main::@20 main::@29 main::@30
-  (byte) main::i#6 ← phi( main::@20/(byte) main::i#1 main::@29/(byte) main::i#7 main::@30/(byte) main::i#5 )
-  (byte*) main::screen#12 ← phi( main::@20/(byte*) main::screen#7 main::@29/(byte*) main::screen#14 main::@30/(byte*) main::screen#11 )
-  (byte) main::ch#3 ← phi( main::@20/(byte) main::ch#4 main::@29/(byte) main::ch#5 main::@30/(byte) main::ch#6 )
+  if((bool~) main::$13) goto main::@21
+  to:main::@23
+main::@21: scope:[main]  from main::@24 main::@33 main::@34
+  (byte) main::i#6 ← phi( main::@24/(byte) main::i#1 main::@33/(byte) main::i#7 main::@34/(byte) main::i#5 )
+  (byte*) main::screen#12 ← phi( main::@24/(byte*) main::screen#7 main::@33/(byte*) main::screen#14 main::@34/(byte*) main::screen#11 )
+  (byte) main::ch#3 ← phi( main::@24/(byte) main::ch#4 main::@33/(byte) main::ch#5 main::@34/(byte) main::ch#6 )
   (byte) main::ch#1 ← (byte) main::ch#3 + rangenext(0,$3f)
   (bool~) main::$17 ← (byte) main::ch#1 != rangelast(0,$3f)
-  if((bool~) main::$17) goto main::@16
-  to:main::@22
-main::@19: scope:[main]  from main::@29
-  (byte) main::i#8 ← phi( main::@29/(byte) main::i#7 )
-  (byte*) main::screen#15 ← phi( main::@29/(byte*) main::screen#14 )
-  (byte) main::ch#7 ← phi( main::@29/(byte) main::ch#5 )
-  (byte) main::key#1 ← phi( main::@29/(byte) main::key#0 )
+  if((bool~) main::$17) goto main::@20
+  to:main::@26
+main::@23: scope:[main]  from main::@33
+  (byte) main::i#8 ← phi( main::@33/(byte) main::i#7 )
+  (byte*) main::screen#15 ← phi( main::@33/(byte*) main::screen#14 )
+  (byte) main::ch#7 ← phi( main::@33/(byte) main::ch#5 )
+  (byte) main::key#1 ← phi( main::@33/(byte) main::key#0 )
   (byte) keyboard_key_pressed::key#0 ← (byte) main::key#1
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
-  to:main::@30
-main::@30: scope:[main]  from main::@19
-  (byte) main::i#5 ← phi( main::@19/(byte) main::i#8 )
-  (byte*) main::screen#11 ← phi( main::@19/(byte*) main::screen#15 )
-  (byte) main::ch#6 ← phi( main::@19/(byte) main::ch#7 )
-  (byte) keyboard_key_pressed::return#4 ← phi( main::@19/(byte) keyboard_key_pressed::return#2 )
+  to:main::@34
+main::@34: scope:[main]  from main::@23
+  (byte) main::i#5 ← phi( main::@23/(byte) main::i#8 )
+  (byte*) main::screen#11 ← phi( main::@23/(byte*) main::screen#15 )
+  (byte) main::ch#6 ← phi( main::@23/(byte) main::ch#7 )
+  (byte) keyboard_key_pressed::return#4 ← phi( main::@23/(byte) keyboard_key_pressed::return#2 )
   (byte~) main::$14 ← (byte) keyboard_key_pressed::return#4
   (bool~) main::$15 ← (byte~) main::$14 != (number) 0
   (bool~) main::$16 ← ! (bool~) main::$15
-  if((bool~) main::$16) goto main::@17
-  to:main::@20
-main::@20: scope:[main]  from main::@30
-  (byte) main::i#3 ← phi( main::@30/(byte) main::i#5 )
-  (byte*) main::screen#7 ← phi( main::@30/(byte*) main::screen#11 )
-  (byte) main::ch#4 ← phi( main::@30/(byte) main::ch#6 )
+  if((bool~) main::$16) goto main::@21
+  to:main::@24
+main::@24: scope:[main]  from main::@34
+  (byte) main::i#3 ← phi( main::@34/(byte) main::i#5 )
+  (byte*) main::screen#7 ← phi( main::@34/(byte*) main::screen#11 )
+  (byte) main::ch#4 ← phi( main::@34/(byte) main::ch#6 )
   *((byte*) main::screen#7 + (byte) main::i#3) ← (byte) main::ch#4
   (byte) main::i#1 ← ++ (byte) main::i#3
-  to:main::@17
-main::@22: scope:[main]  from main::@17 main::@22
-  (byte) main::i#4 ← phi( main::@17/(byte) main::i#6 main::@22/(byte) main::i#2 )
-  (byte*) main::screen#8 ← phi( main::@17/(byte*) main::screen#12 main::@22/(byte*) main::screen#8 )
+  to:main::@21
+main::@26: scope:[main]  from main::@21 main::@26
+  (byte) main::i#4 ← phi( main::@21/(byte) main::i#6 main::@26/(byte) main::i#2 )
+  (byte*) main::screen#8 ← phi( main::@21/(byte*) main::screen#12 main::@26/(byte*) main::screen#8 )
   *((byte*) main::screen#8 + (byte) main::i#4) ← (byte) ' '
   (byte) main::i#2 ← ++ (byte) main::i#4
   (bool~) main::$18 ← (byte) main::i#2 < (number) 5
-  if((bool~) main::$18) goto main::@22
-  to:main::@3
-main::@return: scope:[main]  from main::@3
+  if((bool~) main::$18) goto main::@26
+  to:main::@7
+main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @12: scope:[]  from @4
@@ -493,23 +499,24 @@ SYMBOL TABLE SSA
 (label) main::@10
 (label) main::@11
 (label) main::@12
+(label) main::@13
 (label) main::@14
 (label) main::@15
 (label) main::@16
-(label) main::@17
+(label) main::@18
 (label) main::@19
 (label) main::@2
 (label) main::@20
-(label) main::@22
-(label) main::@27
-(label) main::@28
-(label) main::@29
+(label) main::@21
+(label) main::@23
+(label) main::@24
+(label) main::@26
 (label) main::@3
-(label) main::@30
-(label) main::@6
+(label) main::@31
+(label) main::@32
+(label) main::@33
+(label) main::@34
 (label) main::@7
-(label) main::@8
-(label) main::@9
 (label) main::@return
 (byte) main::ch
 (byte) main::ch#0
@@ -562,6 +569,7 @@ SYMBOL TABLE SSA
 (byte*) main::sc#0
 (byte*) main::sc#1
 (byte*) main::sc#2
+(byte*) main::sc#3
 (byte*) main::screen
 (byte*) main::screen#0
 (byte*) main::screen#1
@@ -637,7 +645,7 @@ Adding number conversion cast (unumber) 0 in *((byte*) CIA1_PORT_B_DDR#0) ← (n
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (number) 3
-Adding number conversion cast (unumber) $400+$3e8 in (bool~) main::$1 ← (byte*) main::sc#1 < (number) $400+(number) $3e8
+Adding number conversion cast (unumber) $400+$3e8 in (bool~) main::$1 ← (byte*) main::sc#2 < (number) $400+(number) $3e8
 Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((byte*) RASTER#0) != (number) $ff
 Adding number conversion cast (unumber) $80 in (number~) main::$4 ← (byte) main::row_pressed_bits#2 & (number) $80
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte) main::row_pressed_bits#2 & (unumber)(number) $80
@@ -886,8 +894,8 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (byte) 7
 Inferred type updated to byte in (unumber~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80
 Inferred type updated to byte in (unumber~) main::$6 ← (byte) main::row_pressed_bits#3 * (byte) 2
-Inversing boolean not [142] (bool~) main::$13 ← (byte) main::key#0 == (byte) $3f from [141] (bool~) main::$12 ← (byte) main::key#0 != (byte) $3f
-Inversing boolean not [155] (bool~) main::$16 ← (byte~) main::$14 == (byte) 0 from [154] (bool~) main::$15 ← (byte~) main::$14 != (byte) 0
+Inversing boolean not [143] (bool~) main::$13 ← (byte) main::key#0 == (byte) $3f from [142] (bool~) main::$12 ← (byte) main::key#0 != (byte) $3f
+Inversing boolean not [156] (bool~) main::$16 ← (byte~) main::$14 == (byte) 0 from [155] (bool~) main::$15 ← (byte~) main::$14 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) keyboard_matrix_read::return#0 = (byte) keyboard_matrix_read::row_pressed_bits#0 (byte~) keyboard_matrix_read::$0 (byte) keyboard_matrix_read::return#4 (byte) keyboard_matrix_read::return#1 
 Alias (byte) keyboard_key_pressed::colidx#0 = (byte~) keyboard_key_pressed::$0 (byte) keyboard_key_pressed::colidx#1 
@@ -895,6 +903,7 @@ Alias (byte) keyboard_key_pressed::rowidx#0 = (byte~) keyboard_key_pressed::$1
 Alias (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#5 
 Alias (byte) keyboard_key_pressed::return#0 = (byte~) keyboard_key_pressed::$3 (byte) keyboard_key_pressed::return#3 (byte) keyboard_key_pressed::return#1 
 Alias (byte) keyboard_get_keycode::return#0 = (byte) keyboard_get_keycode::return#3 (byte) keyboard_get_keycode::return#1 
+Alias (byte*) main::sc#2 = (byte*) main::sc#3 
 Alias (byte) keyboard_matrix_read::return#3 = (byte) keyboard_matrix_read::return#6 
 Alias (byte*) main::screen#13 = (byte*) main::screen#16 
 Alias (byte) main::row#2 = (byte) main::row#8 
@@ -929,15 +938,15 @@ Identical Phi Values (byte) main::row#3 (byte) main::row#2
 Identical Phi Values (byte*) main::screen#11 (byte*) main::screen#2
 Identical Phi Values (byte*) main::screen#8 (byte*) main::screen#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [94] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1
-Simple Condition (bool~) main::$2 [98] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@6
-Simple Condition (bool~) main::$5 [112] if((byte~) main::$4!=(byte) 0) goto main::@10
-Simple Condition (bool~) main::$7 [122] if((byte) main::col#1!=rangelast(0,7)) goto main::@9
-Simple Condition (bool~) main::$9 [128] if((byte) main::row#1!=rangelast(0,7)) goto main::@8
-Simple Condition (bool~) main::$13 [143] if((byte) main::key#0==(byte) $3f) goto main::@17
-Simple Condition (bool~) main::$17 [147] if((byte) main::ch#1!=rangelast(0,$3f)) goto main::@16
-Simple Condition (bool~) main::$16 [156] if((byte~) main::$14==(byte) 0) goto main::@17
-Simple Condition (bool~) main::$18 [164] if((byte) main::i#2<(byte) 5) goto main::@22
+Simple Condition (bool~) main::$1 [92] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2
+Simple Condition (bool~) main::$2 [99] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@10
+Simple Condition (bool~) main::$5 [113] if((byte~) main::$4!=(byte) 0) goto main::@14
+Simple Condition (bool~) main::$7 [123] if((byte) main::col#1!=rangelast(0,7)) goto main::@13
+Simple Condition (bool~) main::$9 [129] if((byte) main::row#1!=rangelast(0,7)) goto main::@12
+Simple Condition (bool~) main::$13 [144] if((byte) main::key#0==(byte) $3f) goto main::@21
+Simple Condition (bool~) main::$17 [148] if((byte) main::ch#1!=rangelast(0,$3f)) goto main::@20
+Simple Condition (bool~) main::$16 [157] if((byte~) main::$14==(byte) 0) goto main::@21
+Simple Condition (bool~) main::$18 [165] if((byte) main::i#2<(byte) 5) goto main::@26
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
@@ -1006,19 +1015,19 @@ Constant (const byte) main::col#0 = 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::ch#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [96] if(true) goto main::@6
+if() condition always true - replacing block destination [97] if(true) goto main::@10
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [120] main::col#1 ← ++ main::col#2 to ++
-Resolved ranged comparison value [122] if(main::col#1!=rangelast(0,7)) goto main::@9 to (number) 8
-Resolved ranged next value [126] main::row#1 ← ++ main::row#2 to ++
-Resolved ranged comparison value [128] if(main::row#1!=rangelast(0,7)) goto main::@8 to (number) 8
-Resolved ranged next value [145] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [147] if(main::ch#1!=rangelast(0,$3f)) goto main::@16 to (number) $40
+Resolved ranged next value [121] main::col#1 ← ++ main::col#2 to ++
+Resolved ranged comparison value [123] if(main::col#1!=rangelast(0,7)) goto main::@13 to (number) 8
+Resolved ranged next value [127] main::row#1 ← ++ main::row#2 to ++
+Resolved ranged comparison value [129] if(main::row#1!=rangelast(0,7)) goto main::@12 to (number) 8
+Resolved ranged next value [146] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [148] if(main::ch#1!=rangelast(0,$3f)) goto main::@20 to (number) $40
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) 8 in if((byte) main::col#1!=(number) 8) goto main::@9
-Adding number conversion cast (unumber) 8 in if((byte) main::row#1!=(number) 8) goto main::@8
-Adding number conversion cast (unumber) $40 in if((byte) main::ch#1!=(number) $40) goto main::@16
+Adding number conversion cast (unumber) 8 in if((byte) main::col#1!=(number) 8) goto main::@13
+Adding number conversion cast (unumber) 8 in if((byte) main::row#1!=(number) 8) goto main::@12
+Adding number conversion cast (unumber) $40 in if((byte) main::ch#1!=(number) $40) goto main::@20
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Simplifying constant integer cast 8
@@ -1047,82 +1056,80 @@ Constant inlined main::sc#0 = (byte*) 1024
 Constant inlined main::row#0 = (byte) 0
 Constant inlined main::ch#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@31(between main::@1 and main::@1)
-Added new block during phi lifting main::@32(between main::@14 and main::@8)
-Added new block during phi lifting main::@33(between main::@11 and main::@9)
-Added new block during phi lifting main::@34(between main::@17 and main::@16)
-Added new block during phi lifting main::@35(between main::@29 and main::@17)
-Added new block during phi lifting main::@36(between main::@30 and main::@17)
-Added new block during phi lifting main::@37(between main::@17 and main::@22)
-Added new block during phi lifting main::@38(between main::@22 and main::@22)
+Added new block during phi lifting main::@35(between main::@18 and main::@12)
+Added new block during phi lifting main::@36(between main::@15 and main::@13)
+Added new block during phi lifting main::@37(between main::@21 and main::@20)
+Added new block during phi lifting main::@38(between main::@33 and main::@21)
+Added new block during phi lifting main::@39(between main::@34 and main::@21)
+Added new block during phi lifting main::@40(between main::@21 and main::@26)
+Added new block during phi lifting main::@41(between main::@26 and main::@26)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @13
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of main::@27
 Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of main::@31
 Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@11
 CALL GRAPH
 Calls in [] to main:3 
-Calls in [main] to keyboard_init:12 keyboard_matrix_read:20 keyboard_get_keycode:37 keyboard_key_pressed:42 
+Calls in [main] to keyboard_init:10 keyboard_matrix_read:18 keyboard_get_keycode:35 keyboard_key_pressed:40 
 Calls in [keyboard_key_pressed] to keyboard_matrix_read:72 
 
 Created 10 initial phi equivalence classes
-Coalesced [19] keyboard_matrix_read::rowid#4 ← keyboard_matrix_read::rowid#1
-Coalesced [23] main::row_pressed_bits#7 ← main::row_pressed_bits#0
-Coalesced [48] main::i#11 ← main::i#1
-Coalesced [52] main::i#14 ← main::i#6
-Coalesced [57] main::i#15 ← main::i#2
-Coalesced [58] main::ch#8 ← main::ch#1
-Coalesced [59] main::i#10 ← main::i#6
-Coalesced (already) [60] main::i#13 ← main::i#3
-Coalesced (already) [61] main::i#12 ← main::i#3
-Coalesced [62] main::row#9 ← main::row#1
-Coalesced [63] main::screen#18 ← main::screen#1
-Coalesced [64] main::row_pressed_bits#6 ← main::row_pressed_bits#1
-Coalesced [65] main::col#6 ← main::col#1
-Coalesced [67] main::sc#3 ← main::sc#1
+Coalesced [17] keyboard_matrix_read::rowid#4 ← keyboard_matrix_read::rowid#1
+Coalesced [21] main::row_pressed_bits#7 ← main::row_pressed_bits#0
+Coalesced [46] main::i#11 ← main::i#1
+Coalesced [50] main::i#14 ← main::i#6
+Coalesced [55] main::i#15 ← main::i#2
+Coalesced [56] main::ch#8 ← main::ch#1
+Coalesced [57] main::i#10 ← main::i#6
+Coalesced (already) [58] main::i#13 ← main::i#3
+Coalesced (already) [59] main::i#12 ← main::i#3
+Coalesced [60] main::row#9 ← main::row#1
+Coalesced [61] main::screen#18 ← main::screen#1
+Coalesced [62] main::row_pressed_bits#6 ← main::row_pressed_bits#1
+Coalesced [63] main::col#6 ← main::col#1
+Coalesced [67] main::sc#4 ← main::sc#1
 Coalesced [71] keyboard_matrix_read::rowid#3 ← keyboard_matrix_read::rowid#0
 Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @13
-Culled Empty Block (label) main::@27
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@7
-Culled Empty Block (label) main::@37
-Culled Empty Block (label) main::@38
-Culled Empty Block (label) main::@34
-Culled Empty Block (label) main::@36
-Culled Empty Block (label) main::@35
-Culled Empty Block (label) main::@32
-Culled Empty Block (label) main::@33
 Culled Empty Block (label) main::@31
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) main::@11
+Culled Empty Block (label) main::@40
+Culled Empty Block (label) main::@41
+Culled Empty Block (label) main::@37
+Culled Empty Block (label) main::@39
+Culled Empty Block (label) main::@38
+Culled Empty Block (label) main::@35
+Culled Empty Block (label) main::@36
 Renumbering block @12 to @1
 Renumbering block keyboard_key_pressed::@2 to keyboard_key_pressed::@1
-Renumbering block main::@6 to main::@3
-Renumbering block main::@8 to main::@4
-Renumbering block main::@9 to main::@5
-Renumbering block main::@10 to main::@6
-Renumbering block main::@11 to main::@7
-Renumbering block main::@12 to main::@8
-Renumbering block main::@14 to main::@9
-Renumbering block main::@15 to main::@10
-Renumbering block main::@16 to main::@11
-Renumbering block main::@17 to main::@12
-Renumbering block main::@19 to main::@13
-Renumbering block main::@20 to main::@14
-Renumbering block main::@22 to main::@15
-Renumbering block main::@28 to main::@16
-Renumbering block main::@29 to main::@17
-Renumbering block main::@30 to main::@18
+Renumbering block main::@10 to main::@4
+Renumbering block main::@12 to main::@5
+Renumbering block main::@13 to main::@6
+Renumbering block main::@14 to main::@7
+Renumbering block main::@15 to main::@8
+Renumbering block main::@16 to main::@9
+Renumbering block main::@18 to main::@10
+Renumbering block main::@19 to main::@11
+Renumbering block main::@20 to main::@12
+Renumbering block main::@21 to main::@13
+Renumbering block main::@23 to main::@14
+Renumbering block main::@24 to main::@15
+Renumbering block main::@26 to main::@16
+Renumbering block main::@32 to main::@17
+Renumbering block main::@33 to main::@18
+Renumbering block main::@34 to main::@19
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1137,90 +1144,92 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] (byte*) main::sc#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::sc#1 )
-  [6] *((byte*) main::sc#2) ← (byte) ' '
-  [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2
-  [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [9] phi()
-  [10] call keyboard_init 
+main::@1: scope:[main]  from main main::@2
+  [5] (byte*) main::sc#2 ← phi( main/(byte*) 1024 main::@2/(byte*) main::sc#1 )
+  [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2
   to:main::@3
-main::@3: scope:[main]  from main::@15 main::@2 main::@3
-  [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3
+main::@3: scope:[main]  from main::@1
+  [7] phi()
+  [8] call keyboard_init 
   to:main::@4
-main::@4: scope:[main]  from main::@3 main::@9
-  [12] (byte*) main::screen#13 ← phi( main::@9/(byte*) main::screen#1 main::@3/(byte*) 1024 )
-  [12] (byte) main::row#2 ← phi( main::@9/(byte) main::row#1 main::@3/(byte) 0 )
-  [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2
-  [14] call keyboard_matrix_read 
-  [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
-  to:main::@16
-main::@16: scope:[main]  from main::@4
-  [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3
+main::@4: scope:[main]  from main::@16 main::@3 main::@4
+  [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4
   to:main::@5
-main::@5: scope:[main]  from main::@16 main::@7
-  [17] (byte) main::col#2 ← phi( main::@7/(byte) main::col#1 main::@16/(byte) 0 )
-  [17] (byte) main::row_pressed_bits#2 ← phi( main::@7/(byte) main::row_pressed_bits#1 main::@16/(byte) main::row_pressed_bits#0 )
-  [18] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80
-  [19] if((byte~) main::$4!=(byte) 0) goto main::@6
-  to:main::@8
-main::@8: scope:[main]  from main::@5
-  [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0'
-  to:main::@7
-main::@7: scope:[main]  from main::@6 main::@8
-  [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1
-  [22] (byte) main::col#1 ← ++ (byte) main::col#2
-  [23] if((byte) main::col#1!=(byte) 8) goto main::@5
-  to:main::@9
-main::@9: scope:[main]  from main::@7
-  [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28
-  [25] (byte) main::row#1 ← ++ (byte) main::row#2
-  [26] if((byte) main::row#1!=(byte) 8) goto main::@4
-  to:main::@10
-main::@10: scope:[main]  from main::@9
-  [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28
-  to:main::@11
-main::@11: scope:[main]  from main::@10 main::@12
-  [28] (byte) main::i#3 ← phi( main::@10/(byte) 0 main::@12/(byte) main::i#6 )
-  [28] (byte) main::ch#2 ← phi( main::@10/(byte) 0 main::@12/(byte) main::ch#1 )
-  [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2
-  [30] call keyboard_get_keycode 
-  [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+main::@5: scope:[main]  from main::@10 main::@4
+  [10] (byte*) main::screen#13 ← phi( main::@4/(byte*) 1024 main::@10/(byte*) main::screen#1 )
+  [10] (byte) main::row#2 ← phi( main::@4/(byte) 0 main::@10/(byte) main::row#1 )
+  [11] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2
+  [12] call keyboard_matrix_read 
+  [13] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
   to:main::@17
-main::@17: scope:[main]  from main::@11
-  [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-  [33] if((byte) main::key#0==(byte) $3f) goto main::@12
-  to:main::@13
-main::@13: scope:[main]  from main::@17
-  [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0
-  [35] call keyboard_key_pressed 
-  [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+main::@17: scope:[main]  from main::@5
+  [14] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3
+  to:main::@6
+main::@6: scope:[main]  from main::@17 main::@8
+  [15] (byte) main::col#2 ← phi( main::@8/(byte) main::col#1 main::@17/(byte) 0 )
+  [15] (byte) main::row_pressed_bits#2 ← phi( main::@8/(byte) main::row_pressed_bits#1 main::@17/(byte) main::row_pressed_bits#0 )
+  [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80
+  [17] if((byte~) main::$4!=(byte) 0) goto main::@7
+  to:main::@9
+main::@9: scope:[main]  from main::@6
+  [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0'
+  to:main::@8
+main::@8: scope:[main]  from main::@7 main::@9
+  [19] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1
+  [20] (byte) main::col#1 ← ++ (byte) main::col#2
+  [21] if((byte) main::col#1!=(byte) 8) goto main::@6
+  to:main::@10
+main::@10: scope:[main]  from main::@8
+  [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28
+  [23] (byte) main::row#1 ← ++ (byte) main::row#2
+  [24] if((byte) main::row#1!=(byte) 8) goto main::@5
+  to:main::@11
+main::@11: scope:[main]  from main::@10
+  [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28
+  to:main::@12
+main::@12: scope:[main]  from main::@11 main::@13
+  [26] (byte) main::i#3 ← phi( main::@11/(byte) 0 main::@13/(byte) main::i#6 )
+  [26] (byte) main::ch#2 ← phi( main::@11/(byte) 0 main::@13/(byte) main::ch#1 )
+  [27] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2
+  [28] call keyboard_get_keycode 
+  [29] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
   to:main::@18
-main::@18: scope:[main]  from main::@13
-  [37] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
-  [38] if((byte~) main::$14==(byte) 0) goto main::@12
+main::@18: scope:[main]  from main::@12
+  [30] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+  [31] if((byte) main::key#0==(byte) $3f) goto main::@13
   to:main::@14
 main::@14: scope:[main]  from main::@18
-  [39] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2
-  [40] (byte) main::i#1 ← ++ (byte) main::i#3
-  to:main::@12
-main::@12: scope:[main]  from main::@14 main::@17 main::@18
-  [41] (byte) main::i#6 ← phi( main::@14/(byte) main::i#1 main::@17/(byte) main::i#3 main::@18/(byte) main::i#3 )
-  [42] (byte) main::ch#1 ← ++ (byte) main::ch#2
-  [43] if((byte) main::ch#1!=(byte) $40) goto main::@11
+  [32] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0
+  [33] call keyboard_key_pressed 
+  [34] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  to:main::@19
+main::@19: scope:[main]  from main::@14
+  [35] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
+  [36] if((byte~) main::$14==(byte) 0) goto main::@13
   to:main::@15
-main::@15: scope:[main]  from main::@12 main::@15
-  [44] (byte) main::i#4 ← phi( main::@12/(byte) main::i#6 main::@15/(byte) main::i#2 )
-  [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' '
-  [46] (byte) main::i#2 ← ++ (byte) main::i#4
-  [47] if((byte) main::i#2<(byte) 5) goto main::@15
-  to:main::@3
-main::@6: scope:[main]  from main::@5
-  [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1'
-  to:main::@7
-keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@13
+main::@15: scope:[main]  from main::@19
+  [37] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2
+  [38] (byte) main::i#1 ← ++ (byte) main::i#3
+  to:main::@13
+main::@13: scope:[main]  from main::@15 main::@18 main::@19
+  [39] (byte) main::i#6 ← phi( main::@15/(byte) main::i#1 main::@18/(byte) main::i#3 main::@19/(byte) main::i#3 )
+  [40] (byte) main::ch#1 ← ++ (byte) main::ch#2
+  [41] if((byte) main::ch#1!=(byte) $40) goto main::@12
+  to:main::@16
+main::@16: scope:[main]  from main::@13 main::@16
+  [42] (byte) main::i#4 ← phi( main::@13/(byte) main::i#6 main::@16/(byte) main::i#2 )
+  [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' '
+  [44] (byte) main::i#2 ← ++ (byte) main::i#4
+  [45] if((byte) main::i#2<(byte) 5) goto main::@16
+  to:main::@4
+main::@7: scope:[main]  from main::@6
+  [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1'
+  to:main::@8
+main::@2: scope:[main]  from main::@1
+  [47] *((byte*) main::sc#2) ← (byte) ' '
+  [48] (byte*) main::sc#1 ← ++ (byte*) main::sc#2
+  to:main::@1
+keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@14
   [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7
   [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3
   [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
@@ -1234,21 +1243,21 @@ keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_presse
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [56] return 
   to:@return
-keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@4
-  [57] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@4/(byte) keyboard_matrix_read::rowid#1 )
+keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@5
+  [57] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@5/(byte) keyboard_matrix_read::rowid#1 )
   [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2)
   [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [60] return 
   to:@return
-keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@11
+keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@12
   [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   [62] return 
   to:@return
-keyboard_init: scope:[keyboard_init]  from main::@2
+keyboard_init: scope:[keyboard_init]  from main::@3
   [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff
   [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0
   to:keyboard_init::@return
@@ -1369,8 +1378,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::row_pressed_bits#1 667.3333333333334
 (byte) main::row_pressed_bits#2 620.8
 (byte*) main::sc
-(byte*) main::sc#1 16.5
-(byte*) main::sc#2 16.5
+(byte*) main::sc#1 22.0
+(byte*) main::sc#2 14.666666666666666
 (byte*) main::screen
 (byte*) main::screen#1 71.0
 (byte*) main::screen#13 169.53846153846155
@@ -1557,124 +1566,111 @@ main: {
     sta sc+1
     jmp b1
   // Clear screen
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
-    bcc b1_from_b1
+    bcc b2
     bne !+
     lda sc
     cmp #<$400+$3e8
-    bcc b1_from_b1
+    bcc b2
   !:
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [10] call keyboard_init 
-    jsr keyboard_init
+    // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+  b3_from_b1:
     jmp b3
     // main::@3
   b3:
-    // [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] call keyboard_init 
+    jsr keyboard_init
+    jmp b4
+    // main::@4
+  b4:
+    // [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b3
-    // [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    // [12] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    bne b4
+    // [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  b5_from_b4:
+    // [10] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    // [12] phi (byte) main::row#2 = (byte) 0 [phi:main::@3->main::@4#1] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::row#2 = (byte) 0 [phi:main::@4->main::@5#1] -- vbuz1=vbuc1 
     lda #0
     sta row
-    jmp b4
-  // Read & print keyboard matrix
-    // [12] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-  b4_from_b9:
-    // [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@9->main::@4#1] -- register_copy 
-    jmp b4
-    // main::@4
-  b4:
-    // [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuz1=vbuz2 
-    lda row
-    sta keyboard_matrix_read.rowid
-    // [14] call keyboard_matrix_read 
-    // [57] phi from main::@4 to keyboard_matrix_read [phi:main::@4->keyboard_matrix_read]
-  keyboard_matrix_read_from_b4:
-    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@4->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return
-    sta keyboard_matrix_read.return_3
-    jmp b16
-    // main::@16
-  b16:
-    // [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuz1=vbuz2 
-    lda keyboard_matrix_read.return_3
-    sta row_pressed_bits
-    // [17] phi from main::@16 to main::@5 [phi:main::@16->main::@5]
-  b5_from_b16:
-    // [17] phi (byte) main::col#2 = (byte) 0 [phi:main::@16->main::@5#0] -- vbuz1=vbuc1 
-    lda #0
-    sta col
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@16->main::@5#1] -- register_copy 
     jmp b5
-    // [17] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-  b5_from_b7:
-    // [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@7->main::@5#0] -- register_copy 
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@7->main::@5#1] -- register_copy 
+  // Read & print keyboard matrix
+    // [10] phi from main::@10 to main::@5 [phi:main::@10->main::@5]
+  b5_from_b10:
+    // [10] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@10->main::@5#0] -- register_copy 
+    // [10] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@10->main::@5#1] -- register_copy 
     jmp b5
     // main::@5
   b5:
-    // [18] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
+    // [11] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuz1=vbuz2 
+    lda row
+    sta keyboard_matrix_read.rowid
+    // [12] call keyboard_matrix_read 
+    // [57] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+  keyboard_matrix_read_from_b5:
+    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // [13] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+    lda keyboard_matrix_read.return
+    sta keyboard_matrix_read.return_3
+    jmp b17
+    // main::@17
+  b17:
+    // [14] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuz1=vbuz2 
+    lda keyboard_matrix_read.return_3
+    sta row_pressed_bits
+    // [15] phi from main::@17 to main::@6 [phi:main::@17->main::@6]
+  b6_from_b17:
+    // [15] phi (byte) main::col#2 = (byte) 0 [phi:main::@17->main::@6#0] -- vbuz1=vbuc1 
+    lda #0
+    sta col
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@17->main::@6#1] -- register_copy 
+    jmp b6
+    // [15] phi from main::@8 to main::@6 [phi:main::@8->main::@6]
+  b6_from_b8:
+    // [15] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@8->main::@6#0] -- register_copy 
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@8->main::@6#1] -- register_copy 
+    jmp b6
+    // main::@6
+  b6:
+    // [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and row_pressed_bits
     sta _4
-    // [19] if((byte~) main::$4!=(byte) 0) goto main::@6 -- vbuz1_neq_0_then_la1 
+    // [17] if((byte~) main::$4!=(byte) 0) goto main::@7 -- vbuz1_neq_0_then_la1 
     lda _4
     cmp #0
-    bne b6
-    jmp b8
-    // main::@8
-  b8:
-    // [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuz2=vbuc1 
-    lda #'0'
-    ldy col
-    sta (screen),y
-    jmp b7
-    // main::@7
-  b7:
-    // [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl row_pressed_bits
-    // [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuz1=_inc_vbuz1 
-    inc col
-    // [23] if((byte) main::col#1!=(byte) 8) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
-    lda #8
-    cmp col
-    bne b5_from_b7
+    bne b7
     jmp b9
     // main::@9
   b9:
-    // [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuz2=vbuc1 
+    lda #'0'
+    ldy col
+    sta (screen),y
+    jmp b8
+    // main::@8
+  b8:
+    // [19] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
+    asl row_pressed_bits
+    // [20] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuz1=_inc_vbuz1 
+    inc col
+    // [21] if((byte) main::col#1!=(byte) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+    lda #8
+    cmp col
+    bne b6_from_b8
+    jmp b10
+    // main::@10
+  b10:
+    // [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -1682,16 +1678,16 @@ main: {
     bcc !+
     inc screen+1
   !:
-    // [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+    // [23] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
     inc row
-    // [26] if((byte) main::row#1!=(byte) 8) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [24] if((byte) main::row#1!=(byte) 8) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp row
-    bne b4_from_b9
-    jmp b10
-    // main::@10
-  b10:
-    // [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    bne b5_from_b10
+    jmp b11
+    // main::@11
+  b11:
+    // [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -1699,110 +1695,125 @@ main: {
     lda #0
     adc screen+1
     sta screen_2+1
-    // [28] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
-  b11_from_b10:
-    // [28] phi (byte) main::i#3 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
+    // [26] phi from main::@11 to main::@12 [phi:main::@11->main::@12]
+  b12_from_b11:
+    // [26] phi (byte) main::i#3 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-    // [28] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#1] -- vbuz1=vbuc1 
+    // [26] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#1] -- vbuz1=vbuc1 
     lda #0
     sta ch
-    jmp b11
-    // [28] phi from main::@12 to main::@11 [phi:main::@12->main::@11]
-  b11_from_b12:
-    // [28] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@12->main::@11#0] -- register_copy 
-    // [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@12->main::@11#1] -- register_copy 
-    jmp b11
-    // main::@11
-  b11:
-    // [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
-    lda ch
-    sta keyboard_get_keycode.ch
-    // [30] call keyboard_get_keycode 
-    jsr keyboard_get_keycode
-    // [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
-    lda keyboard_get_keycode.return
-    sta keyboard_get_keycode.return_2
-    jmp b17
-    // main::@17
-  b17:
-    // [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
-    lda keyboard_get_keycode.return_2
-    sta key
-    // [33] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuz1_eq_vbuc1_then_la1 
-    lda #$3f
-    cmp key
-    beq b12_from_b17
-    jmp b13
-    // main::@13
-  b13:
-    // [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuz1=vbuz2 
-    lda key
-    sta keyboard_key_pressed.key
-    // [35] call keyboard_key_pressed 
-    jsr keyboard_key_pressed
-    // [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return
-    sta keyboard_key_pressed.return_2
-    jmp b18
-    // main::@18
-  b18:
-    // [37] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda keyboard_key_pressed.return_2
-    sta _14
-    // [38] if((byte~) main::$14==(byte) 0) goto main::@12 -- vbuz1_eq_0_then_la1 
-    lda _14
-    cmp #0
-    beq b12_from_b18
-    jmp b14
-    // main::@14
-  b14:
-    // [39] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda ch
-    ldy i
-    sta (screen_2),y
-    // [40] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
-    inc i
-    // [41] phi from main::@14 main::@17 main::@18 to main::@12 [phi:main::@14/main::@17/main::@18->main::@12]
-  b12_from_b14:
-  b12_from_b17:
-  b12_from_b18:
-    // [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@14/main::@17/main::@18->main::@12#0] -- register_copy 
+    jmp b12
+    // [26] phi from main::@13 to main::@12 [phi:main::@13->main::@12]
+  b12_from_b13:
+    // [26] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@13->main::@12#0] -- register_copy 
+    // [26] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@12#1] -- register_copy 
     jmp b12
     // main::@12
   b12:
-    // [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
-    inc ch
-    // [43] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$40
-    cmp ch
-    bne b11_from_b12
-    // [44] phi from main::@12 main::@15 to main::@15 [phi:main::@12/main::@15->main::@15]
-  b15_from_b12:
-  b15_from_b15:
-    // [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@12/main::@15->main::@15#0] -- register_copy 
+    // [27] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
+    lda ch
+    sta keyboard_get_keycode.ch
+    // [28] call keyboard_get_keycode 
+    jsr keyboard_get_keycode
+    // [29] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
+    lda keyboard_get_keycode.return
+    sta keyboard_get_keycode.return_2
+    jmp b18
+    // main::@18
+  b18:
+    // [30] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
+    lda keyboard_get_keycode.return_2
+    sta key
+    // [31] if((byte) main::key#0==(byte) $3f) goto main::@13 -- vbuz1_eq_vbuc1_then_la1 
+    lda #$3f
+    cmp key
+    beq b13_from_b18
+    jmp b14
+    // main::@14
+  b14:
+    // [32] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuz1=vbuz2 
+    lda key
+    sta keyboard_key_pressed.key
+    // [33] call keyboard_key_pressed 
+    jsr keyboard_key_pressed
+    // [34] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    lda keyboard_key_pressed.return
+    sta keyboard_key_pressed.return_2
+    jmp b19
+    // main::@19
+  b19:
+    // [35] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+    lda keyboard_key_pressed.return_2
+    sta _14
+    // [36] if((byte~) main::$14==(byte) 0) goto main::@13 -- vbuz1_eq_0_then_la1 
+    lda _14
+    cmp #0
+    beq b13_from_b19
     jmp b15
-  // Add some spaces
     // main::@15
   b15:
-    // [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [37] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuz2=vbuz3 
+    lda ch
+    ldy i
+    sta (screen_2),y
+    // [38] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
+    inc i
+    // [39] phi from main::@15 main::@18 main::@19 to main::@13 [phi:main::@15/main::@18/main::@19->main::@13]
+  b13_from_b15:
+  b13_from_b18:
+  b13_from_b19:
+    // [39] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@15/main::@18/main::@19->main::@13#0] -- register_copy 
+    jmp b13
+    // main::@13
+  b13:
+    // [40] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    inc ch
+    // [41] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$40
+    cmp ch
+    bne b12_from_b13
+    // [42] phi from main::@13 main::@16 to main::@16 [phi:main::@13/main::@16->main::@16]
+  b16_from_b13:
+  b16_from_b16:
+    // [42] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@13/main::@16->main::@16#0] -- register_copy 
+    jmp b16
+  // Add some spaces
+    // main::@16
+  b16:
+    // [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #' '
     ldy i
     sta (screen_2),y
-    // [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
+    // [44] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
     inc i
-    // [47] if((byte) main::i#2<(byte) 5) goto main::@15 -- vbuz1_lt_vbuc1_then_la1 
+    // [45] if((byte) main::i#2<(byte) 5) goto main::@16 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #5
-    bcc b15_from_b15
-    jmp b3
-    // main::@6
-  b6:
-    // [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuz2=vbuc1 
+    bcc b16_from_b16
+    jmp b4
+    // main::@7
+  b7:
+    // [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'1'
     ldy col
     sta (screen),y
-    jmp b7
+    jmp b8
+    // main::@2
+  b2:
+    // [47] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // [48] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -1928,40 +1939,40 @@ keyboard_init: {
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 [ main::sc#1 ] ( main:2 [ main::sc#1 ] ) always clobbers reg byte a 
-Statement [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
+Statement [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a 
+Statement [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::row#2 main::row#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ main::col#2 main::col#1 ]
-Statement [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 [ main::row#2 main::screen#1 ] ( main:2 [ main::row#2 main::screen#1 ] ) always clobbers reg byte a 
-Statement [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 [ main::screen#2 ] ( main:2 [ main::screen#2 ] ) always clobbers reg byte a 
-Statement [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ main::screen#2 main::i#4 ] ( main:2 [ main::screen#2 main::i#4 ] ) always clobbers reg byte a 
+Statement [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 [ main::row#2 main::screen#1 ] ( main:2 [ main::row#2 main::screen#1 ] ) always clobbers reg byte a 
+Statement [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 [ main::screen#2 ] ( main:2 [ main::screen#2 ] ) always clobbers reg byte a 
+Statement [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ main::screen#2 main::i#4 ] ( main:2 [ main::screen#2 main::i#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ]
-Statement [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
-Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:35 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
+Statement [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
+Statement [47] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:33 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ main::ch#2 main::ch#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ keyboard_key_pressed::colidx#0 ]
-Statement [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:14 [ main::row#2 main::screen#13 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
-Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:14 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Statement [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:10 [ ] ) always clobbers reg byte a 
-Statement [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:10 [ ] ) always clobbers reg byte a 
-Statement [6] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 [ main::sc#1 ] ( main:2 [ main::sc#1 ] ) always clobbers reg byte a 
-Statement [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [18] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] ) always clobbers reg byte a 
-Statement [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
-Statement [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 [ main::row#2 main::screen#1 ] ( main:2 [ main::row#2 main::screen#1 ] ) always clobbers reg byte a 
-Statement [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 [ main::screen#2 ] ( main:2 [ main::screen#2 ] ) always clobbers reg byte a 
-Statement [39] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 [ main::screen#2 main::ch#2 main::i#3 ] ( main:2 [ main::screen#2 main::ch#2 main::i#3 ] ) always clobbers reg byte a 
-Statement [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ main::screen#2 main::i#4 ] ( main:2 [ main::screen#2 main::i#4 ] ) always clobbers reg byte a 
-Statement [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
-Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:35 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
-Statement [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:14 [ main::row#2 main::screen#13 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
-Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:14 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:35::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Statement [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:10 [ ] ) always clobbers reg byte a 
-Statement [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:10 [ ] ) always clobbers reg byte a 
+Statement [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
+Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
+Statement [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] ) always clobbers reg byte a 
+Statement [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] ) always clobbers reg byte a 
+Statement [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a 
+Statement [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] ) always clobbers reg byte a 
+Statement [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
+Statement [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 [ main::row#2 main::screen#1 ] ( main:2 [ main::row#2 main::screen#1 ] ) always clobbers reg byte a 
+Statement [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 [ main::screen#2 ] ( main:2 [ main::screen#2 ] ) always clobbers reg byte a 
+Statement [37] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 [ main::screen#2 main::ch#2 main::i#3 ] ( main:2 [ main::screen#2 main::ch#2 main::i#3 ] ) always clobbers reg byte a 
+Statement [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ main::screen#2 main::i#4 ] ( main:2 [ main::screen#2 main::i#4 ] ) always clobbers reg byte a 
+Statement [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ) always clobbers reg byte a 
+Statement [47] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:33 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
+Statement [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
+Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
+Statement [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] ) always clobbers reg byte a 
+Statement [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ main::row#2 main::row#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:5 [ main::screen#13 main::screen#1 ] : zp ZP_WORD:5 , 
@@ -1988,7 +1999,7 @@ Potential registers zp ZP_BYTE:27 [ keyboard_matrix_read::return#0 ] : zp ZP_BYT
 Potential registers zp ZP_BYTE:28 [ keyboard_get_keycode::return#0 ] : zp ZP_BYTE:28 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2,168.83: zp ZP_BYTE:8 [ main::col#2 main::col#1 ] 2,002: zp ZP_BYTE:13 [ main::$4 ] 1,490.13: zp ZP_BYTE:7 [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ] 765.92: zp ZP_BYTE:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ] 240.54: zp ZP_WORD:5 [ main::screen#13 main::screen#1 ] 202: zp ZP_BYTE:21 [ main::$14 ] 180.36: zp ZP_BYTE:9 [ main::ch#2 main::ch#1 ] 173.14: zp ZP_BYTE:4 [ main::row#2 main::row#1 ] 151.5: zp ZP_BYTE:18 [ main::key#0 ] 33: zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] 10.14: zp ZP_WORD:14 [ main::screen#2 ] 
+Uplift Scope [main] 2,168.83: zp ZP_BYTE:8 [ main::col#2 main::col#1 ] 2,002: zp ZP_BYTE:13 [ main::$4 ] 1,490.13: zp ZP_BYTE:7 [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ] 765.92: zp ZP_BYTE:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ] 240.54: zp ZP_WORD:5 [ main::screen#13 main::screen#1 ] 202: zp ZP_BYTE:21 [ main::$14 ] 180.36: zp ZP_BYTE:9 [ main::ch#2 main::ch#1 ] 173.14: zp ZP_BYTE:4 [ main::row#2 main::row#1 ] 151.5: zp ZP_BYTE:18 [ main::key#0 ] 36.67: zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] 10.14: zp ZP_WORD:14 [ main::screen#2 ] 
 Uplift Scope [keyboard_matrix_read] 311: zp ZP_BYTE:11 [ keyboard_matrix_read::rowid#2 keyboard_matrix_read::rowid#0 keyboard_matrix_read::rowid#1 ] 202: zp ZP_BYTE:12 [ keyboard_matrix_read::return#3 ] 26.25: zp ZP_BYTE:27 [ keyboard_matrix_read::return#0 ] 4: zp ZP_BYTE:24 [ keyboard_matrix_read::return#2 ] 
 Uplift Scope [keyboard_get_keycode] 202: zp ZP_BYTE:17 [ keyboard_get_keycode::return#2 ] 103: zp ZP_BYTE:16 [ keyboard_get_keycode::ch#0 ] 34.33: zp ZP_BYTE:28 [ keyboard_get_keycode::return#0 ] 
 Uplift Scope [keyboard_key_pressed] 202: zp ZP_BYTE:20 [ keyboard_key_pressed::return#2 ] 52.5: zp ZP_BYTE:19 [ keyboard_key_pressed::key#0 ] 34.33: zp ZP_BYTE:26 [ keyboard_key_pressed::return#0 ] 4: zp ZP_BYTE:23 [ keyboard_key_pressed::rowidx#0 ] 4: zp ZP_BYTE:25 [ keyboard_key_pressed::$2 ] 0.67: zp ZP_BYTE:22 [ keyboard_key_pressed::colidx#0 ] 
@@ -2120,232 +2131,234 @@ main: {
     sta sc+1
     jmp b1
   // Clear screen
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
-    bcc b1_from_b1
+    bcc b2
     bne !+
     lda sc
     cmp #<$400+$3e8
-    bcc b1_from_b1
+    bcc b2
   !:
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [10] call keyboard_init 
-    jsr keyboard_init
+    // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+  b3_from_b1:
     jmp b3
     // main::@3
   b3:
-    // [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] call keyboard_init 
+    jsr keyboard_init
+    jmp b4
+    // main::@4
+  b4:
+    // [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b3
-    // [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    // [12] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    bne b4
+    // [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  b5_from_b4:
+    // [10] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    // [12] phi (byte) main::row#2 = (byte) 0 [phi:main::@3->main::@4#1] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::row#2 = (byte) 0 [phi:main::@4->main::@5#1] -- vbuz1=vbuc1 
     lda #0
     sta row
-    jmp b4
-  // Read & print keyboard matrix
-    // [12] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-  b4_from_b9:
-    // [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@9->main::@4#1] -- register_copy 
-    jmp b4
-    // main::@4
-  b4:
-    // [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
-    ldy row
-    // [14] call keyboard_matrix_read 
-    // [57] phi from main::@4 to keyboard_matrix_read [phi:main::@4->keyboard_matrix_read]
-  keyboard_matrix_read_from_b4:
-    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@4->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
-    jmp b16
-    // main::@16
-  b16:
-    // [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
-    tax
-    // [17] phi from main::@16 to main::@5 [phi:main::@16->main::@5]
-  b5_from_b16:
-    // [17] phi (byte) main::col#2 = (byte) 0 [phi:main::@16->main::@5#0] -- vbuyy=vbuc1 
-    ldy #0
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@16->main::@5#1] -- register_copy 
     jmp b5
-    // [17] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-  b5_from_b7:
-    // [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@7->main::@5#0] -- register_copy 
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@7->main::@5#1] -- register_copy 
+  // Read & print keyboard matrix
+    // [10] phi from main::@10 to main::@5 [phi:main::@10->main::@5]
+  b5_from_b10:
+    // [10] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@10->main::@5#0] -- register_copy 
+    // [10] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@10->main::@5#1] -- register_copy 
     jmp b5
     // main::@5
   b5:
-    // [18] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #$80
-    // [19] if((byte~) main::$4!=(byte) 0) goto main::@6 -- vbuaa_neq_0_then_la1 
-    cmp #0
-    bne b6
-    jmp b8
-    // main::@8
-  b8:
-    // [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
-    lda #'0'
-    sta (screen),y
-    jmp b7
-    // main::@7
-  b7:
-    // [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
-    txa
-    asl
-    tax
-    // [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [23] if((byte) main::col#1!=(byte) 8) goto main::@5 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #8
-    bne b5_from_b7
-    jmp b9
-    // main::@9
-  b9:
-    // [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
-    lda #$28
-    clc
-    adc screen
-    sta screen
-    bcc !+
-    inc screen+1
-  !:
-    // [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
-    inc row
-    // [26] if((byte) main::row#1!=(byte) 8) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
-    lda #8
-    cmp row
-    bne b4_from_b9
-    jmp b10
-    // main::@10
-  b10:
-    // [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
-    lda #$28
-    clc
-    adc screen
-    sta screen
-    bcc !+
-    inc screen+1
-  !:
-    // [28] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
-  b11_from_b10:
-    // [28] phi (byte) main::i#3 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [28] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#1] -- vbuz1=vbuc1 
-    lda #0
-    sta ch
-    jmp b11
-    // [28] phi from main::@12 to main::@11 [phi:main::@12->main::@11]
-  b11_from_b12:
-    // [28] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@12->main::@11#0] -- register_copy 
-    // [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@12->main::@11#1] -- register_copy 
-    jmp b11
-    // main::@11
-  b11:
-    // [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
-    ldy ch
-    // [30] call keyboard_get_keycode 
-    jsr keyboard_get_keycode
-    // [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+    // [11] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
+    ldy row
+    // [12] call keyboard_matrix_read 
+    // [57] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+  keyboard_matrix_read_from_b5:
+    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // [13] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
     jmp b17
     // main::@17
   b17:
-    // [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-    // [33] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
-    cmp #$3f
-    beq b12_from_b17
-    jmp b13
-    // main::@13
-  b13:
-    // [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
-    tay
-    // [35] call keyboard_key_pressed 
-    jsr keyboard_key_pressed
-    // [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // [14] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
+    tax
+    // [15] phi from main::@17 to main::@6 [phi:main::@17->main::@6]
+  b6_from_b17:
+    // [15] phi (byte) main::col#2 = (byte) 0 [phi:main::@17->main::@6#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@17->main::@6#1] -- register_copy 
+    jmp b6
+    // [15] phi from main::@8 to main::@6 [phi:main::@8->main::@6]
+  b6_from_b8:
+    // [15] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@8->main::@6#0] -- register_copy 
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@8->main::@6#1] -- register_copy 
+    jmp b6
+    // main::@6
+  b6:
+    // [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #$80
+    // [17] if((byte~) main::$4!=(byte) 0) goto main::@7 -- vbuaa_neq_0_then_la1 
+    cmp #0
+    bne b7
+    jmp b9
+    // main::@9
+  b9:
+    // [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
+    lda #'0'
+    sta (screen),y
+    jmp b8
+    // main::@8
+  b8:
+    // [19] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    txa
+    asl
+    tax
+    // [20] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [21] if((byte) main::col#1!=(byte) 8) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #8
+    bne b6_from_b8
+    jmp b10
+    // main::@10
+  b10:
+    // [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    lda #$28
+    clc
+    adc screen
+    sta screen
+    bcc !+
+    inc screen+1
+  !:
+    // [23] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+    inc row
+    // [24] if((byte) main::row#1!=(byte) 8) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
+    lda #8
+    cmp row
+    bne b5_from_b10
+    jmp b11
+    // main::@11
+  b11:
+    // [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    lda #$28
+    clc
+    adc screen
+    sta screen
+    bcc !+
+    inc screen+1
+  !:
+    // [26] phi from main::@11 to main::@12 [phi:main::@11->main::@12]
+  b12_from_b11:
+    // [26] phi (byte) main::i#3 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [26] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#1] -- vbuz1=vbuc1 
+    lda #0
+    sta ch
+    jmp b12
+    // [26] phi from main::@13 to main::@12 [phi:main::@13->main::@12]
+  b12_from_b13:
+    // [26] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@13->main::@12#0] -- register_copy 
+    // [26] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@12#1] -- register_copy 
+    jmp b12
+    // main::@12
+  b12:
+    // [27] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
+    ldy ch
+    // [28] call keyboard_get_keycode 
+    jsr keyboard_get_keycode
+    // [29] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
     jmp b18
     // main::@18
   b18:
-    // [37] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
-    // [38] if((byte~) main::$14==(byte) 0) goto main::@12 -- vbuaa_eq_0_then_la1 
-    cmp #0
-    beq b12_from_b18
+    // [30] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+    // [31] if((byte) main::key#0==(byte) $3f) goto main::@13 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$3f
+    beq b13_from_b18
     jmp b14
     // main::@14
   b14:
-    // [39] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
+    // [32] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
+    tay
+    // [33] call keyboard_key_pressed 
+    jsr keyboard_key_pressed
+    // [34] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    jmp b19
+    // main::@19
+  b19:
+    // [35] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
+    // [36] if((byte~) main::$14==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
+    cmp #0
+    beq b13_from_b19
+    jmp b15
+    // main::@15
+  b15:
+    // [37] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
     txa
     tay
     lda ch
     sta (screen),y
-    // [40] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
+    // [38] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [41] phi from main::@14 main::@17 main::@18 to main::@12 [phi:main::@14/main::@17/main::@18->main::@12]
-  b12_from_b14:
-  b12_from_b17:
-  b12_from_b18:
-    // [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@14/main::@17/main::@18->main::@12#0] -- register_copy 
-    jmp b12
-    // main::@12
-  b12:
-    // [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // [39] phi from main::@15 main::@18 main::@19 to main::@13 [phi:main::@15/main::@18/main::@19->main::@13]
+  b13_from_b15:
+  b13_from_b18:
+  b13_from_b19:
+    // [39] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@15/main::@18/main::@19->main::@13#0] -- register_copy 
+    jmp b13
+    // main::@13
+  b13:
+    // [40] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-    // [43] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
+    // [41] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp ch
-    bne b11_from_b12
-    // [44] phi from main::@12 main::@15 to main::@15 [phi:main::@12/main::@15->main::@15]
-  b15_from_b12:
-  b15_from_b15:
-    // [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@12/main::@15->main::@15#0] -- register_copy 
-    jmp b15
+    bne b12_from_b13
+    // [42] phi from main::@13 main::@16 to main::@16 [phi:main::@13/main::@16->main::@16]
+  b16_from_b13:
+  b16_from_b16:
+    // [42] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@13/main::@16->main::@16#0] -- register_copy 
+    jmp b16
   // Add some spaces
-    // main::@15
-  b15:
-    // [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
+    // main::@16
+  b16:
+    // [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
     txa
     tay
     lda #' '
     sta (screen),y
-    // [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
+    // [44] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
     inx
-    // [47] if((byte) main::i#2<(byte) 5) goto main::@15 -- vbuxx_lt_vbuc1_then_la1 
+    // [45] if((byte) main::i#2<(byte) 5) goto main::@16 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
-    bcc b15_from_b15
-    jmp b3
-    // main::@6
-  b6:
-    // [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
+    bcc b16_from_b16
+    jmp b4
+    // main::@7
+  b7:
+    // [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'1'
     sta (screen),y
-    jmp b7
+    jmp b8
+    // main::@2
+  b2:
+    // [47] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // [48] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -2450,22 +2463,22 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b2
 Removing instruction jmp b3
 Removing instruction jmp b4
-Removing instruction jmp b16
 Removing instruction jmp b5
-Removing instruction jmp b8
-Removing instruction jmp b7
+Removing instruction jmp b17
+Removing instruction jmp b6
 Removing instruction jmp b9
+Removing instruction jmp b8
 Removing instruction jmp b10
 Removing instruction jmp b11
-Removing instruction jmp b17
-Removing instruction jmp b13
+Removing instruction jmp b12
 Removing instruction jmp b18
 Removing instruction jmp b14
-Removing instruction jmp b12
+Removing instruction jmp b19
 Removing instruction jmp b15
+Removing instruction jmp b13
+Removing instruction jmp b16
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
@@ -2473,43 +2486,41 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction lda #0 with TXA
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b5_from_b7 with b5
-Replacing label b4_from_b9 with b4
-Replacing label b12_from_b17 with b12
-Replacing label b12_from_b18 with b12
-Replacing label b11_from_b12 with b11
+Replacing label b6_from_b8 with b6
+Replacing label b5_from_b10 with b5
+Replacing label b13_from_b18 with b13
+Replacing label b13_from_b19 with b13
+Replacing label b12_from_b13 with b12
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction b4_from_b9:
-Removing instruction b5_from_b7:
-Removing instruction b11_from_b12:
-Removing instruction b12_from_b14:
-Removing instruction b12_from_b17:
-Removing instruction b12_from_b18:
-Removing instruction b15_from_b12:
+Removing instruction b3_from_b1:
+Removing instruction b5_from_b10:
+Removing instruction b6_from_b8:
+Removing instruction b12_from_b13:
+Removing instruction b13_from_b15:
+Removing instruction b13_from_b18:
+Removing instruction b13_from_b19:
+Removing instruction b16_from_b13:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b2:
-Removing instruction b4_from_b3:
-Removing instruction keyboard_matrix_read_from_b4:
-Removing instruction b16:
-Removing instruction b5_from_b16:
-Removing instruction b8:
+Removing instruction b3:
+Removing instruction b5_from_b4:
+Removing instruction keyboard_matrix_read_from_b5:
+Removing instruction b17:
+Removing instruction b6_from_b17:
 Removing instruction b9:
 Removing instruction b10:
-Removing instruction b11_from_b10:
-Removing instruction b17:
-Removing instruction b13:
+Removing instruction b11:
+Removing instruction b12_from_b11:
 Removing instruction b18:
 Removing instruction b14:
+Removing instruction b19:
 Removing instruction b15:
+Removing instruction b16:
+Removing instruction b1_from_b2:
 Removing instruction keyboard_matrix_read_from_keyboard_key_pressed:
 Removing instruction b1:
 Removing instruction breturn:
@@ -2520,15 +2531,16 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b15_from_b15 to b2
+Relabelling long label b16_from_b16 to b3
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction jmp b1
-Removing instruction jmp b4
 Removing instruction jmp b5
-Removing instruction jmp b11
+Removing instruction jmp b6
+Removing instruction jmp b12
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Fixing long branch [76] bcc b2 to bcs
+Fixing long branch [82] bcc b2 to bcs
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -2696,6 +2708,7 @@ FINAL SYMBOL TABLE
 (label) main::@16
 (label) main::@17
 (label) main::@18
+(label) main::@19
 (label) main::@2
 (label) main::@3
 (label) main::@4
@@ -2726,8 +2739,8 @@ FINAL SYMBOL TABLE
 (byte) main::row_pressed_bits#1 reg byte x 667.3333333333334
 (byte) main::row_pressed_bits#2 reg byte x 620.8
 (byte*) main::sc
-(byte*) main::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) main::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) main::sc#1 sc zp ZP_WORD:2 22.0
+(byte*) main::sc#2 sc zp ZP_WORD:2 14.666666666666666
 (byte*) main::screen
 (byte*) main::screen#1 screen zp ZP_WORD:4 71.0
 (byte*) main::screen#13 screen zp ZP_WORD:4 169.53846153846155
@@ -2758,7 +2771,7 @@ reg byte a [ keyboard_get_keycode::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 56821
+Score: 56911
 
   // File Comments
 // Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
@@ -2846,108 +2859,100 @@ main: {
     lda #>$400
     sta sc+1
   // Clear screen
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   b1:
-    // *sc = ' '
-    // [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
     // for(byte* sc = $400; sc<$400+1000;sc++)
-    // [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [8] if((byte*) main::sc#1<(word)(number) $400+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+    // [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
-    bcc b1
+    bcs !b2+
+    jmp b2
+  !b2:
     bne !+
     lda sc
     cmp #<$400+$3e8
-    bcc b1
+    bcs !b2+
+    jmp b2
+  !b2:
   !:
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // main::@2
-    // keyboard_init()
-    // [10] call keyboard_init 
-    jsr keyboard_init
+    // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // main::@3
-  b3:
+    // keyboard_init()
+    // [8] call keyboard_init 
+    jsr keyboard_init
+    // main::@4
+  b4:
     // while (*RASTER!=$ff)
-    // [11] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [9] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b3
-    // [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-    // [12] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    bne b4
+    // [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [10] phi (byte*) main::screen#13 = (byte*) 1024 [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    // [12] phi (byte) main::row#2 = (byte) 0 [phi:main::@3->main::@4#1] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::row#2 = (byte) 0 [phi:main::@4->main::@5#1] -- vbuz1=vbuc1 
     lda #0
     sta row
   // Read & print keyboard matrix
-    // [12] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-    // [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@9->main::@4#1] -- register_copy 
-    // main::@4
-  b4:
-    // keyboard_matrix_read(row)
-    // [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
-    ldy row
-    // [14] call keyboard_matrix_read 
-    // [57] phi from main::@4 to keyboard_matrix_read [phi:main::@4->keyboard_matrix_read]
-    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@4->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // keyboard_matrix_read(row)
-    // [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
-    // main::@16
-    // row_pressed_bits = keyboard_matrix_read(row)
-    // [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
-    tax
-    // [17] phi from main::@16 to main::@5 [phi:main::@16->main::@5]
-    // [17] phi (byte) main::col#2 = (byte) 0 [phi:main::@16->main::@5#0] -- vbuyy=vbuc1 
-    ldy #0
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@16->main::@5#1] -- register_copy 
-    // [17] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-    // [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@7->main::@5#0] -- register_copy 
-    // [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@7->main::@5#1] -- register_copy 
+    // [10] phi from main::@10 to main::@5 [phi:main::@10->main::@5]
+    // [10] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@10->main::@5#0] -- register_copy 
+    // [10] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@10->main::@5#1] -- register_copy 
     // main::@5
   b5:
+    // keyboard_matrix_read(row)
+    // [11] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
+    ldy row
+    // [12] call keyboard_matrix_read 
+    // [57] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+    // [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // keyboard_matrix_read(row)
+    // [13] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
+    // main::@17
+    // row_pressed_bits = keyboard_matrix_read(row)
+    // [14] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
+    tax
+    // [15] phi from main::@17 to main::@6 [phi:main::@17->main::@6]
+    // [15] phi (byte) main::col#2 = (byte) 0 [phi:main::@17->main::@6#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@17->main::@6#1] -- register_copy 
+    // [15] phi from main::@8 to main::@6 [phi:main::@8->main::@6]
+    // [15] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@8->main::@6#0] -- register_copy 
+    // [15] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@8->main::@6#1] -- register_copy 
+    // main::@6
+  b6:
     // row_pressed_bits & $80
-    // [18] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
+    // [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
     // if( (row_pressed_bits & $80) != 0)
-    // [19] if((byte~) main::$4!=(byte) 0) goto main::@6 -- vbuaa_neq_0_then_la1 
+    // [17] if((byte~) main::$4!=(byte) 0) goto main::@7 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b6
-    // main::@8
+    bne b7
+    // main::@9
     // screen[col] = '0'
-    // [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'0'
     sta (screen),y
-    // main::@7
-  b7:
+    // main::@8
+  b8:
     // row_pressed_bits = row_pressed_bits * 2
-    // [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [19] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
     // for(byte col : 0..7)
-    // [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
+    // [20] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [23] if((byte) main::col#1!=(byte) 8) goto main::@5 -- vbuyy_neq_vbuc1_then_la1 
+    // [21] if((byte) main::col#1!=(byte) 8) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
-    bne b5
-    // main::@9
+    bne b6
+    // main::@10
     // screen = screen + 40
-    // [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -2956,15 +2961,15 @@ main: {
     inc screen+1
   !:
     // for(byte row : 0..7)
-    // [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+    // [23] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
     inc row
-    // [26] if((byte) main::row#1!=(byte) 8) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [24] if((byte) main::row#1!=(byte) 8) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp row
-    bne b4
-    // main::@10
+    bne b5
+    // main::@11
     // screen = screen + 40
-    // [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [25] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -2972,90 +2977,106 @@ main: {
     bcc !+
     inc screen+1
   !:
-    // [28] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
-    // [28] phi (byte) main::i#3 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
+    // [26] phi from main::@11 to main::@12 [phi:main::@11->main::@12]
+    // [26] phi (byte) main::i#3 = (byte) 0 [phi:main::@11->main::@12#0] -- vbuxx=vbuc1 
     ldx #0
-    // [28] phi (byte) main::ch#2 = (byte) 0 [phi:main::@10->main::@11#1] -- vbuz1=vbuc1 
+    // [26] phi (byte) main::ch#2 = (byte) 0 [phi:main::@11->main::@12#1] -- vbuz1=vbuc1 
     txa
     sta ch
-    // [28] phi from main::@12 to main::@11 [phi:main::@12->main::@11]
-    // [28] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@12->main::@11#0] -- register_copy 
-    // [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@12->main::@11#1] -- register_copy 
-    // main::@11
-  b11:
+    // [26] phi from main::@13 to main::@12 [phi:main::@13->main::@12]
+    // [26] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@13->main::@12#0] -- register_copy 
+    // [26] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@13->main::@12#1] -- register_copy 
+    // main::@12
+  b12:
     // keyboard_get_keycode(ch)
-    // [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
+    // [27] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
     ldy ch
-    // [30] call keyboard_get_keycode 
+    // [28] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-    // [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
-    // main::@17
-    // key = keyboard_get_keycode(ch)
-    // [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-    // if(key!=$3f)
-    // [33] if((byte) main::key#0==(byte) $3f) goto main::@12 -- vbuaa_eq_vbuc1_then_la1 
-    cmp #$3f
-    beq b12
-    // main::@13
-    // keyboard_key_pressed(key)
-    // [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
-    tay
-    // [35] call keyboard_key_pressed 
-    jsr keyboard_key_pressed
-    // [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // [29] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
     // main::@18
-    // [37] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
-    // if(keyboard_key_pressed(key)!=0)
-    // [38] if((byte~) main::$14==(byte) 0) goto main::@12 -- vbuaa_eq_0_then_la1 
-    cmp #0
-    beq b12
+    // key = keyboard_get_keycode(ch)
+    // [30] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+    // if(key!=$3f)
+    // [31] if((byte) main::key#0==(byte) $3f) goto main::@13 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$3f
+    beq b13
     // main::@14
+    // keyboard_key_pressed(key)
+    // [32] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
+    tay
+    // [33] call keyboard_key_pressed 
+    jsr keyboard_key_pressed
+    // [34] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // main::@19
+    // [35] (byte~) main::$14 ← (byte) keyboard_key_pressed::return#2
+    // if(keyboard_key_pressed(key)!=0)
+    // [36] if((byte~) main::$14==(byte) 0) goto main::@13 -- vbuaa_eq_0_then_la1 
+    cmp #0
+    beq b13
+    // main::@15
     // screen[i++] = ch
-    // [39] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
+    // [37] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
     txa
     tay
     lda ch
     sta (screen),y
     // screen[i++] = ch;
-    // [40] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
+    // [38] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [41] phi from main::@14 main::@17 main::@18 to main::@12 [phi:main::@14/main::@17/main::@18->main::@12]
-    // [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@14/main::@17/main::@18->main::@12#0] -- register_copy 
-    // main::@12
-  b12:
+    // [39] phi from main::@15 main::@18 main::@19 to main::@13 [phi:main::@15/main::@18/main::@19->main::@13]
+    // [39] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@15/main::@18/main::@19->main::@13#0] -- register_copy 
+    // main::@13
+  b13:
     // for( byte ch : 0..$3f )
-    // [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // [40] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-    // [43] if((byte) main::ch#1!=(byte) $40) goto main::@11 -- vbuz1_neq_vbuc1_then_la1 
+    // [41] if((byte) main::ch#1!=(byte) $40) goto main::@12 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp ch
-    bne b11
-    // [44] phi from main::@12 main::@15 to main::@15 [phi:main::@12/main::@15->main::@15]
-  b2:
-    // [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@12/main::@15->main::@15#0] -- register_copy 
+    bne b12
+    // [42] phi from main::@13 main::@16 to main::@16 [phi:main::@13/main::@16->main::@16]
+  b3:
+    // [42] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@13/main::@16->main::@16#0] -- register_copy 
   // Add some spaces
-    // main::@15
+    // main::@16
     // screen[i++] = ' '
-    // [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
+    // [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
     txa
     tay
     lda #' '
     sta (screen),y
     // screen[i++] = ' ';
-    // [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
+    // [44] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
     inx
     // while (i<5)
-    // [47] if((byte) main::i#2<(byte) 5) goto main::@15 -- vbuxx_lt_vbuc1_then_la1 
+    // [45] if((byte) main::i#2<(byte) 5) goto main::@16 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
-    bcc b2
-    jmp b3
-    // main::@6
-  b6:
+    bcc b3
+    jmp b4
+    // main::@7
+  b7:
     // screen[col] = '1'
-    // [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'1'
     sta (screen),y
-    jmp b7
+    jmp b8
+    // main::@2
+  b2:
+    // *sc = ' '
+    // [47] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // for(byte* sc = $400; sc<$400+1000;sc++)
+    // [48] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly

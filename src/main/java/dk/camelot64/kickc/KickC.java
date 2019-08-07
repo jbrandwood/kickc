@@ -66,6 +66,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
 
+   @CommandLine.Option(names = {"-Oloophead"}, description = "Optimization Option. Enables loop-head constant pass which identifies loops where the condition is constant on the first iteration.")
+   private boolean optimizeLoopHeadConstant = false;
+
    @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
    private boolean optimizeFragmentCache = false;
 
@@ -210,6 +213,10 @@ public class KickC implements Callable<Void> {
 
          if(optimizeZeroPageCoalesce) {
             compiler.enableZeroPageCoalasce();
+         }
+
+         if(optimizeLoopHeadConstant) {
+            compiler.enableLoopHeadConstant();
          }
 
          System.out.println("Compiling " + kcFile);

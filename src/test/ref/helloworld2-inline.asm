@@ -7,25 +7,29 @@ main: {
     ldx #0
     ldy #0
   print21_b1:
-    lda hello,y
-    sta screen,x
-    inx
-    inx
-    iny
     lda #'@'
     cmp hello,y
-    bne print21_b1
+    bne print21_b2
     ldx #0
     ldy #0
   print22_b1:
+    lda #'@'
+    cmp hello,y
+    bne print22_b2
+    rts
+  print22_b2:
     lda hello,y
     sta print22_at,x
     inx
     inx
     iny
-    lda #'@'
-    cmp hello,y
-    bne print22_b1
-    rts
+    jmp print22_b1
+  print21_b2:
+    lda hello,y
+    sta screen,x
+    inx
+    inx
+    iny
+    jmp print21_b1
     hello: .text "hello world!@"
 }

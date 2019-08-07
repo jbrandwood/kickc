@@ -1,5 +1,8 @@
 Culled Empty Block (label) @1
-Culled Empty Block (label) print_cls::@2
+Culled Empty Block (label) print_cls::@4
+Culled Empty Block (label) print_cls::@3
+Culled Empty Block (label) print_cls::@5
+Culled Empty Block (label) print_cls::@6
 Culled Empty Block (label) @2
 Culled Empty Block (label) mode_ctrl::@6
 Culled Empty Block (label) mode_ctrl::@3
@@ -27,14 +30,17 @@ main::@return: scope:[main]  from main::@2
 print_cls: scope:[print_cls]  from main
   (byte*) print_cls::sc#0 ← (byte*) SCREEN#0
   to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  *((byte*) print_cls::sc#2) ← (byte) ' '
-  (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
+  (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@2/(byte*) print_cls::sc#1 )
   (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
-  (bool~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
-  if((bool~) print_cls::$1) goto print_cls::@1
+  (bool~) print_cls::$1 ← (byte*) print_cls::sc#2 != (byte*~) print_cls::$0
+  if((bool~) print_cls::$1) goto print_cls::@2
   to:print_cls::@return
+print_cls::@2: scope:[print_cls]  from print_cls::@1
+  (byte*) print_cls::sc#3 ← phi( print_cls::@1/(byte*) print_cls::sc#2 )
+  *((byte*) print_cls::sc#3) ← (byte) ' '
+  (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#3
+  to:print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   return 
   to:@return
@@ -90,11 +96,13 @@ SYMBOL TABLE SSA
 (byte*~) print_cls::$0
 (bool~) print_cls::$1
 (label) print_cls::@1
+(label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
 (byte*) print_cls::sc#0
 (byte*) print_cls::sc#1
 (byte*) print_cls::sc#2
+(byte*) print_cls::sc#3
 
 Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
 Adding number conversion cast (unumber) $ff in (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
@@ -118,19 +126,21 @@ Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) print_cls::$1 [11] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) mode_ctrl::$0 [16] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
+Alias (byte*) print_cls::sc#2 = (byte*) print_cls::sc#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition (bool~) print_cls::$1 [9] if((byte*) print_cls::sc#2!=(byte*~) print_cls::$0) goto print_cls::@2
+Simple Condition (bool~) mode_ctrl::$0 [17] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) BORDERCOL#0 = (byte*) 53280
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = SCREEN#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [13] if(true) goto mode_ctrl::@2
+if() condition always true - replacing block destination [14] if(true) goto mode_ctrl::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block mode_ctrl::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [6] (byte*~) print_cls::$0 ← (const byte*) SCREEN#0 + (word) $3e8
+Constant right-side identified [4] (byte*~) print_cls::$0 ← (const byte*) SCREEN#0 + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_cls::$0 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
@@ -138,7 +148,6 @@ Inlining constant with var siblings (const byte*) print_cls::sc#0
 Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
 Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
@@ -154,12 +163,11 @@ Calls in [] to main:2
 Calls in [main] to print_cls:6 mode_ctrl:8 
 
 Created 1 initial phi equivalence classes
-Coalesced [23] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [23] print_cls::sc#4 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) mode_ctrl::@1
-Culled Empty Block (label) print_cls::@3
 Renumbering block @3 to @1
 Renumbering block mode_ctrl::@2 to mode_ctrl::@1
 Renumbering block mode_ctrl::@4 to mode_ctrl::@2
@@ -209,15 +217,17 @@ mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
 print_cls: scope:[print_cls]  from main
   [14] phi()
   to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  [16] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
+  [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@2/(byte*) print_cls::sc#1 )
+  [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [19] return 
+  [17] return 
   to:@return
+print_cls::@2: scope:[print_cls]  from print_cls::@1
+  [18] *((byte*) print_cls::sc#2) ← (byte) ' '
+  [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+  to:print_cls::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -229,8 +239,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) mode_ctrl::before#0 22.0
 (void()) print_cls()
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 16.5
-(byte*) print_cls::sc#2 16.5
+(byte*) print_cls::sc#1 22.0
+(byte*) print_cls::sc#2 14.666666666666666
 
 Initial phi equivalence classes
 [ print_cls::sc#2 print_cls::sc#1 ]
@@ -326,46 +336,48 @@ print_cls: {
     lda #>SCREEN
     sta sc+1
     jmp b1
-    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
     // print_cls::@1
   b1:
-    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    jmp breturn
+    // print_cls::@return
+  breturn:
+    // [17] return 
+    rts
+    // print_cls::@2
+  b2:
+    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b1_from_b1
-    jmp breturn
-    // print_cls::@return
-  breturn:
-    // [19] return 
-    rts
+    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+  b1_from_b2:
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) BORDERCOL#0) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) BORDERCOL#0) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
-Statement [16] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a 
+Statement [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ mode_ctrl::before#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print_cls] 33: zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplift Scope [print_cls] 36.67: zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [mode_ctrl] 22: zp ZP_BYTE:4 [ mode_ctrl::before#0 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
@@ -456,33 +468,35 @@ print_cls: {
     lda #>SCREEN
     sta sc+1
     jmp b1
-    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  b1_from_b1:
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-    jmp b1
     // print_cls::@1
   b1:
-    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    jmp breturn
+    // print_cls::@return
+  breturn:
+    // [17] return 
+    rts
+    // print_cls::@2
+  b2:
+    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1_from_b1
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b1_from_b1
-    jmp breturn
-    // print_cls::@return
-  breturn:
-    // [19] return 
-    rts
+    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+  b1_from_b2:
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
@@ -496,15 +510,12 @@ Removing instruction jmp b3
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction mode_ctrl_from_b1:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
@@ -513,12 +524,11 @@ Removing instruction breturn:
 Removing instruction b3:
 Removing instruction b1_from_print_cls:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -541,17 +551,18 @@ FINAL SYMBOL TABLE
 (byte) mode_ctrl::before#0 reg byte a 22.0
 (void()) print_cls()
 (label) print_cls::@1
+(label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:2 22.0
+(byte*) print_cls::sc#2 sc zp ZP_WORD:2 14.666666666666666
 
 zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
 reg byte a [ mode_ctrl::before#0 ]
 
 
 FINAL ASSEMBLER
-Score: 764
+Score: 794
 
   // File Comments
   // Upstart
@@ -619,32 +630,36 @@ print_cls: {
     sta sc
     lda #>SCREEN
     sta sc+1
-    // [15] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     // print_cls::@1
   b1:
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    // print_cls::@return
+    // }
+    // [17] return 
+    rts
+    // print_cls::@2
+  b2:
     // *sc = ' '
-    // [16] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b1
-    // print_cls::@return
-    // }
-    // [19] return 
-    rts
+    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 

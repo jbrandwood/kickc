@@ -1,4 +1,7 @@
 Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -8,18 +11,21 @@ main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 0
   (byte) main::i#1 ← (number) 7
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#3 ← phi( main/(byte) main::i#1 main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN#0 + (byte) main::i#3) ← (byte) main::i#3
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#3 ← phi( main/(byte) main::i#1 main::@2/(byte) main::i#4 )
   (bool~) main::$0 ← (byte) main::i#3 < (number) 7
   (byte) main::i#2 ← ++ (byte) main::i#3
-  if((bool~) main::$0) goto main::@1
-  to:main::@2
+  if((bool~) main::$0) goto main::@2
+  to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN#0 + (byte) main::i#4) ← (byte) 'x'
+  *((byte*) SCREEN#0 + (byte) main::i#4) ← (byte) main::i#4
+  to:main::@1
+main::@3: scope:[main]  from main::@1
+  (byte) main::i#5 ← phi( main::@1/(byte) main::i#2 )
+  *((byte*) SCREEN#0 + (byte) main::i#5) ← (byte) 'x'
   to:main::@return
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
@@ -40,6 +46,7 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
@@ -47,6 +54,7 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (byte) main::i#4
+(byte) main::i#5
 
 Adding number conversion cast (unumber) 7 in (byte) main::i#1 ← (number) 7
 Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) main::i#3 < (number) 7
@@ -61,9 +69,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) main::i#2 = (byte) main::i#4 
+Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [7] if((byte) main::i#3<(byte) 7) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#3<(byte) 7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
@@ -71,60 +79,9 @@ Constant (const byte) main::i#1 = 7
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) main::i#0
 Successful SSA optimization PassNEliminateUnusedVars
-GRAPH (NEW VERSIONS for main::i#2)
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [0] (byte) main::i#3 ← phi( main/(const byte) main::i#1 main::@1/(byte) main::i#2 )
-  [1] *((const byte*) SCREEN#0 + (byte) main::i#3) ← (byte) main::i#3
-  [2] (byte) main::i#2 ← ++ (byte) main::i#3
-  [3] if((byte) main::i#3<(byte) 7) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#5 ← phi( )
-  [4] *((const byte*) SCREEN#0 + (byte) main::i#5) ← (byte) 'x'
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [5] return 
-  to:@return
-@1: scope:[]  from @begin
-  [6] call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
-Successful SSA optimization Pass2LoopHeadConstantIdentification
-Identical Phi Values (byte) main::i#6 (const byte) main::i#1
-Successful SSA optimization Pass2IdenticalPhiElimination
-Negating conditional jump and destination [11] if((const byte) main::i#1>=(byte) 7) goto main::@2
-Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [10] (byte) main::i#7 ← ++ (const byte) main::i#1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#7 = ++main::i#1
-Successful SSA optimization Pass2ConstantIdentification
-Removing PHI-reference to removed block (main::@1_1) in block main::@1
-if() condition always true - replacing block destination [11] if((const byte) main::i#1>=(byte) 7) goto main::@2
-Successful SSA optimization Pass2ConstantIfs
-Eliminating variable (byte) main::i#3 from unused block main::@1
-Eliminating variable (byte) main::i#2 from unused block main::@1
-Removing PHI-reference to removed block (main::@1) in block main::@2
-Removing unused block main::@1
-Successful SSA optimization Pass2EliminateUnusedBlocks
-Identical Phi Values (byte) main::i#5 (const byte) main::i#7
-Successful SSA optimization Pass2IdenticalPhiElimination
-Inlining constant with different constant siblings (const byte) main::i#1
-Inlining constant with different constant siblings (const byte) main::i#7
-Constant inlined main::i#7 = ++(byte) 7
+Inlining constant with var siblings (const byte) main::i#1
 Constant inlined main::i#1 = (byte) 7
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN#0+++7)
-Consolidated array index constant in *(SCREEN#0+7)
-Successful SSA optimization Pass2ConstantAdditionElimination
-Simplifying constant integer increment ++7
-Successful SSA optimization Pass2ConstantSimplification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -133,10 +90,10 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 1 initial phi equivalence classes
+Not coalescing [12] main::i#6 ← main::i#2
+Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @2
-Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -154,25 +111,40 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] phi()
-  to:main::@1_1
-main::@1_1: scope:[main]  from main
-  [5] *((const byte*) SCREEN#0+(byte) 7) ← (byte) 7
   to:main::@1
-main::@1: scope:[main]  from main::@1_1
-  [6] *((const byte*) SCREEN#0+(byte) 8) ← (byte) 'x'
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::i#3 ← phi( main/(byte) 7 main::@2/(byte~) main::i#6 )
+  [6] (byte) main::i#2 ← ++ (byte) main::i#3
+  [7] if((byte) main::i#3<(byte) 7) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x'
   to:main::@return
-main::@return: scope:[main]  from main::@1
-  [7] return 
+main::@return: scope:[main]  from main::@3
+  [9] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
+  [11] (byte~) main::i#6 ← (byte) main::i#2
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (void()) main()
 (byte) main::i
+(byte) main::i#2 15.333333333333332
+(byte) main::i#3 16.5
+(byte~) main::i#6 22.0
 
 Initial phi equivalence classes
+[ main::i#3 main::i#6 ]
+Added variable main::i#2 to zero page equivalence class [ main::i#2 ]
 Complete equivalence classes
+[ main::i#3 main::i#6 ]
+[ main::i#2 ]
+Allocated zp ZP_BYTE:2 [ main::i#3 main::i#6 ]
+Allocated zp ZP_BYTE:3 [ main::i#2 ]
 
 INITIAL ASM
 Target platform is c64basic
@@ -203,37 +175,65 @@ bend_from_b1:
 bend:
   // main
 main: {
-    jmp b1_1
-    // main::@1_1
-  b1_1:
-    // [5] *((const byte*) SCREEN#0+(byte) 7) ← (byte) 7 -- _deref_pbuc1=vbuc2 
+    .label i = 3
+    .label i_3 = 2
+    .label i_6 = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#3 = (byte) 7 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #7
-    sta SCREEN+7
+    sta i_3
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) SCREEN#0+(byte) 8) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [6] (byte) main::i#2 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz2 
+    ldy i_3
+    iny
+    sty i
+    // [7] if((byte) main::i#3<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda i_3
+    cmp #7
+    bcc b2
+    jmp b3
+    // main::@3
+  b3:
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuz1=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
-    sta SCREEN+8
+    ldy i
+    sta SCREEN,y
     jmp breturn
     // main::@return
   breturn:
-    // [7] return 
+    // [9] return 
     rts
+    // main::@2
+  b2:
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy i
+    tya
+    sta SCREEN,y
+    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    lda i
+    sta i_6
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) SCREEN#0+(byte) 7) ← (byte) 7 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN#0+(byte) 8) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#6 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::i#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#3 main::i#6 ] 15.33: zp ZP_BYTE:3 [ main::i#2 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 66 combination 
-Uplifting [] best 66 combination 
+Uplifting [main] best 313 combination reg byte a [ main::i#3 main::i#6 ] reg byte x [ main::i#2 ] 
+Uplifting [] best 313 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -263,32 +263,50 @@ bend_from_b1:
 bend:
   // main
 main: {
-    jmp b1_1
-    // main::@1_1
-  b1_1:
-    // [5] *((const byte*) SCREEN#0+(byte) 7) ← (byte) 7 -- _deref_pbuc1=vbuc2 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#3 = (byte) 7 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #7
-    sta SCREEN+7
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) SCREEN#0+(byte) 8) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [6] (byte) main::i#2 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
+    // [7] if((byte) main::i#3<(byte) 7) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #7
+    bcc b2
+    jmp b3
+    // main::@3
+  b3:
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
-    sta SCREEN+8
+    sta SCREEN,x
     jmp breturn
     // main::@return
   breturn:
-    // [7] return 
+    // [9] return 
     rts
+    // main::@2
+  b2:
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
-Removing instruction jmp b1_1
 Removing instruction jmp b1
+Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction b1_from_bbegin:
@@ -297,9 +315,10 @@ Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b1_1:
-Removing instruction b1:
+Removing instruction b1_from_main:
+Removing instruction b3:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -315,14 +334,20 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
-(label) main::@1_1
+(label) main::@2
+(label) main::@3
 (label) main::@return
 (byte) main::i
+(byte) main::i#2 reg byte x 15.333333333333332
+(byte) main::i#3 reg byte a 16.5
+(byte~) main::i#6 reg byte a 22.0
 
+reg byte a [ main::i#3 main::i#6 ]
+reg byte x [ main::i#2 ]
 
 
 FINAL ASSEMBLER
-Score: 18
+Score: 238
 
   // File Comments
 // Test a for()-loop where the condition has a side-effect
@@ -342,21 +367,39 @@ Score: 18
   // @end
   // main
 main: {
-    // main::@1_1
-    // SCREEN[i] = i
-    // [5] *((const byte*) SCREEN#0+(byte) 7) ← (byte) 7 -- _deref_pbuc1=vbuc2 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#3 = (byte) 7 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #7
-    sta SCREEN+7
     // main::@1
+  b1:
+    // for(i=7;i++<7;)
+    // [6] (byte) main::i#2 ← ++ (byte) main::i#3 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
+    // [7] if((byte) main::i#3<(byte) 7) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #7
+    bcc b2
+    // main::@3
     // (SCREEN)[i] = 'x'
-    // [6] *((const byte*) SCREEN#0+(byte) 8) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
-    sta SCREEN+8
+    sta SCREEN,x
     // main::@return
     // }
-    // [7] return 
+    // [9] return 
     rts
+    // main::@2
+  b2:
+    // SCREEN[i] = i
+    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    txa
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 

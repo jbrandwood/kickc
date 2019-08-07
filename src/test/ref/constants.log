@@ -9,7 +9,10 @@ Identified constant variable (byte) test_bytes::bb
 Identified constant variable (signed byte) test_sbytes::bb
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@7
+Culled Empty Block (label) memset::@6
+Culled Empty Block (label) memset::@8
+Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
@@ -58,7 +61,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@12
 memset: scope:[memset]  from print_cls
-  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (byte) memset::c#4 ← phi( print_cls/(byte) memset::c#0 )
   (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
   (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
   (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
@@ -70,7 +73,7 @@ memset::@1: scope:[memset]  from memset memset::@4
   (void*) memset::return#0 ← (void*) memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
   (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
@@ -78,16 +81,22 @@ memset::@2: scope:[memset]  from memset
   (byte*) memset::end#0 ← (byte*~) memset::$3
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
-memset::@4: scope:[memset]  from memset::@2 memset::@4
-  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
-  *((byte*) memset::dst#2) ← (byte) memset::c#1
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@5
+  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@5/(byte) memset::c#1 )
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
+  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@5
   to:memset::@1
+memset::@5: scope:[memset]  from memset::@4
+  (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#2 ← phi( memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#3 ← phi( memset::@4/(byte*) memset::dst#2 )
+  (byte) memset::c#1 ← phi( memset::@4/(byte) memset::c#2 )
+  *((byte*) memset::dst#3) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  to:memset::@4
 memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
   (void*) memset::return#1 ← (void*) memset::return#3
@@ -579,19 +588,23 @@ SYMBOL TABLE SSA
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
+(label) memset::@5
 (label) memset::@return
 (byte) memset::c
 (byte) memset::c#0
 (byte) memset::c#1
 (byte) memset::c#2
 (byte) memset::c#3
+(byte) memset::c#4
 (byte*) memset::dst
 (byte*) memset::dst#0
 (byte*) memset::dst#1
 (byte*) memset::dst#2
+(byte*) memset::dst#3
 (byte*) memset::end
 (byte*) memset::end#0
 (byte*) memset::end#1
+(byte*) memset::end#2
 (word) memset::num
 (word) memset::num#0
 (word) memset::num#1
@@ -607,6 +620,7 @@ SYMBOL TABLE SSA
 (void*) memset::str#2
 (void*) memset::str#3
 (void*) memset::str#4
+(void*) memset::str#5
 (byte*) print_char_cursor
 (byte*) print_char_cursor#0
 (byte*) print_char_cursor#1
@@ -938,8 +952,12 @@ Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
 Alias (word) memset::num#1 = (word) memset::num#2 
-Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte) memset::c#3 = (byte) memset::c#4 
 Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte) memset::c#1 = (byte) memset::c#2 
+Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
+Alias (byte*) memset::end#1 = (byte*) memset::end#2 
+Alias (void*) memset::str#4 = (void*) memset::str#5 
 Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#58 (byte*) print_char_cursor#81 (byte*) print_screen#5 (byte*) print_line_cursor#53 (byte*) print_char_cursor#79 (byte*) print_screen#4 
 Alias (byte*) print_str::str#10 = (byte*) print_str::str#9 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#34 (byte*) print_char_cursor#66 (byte*) print_char_cursor#35 
@@ -999,10 +1017,10 @@ Alias (byte*) print_line_cursor#52 = (byte*) print_line_cursor#56
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) memset::num#1 (word) memset::num#0
 Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
-Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
-Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte) memset::c#3 (byte) memset::c#0
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
 Identical Phi Values (byte*) print_char_cursor#36 (byte*) print_char_cursor#67
 Identical Phi Values (byte*) print_line_cursor#27 (byte*) print_screen#3
 Identical Phi Values (byte*) print_screen#3 (byte*) print_line_cursor#0
@@ -1058,13 +1076,13 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) print_char_cursor#67 (byte*) print_char_cursor#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [15] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) print_str::$0 [25] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [38] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
-Simple Condition (bool~) assert_byte::$2 [123] if((byte) assert_byte::b#3!=(byte) assert_byte::c#3) goto assert_byte::@1
-Simple Condition (bool~) assert_sbyte::$2 [203] if((signed byte) assert_sbyte::b#5!=(signed byte) assert_sbyte::c#5) goto assert_sbyte::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) print_str::$0 [26] if(*((byte*) print_str::str#10)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
+Simple Condition (bool~) assert_byte::$2 [124] if((byte) assert_byte::b#3!=(byte) assert_byte::c#3) goto assert_byte::@1
+Simple Condition (bool~) assert_sbyte::$2 [204] if((signed byte) assert_sbyte::b#5!=(signed byte) assert_sbyte::c#5) goto assert_sbyte::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [180] (signed byte) test_sbytes::bf#0 ← (signed byte)(number) -$7f-(number) $7f
+Constant right-side identified [181] (signed byte) test_sbytes::bf#0 ← (signed byte)(number) -$7f-(number) $7f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
@@ -1102,13 +1120,13 @@ Constant (const byte) assert_byte::b#0 = test_bytes::bb#0
 Constant (const signed byte) assert_sbyte::b#0 = test_sbytes::bb#0
 Constant (const signed byte) assert_sbyte::b#4 = test_sbytes::bf#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)print_line_cursor#0 in [46] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
+Constant value identified (void*)print_line_cursor#0 in [47] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization Pass2ConstantStringConsolidation
-Simplifying expression containing zero 2 in [89] (byte) test_bytes::bc#0 ← (const byte) test_bytes::bb#0 + (byte) 2
-Simplifying expression containing zero 2 in [153] (signed byte) test_sbytes::bc#0 ← (const signed byte) test_sbytes::bb#0 + (signed byte) 2
+Simplifying expression containing zero 2 in [90] (byte) test_bytes::bc#0 ← (const byte) test_bytes::bb#0 + (byte) 2
+Simplifying expression containing zero 2 in [154] (signed byte) test_sbytes::bc#0 ← (const signed byte) test_sbytes::bb#0 + (signed byte) 2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [22] (void*) memset::return#2 ← (void*) memset::str#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -1226,7 +1244,6 @@ Constant inlined print_str::str#8 = (const string) str2
 Constant inlined print_str::str#7 = (const string) str1
 Constant inlined print_str::str#6 = (const string) str
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
@@ -1289,7 +1306,7 @@ Coalesced (already) [80] print_char_cursor#85 ← print_char_cursor#2
 Coalesced (already) [83] print_char_cursor#84 ← print_char_cursor#2
 Coalesced (already) [86] print_line_cursor#69 ← print_line_cursor#50
 Coalesced (already) [91] print_char_cursor#83 ← print_char_cursor#2
-Coalesced [106] memset::dst#3 ← memset::dst#1
+Coalesced [106] memset::dst#4 ← memset::dst#1
 Coalesced down to 10 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @36
@@ -1308,9 +1325,9 @@ Culled Empty Block (label) assert_byte::@7
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@6
 Renumbering block @41 to @1
 Renumbering block memset::@4 to memset::@1
+Renumbering block memset::@5 to memset::@2
 Renumbering block assert_byte::@5 to assert_byte::@4
 Renumbering block assert_byte::@6 to assert_byte::@5
 Renumbering block assert_sbyte::@5 to assert_sbyte::@4
@@ -1497,15 +1514,17 @@ print_cls::@return: scope:[print_cls]  from print_cls
 memset: scope:[memset]  from print_cls
   [71] phi()
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@1
-  [72] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
-  [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [74] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+memset::@1: scope:[memset]  from memset memset::@2
+  [72] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [76] return 
+  [74] return 
   to:@return
+memset::@2: scope:[memset]  from memset::@1
+  [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [76] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -1530,8 +1549,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#2 16.5
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 14.666666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -2146,33 +2165,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [72] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [74] return 
+    rts
+    // memset::@2
+  b2:
+    // [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [74] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [76] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [76] return 
-    rts
+    // [72] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   msg: .text "0=0@"
@@ -2202,8 +2223,8 @@ Statement [50] (byte*~) print_char_cursor#92 ← (byte*) print_line_cursor#1 [ p
 Statement [52] (byte*~) print_char_cursor#93 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#93 ] ( main:2::test_bytes:7 [ print_line_cursor#1 print_char_cursor#93 ] ) always clobbers reg byte a 
 Statement [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] ) always clobbers reg byte a 
 Statement [66] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ print_char_cursor#2 print_line_cursor#50 ] ( main:2::test_bytes:7::assert_byte:49 [ print_char_cursor#2 print_line_cursor#50 ] main:2::test_bytes:7::assert_byte:51 [ print_char_cursor#2 print_line_cursor#50 ] main:2::test_bytes:7::assert_byte:53 [ print_char_cursor#2 print_line_cursor#50 ] ) always clobbers reg byte a 
-Statement [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:69 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [6] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [24] (byte*~) print_char_cursor#86 ← (byte*) print_line_cursor#1 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 print_char_cursor#86 print_line_cursor#1 ] ) always clobbers reg byte a 
@@ -2216,8 +2237,8 @@ Statement [50] (byte*~) print_char_cursor#92 ← (byte*) print_line_cursor#1 [ p
 Statement [52] (byte*~) print_char_cursor#93 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#93 ] ( main:2::test_bytes:7 [ print_line_cursor#1 print_char_cursor#93 ] ) always clobbers reg byte a 
 Statement [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 print_char_cursor#70 print_line_cursor#50 assert_byte::b#3 assert_byte::c#3 ] ) always clobbers reg byte a 
 Statement [66] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ print_char_cursor#2 print_line_cursor#50 ] ( main:2::test_bytes:7::assert_byte:49 [ print_char_cursor#2 print_line_cursor#50 ] main:2::test_bytes:7::assert_byte:51 [ print_char_cursor#2 print_line_cursor#50 ] main:2::test_bytes:7::assert_byte:53 [ print_char_cursor#2 print_line_cursor#50 ] ) always clobbers reg byte a 
-Statement [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:69 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:69 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ assert_sbyte::msg#5 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ assert_sbyte::b#5 ] : zp ZP_BYTE:4 , reg byte x , 
 Potential registers zp ZP_BYTE:5 [ assert_sbyte::c#5 ] : zp ZP_BYTE:5 , reg byte x , 
@@ -2232,7 +2253,7 @@ Potential registers zp ZP_WORD:16 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:1
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 46.23: zp ZP_WORD:6 [ print_char_cursor#80 print_char_cursor#70 print_char_cursor#2 print_char_cursor#86 print_char_cursor#1 print_char_cursor#92 print_char_cursor#93 ] 31.8: zp ZP_WORD:10 [ print_line_cursor#24 print_line_cursor#47 print_line_cursor#50 print_line_cursor#1 ] 
 Uplift Scope [print_str] 45.5: zp ZP_WORD:8 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] 
-Uplift Scope [memset] 33: zp ZP_WORD:16 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 36.67: zp ZP_WORD:16 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [assert_byte] 2: zp ZP_WORD:12 [ assert_byte::msg#3 ] 0.4: zp ZP_BYTE:14 [ assert_byte::b#3 ] 0.4: zp ZP_BYTE:15 [ assert_byte::c#3 ] 
 Uplift Scope [assert_sbyte] 2: zp ZP_WORD:2 [ assert_sbyte::msg#5 ] 0.33: zp ZP_BYTE:4 [ assert_sbyte::b#5 ] 0.33: zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
 Uplift Scope [RADIX] 
@@ -2788,33 +2809,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [72] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [74] return 
+    rts
+    // memset::@2
+  b2:
+    // [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [74] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [76] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [76] return 
-    rts
+    // [72] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   msg: .text "0=0@"
@@ -2862,8 +2885,6 @@ Replacing label b1_from_b2 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b1 with b2
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -2896,7 +2917,6 @@ Removing instruction print_str_from_b3:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b3:
 Removing instruction print_ln_from_b2:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
@@ -2934,12 +2954,11 @@ Removing instruction memset_from_print_cls:
 Removing instruction breturn:
 Removing instruction b1_from_memset:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -2989,12 +3008,13 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
+(label) memset::@2
 (label) memset::@return
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:7 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:7 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:7 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:7 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -3076,7 +3096,7 @@ zp ZP_WORD:7 [ memset::dst#2 memset::dst#1 assert_sbyte::msg#5 print_str::str#10
 
 
 FINAL ASSEMBLER
-Score: 1852
+Score: 1882
 
   // File Comments
   // Upstart
@@ -3541,32 +3561,36 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-    // [72] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     // memset::@1
   b1:
+    // for(char* dst = str; dst!=end; dst++)
+    // [73] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    // memset::@return
+    // }
+    // [74] return 
+    rts
+    // memset::@2
+  b2:
     // *dst = c
-    // [73] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [75] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [74] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [76] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [75] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    // memset::@return
-    // }
-    // [76] return 
-    rts
+    // [72] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [72] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   msg: .text "0=0@"

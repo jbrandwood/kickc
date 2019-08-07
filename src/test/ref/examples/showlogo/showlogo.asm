@@ -82,6 +82,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -89,14 +98,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 .pc = LOGO "LOGO"
   .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))

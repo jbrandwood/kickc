@@ -31,6 +31,9 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
+   /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
+   private boolean enableLoopHeadConstant = false;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -41,6 +44,10 @@ public class Compiler {
 
    void enableZeroPageCoalasce() {
       this.enableZeroPageCoalasce = true;
+   }
+
+   void enableLoopHeadConstant() {
+      this.enableLoopHeadConstant = true;
    }
 
    void setTargetPlatform(TargetPlatform targetPlatform) {
@@ -305,10 +312,13 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
-      optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(() -> { program.clearDominators(); return false; });
-      optimizations.add(() -> { program.clearLoopSet(); return false; });
-      optimizations.add(new Pass2LoopHeadConstantIdentification(program));
+      if(enableLoopHeadConstant) {
+         optimizations.add(new PassNStatementIndices(program));
+         optimizations.add(() -> { program.clearDominators(); return false; });
+         optimizations.add(() -> { program.clearLoopSet(); return false; });
+         optimizations.add(new Pass2LoopHeadConstantIdentification(program));
+         optimizations.add(() -> { program.clearStatementIndices(); return false; });
+      }
       return optimizations;
    }
 

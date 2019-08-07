@@ -33,6 +33,14 @@ main: {
     sta entry
     lda #>ENTRIES
     sta entry+1
+  b1:
+    lda entry+1
+    cmp #>0
+    bne b2
+    lda entry
+    cmp #<0
+    bne b2
+    rts
   b2:
     lda #'0'
     clc
@@ -59,11 +67,5 @@ main: {
     sta entry+1
     pla
     sta entry
-    lda entry+1
-    cmp #>0
-    bne b2
-    lda entry
-    cmp #<0
-    bne b2
-    rts
+    jmp b1
 }

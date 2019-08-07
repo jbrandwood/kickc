@@ -63,8 +63,8 @@ main: {
     jmp b1
 }
 render_sine: {
-    .label _0 = $16
-    .label _3 = $16
+    .label _1 = $16
+    .label _4 = $16
     .label _10 = $16
     .label _11 = $16
     .label sin_val = $16
@@ -77,6 +77,16 @@ render_sine: {
     sta sin_idx
     sta sin_idx+1
   b1:
+    lda sin_idx+1
+    cmp #>SIN_SIZE
+    bcc b2
+    bne !+
+    lda sin_idx
+    cmp #<SIN_SIZE
+    bcc b2
+  !:
+    rts
+  b2:
     lda sin_idx
     asl
     sta _10
@@ -84,12 +94,12 @@ render_sine: {
     rol
     sta _10+1
     clc
-    lda _0
+    lda _1
     adc #<sin
-    sta _0
-    lda _0+1
+    sta _1
+    lda _1+1
     adc #>sin
-    sta _0+1
+    sta _1+1
     ldy #0
     lda (sin_val),y
     tax
@@ -107,12 +117,12 @@ render_sine: {
     rol
     sta _11+1
     clc
-    lda _3
+    lda _4
     adc #<sin2
-    sta _3
-    lda _3+1
+    sta _4
+    lda _4+1
     adc #>sin2
-    sta _3+1
+    sta _4+1
     ldy #0
     lda (sin2_val),y
     tax
@@ -136,31 +146,19 @@ render_sine: {
   !:
     lda xpos+1
     cmp #>$140
-    bne b2
+    bne b3
     lda xpos
     cmp #<$140
-    bne b2
+    bne b3
     lda #<0
     sta xpos
     sta xpos+1
-  b2:
+  b3:
     inc sin_idx
     bne !+
     inc sin_idx+1
   !:
-    lda sin_idx+1
-    cmp #>SIN_SIZE
-    bcs !b1+
     jmp b1
-  !b1:
-    bne !+
-    lda sin_idx
-    cmp #<SIN_SIZE
-    bcs !b1+
-    jmp b1
-  !b1:
-  !:
-    rts
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(6) x, byte register(X) y)
@@ -232,21 +230,18 @@ wrap_y: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zeropage($14) sintab)
+// sin16s_gen2(signed word* zeropage(6) sintab)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .label _5 = $c
-    .label _8 = $1c
+    .label _6 = $c
+    .label _9 = $1c
     .label step = $18
-    .label sintab = $14
+    .label sintab = 6
     .label x = 2
-    .label i = 6
+    .label i = $14
     jsr div32u16u
-    lda #<0
-    sta i
-    sta i+1
     lda #<sin
     sta sintab
     lda #>sin
@@ -256,8 +251,20 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
+    sta i
+    sta i+1
   // u[4.28]
   b1:
+    lda i+1
+    cmp #>SIN_SIZE
+    bcc b2
+    bne !+
+    lda i
+    cmp #<SIN_SIZE
+    bcc b2
+  !:
+    rts
+  b2:
     lda x
     sta sin16s.x
     lda x+1
@@ -268,15 +275,15 @@ sin16s_gen2: {
     sta sin16s.x+3
     jsr sin16s
     jsr mul16s
-    lda _5+2
-    sta _8
-    lda _5+3
-    sta _8+1
+    lda _6+2
+    sta _9
+    lda _6+3
+    sta _9+1
     ldy #0
-    lda _8
+    lda _9
     sta (sintab),y
     iny
-    lda _8+1
+    lda _9+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
@@ -302,15 +309,7 @@ sin16s_gen2: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp #>SIN_SIZE
-    bcc b1
-    bne !+
-    lda i
-    cmp #<SIN_SIZE
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
@@ -750,6 +749,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -757,14 +765,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {

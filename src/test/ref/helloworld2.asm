@@ -23,12 +23,14 @@ print2: {
     ldx #0
   b1:
     lda main.hello,x
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    lda main.hello,x
     sta (at),y
     iny
     iny
     inx
-    lda main.hello,x
-    cmp #'@'
-    bne b1
-    rts
+    jmp b1
 }

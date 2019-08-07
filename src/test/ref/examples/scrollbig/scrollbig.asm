@@ -119,6 +119,10 @@ scroll_hard: {
     ldx #0
   // Hard scroll
   b1:
+    cpx #$27
+    bne b2
+    rts
+  b2:
     lda SCREEN+1,x
     sta SCREEN,x
     lda SCREEN+$28*1+1,x
@@ -136,9 +140,7 @@ scroll_hard: {
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
     inx
-    cpx #$27
-    bne b1
-    rts
+    jmp b1
 }
 // Find the next char of the scroll text
 next_char: {
@@ -168,6 +170,16 @@ fillscreen: {
     lda #>SCREEN
     sta cursor+1
   b1:
+    lda cursor+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda cursor
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     lda #fill
     ldy #0
     sta (cursor),y
@@ -175,14 +187,6 @@ fillscreen: {
     bne !+
     inc cursor+1
   !:
-    lda cursor+1
-    cmp #>SCREEN+$3e8
-    bcc b1
-    bne !+
-    lda cursor
-    cmp #<SCREEN+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"

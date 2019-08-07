@@ -175,6 +175,16 @@ clear_screen: {
     lda #>SCREEN
     sta sc+1
   b1:
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda sc
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -182,15 +192,7 @@ clear_screen: {
     bne !+
     inc sc+1
   !:
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bcc b1
-    bne !+
-    lda sc
-    cmp #<SCREEN+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 // Generate a sinus table using BASIC floats
 // - sintab is a pointer to the table to fill
@@ -201,7 +203,7 @@ clear_screen: {
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label _23 = $f
+    .label _24 = $f
     .label i = 9
     .label min = 6
     .label length = 8
@@ -255,6 +257,11 @@ gen_sintab: {
   // f_min = min + (max - min) / 2
   b1:
     lda i
+    cmp length
+    bcc b2
+    rts
+  b2:
+    lda i
     sta setFAC.w
     lda #0
     sta setFAC.w+1
@@ -287,16 +294,13 @@ gen_sintab: {
     jsr mulFACbyMEM
     jsr addMEMtoFAC
     jsr getFAC
-    lda _23
+    lda _24
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
     jsr progress_inc
     inc i
-    lda i
-    cmp length
-    bcc b1
-    rts
+    jmp b1
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0

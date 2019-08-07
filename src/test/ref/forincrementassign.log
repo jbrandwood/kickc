@@ -1,5 +1,8 @@
 Identified constant variable (byte*) SCREEN
-Culled Empty Block (label) main::@2
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -8,14 +11,17 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (byte) main::i#0 ← (number) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
-  (number~) main::$0 ← (byte) main::i#2 + (number) 2
-  (byte) main::i#1 ← (number~) main::$0
-  (bool~) main::$1 ← (byte) main::i#1 < (number) $28
-  if((bool~) main::$1) goto main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (bool~) main::$0 ← (byte) main::i#2 < (number) $28
+  if((bool~) main::$0) goto main::@2
   to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
+  *((byte*) SCREEN#0 + (byte) main::i#3) ← (byte) main::i#3
+  (number~) main::$1 ← (byte) main::i#3 + (number) 2
+  (byte) main::i#1 ← (number~) main::$1
+  to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
@@ -34,36 +40,39 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (void()) main()
-(number~) main::$0
-(bool~) main::$1
+(bool~) main::$0
+(number~) main::$1
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
+(byte) main::i#3
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) 2 in (number~) main::$0 ← (byte) main::i#2 + (number) 2
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#2 + (unumber)(number) 2
-Adding number conversion cast (unumber) $28 in (bool~) main::$1 ← (byte) main::i#1 < (number) $28
+Adding number conversion cast (unumber) $28 in (bool~) main::$0 ← (byte) main::i#2 < (number) $28
+Adding number conversion cast (unumber) 2 in (number~) main::$1 ← (byte) main::i#3 + (number) 2
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#3 + (unumber)(number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast 2
 Simplifying constant integer cast $28
+Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#2 + (byte) 2
-Alias (byte) main::i#1 = (byte~) main::$0 
+Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::i#3 + (byte) 2
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (byte) main::i#1 = (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [7] if((byte) main::i#1<(byte) $28) goto main::@1
+Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $28) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
@@ -71,7 +80,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -81,10 +89,9 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [11] main::i#3 ← main::i#1
+Coalesced [11] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
-Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -103,23 +110,25 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
-  [7] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2
-  [8] if((byte) main::i#1<(byte) $28) goto main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [6] if((byte) main::i#2<(byte) $28) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [9] return 
+  [7] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
+  [9] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (void()) main()
 (byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 22.0
+(byte) main::i#1 22.0
+(byte) main::i#2 18.333333333333332
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -163,30 +172,32 @@ main: {
     lda #0
     sta i
     jmp b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] if((byte) main::i#2<(byte) $28) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda i
+    cmp #$28
+    bcc b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy i
     tya
     sta SCREEN,y
-    // [7] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [9] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda i
     clc
     adc #2
     sta i
-    // [8] if((byte) main::i#1<(byte) $28) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #$28
-    bcc b1_from_b1
-    jmp breturn
-    // main::@return
-  breturn:
-    // [9] return 
-    rts
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
@@ -194,7 +205,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 40.33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 283 combination reg byte a [ main::i#2 main::i#1 ] 
@@ -233,26 +244,28 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #0
     jmp b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
-    tax
-    sta SCREEN,x
-    // [7] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuaa=vbuaa_plus_2 
-    clc
-    adc #2
-    // [8] if((byte) main::i#1<(byte) $28) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+    // [6] if((byte) main::i#2<(byte) $28) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$28
-    bcc b1_from_b1
+    bcc b2
     jmp breturn
     // main::@return
   breturn:
-    // [9] return 
+    // [7] return 
     rts
+    // main::@2
+  b2:
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
+    tax
+    sta SCREEN,x
+    // [9] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuaa=vbuaa_plus_2 
+    clc
+    adc #2
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
@@ -262,22 +275,19 @@ Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -289,16 +299,17 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte a 16.5
-(byte) main::i#2 reg byte a 22.0
+(byte) main::i#1 reg byte a 22.0
+(byte) main::i#2 reg byte a 18.333333333333332
 
 reg byte a [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 181
+Score: 211
 
   // File Comments
 // Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
@@ -321,26 +332,29 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #0
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   b1:
+    // for(byte i=0;i<40;i=i+2)
+    // [6] if((byte) main::i#2<(byte) $28) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$28
+    bcc b2
+    // main::@return
+    // }
+    // [7] return 
+    rts
+    // main::@2
+  b2:
     // SCREEN[i] = i
-    // [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
+    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
     tax
     sta SCREEN,x
     // i=i+2
-    // [7] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuaa=vbuaa_plus_2 
+    // [9] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2 -- vbuaa=vbuaa_plus_2 
     clc
     adc #2
-    // for(byte i=0;i<40;i=i+2)
-    // [8] if((byte) main::i#1<(byte) $28) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #$28
-    bcc b1
-    // main::@return
-    // }
-    // [9] return 
-    rts
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 

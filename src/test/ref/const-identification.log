@@ -3,7 +3,10 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) @1
 Culled Empty Block (label) line::@2
 Culled Empty Block (label) line::@4
-Culled Empty Block (label) line::@6
+Culled Empty Block (label) line::@8
+Culled Empty Block (label) line::@7
+Culled Empty Block (label) line::@9
+Culled Empty Block (label) line::@10
 Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
@@ -40,7 +43,7 @@ line: scope:[line]  from main::@3
   if((bool~) line::$0) goto line::@1
   to:line::@3
 line::@1: scope:[line]  from line
-  (byte) line::x1#4 ← phi( line/(byte) line::x1#1 )
+  (byte) line::x1#3 ← phi( line/(byte) line::x1#1 )
   (byte) line::x0#2 ← phi( line/(byte) line::x0#1 )
   (byte) line::x#0 ← (byte) line::x0#2
   to:line::@5
@@ -48,27 +51,31 @@ line::@3: scope:[line]  from line
   (byte) line::x0#3 ← phi( line/(byte) line::x0#1 )
   (byte) plot::x#0 ← (byte) line::x0#3
   call plot 
-  to:line::@7
-line::@7: scope:[line]  from line::@3
+  to:line::@11
+line::@11: scope:[line]  from line::@3
   to:line::@return
-line::@5: scope:[line]  from line::@1 line::@8
-  (byte) line::x1#3 ← phi( line::@1/(byte) line::x1#4 line::@8/(byte) line::x1#2 )
-  (byte) line::x#2 ← phi( line::@1/(byte) line::x#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot 
-  to:line::@8
-line::@8: scope:[line]  from line::@5
-  (byte) line::x1#2 ← phi( line::@5/(byte) line::x1#3 )
+line::@5: scope:[line]  from line::@1 line::@12
+  (byte) line::x1#2 ← phi( line::@1/(byte) line::x1#3 line::@12/(byte) line::x1#4 )
+  (byte) line::x#2 ← phi( line::@1/(byte) line::x#0 line::@12/(byte) line::x#1 )
+  (bool~) line::$2 ← (byte) line::x#2 <= (byte) line::x1#2
+  if((bool~) line::$2) goto line::@6
+  to:line::@return
+line::@6: scope:[line]  from line::@5
+  (byte) line::x1#5 ← phi( line::@5/(byte) line::x1#2 )
   (byte) line::x#3 ← phi( line::@5/(byte) line::x#2 )
-  (byte) line::x#1 ← ++ (byte) line::x#3
-  (bool~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((bool~) line::$3) goto line::@5
-  to:line::@return
-line::@return: scope:[line]  from line::@7 line::@8
+  (byte) plot::x#1 ← (byte) line::x#3
+  call plot 
+  to:line::@12
+line::@12: scope:[line]  from line::@6
+  (byte) line::x1#4 ← phi( line::@6/(byte) line::x1#5 )
+  (byte) line::x#4 ← phi( line::@6/(byte) line::x#3 )
+  (byte) line::x#1 ← ++ (byte) line::x#4
+  to:line::@5
+line::@return: scope:[line]  from line::@11 line::@5
   return 
   to:@return
-plot: scope:[plot]  from line::@3 line::@5
-  (byte) plot::x#2 ← phi( line::@3/(byte) plot::x#0 line::@5/(byte) plot::x#1 )
+plot: scope:[plot]  from line::@3 line::@6
+  (byte) plot::x#2 ← phi( line::@3/(byte) plot::x#0 line::@6/(byte) plot::x#1 )
   (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
   (number~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (number) 1
   *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (number~) plot::$0
@@ -92,18 +99,20 @@ SYMBOL TABLE SSA
 (byte*) SCREEN#0
 (void()) line((byte) line::x0 , (byte) line::x1)
 (bool~) line::$0
-(bool~) line::$3
+(bool~) line::$2
 (label) line::@1
+(label) line::@11
+(label) line::@12
 (label) line::@3
 (label) line::@5
-(label) line::@7
-(label) line::@8
+(label) line::@6
 (label) line::@return
 (byte) line::x
 (byte) line::x#0
 (byte) line::x#1
 (byte) line::x#2
 (byte) line::x#3
+(byte) line::x#4
 (byte) line::x0
 (byte) line::x0#0
 (byte) line::x0#1
@@ -115,6 +124,7 @@ SYMBOL TABLE SSA
 (byte) line::x1#2
 (byte) line::x1#3
 (byte) line::x1#4
+(byte) line::x1#5
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -163,9 +173,9 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1
 Alias (byte) line::x0#1 = (byte) line::x0#2 (byte) line::x#0 (byte) line::x0#3 
-Alias (byte) line::x1#1 = (byte) line::x1#4 
-Alias (byte) line::x#2 = (byte) line::x#3 
-Alias (byte) line::x1#2 = (byte) line::x1#3 
+Alias (byte) line::x1#1 = (byte) line::x1#3 
+Alias (byte) line::x#2 = (byte) line::x#3 (byte) line::x#4 
+Alias (byte) line::x1#2 = (byte) line::x1#5 (byte) line::x1#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) line::x0#1 (byte) line::x0#0
 Identical Phi Values (byte) line::x1#1 (byte) line::x1#0
@@ -173,7 +183,7 @@ Identical Phi Values (byte) line::x1#2 (byte) line::x1#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
 Simple Condition (bool~) line::$0 [16] if((byte) line::x0#0<(byte) line::x1#0) goto line::@1
-Simple Condition (bool~) line::$3 [28] if((byte) line::x#1<=(byte) line::x1#0) goto line::@5
+Simple Condition (bool~) line::$2 [24] if((byte) line::x#2<=(byte) line::x1#0) goto line::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) plots#0 = (byte*) 4096
 Constant (const byte*) SCREEN#0 = (byte*) 1024
@@ -188,15 +198,15 @@ if() condition always true - replacing block destination [16] if((const byte) li
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
-Rewriting conditional comparison [28] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@5
+Rewriting conditional comparison [24] if((byte) line::x#2<=(const byte) line::x1#0) goto line::@6
 Removing unused block main::@return
 Removing PHI-reference to removed block (line::@3) in block plot
 Removing unused block line::@3
-Removing unused block line::@7
+Removing unused block line::@11
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $28 in if((byte) main::i#1!=(number) $28) goto main::@1
-Adding number conversion cast (unumber) line::x1#0+1 in if((byte) line::x#1<(const byte) line::x1#0+(number) 1) goto line::@5
-Adding number conversion cast (unumber) 1 in if((byte) line::x#1<(unumber)(const byte) line::x1#0+(number) 1) goto line::@5
+Adding number conversion cast (unumber) line::x1#0+1 in if((byte) line::x#2<(const byte) line::x1#0+(number) 1) goto line::@6
+Adding number conversion cast (unumber) 1 in if((byte) line::x#2<(unumber)(const byte) line::x1#0+(number) 1) goto line::@6
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
 Simplifying constant integer cast (const byte) line::x1#0+(unumber)(number) 1
@@ -213,7 +223,6 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@1 and main::@1)
-Added new block during phi lifting line::@9(between line::@8 and line::@5)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
@@ -226,21 +235,21 @@ Adding NOP phi() at start of line::@1
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to line:12 
-Calls in [line] to plot:19 
+Calls in [line] to plot:21 
 
 Created 2 initial phi equivalence classes
 Coalesced [14] main::i#3 ← main::i#1
-Coalesced [23] line::x#4 ← line::x#1
+Coalesced [23] line::x#5 ← line::x#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) line::@1
-Culled Empty Block (label) line::@9
 Renumbering block @3 to @1
 Renumbering block main::@3 to main::@2
 Renumbering block line::@5 to line::@1
-Renumbering block line::@8 to line::@2
+Renumbering block line::@6 to line::@2
+Renumbering block line::@12 to line::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -275,19 +284,21 @@ main::@2: scope:[main]  from main::@1 main::@2
 line: scope:[line]  from main::@2
   [12] phi()
   to:line::@1
-line::@1: scope:[line]  from line line::@2
-  [13] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@2/(byte) line::x#1 )
-  [14] (byte) plot::x#1 ← (byte) line::x#2
-  [15] call plot 
-  to:line::@2
-line::@2: scope:[line]  from line::@1
-  [16] (byte) line::x#1 ← ++ (byte) line::x#2
-  [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@1
+line::@1: scope:[line]  from line line::@3
+  [13] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@3/(byte) line::x#1 )
+  [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2
   to:line::@return
-line::@return: scope:[line]  from line::@2
-  [18] return 
+line::@return: scope:[line]  from line::@1
+  [15] return 
   to:@return
-plot: scope:[plot]  from line::@1
+line::@2: scope:[line]  from line::@1
+  [16] (byte) plot::x#1 ← (byte) line::x#2
+  [17] call plot 
+  to:line::@3
+line::@3: scope:[line]  from line::@2
+  [18] (byte) line::x#1 ← ++ (byte) line::x#2
+  to:line::@1
+plot: scope:[plot]  from line::@2
   [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1)
   [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1
   [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$0
@@ -301,7 +312,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (void()) line((byte) line::x0 , (byte) line::x1)
 (byte) line::x
-(byte) line::x#1 151.5
+(byte) line::x#1 202.0
 (byte) line::x#2 101.0
 (byte) line::x0
 (byte) line::x1
@@ -413,31 +424,33 @@ line: {
     lda #x0
     sta x
     jmp b1
-    // [13] phi from line::@2 to line::@1 [phi:line::@2->line::@1]
-  b1_from_b2:
-    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@2->line::@1#0] -- register_copy 
-    jmp b1
     // line::@1
   b1:
-    // [14] (byte) plot::x#1 ← (byte) line::x#2 -- vbuz1=vbuz2 
-    lda x
-    sta plot.x
-    // [15] call plot 
-    jsr plot
-    jmp b2
-    // line::@2
-  b2:
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #x1+1
-    bcc b1_from_b2
+    bcc b2
     jmp breturn
     // line::@return
   breturn:
-    // [18] return 
+    // [15] return 
     rts
+    // line::@2
+  b2:
+    // [16] (byte) plot::x#1 ← (byte) line::x#2 -- vbuz1=vbuz2 
+    lda x
+    sta plot.x
+    // [17] call plot 
+    jsr plot
+    jmp b3
+    // line::@3
+  b3:
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
+    inc x
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+  b1_from_b3:
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
+    jmp b1
 }
   // plot
 // plot(byte zeropage(4) x)
@@ -478,7 +491,7 @@ Potential registers zp ZP_BYTE:5 [ plot::idx#0 ] : zp ZP_BYTE:5 , reg byte a , r
 Potential registers zp ZP_BYTE:6 [ plot::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [line] 252.5: zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
+Uplift Scope [line] 303: zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
 Uplift Scope [plot] 103: zp ZP_BYTE:4 [ plot::x#1 ] 4: zp ZP_BYTE:6 [ plot::$0 ] 3: zp ZP_BYTE:5 [ plot::idx#0 ] 
 Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
@@ -560,28 +573,30 @@ line: {
     // [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@1#0] -- vbuyy=vbuc1 
     ldy #x0
     jmp b1
-    // [13] phi from line::@2 to line::@1 [phi:line::@2->line::@1]
-  b1_from_b2:
-    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@2->line::@1#0] -- register_copy 
-    jmp b1
     // line::@1
   b1:
-    // [14] (byte) plot::x#1 ← (byte) line::x#2
-    // [15] call plot 
-    jsr plot
-    jmp b2
-    // line::@2
-  b2:
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@1 -- vbuyy_lt_vbuc1_then_la1 
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
     cpy #x1+1
-    bcc b1_from_b2
+    bcc b2
     jmp breturn
     // line::@return
   breturn:
-    // [18] return 
+    // [15] return 
     rts
+    // line::@2
+  b2:
+    // [16] (byte) plot::x#1 ← (byte) line::x#2
+    // [17] call plot 
+    jsr plot
+    jmp b3
+    // line::@3
+  b3:
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+  b1_from_b3:
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
+    jmp b1
 }
   // plot
 // plot(byte register(Y) x)
@@ -608,13 +623,12 @@ Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b1
-Removing instruction jmp b2
 Removing instruction jmp breturn
+Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
-Replacing label b1_from_b2 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -623,19 +637,18 @@ Removing instruction b1_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b2:
 Removing instruction line_from_b2:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b1_from_line:
-Removing instruction b2:
 Removing instruction breturn:
+Removing instruction b3:
+Removing instruction b1_from_b3:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
@@ -650,9 +663,10 @@ FINAL SYMBOL TABLE
 (void()) line((byte) line::x0 , (byte) line::x1)
 (label) line::@1
 (label) line::@2
+(label) line::@3
 (label) line::@return
 (byte) line::x
-(byte) line::x#1 reg byte y 151.5
+(byte) line::x#1 reg byte y 202.0
 (byte) line::x#2 reg byte y 101.0
 (byte) line::x0
 (const byte) line::x0#0 x0 = (byte) 0
@@ -682,7 +696,7 @@ reg byte a [ plot::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 1713
+Score: 2013
 
   // File Comments
   // Upstart
@@ -738,25 +752,29 @@ line: {
     // [13] phi from line to line::@1 [phi:line->line::@1]
     // [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@1#0] -- vbuyy=vbuc1 
     ldy #x0
-    // [13] phi from line::@2 to line::@1 [phi:line::@2->line::@1]
-    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@2->line::@1#0] -- register_copy 
     // line::@1
   b1:
-    // plot(x)
-    // [14] (byte) plot::x#1 ← (byte) line::x#2
-    // [15] call plot 
-    jsr plot
-    // line::@2
     // for(byte x = x0; x<=x1; x++)
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@1 -- vbuyy_lt_vbuc1_then_la1 
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
     cpy #x1+1
-    bcc b1
+    bcc b2
     // line::@return
     // }
-    // [18] return 
+    // [15] return 
     rts
+    // line::@2
+  b2:
+    // plot(x)
+    // [16] (byte) plot::x#1 ← (byte) line::x#2
+    // [17] call plot 
+    jsr plot
+    // line::@3
+    // for(byte x = x0; x<=x1; x++)
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
+    jmp b1
 }
   // plot
 // plot(byte register(Y) x)

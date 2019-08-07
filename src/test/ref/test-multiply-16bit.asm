@@ -4,7 +4,7 @@
 .pc = $80d "Program"
   .label BGCOL = $d021
   .label print_char_cursor = $15
-  .label print_line_cursor = $12
+  .label print_line_cursor = $13
 main: {
     lda #5
     sta BGCOL
@@ -21,7 +21,7 @@ mul16s_compare: {
     .label ms = 2
     .label mn = 6
     .label mf = $a
-    .label i = $14
+    .label i = $12
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -644,20 +644,35 @@ muls16s: {
     .label a = $e
     .label b = $10
     lda a+1
-    bmi b6
-    bmi b5
+    bmi b8
+    bmi b7
     bne !+
     lda a
-    beq b5
+    beq b7
   !:
-    lda #<0
-    sta j
-    sta j+1
+    lda #0
     sta m
     sta m+1
     sta m+2
     sta m+3
+    sta j
+    sta j+1
   b3:
+    lda j+1
+    cmp a+1
+    bne b4
+    lda j
+    cmp a
+    bne b4
+    rts
+  b7:
+    lda #0
+    sta return
+    sta return+1
+    sta return+2
+    sta return+3
+    rts
+  b4:
     lda b+1
     ora #$7f
     bmi !+
@@ -681,29 +696,24 @@ muls16s: {
     bne !+
     inc j+1
   !:
-    lda j+1
-    cmp a+1
-    bne b3
-    lda j
-    cmp a
-    bne b3
-    rts
-  b5:
+    jmp b3
+  b8:
     lda #0
-    sta return
-    sta return+1
-    sta return+2
-    sta return+3
-    rts
-  b6:
-    lda #<0
-    sta i
-    sta i+1
     sta m
     sta m+1
     sta m+2
     sta m+3
-  b4:
+    sta i
+    sta i+1
+  b5:
+    lda i+1
+    cmp a+1
+    bne b6
+    lda i
+    cmp a
+    bne b6
+    rts
+  b6:
     lda b+1
     ora #$7f
     bmi !+
@@ -728,13 +738,7 @@ muls16s: {
     dec i+1
   !:
     dec i
-    lda i+1
-    cmp a+1
-    bne b4
-    lda i
-    cmp a
-    bne b4
-    rts
+    jmp b5
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
@@ -743,7 +747,7 @@ mul16u_compare: {
     .label ms = 2
     .label mn = 6
     .label mf = $a
-    .label i = $14
+    .label i = $12
     lda #0
     sta i
     sta b
@@ -940,16 +944,31 @@ muls16u: {
     lda a
     bne !+
     lda a+1
-    beq b3
+    beq b4
   !:
-    lda #<0
-    sta i
-    sta i+1
+    lda #0
     sta m
     sta m+1
     sta m+2
     sta m+3
+    sta i
+    sta i+1
   b2:
+    lda i+1
+    cmp a+1
+    bne b3
+    lda i
+    cmp a
+    bne b3
+    rts
+  b4:
+    lda #0
+    sta return
+    sta return+1
+    sta return+2
+    sta return+3
+    rts
+  b3:
     lda m
     clc
     adc b
@@ -967,94 +986,62 @@ muls16u: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp a+1
-    bne b2
-    lda i
-    cmp a
-    bne b2
-    rts
-  b3:
-    lda #0
-    sta return
-    sta return+1
-    sta return+2
-    sta return+3
-    rts
+    jmp b2
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = $12
-    .label sqr = $15
+    .label c = $12
+    .label sqr1_hi = $13
+    .label sqr = $1a
     .label sqr1_lo = $10
-    .label x_2 = $14
-    .label sqr2_hi = $1a
-    .label sqr2_lo = $17
+    .label sqr2_hi = $17
+    .label sqr2_lo = $15
     .label dir = $19
-    lda #0
-    sta x_2
+    ldx #0
     lda #<mulf_sqr1_hi+1
     sta sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta sqr1_hi+1
+    txa
+    sta sqr
+    sta sqr+1
+    sta c
     lda #<mulf_sqr1_lo+1
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
-    sta sqr
-    sta sqr+1
-    tax
   b1:
-    inx
-    txa
-    and #1
-    cmp #0
-    bne b2
-    inc x_2
-    inc sqr
-    bne !+
-    inc sqr+1
-  !:
-  b2:
-    lda sqr
-    ldy #0
-    sta (sqr1_lo),y
-    lda sqr+1
-    sta (sqr1_hi),y
-    inc sqr1_hi
-    bne !+
-    inc sqr1_hi+1
-  !:
-    lda x_2
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inc sqr1_lo
-    bne !+
-    inc sqr1_lo+1
-  !:
     lda sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda #$ff
     sta dir
     lda #<mulf_sqr2_hi
     sta sqr2_hi
     lda #>mulf_sqr2_hi
     sta sqr2_hi+1
+    ldx #-1
     lda #<mulf_sqr2_lo
     sta sqr2_lo
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
-    ldx #-1
-  b4:
+  b5:
+    lda sqr2_lo+1
+    cmp #>mulf_sqr2_lo+$1ff
+    bne b6
+    lda sqr2_lo
+    cmp #<mulf_sqr2_lo+$1ff
+    bne b6
+    // Set the very last value g(511) = f(256)
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
+    rts
+  b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -1069,26 +1056,48 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b5
+    bne b8
     lda #1
     sta dir
-  b5:
+  b8:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
-    lda sqr2_lo+1
-    cmp #>mulf_sqr2_lo+$1ff
-    bne b4
-    lda sqr2_lo
-    cmp #<mulf_sqr2_lo+$1ff
-    bne b4
-    // Set the very last value g(511) = f(256)
-    lda mulf_sqr1_lo+$100
-    sta mulf_sqr2_lo+$1ff
-    lda mulf_sqr1_hi+$100
-    sta mulf_sqr2_hi+$1ff
-    rts
+    jmp b5
+  b2:
+    inc c
+    lda #1
+    and c
+    cmp #0
+    bne b3
+    inx
+    inc sqr
+    bne !+
+    inc sqr+1
+  !:
+  b3:
+    lda sqr
+    ldy #0
+    sta (sqr1_lo),y
+    lda sqr+1
+    sta (sqr1_hi),y
+    inc sqr1_hi
+    bne !+
+    inc sqr1_hi+1
+  !:
+    txa
+    clc
+    adc sqr
+    sta sqr
+    bcc !+
+    inc sqr+1
+  !:
+    inc sqr1_lo
+    bne !+
+    inc sqr1_lo+1
+  !:
+    jmp b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -1107,6 +1116,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -1114,13 +1131,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

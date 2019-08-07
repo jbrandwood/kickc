@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -300,6 +301,17 @@ public class Program {
 
    public void clearStatementInfos() {
       this.statementInfos = null;
+   }
+
+   /**
+    * Clear index numbers for all statements in the control flow graph.
+    */
+   public void clearStatementIndices() {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            statement.setIndex(null);
+         }
+      }
    }
 
    public SymbolInfos getSymbolInfos() {

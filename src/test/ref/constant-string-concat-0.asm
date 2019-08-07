@@ -7,11 +7,13 @@ main: {
     ldx #0
   b1:
     lda msg,x
+    cmp #0
+    bne b2
+    rts
+  b2:
+    lda msg,x
     sta SCREEN,x
     inx
-    lda msg,x
-    cmp #0
-    bne b1
-    rts
+    jmp b1
     msg: .text "camelot@"
 }

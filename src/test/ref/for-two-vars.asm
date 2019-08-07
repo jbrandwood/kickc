@@ -12,6 +12,10 @@ main: {
     sta sc+1
     ldx #0
   b1:
+    cpx #$28
+    bcc b2
+    rts
+  b2:
     txa
     ldy #0
     sta (sc),y
@@ -21,7 +25,5 @@ main: {
     dec sc+1
   !:
     dec sc
-    cpx #$28
-    bcc b1
-    rts
+    jmp b1
 }

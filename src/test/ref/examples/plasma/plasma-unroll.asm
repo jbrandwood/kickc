@@ -27,7 +27,7 @@
   .label print_char_cursor = $c
   .label c1A = $b
   .label c1B = $f
-  .label c2A = $10
+  .label c2A = $12
   .label c2B = 2
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
@@ -68,46 +68,27 @@ main: {
 }
 // Render plasma to the passed screen
 doplasma: {
-    .label c1a = 3
-    .label c1b = 4
+    .label c1a = 4
+    .label c1b = 5
     .label yval = $e
-    .label i = 5
-    .label c2a = 6
-    .label c2b = 7
-    .label i1 = 8
+    .label i = 3
+    .label c2a = 7
+    .label c2b = 8
+    .label i1 = 6
     lda c1A
     sta c1a
     lda c1B
     sta c1b
-    lda #0
+    ldx #0
+    txa
     sta i
-    tax
   // Calculate ybuff as a bunch of differences
   b1:
-    ldy c1a
-    lda SINTABLE,y
-    ldy c1b
-    clc
-    adc SINTABLE,y
-    sta yval
-    txa
-    eor #$ff
-    sec
-    adc yval
-    ldy i
-    sta ybuf,y
-    lax c1a
-    axs #-[4]
-    stx c1a
-    lax c1b
-    axs #-[9]
-    stx c1b
-    inc i
     lda i
     cmp #$19
-    bcs !b8+
-    jmp b8
-  !b8:
+    bcs !b2+
+    jmp b2
+  !b2:
     lax c1A
     axs #-[3]
     stx c1A
@@ -120,24 +101,12 @@ doplasma: {
     sta c2b
     lda #0
     sta i1
-  b3:
-    ldy c2a
-    lda SINTABLE,y
-    ldy c2b
-    clc
-    adc SINTABLE,y
-    ldy i1
-    sta xbuf,y
-    lax c2a
-    axs #-[3]
-    stx c2a
-    lax c2b
-    axs #-[7]
-    stx c2b
-    inc i1
+  b4:
     lda i1
     cmp #$28
-    bcc b3
+    bcs !b5+
+    jmp b5
+  !b5:
     lda c2A
     clc
     adc #2
@@ -146,11 +115,13 @@ doplasma: {
     axs #3
     stx c2B
     ldx #0
-  b5:
+  b7:
+    cpx #$28
+    bcc b8
+    rts
+  b8:
     // Find the first value on the row
     lda xbuf,x
-  // Calculate the next values as sums of diffs
-  // Use experimental loop unrolling to increase the speed
     clc
     adc ybuf
     sta SCREEN1,x
@@ -227,12 +198,43 @@ doplasma: {
     adc ybuf+$18
     sta SCREEN1+$18*$28,x
     inx
-    cpx #$28
-    bcs !b5+
-    jmp b5
-  !b5:
-    rts
-  b8:
+    jmp b7
+  b5:
+    ldy c2a
+    lda SINTABLE,y
+    ldy c2b
+    clc
+    adc SINTABLE,y
+    ldy i1
+    sta xbuf,y
+    lax c2a
+    axs #-[3]
+    stx c2a
+    lax c2b
+    axs #-[7]
+    stx c2b
+    inc i1
+    jmp b4
+  b2:
+    ldy c1a
+    lda SINTABLE,y
+    ldy c1b
+    clc
+    adc SINTABLE,y
+    sta yval
+    txa
+    eor #$ff
+    sec
+    adc yval
+    ldy i
+    sta ybuf,y
+    lax c1a
+    axs #-[4]
+    stx c1a
+    lax c1b
+    axs #-[9]
+    stx c1b
+    inc i
     ldx yval
     jmp b1
     xbuf: .fill $28, 0
@@ -240,13 +242,13 @@ doplasma: {
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _4 = $10
-    .label _8 = $11
-    .label _9 = $11
+    .label _7 = $12
+    .label _10 = $10
+    .label _11 = $10
     .label s = $f
     .label i = $b
     .label c = 9
-    .label _16 = $11
+    .label _16 = $10
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -257,45 +259,59 @@ makecharset: {
     sta c
     sta c+1
   b1:
+    lda c+1
+    cmp #>$100
+    bcc b2
+    bne !+
+    lda c
+    cmp #<$100
+    bcc b2
+  !:
+    rts
+  b2:
     lda c
     tay
     lda SINTABLE,y
     sta s
     lda #0
     sta i
-  b2:
+  b3:
+    lda i
+    cmp #8
+    bcc b4
+    lda c
+    and #7
+    cmp #0
+    bne b11
+    jsr print_char
+  b11:
+    inc c
+    bne !+
+    inc c+1
+  !:
+    jmp b1
+  b4:
     ldy #0
     ldx #0
-  b3:
-    jsr sid_rnd
-    and #$ff
-    sta _4
-    lda s
-    cmp _4
-    bcs b4
-    tya
-    ora bittab,x
-    tay
-  b4:
-    inx
+  b5:
     cpx #8
-    bcc b3
+    bcc b6
     lda c
     asl
-    sta _8
+    sta _10
     lda c+1
     rol
-    sta _8+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
+    sta _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
     lda i
     clc
-    adc _9
-    sta _9
+    adc _11
+    sta _11
     bcc !+
-    inc _9+1
+    inc _11+1
   !:
     clc
     lda _16
@@ -308,29 +324,27 @@ makecharset: {
     ldy #0
     sta (_16),y
     inc i
-    lda i
-    cmp #8
-    bcc b2
-    lda c
-    and #7
-    cmp #0
-    bne b9
-    jsr print_char
-  b9:
-    inc c
-    bne !+
-    inc c+1
-  !:
-    lda c+1
-    cmp #>$100
-    bcc b1
-    bne !+
-    lda c
-    cmp #<$100
-    bcc b1
-  !:
-    rts
+    jmp b3
+  b6:
+    jsr sid_rnd
+    and #$ff
+    sta _7
+    lda s
+    cmp _7
+    bcs b8
+    tya
+    ora bittab,x
+    tay
+  b8:
+    inx
+    jmp b5
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
+}
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+sid_rnd: {
+    lda SID_VOICE3_OSC
+    rts
 }
 // Print a single char
 print_char: {
@@ -342,12 +356,6 @@ print_char: {
     bne !+
     inc print_char_cursor+1
   !:
-    rts
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -367,6 +375,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -374,13 +390,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {

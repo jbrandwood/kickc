@@ -55,6 +55,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -62,11 +70,5 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }

@@ -6,10 +6,12 @@
 main: {
     ldx #0
   b1:
+    cpx #$64
+    bne b2
+    rts
+  b2:
     txa
     sta SCREEN,x
     inx
-    cpx #$64
-    bne b1
-    rts
+    jmp b1
 }

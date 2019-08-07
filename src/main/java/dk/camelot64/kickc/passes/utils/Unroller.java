@@ -60,12 +60,10 @@ public class Unroller {
    public void unroll() {
       // 0. Prepare for copying by ensuring that all variables defined in the blocks are represented in PHI-blocks of the successors
       prepare();
-
-      if(program.getLog().isVerboseSSAOptimize()) {
-         program.getLog().append("CONTROL FLOW GRAPH (PREPARED)");
+      if(program.getLog().isVerboseLoopUnroll()) {
+         program.getLog().append("CONTROL FLOW GRAPH (PREPARED FOR LOOP HEAD UNROLL)");
          program.getLog().append(program.getGraph().toString(program));
       }
-
       // 1. Create new versions of all symbols assigned inside the loop
       this.varsOriginalToCopied = copyDefinedVars(unrollBlocks, program);
       // 2. Create new labels for all blocks in the loop
@@ -85,8 +83,10 @@ public class Unroller {
             Map<LabelRef, VariableRef> newPhis = new LinkedHashMap<>();
             Map<LabelRef, VariableRef> varVersions = new LinkedHashMap<>();
             reVersionAllUsages(origVarRef, newPhis, varVersions);
-            program.getLog().append("GRAPH (NEW VERSIONS for " + origVarRef + ")");
-            program.getLog().append(program.getGraph().toString(program));
+            if(program.getLog().isVerboseLoopUnroll()) {
+               program.getLog().append("Created new versions for " + origVarRef + ")");
+               //program.getLog().append(program.getGraph().toString(program));
+            }
             // Recursively fill out & add PHI-functions until they have propagated everywhere needed
             completePhiFunctions(newPhis, varVersions);
          }

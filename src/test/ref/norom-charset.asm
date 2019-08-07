@@ -15,6 +15,13 @@ main: {
     lda #0
     sta c
   b1:
+    lda #4
+    cmp c
+    bne b2
+    lda #SCREEN/$40|CHARSET/$400
+    sta VIC_MEMORY
+    rts
+  b2:
     lda c
     asl
     tax
@@ -31,12 +38,7 @@ main: {
     inc charset+1
   !:
     inc c
-    lda #4
-    cmp c
-    bne b1
-    lda #SCREEN/$40|CHARSET/$400
-    sta VIC_MEMORY
-    rts
+    jmp b1
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0

@@ -17,33 +17,12 @@ scrollup3: {
     lda #<0
     sta line
     sta line+1
-  b1:
-    lda line+1
-    cmp #>$28*$18
-    bcc b2
-    bne !+
-    lda line
-    cmp #<$28*$18
-    bcc b2
-  !:
-    rts
   b2:
     lda line
     sta l2
     lda line+1
     sta l2+1
     ldx #0
-  b3:
-    cpx #$28
-    bcc b4
-    lda #$28
-    clc
-    adc line
-    sta line
-    bcc !+
-    inc line+1
-  !:
-    jmp b1
   b4:
     lda l2
     clc
@@ -67,7 +46,24 @@ scrollup3: {
     inc l2+1
   !:
     inx
-    jmp b3
+    cpx #$28
+    bcc b4
+    lda #$28
+    clc
+    adc line
+    sta line
+    bcc !+
+    inc line+1
+  !:
+    lda line+1
+    cmp #>$28*$18
+    bcc b2
+    bne !+
+    lda line
+    cmp #<$28*$18
+    bcc b2
+  !:
+    rts
 }
 scrollup2: {
     .label line1 = 3
@@ -115,30 +111,9 @@ scrollup1: {
     lda #<0
     sta line
     sta line+1
-  b1:
-    lda line+1
-    cmp #>$28*$18
-    bcc b4
-    bne !+
-    lda line
-    cmp #<$28*$18
-    bcc b4
-  !:
-    rts
-  b4:
-    ldx #0
   b2:
-    cpx #$28
-    bcc b3
-    lda #$28
-    clc
-    adc line
-    sta line
-    bcc !+
-    inc line+1
-  !:
-    jmp b1
-  b3:
+    ldx #0
+  b4:
     txa
     clc
     adc line
@@ -171,5 +146,22 @@ scrollup1: {
     lda (_5),y
     sta (_6),y
     inx
-    jmp b2
+    cpx #$28
+    bcc b4
+    lda #$28
+    clc
+    adc line
+    sta line
+    bcc !+
+    inc line+1
+  !:
+    lda line+1
+    cmp #>$28*$18
+    bcc b2
+    bne !+
+    lda line
+    cmp #<$28*$18
+    bcc b2
+  !:
+    rts
 }

@@ -28,30 +28,14 @@ main: {
     lda header,x
     cmp #0
     bne b3
-    lda #<$400
+    lda #'0'
+    sta $400+$28
+    lda #<$400+$28
     sta screen
-    lda #>$400
+    lda #>$400+$28
     sta screen+1
     ldx #0
-  b4:
-    cpx #9+1
-    bcc b5
-    rts
-  b5:
-    lda #$28
-    clc
-    adc screen
-    sta screen
-    bcc !+
-    inc screen+1
-  !:
-    txa
-    clc
-    adc #'0'
-    ldy #0
-    sta (screen),y
-    cpx #5
-    bcs b6
+  b11:
     lda #'+'
     ldy #2
     sta (screen),y
@@ -81,7 +65,25 @@ main: {
     sta (screen),y
   b10:
     inx
-    jmp b4
+    cpx #9+1
+    bcc b5
+    rts
+  b5:
+    lda #$28
+    clc
+    adc screen
+    sta screen
+    bcc !+
+    inc screen+1
+  !:
+    txa
+    clc
+    adc #'0'
+    ldy #0
+    sta (screen),y
+    cpx #5
+    bcs b6
+    jmp b11
   b3:
     lda header,x
     sta $400,x

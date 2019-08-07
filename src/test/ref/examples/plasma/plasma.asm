@@ -26,7 +26,7 @@
   .label print_char_cursor = 9
   .label c1A = $b
   .label c1B = $e
-  .label c2A = $11
+  .label c2A = $f
   .label c2B = 2
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
@@ -94,75 +94,6 @@ doplasma: {
     sta c1b
     lda #0
     sta i
-  b1:
-    lda i
-    cmp #$19
-    bcc b2
-    lax c1A
-    axs #-[3]
-    stx c1A
-    lax c1B
-    axs #5
-    stx c1B
-    lda c2A
-    sta c2a
-    lda c2B
-    sta c2b
-    lda #0
-    sta i1
-  b4:
-    lda i1
-    cmp #$28
-    bcc b5
-    lda c2A
-    clc
-    adc #2
-    sta c2A
-    lax c2B
-    axs #3
-    stx c2B
-    ldx #0
-  b7:
-    cpx #$19
-    bcc b3
-    rts
-  b3:
-    ldy #0
-  b8:
-    cpy #$28
-    bcc b9
-    lda #$28
-    clc
-    adc screen
-    sta screen
-    bcc !+
-    inc screen+1
-  !:
-    inx
-    jmp b7
-  b9:
-    lda xbuf,y
-    clc
-    adc ybuf,x
-    sta (screen),y
-    iny
-    jmp b8
-  b5:
-    ldy c2a
-    lda SINTABLE,y
-    ldy c2b
-    clc
-    adc SINTABLE,y
-    ldy i1
-    sta xbuf,y
-    lax c2a
-    axs #-[3]
-    stx c2a
-    lax c2b
-    axs #-[7]
-    stx c2b
-    inc i1
-    jmp b4
   b2:
     ldy c1a
     lda SINTABLE,y
@@ -178,19 +109,80 @@ doplasma: {
     axs #-[9]
     stx c1b
     inc i
-    jmp b1
+    lda i
+    cmp #$19
+    bcc b2
+    lax c1A
+    axs #-[3]
+    stx c1A
+    lax c1B
+    axs #5
+    stx c1B
+    lda c2A
+    sta c2a
+    lda c2B
+    sta c2b
+    lda #0
+    sta i1
+  b5:
+    ldy c2a
+    lda SINTABLE,y
+    ldy c2b
+    clc
+    adc SINTABLE,y
+    ldy i1
+    sta xbuf,y
+    lax c2a
+    axs #-[3]
+    stx c2a
+    lax c2b
+    axs #-[7]
+    stx c2b
+    inc i1
+    lda i1
+    cmp #$28
+    bcc b5
+    lda c2A
+    clc
+    adc #2
+    sta c2A
+    lax c2B
+    axs #3
+    stx c2B
+    ldx #0
+  b8:
+    ldy #0
+  b10:
+    lda xbuf,y
+    clc
+    adc ybuf,x
+    sta (screen),y
+    iny
+    cpy #$28
+    bcc b10
+    lda #$28
+    clc
+    adc screen
+    sta screen
+    bcc !+
+    inc screen+1
+  !:
+    inx
+    cpx #$19
+    bcc b8
+    rts
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _7 = $11
-    .label _10 = $f
-    .label _11 = $f
+    .label _7 = $f
+    .label _10 = $10
+    .label _11 = $10
     .label s = $e
     .label i = $b
     .label c = $c
-    .label _16 = $f
+    .label _16 = $10
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -200,16 +192,6 @@ makecharset: {
     lda #<0
     sta c
     sta c+1
-  b1:
-    lda c+1
-    cmp #>$100
-    bcc b2
-    bne !+
-    lda c
-    cmp #<$100
-    bcc b2
-  !:
-    rts
   b2:
     lda c
     tay
@@ -217,27 +199,23 @@ makecharset: {
     sta s
     lda #0
     sta i
-  b3:
-    lda i
-    cmp #8
-    bcc b4
-    lda c
-    and #7
-    cmp #0
-    bne b11
-    jsr print_char
-  b11:
-    inc c
-    bne !+
-    inc c+1
-  !:
-    jmp b1
   b4:
     ldy #0
     ldx #0
-  b5:
+  b7:
+    jsr sid_rnd
+    and #$ff
+    sta _7
+    lda s
+    cmp _7
+    bcs b9
+    tya
+    ora bittab,x
+    tay
+  b9:
+    inx
     cpx #8
-    bcc b6
+    bcc b7
     lda c
     asl
     sta _10
@@ -266,27 +244,29 @@ makecharset: {
     ldy #0
     sta (_16),y
     inc i
-    jmp b3
-  b6:
-    jsr sid_rnd
-    and #$ff
-    sta _7
-    lda s
-    cmp _7
-    bcs b8
-    tya
-    ora bittab,x
-    tay
-  b8:
-    inx
-    jmp b5
-    bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
+    lda i
+    cmp #8
+    bcc b4
+    lda c
+    and #7
+    cmp #0
+    bne b12
+    jsr print_char
+  b12:
+    inc c
+    bne !+
+    inc c+1
+  !:
+    lda c+1
+    cmp #>$100
+    bcc b2
+    bne !+
+    lda c
+    cmp #<$100
+    bcc b2
+  !:
     rts
+    bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
 // Print a single char
 print_char: {
@@ -298,6 +278,12 @@ print_char: {
     bne !+
     inc print_char_cursor+1
   !:
+    rts
+}
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+sid_rnd: {
+    lda SID_VOICE3_OSC
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -316,14 +302,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -332,7 +310,13 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {

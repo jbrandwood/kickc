@@ -6,9 +6,9 @@
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
   .const YSPACE = $14
-  .label x = 3
+  .label x = 5
   .label idx = 4
-  .label y = 5
+  .label y = 3
   .label line = 2
 main: {
     lda #0
@@ -16,22 +16,9 @@ main: {
     sta idx
     sta x
     sta line
-  b1:
-    lda line
-    cmp #8
-    bcc b2
-    rts
   b2:
     inc x
     ldy #0
-  b3:
-    cpy #8
-    bcc b4
-    lax y
-    axs #-[YSPACE]
-    stx y
-    inc line
-    jmp b1
   b4:
     lda idx
     asl
@@ -45,6 +32,15 @@ main: {
     axs #-[XSPACE]
     stx x
     iny
-    jmp b3
+    cpy #8
+    bcc b4
+    lax y
+    axs #-[YSPACE]
+    stx y
+    inc line
+    lda line
+    cmp #8
+    bcc b2
+    rts
 }
   p: .fill 2*$40, 0

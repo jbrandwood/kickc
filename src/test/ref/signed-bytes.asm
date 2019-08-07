@@ -3,10 +3,14 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    ldy #0
-    ldx #-$7f
-  b1:
-    txa
+    ldx #0
+    ldy #-$7f
+  b2:
+    tya
+    sta screen,x
+    iny
+    inx
+    tya
     sec
     sbc #$7f
     bvc !+
@@ -14,10 +18,4 @@ main: {
   !:
     bmi b2
     rts
-  b2:
-    txa
-    sta screen,y
-    inx
-    iny
-    jmp b1
 }

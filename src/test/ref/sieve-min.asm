@@ -9,81 +9,31 @@
   .label sieve = $1000
   .label print_char_cursor = 8
 main: {
-    .label i = 8
     .label sieve_i = $a
-    .label j = 4
-    .label s = 6
-    .label i_3 = 2
-    .label i_10 = 2
+    .label j = 2
+    .label s = 4
+    .label i = 6
+    .label i_12 = 8
     .label _18 = $c
+    .label i_17 = 8
     jsr memset
     lda #<sieve+2
     sta sieve_i
     lda #>sieve+2
     sta sieve_i+1
     lda #<2
-    sta i
+    sta i_17
     lda #>2
-    sta i+1
-  b1:
-    lda i+1
-    cmp #>SQRT_COUNT
-    bcc b2
-    bne !+
-    lda i
-    cmp #<SQRT_COUNT
-    bcc b2
-  !:
-    lda #<$400
-    sta print_char_cursor
-    lda #>$400
-    sta print_char_cursor+1
-    lda #<2
-    sta i_10
-    lda #>2
-    sta i_10+1
-  b7:
-    lda i_10+1
-    cmp #>$4c7
-    bcc b8
-    bne !+
-    lda i_10
-    cmp #<$4c7
-    bcc b8
-  !:
-  b11:
-    inc SCREEN+$3e7
-    jmp b11
-  b8:
-    lda i_10
-    clc
-    adc #<sieve
-    sta _18
-    lda i_10+1
-    adc #>sieve
-    sta _18+1
-    ldy #0
-    lda (_18),y
-    cmp #0
-    bne b9
-    jsr print_word
-    lda #' '
-    jsr print_char
-  b9:
-    inc i_3
-    bne !+
-    inc i_3+1
-  !:
-    jmp b7
+    sta i_17+1
   b2:
     ldy #0
     lda (sieve_i),y
     cmp #0
     bne b3
-    lda i
+    lda i_17
     asl
     sta j
-    lda i+1
+    lda i_17+1
     rol
     sta j+1
     lda j
@@ -103,32 +53,78 @@ main: {
     bcc b5
   !:
   b3:
-    inc i
+    inc i_12
     bne !+
-    inc i+1
+    inc i_12+1
   !:
     inc sieve_i
     bne !+
     inc sieve_i+1
   !:
-    jmp b1
+    lda i_12+1
+    cmp #>SQRT_COUNT
+    bcc b2
+    bne !+
+    lda i_12
+    cmp #<SQRT_COUNT
+    bcc b2
+  !:
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
+    lda #<2
+    sta i
+    lda #>2
+    sta i+1
+  b8:
+    lda i
+    clc
+    adc #<sieve
+    sta _18
+    lda i+1
+    adc #>sieve
+    sta _18+1
+    ldy #0
+    lda (_18),y
+    cmp #0
+    bne b9
+    jsr print_word
+    lda #' '
+    jsr print_char
+  b9:
+    inc i
+    bne !+
+    inc i+1
+  !:
+    lda i+1
+    cmp #>$4c7
+    bcc b8
+    bne !+
+    lda i
+    cmp #<$4c7
+    bcc b8
+  !:
+  b11:
+    inc SCREEN+$3e7
+    jmp b11
   b5:
     lda #1
     ldy #0
     sta (s),y
     lda s
     clc
-    adc i
+    adc i_17
     sta s
     lda s+1
-    adc i+1
+    adc i_17+1
     sta s+1
     lda j
     clc
-    adc i
+    adc i_17
     sta j
     lda j+1
-    adc i+1
+    adc i_17+1
     sta j+1
     jmp b4
 }
@@ -144,9 +140,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zeropage(6) w)
 print_word: {
-    .label w = 2
+    .label w = 6
     lda w+1
     tax
     jsr print_byte
@@ -182,14 +178,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -198,6 +186,12 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
   print_hextab: .text "0123456789abcdef"

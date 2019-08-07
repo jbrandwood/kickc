@@ -156,18 +156,21 @@ menu: {
     sta c
     lda #>COLS
     sta c+1
+  b3:
+    lda #LIGHT_GREEN
+    ldy #0
+    sta (c),y
+    inc c
+    bne !+
+    inc c+1
+  !:
   // Char Colors
-  b2:
     lda c+1
     cmp #>COLS+$3e8
-    beq !b3+
-    jmp b3
-  !b3:
+    bne b3
     lda c
     cmp #<COLS+$3e8
-    beq !b3+
-    jmp b3
-  !b3:
+    bne b3
     // Screen colors
     lda #0
     sta BGCOL
@@ -261,15 +264,6 @@ menu: {
   !b5:
     jsr mode_8bppchunkybmm
     rts
-  b3:
-    lda #LIGHT_GREEN
-    ldy #0
-    sta (c),y
-    inc c
-    bne !+
-    inc c+1
-  !:
-    jmp b2
 }
 //Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
 // Resolution: 320x200
@@ -1526,14 +1520,6 @@ mode_stdbitmap: {
     jsr bitmap_clear
     lda #0
     sta l
-  b7:
-    lda l
-    cmp #lines_cnt
-    bcc b8
-    lda #0
-    sta dtv_control
-    jsr mode_ctrl
-    rts
   b8:
     ldy l
     lda lines_x,y
@@ -1545,7 +1531,13 @@ mode_stdbitmap: {
     sta bitmap_line.y1
     jsr bitmap_line
     inc l
-    jmp b7
+    lda l
+    cmp #lines_cnt
+    bcc b8
+    lda #0
+    sta dtv_control
+    jsr mode_ctrl
+    rts
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
@@ -2314,14 +2306,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -2330,7 +2314,13 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
 // Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {

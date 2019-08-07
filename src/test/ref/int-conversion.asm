@@ -18,7 +18,14 @@ main: {
     sta s
     lda #>SCREEN
     sta s+1
-  b1:
+  b2:
+    lda #' '
+    ldy #0
+    sta (s),y
+    inc s
+    bne !+
+    inc s+1
+  !:
     lda s+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -30,15 +37,6 @@ main: {
     jsr testUnaryOperator
     jsr testBinaryOperator
     rts
-  b2:
-    lda #' '
-    ldy #0
-    sta (s),y
-    inc s
-    bne !+
-    inc s+1
-  !:
-    jmp b1
 }
 testBinaryOperator: {
     ldx #$28

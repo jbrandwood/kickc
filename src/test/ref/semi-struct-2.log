@@ -3832,6 +3832,13 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
 Constant (const byte[$2]) files#0 = { fill( $2, 0) }
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) memset::dst#1 = (byte*) memset::dst#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) memset::dst#5 (const byte*) memset::dst#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [187] if((const byte*) memset::dst#0!=(const byte*) memset::end#0) goto memset::@5
+Successful SSA optimization Pass2ConstantIfs
 Inlining Noop Cast [131] (word) print_word::w#0 ← (word)*((byte**)(byte*) printEntry::entry#10) keeping *((byte**)printEntry::entry#10)
 Inlining Noop Cast [135] (word) print_word::w#1 ← (word)*((byte**)(byte*) printEntry::entry#10 + (byte) 2) keeping *((byte**)printEntry::entry#10 + 2)
 Inlining Noop Cast [143] (word) print_word::w#3 ← (word)*((word**)(byte*) printEntry::entry#10 + (byte) 6) keeping *((word**)printEntry::entry#10 + 6)
@@ -3913,6 +3920,7 @@ Consolidated array index constant in *(keyboard_matrix_row_bitmask#0+keyboard_ke
 Consolidated array index constant in *(keyboard_matrix_col_bitmask#0+keyboard_key_pressed::colidx#0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
+Added new block during phi lifting memset::@10(between memset::@4 and memset::@5)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @17
@@ -3944,6 +3952,7 @@ Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
+Adding NOP phi() at start of memset::@4_1
 Adding NOP phi() at start of memset::@1
 Adding NOP phi() at start of keyboard_key_pressed
 Adding NOP phi() at start of print_ln::@2
@@ -4020,10 +4029,10 @@ CALL GRAPH
 Calls in [] to main:7 
 Calls in [main] to keyboard_init:11 mul8u:14 mul8u:21 initEntry:28 initEntry:31 print_cls:33 print_str:35 print_ln:37 print_ln:40 printEntry:43 print_ln:46 print_str:48 keyboard_key_pressed:51 print_cls:56 print_str:58 print_ln:60 print_ln:63 printEntry:66 print_ln:69 print_str:71 keyboard_key_pressed:74 print_cls:79 
 Calls in [print_cls] to memset:83 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:96 
-Calls in [printEntry] to print_str:125 print_word:130 print_ln:133 print_str:135 print_word:140 print_ln:143 print_str:145 print_word:151 print_ln:154 print_str:156 print_word:161 print_ln:164 print_str:166 print_byte:173 print_ln:176 print_str:178 print_byte:185 print_ln:188 print_str:190 print_byte:197 print_ln:200 print_str:202 print_byte:209 print_ln:212 print_str:214 print_word:220 print_ln:223 print_str:225 print_byte:232 print_ln:235 print_str:237 print_byte:244 print_ln:247 print_str:249 print_byte:256 print_ln:259 print_str:261 print_byte:268 print_ln:271 
-Calls in [print_byte] to print_char:279 print_char:284 
-Calls in [print_word] to print_byte:295 print_byte:299 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:97 
+Calls in [printEntry] to print_str:126 print_word:131 print_ln:134 print_str:136 print_word:141 print_ln:144 print_str:146 print_word:152 print_ln:155 print_str:157 print_word:162 print_ln:165 print_str:167 print_byte:174 print_ln:177 print_str:179 print_byte:186 print_ln:189 print_str:191 print_byte:198 print_ln:201 print_str:203 print_byte:210 print_ln:213 print_str:215 print_word:221 print_ln:224 print_str:226 print_byte:233 print_ln:236 print_str:238 print_byte:245 print_ln:248 print_str:250 print_byte:257 print_ln:260 print_str:262 print_byte:269 print_ln:272 
+Calls in [print_byte] to print_char:280 print_char:285 
+Calls in [print_word] to print_byte:296 print_byte:300 
 
 Created 21 initial phi equivalence classes
 Coalesced [27] initEntry::entry#39 ← initEntry::entry#0
@@ -4042,84 +4051,84 @@ Coalesced [65] printEntry::entry#77 ← printEntry::entry#1
 Not coalescing [67] print_line_cursor#160 ← print_line_cursor#1
 Not coalescing [68] print_char_cursor#232 ← print_line_cursor#1
 Not coalescing [70] print_char_cursor#211 ← print_line_cursor#1
-Coalesced [94] memset::dst#4 ← memset::dst#1
-Coalesced [105] print_str::str#21 ← print_str::str#20
-Coalesced [106] print_char_cursor#225 ← print_char_cursor#164
-Coalesced [113] print_str::str#22 ← print_str::str#0
-Coalesced [114] print_char_cursor#226 ← print_char_cursor#1
-Coalesced [116] print_line_cursor#174 ← print_line_cursor#63
-Not coalescing [122] print_line_cursor#175 ← print_line_cursor#1
-Not coalescing [124] print_char_cursor#212 ← print_line_cursor#1
-Not coalescing [131] print_line_cursor#161 ← print_line_cursor#1
-Coalesced [132] print_char_cursor#233 ← print_char_cursor#11
-Not coalescing [134] print_char_cursor#213 ← print_line_cursor#1
-Not coalescing [141] print_line_cursor#162 ← print_line_cursor#1
-Coalesced (already) [142] print_char_cursor#234 ← print_char_cursor#11
-Not coalescing [144] print_char_cursor#214 ← print_line_cursor#1
-Coalesced [150] print_word::w#9 ← print_word::w#2
-Not coalescing [152] print_line_cursor#163 ← print_line_cursor#1
-Coalesced (already) [153] print_char_cursor#235 ← print_char_cursor#11
-Not coalescing [155] print_char_cursor#215 ← print_line_cursor#1
-Not coalescing [162] print_line_cursor#164 ← print_line_cursor#1
-Coalesced (already) [163] print_char_cursor#236 ← print_char_cursor#11
-Not coalescing [165] print_char_cursor#216 ← print_line_cursor#1
-Coalesced [171] print_byte::b#16 ← print_byte::b#2
-Coalesced [172] print_char_cursor#250 ← print_char_cursor#142
-Not coalescing [174] print_line_cursor#165 ← print_line_cursor#1
-Coalesced (already) [175] print_char_cursor#237 ← print_char_cursor#11
-Not coalescing [177] print_char_cursor#217 ← print_line_cursor#1
-Coalesced [183] print_byte::b#17 ← print_byte::b#3
-Coalesced (already) [184] print_char_cursor#251 ← print_char_cursor#142
-Not coalescing [186] print_line_cursor#166 ← print_line_cursor#1
-Coalesced (already) [187] print_char_cursor#238 ← print_char_cursor#11
-Not coalescing [189] print_char_cursor#218 ← print_line_cursor#1
-Coalesced [195] print_byte::b#18 ← print_byte::b#4
-Coalesced (already) [196] print_char_cursor#252 ← print_char_cursor#142
-Not coalescing [198] print_line_cursor#167 ← print_line_cursor#1
-Coalesced (already) [199] print_char_cursor#239 ← print_char_cursor#11
-Not coalescing [201] print_char_cursor#219 ← print_line_cursor#1
-Coalesced [207] print_byte::b#19 ← print_byte::b#5
-Coalesced (already) [208] print_char_cursor#253 ← print_char_cursor#142
-Not coalescing [210] print_line_cursor#168 ← print_line_cursor#1
-Coalesced (already) [211] print_char_cursor#240 ← print_char_cursor#11
-Not coalescing [213] print_char_cursor#220 ← print_line_cursor#1
-Coalesced [219] print_word::w#11 ← print_word::w#4
-Not coalescing [221] print_line_cursor#169 ← print_line_cursor#1
-Coalesced (already) [222] print_char_cursor#241 ← print_char_cursor#11
-Not coalescing [224] print_char_cursor#221 ← print_line_cursor#1
-Coalesced [230] print_byte::b#12 ← print_byte::b#6
-Coalesced (already) [231] print_char_cursor#246 ← print_char_cursor#142
-Not coalescing [233] print_line_cursor#170 ← print_line_cursor#1
-Coalesced (already) [234] print_char_cursor#242 ← print_char_cursor#11
-Not coalescing [236] print_char_cursor#222 ← print_line_cursor#1
-Coalesced [242] print_byte::b#13 ← print_byte::b#7
-Coalesced (already) [243] print_char_cursor#247 ← print_char_cursor#142
-Not coalescing [245] print_line_cursor#171 ← print_line_cursor#1
-Coalesced (already) [246] print_char_cursor#243 ← print_char_cursor#11
-Not coalescing [248] print_char_cursor#223 ← print_line_cursor#1
-Coalesced [254] print_byte::b#14 ← print_byte::b#8
-Coalesced (already) [255] print_char_cursor#248 ← print_char_cursor#142
-Not coalescing [257] print_line_cursor#172 ← print_line_cursor#1
-Coalesced (already) [258] print_char_cursor#244 ← print_char_cursor#11
-Not coalescing [260] print_char_cursor#224 ← print_line_cursor#1
-Coalesced [266] print_byte::b#15 ← print_byte::b#9
-Coalesced (already) [267] print_char_cursor#249 ← print_char_cursor#142
-Not coalescing [269] print_line_cursor#173 ← print_line_cursor#1
-Coalesced (already) [270] print_char_cursor#245 ← print_char_cursor#11
-Coalesced [277] print_char::ch#3 ← print_char::ch#0
-Coalesced [278] print_char_cursor#256 ← print_char_cursor#145
-Coalesced [282] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [283] print_char_cursor#257 ← print_char_cursor#11
-Coalesced [293] print_byte::b#20 ← print_byte::b#0
-Coalesced (already) [294] print_char_cursor#254 ← print_char_cursor#142
-Coalesced [297] print_byte::b#21 ← print_byte::b#1
-Coalesced (already) [298] print_char_cursor#255 ← print_char_cursor#11
-Coalesced [357] mul8u::a#8 ← mul8u::a#6
-Coalesced [365] mul8u::res#9 ← mul8u::res#1
-Coalesced [369] mul8u::a#9 ← mul8u::a#0
-Coalesced [370] mul8u::res#7 ← mul8u::res#6
-Coalesced [371] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [372] mul8u::res#8 ← mul8u::res#2
+Coalesced [95] memset::dst#6 ← memset::dst#1
+Coalesced [106] print_str::str#21 ← print_str::str#20
+Coalesced [107] print_char_cursor#225 ← print_char_cursor#164
+Coalesced [114] print_str::str#22 ← print_str::str#0
+Coalesced [115] print_char_cursor#226 ← print_char_cursor#1
+Coalesced [117] print_line_cursor#174 ← print_line_cursor#63
+Not coalescing [123] print_line_cursor#175 ← print_line_cursor#1
+Not coalescing [125] print_char_cursor#212 ← print_line_cursor#1
+Not coalescing [132] print_line_cursor#161 ← print_line_cursor#1
+Coalesced [133] print_char_cursor#233 ← print_char_cursor#11
+Not coalescing [135] print_char_cursor#213 ← print_line_cursor#1
+Not coalescing [142] print_line_cursor#162 ← print_line_cursor#1
+Coalesced (already) [143] print_char_cursor#234 ← print_char_cursor#11
+Not coalescing [145] print_char_cursor#214 ← print_line_cursor#1
+Coalesced [151] print_word::w#9 ← print_word::w#2
+Not coalescing [153] print_line_cursor#163 ← print_line_cursor#1
+Coalesced (already) [154] print_char_cursor#235 ← print_char_cursor#11
+Not coalescing [156] print_char_cursor#215 ← print_line_cursor#1
+Not coalescing [163] print_line_cursor#164 ← print_line_cursor#1
+Coalesced (already) [164] print_char_cursor#236 ← print_char_cursor#11
+Not coalescing [166] print_char_cursor#216 ← print_line_cursor#1
+Coalesced [172] print_byte::b#16 ← print_byte::b#2
+Coalesced [173] print_char_cursor#250 ← print_char_cursor#142
+Not coalescing [175] print_line_cursor#165 ← print_line_cursor#1
+Coalesced (already) [176] print_char_cursor#237 ← print_char_cursor#11
+Not coalescing [178] print_char_cursor#217 ← print_line_cursor#1
+Coalesced [184] print_byte::b#17 ← print_byte::b#3
+Coalesced (already) [185] print_char_cursor#251 ← print_char_cursor#142
+Not coalescing [187] print_line_cursor#166 ← print_line_cursor#1
+Coalesced (already) [188] print_char_cursor#238 ← print_char_cursor#11
+Not coalescing [190] print_char_cursor#218 ← print_line_cursor#1
+Coalesced [196] print_byte::b#18 ← print_byte::b#4
+Coalesced (already) [197] print_char_cursor#252 ← print_char_cursor#142
+Not coalescing [199] print_line_cursor#167 ← print_line_cursor#1
+Coalesced (already) [200] print_char_cursor#239 ← print_char_cursor#11
+Not coalescing [202] print_char_cursor#219 ← print_line_cursor#1
+Coalesced [208] print_byte::b#19 ← print_byte::b#5
+Coalesced (already) [209] print_char_cursor#253 ← print_char_cursor#142
+Not coalescing [211] print_line_cursor#168 ← print_line_cursor#1
+Coalesced (already) [212] print_char_cursor#240 ← print_char_cursor#11
+Not coalescing [214] print_char_cursor#220 ← print_line_cursor#1
+Coalesced [220] print_word::w#11 ← print_word::w#4
+Not coalescing [222] print_line_cursor#169 ← print_line_cursor#1
+Coalesced (already) [223] print_char_cursor#241 ← print_char_cursor#11
+Not coalescing [225] print_char_cursor#221 ← print_line_cursor#1
+Coalesced [231] print_byte::b#12 ← print_byte::b#6
+Coalesced (already) [232] print_char_cursor#246 ← print_char_cursor#142
+Not coalescing [234] print_line_cursor#170 ← print_line_cursor#1
+Coalesced (already) [235] print_char_cursor#242 ← print_char_cursor#11
+Not coalescing [237] print_char_cursor#222 ← print_line_cursor#1
+Coalesced [243] print_byte::b#13 ← print_byte::b#7
+Coalesced (already) [244] print_char_cursor#247 ← print_char_cursor#142
+Not coalescing [246] print_line_cursor#171 ← print_line_cursor#1
+Coalesced (already) [247] print_char_cursor#243 ← print_char_cursor#11
+Not coalescing [249] print_char_cursor#223 ← print_line_cursor#1
+Coalesced [255] print_byte::b#14 ← print_byte::b#8
+Coalesced (already) [256] print_char_cursor#248 ← print_char_cursor#142
+Not coalescing [258] print_line_cursor#172 ← print_line_cursor#1
+Coalesced (already) [259] print_char_cursor#244 ← print_char_cursor#11
+Not coalescing [261] print_char_cursor#224 ← print_line_cursor#1
+Coalesced [267] print_byte::b#15 ← print_byte::b#9
+Coalesced (already) [268] print_char_cursor#249 ← print_char_cursor#142
+Not coalescing [270] print_line_cursor#173 ← print_line_cursor#1
+Coalesced (already) [271] print_char_cursor#245 ← print_char_cursor#11
+Coalesced [278] print_char::ch#3 ← print_char::ch#0
+Coalesced [279] print_char_cursor#256 ← print_char_cursor#145
+Coalesced [283] print_char::ch#4 ← print_char::ch#1
+Coalesced (already) [284] print_char_cursor#257 ← print_char_cursor#11
+Coalesced [294] print_byte::b#20 ← print_byte::b#0
+Coalesced (already) [295] print_char_cursor#254 ← print_char_cursor#142
+Coalesced [298] print_byte::b#21 ← print_byte::b#1
+Coalesced (already) [299] print_char_cursor#255 ← print_char_cursor#11
+Coalesced [358] mul8u::a#8 ← mul8u::a#6
+Coalesced [366] mul8u::res#9 ← mul8u::res#1
+Coalesced [370] mul8u::a#9 ← mul8u::a#0
+Coalesced [371] mul8u::res#7 ← mul8u::res#6
+Coalesced [372] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [373] mul8u::res#8 ← mul8u::res#2
 Coalesced down to 14 phi equivalence classes
 Culled Empty Block (label) @17
 Culled Empty Block (label) @34
@@ -4136,7 +4145,9 @@ Culled Empty Block (label) main::@34
 Culled Empty Block (label) main::@36
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@4_1
 Culled Empty Block (label) memset::@1
+Culled Empty Block (label) memset::@10
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) printEntry::@14
 Culled Empty Block (label) printEntry::entryBufDisk1_@return
@@ -4415,18 +4426,18 @@ print_cls::@return: scope:[print_cls]  from print_cls
   to:@return
 memset: scope:[memset]  from print_cls
   [68] phi()
+  to:memset::@2
+memset::@2: scope:[memset]  from memset memset::@1
+  [69] (byte*) memset::dst#4 ← phi( memset::@1/(byte*) memset::dst#1 memset/(byte*)(const void*) memset::str#0 )
+  [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0
+  [71] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@2
-  [69] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+memset::@1: scope:[memset]  from memset::@2
+  [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [71] return 
+  [73] return 
   to:@return
-memset::@2: scope:[memset]  from memset::@1
-  [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  to:memset::@1
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@1 main::@3
   [74] phi()
   [75] call keyboard_matrix_read 
@@ -4962,8 +4973,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 22.0
-(byte*) memset::dst#2 14.666666666666666
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#4 16.5
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -5129,7 +5140,7 @@ VARIABLE REGISTER WEIGHTS
 (word~) print_word::w#8 4.0
 
 Initial phi equivalence classes
-[ memset::dst#2 memset::dst#1 ]
+[ memset::dst#4 memset::dst#1 ]
 [ print_str::str#18 print_str::str#20 print_str::str#0 ]
 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ]
 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ]
@@ -5174,7 +5185,7 @@ Added variable initEntry::$23 to zero page equivalence class [ initEntry::$23 ]
 Added variable initEntry::$25 to zero page equivalence class [ initEntry::$25 ]
 Added variable mul8u::$1 to zero page equivalence class [ mul8u::$1 ]
 Complete equivalence classes
-[ memset::dst#2 memset::dst#1 ]
+[ memset::dst#4 memset::dst#1 ]
 [ print_str::str#18 print_str::str#20 print_str::str#0 ]
 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ]
 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ]
@@ -5218,7 +5229,7 @@ Complete equivalence classes
 [ initEntry::$23 ]
 [ initEntry::$25 ]
 [ mul8u::$1 ]
-Allocated zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ]
+Allocated zp ZP_WORD:2 [ memset::dst#4 memset::dst#1 ]
 Allocated zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ]
 Allocated zp ZP_WORD:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ]
 Allocated zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ]
@@ -5761,43 +5772,44 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = 2
-    // [69] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [69] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [69] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [69] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [71] return 
-    rts
+    jmp b2
+    // [69] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [69] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [71] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [69] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [73] return 
+    rts
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -7108,8 +7120,8 @@ Statement [50] (byte*) printEntry::entry#1 ← (byte*) main::entry2#0 [ print_li
 Statement [52] (byte*~) print_line_cursor#160 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_line_cursor#160 ] ( main:2 [ print_line_cursor#1 print_line_cursor#160 ] ) always clobbers reg byte a 
 Statement [53] (byte*~) print_char_cursor#232 ← (byte*) print_line_cursor#1 [ print_line_cursor#160 print_char_cursor#232 ] ( main:2 [ print_line_cursor#160 print_char_cursor#232 ] ) always clobbers reg byte a 
 Statement [55] (byte*~) print_char_cursor#211 ← (byte*) print_line_cursor#1 [ print_char_cursor#211 ] ( main:2 [ print_char_cursor#211 ] ) always clobbers reg byte a 
-Statement [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] main:2::print_cls:63::memset:66 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] main:2::print_cls:63::memset:66 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#4 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#4 ] main:2::print_cls:63::memset:66 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#1 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#1 ] main:2::print_cls:63::memset:66 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [80] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] ) always clobbers reg byte a 
 Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
 Statement [85] if(*((byte*) print_str::str#18)!=(byte) '@') goto print_str::@2 [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] ) always clobbers reg byte a reg byte y 
@@ -7215,8 +7227,8 @@ Statement [50] (byte*) printEntry::entry#1 ← (byte*) main::entry2#0 [ print_li
 Statement [52] (byte*~) print_line_cursor#160 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_line_cursor#160 ] ( main:2 [ print_line_cursor#1 print_line_cursor#160 ] ) always clobbers reg byte a 
 Statement [53] (byte*~) print_char_cursor#232 ← (byte*) print_line_cursor#1 [ print_line_cursor#160 print_char_cursor#232 ] ( main:2 [ print_line_cursor#160 print_char_cursor#232 ] ) always clobbers reg byte a 
 Statement [55] (byte*~) print_char_cursor#211 ← (byte*) print_line_cursor#1 [ print_char_cursor#211 ] ( main:2 [ print_char_cursor#211 ] ) always clobbers reg byte a 
-Statement [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] main:2::print_cls:63::memset:66 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] main:2::print_cls:63::memset:66 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#4 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#4 ] main:2::print_cls:63::memset:66 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#1 ] main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#1 ] main:2::print_cls:63::memset:66 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [80] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] ) always clobbers reg byte a 
 Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
 Statement [85] if(*((byte*) print_str::str#18)!=(byte) '@') goto print_str::@2 [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] ) always clobbers reg byte a reg byte y 
@@ -7298,7 +7310,7 @@ Statement [252] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 [ mul8u::res#
 Statement [254] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:7 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::mul8u:12 [ main::entry1#0 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Statement [258] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
 Statement [259] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:2 [ memset::dst#4 memset::dst#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_WORD:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] : zp ZP_WORD:6 , 
 Potential registers zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ] : zp ZP_WORD:8 , 
@@ -7350,8 +7362,8 @@ Uplift Scope [initEntry] 8.51: zp ZP_WORD:16 [ initEntry::entry#10 initEntry::en
 Uplift Scope [print_byte] 46: zp ZP_BYTE:10 [ print_byte::b#10 print_byte::b#6 print_byte::b#7 print_byte::b#8 print_byte::b#9 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:46 [ print_byte::$0 ] 4: zp ZP_BYTE:47 [ print_byte::$2 ] 
 Uplift Scope [keyboard_key_pressed] 22: zp ZP_BYTE:36 [ keyboard_key_pressed::return#2 ] 22: zp ZP_BYTE:38 [ keyboard_key_pressed::return#3 ] 6: zp ZP_BYTE:42 [ keyboard_key_pressed::return#0 ] 4: zp ZP_BYTE:41 [ keyboard_key_pressed::$2 ] 
 Uplift Scope [main] 22: zp ZP_BYTE:37 [ main::$20 ] 22: zp ZP_BYTE:39 [ main::$22 ] 4: zp ZP_WORD:26 [ main::fileEntry1_$0#0 ] 4: zp ZP_WORD:32 [ main::fileEntry2_$0#0 ] 0.32: zp ZP_WORD:28 [ main::entry1#0 ] 0.17: zp ZP_WORD:34 [ main::entry2#0 ] 
-Uplift Scope [memset] 36.67: zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_str] 35.5: zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:2 [ memset::dst#4 memset::dst#1 ] 
 Uplift Scope [print_word] 24.67: zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:11 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
 Uplift Scope [printEntry] 8.23: zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ] 
@@ -7361,52 +7373,52 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 Uplift Scope [keyboard_init] 
 
-Uplifting [] best 6192 combination zp ZP_WORD:12 [ print_char_cursor#82 print_char_cursor#145 print_char_cursor#143 print_char_cursor#142 print_char_cursor#164 print_char_cursor#210 print_char_cursor#211 print_char_cursor#212 print_char_cursor#213 print_char_cursor#214 print_char_cursor#215 print_char_cursor#216 print_char_cursor#217 print_char_cursor#218 print_char_cursor#219 print_char_cursor#220 print_char_cursor#221 print_char_cursor#222 print_char_cursor#223 print_char_cursor#224 print_char_cursor#1 print_char_cursor#228 print_char_cursor#229 print_char_cursor#231 print_char_cursor#232 print_char_cursor#11 ] zp ZP_WORD:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] zp ZP_WORD:44 [ print_line_cursor#1 ] 
-Uplifting [mul8u] best 6096 combination zp ZP_WORD:20 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:22 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#0 ] zp ZP_WORD:24 [ mul8u::return#2 ] zp ZP_WORD:30 [ mul8u::return#3 ] 
-Uplifting [initEntry] best 6080 combination zp ZP_WORD:16 [ initEntry::entry#10 initEntry::entry#0 initEntry::entry#1 ] zp ZP_WORD:52 [ initEntry::$5 ] reg byte a [ initEntry::$9 ] reg byte a [ initEntry::$11 ] reg byte a [ initEntry::$13 ] reg byte a [ initEntry::$15 ] zp ZP_WORD:60 [ initEntry::$17 ] zp ZP_BYTE:62 [ initEntry::$19 ] zp ZP_BYTE:63 [ initEntry::$21 ] zp ZP_BYTE:64 [ initEntry::$23 ] zp ZP_BYTE:65 [ initEntry::$25 ] zp ZP_WORD:48 [ initEntry::$1 ] zp ZP_WORD:50 [ initEntry::$3 ] zp ZP_WORD:54 [ initEntry::$7 ] zp ZP_BYTE:18 [ initEntry::n#10 ] 
+Uplifting [] best 6222 combination zp ZP_WORD:12 [ print_char_cursor#82 print_char_cursor#145 print_char_cursor#143 print_char_cursor#142 print_char_cursor#164 print_char_cursor#210 print_char_cursor#211 print_char_cursor#212 print_char_cursor#213 print_char_cursor#214 print_char_cursor#215 print_char_cursor#216 print_char_cursor#217 print_char_cursor#218 print_char_cursor#219 print_char_cursor#220 print_char_cursor#221 print_char_cursor#222 print_char_cursor#223 print_char_cursor#224 print_char_cursor#1 print_char_cursor#228 print_char_cursor#229 print_char_cursor#231 print_char_cursor#232 print_char_cursor#11 ] zp ZP_WORD:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] zp ZP_WORD:44 [ print_line_cursor#1 ] 
+Uplifting [mul8u] best 6126 combination zp ZP_WORD:20 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:22 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#0 ] zp ZP_WORD:24 [ mul8u::return#2 ] zp ZP_WORD:30 [ mul8u::return#3 ] 
+Uplifting [initEntry] best 6110 combination zp ZP_WORD:16 [ initEntry::entry#10 initEntry::entry#0 initEntry::entry#1 ] zp ZP_WORD:52 [ initEntry::$5 ] reg byte a [ initEntry::$9 ] reg byte a [ initEntry::$11 ] reg byte a [ initEntry::$13 ] reg byte a [ initEntry::$15 ] zp ZP_WORD:60 [ initEntry::$17 ] zp ZP_BYTE:62 [ initEntry::$19 ] zp ZP_BYTE:63 [ initEntry::$21 ] zp ZP_BYTE:64 [ initEntry::$23 ] zp ZP_BYTE:65 [ initEntry::$25 ] zp ZP_WORD:48 [ initEntry::$1 ] zp ZP_WORD:50 [ initEntry::$3 ] zp ZP_WORD:54 [ initEntry::$7 ] zp ZP_BYTE:18 [ initEntry::n#10 ] 
 Limited combination testing to 100 combinations of 131072 possible.
-Uplifting [print_byte] best 6058 combination reg byte x [ print_byte::b#10 print_byte::b#6 print_byte::b#7 print_byte::b#8 print_byte::b#9 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [keyboard_key_pressed] best 5869 combination reg byte a [ keyboard_key_pressed::return#2 ] reg byte a [ keyboard_key_pressed::return#3 ] reg byte a [ keyboard_key_pressed::return#0 ] reg byte a [ keyboard_key_pressed::$2 ] 
+Uplifting [print_byte] best 6088 combination reg byte x [ print_byte::b#10 print_byte::b#6 print_byte::b#7 print_byte::b#8 print_byte::b#9 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [keyboard_key_pressed] best 5899 combination reg byte a [ keyboard_key_pressed::return#2 ] reg byte a [ keyboard_key_pressed::return#3 ] reg byte a [ keyboard_key_pressed::return#0 ] reg byte a [ keyboard_key_pressed::$2 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [main] best 5749 combination reg byte a [ main::$20 ] reg byte a [ main::$22 ] zp ZP_WORD:26 [ main::fileEntry1_$0#0 ] zp ZP_WORD:32 [ main::fileEntry2_$0#0 ] zp ZP_WORD:28 [ main::entry1#0 ] zp ZP_WORD:34 [ main::entry2#0 ] 
-Uplifting [memset] best 5749 combination zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [print_str] best 5749 combination zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] 
-Uplifting [print_word] best 5749 combination zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 ] 
-Uplifting [print_char] best 5740 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [printEntry] best 5740 combination zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ] 
-Uplifting [keyboard_matrix_read] best 5728 combination reg byte a [ keyboard_matrix_read::return#2 ] reg byte a [ keyboard_matrix_read::return#0 ] 
-Uplifting [RADIX] best 5728 combination 
-Uplifting [print_ln] best 5728 combination 
-Uplifting [print_cls] best 5728 combination 
-Uplifting [keyboard_init] best 5728 combination 
+Uplifting [main] best 5779 combination reg byte a [ main::$20 ] reg byte a [ main::$22 ] zp ZP_WORD:26 [ main::fileEntry1_$0#0 ] zp ZP_WORD:32 [ main::fileEntry2_$0#0 ] zp ZP_WORD:28 [ main::entry1#0 ] zp ZP_WORD:34 [ main::entry2#0 ] 
+Uplifting [print_str] best 5779 combination zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] 
+Uplifting [memset] best 5779 combination zp ZP_WORD:2 [ memset::dst#4 memset::dst#1 ] 
+Uplifting [print_word] best 5779 combination zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 ] 
+Uplifting [print_char] best 5770 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [printEntry] best 5770 combination zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ] 
+Uplifting [keyboard_matrix_read] best 5758 combination reg byte a [ keyboard_matrix_read::return#2 ] reg byte a [ keyboard_matrix_read::return#0 ] 
+Uplifting [RADIX] best 5758 combination 
+Uplifting [print_ln] best 5758 combination 
+Uplifting [print_cls] best 5758 combination 
+Uplifting [keyboard_init] best 5758 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:62 [ initEntry::$19 ]
-Uplifting [initEntry] best 5724 combination reg byte a [ initEntry::$19 ] 
+Uplifting [initEntry] best 5754 combination reg byte a [ initEntry::$19 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:63 [ initEntry::$21 ]
-Uplifting [initEntry] best 5720 combination reg byte a [ initEntry::$21 ] 
+Uplifting [initEntry] best 5750 combination reg byte a [ initEntry::$21 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:64 [ initEntry::$23 ]
-Uplifting [initEntry] best 5716 combination reg byte a [ initEntry::$23 ] 
+Uplifting [initEntry] best 5746 combination reg byte a [ initEntry::$23 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:65 [ initEntry::$25 ]
-Uplifting [initEntry] best 5712 combination reg byte a [ initEntry::$25 ] 
+Uplifting [initEntry] best 5742 combination reg byte a [ initEntry::$25 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ initEntry::n#10 ]
-Uplifting [initEntry] best 5693 combination reg byte x [ initEntry::n#10 ] 
+Uplifting [initEntry] best 5723 combination reg byte x [ initEntry::n#10 ] 
 Coalescing zero page register [ zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 ] ] with [ zp ZP_WORD:28 [ main::entry1#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:20 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp ZP_WORD:24 [ mul8u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:20 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp ZP_WORD:30 [ mul8u::return#3 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:32 [ main::fileEntry2_$0#0 ] ] with [ zp ZP_WORD:34 [ main::entry2#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:8 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 main::entry1#0 ] ] with [ zp ZP_WORD:26 [ main::fileEntry1_$0#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:20 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mul8u::return#3 ] ] with [ zp ZP_WORD:32 [ main::fileEntry2_$0#0 main::entry2#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] ] with [ zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] ] with [ zp ZP_WORD:2 [ memset::dst#4 memset::dst#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 ] ] with [ zp ZP_WORD:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] ]
 Coalescing zero page register [ zp ZP_WORD:16 [ initEntry::entry#10 initEntry::entry#0 initEntry::entry#1 ] ] with [ zp ZP_WORD:12 [ print_char_cursor#82 print_char_cursor#145 print_char_cursor#143 print_char_cursor#142 print_char_cursor#164 print_char_cursor#210 print_char_cursor#211 print_char_cursor#212 print_char_cursor#213 print_char_cursor#214 print_char_cursor#215 print_char_cursor#216 print_char_cursor#217 print_char_cursor#218 print_char_cursor#219 print_char_cursor#220 print_char_cursor#221 print_char_cursor#222 print_char_cursor#223 print_char_cursor#224 print_char_cursor#1 print_char_cursor#228 print_char_cursor#229 print_char_cursor#231 print_char_cursor#232 print_char_cursor#11 ] ]
 Coalescing zero page register [ zp ZP_WORD:44 [ print_line_cursor#1 ] ] with [ zp ZP_WORD:22 [ mul8u::mb#2 mul8u::mb#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] ] with [ zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#2 memset::dst#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 ] ] with [ zp ZP_WORD:4 [ print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#4 memset::dst#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:48 [ initEntry::$1 ] ] with [ zp ZP_WORD:44 [ print_line_cursor#1 mul8u::mb#2 mul8u::mb#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:50 [ initEntry::$3 ] ] with [ zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#2 memset::dst#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:50 [ initEntry::$3 ] ] with [ zp ZP_WORD:14 [ print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#4 memset::dst#1 ] ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:2 [ printEntry::entry#10 printEntry::entry#0 printEntry::entry#1 main::entry1#0 main::fileEntry1_$0#0 ]
 Allocated (was zp ZP_WORD:16) zp ZP_WORD:4 [ initEntry::entry#10 initEntry::entry#0 initEntry::entry#1 print_char_cursor#82 print_char_cursor#145 print_char_cursor#143 print_char_cursor#142 print_char_cursor#164 print_char_cursor#210 print_char_cursor#211 print_char_cursor#212 print_char_cursor#213 print_char_cursor#214 print_char_cursor#215 print_char_cursor#216 print_char_cursor#217 print_char_cursor#218 print_char_cursor#219 print_char_cursor#220 print_char_cursor#221 print_char_cursor#222 print_char_cursor#223 print_char_cursor#224 print_char_cursor#1 print_char_cursor#228 print_char_cursor#229 print_char_cursor#231 print_char_cursor#232 print_char_cursor#11 ]
 Allocated (was zp ZP_WORD:20) zp ZP_WORD:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mul8u::return#3 main::fileEntry2_$0#0 main::entry2#0 ]
 Allocated (was zp ZP_WORD:48) zp ZP_WORD:8 [ initEntry::$1 print_line_cursor#1 mul8u::mb#2 mul8u::mb#1 ]
-Allocated (was zp ZP_WORD:50) zp ZP_WORD:10 [ initEntry::$3 print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#2 memset::dst#1 ]
+Allocated (was zp ZP_WORD:50) zp ZP_WORD:10 [ initEntry::$3 print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#4 memset::dst#1 ]
 Allocated (was zp ZP_WORD:52) zp ZP_WORD:12 [ initEntry::$5 ]
 Allocated (was zp ZP_WORD:54) zp ZP_WORD:14 [ initEntry::$7 ]
 Allocated (was zp ZP_WORD:60) zp ZP_WORD:16 [ initEntry::$17 ]
@@ -7876,43 +7888,44 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = $a
-    // [69] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [69] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [69] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [69] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [71] return 
-    rts
+    jmp b2
+    // [69] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [69] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [71] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [69] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [73] return 
+    rts
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -9188,6 +9201,7 @@ Removing instruction jmp b23
 Removing instruction jmp b4
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
@@ -9293,6 +9307,8 @@ Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b16 with b1
 Replacing label b3_from_b23 with b3
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Replacing label b1_from_b2 with b1
 Replacing label b1_from_b2 with b1
 Replacing label b3_from_b2 with b3
@@ -9325,6 +9341,7 @@ Removing instruction b3_from_b23:
 Removing instruction keyboard_key_pressed_from_b3:
 Removing instruction b4_from_b23:
 Removing instruction print_cls_from_b4:
+Removing instruction b2_from_b1:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
 Removing instruction b1_from_print_ln:
@@ -9420,9 +9437,9 @@ Removing instruction b4:
 Removing instruction breturn:
 Removing instruction memset_from_print_cls:
 Removing instruction breturn:
-Removing instruction b1_from_memset:
+Removing instruction b2_from_memset:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Removing instruction b1:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -9538,6 +9555,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -9744,8 +9763,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:10 22.0
-(byte*) memset::dst#2 dst zp ZP_WORD:10 14.666666666666666
+(byte*) memset::dst#1 dst zp ZP_WORD:10 16.5
+(byte*) memset::dst#4 dst zp ZP_WORD:10 16.5
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -10014,7 +10033,7 @@ reg byte a [ keyboard_matrix_read::return#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 zp ZP_WORD:8 [ initEntry::$1 print_line_cursor#1 mul8u::mb#2 mul8u::mb#1 ]
-zp ZP_WORD:10 [ initEntry::$3 print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#2 memset::dst#1 ]
+zp ZP_WORD:10 [ initEntry::$3 print_word::w#5 print_word::w#7 print_word::w#8 print_word::w#2 print_word::w#10 print_word::w#4 print_line_cursor#32 print_line_cursor#63 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#170 print_line_cursor#171 print_line_cursor#172 print_line_cursor#173 print_line_cursor#175 print_str::str#18 print_str::str#20 print_str::str#0 memset::dst#4 memset::dst#1 ]
 zp ZP_WORD:12 [ initEntry::$5 ]
 zp ZP_WORD:14 [ initEntry::$7 ]
 reg byte a [ initEntry::$9 ]
@@ -10030,7 +10049,7 @@ reg byte a [ mul8u::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 4108
+Score: 4078
 
   // File Comments
 // Implementing a semi-struct without the struct keyword by using pointer math and inline functions
@@ -10433,16 +10452,29 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = $a
-    // [69] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [69] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [69] phi from memset to memset::@2 [phi:memset->memset::@2]
+    // [69] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    // memset::@1
-  b1:
+    // [69] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+    // [69] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    // memset::@2
+  b2:
+    // *dst = c
+    // [70] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [71] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // memset::@1
+    // [72] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda dst+1
     cmp #>end
     bne b2
@@ -10451,24 +10483,8 @@ memset: {
     bne b2
     // memset::@return
     // }
-    // [71] return 
+    // [73] return 
     rts
-    // memset::@2
-  b2:
-    // *dst = c
-    // [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
-    bne !+
-    inc dst+1
-  !:
-    // [69] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly

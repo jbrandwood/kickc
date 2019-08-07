@@ -31,8 +31,8 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
-   /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
-   private boolean enableLoopHeadConstant = false;
+   /** Disable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
+   private boolean disableLoopHeadConstant = true;
 
    public Compiler() {
       this.program = new Program();
@@ -46,8 +46,8 @@ public class Compiler {
       this.enableZeroPageCoalasce = true;
    }
 
-   void enableLoopHeadConstant() {
-      this.enableLoopHeadConstant = true;
+   void disableLoopHeadConstant() {
+      this.disableLoopHeadConstant = false;
    }
 
    void setTargetPlatform(TargetPlatform targetPlatform) {
@@ -312,7 +312,7 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
-      if(enableLoopHeadConstant) {
+      if(!disableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
          optimizations.add(() -> { program.clearDominators(); return false; });
          optimizations.add(() -> { program.clearLoopSet(); return false; });

@@ -3524,6 +3524,13 @@ Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memse
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) memset::dst#1 = (byte*) memset::dst#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) memset::dst#5 (const byte*) memset::dst#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [263] if((const byte*) memset::dst#0!=(const byte*) memset::end#0) goto memset::@5
+Successful SSA optimization Pass2ConstantIfs
 Inlining Noop Cast [104] (byte) div8s::dividendu#1 ← (byte)(signed byte~) div8s::$5 keeping div8s::dividendu#1
 Inlining Noop Cast [109] (byte) div8s::divisoru#1 ← (byte)(signed byte~) div8s::$8 keeping div8s::divisoru#1
 Inlining Noop Cast [129] (word) divr16s::dividendu#1 ← (word)(signed word~) divr16s::$8 keeping divr16s::dividendu#1
@@ -3638,6 +3645,7 @@ Constant inlined divr16u::rem#4 = (word) 0
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) divr16u::rem#10 (byte) 0
 Successful SSA optimization Pass2IdenticalPhiElimination
+Added new block during phi lifting memset::@10(between memset::@4 and memset::@5)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting divr8u::@8(between divr8u::@3 and divr8u::@1)
 Added new block during phi lifting divr8u::@9(between divr8u::@1 and divr8u::@2)
@@ -3691,6 +3699,7 @@ Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
+Adding NOP phi() at start of memset::@4_1
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [] to main:8 
@@ -3817,7 +3826,7 @@ Coalesced [386] print_line_cursor#90 ← print_line_cursor#41
 Coalesced [391] test_8u::i#12 ← test_8u::i#1
 Not coalescing [392] print_char_cursor#190 ← print_line_cursor#1
 Coalesced (already) [393] print_line_cursor#93 ← print_line_cursor#1
-Coalesced [406] memset::dst#4 ← memset::dst#1
+Coalesced [407] memset::dst#6 ← memset::dst#1
 Coalesced down to 34 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @29
@@ -3847,7 +3856,9 @@ Culled Empty Block (label) divr8u::@9
 Culled Empty Block (label) test_16u::@12
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@4_1
 Culled Empty Block (label) memset::@1
+Culled Empty Block (label) memset::@10
 Renumbering block @49 to @1
 Renumbering block memset::@4 to memset::@1
 Renumbering block memset::@5 to memset::@2
@@ -4521,18 +4532,18 @@ print_cls::@return: scope:[print_cls]  from print_cls
   to:@return
 memset: scope:[memset]  from print_cls
   [290] phi()
+  to:memset::@2
+memset::@2: scope:[memset]  from memset memset::@1
+  [291] (byte*) memset::dst#4 ← phi( memset::@1/(byte*) memset::dst#1 memset/(byte*)(const void*) memset::str#0 )
+  [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0
+  [293] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@2
-  [291] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+memset::@1: scope:[memset]  from memset::@2
+  [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [293] return 
+  [295] return 
   to:@return
-memset::@2: scope:[memset]  from memset::@1
-  [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [295] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  to:memset::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -4681,8 +4692,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 22.0
-(byte*) memset::dst#2 14.666666666666666
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#4 16.5
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -4855,7 +4866,7 @@ Initial phi equivalence classes
 [ divr8u::i#2 divr8u::i#1 ]
 [ test_16u::i#10 test_16u::i#1 ]
 [ test_8u::i#10 test_8u::i#1 ]
-[ memset::dst#2 memset::dst#1 ]
+[ memset::dst#4 memset::dst#1 ]
 Added variable test_16s::$11 to zero page equivalence class [ test_16s::$11 ]
 Added variable test_16s::dividend#0 to zero page equivalence class [ test_16s::dividend#0 ]
 Added variable test_16s::divisor#0 to zero page equivalence class [ test_16s::divisor#0 ]
@@ -4940,7 +4951,7 @@ Complete equivalence classes
 [ divr8u::i#2 divr8u::i#1 ]
 [ test_16u::i#10 test_16u::i#1 ]
 [ test_8u::i#10 test_8u::i#1 ]
-[ memset::dst#2 memset::dst#1 ]
+[ memset::dst#4 memset::dst#1 ]
 [ test_16s::$11 ]
 [ test_16s::dividend#0 ]
 [ test_16s::divisor#0 ]
@@ -5024,7 +5035,7 @@ Allocated zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1
 Allocated zp ZP_BYTE:45 [ divr8u::i#2 divr8u::i#1 ]
 Allocated zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ]
 Allocated zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ]
-Allocated zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ]
+Allocated zp ZP_WORD:48 [ memset::dst#4 memset::dst#1 ]
 Allocated zp ZP_BYTE:50 [ test_16s::$11 ]
 Allocated zp ZP_WORD:51 [ test_16s::dividend#0 ]
 Allocated zp ZP_WORD:53 [ test_16s::divisor#0 ]
@@ -6905,43 +6916,44 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = $30
-    // [291] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [291] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [291] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [291] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [293] return 
-    rts
+    jmp b2
+    // [291] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [291] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [295] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [293] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [295] return 
+    rts
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -7066,8 +7078,8 @@ Statement [253] (word) divr16u::divisor#0 ← (word) div16u::divisor#0 [ divr16u
 Statement [255] (word) divr16u::return#2 ← (word) divr16u::return#0 [ rem16u#1 divr16u::return#2 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [256] (word) div16u::return#0 ← (word) divr16u::return#2 [ rem16u#1 div16u::return#0 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 div16u::return#0 ] ) always clobbers reg byte a 
 Statement [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ( main:2::test_8u:7 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ) always clobbers reg byte a 
-Statement [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:5::memset:288 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:5::memset:288 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [17] (byte~) test_16s::$11 ← (byte) test_16s::i#10 << (byte) 1 [ test_16s::i#10 test_16s::$11 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::$11 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [18] (signed word) test_16s::dividend#0 ← *((const signed word[]) test_16s::dividends#0 + (byte~) test_16s::$11) [ test_16s::i#10 test_16s::$11 test_16s::dividend#0 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::$11 test_16s::dividend#0 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [19] (signed word) test_16s::divisor#0 ← *((const signed word[]) test_16s::divisors#0 + (byte~) test_16s::$11) [ test_16s::i#10 test_16s::dividend#0 test_16s::divisor#0 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::dividend#0 test_16s::divisor#0 print_line_cursor#1 ] ) always clobbers reg byte a 
@@ -7147,8 +7159,8 @@ Statement [253] (word) divr16u::divisor#0 ← (word) div16u::divisor#0 [ divr16u
 Statement [255] (word) divr16u::return#2 ← (word) divr16u::return#0 [ rem16u#1 divr16u::return#2 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [256] (word) div16u::return#0 ← (word) divr16u::return#2 [ rem16u#1 div16u::return#0 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 div16u::return#0 ] ) always clobbers reg byte a 
 Statement [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ( main:2::test_8u:7 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ) always clobbers reg byte a 
-Statement [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:5::memset:288 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:5::memset:288 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [17] (byte~) test_16s::$11 ← (byte) test_16s::i#10 << (byte) 1 [ test_16s::i#10 test_16s::$11 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::$11 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [18] (signed word) test_16s::dividend#0 ← *((const signed word[]) test_16s::dividends#0 + (byte~) test_16s::$11) [ test_16s::i#10 test_16s::$11 test_16s::dividend#0 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::$11 test_16s::dividend#0 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [19] (signed word) test_16s::divisor#0 ← *((const signed word[]) test_16s::divisors#0 + (byte~) test_16s::$11) [ test_16s::i#10 test_16s::dividend#0 test_16s::divisor#0 print_line_cursor#1 ] ( main:2::test_16s:13 [ test_16s::i#10 test_16s::dividend#0 test_16s::divisor#0 print_line_cursor#1 ] ) always clobbers reg byte a 
@@ -7227,8 +7239,8 @@ Statement [253] (word) divr16u::divisor#0 ← (word) div16u::divisor#0 [ divr16u
 Statement [255] (word) divr16u::return#2 ← (word) divr16u::return#0 [ rem16u#1 divr16u::return#2 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [256] (word) div16u::return#0 ← (word) divr16u::return#2 [ rem16u#1 div16u::return#0 ] ( main:2::test_16u:9::div16u:229 [ print_line_cursor#1 test_16u::i#10 test_16u::dividend#0 test_16u::divisor#0 rem16u#1 div16u::return#0 ] ) always clobbers reg byte a 
 Statement [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ( main:2::test_8u:7 [ print_line_cursor#1 test_8u::i#1 print_char_cursor#190 ] ) always clobbers reg byte a 
-Statement [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:288 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:5::memset:288 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:5::memset:288 [ memset::dst#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_WORD:5 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#4 ] : zp ZP_WORD:5 , 
@@ -7262,7 +7274,7 @@ Potential registers zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::
 Potential registers zp ZP_BYTE:45 [ divr8u::i#2 divr8u::i#1 ] : zp ZP_BYTE:45 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] : zp ZP_BYTE:46 , reg byte x , 
 Potential registers zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] : zp ZP_BYTE:47 , reg byte x , 
-Potential registers zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:48 , 
+Potential registers zp ZP_WORD:48 [ memset::dst#4 memset::dst#1 ] : zp ZP_WORD:48 , 
 Potential registers zp ZP_BYTE:50 [ test_16s::$11 ] : zp ZP_BYTE:50 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:51 [ test_16s::dividend#0 ] : zp ZP_WORD:51 , 
 Potential registers zp ZP_WORD:53 [ test_16s::divisor#0 ] : zp ZP_WORD:53 , 
@@ -7330,7 +7342,7 @@ Uplift Scope [test_16u] 17.77: zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] 16
 Uplift Scope [test_16s] 17.77: zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] 16.5: zp ZP_BYTE:50 [ test_16s::$11 ] 4.71: zp ZP_WORD:51 [ test_16s::dividend#0 ] 3: zp ZP_WORD:53 [ test_16s::divisor#0 ] 2.2: zp ZP_WORD:61 [ test_16s::res#0 ] 
 Uplift Scope [div16u] 22: zp ZP_WORD:112 [ div16u::return#2 ] 6.5: zp ZP_WORD:108 [ div16u::dividend#0 ] 6.5: zp ZP_WORD:110 [ div16u::divisor#0 ] 4.33: zp ZP_WORD:118 [ div16u::return#0 ] 
 Uplift Scope [div16s] 22: zp ZP_WORD:59 [ div16s::return#2 ] 6.5: zp ZP_WORD:55 [ div16s::dividend#0 ] 6.5: zp ZP_WORD:57 [ div16s::divisor#0 ] 4.33: zp ZP_WORD:71 [ div16s::return#0 ] 
-Uplift Scope [memset] 36.67: zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:48 [ memset::dst#4 memset::dst#1 ] 
 Uplift Scope [test_8s] 18.26: zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] 4.71: zp ZP_BYTE:87 [ test_8s::dividend#0 ] 3: zp ZP_BYTE:88 [ test_8s::divisor#0 ] 2.2: zp ZP_BYTE:92 [ test_8s::res#0 ] 
 Uplift Scope [test_8u] 12.83: zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] 4.71: zp ZP_BYTE:120 [ test_8u::dividend#0 ] 3.3: zp ZP_BYTE:121 [ test_8u::divisor#0 ] 2.44: zp ZP_BYTE:123 [ test_8u::res#0 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:7 [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ] 
@@ -7339,82 +7351,82 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 Uplift Scope [main] 
 
-Uplifting [divr16u] best 45229 combination zp ZP_WORD:26 [ divr16u::rem#5 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:30 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:28 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:24 [ divr16u::divisor#6 divr16u::divisor#0 divr16u::divisor#1 ] zp ZP_WORD:73 [ divr16u::return#3 ] zp ZP_WORD:116 [ divr16u::return#2 ] 
-Uplifting [divr8u] best 42826 combination reg byte y [ divr8u::rem#4 divr8u::rem#10 divr8u::rem#5 divr8u::rem#1 divr8u::rem#2 divr8u::rem#3 ] zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1 divr8u::quotient#2 ] reg byte a [ divr8u::$1 ] reg byte x [ divr8u::i#2 divr8u::i#1 ] zp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ] zp ZP_BYTE:98 [ divr8u::divisor#0 ] zp ZP_BYTE:99 [ divr8u::return#0 ] 
+Uplifting [divr16u] best 45259 combination zp ZP_WORD:26 [ divr16u::rem#5 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:30 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:28 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:24 [ divr16u::divisor#6 divr16u::divisor#0 divr16u::divisor#1 ] zp ZP_WORD:73 [ divr16u::return#3 ] zp ZP_WORD:116 [ divr16u::return#2 ] 
+Uplifting [divr8u] best 42856 combination reg byte y [ divr8u::rem#4 divr8u::rem#10 divr8u::rem#5 divr8u::rem#1 divr8u::rem#2 divr8u::rem#3 ] zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1 divr8u::quotient#2 ] reg byte a [ divr8u::$1 ] reg byte x [ divr8u::i#2 divr8u::i#1 ] zp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ] zp ZP_BYTE:98 [ divr8u::divisor#0 ] zp ZP_BYTE:99 [ divr8u::return#0 ] 
 Limited combination testing to 100 combinations of 3888 possible.
-Uplifting [] best 42757 combination zp ZP_WORD:10 [ print_char_cursor#138 print_char_cursor#84 print_char_cursor#139 print_char_cursor#19 print_char_cursor#135 print_char_cursor#132 print_char_cursor#164 print_char_cursor#130 print_char_cursor#173 print_char_cursor#141 print_char_cursor#1 print_char_cursor#168 print_char_cursor#190 ] zp ZP_WORD:3 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ] reg byte x [ rem8s#3 rem8s#2 rem8s#33 ] zp ZP_WORD:22 [ rem16s#11 rem16s#2 rem16s#37 ] reg byte x [ rem8u#17 ] zp ZP_WORD:85 [ rem16u#1 ] 
-Uplifting [print_str] best 42757 combination zp ZP_WORD:13 [ print_str::str#13 print_str::str#15 print_str::str#0 ] 
-Uplifting [print_byte] best 42749 combination zp ZP_BYTE:12 [ print_byte::b#7 print_byte::b#0 print_byte::b#1 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#6 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_word] best 42749 combination zp ZP_WORD:8 [ print_word::w#5 print_word::w#0 print_word::w#1 print_word::w#2 print_word::w#3 print_word::w#4 ] 
-Uplifting [print_sword] best 42749 combination zp ZP_WORD:5 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#4 ] 
-Uplifting [print_sbyte] best 42749 combination zp ZP_BYTE:34 [ print_sbyte::b#7 print_sbyte::b#0 print_sbyte::b#10 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#3 print_sbyte::b#4 ] 
-Uplifting [div8u] best 42611 combination reg byte x [ div8u::divisor#2 div8u::divisor#0 div8u::divisor#1 ] reg byte a [ div8u::dividend#2 div8u::dividend#0 div8u::dividend#1 ] reg byte a [ div8u::return#3 ] reg byte a [ div8u::return#2 ] zp ZP_BYTE:100 [ div8u::return#0 ] 
+Uplifting [] best 42787 combination zp ZP_WORD:10 [ print_char_cursor#138 print_char_cursor#84 print_char_cursor#139 print_char_cursor#19 print_char_cursor#135 print_char_cursor#132 print_char_cursor#164 print_char_cursor#130 print_char_cursor#173 print_char_cursor#141 print_char_cursor#1 print_char_cursor#168 print_char_cursor#190 ] zp ZP_WORD:3 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ] reg byte x [ rem8s#3 rem8s#2 rem8s#33 ] zp ZP_WORD:22 [ rem16s#11 rem16s#2 rem16s#37 ] reg byte x [ rem8u#17 ] zp ZP_WORD:85 [ rem16u#1 ] 
+Uplifting [print_str] best 42787 combination zp ZP_WORD:13 [ print_str::str#13 print_str::str#15 print_str::str#0 ] 
+Uplifting [print_byte] best 42779 combination zp ZP_BYTE:12 [ print_byte::b#7 print_byte::b#0 print_byte::b#1 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#6 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_word] best 42779 combination zp ZP_WORD:8 [ print_word::w#5 print_word::w#0 print_word::w#1 print_word::w#2 print_word::w#3 print_word::w#4 ] 
+Uplifting [print_sword] best 42779 combination zp ZP_WORD:5 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#4 ] 
+Uplifting [print_sbyte] best 42779 combination zp ZP_BYTE:34 [ print_sbyte::b#7 print_sbyte::b#0 print_sbyte::b#10 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#3 print_sbyte::b#4 ] 
+Uplifting [div8u] best 42641 combination reg byte x [ div8u::divisor#2 div8u::divisor#0 div8u::divisor#1 ] reg byte a [ div8u::dividend#2 div8u::dividend#0 div8u::dividend#1 ] reg byte a [ div8u::return#3 ] reg byte a [ div8u::return#2 ] zp ZP_BYTE:100 [ div8u::return#0 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [div8s] best 42506 combination reg byte a [ div8s::return#3 ] reg byte x [ div8s::divisoru#3 div8s::divisoru#4 div8s::divisoru#5 ] reg byte a [ div8s::return#2 div8s::return#1 div8s::return#7 ] zp ZP_BYTE:35 [ div8s::dividendu#3 div8s::dividendu#7 div8s::dividendu#8 ] zp ZP_BYTE:89 [ div8s::dividend#0 ] zp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ] zp ZP_BYTE:95 [ div8s::$11 ] zp ZP_BYTE:90 [ div8s::divisor#0 ] zp ZP_BYTE:97 [ div8s::dividendu#1 ] zp ZP_BYTE:96 [ div8s::divisoru#1 ] zp ZP_BYTE:94 [ div8s::resultu#0 ] 
+Uplifting [div8s] best 42536 combination reg byte a [ div8s::return#3 ] reg byte x [ div8s::divisoru#3 div8s::divisoru#4 div8s::divisoru#5 ] reg byte a [ div8s::return#2 div8s::return#1 div8s::return#7 ] zp ZP_BYTE:35 [ div8s::dividendu#3 div8s::dividendu#7 div8s::dividendu#8 ] zp ZP_BYTE:89 [ div8s::dividend#0 ] zp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ] zp ZP_BYTE:95 [ div8s::$11 ] zp ZP_BYTE:90 [ div8s::divisor#0 ] zp ZP_BYTE:97 [ div8s::dividendu#1 ] zp ZP_BYTE:96 [ div8s::divisoru#1 ] zp ZP_BYTE:94 [ div8s::resultu#0 ] 
 Limited combination testing to 100 combinations of 995328 possible.
-Uplifting [divr16s] best 42495 combination zp ZP_WORD:17 [ divr16s::divisoru#3 divr16s::divisoru#4 divr16s::divisoru#5 ] zp ZP_WORD:15 [ divr16s::dividendu#3 divr16s::dividendu#7 divr16s::dividendu#8 ] zp ZP_WORD:20 [ divr16s::return#2 divr16s::return#1 divr16s::return#7 ] reg byte y [ divr16s::neg#4 divr16s::neg#2 divr16s::neg#3 ] zp ZP_WORD:69 [ divr16s::return#3 ] zp ZP_WORD:77 [ divr16s::$16 ] zp ZP_WORD:65 [ divr16s::dividend#0 ] zp ZP_WORD:81 [ divr16s::dividendu#1 ] zp ZP_WORD:79 [ divr16s::divisoru#1 ] zp ZP_WORD:67 [ divr16s::divisor#0 ] zp ZP_WORD:75 [ divr16s::resultu#0 ] 
-Uplifting [test_16u] best 42425 combination zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] reg byte x [ test_16u::$11 ] zp ZP_WORD:104 [ test_16u::dividend#0 ] zp ZP_WORD:106 [ test_16u::divisor#0 ] zp ZP_WORD:114 [ test_16u::res#0 ] 
-Uplifting [test_16s] best 42355 combination zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] reg byte x [ test_16s::$11 ] zp ZP_WORD:51 [ test_16s::dividend#0 ] zp ZP_WORD:53 [ test_16s::divisor#0 ] zp ZP_WORD:61 [ test_16s::res#0 ] 
-Uplifting [div16u] best 42355 combination zp ZP_WORD:112 [ div16u::return#2 ] zp ZP_WORD:108 [ div16u::dividend#0 ] zp ZP_WORD:110 [ div16u::divisor#0 ] zp ZP_WORD:118 [ div16u::return#0 ] 
-Uplifting [div16s] best 42355 combination zp ZP_WORD:59 [ div16s::return#2 ] zp ZP_WORD:55 [ div16s::dividend#0 ] zp ZP_WORD:57 [ div16s::divisor#0 ] zp ZP_WORD:71 [ div16s::return#0 ] 
-Uplifting [memset] best 42355 combination zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [test_8s] best 42355 combination zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] zp ZP_BYTE:87 [ test_8s::dividend#0 ] zp ZP_BYTE:88 [ test_8s::divisor#0 ] zp ZP_BYTE:92 [ test_8s::res#0 ] 
-Uplifting [test_8u] best 42355 combination zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] zp ZP_BYTE:120 [ test_8u::dividend#0 ] zp ZP_BYTE:121 [ test_8u::divisor#0 ] zp ZP_BYTE:123 [ test_8u::res#0 ] 
-Uplifting [print_char] best 42334 combination reg byte a [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ] 
-Uplifting [RADIX] best 42334 combination 
-Uplifting [print_ln] best 42334 combination 
-Uplifting [print_cls] best 42334 combination 
-Uplifting [main] best 42334 combination 
+Uplifting [divr16s] best 42525 combination zp ZP_WORD:17 [ divr16s::divisoru#3 divr16s::divisoru#4 divr16s::divisoru#5 ] zp ZP_WORD:15 [ divr16s::dividendu#3 divr16s::dividendu#7 divr16s::dividendu#8 ] zp ZP_WORD:20 [ divr16s::return#2 divr16s::return#1 divr16s::return#7 ] reg byte y [ divr16s::neg#4 divr16s::neg#2 divr16s::neg#3 ] zp ZP_WORD:69 [ divr16s::return#3 ] zp ZP_WORD:77 [ divr16s::$16 ] zp ZP_WORD:65 [ divr16s::dividend#0 ] zp ZP_WORD:81 [ divr16s::dividendu#1 ] zp ZP_WORD:79 [ divr16s::divisoru#1 ] zp ZP_WORD:67 [ divr16s::divisor#0 ] zp ZP_WORD:75 [ divr16s::resultu#0 ] 
+Uplifting [test_16u] best 42455 combination zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] reg byte x [ test_16u::$11 ] zp ZP_WORD:104 [ test_16u::dividend#0 ] zp ZP_WORD:106 [ test_16u::divisor#0 ] zp ZP_WORD:114 [ test_16u::res#0 ] 
+Uplifting [test_16s] best 42385 combination zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] reg byte x [ test_16s::$11 ] zp ZP_WORD:51 [ test_16s::dividend#0 ] zp ZP_WORD:53 [ test_16s::divisor#0 ] zp ZP_WORD:61 [ test_16s::res#0 ] 
+Uplifting [div16u] best 42385 combination zp ZP_WORD:112 [ div16u::return#2 ] zp ZP_WORD:108 [ div16u::dividend#0 ] zp ZP_WORD:110 [ div16u::divisor#0 ] zp ZP_WORD:118 [ div16u::return#0 ] 
+Uplifting [div16s] best 42385 combination zp ZP_WORD:59 [ div16s::return#2 ] zp ZP_WORD:55 [ div16s::dividend#0 ] zp ZP_WORD:57 [ div16s::divisor#0 ] zp ZP_WORD:71 [ div16s::return#0 ] 
+Uplifting [memset] best 42385 combination zp ZP_WORD:48 [ memset::dst#4 memset::dst#1 ] 
+Uplifting [test_8s] best 42385 combination zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] zp ZP_BYTE:87 [ test_8s::dividend#0 ] zp ZP_BYTE:88 [ test_8s::divisor#0 ] zp ZP_BYTE:92 [ test_8s::res#0 ] 
+Uplifting [test_8u] best 42385 combination zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] zp ZP_BYTE:120 [ test_8u::dividend#0 ] zp ZP_BYTE:121 [ test_8u::divisor#0 ] zp ZP_BYTE:123 [ test_8u::res#0 ] 
+Uplifting [print_char] best 42364 combination reg byte a [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ] 
+Uplifting [RADIX] best 42364 combination 
+Uplifting [print_ln] best 42364 combination 
+Uplifting [print_cls] best 42364 combination 
+Uplifting [main] best 42364 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1 divr8u::quotient#2 ]
-Uplifting [divr8u] best 42334 combination zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1 divr8u::quotient#2 ] 
+Uplifting [divr8u] best 42364 combination zp ZP_BYTE:44 [ divr8u::quotient#3 divr8u::return#1 divr8u::quotient#1 divr8u::quotient#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:12 [ print_byte::b#7 print_byte::b#0 print_byte::b#1 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#6 ]
-Uplifting [print_byte] best 42334 combination zp ZP_BYTE:12 [ print_byte::b#7 print_byte::b#0 print_byte::b#1 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#6 ] 
+Uplifting [print_byte] best 42364 combination zp ZP_BYTE:12 [ print_byte::b#7 print_byte::b#0 print_byte::b#1 print_byte::b#2 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ print_sbyte::b#7 print_sbyte::b#0 print_sbyte::b#10 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#3 print_sbyte::b#4 ]
-Uplifting [print_sbyte] best 42334 combination zp ZP_BYTE:34 [ print_sbyte::b#7 print_sbyte::b#0 print_sbyte::b#10 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#3 print_sbyte::b#4 ] 
+Uplifting [print_sbyte] best 42364 combination zp ZP_BYTE:34 [ print_sbyte::b#7 print_sbyte::b#0 print_sbyte::b#10 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#3 print_sbyte::b#4 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ]
-Uplifting [divr8u] best 42334 combination zp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ] 
+Uplifting [divr8u] best 42364 combination zp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ]
-Uplifting [test_8s] best 42334 combination zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] 
+Uplifting [test_8s] best 42364 combination zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ]
-Uplifting [test_16s] best 42334 combination zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] 
+Uplifting [test_16s] best 42364 combination zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ]
-Uplifting [test_16u] best 42334 combination zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] 
+Uplifting [test_16u] best 42364 combination zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ]
-Uplifting [test_8u] best 42334 combination zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] 
+Uplifting [test_8u] best 42364 combination zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:98 [ divr8u::divisor#0 ]
-Uplifting [divr8u] best 42334 combination zp ZP_BYTE:98 [ divr8u::divisor#0 ] 
+Uplifting [divr8u] best 42364 combination zp ZP_BYTE:98 [ divr8u::divisor#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ div8s::dividendu#3 div8s::dividendu#7 div8s::dividendu#8 ]
-Uplifting [div8s] best 42327 combination reg byte y [ div8s::dividendu#3 div8s::dividendu#7 div8s::dividendu#8 ] 
+Uplifting [div8s] best 42357 combination reg byte y [ div8s::dividendu#3 div8s::dividendu#7 div8s::dividendu#8 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:89 [ div8s::dividend#0 ]
-Uplifting [div8s] best 42292 combination reg byte y [ div8s::dividend#0 ] 
+Uplifting [div8s] best 42322 combination reg byte y [ div8s::dividend#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:87 [ test_8s::dividend#0 ]
-Uplifting [test_8s] best 42292 combination zp ZP_BYTE:87 [ test_8s::dividend#0 ] 
+Uplifting [test_8s] best 42322 combination zp ZP_BYTE:87 [ test_8s::dividend#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:120 [ test_8u::dividend#0 ]
-Uplifting [test_8u] best 42292 combination zp ZP_BYTE:120 [ test_8u::dividend#0 ] 
+Uplifting [test_8u] best 42322 combination zp ZP_BYTE:120 [ test_8u::dividend#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ]
-Uplifting [div8s] best 42292 combination zp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ] 
+Uplifting [div8s] best 42322 combination zp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:95 [ div8s::$11 ]
-Uplifting [div8s] best 42288 combination reg byte a [ div8s::$11 ] 
+Uplifting [div8s] best 42318 combination reg byte a [ div8s::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:99 [ divr8u::return#0 ]
-Uplifting [divr8u] best 42282 combination reg byte a [ divr8u::return#0 ] 
+Uplifting [divr8u] best 42312 combination reg byte a [ divr8u::return#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:100 [ div8u::return#0 ]
-Uplifting [div8u] best 42246 combination reg byte a [ div8u::return#0 ] 
+Uplifting [div8u] best 42276 combination reg byte a [ div8u::return#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:121 [ test_8u::divisor#0 ]
-Uplifting [test_8u] best 42246 combination zp ZP_BYTE:121 [ test_8u::divisor#0 ] 
+Uplifting [test_8u] best 42276 combination zp ZP_BYTE:121 [ test_8u::divisor#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:88 [ test_8s::divisor#0 ]
-Uplifting [test_8s] best 42246 combination zp ZP_BYTE:88 [ test_8s::divisor#0 ] 
+Uplifting [test_8s] best 42276 combination zp ZP_BYTE:88 [ test_8s::divisor#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:123 [ test_8u::res#0 ]
-Uplifting [test_8u] best 42246 combination zp ZP_BYTE:123 [ test_8u::res#0 ] 
+Uplifting [test_8u] best 42276 combination zp ZP_BYTE:123 [ test_8u::res#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:92 [ test_8s::res#0 ]
-Uplifting [test_8s] best 42246 combination zp ZP_BYTE:92 [ test_8s::res#0 ] 
+Uplifting [test_8s] best 42276 combination zp ZP_BYTE:92 [ test_8s::res#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:90 [ div8s::divisor#0 ]
-Uplifting [div8s] best 42211 combination reg byte x [ div8s::divisor#0 ] 
+Uplifting [div8s] best 42241 combination reg byte x [ div8s::divisor#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:97 [ div8s::dividendu#1 ]
-Uplifting [div8s] best 42207 combination reg byte a [ div8s::dividendu#1 ] 
+Uplifting [div8s] best 42237 combination reg byte a [ div8s::dividendu#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:96 [ div8s::divisoru#1 ]
-Uplifting [div8s] best 42203 combination reg byte x [ div8s::divisoru#1 ] 
+Uplifting [div8s] best 42233 combination reg byte x [ div8s::divisoru#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:94 [ div8s::resultu#0 ]
-Uplifting [div8s] best 42200 combination reg byte y [ div8s::resultu#0 ] 
+Uplifting [div8s] best 42230 combination reg byte y [ div8s::resultu#0 ] 
 Coalescing zero page register [ zp ZP_WORD:20 [ divr16s::return#2 divr16s::return#1 divr16s::return#7 ] ] with [ zp ZP_WORD:75 [ divr16s::resultu#0 ] ] - score: 2
 Coalescing zero page register [ zp ZP_WORD:5 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#4 ] ] with [ zp ZP_WORD:8 [ print_word::w#5 print_word::w#0 print_word::w#1 print_word::w#2 print_word::w#3 print_word::w#4 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:5 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#4 print_word::w#5 print_word::w#0 print_word::w#1 print_word::w#2 print_word::w#3 print_word::w#4 ] ] with [ zp ZP_WORD:51 [ test_16s::dividend#0 ] ] - score: 1
@@ -7450,7 +7462,7 @@ Coalescing zero page register [ zp ZP_WORD:13 [ print_str::str#13 print_str::str
 Coalescing zero page register [ zp ZP_WORD:15 [ divr16s::dividendu#3 divr16s::dividendu#7 divr16s::dividendu#8 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 divr16s::dividend#0 divr16s::dividendu#1 ] ] with [ zp ZP_WORD:10 [ print_char_cursor#138 print_char_cursor#84 print_char_cursor#139 print_char_cursor#19 print_char_cursor#135 print_char_cursor#132 print_char_cursor#164 print_char_cursor#130 print_char_cursor#173 print_char_cursor#141 print_char_cursor#1 print_char_cursor#168 print_char_cursor#190 ] ]
 Coalescing zero page register [ zp ZP_BYTE:33 [ test_8s::i#10 test_8s::i#1 ] ] with [ zp ZP_BYTE:2 [ test_16s::i#10 test_16s::i#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:46 [ test_16u::i#10 test_16u::i#1 ] ] with [ zp ZP_BYTE:37 [ div8s::neg#4 div8s::neg#2 div8s::neg#3 ] ]
-Coalescing zero page register [ zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:3 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ] ]
+Coalescing zero page register [ zp ZP_WORD:48 [ memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:3 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ] ]
 Coalescing zero page register [ zp ZP_BYTE:88 [ test_8s::divisor#0 ] ] with [ zp ZP_BYTE:47 [ test_8u::i#10 test_8u::i#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:92 [ test_8s::res#0 ] ] with [ zp ZP_BYTE:43 [ divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:121 [ test_8u::divisor#0 ] ] with [ zp ZP_BYTE:98 [ divr8u::divisor#0 ] ]
@@ -7463,7 +7475,7 @@ Allocated (was zp ZP_WORD:20) zp ZP_WORD:9 [ divr16s::return#2 divr16s::return#1
 Allocated (was zp ZP_WORD:22) zp ZP_WORD:11 [ rem16s#11 rem16s#2 rem16s#37 divr16s::$16 rem16u#1 divr16u::rem#5 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
 Allocated (was zp ZP_BYTE:33) zp ZP_BYTE:13 [ test_8s::i#10 test_8s::i#1 test_16s::i#10 test_16s::i#1 ]
 Allocated (was zp ZP_BYTE:46) zp ZP_BYTE:14 [ test_16u::i#10 test_16u::i#1 div8s::neg#4 div8s::neg#2 div8s::neg#3 ]
-Allocated (was zp ZP_WORD:48) zp ZP_WORD:15 [ memset::dst#2 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ]
+Allocated (was zp ZP_WORD:48) zp ZP_WORD:15 [ memset::dst#4 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ]
 Allocated (was zp ZP_WORD:53) zp ZP_WORD:17 [ test_16s::divisor#0 div16s::divisor#0 ]
 Allocated (was zp ZP_BYTE:88) zp ZP_BYTE:19 [ test_8s::divisor#0 test_8u::i#10 test_8u::i#1 ]
 Allocated (was zp ZP_BYTE:92) zp ZP_BYTE:20 [ test_8s::res#0 divr8u::dividend#2 divr8u::dividend#0 divr8u::dividend#1 ]
@@ -9072,43 +9084,44 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = $f
-    // [291] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [291] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [291] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [291] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [293] return 
-    rts
+    jmp b2
+    // [291] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [291] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [295] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [293] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [295] return 
+    rts
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -9222,6 +9235,7 @@ Removing instruction jmp b9
 Removing instruction jmp b10
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -9257,6 +9271,8 @@ Replacing label b2_from_b1 with b2
 Replacing label b3_from_b2 with b3
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b10 with b1
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -9349,6 +9365,7 @@ Removing instruction b7_from_b6:
 Removing instruction print_str_from_b7:
 Removing instruction b9_from_b8:
 Removing instruction print_ln_from_b9:
+Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
@@ -9461,9 +9478,9 @@ Removing instruction breturn:
 Removing instruction b1_from_b11:
 Removing instruction memset_from_print_cls:
 Removing instruction breturn:
-Removing instruction b1_from_memset:
+Removing instruction b2_from_memset:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -9477,6 +9494,7 @@ Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b1
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b5:
@@ -9687,8 +9705,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:15 22.0
-(byte*) memset::dst#2 dst zp ZP_WORD:15 14.666666666666666
+(byte*) memset::dst#1 dst zp ZP_WORD:15 16.5
+(byte*) memset::dst#4 dst zp ZP_WORD:15 16.5
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -9927,7 +9945,7 @@ reg byte x [ div8u::divisor#2 div8u::divisor#0 div8u::divisor#1 ]
 reg byte y [ divr8u::rem#4 divr8u::rem#10 divr8u::rem#5 divr8u::rem#1 divr8u::rem#2 divr8u::rem#3 ]
 reg byte x [ divr8u::i#2 divr8u::i#1 ]
 zp ZP_BYTE:14 [ test_16u::i#10 test_16u::i#1 div8s::neg#4 div8s::neg#2 div8s::neg#3 ]
-zp ZP_WORD:15 [ memset::dst#2 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ]
+zp ZP_WORD:15 [ memset::dst#4 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_line_cursor#41 ]
 reg byte x [ test_16s::$11 ]
 zp ZP_WORD:17 [ test_16s::divisor#0 div16s::divisor#0 ]
 reg byte a [ print_byte::$0 ]
@@ -9955,7 +9973,7 @@ zp ZP_BYTE:22 [ test_8u::res#0 divr8u::quotient#3 divr8u::return#1 divr8u::quoti
 
 
 FINAL ASSEMBLER
-Score: 33209
+Score: 33179
 
   // File Comments
 // Test the binary division library
@@ -11391,16 +11409,29 @@ memset: {
     .label str = $400
     .label end = str+num
     .label dst = $f
-    // [291] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [291] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [291] phi from memset to memset::@2 [phi:memset->memset::@2]
+    // [291] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    // memset::@1
-  b1:
+    // [291] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+    // [291] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    // memset::@2
+  b2:
+    // *dst = c
+    // [292] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [293] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // memset::@1
+    // [294] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda dst+1
     cmp #>end
     bne b2
@@ -11409,24 +11440,8 @@ memset: {
     bne b2
     // memset::@return
     // }
-    // [293] return 
+    // [295] return 
     rts
-    // memset::@2
-  b2:
-    // *dst = c
-    // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    // [295] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
-    bne !+
-    inc dst+1
-  !:
-    // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"

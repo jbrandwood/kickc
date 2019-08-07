@@ -9,16 +9,6 @@ main: {
     lda #<0
     sta i
     sta i+1
-  b1:
-    lda i+1
-    cmp #>$3e8
-    bcc b2
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b2
-  !:
-    rts
   b2:
     lda i
     clc
@@ -37,5 +27,13 @@ main: {
     bcc !+
     inc i+1
   !:
-    jmp b1
+    lda i+1
+    cmp #>$3e8
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$3e8
+    bcc b2
+  !:
+    rts
 }

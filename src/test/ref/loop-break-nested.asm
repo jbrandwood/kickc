@@ -8,22 +8,14 @@ main: {
     sta line
     lda #>$400
     sta line+1
-  b1:
-    lda line+1
-    cmp #>$400+$28*$19
-    bcc !+
-    bne breturn
-    lda line
-    cmp #<$400+$28*$19
-    bcs breturn
-  !:
+  b2:
     ldy #0
     lda (line),y
     cmp #'a'
-    bne b2
+    bne b1
   breturn:
     rts
-  b2:
+  b1:
     ldy #0
   b3:
     lda (line),y
@@ -42,5 +34,13 @@ main: {
     bcc !+
     inc line+1
   !:
-    jmp b1
+    lda line+1
+    cmp #>$400+$28*$19
+    bcc !+
+    bne breturn
+    lda line
+    cmp #<$400+$28*$19
+    bcs breturn
+  !:
+    jmp b2
 }

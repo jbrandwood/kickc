@@ -76,16 +76,6 @@ render_sine: {
     sta xpos+1
     sta sin_idx
     sta sin_idx+1
-  b1:
-    lda sin_idx+1
-    cmp #>SIN_SIZE
-    bcc b2
-    bne !+
-    lda sin_idx
-    cmp #<SIN_SIZE
-    bcc b2
-  !:
-    rts
   b2:
     lda sin_idx
     asl
@@ -158,7 +148,19 @@ render_sine: {
     bne !+
     inc sin_idx+1
   !:
-    jmp b1
+    lda sin_idx+1
+    cmp #>SIN_SIZE
+    bcs !b2+
+    jmp b2
+  !b2:
+    bne !+
+    lda sin_idx
+    cmp #<SIN_SIZE
+    bcs !b2+
+    jmp b2
+  !b2:
+  !:
+    rts
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(6) x, byte register(X) y)
@@ -253,17 +255,6 @@ sin16s_gen2: {
     sta x+3
     sta i
     sta i+1
-  // u[4.28]
-  b1:
-    lda i+1
-    cmp #>SIN_SIZE
-    bcc b2
-    bne !+
-    lda i
-    cmp #<SIN_SIZE
-    bcc b2
-  !:
-    rts
   b2:
     lda x
     sta sin16s.x
@@ -309,7 +300,16 @@ sin16s_gen2: {
     bne !+
     inc i+1
   !:
-    jmp b1
+  // u[4.28]
+    lda i+1
+    cmp #>SIN_SIZE
+    bcc b2
+    bne !+
+    lda i
+    cmp #<SIN_SIZE
+    bcc b2
+  !:
+    rts
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication

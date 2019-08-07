@@ -9,6 +9,12 @@ main: {
     ldx #2
     lda #$80
     sta a
+  b4:
+    txa
+    eor #$ff
+    sec
+    adc a
+    sta a
   b1:
     cpx a
     bne b2
@@ -22,12 +28,5 @@ main: {
     sec
     sbc a
     tax
-    jmp b1
-  b4:
-    txa
-    eor #$ff
-    sec
-    adc a
-    sta a
     jmp b1
 }

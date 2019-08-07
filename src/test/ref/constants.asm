@@ -238,14 +238,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -254,7 +246,13 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
   msg: .text "0=0@"
   msg1: .text "0+2=2@"

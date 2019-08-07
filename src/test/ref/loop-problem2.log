@@ -144,10 +144,18 @@ Constant right-side identified [4] (byte*~) print_cls::$0 ← (const byte*) SCRE
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_cls::$0 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) print_cls::sc#1 = (byte*) print_cls::sc#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) print_cls::sc#5 (const byte*) print_cls::sc#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [16] if((const byte*) print_cls::sc#0!=(const byte*) print_cls::$0) goto print_cls::@2
+Successful SSA optimization Pass2ConstantIfs
 Inlining constant with var siblings (const byte*) print_cls::sc#0
 Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
 Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting print_cls::@7(between print_cls::@1 and print_cls::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
@@ -158,16 +166,19 @@ Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of mode_ctrl
 Adding NOP phi() at start of mode_ctrl::@1
 Adding NOP phi() at start of print_cls
+Adding NOP phi() at start of print_cls::@1_1
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print_cls:6 mode_ctrl:8 
 
 Created 1 initial phi equivalence classes
-Coalesced [23] print_cls::sc#4 ← print_cls::sc#1
+Coalesced [24] print_cls::sc#6 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) mode_ctrl::@1
+Culled Empty Block (label) print_cls::@1_1
+Culled Empty Block (label) print_cls::@7
 Renumbering block @3 to @1
 Renumbering block mode_ctrl::@2 to mode_ctrl::@1
 Renumbering block mode_ctrl::@4 to mode_ctrl::@2
@@ -216,18 +227,18 @@ mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
   to:mode_ctrl::@1
 print_cls: scope:[print_cls]  from main
   [14] phi()
+  to:print_cls::@2
+print_cls::@2: scope:[print_cls]  from print_cls print_cls::@1
+  [15] (byte*) print_cls::sc#4 ← phi( print_cls::@1/(byte*) print_cls::sc#1 print_cls/(const byte*) SCREEN#0 )
+  [16] *((byte*) print_cls::sc#4) ← (byte) ' '
+  [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#4
   to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
-  [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@2/(byte*) print_cls::sc#1 )
-  [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2
+print_cls::@1: scope:[print_cls]  from print_cls::@2
+  [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [17] return 
+  [19] return 
   to:@return
-print_cls::@2: scope:[print_cls]  from print_cls::@1
-  [18] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  to:print_cls::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -239,16 +250,16 @@ VARIABLE REGISTER WEIGHTS
 (byte) mode_ctrl::before#0 22.0
 (void()) print_cls()
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 22.0
-(byte*) print_cls::sc#2 14.666666666666666
+(byte*) print_cls::sc#1 16.5
+(byte*) print_cls::sc#4 16.5
 
 Initial phi equivalence classes
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ print_cls::sc#4 print_cls::sc#1 ]
 Added variable mode_ctrl::before#0 to zero page equivalence class [ mode_ctrl::before#0 ]
 Complete equivalence classes
-[ print_cls::sc#2 print_cls::sc#1 ]
+[ print_cls::sc#4 print_cls::sc#1 ]
 [ mode_ctrl::before#0 ]
-Allocated zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated zp ZP_WORD:2 [ print_cls::sc#4 print_cls::sc#1 ]
 Allocated zp ZP_BYTE:4 [ mode_ctrl::before#0 ]
 
 INITIAL ASM
@@ -328,64 +339,65 @@ mode_ctrl: {
   // print_cls
 print_cls: {
     .label sc = 2
-    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from print_cls to print_cls::@2 [phi:print_cls->print_cls::@2]
+  b2_from_print_cls:
+    // [15] phi (byte*) print_cls::sc#4 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b2
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b2
-    jmp breturn
-    // print_cls::@return
-  breturn:
-    // [17] return 
-    rts
+    jmp b2
+    // [15] phi from print_cls::@1 to print_cls::@2 [phi:print_cls::@1->print_cls::@2]
+  b2_from_b1:
+    // [15] phi (byte*) print_cls::sc#4 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@2#0] -- register_copy 
+    jmp b2
     // print_cls::@2
   b2:
-    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] *((byte*) print_cls::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#4 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
-  b1_from_b2:
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
     jmp b1
+    // print_cls::@1
+  b1:
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2_from_b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2_from_b1
+    jmp breturn
+    // print_cls::@return
+  breturn:
+    // [19] return 
+    rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const byte*) BORDERCOL#0) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) BORDERCOL#0) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
-Statement [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a 
-Statement [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:2 , 
+Statement [16] *((byte*) print_cls::sc#4) ← (byte) ' ' [ print_cls::sc#4 ] ( main:2::print_cls:5 [ print_cls::sc#4 ] ) always clobbers reg byte a reg byte y 
+Statement [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ print_cls::sc#4 print_cls::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ mode_ctrl::before#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print_cls] 36.67: zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplift Scope [print_cls] 33: zp ZP_WORD:2 [ print_cls::sc#4 print_cls::sc#1 ] 
 Uplift Scope [mode_ctrl] 22: zp ZP_BYTE:4 [ mode_ctrl::before#0 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print_cls] best 992 combination zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [mode_ctrl] best 932 combination reg byte a [ mode_ctrl::before#0 ] 
-Uplifting [main] best 932 combination 
-Uplifting [] best 932 combination 
+Uplifting [print_cls] best 1022 combination zp ZP_WORD:2 [ print_cls::sc#4 print_cls::sc#1 ] 
+Uplifting [mode_ctrl] best 962 combination reg byte a [ mode_ctrl::before#0 ] 
+Uplifting [main] best 962 combination 
+Uplifting [] best 962 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -460,43 +472,44 @@ mode_ctrl: {
   // print_cls
 print_cls: {
     .label sc = 2
-    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  b1_from_print_cls:
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from print_cls to print_cls::@2 [phi:print_cls->print_cls::@2]
+  b2_from_print_cls:
+    // [15] phi (byte*) print_cls::sc#4 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-    jmp b1
-    // print_cls::@1
-  b1:
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b2
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b2
-    jmp breturn
-    // print_cls::@return
-  breturn:
-    // [17] return 
-    rts
+    jmp b2
+    // [15] phi from print_cls::@1 to print_cls::@2 [phi:print_cls::@1->print_cls::@2]
+  b2_from_b1:
+    // [15] phi (byte*) print_cls::sc#4 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@2#0] -- register_copy 
+    jmp b2
     // print_cls::@2
   b2:
-    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [16] *((byte*) print_cls::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#4 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
-  b1_from_b2:
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
     jmp b1
+    // print_cls::@1
+  b1:
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2_from_b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2_from_b1
+    jmp breturn
+    // print_cls::@return
+  breturn:
+    // [19] return 
+    rts
 }
   // File Data
 
@@ -507,28 +520,34 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction mode_ctrl_from_b1:
+Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
 Removing instruction breturn:
 Removing instruction b3:
-Removing instruction b1_from_print_cls:
+Removing instruction b2_from_print_cls:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -554,15 +573,15 @@ FINAL SYMBOL TABLE
 (label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 22.0
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 14.666666666666666
+(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#4 sc zp ZP_WORD:2 16.5
 
-zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ print_cls::sc#4 print_cls::sc#1 ]
 reg byte a [ mode_ctrl::before#0 ]
 
 
 FINAL ASSEMBLER
-Score: 794
+Score: 764
 
   // File Comments
   // Upstart
@@ -624,16 +643,29 @@ mode_ctrl: {
   // print_cls
 print_cls: {
     .label sc = 2
-    // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi from print_cls to print_cls::@2 [phi:print_cls->print_cls::@2]
+    // [15] phi (byte*) print_cls::sc#4 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-    // print_cls::@1
-  b1:
+    // [15] phi from print_cls::@1 to print_cls::@2 [phi:print_cls::@1->print_cls::@2]
+    // [15] phi (byte*) print_cls::sc#4 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@2#0] -- register_copy 
+    // print_cls::@2
+  b2:
+    // *sc = ' '
+    // [16] *((byte*) print_cls::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#4 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    // print_cls::@1
+    // [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -642,24 +674,8 @@ print_cls: {
     bne b2
     // print_cls::@return
     // }
-    // [17] return 
+    // [19] return 
     rts
-    // print_cls::@2
-  b2:
-    // *sc = ' '
-    // [18] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [15] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
-    // [15] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
 

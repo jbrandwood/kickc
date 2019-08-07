@@ -88,7 +88,7 @@ render: {
     sta x
   b2:
     jsr findcol
-    txa
+    lda findcol.return
     ldy x
     sta (colline),y
     inc x
@@ -111,75 +111,78 @@ render: {
 findcol: {
     .label x = 3
     .label y = 2
-    .label xp = 8
-    .label yp = 9
-    .label i = 4
-    .label mindiff = 5
+    .label yp = 8
+    .label return = 5
+    .label mincol = 5
+    .label mindiff = 4
     lda #$ff
     sta mindiff
-    ldx #0
-    txa
-    sta i
-  b1:
-    lda i
-    cmp #numpoints
-    bcc b2
-    rts
+    lda #0
+    sta mincol
+    tay
   b2:
-    ldy i
-    lda XPOS,y
-    sta xp
+    ldx XPOS,y
     lda YPOS,y
     sta yp
-    lda x
-    cmp xp
+    cpx x
     bne b3
     lda y
     cmp yp
     bne b3
-    ldx #0
+    lda #0
+    sta return
     rts
   b3:
-    lda x
-    cmp xp
-    bcc b4
+    txa
+    cmp x
+    beq !+
+    bcs b4
+  !:
+    txa
+    eor #$ff
     sec
-    sbc xp
-    tay
+    adc x
+    tax
   b5:
     lda y
     cmp yp
     bcc b6
     sec
     sbc yp
-    sty $ff
+    stx $ff
     clc
     adc $ff
+    tax
   b7:
-    cmp mindiff
-    bcs b13
-    ldy i
-    ldx COLS,y
+    cpx mindiff
+    bcs b14
+    lda COLS,y
+    sta mincol
   b8:
-    inc i
-    sta mindiff
-    jmp b1
+    iny
+    cpy #numpoints
+    bcc b13
+    rts
   b13:
-    lda mindiff
+    stx mindiff
+    jmp b2
+  b14:
+    ldx mindiff
     jmp b8
   b6:
     lda yp
     sec
     sbc y
-    sty $ff
+    stx $ff
     clc
     adc $ff
+    tax
     jmp b7
   b4:
-    lda xp
+    txa
     sec
     sbc x
-    tay
+    tax
     jmp b5
 }
 initscreen: {
@@ -188,7 +191,14 @@ initscreen: {
     sta screen
     lda #>SCREEN
     sta screen+1
-  b1:
+  b2:
+    lda #FILL
+    ldy #0
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
     lda screen+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -198,15 +208,6 @@ initscreen: {
     bcc b2
   !:
     rts
-  b2:
-    lda #FILL
-    ldy #0
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    jmp b1
 }
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f

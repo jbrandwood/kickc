@@ -891,6 +891,7 @@ Eliminating unused constant (const byte) findcol::diff#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Successful SSA optimization Pass2LoopHeadConstantIdentification
 Adding number conversion cast (unumber) $28 in if((byte) render::x#1!=(number) $28) goto render::@2
 Adding number conversion cast (unumber) $19 in if((byte) render::y#1!=(number) $19) goto render::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -900,10 +901,43 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte) findcol::i#1 = (byte) findcol::i#10 
+Alias (byte) findcol::mincol#10 = (byte) findcol::mincol#4 
+Alias (byte) findcol::mindiff#10 = (byte) findcol::mindiff#12 
+Alias (byte) findcol::i#14 = (byte) findcol::i#24 
+Alias (byte) findcol::mincol#22 = (byte) findcol::mincol#23 
+Alias (byte) findcol::mindiff#20 = (byte) findcol::mindiff#21 
+Alias (byte) findcol::i#21 = (byte) findcol::i#22 (byte) findcol::i#23 
+Alias (byte) findcol::mincol#19 = (byte) findcol::mincol#20 (byte) findcol::mincol#21 
+Alias (byte) findcol::mindiff#17 = (byte) findcol::mindiff#18 (byte) findcol::mindiff#19 
+Alias (byte) findcol::i#18 = (byte) findcol::i#19 (byte) findcol::i#20 
+Alias (byte) findcol::mincol#16 = (byte) findcol::mincol#17 (byte) findcol::mincol#18 
+Alias (byte) findcol::mindiff#14 = (byte) findcol::mindiff#15 (byte) findcol::mindiff#16 
+Alias (byte) findcol::i#16 = (byte) findcol::i#17 
+Successful SSA optimization Pass2AliasElimination
+Alias (byte) findcol::i#14 = (byte) findcol::i#21 (byte) findcol::i#18 (byte) findcol::i#16 (byte) findcol::i#15 
+Alias (byte) findcol::mincol#15 = (byte) findcol::mincol#19 (byte) findcol::mincol#22 (byte) findcol::mincol#16 
+Alias (byte) findcol::mindiff#13 = (byte) findcol::mindiff#17 (byte) findcol::mindiff#20 (byte) findcol::mindiff#14 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) findcol::i#25 (const byte) findcol::i#0
+Identical Phi Values (byte) findcol::mincol#24 (const byte) findcol::mincol#0
+Identical Phi Values (byte) findcol::mindiff#22 (const byte) findcol::mindiff#0
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [30] (byte*~) initscreen::$0 ← (const byte*) SCREEN#0 + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) initscreen::$0 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
+Removing PHI-reference to removed block (findcol::@1_1) in block findcol::@3
+if() condition always true - replacing block destination [82] if((const byte) findcol::i#0<(const byte) numpoints#0) goto findcol::@2
+Successful SSA optimization Pass2ConstantIfs
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) initscreen::screen#1 = (byte*) initscreen::screen#2 
+Alias (byte) findcol::mincol#10 = (byte) findcol::mincol#14 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) initscreen::screen#5 (const byte*) initscreen::screen#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [75] if((const byte*) initscreen::screen#0<(const byte*) initscreen::$0) goto initscreen::@2
+Successful SSA optimization Pass2ConstantIfs
 Inlining constant with var siblings (const byte*) initscreen::screen#0
 Inlining constant with var siblings (const byte) render::y#0
 Inlining constant with var siblings (const byte) render::x#0
@@ -940,9 +974,11 @@ Consolidated array index constant in *(XPOS#0+3)
 Consolidated array index constant in *(XPOS#0+3)
 Consolidated array index constant in *(XPOS#0+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Added new block during phi lifting initscreen::@7(between initscreen::@1 and initscreen::@2)
 Added new block during phi lifting render::@6(between render::@3 and render::@1)
 Added new block during phi lifting render::@7(between render::@5 and render::@2)
-Added new block during phi lifting findcol::@23(between findcol::@9 and findcol::@10)
+Added new block during phi lifting findcol::@23(between findcol::@1 and findcol::@2)
+Added new block during phi lifting findcol::@24(between findcol::@9 and findcol::@10)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
@@ -954,8 +990,10 @@ Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of render
 Adding NOP phi() at start of findcol
+Adding NOP phi() at start of findcol::@1_1
 Adding NOP phi() at start of findcol::@14
 Adding NOP phi() at start of initscreen
+Adding NOP phi() at start of initscreen::@1_1
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to initscreen:6 render:9 animate:11 
@@ -965,27 +1003,30 @@ Created 12 initial phi equivalence classes
 Coalesced [54] render::y#6 ← render::y#1
 Coalesced [55] render::colline#6 ← render::colline#1
 Coalesced [56] render::x#4 ← render::x#1
-Coalesced [60] findcol::return#6 ← findcol::mincol#10
-Coalesced [70] findcol::diff#10 ← findcol::diff#2
-Coalesced [75] findcol::diff#12 ← findcol::diff#4
-Coalesced [79] findcol::mincol#15 ← findcol::mincol#1
-Coalesced [80] findcol::mindiff#14 ← findcol::diff#7
-Coalesced [83] findcol::i#14 ← findcol::i#1
-Coalesced [84] findcol::mincol#14 ← findcol::mincol#4
-Not coalescing [85] findcol::mindiff#13 ← findcol::mindiff#12
-Coalesced (already) [86] findcol::mincol#16 ← findcol::mincol#10
-Not coalescing [87] findcol::mindiff#15 ← findcol::mindiff#10
-Coalesced [90] findcol::diff#13 ← findcol::diff#3
-Coalesced [92] findcol::diff#11 ← findcol::diff#1
-Coalesced [99] initscreen::screen#4 ← initscreen::screen#1
+Coalesced [69] findcol::diff#10 ← findcol::diff#2
+Coalesced [74] findcol::diff#12 ← findcol::diff#4
+Coalesced [78] findcol::mincol#26 ← findcol::mincol#1
+Coalesced [79] findcol::mindiff#24 ← findcol::diff#7
+Coalesced [83] findcol::return#6 ← findcol::mincol#10
+Coalesced [84] findcol::i#26 ← findcol::i#1
+Coalesced [85] findcol::mincol#25 ← findcol::mincol#10
+Not coalescing [86] findcol::mindiff#23 ← findcol::mindiff#10
+Coalesced (already) [87] findcol::mincol#27 ← findcol::mincol#15
+Not coalescing [88] findcol::mindiff#25 ← findcol::mindiff#13
+Coalesced [91] findcol::diff#13 ← findcol::diff#3
+Coalesced [93] findcol::diff#11 ← findcol::diff#1
+Coalesced [101] initscreen::screen#6 ← initscreen::screen#1
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) render::@6
 Culled Empty Block (label) render::@7
-Culled Empty Block (label) findcol::@3
+Culled Empty Block (label) findcol::@1_1
 Culled Empty Block (label) findcol::@14
+Culled Empty Block (label) findcol::@3
+Culled Empty Block (label) initscreen::@1_1
+Culled Empty Block (label) initscreen::@7
 Renumbering block @5 to @1
 Renumbering block main::@4 to main::@2
 Renumbering block animate::@6 to animate::@5
@@ -1006,6 +1047,7 @@ Renumbering block findcol::@16 to findcol::@10
 Renumbering block findcol::@18 to findcol::@11
 Renumbering block findcol::@20 to findcol::@12
 Renumbering block findcol::@23 to findcol::@13
+Renumbering block findcol::@24 to findcol::@14
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -1118,54 +1160,56 @@ render::@return: scope:[render]  from render::@3
   to:@return
 findcol: scope:[findcol]  from render::@2
   [51] phi()
-  to:findcol::@1
-findcol::@1: scope:[findcol]  from findcol findcol::@8
-  [52] (byte) findcol::mindiff#10 ← phi( findcol/(byte) $ff findcol::@8/(byte~) findcol::mindiff#13 )
-  [52] (byte) findcol::mincol#10 ← phi( findcol/(byte) 0 findcol::@8/(byte) findcol::mincol#4 )
-  [52] (byte) findcol::i#10 ← phi( findcol/(byte) 0 findcol::@8/(byte) findcol::i#1 )
-  [53] if((byte) findcol::i#10<(const byte) numpoints#0) goto findcol::@2
-  to:findcol::@return
-findcol::@return: scope:[findcol]  from findcol::@1 findcol::@9
-  [54] (byte) findcol::return#3 ← phi( findcol::@9/(byte) 0 findcol::@1/(byte) findcol::mincol#10 )
-  [55] return 
-  to:@return
-findcol::@2: scope:[findcol]  from findcol::@1
-  [56] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#10)
-  [57] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#10)
-  [58] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3
+  to:findcol::@2
+findcol::@2: scope:[findcol]  from findcol findcol::@13
+  [52] (byte) findcol::mindiff#13 ← phi( findcol::@13/(byte~) findcol::mindiff#23 findcol/(byte) $ff )
+  [52] (byte) findcol::mincol#15 ← phi( findcol::@13/(byte) findcol::mincol#10 findcol/(byte) 0 )
+  [52] (byte) findcol::i#14 ← phi( findcol::@13/(byte) findcol::i#1 findcol/(byte) 0 )
+  [53] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#14)
+  [54] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#14)
+  [55] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3
   to:findcol::@9
 findcol::@9: scope:[findcol]  from findcol::@2
-  [59] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3
+  [56] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3
   to:findcol::@return
+findcol::@return: scope:[findcol]  from findcol::@1 findcol::@9
+  [57] (byte) findcol::return#3 ← phi( findcol::@9/(byte) 0 findcol::@1/(byte) findcol::mincol#10 )
+  [58] return 
+  to:@return
 findcol::@3: scope:[findcol]  from findcol::@2 findcol::@9
-  [60] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4
+  [59] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4
   to:findcol::@10
 findcol::@10: scope:[findcol]  from findcol::@3
-  [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0
+  [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0
   to:findcol::@5
 findcol::@5: scope:[findcol]  from findcol::@10 findcol::@4
-  [62] (byte) findcol::diff#5 ← phi( findcol::@10/(byte) findcol::diff#2 findcol::@4/(byte) findcol::diff#1 )
-  [63] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6
+  [61] (byte) findcol::diff#5 ← phi( findcol::@10/(byte) findcol::diff#2 findcol::@4/(byte) findcol::diff#1 )
+  [62] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6
   to:findcol::@11
 findcol::@11: scope:[findcol]  from findcol::@5
-  [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0
-  [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9
+  [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0
+  [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9
   to:findcol::@7
 findcol::@7: scope:[findcol]  from findcol::@11 findcol::@6
-  [66] (byte) findcol::diff#7 ← phi( findcol::@11/(byte) findcol::diff#4 findcol::@6/(byte) findcol::diff#3 )
-  [67] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@13
+  [65] (byte) findcol::diff#7 ← phi( findcol::@11/(byte) findcol::diff#4 findcol::@6/(byte) findcol::diff#3 )
+  [66] if((byte) findcol::diff#7>=(byte) findcol::mindiff#13) goto findcol::@14
   to:findcol::@12
 findcol::@12: scope:[findcol]  from findcol::@7
-  [68] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#10)
+  [67] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#14)
   to:findcol::@8
-findcol::@8: scope:[findcol]  from findcol::@12 findcol::@13
-  [69] (byte) findcol::mindiff#12 ← phi( findcol::@12/(byte) findcol::diff#7 findcol::@13/(byte~) findcol::mindiff#15 )
-  [69] (byte) findcol::mincol#4 ← phi( findcol::@12/(byte) findcol::mincol#1 findcol::@13/(byte) findcol::mincol#10 )
-  [70] (byte) findcol::i#1 ← ++ (byte) findcol::i#10
-  [71] (byte~) findcol::mindiff#13 ← (byte) findcol::mindiff#12
+findcol::@8: scope:[findcol]  from findcol::@12 findcol::@14
+  [68] (byte) findcol::mindiff#10 ← phi( findcol::@12/(byte) findcol::diff#7 findcol::@14/(byte~) findcol::mindiff#25 )
+  [68] (byte) findcol::mincol#10 ← phi( findcol::@12/(byte) findcol::mincol#1 findcol::@14/(byte) findcol::mincol#15 )
+  [69] (byte) findcol::i#1 ← ++ (byte) findcol::i#14
   to:findcol::@1
-findcol::@13: scope:[findcol]  from findcol::@7
-  [72] (byte~) findcol::mindiff#15 ← (byte) findcol::mindiff#10
+findcol::@1: scope:[findcol]  from findcol::@8
+  [70] if((byte) findcol::i#1<(const byte) numpoints#0) goto findcol::@13
+  to:findcol::@return
+findcol::@13: scope:[findcol]  from findcol::@1
+  [71] (byte~) findcol::mindiff#23 ← (byte) findcol::mindiff#10
+  to:findcol::@2
+findcol::@14: scope:[findcol]  from findcol::@7
+  [72] (byte~) findcol::mindiff#25 ← (byte) findcol::mindiff#13
   to:findcol::@8
 findcol::@6: scope:[findcol]  from findcol::@5
   [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0
@@ -1176,18 +1220,18 @@ findcol::@4: scope:[findcol]  from findcol::@3
   to:findcol::@5
 initscreen: scope:[initscreen]  from main
   [76] phi()
+  to:initscreen::@2
+initscreen::@2: scope:[initscreen]  from initscreen initscreen::@1
+  [77] (byte*) initscreen::screen#4 ← phi( initscreen::@1/(byte*) initscreen::screen#1 initscreen/(const byte*) SCREEN#0 )
+  [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0
+  [79] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#4
   to:initscreen::@1
-initscreen::@1: scope:[initscreen]  from initscreen initscreen::@2
-  [77] (byte*) initscreen::screen#2 ← phi( initscreen/(const byte*) SCREEN#0 initscreen::@2/(byte*) initscreen::screen#1 )
-  [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2
+initscreen::@1: scope:[initscreen]  from initscreen::@2
+  [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2
   to:initscreen::@return
 initscreen::@return: scope:[initscreen]  from initscreen::@1
-  [79] return 
+  [81] return 
   to:@return
-initscreen::@2: scope:[initscreen]  from initscreen::@1
-  [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0
-  [81] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  to:initscreen::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -1217,16 +1261,16 @@ VARIABLE REGISTER WEIGHTS
 (byte) findcol::diff#7 13334.666666666666
 (byte) findcol::i
 (byte) findcol::i#1 10001.0
-(byte) findcol::i#10 3000.3
+(byte) findcol::i#14 2631.842105263158
 (byte) findcol::mincol
 (byte) findcol::mincol#1 20002.0
-(byte) findcol::mincol#10 1666.8333333333333
-(byte) findcol::mincol#4 10001.0
+(byte) findcol::mincol#10 10001.0
+(byte) findcol::mincol#15 1176.5882352941176
 (byte) findcol::mindiff
-(byte) findcol::mindiff#10 1764.8823529411764
-(byte) findcol::mindiff#12 15001.5
-(byte~) findcol::mindiff#13 20002.0
-(byte~) findcol::mindiff#15 20002.0
+(byte) findcol::mindiff#10 10001.0
+(byte) findcol::mindiff#13 1875.1875
+(byte~) findcol::mindiff#23 20002.0
+(byte~) findcol::mindiff#25 20002.0
 (byte) findcol::return
 (byte) findcol::return#0 2002.0
 (byte) findcol::return#3 3667.333333333333
@@ -1240,8 +1284,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) findcol::yp#0 6250.625
 (void()) initscreen()
 (byte*) initscreen::screen
-(byte*) initscreen::screen#1 22.0
-(byte*) initscreen::screen#2 14.666666666666666
+(byte*) initscreen::screen#1 16.5
+(byte*) initscreen::screen#4 16.5
 (void()) main()
 (byte) numpoints
 (void()) render()
@@ -1261,12 +1305,12 @@ Initial phi equivalence classes
 [ render::y#4 render::y#1 ]
 [ render::colline#5 render::colline#1 ]
 [ render::x#2 render::x#1 ]
-[ findcol::i#10 findcol::i#1 ]
-[ findcol::mindiff#10 findcol::mindiff#13 ]
-[ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ]
+[ findcol::i#14 findcol::i#1 ]
+[ findcol::mindiff#13 findcol::mindiff#23 ]
+[ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
-[ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ]
-[ initscreen::screen#2 initscreen::screen#1 ]
+[ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ]
+[ initscreen::screen#4 initscreen::screen#1 ]
 Added variable animate::$0 to zero page equivalence class [ animate::$0 ]
 Added variable animate::$3 to zero page equivalence class [ animate::$3 ]
 Added variable animate::$6 to zero page equivalence class [ animate::$6 ]
@@ -1286,12 +1330,12 @@ Complete equivalence classes
 [ render::y#4 render::y#1 ]
 [ render::colline#5 render::colline#1 ]
 [ render::x#2 render::x#1 ]
-[ findcol::i#10 findcol::i#1 ]
-[ findcol::mindiff#10 findcol::mindiff#13 ]
-[ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ]
+[ findcol::i#14 findcol::i#1 ]
+[ findcol::mindiff#13 findcol::mindiff#23 ]
+[ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
-[ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ]
-[ initscreen::screen#2 initscreen::screen#1 ]
+[ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ]
+[ initscreen::screen#4 initscreen::screen#1 ]
 [ animate::$0 ]
 [ animate::$3 ]
 [ animate::$6 ]
@@ -1310,12 +1354,12 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ render::y#4 render::y#1 ]
 Allocated zp ZP_WORD:3 [ render::colline#5 render::colline#1 ]
 Allocated zp ZP_BYTE:5 [ render::x#2 render::x#1 ]
-Allocated zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ]
-Allocated zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ]
-Allocated zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ]
+Allocated zp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ]
+Allocated zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ]
+Allocated zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
 Allocated zp ZP_BYTE:9 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
-Allocated zp ZP_BYTE:10 [ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ]
-Allocated zp ZP_WORD:11 [ initscreen::screen#2 initscreen::screen#1 ]
+Allocated zp ZP_BYTE:10 [ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ]
+Allocated zp ZP_WORD:11 [ initscreen::screen#4 initscreen::screen#1 ]
 Allocated zp ZP_BYTE:13 [ animate::$0 ]
 Allocated zp ZP_BYTE:14 [ animate::$3 ]
 Allocated zp ZP_BYTE:15 [ animate::$6 ]
@@ -1627,143 +1671,146 @@ findcol: {
     .label i = 6
     .label mincol = 8
     .label diff_7 = $a
-    .label mindiff = 7
-    .label mindiff_12 = $a
-    .label mindiff_15 = $a
-    // [52] phi from findcol to findcol::@1 [phi:findcol->findcol::@1]
-  b1_from_findcol:
-    // [52] phi (byte) findcol::mindiff#10 = (byte) $ff [phi:findcol->findcol::@1#0] -- vbuz1=vbuc1 
+    .label mindiff = $a
+    .label mindiff_13 = 7
+    .label mindiff_23 = 7
+    // [52] phi from findcol to findcol::@2 [phi:findcol->findcol::@2]
+  b2_from_findcol:
+    // [52] phi (byte) findcol::mindiff#13 = (byte) $ff [phi:findcol->findcol::@2#0] -- vbuz1=vbuc1 
     lda #$ff
-    sta mindiff
-    // [52] phi (byte) findcol::mincol#10 = (byte) 0 [phi:findcol->findcol::@1#1] -- vbuz1=vbuc1 
+    sta mindiff_13
+    // [52] phi (byte) findcol::mincol#15 = (byte) 0 [phi:findcol->findcol::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta mincol
-    // [52] phi (byte) findcol::i#10 = (byte) 0 [phi:findcol->findcol::@1#2] -- vbuz1=vbuc1 
+    // [52] phi (byte) findcol::i#14 = (byte) 0 [phi:findcol->findcol::@2#2] -- vbuz1=vbuc1 
     lda #0
     sta i
-    jmp b1
-    // findcol::@1
-  b1:
-    // [53] if((byte) findcol::i#10<(const byte) numpoints#0) goto findcol::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #numpoints
-    bcc b2
-    // [54] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
-  breturn_from_b1:
-    // [54] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
-    jmp breturn
-    // findcol::@return
-  breturn:
-    // [55] return 
-    rts
+    jmp b2
     // findcol::@2
   b2:
-    // [56] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [53] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda XPOS,y
     sta xp
-    // [57] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [54] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda YPOS,y
     sta yp
-    // [58] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
+    // [55] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
     lda x
     cmp xp
     bne b3
     jmp b9
     // findcol::@9
   b9:
-    // [59] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
+    // [56] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
     lda y
     cmp yp
     bne b3
-    // [54] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
+    // [57] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
   breturn_from_b9:
-    // [54] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuz1=vbuc1 
+    // [57] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuz1=vbuc1 
     lda #0
     sta return_3
     jmp breturn
+    // findcol::@return
+  breturn:
+    // [58] return 
+    rts
     // findcol::@3
   b3:
-    // [60] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuz2_then_la1 
+    // [59] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuz2_then_la1 
     lda x
     cmp xp
     bcc b4
     jmp b10
     // findcol::@10
   b10:
-    // [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuz1=vbuz2_minus_vbuz3 
+    // [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuz1=vbuz2_minus_vbuz3 
     lda x
     sec
     sbc xp
     sta diff
-    // [62] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
+    // [61] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
   b5_from_b10:
   b5_from_b4:
-    // [62] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
+    // [61] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
     jmp b5
     // findcol::@5
   b5:
-    // [63] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
+    // [62] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
     lda y
     cmp yp
     bcc b6
     jmp b11
     // findcol::@11
   b11:
-    // [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuz1=vbuz2_minus_vbuz3 
+    // [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuz1=vbuz2_minus_vbuz3 
     lda y
     sec
     sbc yp
     sta _9
-    // [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuz1=vbuz2_plus_vbuz3 
+    // [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuz1=vbuz2_plus_vbuz3 
     lda diff
     clc
     adc _9
     sta diff_4
-    // [66] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
+    // [65] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
   b7_from_b11:
   b7_from_b6:
-    // [66] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
+    // [65] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
     jmp b7
     // findcol::@7
   b7:
-    // [67] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@13 -- vbuz1_ge_vbuz2_then_la1 
+    // [66] if((byte) findcol::diff#7>=(byte) findcol::mindiff#13) goto findcol::@14 -- vbuz1_ge_vbuz2_then_la1 
     lda diff_7
-    cmp mindiff
-    bcs b13
+    cmp mindiff_13
+    bcs b14
     jmp b12
     // findcol::@12
   b12:
-    // [68] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [67] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda COLS,y
     sta mincol
-    // [69] phi from findcol::@12 findcol::@13 to findcol::@8 [phi:findcol::@12/findcol::@13->findcol::@8]
+    // [68] phi from findcol::@12 findcol::@14 to findcol::@8 [phi:findcol::@12/findcol::@14->findcol::@8]
   b8_from_b12:
-  b8_from_b13:
-    // [69] phi (byte) findcol::mindiff#12 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@13->findcol::@8#0] -- register_copy 
-    // [69] phi (byte) findcol::mincol#4 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@13->findcol::@8#1] -- register_copy 
+  b8_from_b14:
+    // [68] phi (byte) findcol::mindiff#10 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@14->findcol::@8#0] -- register_copy 
+    // [68] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@14->findcol::@8#1] -- register_copy 
     jmp b8
     // findcol::@8
   b8:
-    // [70] (byte) findcol::i#1 ← ++ (byte) findcol::i#10 -- vbuz1=_inc_vbuz1 
+    // [69] (byte) findcol::i#1 ← ++ (byte) findcol::i#14 -- vbuz1=_inc_vbuz1 
     inc i
-    // [71] (byte~) findcol::mindiff#13 ← (byte) findcol::mindiff#12 -- vbuz1=vbuz2 
-    lda mindiff_12
-    sta mindiff
-    // [52] phi from findcol::@8 to findcol::@1 [phi:findcol::@8->findcol::@1]
-  b1_from_b8:
-    // [52] phi (byte) findcol::mindiff#10 = (byte~) findcol::mindiff#13 [phi:findcol::@8->findcol::@1#0] -- register_copy 
-    // [52] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#4 [phi:findcol::@8->findcol::@1#1] -- register_copy 
-    // [52] phi (byte) findcol::i#10 = (byte) findcol::i#1 [phi:findcol::@8->findcol::@1#2] -- register_copy 
     jmp b1
+    // findcol::@1
+  b1:
+    // [70] if((byte) findcol::i#1<(const byte) numpoints#0) goto findcol::@13 -- vbuz1_lt_vbuc1_then_la1 
+    lda i
+    cmp #numpoints
+    bcc b13
+    // [57] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
+  breturn_from_b1:
+    // [57] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
+    jmp breturn
     // findcol::@13
   b13:
-    // [72] (byte~) findcol::mindiff#15 ← (byte) findcol::mindiff#10 -- vbuz1=vbuz2 
+    // [71] (byte~) findcol::mindiff#23 ← (byte) findcol::mindiff#10 -- vbuz1=vbuz2 
     lda mindiff
-    sta mindiff_15
-    jmp b8_from_b13
+    sta mindiff_23
+    // [52] phi from findcol::@13 to findcol::@2 [phi:findcol::@13->findcol::@2]
+  b2_from_b13:
+    // [52] phi (byte) findcol::mindiff#13 = (byte~) findcol::mindiff#23 [phi:findcol::@13->findcol::@2#0] -- register_copy 
+    // [52] phi (byte) findcol::mincol#15 = (byte) findcol::mincol#10 [phi:findcol::@13->findcol::@2#1] -- register_copy 
+    // [52] phi (byte) findcol::i#14 = (byte) findcol::i#1 [phi:findcol::@13->findcol::@2#2] -- register_copy 
+    jmp b2
+    // findcol::@14
+  b14:
+    // [72] (byte~) findcol::mindiff#25 ← (byte) findcol::mindiff#13 -- vbuz1=vbuz2 
+    lda mindiff_13
+    sta mindiff
+    jmp b8_from_b14
     // findcol::@6
   b6:
     // [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 -- vbuz1=vbuz2_minus_vbuz3 
@@ -1789,45 +1836,46 @@ findcol: {
   // initscreen
 initscreen: {
     .label screen = $b
-    // [77] phi from initscreen to initscreen::@1 [phi:initscreen->initscreen::@1]
-  b1_from_initscreen:
-    // [77] phi (byte*) initscreen::screen#2 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@1#0] -- pbuz1=pbuc1 
+    // [77] phi from initscreen to initscreen::@2 [phi:initscreen->initscreen::@2]
+  b2_from_initscreen:
+    // [77] phi (byte*) initscreen::screen#4 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta screen
     lda #>SCREEN
     sta screen+1
-    jmp b1
-    // initscreen::@1
-  b1:
-    // [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda screen+1
-    cmp #>SCREEN+$3e8
-    bcc b2
-    bne !+
-    lda screen
-    cmp #<SCREEN+$3e8
-    bcc b2
-  !:
-    jmp breturn
-    // initscreen::@return
-  breturn:
-    // [79] return 
-    rts
+    jmp b2
+    // [77] phi from initscreen::@1 to initscreen::@2 [phi:initscreen::@1->initscreen::@2]
+  b2_from_b1:
+    // [77] phi (byte*) initscreen::screen#4 = (byte*) initscreen::screen#1 [phi:initscreen::@1->initscreen::@2#0] -- register_copy 
+    jmp b2
     // initscreen::@2
   b2:
-    // [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
+    // [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
     lda #FILL
     ldy #0
     sta (screen),y
-    // [81] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 -- pbuz1=_inc_pbuz1 
+    // [79] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#4 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [77] phi from initscreen::@2 to initscreen::@1 [phi:initscreen::@2->initscreen::@1]
-  b1_from_b2:
-    // [77] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 [phi:initscreen::@2->initscreen::@1#0] -- register_copy 
     jmp b1
+    // initscreen::@1
+  b1:
+    // [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda screen
+    cmp #<SCREEN+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // initscreen::@return
+  breturn:
+    // [81] return 
+    rts
 }
   // File Data
   // Points to create the Voronoi from
@@ -1851,22 +1899,22 @@ Statement [32] if(*((const byte[]) XPOS#0+(byte) 3)<(byte) $28) goto animate::@r
 Statement [33] (byte~) animate::$18 ← *((const byte[]) XPOS#0+(byte) 3) - (byte) $28 [ animate::$18 ] ( main:2::animate:9 [ animate::$18 ] ) always clobbers reg byte a 
 Statement [47] (byte*) render::colline#1 ← (byte*) render::colline#5 + (byte) $28 [ render::y#4 render::colline#1 ] ( main:2::render:7 [ render::y#4 render::colline#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ render::y#4 render::y#1 ]
-Statement [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#2 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#2 ] ) always clobbers reg byte a 
+Statement [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#2 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ render::x#2 render::x#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ findcol::x#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:21 [ findcol::y#0 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:25 [ findcol::yp#0 ]
-Statement [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$9 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$9 ] ) always clobbers reg byte a 
+Statement [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$9 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$9 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
-Statement [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#4 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#4 ] ) always clobbers reg byte a 
-Statement [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$11 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$11 ] ) always clobbers reg byte a 
-Statement [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#3 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#3 ] ) always clobbers reg byte a 
-Statement [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#1 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#1 ] ) always clobbers reg byte a 
-Statement [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 [ initscreen::screen#2 ] ( main:2::initscreen:5 [ initscreen::screen#2 ] ) always clobbers reg byte a 
-Statement [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0 [ initscreen::screen#2 ] ( main:2::initscreen:5 [ initscreen::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#4 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#4 ] ) always clobbers reg byte a 
+Statement [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$11 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$11 ] ) always clobbers reg byte a 
+Statement [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#3 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#3 ] ) always clobbers reg byte a 
+Statement [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#1 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#1 ] ) always clobbers reg byte a 
+Statement [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0 [ initscreen::screen#4 ] ( main:2::initscreen:5 [ initscreen::screen#4 ] ) always clobbers reg byte a reg byte y 
+Statement [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 [ initscreen::screen#1 ] ( main:2::initscreen:5 [ initscreen::screen#1 ] ) always clobbers reg byte a 
 Statement [12] if(*((const byte[]) XPOS#0)!=(byte) $28) goto animate::@1 [ ] ( main:2::animate:9 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte[]) XPOS#0) ← (byte) 0 [ ] ( main:2::animate:9 [ ] ) always clobbers reg byte a 
 Statement [16] if(*((const byte[]) YPOS#0)!=(byte) $19) goto animate::@2 [ ] ( main:2::animate:9 [ ] ) always clobbers reg byte a 
@@ -1881,23 +1929,23 @@ Statement [30] (byte~) animate::$15 ← *((const byte[]) XPOS#0+(byte) 3) + (byt
 Statement [32] if(*((const byte[]) XPOS#0+(byte) 3)<(byte) $28) goto animate::@return [ ] ( main:2::animate:9 [ ] ) always clobbers reg byte a 
 Statement [33] (byte~) animate::$18 ← *((const byte[]) XPOS#0+(byte) 3) - (byte) $28 [ animate::$18 ] ( main:2::animate:9 [ animate::$18 ] ) always clobbers reg byte a 
 Statement [47] (byte*) render::colline#1 ← (byte*) render::colline#5 + (byte) $28 [ render::y#4 render::colline#1 ] ( main:2::render:7 [ render::y#4 render::colline#1 ] ) always clobbers reg byte a 
-Statement [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#2 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#2 ] ) always clobbers reg byte a 
-Statement [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$9 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$9 ] ) always clobbers reg byte a 
-Statement [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#4 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#4 ] ) always clobbers reg byte a 
-Statement [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$11 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#5 findcol::$11 ] ) always clobbers reg byte a 
-Statement [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#3 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::diff#3 ] ) always clobbers reg byte a 
-Statement [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#1 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#10 findcol::mincol#10 findcol::mindiff#10 findcol::yp#0 findcol::diff#1 ] ) always clobbers reg byte a 
-Statement [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 [ initscreen::screen#2 ] ( main:2::initscreen:5 [ initscreen::screen#2 ] ) always clobbers reg byte a 
-Statement [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0 [ initscreen::screen#2 ] ( main:2::initscreen:5 [ initscreen::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#2 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#2 ] ) always clobbers reg byte a 
+Statement [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$9 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$9 ] ) always clobbers reg byte a 
+Statement [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#4 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#4 ] ) always clobbers reg byte a 
+Statement [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$11 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#5 findcol::$11 ] ) always clobbers reg byte a 
+Statement [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#3 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::diff#3 ] ) always clobbers reg byte a 
+Statement [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#1 ] ( main:2::render:7::findcol:41 [ render::y#4 render::colline#5 render::x#2 findcol::x#0 findcol::y#0 findcol::i#14 findcol::mincol#15 findcol::mindiff#13 findcol::yp#0 findcol::diff#1 ] ) always clobbers reg byte a 
+Statement [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0 [ initscreen::screen#4 ] ( main:2::initscreen:5 [ initscreen::screen#4 ] ) always clobbers reg byte a reg byte y 
+Statement [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 [ initscreen::screen#1 ] ( main:2::initscreen:5 [ initscreen::screen#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ render::y#4 render::y#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ render::x#2 render::x#1 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ] : zp ZP_BYTE:7 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ] : zp ZP_BYTE:8 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ] : zp ZP_BYTE:7 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ] : zp ZP_BYTE:8 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:9 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ] : zp ZP_BYTE:9 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:11 [ initscreen::screen#2 initscreen::screen#1 ] : zp ZP_WORD:11 , 
+Potential registers zp ZP_BYTE:10 [ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:11 [ initscreen::screen#4 initscreen::screen#1 ] : zp ZP_WORD:11 , 
 Potential registers zp ZP_BYTE:13 [ animate::$0 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:14 [ animate::$3 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:15 [ animate::$6 ] : zp ZP_BYTE:15 , reg byte a , reg byte x , reg byte y , 
@@ -1915,58 +1963,59 @@ Potential registers zp ZP_BYTE:26 [ findcol::$9 ] : zp ZP_BYTE:26 , reg byte a ,
 Potential registers zp ZP_BYTE:27 [ findcol::$11 ] : zp ZP_BYTE:27 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [findcol] 88,342.17: zp ZP_BYTE:10 [ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ] 50,005: zp ZP_BYTE:9 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ] 35,337.17: zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ] 21,766.88: zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ] 20,002: zp ZP_BYTE:26 [ findcol::$9 ] 20,002: zp ZP_BYTE:27 [ findcol::$11 ] 13,001.3: zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ] 10,001: zp ZP_BYTE:24 [ findcol::xp#0 ] 6,250.62: zp ZP_BYTE:25 [ findcol::yp#0 ] 2,002: zp ZP_BYTE:22 [ findcol::return#0 ] 1,708.54: zp ZP_BYTE:21 [ findcol::y#0 ] 1,640.2: zp ZP_BYTE:20 [ findcol::x#0 ] 
+Uplift Scope [findcol] 83,341.67: zp ZP_BYTE:10 [ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ] 50,005: zp ZP_BYTE:9 [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ] 34,846.92: zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ] 21,877.19: zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ] 20,002: zp ZP_BYTE:26 [ findcol::$9 ] 20,002: zp ZP_BYTE:27 [ findcol::$11 ] 12,632.84: zp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ] 10,001: zp ZP_BYTE:24 [ findcol::xp#0 ] 6,250.62: zp ZP_BYTE:25 [ findcol::yp#0 ] 2,002: zp ZP_BYTE:22 [ findcol::return#0 ] 1,708.54: zp ZP_BYTE:21 [ findcol::y#0 ] 1,640.2: zp ZP_BYTE:20 [ findcol::x#0 ] 
 Uplift Scope [render] 2,073.5: zp ZP_BYTE:5 [ render::x#2 render::x#1 ] 2,002: zp ZP_BYTE:23 [ render::col#0 ] 260.86: zp ZP_BYTE:2 [ render::y#4 render::y#1 ] 187.63: zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] 
-Uplift Scope [initscreen] 36.67: zp ZP_WORD:11 [ initscreen::screen#2 initscreen::screen#1 ] 
+Uplift Scope [initscreen] 33: zp ZP_WORD:11 [ initscreen::screen#4 initscreen::screen#1 ] 
 Uplift Scope [animate] 4: zp ZP_BYTE:13 [ animate::$0 ] 4: zp ZP_BYTE:14 [ animate::$3 ] 4: zp ZP_BYTE:15 [ animate::$6 ] 4: zp ZP_BYTE:16 [ animate::$9 ] 4: zp ZP_BYTE:17 [ animate::$12 ] 4: zp ZP_BYTE:18 [ animate::$15 ] 4: zp ZP_BYTE:19 [ animate::$18 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [findcol] best 1973929 combination reg byte a [ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ] reg byte y [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ] reg byte x [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ] zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ] zp ZP_BYTE:26 [ findcol::$9 ] zp ZP_BYTE:27 [ findcol::$11 ] zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ] zp ZP_BYTE:24 [ findcol::xp#0 ] zp ZP_BYTE:25 [ findcol::yp#0 ] zp ZP_BYTE:22 [ findcol::return#0 ] zp ZP_BYTE:21 [ findcol::y#0 ] zp ZP_BYTE:20 [ findcol::x#0 ] 
+Uplifting [findcol] best 2106962 combination reg byte x [ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ] reg byte x [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ] zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ] zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ] zp ZP_BYTE:26 [ findcol::$9 ] zp ZP_BYTE:27 [ findcol::$11 ] zp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ] zp ZP_BYTE:24 [ findcol::xp#0 ] zp ZP_BYTE:25 [ findcol::yp#0 ] zp ZP_BYTE:22 [ findcol::return#0 ] zp ZP_BYTE:21 [ findcol::y#0 ] zp ZP_BYTE:20 [ findcol::x#0 ] 
 Limited combination testing to 100 combinations of 2239488 possible.
-Uplifting [render] best 1967929 combination zp ZP_BYTE:5 [ render::x#2 render::x#1 ] reg byte a [ render::col#0 ] zp ZP_BYTE:2 [ render::y#4 render::y#1 ] zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] 
-Uplifting [initscreen] best 1967929 combination zp ZP_WORD:11 [ initscreen::screen#2 initscreen::screen#1 ] 
-Uplifting [animate] best 1967909 combination reg byte x [ animate::$0 ] reg byte x [ animate::$3 ] reg byte a [ animate::$6 ] reg byte a [ animate::$9 ] zp ZP_BYTE:17 [ animate::$12 ] zp ZP_BYTE:18 [ animate::$15 ] zp ZP_BYTE:19 [ animate::$18 ] 
+Uplifting [render] best 2100962 combination zp ZP_BYTE:5 [ render::x#2 render::x#1 ] reg byte a [ render::col#0 ] zp ZP_BYTE:2 [ render::y#4 render::y#1 ] zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] 
+Uplifting [initscreen] best 2100962 combination zp ZP_WORD:11 [ initscreen::screen#4 initscreen::screen#1 ] 
+Uplifting [animate] best 2100942 combination reg byte x [ animate::$0 ] reg byte x [ animate::$3 ] reg byte a [ animate::$6 ] reg byte a [ animate::$9 ] zp ZP_BYTE:17 [ animate::$12 ] zp ZP_BYTE:18 [ animate::$15 ] zp ZP_BYTE:19 [ animate::$18 ] 
 Limited combination testing to 100 combinations of 16384 possible.
-Uplifting [main] best 1967909 combination 
-Uplifting [] best 1967909 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ]
-Uplifting [findcol] best 1967909 combination zp ZP_BYTE:7 [ findcol::mindiff#10 findcol::mindiff#13 ] 
+Uplifting [main] best 2100942 combination 
+Uplifting [] best 2100942 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
+Uplifting [findcol] best 2100942 combination zp ZP_BYTE:8 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ]
+Uplifting [findcol] best 2100942 combination zp ZP_BYTE:7 [ findcol::mindiff#13 findcol::mindiff#23 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:26 [ findcol::$9 ]
-Uplifting [findcol] best 1947909 combination reg byte a [ findcol::$9 ] 
+Uplifting [findcol] best 2080942 combination reg byte a [ findcol::$9 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ findcol::$11 ]
-Uplifting [findcol] best 1927909 combination reg byte a [ findcol::$11 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ]
-Uplifting [findcol] best 1927909 combination zp ZP_BYTE:6 [ findcol::i#10 findcol::i#1 ] 
+Uplifting [findcol] best 2060942 combination reg byte a [ findcol::$11 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:6 [ findcol::i#14 findcol::i#1 ]
+Uplifting [findcol] best 1880942 combination reg byte y [ findcol::i#14 findcol::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:24 [ findcol::xp#0 ]
-Uplifting [findcol] best 1927909 combination zp ZP_BYTE:24 [ findcol::xp#0 ] 
+Uplifting [findcol] best 1835942 combination reg byte x [ findcol::xp#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:25 [ findcol::yp#0 ]
-Uplifting [findcol] best 1927909 combination zp ZP_BYTE:25 [ findcol::yp#0 ] 
+Uplifting [findcol] best 1835942 combination zp ZP_BYTE:25 [ findcol::yp#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ render::x#2 render::x#1 ]
-Uplifting [render] best 1927909 combination zp ZP_BYTE:5 [ render::x#2 render::x#1 ] 
+Uplifting [render] best 1835942 combination zp ZP_BYTE:5 [ render::x#2 render::x#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:22 [ findcol::return#0 ]
-Uplifting [findcol] best 1923909 combination reg byte a [ findcol::return#0 ] 
+Uplifting [findcol] best 1829942 combination reg byte a [ findcol::return#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:21 [ findcol::y#0 ]
-Uplifting [findcol] best 1923909 combination zp ZP_BYTE:21 [ findcol::y#0 ] 
+Uplifting [findcol] best 1829942 combination zp ZP_BYTE:21 [ findcol::y#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ findcol::x#0 ]
-Uplifting [findcol] best 1923909 combination zp ZP_BYTE:20 [ findcol::x#0 ] 
+Uplifting [findcol] best 1829942 combination zp ZP_BYTE:20 [ findcol::x#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ render::y#4 render::y#1 ]
-Uplifting [render] best 1923909 combination zp ZP_BYTE:2 [ render::y#4 render::y#1 ] 
+Uplifting [render] best 1829942 combination zp ZP_BYTE:2 [ render::y#4 render::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ animate::$12 ]
-Uplifting [animate] best 1923903 combination reg byte x [ animate::$12 ] 
+Uplifting [animate] best 1829936 combination reg byte x [ animate::$12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ animate::$15 ]
-Uplifting [animate] best 1923897 combination reg byte a [ animate::$15 ] 
+Uplifting [animate] best 1829930 combination reg byte a [ animate::$15 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:19 [ animate::$18 ]
-Uplifting [animate] best 1923891 combination reg byte a [ animate::$18 ] 
+Uplifting [animate] best 1829924 combination reg byte a [ animate::$18 ] 
 Coalescing zero page register [ zp ZP_BYTE:2 [ render::y#4 render::y#1 ] ] with [ zp ZP_BYTE:21 [ findcol::y#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_BYTE:5 [ render::x#2 render::x#1 ] ] with [ zp ZP_BYTE:20 [ findcol::x#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:11 [ initscreen::screen#2 initscreen::screen#1 ] ] with [ zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ initscreen::screen#4 initscreen::screen#1 ] ] with [ zp ZP_WORD:3 [ render::colline#5 render::colline#1 ] ]
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:3 [ render::x#2 render::x#1 findcol::x#0 ]
-Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:4 [ findcol::i#10 findcol::i#1 ]
-Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:5 [ findcol::mindiff#10 findcol::mindiff#13 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:6 [ initscreen::screen#2 initscreen::screen#1 render::colline#5 render::colline#1 ]
-Allocated (was zp ZP_BYTE:24) zp ZP_BYTE:8 [ findcol::xp#0 ]
-Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:9 [ findcol::yp#0 ]
+Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:4 [ findcol::mindiff#13 findcol::mindiff#23 ]
+Allocated (was zp ZP_BYTE:8) zp ZP_BYTE:5 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:6 [ initscreen::screen#4 initscreen::screen#1 render::colline#5 render::colline#1 ]
+Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:8 [ findcol::yp#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2179,8 +2228,8 @@ render: {
     // [51] phi from render::@2 to findcol [phi:render::@2->findcol]
   findcol_from_b2:
     jsr findcol
-    // [42] (byte) findcol::return#0 ← (byte) findcol::return#3 -- vbuaa=vbuxx 
-    txa
+    // [42] (byte) findcol::return#0 ← (byte) findcol::return#3 -- vbuaa=vbuz1 
+    lda findcol.return
     jmp b4
     // render::@4
   b4:
@@ -2222,198 +2271,203 @@ render: {
 findcol: {
     .label x = 3
     .label y = 2
-    .label xp = 8
-    .label yp = 9
-    .label i = 4
-    .label mindiff = 5
-    // [52] phi from findcol to findcol::@1 [phi:findcol->findcol::@1]
-  b1_from_findcol:
-    // [52] phi (byte) findcol::mindiff#10 = (byte) $ff [phi:findcol->findcol::@1#0] -- vbuz1=vbuc1 
+    .label yp = 8
+    .label return = 5
+    .label mincol = 5
+    .label mindiff = 4
+    // [52] phi from findcol to findcol::@2 [phi:findcol->findcol::@2]
+  b2_from_findcol:
+    // [52] phi (byte) findcol::mindiff#13 = (byte) $ff [phi:findcol->findcol::@2#0] -- vbuz1=vbuc1 
     lda #$ff
     sta mindiff
-    // [52] phi (byte) findcol::mincol#10 = (byte) 0 [phi:findcol->findcol::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    // [52] phi (byte) findcol::i#10 = (byte) 0 [phi:findcol->findcol::@1#2] -- vbuz1=vbuc1 
+    // [52] phi (byte) findcol::mincol#15 = (byte) 0 [phi:findcol->findcol::@2#1] -- vbuz1=vbuc1 
     lda #0
-    sta i
-    jmp b1
-    // findcol::@1
-  b1:
-    // [53] if((byte) findcol::i#10<(const byte) numpoints#0) goto findcol::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #numpoints
-    bcc b2
-    // [54] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
-  breturn_from_b1:
-    // [54] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
-    jmp breturn
-    // findcol::@return
-  breturn:
-    // [55] return 
-    rts
+    sta mincol
+    // [52] phi (byte) findcol::i#14 = (byte) 0 [phi:findcol->findcol::@2#2] -- vbuyy=vbuc1 
+    ldy #0
+    jmp b2
     // findcol::@2
   b2:
-    // [56] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
-    lda XPOS,y
-    sta xp
-    // [57] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
+    // [53] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#14) -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx XPOS,y
+    // [54] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda YPOS,y
     sta yp
-    // [58] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
-    lda x
-    cmp xp
+    // [55] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuxx_then_la1 
+    cpx x
     bne b3
     jmp b9
     // findcol::@9
   b9:
-    // [59] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
+    // [56] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
     lda y
     cmp yp
     bne b3
-    // [54] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
+    // [57] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
   breturn_from_b9:
-    // [54] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [57] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuz1=vbuc1 
+    lda #0
+    sta return
     jmp breturn
+    // findcol::@return
+  breturn:
+    // [58] return 
+    rts
     // findcol::@3
   b3:
-    // [60] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuz2_then_la1 
-    lda x
-    cmp xp
-    bcc b4
+    // [59] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuxx_then_la1 
+    txa
+    cmp x
+    beq !+
+    bcs b4
+  !:
     jmp b10
     // findcol::@10
   b10:
-    // [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuyy=vbuz1_minus_vbuz2 
-    lda x
+    // [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuxx=vbuz1_minus_vbuxx 
+    txa
+    eor #$ff
     sec
-    sbc xp
-    tay
-    // [62] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
+    adc x
+    tax
+    // [61] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
   b5_from_b10:
   b5_from_b4:
-    // [62] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
+    // [61] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
     jmp b5
     // findcol::@5
   b5:
-    // [63] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
+    // [62] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
     lda y
     cmp yp
     bcc b6
     jmp b11
     // findcol::@11
   b11:
-    // [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuaa=vbuz1_minus_vbuz2 
+    // [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuaa=vbuz1_minus_vbuz2 
     lda y
     sec
     sbc yp
-    // [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    // [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuxx=vbuxx_plus_vbuaa 
+    stx $ff
     clc
     adc $ff
-    // [66] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
+    tax
+    // [65] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
   b7_from_b11:
   b7_from_b6:
-    // [66] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
+    // [65] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
     jmp b7
     // findcol::@7
   b7:
-    // [67] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@13 -- vbuaa_ge_vbuz1_then_la1 
-    cmp mindiff
-    bcs b13
+    // [66] if((byte) findcol::diff#7>=(byte) findcol::mindiff#13) goto findcol::@14 -- vbuxx_ge_vbuz1_then_la1 
+    cpx mindiff
+    bcs b14
     jmp b12
     // findcol::@12
   b12:
-    // [68] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#10) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy i
-    ldx COLS,y
-    // [69] phi from findcol::@12 findcol::@13 to findcol::@8 [phi:findcol::@12/findcol::@13->findcol::@8]
+    // [67] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuyy 
+    lda COLS,y
+    sta mincol
+    // [68] phi from findcol::@12 findcol::@14 to findcol::@8 [phi:findcol::@12/findcol::@14->findcol::@8]
   b8_from_b12:
-  b8_from_b13:
-    // [69] phi (byte) findcol::mindiff#12 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@13->findcol::@8#0] -- register_copy 
-    // [69] phi (byte) findcol::mincol#4 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@13->findcol::@8#1] -- register_copy 
+  b8_from_b14:
+    // [68] phi (byte) findcol::mindiff#10 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@14->findcol::@8#0] -- register_copy 
+    // [68] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@14->findcol::@8#1] -- register_copy 
     jmp b8
     // findcol::@8
   b8:
-    // [70] (byte) findcol::i#1 ← ++ (byte) findcol::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
-    // [71] (byte~) findcol::mindiff#13 ← (byte) findcol::mindiff#12 -- vbuz1=vbuaa 
-    sta mindiff
-    // [52] phi from findcol::@8 to findcol::@1 [phi:findcol::@8->findcol::@1]
-  b1_from_b8:
-    // [52] phi (byte) findcol::mindiff#10 = (byte~) findcol::mindiff#13 [phi:findcol::@8->findcol::@1#0] -- register_copy 
-    // [52] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#4 [phi:findcol::@8->findcol::@1#1] -- register_copy 
-    // [52] phi (byte) findcol::i#10 = (byte) findcol::i#1 [phi:findcol::@8->findcol::@1#2] -- register_copy 
+    // [69] (byte) findcol::i#1 ← ++ (byte) findcol::i#14 -- vbuyy=_inc_vbuyy 
+    iny
     jmp b1
+    // findcol::@1
+  b1:
+    // [70] if((byte) findcol::i#1<(const byte) numpoints#0) goto findcol::@13 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #numpoints
+    bcc b13
+    // [57] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
+  breturn_from_b1:
+    // [57] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
+    jmp breturn
     // findcol::@13
   b13:
-    // [72] (byte~) findcol::mindiff#15 ← (byte) findcol::mindiff#10 -- vbuaa=vbuz1 
-    lda mindiff
-    jmp b8_from_b13
+    // [71] (byte~) findcol::mindiff#23 ← (byte) findcol::mindiff#10 -- vbuz1=vbuxx 
+    stx mindiff
+    // [52] phi from findcol::@13 to findcol::@2 [phi:findcol::@13->findcol::@2]
+  b2_from_b13:
+    // [52] phi (byte) findcol::mindiff#13 = (byte~) findcol::mindiff#23 [phi:findcol::@13->findcol::@2#0] -- register_copy 
+    // [52] phi (byte) findcol::mincol#15 = (byte) findcol::mincol#10 [phi:findcol::@13->findcol::@2#1] -- register_copy 
+    // [52] phi (byte) findcol::i#14 = (byte) findcol::i#1 [phi:findcol::@13->findcol::@2#2] -- register_copy 
+    jmp b2
+    // findcol::@14
+  b14:
+    // [72] (byte~) findcol::mindiff#25 ← (byte) findcol::mindiff#13 -- vbuxx=vbuz1 
+    ldx mindiff
+    jmp b8_from_b14
     // findcol::@6
   b6:
     // [73] (byte~) findcol::$11 ← (byte) findcol::yp#0 - (byte) findcol::y#0 -- vbuaa=vbuz1_minus_vbuz2 
     lda yp
     sec
     sbc y
-    // [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    // [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 -- vbuxx=vbuxx_plus_vbuaa 
+    stx $ff
     clc
     adc $ff
+    tax
     jmp b7_from_b6
     // findcol::@4
   b4:
-    // [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 -- vbuyy=vbuz1_minus_vbuz2 
-    lda xp
+    // [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 -- vbuxx=vbuxx_minus_vbuz1 
+    txa
     sec
     sbc x
-    tay
+    tax
     jmp b5_from_b4
 }
   // initscreen
 initscreen: {
     .label screen = 6
-    // [77] phi from initscreen to initscreen::@1 [phi:initscreen->initscreen::@1]
-  b1_from_initscreen:
-    // [77] phi (byte*) initscreen::screen#2 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@1#0] -- pbuz1=pbuc1 
+    // [77] phi from initscreen to initscreen::@2 [phi:initscreen->initscreen::@2]
+  b2_from_initscreen:
+    // [77] phi (byte*) initscreen::screen#4 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta screen
     lda #>SCREEN
     sta screen+1
-    jmp b1
-    // initscreen::@1
-  b1:
-    // [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
-    lda screen+1
-    cmp #>SCREEN+$3e8
-    bcc b2
-    bne !+
-    lda screen
-    cmp #<SCREEN+$3e8
-    bcc b2
-  !:
-    jmp breturn
-    // initscreen::@return
-  breturn:
-    // [79] return 
-    rts
+    jmp b2
+    // [77] phi from initscreen::@1 to initscreen::@2 [phi:initscreen::@1->initscreen::@2]
+  b2_from_b1:
+    // [77] phi (byte*) initscreen::screen#4 = (byte*) initscreen::screen#1 [phi:initscreen::@1->initscreen::@2#0] -- register_copy 
+    jmp b2
     // initscreen::@2
   b2:
-    // [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
+    // [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
     lda #FILL
     ldy #0
     sta (screen),y
-    // [81] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 -- pbuz1=_inc_pbuz1 
+    // [79] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#4 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [77] phi from initscreen::@2 to initscreen::@1 [phi:initscreen::@2->initscreen::@1]
-  b1_from_b2:
-    // [77] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 [phi:initscreen::@2->initscreen::@1#0] -- register_copy 
     jmp b1
+    // initscreen::@1
+  b1:
+    // [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda screen
+    cmp #<SCREEN+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // initscreen::@return
+  breturn:
+    // [81] return 
+    rts
 }
   // File Data
   // Points to create the Voronoi from
@@ -2442,9 +2496,9 @@ Removing instruction jmp b2
 Removing instruction jmp b4
 Removing instruction jmp b3
 Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp b2
 Removing instruction jmp b9
+Removing instruction jmp breturn
 Removing instruction jmp b10
 Removing instruction jmp b5
 Removing instruction jmp b11
@@ -2452,18 +2506,21 @@ Removing instruction jmp b7
 Removing instruction jmp b12
 Removing instruction jmp b8
 Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda XPOS+3
-Replacing instruction lda #0 with TXA
-Removing instruction ldy i
+Replacing instruction ldy #0 with TAY
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b2 with b1
 Replacing label b2_from_b4 with b2
 Replacing label b1_from_b3 with b1
-Replacing label b8_from_b13 with b8
+Replacing label b8_from_b14 with b8
 Replacing label b7_from_b6 with b7
 Replacing label b5_from_b4 with b5
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -2476,13 +2533,13 @@ Removing instruction b1_from_b3:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction findcol_from_b2:
-Removing instruction breturn_from_b1:
 Removing instruction b5_from_b10:
 Removing instruction b5_from_b4:
 Removing instruction b7_from_b11:
 Removing instruction b7_from_b6:
 Removing instruction b8_from_b12:
-Removing instruction b8_from_b13:
+Removing instruction b8_from_b14:
+Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction initscreen_from_main:
@@ -2497,16 +2554,18 @@ Removing instruction b1_from_render:
 Removing instruction b4:
 Removing instruction b3:
 Removing instruction breturn:
-Removing instruction b1_from_findcol:
+Removing instruction b2_from_findcol:
 Removing instruction b9:
 Removing instruction breturn_from_b9:
 Removing instruction b10:
 Removing instruction b11:
 Removing instruction b12:
-Removing instruction b1_from_b8:
-Removing instruction b1_from_initscreen:
+Removing instruction b1:
+Removing instruction breturn_from_b1:
+Removing instruction b2_from_b13:
+Removing instruction b2_from_initscreen:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -2515,10 +2574,10 @@ Replacing jump to rts with rts in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction jmp b1
 Removing instruction jmp b2
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda XPOS+3
 Removing instruction lda #$28
-Removing instruction lda x
 Removing instruction lda y
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
@@ -2568,6 +2627,7 @@ FINAL SYMBOL TABLE
 (label) findcol::@11
 (label) findcol::@12
 (label) findcol::@13
+(label) findcol::@14
 (label) findcol::@2
 (label) findcol::@3
 (label) findcol::@4
@@ -2578,42 +2638,42 @@ FINAL SYMBOL TABLE
 (label) findcol::@9
 (label) findcol::@return
 (byte) findcol::diff
-(byte) findcol::diff#1 reg byte y 20002.0
-(byte) findcol::diff#2 reg byte y 20002.0
-(byte) findcol::diff#3 reg byte a 20002.0
-(byte) findcol::diff#4 reg byte a 20002.0
-(byte) findcol::diff#5 reg byte y 10001.0
-(byte) findcol::diff#7 reg byte a 13334.666666666666
+(byte) findcol::diff#1 reg byte x 20002.0
+(byte) findcol::diff#2 reg byte x 20002.0
+(byte) findcol::diff#3 reg byte x 20002.0
+(byte) findcol::diff#4 reg byte x 20002.0
+(byte) findcol::diff#5 reg byte x 10001.0
+(byte) findcol::diff#7 reg byte x 13334.666666666666
 (byte) findcol::i
-(byte) findcol::i#1 i zp ZP_BYTE:4 10001.0
-(byte) findcol::i#10 i zp ZP_BYTE:4 3000.3
+(byte) findcol::i#1 reg byte y 10001.0
+(byte) findcol::i#14 reg byte y 2631.842105263158
 (byte) findcol::mincol
-(byte) findcol::mincol#1 reg byte x 20002.0
-(byte) findcol::mincol#10 reg byte x 1666.8333333333333
-(byte) findcol::mincol#4 reg byte x 10001.0
+(byte) findcol::mincol#1 mincol zp ZP_BYTE:5 20002.0
+(byte) findcol::mincol#10 mincol zp ZP_BYTE:5 10001.0
+(byte) findcol::mincol#15 mincol zp ZP_BYTE:5 1176.5882352941176
 (byte) findcol::mindiff
-(byte) findcol::mindiff#10 mindiff zp ZP_BYTE:5 1764.8823529411764
-(byte) findcol::mindiff#12 reg byte a 15001.5
-(byte~) findcol::mindiff#13 mindiff zp ZP_BYTE:5 20002.0
-(byte~) findcol::mindiff#15 reg byte a 20002.0
+(byte) findcol::mindiff#10 reg byte x 10001.0
+(byte) findcol::mindiff#13 mindiff zp ZP_BYTE:4 1875.1875
+(byte~) findcol::mindiff#23 mindiff zp ZP_BYTE:4 20002.0
+(byte~) findcol::mindiff#25 reg byte x 20002.0
 (byte) findcol::return
 (byte) findcol::return#0 reg byte a 2002.0
-(byte) findcol::return#3 reg byte x 3667.333333333333
+(byte) findcol::return#3 return zp ZP_BYTE:5 3667.333333333333
 (byte) findcol::x
 (byte) findcol::x#0 x zp ZP_BYTE:3 1640.2
 (byte) findcol::xp
-(byte) findcol::xp#0 xp zp ZP_BYTE:8 10001.0
+(byte) findcol::xp#0 reg byte x 10001.0
 (byte) findcol::y
 (byte) findcol::y#0 y zp ZP_BYTE:2 1708.5416666666665
 (byte) findcol::yp
-(byte) findcol::yp#0 yp zp ZP_BYTE:9 6250.625
+(byte) findcol::yp#0 yp zp ZP_BYTE:8 6250.625
 (void()) initscreen()
 (label) initscreen::@1
 (label) initscreen::@2
 (label) initscreen::@return
 (byte*) initscreen::screen
-(byte*) initscreen::screen#1 screen zp ZP_WORD:6 22.0
-(byte*) initscreen::screen#2 screen zp ZP_WORD:6 14.666666666666666
+(byte*) initscreen::screen#1 screen zp ZP_WORD:6 16.5
+(byte*) initscreen::screen#4 screen zp ZP_WORD:6 16.5
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -2639,12 +2699,12 @@ FINAL SYMBOL TABLE
 
 zp ZP_BYTE:2 [ render::y#4 render::y#1 findcol::y#0 ]
 zp ZP_BYTE:3 [ render::x#2 render::x#1 findcol::x#0 ]
-zp ZP_BYTE:4 [ findcol::i#10 findcol::i#1 ]
-zp ZP_BYTE:5 [ findcol::mindiff#10 findcol::mindiff#13 ]
-reg byte x [ findcol::return#3 findcol::mincol#10 findcol::mincol#4 findcol::mincol#1 ]
-reg byte y [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
-reg byte a [ findcol::mindiff#12 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#15 ]
-zp ZP_WORD:6 [ initscreen::screen#2 initscreen::screen#1 render::colline#5 render::colline#1 ]
+reg byte y [ findcol::i#14 findcol::i#1 ]
+zp ZP_BYTE:4 [ findcol::mindiff#13 findcol::mindiff#23 ]
+zp ZP_BYTE:5 [ findcol::return#3 findcol::mincol#15 findcol::mincol#10 findcol::mincol#1 ]
+reg byte x [ findcol::diff#5 findcol::diff#2 findcol::diff#1 ]
+reg byte x [ findcol::mindiff#10 findcol::diff#7 findcol::diff#4 findcol::diff#3 findcol::mindiff#25 ]
+zp ZP_WORD:6 [ initscreen::screen#4 initscreen::screen#1 render::colline#5 render::colline#1 ]
 reg byte x [ animate::$0 ]
 reg byte x [ animate::$3 ]
 reg byte a [ animate::$6 ]
@@ -2654,14 +2714,14 @@ reg byte a [ animate::$15 ]
 reg byte a [ animate::$18 ]
 reg byte a [ findcol::return#0 ]
 reg byte a [ render::col#0 ]
-zp ZP_BYTE:8 [ findcol::xp#0 ]
-zp ZP_BYTE:9 [ findcol::yp#0 ]
+reg byte x [ findcol::xp#0 ]
+zp ZP_BYTE:8 [ findcol::yp#0 ]
 reg byte a [ findcol::$9 ]
 reg byte a [ findcol::$11 ]
 
 
 FINAL ASSEMBLER
-Score: 1568618
+Score: 1504591
 
   // File Comments
 // The screen
@@ -2859,8 +2919,8 @@ render: {
     // [51] phi from render::@2 to findcol [phi:render::@2->findcol]
     jsr findcol
     // findcol(x, y)
-    // [42] (byte) findcol::return#0 ← (byte) findcol::return#3 -- vbuaa=vbuxx 
-    txa
+    // [42] (byte) findcol::return#0 ← (byte) findcol::return#3 -- vbuaa=vbuz1 
+    lda findcol.return
     // render::@4
     // col = findcol(x, y)
     // [43] (byte) render::col#0 ← (byte) findcol::return#0
@@ -2901,122 +2961,124 @@ render: {
 findcol: {
     .label x = 3
     .label y = 2
-    .label xp = 8
-    .label yp = 9
-    .label i = 4
-    .label mindiff = 5
-    // [52] phi from findcol to findcol::@1 [phi:findcol->findcol::@1]
-    // [52] phi (byte) findcol::mindiff#10 = (byte) $ff [phi:findcol->findcol::@1#0] -- vbuz1=vbuc1 
+    .label yp = 8
+    .label return = 5
+    .label mincol = 5
+    .label mindiff = 4
+    // [52] phi from findcol to findcol::@2 [phi:findcol->findcol::@2]
+    // [52] phi (byte) findcol::mindiff#13 = (byte) $ff [phi:findcol->findcol::@2#0] -- vbuz1=vbuc1 
     lda #$ff
     sta mindiff
-    // [52] phi (byte) findcol::mincol#10 = (byte) 0 [phi:findcol->findcol::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    // [52] phi (byte) findcol::i#10 = (byte) 0 [phi:findcol->findcol::@1#2] -- vbuz1=vbuc1 
-    txa
-    sta i
-    // findcol::@1
-  b1:
-    // for( byte i=0; i<numpoints; ++i)
-    // [53] if((byte) findcol::i#10<(const byte) numpoints#0) goto findcol::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #numpoints
-    bcc b2
-    // [54] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
-    // [54] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
-    // findcol::@return
-    // }
-    // [55] return 
-    rts
+    // [52] phi (byte) findcol::mincol#15 = (byte) 0 [phi:findcol->findcol::@2#1] -- vbuz1=vbuc1 
+    lda #0
+    sta mincol
+    // [52] phi (byte) findcol::i#14 = (byte) 0 [phi:findcol->findcol::@2#2] -- vbuyy=vbuc1 
+    tay
     // findcol::@2
   b2:
     // xp = XPOS[i]
-    // [56] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy i
-    lda XPOS,y
-    sta xp
+    // [53] (byte) findcol::xp#0 ← *((const byte[]) XPOS#0 + (byte) findcol::i#14) -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx XPOS,y
     // yp = YPOS[i]
-    // [57] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [54] (byte) findcol::yp#0 ← *((const byte[]) YPOS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda YPOS,y
     sta yp
     // if(x==xp)
-    // [58] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
-    lda x
-    cmp xp
+    // [55] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@3 -- vbuz1_neq_vbuxx_then_la1 
+    cpx x
     bne b3
     // findcol::@9
     // if(y==yp)
-    // [59] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
+    // [56] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@3 -- vbuz1_neq_vbuz2_then_la1 
     lda y
     cmp yp
     bne b3
-    // [54] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
-    // [54] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [57] phi from findcol::@9 to findcol::@return [phi:findcol::@9->findcol::@return]
+    // [57] phi (byte) findcol::return#3 = (byte) 0 [phi:findcol::@9->findcol::@return#0] -- vbuz1=vbuc1 
+    lda #0
+    sta return
+    // findcol::@return
+    // }
+    // [58] return 
     rts
     // findcol::@3
   b3:
     // if(x<xp)
-    // [60] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuz2_then_la1 
-    lda x
-    cmp xp
-    bcc b4
+    // [59] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@4 -- vbuz1_lt_vbuxx_then_la1 
+    txa
+    cmp x
+    beq !+
+    bcs b4
+  !:
     // findcol::@10
     // diff = x-xp
-    // [61] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuyy=vbuz1_minus_vbuz2 
+    // [60] (byte) findcol::diff#2 ← (byte) findcol::x#0 - (byte) findcol::xp#0 -- vbuxx=vbuz1_minus_vbuxx 
+    txa
+    eor #$ff
     sec
-    sbc xp
-    tay
-    // [62] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
-    // [62] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
+    adc x
+    tax
+    // [61] phi from findcol::@10 findcol::@4 to findcol::@5 [phi:findcol::@10/findcol::@4->findcol::@5]
+    // [61] phi (byte) findcol::diff#5 = (byte) findcol::diff#2 [phi:findcol::@10/findcol::@4->findcol::@5#0] -- register_copy 
     // findcol::@5
   b5:
     // if(y<yp)
-    // [63] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
+    // [62] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@6 -- vbuz1_lt_vbuz2_then_la1 
     lda y
     cmp yp
     bcc b6
     // findcol::@11
     // y-yp
-    // [64] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuaa=vbuz1_minus_vbuz2 
+    // [63] (byte~) findcol::$9 ← (byte) findcol::y#0 - (byte) findcol::yp#0 -- vbuaa=vbuz1_minus_vbuz2 
     sec
     sbc yp
     // diff = diff + (y-yp)
-    // [65] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    // [64] (byte) findcol::diff#4 ← (byte) findcol::diff#5 + (byte~) findcol::$9 -- vbuxx=vbuxx_plus_vbuaa 
+    stx $ff
     clc
     adc $ff
-    // [66] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
-    // [66] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
+    tax
+    // [65] phi from findcol::@11 findcol::@6 to findcol::@7 [phi:findcol::@11/findcol::@6->findcol::@7]
+    // [65] phi (byte) findcol::diff#7 = (byte) findcol::diff#4 [phi:findcol::@11/findcol::@6->findcol::@7#0] -- register_copy 
     // findcol::@7
   b7:
     // if(diff<mindiff)
-    // [67] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@13 -- vbuaa_ge_vbuz1_then_la1 
-    cmp mindiff
-    bcs b13
+    // [66] if((byte) findcol::diff#7>=(byte) findcol::mindiff#13) goto findcol::@14 -- vbuxx_ge_vbuz1_then_la1 
+    cpx mindiff
+    bcs b14
     // findcol::@12
     // mincol = COLS[i]
-    // [68] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#10) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldy i
-    ldx COLS,y
-    // [69] phi from findcol::@12 findcol::@13 to findcol::@8 [phi:findcol::@12/findcol::@13->findcol::@8]
-    // [69] phi (byte) findcol::mindiff#12 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@13->findcol::@8#0] -- register_copy 
-    // [69] phi (byte) findcol::mincol#4 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@13->findcol::@8#1] -- register_copy 
+    // [67] (byte) findcol::mincol#1 ← *((const byte[]) COLS#0 + (byte) findcol::i#14) -- vbuz1=pbuc1_derefidx_vbuyy 
+    lda COLS,y
+    sta mincol
+    // [68] phi from findcol::@12 findcol::@14 to findcol::@8 [phi:findcol::@12/findcol::@14->findcol::@8]
+    // [68] phi (byte) findcol::mindiff#10 = (byte) findcol::diff#7 [phi:findcol::@12/findcol::@14->findcol::@8#0] -- register_copy 
+    // [68] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#1 [phi:findcol::@12/findcol::@14->findcol::@8#1] -- register_copy 
     // findcol::@8
   b8:
     // for( byte i=0; i<numpoints; ++i)
-    // [70] (byte) findcol::i#1 ← ++ (byte) findcol::i#10 -- vbuz1=_inc_vbuz1 
-    inc i
-    // [71] (byte~) findcol::mindiff#13 ← (byte) findcol::mindiff#12 -- vbuz1=vbuaa 
-    sta mindiff
-    // [52] phi from findcol::@8 to findcol::@1 [phi:findcol::@8->findcol::@1]
-    // [52] phi (byte) findcol::mindiff#10 = (byte~) findcol::mindiff#13 [phi:findcol::@8->findcol::@1#0] -- register_copy 
-    // [52] phi (byte) findcol::mincol#10 = (byte) findcol::mincol#4 [phi:findcol::@8->findcol::@1#1] -- register_copy 
-    // [52] phi (byte) findcol::i#10 = (byte) findcol::i#1 [phi:findcol::@8->findcol::@1#2] -- register_copy 
-    jmp b1
+    // [69] (byte) findcol::i#1 ← ++ (byte) findcol::i#14 -- vbuyy=_inc_vbuyy 
+    iny
+    // findcol::@1
+    // [70] if((byte) findcol::i#1<(const byte) numpoints#0) goto findcol::@13 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #numpoints
+    bcc b13
+    // [57] phi from findcol::@1 to findcol::@return [phi:findcol::@1->findcol::@return]
+    // [57] phi (byte) findcol::return#3 = (byte) findcol::mincol#10 [phi:findcol::@1->findcol::@return#0] -- register_copy 
+    rts
     // findcol::@13
   b13:
-    // [72] (byte~) findcol::mindiff#15 ← (byte) findcol::mindiff#10 -- vbuaa=vbuz1 
-    lda mindiff
+    // [71] (byte~) findcol::mindiff#23 ← (byte) findcol::mindiff#10 -- vbuz1=vbuxx 
+    stx mindiff
+    // [52] phi from findcol::@13 to findcol::@2 [phi:findcol::@13->findcol::@2]
+    // [52] phi (byte) findcol::mindiff#13 = (byte~) findcol::mindiff#23 [phi:findcol::@13->findcol::@2#0] -- register_copy 
+    // [52] phi (byte) findcol::mincol#15 = (byte) findcol::mincol#10 [phi:findcol::@13->findcol::@2#1] -- register_copy 
+    // [52] phi (byte) findcol::i#14 = (byte) findcol::i#1 [phi:findcol::@13->findcol::@2#2] -- register_copy 
+    jmp b2
+    // findcol::@14
+  b14:
+    // [72] (byte~) findcol::mindiff#25 ← (byte) findcol::mindiff#13 -- vbuxx=vbuz1 
+    ldx mindiff
     jmp b8
     // findcol::@6
   b6:
@@ -3026,34 +3088,48 @@ findcol: {
     sec
     sbc y
     // diff = diff + (yp-y)
-    // [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 -- vbuaa=vbuyy_plus_vbuaa 
-    sty $ff
+    // [74] (byte) findcol::diff#3 ← (byte) findcol::diff#5 + (byte~) findcol::$11 -- vbuxx=vbuxx_plus_vbuaa 
+    stx $ff
     clc
     adc $ff
+    tax
     jmp b7
     // findcol::@4
   b4:
     // diff = xp-x
-    // [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 -- vbuyy=vbuz1_minus_vbuz2 
-    lda xp
+    // [75] (byte) findcol::diff#1 ← (byte) findcol::xp#0 - (byte) findcol::x#0 -- vbuxx=vbuxx_minus_vbuz1 
+    txa
     sec
     sbc x
-    tay
+    tax
     jmp b5
 }
   // initscreen
 initscreen: {
     .label screen = 6
-    // [77] phi from initscreen to initscreen::@1 [phi:initscreen->initscreen::@1]
-    // [77] phi (byte*) initscreen::screen#2 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@1#0] -- pbuz1=pbuc1 
+    // [77] phi from initscreen to initscreen::@2 [phi:initscreen->initscreen::@2]
+    // [77] phi (byte*) initscreen::screen#4 = (const byte*) SCREEN#0 [phi:initscreen->initscreen::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta screen
     lda #>SCREEN
     sta screen+1
-    // initscreen::@1
-  b1:
+    // [77] phi from initscreen::@1 to initscreen::@2 [phi:initscreen::@1->initscreen::@2]
+    // [77] phi (byte*) initscreen::screen#4 = (byte*) initscreen::screen#1 [phi:initscreen::@1->initscreen::@2#0] -- register_copy 
+    // initscreen::@2
+  b2:
+    // *screen = FILL
+    // [78] *((byte*) initscreen::screen#4) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
+    lda #FILL
+    ldy #0
+    sta (screen),y
     // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
-    // [78] if((byte*) initscreen::screen#2<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [79] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#4 -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    // initscreen::@1
+    // [80] if((byte*) initscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto initscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda screen+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -3064,24 +3140,8 @@ initscreen: {
   !:
     // initscreen::@return
     // }
-    // [79] return 
+    // [81] return 
     rts
-    // initscreen::@2
-  b2:
-    // *screen = FILL
-    // [80] *((byte*) initscreen::screen#2) ← (const byte) FILL#0 -- _deref_pbuz1=vbuc1 
-    lda #FILL
-    ldy #0
-    sta (screen),y
-    // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
-    // [81] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    // [77] phi from initscreen::@2 to initscreen::@1 [phi:initscreen::@2->initscreen::@1]
-    // [77] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 [phi:initscreen::@2->initscreen::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
   // Points to create the Voronoi from

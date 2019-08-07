@@ -4,24 +4,26 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    ldy #0
     ldx #0
-  b1:
-    cpx #5+1
-    bcs b2
-    txa
+    ldy #0
+  b4:
+    tya
     sec
     sbc #5
-    sta screen,y
-    iny
-  b3:
+    sta screen,x
     inx
-    cpx #$b
+  b3:
+    iny
+    cpy #$b
     bne b1
     rts
+  b1:
+    cpy #5+1
+    bcs b2
+    jmp b4
   b2:
-    txa
-    sta screen,y
-    iny
+    tya
+    sta screen,x
+    inx
     jmp b3
 }

@@ -11,10 +11,6 @@ main: {
     lda #>SCREEN+$27
     sta sc+1
     ldx #0
-  b1:
-    cpx #$28
-    bcc b2
-    rts
   b2:
     txa
     ldy #0
@@ -25,5 +21,7 @@ main: {
     dec sc+1
   !:
     dec sc
-    jmp b1
+    cpx #$28
+    bcc b2
+    rts
 }

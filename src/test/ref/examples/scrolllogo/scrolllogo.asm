@@ -272,17 +272,6 @@ sin16s_gen2: {
     sta x+3
     sta i
     sta i+1
-  // u[4.28]
-  b1:
-    lda i+1
-    cmp #>XSIN_SIZE
-    bcc b2
-    bne !+
-    lda i
-    cmp #<XSIN_SIZE
-    bcc b2
-  !:
-    rts
   b2:
     lda x
     sta sin16s.x
@@ -328,7 +317,16 @@ sin16s_gen2: {
     bne !+
     inc i+1
   !:
-    jmp b1
+  // u[4.28]
+    lda i+1
+    cmp #>XSIN_SIZE
+    bcc b2
+    bne !+
+    lda i
+    cmp #<XSIN_SIZE
+    bcc b2
+  !:
+    rts
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication

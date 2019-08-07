@@ -8,8 +8,42 @@ main: {
     .label x = 2
     lda #0
     sta x
-  b1:
+  b2:
     lda x
+    asl
+    clc
+    adc #1
+    sta textbox.x2
+    lax x
+    axs #-[$a]
+    stx textbox.y2
+    lda x
+    sta textbox.y1
+    lda #<text2
+    sta textbox.text
+    lda #>text2
+    sta textbox.text+1
+    jsr textbox
+    lda #<0
+    sta wait
+    sta wait+1
+  b5:
+    inc wait
+    bne !+
+    inc wait+1
+  !:
+    lda wait+1
+    cmp #>$88b8
+    bcc b5
+    bne !+
+    lda wait
+    cmp #<$88b8
+    bcc b5
+  !:
+    lda x
+    clc
+    adc #2
+    sta x
     cmp #$f
     bcc b2
     lda #<text
@@ -52,45 +86,6 @@ main: {
     jsr textbox
   b7:
     jmp b7
-  b2:
-    lda x
-    asl
-    clc
-    adc #1
-    sta textbox.x2
-    lax x
-    axs #-[$a]
-    stx textbox.y2
-    lda x
-    sta textbox.y1
-    lda #<text2
-    sta textbox.text
-    lda #>text2
-    sta textbox.text+1
-    jsr textbox
-    lda #<0
-    sta wait
-    sta wait+1
-  b4:
-    lda wait+1
-    cmp #>$88b8
-    bcc b5
-    bne !+
-    lda wait
-    cmp #<$88b8
-    bcc b5
-  !:
-    lda x
-    clc
-    adc #2
-    sta x
-    jmp b1
-  b5:
-    inc wait
-    bne !+
-    inc wait+1
-  !:
-    jmp b4
 }
 // textbox(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2, byte* zeropage(6) text)
 textbox: {

@@ -901,11 +901,28 @@ Eliminating unused constant (const byte) draw_block::color#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte) main::x#1 = (byte) main::x#2 
+Alias (byte) main::y#1 = (byte) main::y#2 
+Alias (byte) main::x#10 = (byte) main::x#12 (byte) main::x#8 
+Alias (byte) main::y#5 = (byte) main::y#6 
+Alias (byte) main::x#11 = (byte) main::x#13 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) main::x#10 (byte) main::x#11
+Identical Phi Values (byte) main::y#7 (const byte) main::y#0
+Identical Phi Values (byte) main::x#14 (const byte) main::x#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Values (byte) main::x#9 (byte) main::x#11
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const void*) memset::str#0 = (void*)screen#0
 Constant (const void*) memset::str#1 = (void*)colors#0
 Constant (const word) init::toD0181_$0#0 = (word)init::toD0181_screen#0
 Constant (const word) init::toD0181_$4#0 = (word)init::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [100] if((const byte) main::y#0<(byte) 9) goto main::@5
+if() condition always true - replacing block destination [102] if((const byte) main::x#0<(byte) $10) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
 Constant right-side identified [35] (word~) init::toD0181_$1#0 ← (const word) init::toD0181_$0#0 & (word) $3fff
 Constant right-side identified [38] (byte~) init::toD0181_$5#0 ← > (const word) init::toD0181_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -974,6 +991,8 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [1] if((word) $3e8<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
+Added new block during phi lifting main::@17(between main::@1 and main::@2)
+Added new block during phi lifting main::@18(between main::@4 and main::@5)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @20
 Adding NOP phi() at start of @24
@@ -981,8 +1000,9 @@ Adding NOP phi() at start of @25
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@15
+Adding NOP phi() at start of main::@1_1
+Adding NOP phi() at start of main::@4_1
 Adding NOP phi() at start of main::@13
-Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of mul8u::@3
 Adding NOP phi() at start of init
 Adding NOP phi() at start of init::@2
@@ -993,25 +1013,28 @@ Adding NOP phi() at start of init::toD0181_@return
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [] to main:3 
-Calls in [main] to init:7 draw_block:22 
-Calls in [draw_block] to mul8u:29 
-Calls in [init] to init_sprites:68 memset:70 memset:72 
+Calls in [main] to init:7 draw_block:18 
+Calls in [draw_block] to mul8u:30 
+Calls in [init] to init_sprites:69 memset:71 memset:73 
 
 Created 9 initial phi equivalence classes
-Coalesced [16] main::x#8 ← main::x#1
-Coalesced [24] main::y#5 ← main::y#1
-Coalesced [51] mul8u::a#7 ← mul8u::a#1
-Coalesced [59] mul8u::res#9 ← mul8u::res#1
-Coalesced [63] mul8u::a#8 ← mul8u::a#0
-Coalesced [64] mul8u::res#7 ← mul8u::res#6
-Coalesced [65] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [66] mul8u::res#8 ← mul8u::res#2
-Coalesced [93] memset::dst#5 ← memset::dst#1
+Coalesced [24] main::x#15 ← main::x#1
+Coalesced [25] main::y#8 ← main::y#1
+Coalesced [52] mul8u::a#7 ← mul8u::a#1
+Coalesced [60] mul8u::res#9 ← mul8u::res#1
+Coalesced [64] mul8u::a#8 ← mul8u::a#0
+Coalesced [65] mul8u::res#7 ← mul8u::res#6
+Coalesced [66] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [67] mul8u::res#8 ← mul8u::res#2
+Coalesced [94] memset::dst#5 ← memset::dst#1
 Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) @20
 Culled Empty Block (label) @25
 Culled Empty Block (label) main::@15
-Culled Empty Block (label) main::@2
+Culled Empty Block (label) main::@1_1
+Culled Empty Block (label) main::@4_1
+Culled Empty Block (label) main::@17
+Culled Empty Block (label) main::@18
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) mul8u::@10
 Culled Empty Block (label) init::@4
@@ -1023,16 +1046,16 @@ Renumbering block memset::@4 to memset::@2
 Renumbering block memset::@5 to memset::@3
 Renumbering block mul8u::@4 to mul8u::@3
 Renumbering block mul8u::@7 to mul8u::@4
-Renumbering block main::@4 to main::@2
-Renumbering block main::@5 to main::@3
-Renumbering block main::@6 to main::@4
-Renumbering block main::@13 to main::@5
-Renumbering block main::@16 to main::@6
+Renumbering block main::@4 to main::@3
+Renumbering block main::@5 to main::@4
+Renumbering block main::@6 to main::@5
+Renumbering block main::@13 to main::@6
+Renumbering block main::@16 to main::@7
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@5
+Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of mul8u
 Adding NOP phi() at start of init
 Adding NOP phi() at start of init::@2
@@ -1052,33 +1075,35 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   [5] call init 
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  [6] (byte) main::x#2 ← phi( main/(byte) 0 main::@4/(byte) main::x#1 )
-  [7] if((byte) main::x#2<(byte) $10) goto main::@2
-  to:main::@5
-main::@5: scope:[main]  from main::@1 main::@5
-  [8] phi()
-  to:main::@5
-main::@2: scope:[main]  from main::@1 main::@6
-  [9] (byte) main::y#2 ← phi( main::@6/(byte) main::y#1 main::@1/(byte) 0 )
-  [10] if((byte) main::y#2<(byte) 9) goto main::@3
-  to:main::@4
-main::@4: scope:[main]  from main::@2
-  [11] (byte) main::x#1 ← ++ (byte) main::x#2
-  to:main::@1
-main::@3: scope:[main]  from main::@2
-  [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2
-  [13] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0)
-  [14] (byte) draw_block::tileno#0 ← (byte) main::tile#0
-  [15] (byte) draw_block::x#0 ← (byte) main::x#2
-  [16] (byte) draw_block::y#0 ← (byte) main::y#2
-  [17] call draw_block 
-  to:main::@6
-main::@6: scope:[main]  from main::@3
-  [18] (byte) main::y#1 ← ++ (byte) main::y#2
   to:main::@2
-draw_block: scope:[draw_block]  from main::@3
+main::@2: scope:[main]  from main main::@1
+  [6] (byte) main::x#11 ← phi( main::@1/(byte) main::x#1 main/(byte) 0 )
+  to:main::@4
+main::@4: scope:[main]  from main::@2 main::@3
+  [7] (byte) main::y#5 ← phi( main::@3/(byte) main::y#1 main::@2/(byte) 0 )
+  [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5
+  [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0)
+  [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0
+  [11] (byte) draw_block::x#0 ← (byte) main::x#11
+  [12] (byte) draw_block::y#0 ← (byte) main::y#5
+  [13] call draw_block 
+  to:main::@7
+main::@7: scope:[main]  from main::@4
+  [14] (byte) main::y#1 ← ++ (byte) main::y#5
+  to:main::@3
+main::@3: scope:[main]  from main::@7
+  [15] if((byte) main::y#1<(byte) 9) goto main::@4
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [16] (byte) main::x#1 ← ++ (byte) main::x#11
+  to:main::@1
+main::@1: scope:[main]  from main::@5
+  [17] if((byte) main::x#1<(byte) $10) goto main::@2
+  to:main::@6
+main::@6: scope:[main]  from main::@1 main::@6
+  [18] phi()
+  to:main::@6
+draw_block: scope:[draw_block]  from main::@4
   [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2
   [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1
   [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1
@@ -1258,11 +1283,11 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::tile
 (byte) main::tile#0 202.0
 (byte) main::x
-(byte) main::x#1 22.0
-(byte) main::x#2 21.363636363636363
+(byte) main::x#1 16.5
+(byte) main::x#11 22.4
 (byte) main::y
-(byte) main::y#1 202.0
-(byte) main::y#2 63.125
+(byte) main::y#1 151.5
+(byte) main::y#5 57.714285714285715
 (byte) main::z
 (byte) main::z#0 202.0
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -1298,8 +1323,8 @@ VARIABLE REGISTER WEIGHTS
 (byte*) tileset
 
 Initial phi equivalence classes
-[ main::x#2 main::x#1 ]
-[ main::y#2 main::y#1 ]
+[ main::x#11 main::x#1 ]
+[ main::y#5 main::y#1 ]
 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 [ mul8u::mb#2 mul8u::mb#1 ]
@@ -1329,8 +1354,8 @@ Added variable draw_block::$18 to zero page equivalence class [ draw_block::$18 
 Added variable mul8u::$1 to zero page equivalence class [ mul8u::$1 ]
 Added variable memset::end#0 to zero page equivalence class [ memset::end#0 ]
 Complete equivalence classes
-[ main::x#2 main::x#1 ]
-[ main::y#2 main::y#1 ]
+[ main::x#11 main::x#1 ]
+[ main::y#5 main::y#1 ]
 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 [ mul8u::mb#2 mul8u::mb#1 ]
@@ -1359,8 +1384,8 @@ Complete equivalence classes
 [ draw_block::$18 ]
 [ mul8u::$1 ]
 [ memset::end#0 ]
-Allocated zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
-Allocated zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
+Allocated zp ZP_BYTE:2 [ main::x#11 main::x#1 ]
+Allocated zp ZP_BYTE:3 [ main::y#5 main::y#1 ]
 Allocated zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Allocated zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 Allocated zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ]
@@ -1449,77 +1474,81 @@ main: {
     // [55] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    // [6] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta x
-    jmp b1
-    // main::@1
-  b1:
-    // [7] if((byte) main::x#2<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
-    cmp #$10
-    bcc b2_from_b1
-    // [8] phi from main::@1 main::@5 to main::@5 [phi:main::@1/main::@5->main::@5]
-  b5_from_b1:
-  b5_from_b5:
-    jmp b5
-    // main::@5
-  b5:
-    jmp b5_from_b5
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    jmp b2
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-    // [9] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
-    lda #0
-    sta y
+    // [6] phi (byte) main::x#11 = (byte) main::x#1 [phi:main::@1->main::@2#0] -- register_copy 
     jmp b2
     // main::@2
   b2:
-    // [10] if((byte) main::y#2<(byte) 9) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
-    cmp #9
-    bcc b3
+    // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
+    // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
+    lda #0
+    sta y
+    jmp b4
+    // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    // [7] phi (byte) main::y#5 = (byte) main::y#1 [phi:main::@3->main::@4#0] -- register_copy 
     jmp b4
     // main::@4
   b4:
-    // [11] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-    // [6] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b1
-    // main::@3
-  b3:
-    // [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuz1=vbuz2_plus_vbuz3 
     lda x
     clc
     adc y
     sta z
-    // [13] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy z
     lda level_address,y
     sta tile
-    // [14] (byte) draw_block::tileno#0 ← (byte) main::tile#0 -- vbuz1=vbuz2 
+    // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0 -- vbuz1=vbuz2 
     lda tile
     sta draw_block.tileno
-    // [15] (byte) draw_block::x#0 ← (byte) main::x#2 -- vbuz1=vbuz2 
+    // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuz1=vbuz2 
     lda x
     sta draw_block.x
-    // [16] (byte) draw_block::y#0 ← (byte) main::y#2 -- vbuz1=vbuz2 
+    // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuz1=vbuz2 
     lda y
     sta draw_block.y
-    // [17] call draw_block 
+    // [13] call draw_block 
     jsr draw_block
+    jmp b7
+    // main::@7
+  b7:
+    // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
+    inc y
+    jmp b3
+    // main::@3
+  b3:
+    // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    lda y
+    cmp #9
+    bcc b4_from_b3
+    jmp b5
+    // main::@5
+  b5:
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
+    inc x
+    jmp b1
+    // main::@1
+  b1:
+    // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda x
+    cmp #$10
+    bcc b2_from_b1
+    // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
+  b6_from_b1:
+  b6_from_b6:
     jmp b6
     // main::@6
   b6:
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
-    // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  b2_from_b6:
-    // [9] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
+    jmp b6_from_b6
 }
   // draw_block
 // draw_block(byte zeropage($10) tileno, byte zeropage($11) x, byte zeropage($12) y)
@@ -1926,38 +1955,38 @@ init_sprites: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 [ main::x#2 main::y#2 main::z#0 ] ( main:2 [ main::x#2 main::y#2 main::z#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
-Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
+Statement [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 [ main::x#11 main::y#5 main::z#0 ] ( main:2 [ main::x#11 main::y#5 main::z#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#11 main::x#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::y#5 main::y#1 ]
+Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ draw_block::x#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:18 [ draw_block::y#0 ]
-Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
+Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:19 [ draw_block::tileno#1 ]
-Statement [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ) always clobbers reg byte a 
-Statement [24] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
-Statement [25] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
-Statement [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
+Statement [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ) always clobbers reg byte a 
+Statement [24] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
+Statement [25] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
+Statement [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
+Statement [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:29 [ draw_block::drawtile#0 ]
-Statement [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
-Statement [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
-Statement [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
-Statement [33] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
-Statement [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
-Statement [37] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
-Statement [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
-Statement [41] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::$18 ] ) always clobbers reg byte a 
-Statement [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:17 [ main::x#2 main::y#2 ] ) always clobbers reg byte a reg byte y 
-Statement [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:17::mul8u:23 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::x#11 main::x#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::y#5 main::y#1 ]
+Statement [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
+Statement [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
+Statement [33] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
+Statement [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
+Statement [37] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
+Statement [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
+Statement [41] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::$18 ] ) always clobbers reg byte a 
+Statement [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#11 main::y#5 ] ) always clobbers reg byte a reg byte y 
+Statement [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:23 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Statement [62] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
@@ -1978,31 +2007,31 @@ Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::in
 Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Statement [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 [ main::x#2 main::y#2 main::z#0 ] ( main:2 [ main::x#2 main::y#2 main::z#0 ] ) always clobbers reg byte a 
-Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
-Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
-Statement [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ) always clobbers reg byte a 
-Statement [24] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
-Statement [25] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
-Statement [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
-Statement [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
-Statement [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
-Statement [33] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
-Statement [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
-Statement [37] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
-Statement [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
-Statement [41] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
-Statement [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:17 [ main::x#2 main::y#2 draw_block::$18 ] ) always clobbers reg byte a 
-Statement [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:17 [ main::x#2 main::y#2 ] ) always clobbers reg byte a reg byte y 
-Statement [49] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::draw_block:17::mul8u:23 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
-Statement [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:17::mul8u:23 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 [ main::x#11 main::y#5 main::z#0 ] ( main:2 [ main::x#11 main::y#5 main::z#0 ] ) always clobbers reg byte a 
+Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
+Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
+Statement [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ) always clobbers reg byte a 
+Statement [24] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
+Statement [25] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
+Statement [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
+Statement [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
+Statement [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [30] (byte*~) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
+Statement [31] *((byte*~) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [32] (byte*~) draw_block::$13 ← (const byte*) screen#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
+Statement [33] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [34] (byte*~) draw_block::$14 ← (const byte*) colors#0+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
+Statement [35] *((byte*~) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [36] (byte*~) draw_block::$15 ← (const byte*) screen#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
+Statement [37] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [38] (byte*~) draw_block::$16 ← (const byte*) colors#0+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
+Statement [39] *((byte*~) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [40] (byte*~) draw_block::$17 ← (const byte*) screen#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
+Statement [41] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [42] (byte*~) draw_block::$18 ← (const byte*) colors#0+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:13 [ main::x#11 main::y#5 draw_block::$18 ] ) always clobbers reg byte a 
+Statement [43] *((byte*~) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#11 main::y#5 ] ) always clobbers reg byte a reg byte y 
+Statement [49] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::draw_block:13::mul8u:23 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
+Statement [51] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:23 [ main::x#11 main::y#5 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Statement [62] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
 Statement [64] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
@@ -2020,8 +2049,8 @@ Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::in
 Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Statement [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::x#2 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_BYTE:3 [ main::y#2 main::y#1 ] : zp ZP_BYTE:3 , reg byte x , 
+Potential registers zp ZP_BYTE:2 [ main::x#11 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_BYTE:3 [ main::y#5 main::y#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] : zp ZP_WORD:5 , 
 Potential registers zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] : zp ZP_WORD:7 , 
@@ -2053,29 +2082,29 @@ Potential registers zp ZP_WORD:47 [ memset::end#0 ] : zp ZP_WORD:47 ,
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [mul8u] 3,503.83: zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,431: zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] 2,002: zp ZP_BYTE:46 [ mul8u::$1 ] 1,670.67: zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 4: zp ZP_WORD:23 [ mul8u::return#2 ] 
-Uplift Scope [main] 265.12: zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 202: zp ZP_BYTE:14 [ main::z#0 ] 202: zp ZP_BYTE:15 [ main::tile#0 ] 43.36: zp ZP_BYTE:2 [ main::x#2 main::x#1 ] 
+Uplift Scope [main] 209.21: zp ZP_BYTE:3 [ main::y#5 main::y#1 ] 202: zp ZP_BYTE:14 [ main::z#0 ] 202: zp ZP_BYTE:15 [ main::tile#0 ] 38.9: zp ZP_BYTE:2 [ main::x#11 main::x#1 ] 
 Uplift Scope [draw_block] 34.33: zp ZP_BYTE:16 [ draw_block::tileno#0 ] 34.33: zp ZP_BYTE:17 [ draw_block::x#0 ] 34.33: zp ZP_BYTE:18 [ draw_block::y#0 ] 4: zp ZP_BYTE:22 [ draw_block::y#1 ] 4: zp ZP_WORD:25 [ draw_block::z#0 ] 4: zp ZP_WORD:30 [ draw_block::$11 ] 4: zp ZP_WORD:32 [ draw_block::$12 ] 4: zp ZP_WORD:34 [ draw_block::$13 ] 4: zp ZP_WORD:36 [ draw_block::$14 ] 4: zp ZP_WORD:38 [ draw_block::$15 ] 4: zp ZP_WORD:40 [ draw_block::$16 ] 4: zp ZP_WORD:42 [ draw_block::$17 ] 4: zp ZP_WORD:44 [ draw_block::$18 ] 2: zp ZP_BYTE:29 [ draw_block::drawtile#0 ] 1.12: zp ZP_WORD:27 [ draw_block::z#1 ] 0.67: zp ZP_WORD:20 [ draw_block::x1#0 ] 0.5: zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
 Uplift Scope [memset] 41.33: zp ZP_WORD:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 2.17: zp ZP_WORD:47 [ memset::end#0 ] 1.57: zp ZP_BYTE:11 [ memset::c#4 ] 0: zp ZP_WORD:9 [ memset::str#3 ] 
 Uplift Scope [init] 
 Uplift Scope [init_sprites] 
 Uplift Scope [] 
 
-Uplifting [mul8u] best 92896 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:23 [ mul8u::return#2 ] 
-Uplifting [main] best 91896 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#2 main::x#1 ] 
-Uplifting [draw_block] best 90987 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::y#1 ] zp ZP_WORD:25 [ draw_block::z#0 ] zp ZP_WORD:30 [ draw_block::$11 ] zp ZP_WORD:32 [ draw_block::$12 ] zp ZP_WORD:34 [ draw_block::$13 ] zp ZP_WORD:36 [ draw_block::$14 ] zp ZP_WORD:38 [ draw_block::$15 ] zp ZP_WORD:40 [ draw_block::$16 ] zp ZP_WORD:42 [ draw_block::$17 ] zp ZP_WORD:44 [ draw_block::$18 ] zp ZP_BYTE:29 [ draw_block::drawtile#0 ] zp ZP_WORD:27 [ draw_block::z#1 ] zp ZP_WORD:20 [ draw_block::x1#0 ] zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
+Uplifting [mul8u] best 93226 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:23 [ mul8u::return#2 ] 
+Uplifting [main] best 92226 combination zp ZP_BYTE:3 [ main::y#5 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#11 main::x#1 ] 
+Uplifting [draw_block] best 91317 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::y#1 ] zp ZP_WORD:25 [ draw_block::z#0 ] zp ZP_WORD:30 [ draw_block::$11 ] zp ZP_WORD:32 [ draw_block::$12 ] zp ZP_WORD:34 [ draw_block::$13 ] zp ZP_WORD:36 [ draw_block::$14 ] zp ZP_WORD:38 [ draw_block::$15 ] zp ZP_WORD:40 [ draw_block::$16 ] zp ZP_WORD:42 [ draw_block::$17 ] zp ZP_WORD:44 [ draw_block::$18 ] zp ZP_BYTE:29 [ draw_block::drawtile#0 ] zp ZP_WORD:27 [ draw_block::z#1 ] zp ZP_WORD:20 [ draw_block::x1#0 ] zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
 Limited combination testing to 100 combinations of 1296 possible.
-Uplifting [memset] best 90971 combination zp ZP_WORD:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp ZP_WORD:47 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp ZP_WORD:9 [ memset::str#3 ] 
-Uplifting [init] best 90971 combination 
-Uplifting [init_sprites] best 90971 combination 
-Uplifting [] best 90971 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::y#2 main::y#1 ]
-Uplifting [main] best 90971 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#2 main::x#1 ]
-Uplifting [main] best 90971 combination zp ZP_BYTE:2 [ main::x#2 main::x#1 ] 
+Uplifting [memset] best 91301 combination zp ZP_WORD:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp ZP_WORD:47 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp ZP_WORD:9 [ memset::str#3 ] 
+Uplifting [init] best 91301 combination 
+Uplifting [init_sprites] best 91301 combination 
+Uplifting [] best 91301 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::y#5 main::y#1 ]
+Uplifting [main] best 91301 combination zp ZP_BYTE:3 [ main::y#5 main::y#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#11 main::x#1 ]
+Uplifting [main] best 91301 combination zp ZP_BYTE:2 [ main::x#11 main::x#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:29 [ draw_block::drawtile#0 ]
-Uplifting [draw_block] best 90967 combination reg byte x [ draw_block::drawtile#0 ] 
+Uplifting [draw_block] best 91297 combination reg byte x [ draw_block::drawtile#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:19 [ draw_block::tileno#1 ]
-Uplifting [draw_block] best 90967 combination zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
+Uplifting [draw_block] best 91297 combination zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
 Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp ZP_WORD:23 [ mul8u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:9 [ memset::str#3 ] ] with [ zp ZP_WORD:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:20 [ draw_block::x1#0 ] ] with [ zp ZP_WORD:27 [ draw_block::z#1 ] ] - score: 1
@@ -2151,71 +2180,75 @@ main: {
     // [55] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    // [6] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta x
-    jmp b1
-    // main::@1
-  b1:
-    // [7] if((byte) main::x#2<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
-    cmp #$10
-    bcc b2_from_b1
-    // [8] phi from main::@1 main::@5 to main::@5 [phi:main::@1/main::@5->main::@5]
-  b5_from_b1:
-  b5_from_b5:
-    jmp b5
-    // main::@5
-  b5:
-    jmp b5_from_b5
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    jmp b2
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-    // [9] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
-    lda #0
-    sta y
+    // [6] phi (byte) main::x#11 = (byte) main::x#1 [phi:main::@1->main::@2#0] -- register_copy 
     jmp b2
     // main::@2
   b2:
-    // [10] if((byte) main::y#2<(byte) 9) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
-    cmp #9
-    bcc b3
+    // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
+    // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
+    lda #0
+    sta y
+    jmp b4
+    // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    // [7] phi (byte) main::y#5 = (byte) main::y#1 [phi:main::@3->main::@4#0] -- register_copy 
     jmp b4
     // main::@4
   b4:
-    // [11] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-    // [6] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b1
-    // main::@3
-  b3:
-    // [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 -- vbuaa=vbuz1_plus_vbuz2 
+    // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuaa=vbuz1_plus_vbuz2 
     lda x
     clc
     adc y
-    // [13] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda level_address,y
-    // [14] (byte) draw_block::tileno#0 ← (byte) main::tile#0
-    // [15] (byte) draw_block::x#0 ← (byte) main::x#2 -- vbuyy=vbuz1 
+    // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0
+    // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuyy=vbuz1 
     ldy x
-    // [16] (byte) draw_block::y#0 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuxx=vbuz1 
     ldx y
-    // [17] call draw_block 
+    // [13] call draw_block 
     jsr draw_block
+    jmp b7
+    // main::@7
+  b7:
+    // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
+    inc y
+    jmp b3
+    // main::@3
+  b3:
+    // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    lda y
+    cmp #9
+    bcc b4_from_b3
+    jmp b5
+    // main::@5
+  b5:
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
+    inc x
+    jmp b1
+    // main::@1
+  b1:
+    // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda x
+    cmp #$10
+    bcc b2_from_b1
+    // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
+  b6_from_b1:
+  b6_from_b6:
     jmp b6
     // main::@6
   b6:
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
-    inc y
-    // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  b2_from_b6:
-    // [9] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
+    jmp b6_from_b6
 }
   // draw_block
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
@@ -2597,10 +2630,12 @@ init_sprites: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b5
 Removing instruction jmp b2
 Removing instruction jmp b4
+Removing instruction jmp b7
+Removing instruction jmp b3
+Removing instruction jmp b5
+Removing instruction jmp b1
 Removing instruction jmp b6
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -2630,15 +2665,20 @@ Removing instruction lda #BLACK
 Removing instruction lda #0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b5_from_b5 with b5
+Replacing label b4_from_b3 with b4
+Replacing label b2_from_b1 with b2
+Replacing label b6_from_b6 with b6
 Replacing label b3_from_b2 with b3
 Replacing label b2_from_b3 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b5_from_b1:
-Removing instruction b5_from_b5:
+Removing instruction b2_from_b1:
+Removing instruction b4_from_b2:
+Removing instruction b4_from_b3:
+Removing instruction b6_from_b1:
+Removing instruction b6_from_b6:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b4:
 Removing instruction b2_from_init:
@@ -2652,11 +2692,11 @@ Removing instruction b2_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction init_from_main:
-Removing instruction b1_from_main:
-Removing instruction b4:
-Removing instruction b1_from_b4:
-Removing instruction b6:
-Removing instruction b2_from_b6:
+Removing instruction b2_from_main:
+Removing instruction b7:
+Removing instruction b3:
+Removing instruction b5:
+Removing instruction b1:
 Removing instruction mul8u_from_draw_block:
 Removing instruction b1:
 Removing instruction breturn:
@@ -2675,8 +2715,9 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b2_from_b1 to b4
-Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction jmp b2
+Removing instruction jmp b4
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -2781,14 +2822,15 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@5
 (label) main::@6
+(label) main::@7
 (byte) main::tile
 (byte) main::tile#0 reg byte a 202.0
 (byte) main::x
-(byte) main::x#1 x zp ZP_BYTE:2 22.0
-(byte) main::x#2 x zp ZP_BYTE:2 21.363636363636363
+(byte) main::x#1 x zp ZP_BYTE:2 16.5
+(byte) main::x#11 x zp ZP_BYTE:2 22.4
 (byte) main::y
-(byte) main::y#1 y zp ZP_BYTE:3 202.0
-(byte) main::y#2 y zp ZP_BYTE:3 63.125
+(byte) main::y#1 y zp ZP_BYTE:3 151.5
+(byte) main::y#5 y zp ZP_BYTE:3 57.714285714285715
 (byte) main::z
 (byte) main::z#0 reg byte a 202.0
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -2835,8 +2877,8 @@ FINAL SYMBOL TABLE
 (byte*) tileset
 (const byte*) tileset#0 tileset = (byte*) 10240
 
-zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
-zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
+zp ZP_BYTE:2 [ main::x#11 main::x#1 ]
+zp ZP_BYTE:3 [ main::y#5 main::y#1 ]
 reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 zp ZP_WORD:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ]
 reg byte x [ memset::c#4 ]
@@ -2860,7 +2902,7 @@ zp ZP_WORD:21 [ memset::end#0 draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
 
 
 FINAL ASSEMBLER
-Score: 75798
+Score: 75468
 
   // File Comments
 // Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
@@ -2908,66 +2950,61 @@ main: {
     // [5] call init 
     // [55] phi from main to init [phi:main->init]
     jsr init
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi from main to main::@2 [phi:main->main::@2]
+    // [6] phi (byte) main::x#11 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta x
-    // main::@1
-  b1:
-    // for (byte x = 0; x < 16; x++ )
-    // [7] if((byte) main::x#2<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda x
-    cmp #$10
-    bcc b4
-    // [8] phi from main::@1 main::@5 to main::@5 [phi:main::@1/main::@5->main::@5]
-    // main::@5
-  b5:
-    jmp b5
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b4:
-    // [9] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
-    lda #0
-    sta y
+    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [6] phi (byte) main::x#11 = (byte) main::x#1 [phi:main::@1->main::@2#0] -- register_copy 
     // main::@2
   b2:
-    // for (byte y = 0; y < 9; y++)
-    // [10] if((byte) main::y#2<(byte) 9) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda y
-    cmp #9
-    bcc b3
+    // [7] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [7] phi (byte) main::y#5 = (byte) 0 [phi:main::@2->main::@4#0] -- vbuz1=vbuc1 
+    lda #0
+    sta y
+    // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [7] phi (byte) main::y#5 = (byte) main::y#1 [phi:main::@3->main::@4#0] -- register_copy 
     // main::@4
-    // for (byte x = 0; x < 16; x++ )
-    // [11] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
-    inc x
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [6] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b1
-    // main::@3
-  b3:
+  b4:
     // z = x+y
-    // [12] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 -- vbuaa=vbuz1_plus_vbuz2 
+    // [8] (byte) main::z#0 ← (byte) main::x#11 + (byte) main::y#5 -- vbuaa=vbuz1_plus_vbuz2 
     lda x
     clc
     adc y
     // tile = level_address[z]
-    // [13] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [9] (byte) main::tile#0 ← *((const byte*) level_address#0 + (byte) main::z#0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda level_address,y
     // draw_block(tile,x,y,YELLOW)
-    // [14] (byte) draw_block::tileno#0 ← (byte) main::tile#0
-    // [15] (byte) draw_block::x#0 ← (byte) main::x#2 -- vbuyy=vbuz1 
+    // [10] (byte) draw_block::tileno#0 ← (byte) main::tile#0
+    // [11] (byte) draw_block::x#0 ← (byte) main::x#11 -- vbuyy=vbuz1 
     ldy x
-    // [16] (byte) draw_block::y#0 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [12] (byte) draw_block::y#0 ← (byte) main::y#5 -- vbuxx=vbuz1 
     ldx y
-    // [17] call draw_block 
+    // [13] call draw_block 
     jsr draw_block
-    // main::@6
+    // main::@7
     // for (byte y = 0; y < 9; y++)
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [14] (byte) main::y#1 ← ++ (byte) main::y#5 -- vbuz1=_inc_vbuz1 
     inc y
-    // [9] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-    // [9] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
+    // main::@3
+    // [15] if((byte) main::y#1<(byte) 9) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    lda y
+    cmp #9
+    bcc b4
+    // main::@5
+    // for (byte x = 0; x < 16; x++ )
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#11 -- vbuz1=_inc_vbuz1 
+    inc x
+    // main::@1
+    // [17] if((byte) main::x#1<(byte) $10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda x
+    cmp #$10
+    bcc b2
+    // [18] phi from main::@1 main::@6 to main::@6 [phi:main::@1/main::@6->main::@6]
+    // main::@6
+  b6:
+    jmp b6
 }
   // draw_block
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)

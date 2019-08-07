@@ -3,11 +3,11 @@
 .pc = $80d "Program"
   .label print_line_cursor = $10
   .label print_char_cursor = 8
-  .label print_char_cursor_31 = $10
   .label print_line_cursor_9 = 6
-  .label print_line_cursor_15 = 6
   .label print_line_cursor_37 = 6
-  .label print_line_cursor_38 = 6
+  .label print_char_cursor_74 = $10
+  .label print_line_cursor_53 = 6
+  .label print_line_cursor_54 = 6
 main: {
     .label _3 = 8
     .label _6 = $e
@@ -21,13 +21,13 @@ main: {
     .label dw = 2
     jsr print_cls
     lda #<$400
-    sta print_char_cursor_31
+    sta print_char_cursor_74
     lda #>$400
-    sta print_char_cursor_31+1
+    sta print_char_cursor_74+1
     lda #<$400
-    sta print_line_cursor_15
+    sta print_line_cursor_37
     lda #>$400
-    sta print_line_cursor_15+1
+    sta print_line_cursor_37+1
     lda #<$12345678
     sta dw
     lda #>$12345678
@@ -36,20 +36,6 @@ main: {
     sta dw+2
     lda #>$12345678>>$10
     sta dw+3
-  b1:
-    lda dw+3
-    cmp #>$12345690>>$10
-    bne b2
-    lda dw+2
-    cmp #<$12345690>>$10
-    bne b2
-    lda dw+1
-    cmp #>$12345690
-    bne b2
-    lda dw
-    cmp #<$12345690
-    bne b2
-    rts
   b2:
     lda dw+2
     sta _3
@@ -143,11 +129,25 @@ main: {
     bne !+
     inc dw+3
   !:
+    lda dw+3
+    cmp #>$12345690>>$10
+    bne b17
+    lda dw+2
+    cmp #<$12345690>>$10
+    bne b17
+    lda dw+1
+    cmp #>$12345690
+    bne b17
+    lda dw
+    cmp #<$12345690
+    bne b17
+    rts
+  b17:
     lda print_line_cursor
-    sta print_line_cursor_38
+    sta print_line_cursor_54
     lda print_line_cursor+1
-    sta print_line_cursor_38+1
-    jmp b1
+    sta print_line_cursor_54+1
+    jmp b2
 }
 // Print a newline
 print_ln: {
@@ -169,9 +169,9 @@ print_ln: {
     rts
   b2:
     lda print_line_cursor
-    sta print_line_cursor_37
+    sta print_line_cursor_53
     lda print_line_cursor+1
-    sta print_line_cursor_37+1
+    sta print_line_cursor_53+1
     jmp b1
 }
 // Print a byte as HEX
@@ -222,9 +222,9 @@ print_dword: {
     sta print_word.w
     lda dw+3
     sta print_word.w+1
-    lda print_char_cursor_31
+    lda print_char_cursor_74
     sta print_char_cursor
-    lda print_char_cursor_31+1
+    lda print_char_cursor_74+1
     sta print_char_cursor+1
     jsr print_word
     lda dw
@@ -250,14 +250,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -266,6 +258,12 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
   print_hextab: .text "0123456789abcdef"

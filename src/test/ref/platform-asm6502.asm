@@ -2,14 +2,12 @@
 .pc = $1000 "Program"
 main: {
     ldx #0
-  b1:
-    cpx #$a
-    bcc b2
-    rts
   b2:
     txa
     sta TABLE,x
     inx
-    jmp b1
+    cpx #$a
+    bcc b2
+    rts
 }
   TABLE: .fill $a, 0

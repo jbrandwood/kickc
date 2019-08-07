@@ -1132,10 +1132,6 @@ print_str_at: {
 // Render all form values from the form_fields_val array
 form_render_values: {
     ldx #0
-  b1:
-    cpx #form_fields_cnt
-    bcc b2
-    rts
   b2:
     jsr form_field_ptr
     ldy form_fields_val,x
@@ -1143,7 +1139,9 @@ form_render_values: {
     ldy form_field_ptr.x
     sta (form_field_ptr.line),y
     inx
-    jmp b1
+    cpx #form_fields_cnt
+    bcc b2
+    rts
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
@@ -1255,16 +1253,14 @@ apply_preset: {
     sta preset+1
   b2:
     ldy #0
-  // Copy preset values into the fields
-  b13:
-    cpy #form_fields_cnt
-    bne b14
-    rts
   b14:
     lda (preset),y
     sta form_fields_val,y
     iny
-    jmp b13
+  // Copy preset values into the fields
+    cpy #form_fields_cnt
+    bne b14
+    rts
 }
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
@@ -1922,11 +1918,6 @@ gfx_init_vic_bitmap: {
     jsr bitmap_clear
     lda #0
     sta l
-  b1:
-    lda l
-    cmp #lines_cnt
-    bcc b2
-    rts
   b2:
     ldy l
     lda lines_x,y
@@ -1938,7 +1929,10 @@ gfx_init_vic_bitmap: {
     sta bitmap_line.y1
     jsr bitmap_line
     inc l
-    jmp b1
+    lda l
+    cmp #lines_cnt
+    bcc b2
+    rts
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }

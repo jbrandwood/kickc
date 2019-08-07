@@ -32,22 +32,10 @@ main: {
     jsr init
     lda #0
     sta x
-  b1:
-    lda x
-    cmp #$10
-    bcc b4
-  b5:
-    jmp b5
-  b4:
+  b2:
     lda #0
     sta y
-  b2:
-    lda y
-    cmp #9
-    bcc b3
-    inc x
-    jmp b1
-  b3:
+  b4:
     lda x
     clc
     adc y
@@ -57,7 +45,15 @@ main: {
     ldx y
     jsr draw_block
     inc y
-    jmp b2
+    lda y
+    cmp #9
+    bcc b4
+    inc x
+    lda x
+    cmp #$10
+    bcc b2
+  b6:
+    jmp b6
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {

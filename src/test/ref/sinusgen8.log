@@ -1851,6 +1851,7 @@ Resolved ranged next value [321] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [323] if(main::i#1!=rangelast(0,$bf)) goto main::@1 to (number) $c0
 Eliminating unused variable (void*) memset::return#2 and assignment [132] (void*) memset::return#2 ← (void*) memset::str#0
 Successful SSA optimization PassNEliminateUnusedVars
+Successful SSA optimization Pass2LoopHeadConstantIdentification
 Adding number conversion cast (unumber) $10 in if((byte) divr16u::i#1!=(number) $10) goto divr16u::@1
 Adding number conversion cast (unumber) $c0 in if((byte) main::i#1!=(number) $c0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -1860,11 +1861,24 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) $c0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (word) sin8s_gen::i#1 = (word) sin8s_gen::i#2 
+Alias (word) sin8s_gen::x#1 = (word) sin8s_gen::x#2 
+Alias (signed byte*) sin8s_gen::sintab#0 = (signed byte*) sin8s_gen::sintab#2 
+Alias (word) sin8s_gen::i#5 = (word) sin8s_gen::i#6 
+Alias (word) sin8s_gen::x#5 = (word) sin8s_gen::x#6 
+Alias (signed byte*) sin8s_gen::sintab#7 = (signed byte*) sin8s_gen::sintab#8 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (word) sin8s_gen::i#7 (const word) sin8s_gen::i#0
+Identical Phi Values (word) sin8s_gen::x#7 (const word) sin8s_gen::x#0
+Identical Phi Values (signed byte*) sin8s_gen::sintab#9 (const signed byte*) sin8s_gen::sintab#1
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memset::str#0 in [96] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
-Constant value identified (byte*)memset::str#0 in [98] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
+Constant value identified (byte*)memset::str#0 in [99] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
+Constant value identified (byte*)memset::str#0 in [101] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
 Successful SSA optimization Pass2ConstantValues
+if() condition always true - replacing block destination [152] if((const word) sin8s_gen::i#0<(const word) sin8s_gen::wavelength#0) goto sin8s_gen::@2
+Successful SSA optimization Pass2ConstantIfs
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1872,6 +1886,13 @@ Constant right-side identified [96] (byte*) memset::end#0 ← (const byte*) mems
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) memset::dst#1 = (byte*) memset::dst#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) memset::dst#5 (const byte*) memset::dst#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [147] if((const byte*) memset::dst#0!=(const byte*) memset::end#0) goto memset::@5
+Successful SSA optimization Pass2ConstantIfs
 Inlining Noop Cast [80] (signed byte) sin8s::sinx#0 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
 Inlining Noop Cast [84] (signed byte~) sin8s::$21 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
 Inlining Noop Cast [132] (signed byte~) main::$2 ← (signed byte)*((const byte[]) main::sintabref#0 + (byte) main::i#2) keeping *(main::sintabref#0 + main::i#2)
@@ -1931,11 +1952,13 @@ Added new block during phi lifting divr16u::@8(between divr16u::@3 and divr16u::
 Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
+Added new block during phi lifting sin8s_gen::@9(between sin8s_gen::@1 and sin8s_gen::@2)
 Added new block during phi lifting sin8s::@15(between sin8s and sin8s::@1)
 Fixing phi predecessor for sin8s::isUpper#10 to new block ( sin8s -> sin8s::@15 ) during phi lifting.
 Added new block during phi lifting sin8s::@16(between sin8s::@1 and sin8s::@2)
 Added new block during phi lifting sin8s::@17(between sin8s::@14 and sin8s::@3)
 Added new block during phi lifting sin8s::@18(between sin8s::@3 and sin8s::@4)
+Added new block during phi lifting memset::@10(between memset::@4 and memset::@5)
 Added new block during phi lifting main::@10(between main::@8 and main::@1)
 Added new block during phi lifting main::@11(between main::@1 and main::@2)
 Adding NOP phi() at start of @begin
@@ -1954,8 +1977,10 @@ Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
+Adding NOP phi() at start of memset::@4_1
 Adding NOP phi() at start of memset::@1
 Adding NOP phi() at start of sin8s_gen
+Adding NOP phi() at start of sin8s_gen::@1_1
 Adding NOP phi() at start of mul8u::@3
 Adding NOP phi() at start of div16u
 Adding NOP phi() at start of divr16u
@@ -1966,10 +1991,10 @@ Calls in [main] to sin8s_gen:9 print_cls:11 print_str:17 print_sbyte:21 print_st
 Calls in [print_sbyte] to print_char:43 print_byte:47 print_char:51 
 Calls in [print_byte] to print_char:62 print_char:67 
 Calls in [print_cls] to memset:71 
-Calls in [sin8s_gen] to div16u:84 sin8s:91 
-Calls in [sin8s] to mulu8_sel:115 mulu8_sel:122 mulu8_sel:127 mulu8_sel:135 mulu8_sel:142 
-Calls in [mulu8_sel] to mul8u:163 
-Calls in [div16u] to divr16u:187 
+Calls in [sin8s_gen] to div16u:85 sin8s:91 
+Calls in [sin8s] to mulu8_sel:117 mulu8_sel:124 mulu8_sel:129 mulu8_sel:137 mulu8_sel:144 
+Calls in [mulu8_sel] to mul8u:165 
+Calls in [div16u] to divr16u:189 
 
 Created 33 initial phi equivalence classes
 Coalesced [16] print_char_cursor#52 ← print_char_cursor#45
@@ -1990,43 +2015,43 @@ Coalesced [60] print_char::ch#5 ← print_char::ch#2
 Coalesced (already) [61] print_char_cursor#56 ← print_char_cursor#10
 Coalesced [65] print_char::ch#6 ← print_char::ch#3
 Coalesced (already) [66] print_char_cursor#57 ← print_char_cursor#10
-Coalesced [82] memset::dst#4 ← memset::dst#1
-Coalesced [98] sin8s_gen::i#5 ← sin8s_gen::i#1
-Coalesced [99] sin8s_gen::x#5 ← sin8s_gen::x#1
-Coalesced [100] sin8s_gen::sintab#7 ← sin8s_gen::sintab#0
-Coalesced [103] sin8s::x#9 ← sin8s::x#1
-Coalesced [107] sin8s::x#11 ← sin8s::x#2
-Coalesced [113] mulu8_sel::v1#10 ← mulu8_sel::v1#0
-Coalesced [114] mulu8_sel::v2#9 ← mulu8_sel::v2#0
-Coalesced [120] mulu8_sel::v1#6 ← mulu8_sel::v1#1
-Coalesced [121] mulu8_sel::v2#6 ← mulu8_sel::v2#1
-Coalesced [126] mulu8_sel::v1#7 ← mulu8_sel::v1#2
-Coalesced [133] mulu8_sel::v1#8 ← mulu8_sel::v1#3
-Coalesced [134] mulu8_sel::v2#7 ← mulu8_sel::v2#3
-Coalesced [140] mulu8_sel::v1#9 ← mulu8_sel::v1#4
-Coalesced [141] mulu8_sel::v2#8 ← mulu8_sel::v2#4
-Coalesced [149] sin8s::usinx#9 ← sin8s::usinx#2
-Coalesced [153] sin8s::return#6 ← sin8s::sinx#1
-Coalesced [157] sin8s::usinx#8 ← sin8s::usinx#1
-Coalesced [158] sin8s::x#10 ← sin8s::x#4
-Coalesced [159] sin8s::x#8 ← sin8s::x#0
-Coalesced [169] mul8u::a#7 ← mul8u::a#1
-Coalesced [170] mul8u::mb#6 ← mul8u::b#0
-Coalesced [178] mul8u::res#9 ← mul8u::res#1
-Coalesced [182] mul8u::a#8 ← mul8u::a#0
-Coalesced [183] mul8u::res#7 ← mul8u::res#6
-Coalesced [184] mul8u::mb#7 ← mul8u::mb#1
-Coalesced (already) [185] mul8u::res#8 ← mul8u::res#2
-Coalesced [198] divr16u::rem#12 ← divr16u::rem#1
-Coalesced [205] divr16u::rem#14 ← divr16u::rem#2
-Coalesced [206] divr16u::return#6 ← divr16u::quotient#2
-Coalesced [212] divr16u::rem#10 ← divr16u::rem#9
-Coalesced [213] divr16u::dividend#8 ← divr16u::dividend#0
-Coalesced [214] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [215] divr16u::i#7 ← divr16u::i#1
-Coalesced [216] divr16u::rem#13 ← divr16u::rem#5
-Coalesced [217] divr16u::return#5 ← divr16u::quotient#1
-Coalesced [218] divr16u::rem#11 ← divr16u::rem#0
+Coalesced [83] memset::dst#6 ← memset::dst#1
+Coalesced [100] sin8s_gen::i#8 ← sin8s_gen::i#1
+Coalesced [101] sin8s_gen::x#8 ← sin8s_gen::x#1
+Coalesced [102] sin8s_gen::sintab#10 ← sin8s_gen::sintab#0
+Coalesced [105] sin8s::x#9 ← sin8s::x#1
+Coalesced [109] sin8s::x#11 ← sin8s::x#2
+Coalesced [115] mulu8_sel::v1#10 ← mulu8_sel::v1#0
+Coalesced [116] mulu8_sel::v2#9 ← mulu8_sel::v2#0
+Coalesced [122] mulu8_sel::v1#6 ← mulu8_sel::v1#1
+Coalesced [123] mulu8_sel::v2#6 ← mulu8_sel::v2#1
+Coalesced [128] mulu8_sel::v1#7 ← mulu8_sel::v1#2
+Coalesced [135] mulu8_sel::v1#8 ← mulu8_sel::v1#3
+Coalesced [136] mulu8_sel::v2#7 ← mulu8_sel::v2#3
+Coalesced [142] mulu8_sel::v1#9 ← mulu8_sel::v1#4
+Coalesced [143] mulu8_sel::v2#8 ← mulu8_sel::v2#4
+Coalesced [151] sin8s::usinx#9 ← sin8s::usinx#2
+Coalesced [155] sin8s::return#6 ← sin8s::sinx#1
+Coalesced [159] sin8s::usinx#8 ← sin8s::usinx#1
+Coalesced [160] sin8s::x#10 ← sin8s::x#4
+Coalesced [161] sin8s::x#8 ← sin8s::x#0
+Coalesced [171] mul8u::a#7 ← mul8u::a#1
+Coalesced [172] mul8u::mb#6 ← mul8u::b#0
+Coalesced [180] mul8u::res#9 ← mul8u::res#1
+Coalesced [184] mul8u::a#8 ← mul8u::a#0
+Coalesced [185] mul8u::res#7 ← mul8u::res#6
+Coalesced [186] mul8u::mb#7 ← mul8u::mb#1
+Coalesced (already) [187] mul8u::res#8 ← mul8u::res#2
+Coalesced [200] divr16u::rem#12 ← divr16u::rem#1
+Coalesced [207] divr16u::rem#14 ← divr16u::rem#2
+Coalesced [208] divr16u::return#6 ← divr16u::quotient#2
+Coalesced [214] divr16u::rem#10 ← divr16u::rem#9
+Coalesced [215] divr16u::dividend#8 ← divr16u::dividend#0
+Coalesced [216] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [217] divr16u::i#7 ← divr16u::i#1
+Coalesced [218] divr16u::rem#13 ← divr16u::rem#5
+Coalesced [219] divr16u::return#5 ← divr16u::quotient#1
+Coalesced [220] divr16u::rem#11 ← divr16u::rem#0
 Coalesced down to 23 phi equivalence classes
 Culled Empty Block (label) @13
 Culled Empty Block (label) @32
@@ -2041,7 +2066,11 @@ Culled Empty Block (label) print_sbyte::@7
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@4_1
 Culled Empty Block (label) memset::@1
+Culled Empty Block (label) memset::@10
+Culled Empty Block (label) sin8s_gen::@1_1
+Culled Empty Block (label) sin8s_gen::@9
 Culled Empty Block (label) sin8s::@17
 Culled Empty Block (label) sin8s::@16
 Culled Empty Block (label) sin8s::@15
@@ -2200,18 +2229,18 @@ print_cls::@return: scope:[print_cls]  from print_cls
   to:@return
 memset: scope:[memset]  from print_cls
   [52] phi()
+  to:memset::@2
+memset::@2: scope:[memset]  from memset memset::@1
+  [53] (byte*) memset::dst#4 ← phi( memset::@1/(byte*) memset::dst#1 memset/(byte*)(const void*) memset::str#0 )
+  [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0
+  [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@2
-  [53] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+memset::@1: scope:[memset]  from memset::@2
+  [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [55] return 
+  [57] return 
   to:@return
-memset::@2: scope:[memset]  from memset::@1
-  [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  to:memset::@1
 sin8s_gen: scope:[sin8s_gen]  from main
   [58] phi()
   [59] call div16u 
@@ -2219,28 +2248,28 @@ sin8s_gen: scope:[sin8s_gen]  from main
   to:sin8s_gen::@3
 sin8s_gen::@3: scope:[sin8s_gen]  from sin8s_gen
   [61] (word) sin8s_gen::step#0 ← (word) div16u::return#2
-  to:sin8s_gen::@1
-sin8s_gen::@1: scope:[sin8s_gen]  from sin8s_gen::@3 sin8s_gen::@4
-  [62] (signed byte*) sin8s_gen::sintab#2 ← phi( sin8s_gen::@3/(const signed byte[$c0]) main::sintab2#0 sin8s_gen::@4/(signed byte*) sin8s_gen::sintab#0 )
-  [62] (word) sin8s_gen::x#2 ← phi( sin8s_gen::@3/(byte) 0 sin8s_gen::@4/(word) sin8s_gen::x#1 )
-  [62] (word) sin8s_gen::i#2 ← phi( sin8s_gen::@3/(byte) 0 sin8s_gen::@4/(word) sin8s_gen::i#1 )
-  [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2
-  to:sin8s_gen::@return
-sin8s_gen::@return: scope:[sin8s_gen]  from sin8s_gen::@1
-  [64] return 
-  to:@return
-sin8s_gen::@2: scope:[sin8s_gen]  from sin8s_gen::@1
-  [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2
-  [66] call sin8s 
-  [67] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
+  to:sin8s_gen::@2
+sin8s_gen::@2: scope:[sin8s_gen]  from sin8s_gen::@1 sin8s_gen::@3
+  [62] (signed byte*) sin8s_gen::sintab#7 ← phi( sin8s_gen::@1/(signed byte*) sin8s_gen::sintab#0 sin8s_gen::@3/(const signed byte[$c0]) main::sintab2#0 )
+  [62] (word) sin8s_gen::x#5 ← phi( sin8s_gen::@1/(word) sin8s_gen::x#1 sin8s_gen::@3/(byte) 0 )
+  [62] (word) sin8s_gen::i#5 ← phi( sin8s_gen::@1/(word) sin8s_gen::i#1 sin8s_gen::@3/(byte) 0 )
+  [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5
+  [64] call sin8s 
+  [65] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
   to:sin8s_gen::@4
 sin8s_gen::@4: scope:[sin8s_gen]  from sin8s_gen::@2
-  [68] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
-  [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2
-  [70] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#2
-  [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0
-  [72] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#2
+  [66] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
+  [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2
+  [68] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#7
+  [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0
+  [70] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#5
   to:sin8s_gen::@1
+sin8s_gen::@1: scope:[sin8s_gen]  from sin8s_gen::@4
+  [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2
+  to:sin8s_gen::@return
+sin8s_gen::@return: scope:[sin8s_gen]  from sin8s_gen::@1
+  [72] return 
+  to:@return
 sin8s: scope:[sin8s]  from sin8s_gen::@2
   [73] if((word) sin8s::x#0<(const word) PI_u4f12#0) goto sin8s::@1
   to:sin8s::@5
@@ -2452,8 +2481,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 22.0
-(byte*) memset::dst#2 14.666666666666666
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#4 16.5
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -2571,17 +2600,17 @@ VARIABLE REGISTER WEIGHTS
 (void()) sin8s_gen((signed byte*) sin8s_gen::sintab , (word) sin8s_gen::wavelength)
 (signed byte~) sin8s_gen::$2 22.0
 (word) sin8s_gen::i
-(word) sin8s_gen::i#1 22.0
-(word) sin8s_gen::i#2 3.666666666666667
+(word) sin8s_gen::i#1 16.5
+(word) sin8s_gen::i#5 2.75
 (signed byte*) sin8s_gen::sintab
-(signed byte*) sin8s_gen::sintab#0 7.333333333333333
-(signed byte*) sin8s_gen::sintab#2 4.714285714285714
+(signed byte*) sin8s_gen::sintab#0 5.5
+(signed byte*) sin8s_gen::sintab#7 5.5
 (word) sin8s_gen::step
 (word) sin8s_gen::step#0 1.1818181818181819
 (word) sin8s_gen::wavelength
 (word) sin8s_gen::x
-(word) sin8s_gen::x#1 11.0
-(word) sin8s_gen::x#2 4.125
+(word) sin8s_gen::x#1 7.333333333333333
+(word) sin8s_gen::x#5 4.714285714285714
 
 Not consolidating phi with different size mul8u::mb#2 mul8u::b#0
 Initial phi equivalence classes
@@ -2590,10 +2619,10 @@ Initial phi equivalence classes
 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ]
 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
-[ memset::dst#2 memset::dst#1 ]
-[ sin8s_gen::i#2 sin8s_gen::i#1 ]
-[ sin8s_gen::x#2 sin8s_gen::x#1 ]
-[ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ]
+[ memset::dst#4 memset::dst#1 ]
+[ sin8s_gen::i#5 sin8s_gen::i#1 ]
+[ sin8s_gen::x#5 sin8s_gen::x#1 ]
+[ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ]
 [ sin8s::isUpper#10 ]
 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ]
 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ]
@@ -2646,10 +2675,10 @@ Complete equivalence classes
 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ]
 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
-[ memset::dst#2 memset::dst#1 ]
-[ sin8s_gen::i#2 sin8s_gen::i#1 ]
-[ sin8s_gen::x#2 sin8s_gen::x#1 ]
-[ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ]
+[ memset::dst#4 memset::dst#1 ]
+[ sin8s_gen::i#5 sin8s_gen::i#1 ]
+[ sin8s_gen::x#5 sin8s_gen::x#1 ]
+[ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ]
 [ sin8s::isUpper#10 ]
 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ]
 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ]
@@ -2701,10 +2730,10 @@ Allocated zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
 Allocated zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ]
 Allocated zp ZP_BYTE:6 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
 Allocated zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
-Allocated zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ]
-Allocated zp ZP_WORD:11 [ sin8s_gen::i#2 sin8s_gen::i#1 ]
-Allocated zp ZP_WORD:13 [ sin8s_gen::x#2 sin8s_gen::x#1 ]
-Allocated zp ZP_WORD:15 [ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ]
+Allocated zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 ]
+Allocated zp ZP_WORD:11 [ sin8s_gen::i#5 sin8s_gen::i#1 ]
+Allocated zp ZP_WORD:13 [ sin8s_gen::x#5 sin8s_gen::x#1 ]
+Allocated zp ZP_WORD:15 [ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ]
 Allocated zp ZP_BYTE:17 [ sin8s::isUpper#10 ]
 Allocated zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ]
 Allocated zp ZP_BYTE:20 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ]
@@ -3083,43 +3112,44 @@ memset: {
     .label str = print_line_cursor
     .label end = str+num
     .label dst = 9
-    // [53] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [53] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [53] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [53] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [55] return 
-    rts
+    jmp b2
+    // [53] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [53] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [53] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [53] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [57] return 
+    rts
 }
   // sin8s_gen
 // Generate signed byte sinus table - on the full -$7f - $7f range
@@ -3149,69 +3179,58 @@ sin8s_gen: {
     sta step
     lda div16u.return_2+1
     sta step+1
-    // [62] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
-  b1_from_b3:
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [62] phi from sin8s_gen::@3 to sin8s_gen::@2 [phi:sin8s_gen::@3->sin8s_gen::@2]
+  b2_from_b3:
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@2#0] -- pbsz1=pbsc1 
     lda #<main.sintab2
     sta sintab
     lda #>main.sintab2
     sta sintab+1
-    // [62] phi (word) sin8s_gen::x#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#1] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::x#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#1] -- vwuz1=vbuc1 
     lda #<0
     sta x
     lda #>0
     sta x+1
-    // [62] phi (word) sin8s_gen::i#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#2] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::i#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#2] -- vwuz1=vbuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
-    jmp b1
-  // u[4.12]
-    // sin8s_gen::@1
-  b1:
-    // [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    jmp breturn
-    // sin8s_gen::@return
-  breturn:
-    // [64] return 
-    rts
+    jmp b2
+    // [62] phi from sin8s_gen::@1 to sin8s_gen::@2 [phi:sin8s_gen::@1->sin8s_gen::@2]
+  b2_from_b1:
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@1->sin8s_gen::@2#0] -- register_copy 
+    // [62] phi (word) sin8s_gen::x#5 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@1->sin8s_gen::@2#1] -- register_copy 
+    // [62] phi (word) sin8s_gen::i#5 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@1->sin8s_gen::@2#2] -- register_copy 
+    jmp b2
     // sin8s_gen::@2
   b2:
-    // [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2 -- vwuz1=vwuz2 
+    // [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5 -- vwuz1=vwuz2 
     lda x
     sta sin8s.x
     lda x+1
     sta sin8s.x+1
-    // [66] call sin8s 
+    // [64] call sin8s 
     jsr sin8s
-    // [67] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1 -- vbsz1=vbsz2 
+    // [65] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1 -- vbsz1=vbsz2 
     lda sin8s.return_1
     sta sin8s.return
     jmp b4
     // sin8s_gen::@4
   b4:
-    // [68] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0 -- vbsz1=vbsz2 
+    // [66] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0 -- vbsz1=vbsz2 
     lda sin8s.return
     sta _2
-    // [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsz2 
+    // [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsz2 
     lda _2
     ldy #0
     sta (sintab),y
-    // [70] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#2 -- pbsz1=_inc_pbsz1 
+    // [68] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#7 -- pbsz1=_inc_pbsz1 
     inc sintab
     bne !+
     inc sintab+1
   !:
-    // [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
+    // [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda x
     clc
     adc step
@@ -3219,17 +3238,29 @@ sin8s_gen: {
     lda x+1
     adc step+1
     sta x+1
-    // [72] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#2 -- vwuz1=_inc_vwuz1 
+    // [70] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#5 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-    // [62] phi from sin8s_gen::@4 to sin8s_gen::@1 [phi:sin8s_gen::@4->sin8s_gen::@1]
-  b1_from_b4:
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@4->sin8s_gen::@1#0] -- register_copy 
-    // [62] phi (word) sin8s_gen::x#2 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@4->sin8s_gen::@1#1] -- register_copy 
-    // [62] phi (word) sin8s_gen::i#2 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@4->sin8s_gen::@1#2] -- register_copy 
     jmp b1
+  // u[4.12]
+    // sin8s_gen::@1
+  b1:
+    // [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
+    lda i+1
+    cmp #>main.wavelength
+    bcc b2_from_b1
+    bne !+
+    lda i
+    cmp #<main.wavelength
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // sin8s_gen::@return
+  breturn:
+    // [72] return 
+    rts
 }
   // sin8s
 // Calculate signed byte sinus sin(x)
@@ -3827,34 +3858,34 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:39 [ p
 Statement [42] (byte~) print_byte::$0 ← (byte) print_byte::b#0 >> (byte) 4 [ print_char_cursor#10 print_byte::b#0 print_byte::$0 ] ( main:2::print_sbyte:15::print_byte:33 [ main::i#2 print_char_cursor#10 print_byte::b#0 print_byte::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:39 [ print_byte::b#0 ]
 Statement [45] (byte~) print_byte::$2 ← (byte) print_byte::b#0 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_sbyte:15::print_byte:33 [ main::i#2 print_char_cursor#10 print_byte::$2 ] ) always clobbers reg byte a 
-Statement [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:7::memset:50 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:7::memset:50 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:7::memset:50 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:7::memset:50 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [60] (word) div16u::return#2 ← (word) div16u::return#0 [ div16u::return#2 ] ( main:2::sin8s_gen:5 [ div16u::return#2 ] ) always clobbers reg byte a 
 Statement [61] (word) sin8s_gen::step#0 ← (word) div16u::return#2 [ sin8s_gen::step#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 ] ) always clobbers reg byte a 
-Statement [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ) always clobbers reg byte a 
-Statement [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ) always clobbers reg byte a 
-Statement [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ) always clobbers reg byte y 
-Statement [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
-Statement [73] if((word) sin8s::x#0<(const word) PI_u4f12#0) goto sin8s::@1 [ sin8s::x#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ) always clobbers reg byte a 
-Statement [74] (word) sin8s::x#1 ← (word) sin8s::x#0 - (const word) PI_u4f12#0 [ sin8s::x#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#1 ] ) always clobbers reg byte a 
-Statement [76] if((word) sin8s::x#4<(const word) PI_HALF_u4f12#0) goto sin8s::@2 [ sin8s::x#4 sin8s::isUpper#10 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#4 sin8s::isUpper#10 ] ) always clobbers reg byte a 
+Statement [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ) always clobbers reg byte a 
+Statement [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 ] ) always clobbers reg byte y 
+Statement [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2 [ sin8s_gen::step#0 sin8s_gen::i#1 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#1 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [73] if((word) sin8s::x#0<(const word) PI_u4f12#0) goto sin8s::@1 [ sin8s::x#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ) always clobbers reg byte a 
+Statement [74] (word) sin8s::x#1 ← (word) sin8s::x#0 - (const word) PI_u4f12#0 [ sin8s::x#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#1 ] ) always clobbers reg byte a 
+Statement [76] if((word) sin8s::x#4<(const word) PI_HALF_u4f12#0) goto sin8s::@2 [ sin8s::x#4 sin8s::isUpper#10 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#4 sin8s::isUpper#10 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ sin8s::isUpper#10 ]
-Statement [77] (word) sin8s::x#2 ← (const word) PI_u4f12#0 - (word) sin8s::x#4 [ sin8s::isUpper#10 sin8s::x#2 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x#2 ] ) always clobbers reg byte a 
-Statement [79] (word~) sin8s::$4 ← (word) sin8s::x#6 << (byte) 3 [ sin8s::isUpper#10 sin8s::$4 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::$4 ] ) always clobbers reg byte a 
-Statement [80] (byte) sin8s::x1#0 ← > (word~) sin8s::$4 [ sin8s::isUpper#10 sin8s::x1#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 ] ) always clobbers reg byte a 
-Statement [95] (byte) sin8s::usinx#0 ← (byte) sin8s::x1#0 - (byte) sin8s::x3_6#0 [ sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ) always clobbers reg byte a 
+Statement [77] (word) sin8s::x#2 ← (const word) PI_u4f12#0 - (word) sin8s::x#4 [ sin8s::isUpper#10 sin8s::x#2 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x#2 ] ) always clobbers reg byte a 
+Statement [79] (word~) sin8s::$4 ← (word) sin8s::x#6 << (byte) 3 [ sin8s::isUpper#10 sin8s::$4 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::$4 ] ) always clobbers reg byte a 
+Statement [80] (byte) sin8s::x1#0 ← > (word~) sin8s::$4 [ sin8s::isUpper#10 sin8s::x1#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 ] ) always clobbers reg byte a 
+Statement [95] (byte) sin8s::usinx#0 ← (byte) sin8s::x1#0 - (byte) sin8s::x3_6#0 [ sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:50 [ sin8s::x1#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:54 [ sin8s::x3#0 ]
-Statement [106] (byte) sin8s::x5_128#0 ← (byte) sin8s::x5#0 >> (byte) 4 [ sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ) always clobbers reg byte a 
+Statement [106] (byte) sin8s::x5_128#0 ← (byte) sin8s::x5#0 >> (byte) 4 [ sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:57 [ sin8s::usinx#0 ]
-Statement [107] (byte) sin8s::usinx#1 ← (byte) sin8s::usinx#0 + (byte) sin8s::x5_128#0 [ sin8s::isUpper#10 sin8s::usinx#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#1 ] ) always clobbers reg byte a 
-Statement [112] (signed byte) sin8s::sinx#1 ← - (signed byte)(byte) sin8s::usinx#4 [ sin8s::sinx#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::sinx#1 ] ) always clobbers reg byte a 
-Statement [120] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mulu8_sel::select#5 mul8u::return#2 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] ) always clobbers reg byte a 
+Statement [107] (byte) sin8s::usinx#1 ← (byte) sin8s::usinx#0 + (byte) sin8s::x5_128#0 [ sin8s::isUpper#10 sin8s::usinx#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#1 ] ) always clobbers reg byte a 
+Statement [112] (signed byte) sin8s::sinx#1 ← - (signed byte)(byte) sin8s::usinx#4 [ sin8s::sinx#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::sinx#1 ] ) always clobbers reg byte a 
+Statement [120] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mulu8_sel::select#5 mul8u::return#2 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:24 [ mulu8_sel::select#5 ]
-Statement [121] (word~) mulu8_sel::$0 ← (word) mul8u::return#2 [ mulu8_sel::select#5 mulu8_sel::$0 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] ) always clobbers reg byte a 
-Statement [122] (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select#5 [ mulu8_sel::$1 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::$1 ] ) always clobbers reg byte a 
-Statement [123] (byte) mulu8_sel::return#12 ← > (word~) mulu8_sel::$1 [ mulu8_sel::return#12 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::return#12 ] ) always clobbers reg byte a 
-Statement [131] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [121] (word~) mulu8_sel::$0 ← (word) mul8u::return#2 [ mulu8_sel::select#5 mulu8_sel::$0 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] ) always clobbers reg byte a 
+Statement [122] (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select#5 [ mulu8_sel::$1 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::$1 ] ) always clobbers reg byte a 
+Statement [123] (byte) mulu8_sel::return#12 ← > (word~) mulu8_sel::$1 [ mulu8_sel::return#12 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::return#12 ] ) always clobbers reg byte a 
+Statement [131] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:25 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Statement [137] (word) divr16u::return#2 ← (word) divr16u::return#0 [ divr16u::return#2 ] ( main:2::sin8s_gen:5::div16u:59 [ divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [138] (word) div16u::return#0 ← (word) divr16u::return#2 [ div16u::return#0 ] ( main:2::sin8s_gen:5::div16u:59 [ div16u::return#0 ] ) always clobbers reg byte a 
@@ -3870,30 +3901,30 @@ Statement [37] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b
 Statement [39] *((byte*) print_char_cursor#29) ← (byte) print_char::ch#4 [ print_char_cursor#29 ] ( main:2::print_sbyte:15::print_char:30 [ main::i#2 print_sbyte::b#1 print_char_cursor#29 ] main:2::print_sbyte:15::print_char:36 [ main::i#2 print_sbyte::b#1 print_char_cursor#29 ] main:2::print_sbyte:15::print_byte:33::print_char:44 [ main::i#2 print_byte::b#0 print_char_cursor#29 ] main:2::print_sbyte:15::print_byte:33::print_char:47 [ main::i#2 print_char_cursor#29 ] ) always clobbers reg byte y 
 Statement [42] (byte~) print_byte::$0 ← (byte) print_byte::b#0 >> (byte) 4 [ print_char_cursor#10 print_byte::b#0 print_byte::$0 ] ( main:2::print_sbyte:15::print_byte:33 [ main::i#2 print_char_cursor#10 print_byte::b#0 print_byte::$0 ] ) always clobbers reg byte a 
 Statement [45] (byte~) print_byte::$2 ← (byte) print_byte::b#0 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_sbyte:15::print_byte:33 [ main::i#2 print_char_cursor#10 print_byte::$2 ] ) always clobbers reg byte a 
-Statement [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:7::memset:50 [ memset::dst#2 ] ) always clobbers reg byte a 
-Statement [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:7::memset:50 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::print_cls:7::memset:50 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
+Statement [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::print_cls:7::memset:50 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [60] (word) div16u::return#2 ← (word) div16u::return#0 [ div16u::return#2 ] ( main:2::sin8s_gen:5 [ div16u::return#2 ] ) always clobbers reg byte a 
 Statement [61] (word) sin8s_gen::step#0 ← (word) div16u::return#2 [ sin8s_gen::step#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 ] ) always clobbers reg byte a 
-Statement [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ) always clobbers reg byte a 
-Statement [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ) always clobbers reg byte a 
-Statement [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 ] ) always clobbers reg byte y 
-Statement [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
-Statement [73] if((word) sin8s::x#0<(const word) PI_u4f12#0) goto sin8s::@1 [ sin8s::x#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#0 ] ) always clobbers reg byte a 
-Statement [74] (word) sin8s::x#1 ← (word) sin8s::x#0 - (const word) PI_u4f12#0 [ sin8s::x#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#1 ] ) always clobbers reg byte a 
-Statement [76] if((word) sin8s::x#4<(const word) PI_HALF_u4f12#0) goto sin8s::@2 [ sin8s::x#4 sin8s::isUpper#10 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::x#4 sin8s::isUpper#10 ] ) always clobbers reg byte a 
-Statement [77] (word) sin8s::x#2 ← (const word) PI_u4f12#0 - (word) sin8s::x#4 [ sin8s::isUpper#10 sin8s::x#2 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x#2 ] ) always clobbers reg byte a 
-Statement [79] (word~) sin8s::$4 ← (word) sin8s::x#6 << (byte) 3 [ sin8s::isUpper#10 sin8s::$4 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::$4 ] ) always clobbers reg byte a 
-Statement [80] (byte) sin8s::x1#0 ← > (word~) sin8s::$4 [ sin8s::isUpper#10 sin8s::x1#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 ] ) always clobbers reg byte a 
-Statement [95] (byte) sin8s::usinx#0 ← (byte) sin8s::x1#0 - (byte) sin8s::x3_6#0 [ sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ) always clobbers reg byte a 
-Statement [106] (byte) sin8s::x5_128#0 ← (byte) sin8s::x5#0 >> (byte) 4 [ sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ) always clobbers reg byte a 
-Statement [107] (byte) sin8s::usinx#1 ← (byte) sin8s::usinx#0 + (byte) sin8s::x5_128#0 [ sin8s::isUpper#10 sin8s::usinx#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#1 ] ) always clobbers reg byte a 
-Statement [112] (signed byte) sin8s::sinx#1 ← - (signed byte)(byte) sin8s::usinx#4 [ sin8s::sinx#1 ] ( main:2::sin8s_gen:5::sin8s:66 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::sinx#1 ] ) always clobbers reg byte a 
-Statement [120] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mulu8_sel::select#5 mul8u::return#2 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] ) always clobbers reg byte a 
-Statement [121] (word~) mulu8_sel::$0 ← (word) mul8u::return#2 [ mulu8_sel::select#5 mulu8_sel::$0 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] ) always clobbers reg byte a 
-Statement [122] (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select#5 [ mulu8_sel::$1 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::$1 ] ) always clobbers reg byte a 
-Statement [123] (byte) mulu8_sel::return#12 ← > (word~) mulu8_sel::$1 [ mulu8_sel::return#12 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::return#12 ] ) always clobbers reg byte a 
-Statement [129] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
-Statement [131] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::sin8s_gen:5::sin8s:66::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:66::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#2 sin8s_gen::x#2 sin8s_gen::sintab#2 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ) always clobbers reg byte a 
+Statement [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 ] ) always clobbers reg byte y 
+Statement [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2 [ sin8s_gen::step#0 sin8s_gen::i#1 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ( main:2::sin8s_gen:5 [ sin8s_gen::step#0 sin8s_gen::i#1 sin8s_gen::x#1 sin8s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [73] if((word) sin8s::x#0<(const word) PI_u4f12#0) goto sin8s::@1 [ sin8s::x#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#0 ] ) always clobbers reg byte a 
+Statement [74] (word) sin8s::x#1 ← (word) sin8s::x#0 - (const word) PI_u4f12#0 [ sin8s::x#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#1 ] ) always clobbers reg byte a 
+Statement [76] if((word) sin8s::x#4<(const word) PI_HALF_u4f12#0) goto sin8s::@2 [ sin8s::x#4 sin8s::isUpper#10 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::x#4 sin8s::isUpper#10 ] ) always clobbers reg byte a 
+Statement [77] (word) sin8s::x#2 ← (const word) PI_u4f12#0 - (word) sin8s::x#4 [ sin8s::isUpper#10 sin8s::x#2 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x#2 ] ) always clobbers reg byte a 
+Statement [79] (word~) sin8s::$4 ← (word) sin8s::x#6 << (byte) 3 [ sin8s::isUpper#10 sin8s::$4 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::$4 ] ) always clobbers reg byte a 
+Statement [80] (byte) sin8s::x1#0 ← > (word~) sin8s::$4 [ sin8s::isUpper#10 sin8s::x1#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 ] ) always clobbers reg byte a 
+Statement [95] (byte) sin8s::usinx#0 ← (byte) sin8s::x1#0 - (byte) sin8s::x3_6#0 [ sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 sin8s::usinx#0 ] ) always clobbers reg byte a 
+Statement [106] (byte) sin8s::x5_128#0 ← (byte) sin8s::x5#0 >> (byte) 4 [ sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 sin8s::x5_128#0 ] ) always clobbers reg byte a 
+Statement [107] (byte) sin8s::usinx#1 ← (byte) sin8s::usinx#0 + (byte) sin8s::x5_128#0 [ sin8s::isUpper#10 sin8s::usinx#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#1 ] ) always clobbers reg byte a 
+Statement [112] (signed byte) sin8s::sinx#1 ← - (signed byte)(byte) sin8s::usinx#4 [ sin8s::sinx#1 ] ( main:2::sin8s_gen:5::sin8s:64 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::sinx#1 ] ) always clobbers reg byte a 
+Statement [120] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mulu8_sel::select#5 mul8u::return#2 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::return#2 ] ) always clobbers reg byte a 
+Statement [121] (word~) mulu8_sel::$0 ← (word) mul8u::return#2 [ mulu8_sel::select#5 mulu8_sel::$0 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mulu8_sel::$0 ] ) always clobbers reg byte a 
+Statement [122] (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select#5 [ mulu8_sel::$1 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::$1 ] ) always clobbers reg byte a 
+Statement [123] (byte) mulu8_sel::return#12 ← > (word~) mulu8_sel::$1 [ mulu8_sel::return#12 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::return#12 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::return#12 ] ) always clobbers reg byte a 
+Statement [129] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
+Statement [131] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::sin8s_gen:5::sin8s:64::mulu8_sel:83::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:88::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:92::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:98::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] main:2::sin8s_gen:5::sin8s:64::mulu8_sel:103::mul8u:119 [ sin8s_gen::step#0 sin8s_gen::i#5 sin8s_gen::x#5 sin8s_gen::sintab#7 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Statement [137] (word) divr16u::return#2 ← (word) divr16u::return#0 [ divr16u::return#2 ] ( main:2::sin8s_gen:5::div16u:59 [ divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [138] (word) div16u::return#0 ← (word) divr16u::return#2 [ div16u::return#0 ] ( main:2::sin8s_gen:5::div16u:59 [ div16u::return#0 ] ) always clobbers reg byte a 
 Statement [143] (byte~) divr16u::$1 ← > (word) divr16u::dividend#2 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::sin8s_gen:5::div16u:59::divr16u:136 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
@@ -3905,10 +3936,10 @@ Potential registers zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::
 Potential registers zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:6 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:9 , 
-Potential registers zp ZP_WORD:11 [ sin8s_gen::i#2 sin8s_gen::i#1 ] : zp ZP_WORD:11 , 
-Potential registers zp ZP_WORD:13 [ sin8s_gen::x#2 sin8s_gen::x#1 ] : zp ZP_WORD:13 , 
-Potential registers zp ZP_WORD:15 [ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ] : zp ZP_WORD:15 , 
+Potential registers zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:11 [ sin8s_gen::i#5 sin8s_gen::i#1 ] : zp ZP_WORD:11 , 
+Potential registers zp ZP_WORD:13 [ sin8s_gen::x#5 sin8s_gen::x#1 ] : zp ZP_WORD:13 , 
+Potential registers zp ZP_WORD:15 [ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ] : zp ZP_WORD:15 , 
 Potential registers zp ZP_BYTE:17 [ sin8s::isUpper#10 ] : zp ZP_BYTE:17 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] : zp ZP_WORD:18 , 
 Potential registers zp ZP_BYTE:20 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] : zp ZP_BYTE:20 , reg byte a , reg byte x , reg byte y , 
@@ -3962,9 +3993,9 @@ Uplift Scope [print_str] 305.5: zp ZP_WORD:3 [ print_str::str#3 print_str::str#5
 Uplift Scope [divr16u] 96.25: zp ZP_WORD:31 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 37.25: zp ZP_WORD:35 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp ZP_BYTE:75 [ divr16u::$1 ] 22: zp ZP_BYTE:76 [ divr16u::$2 ] 18.19: zp ZP_BYTE:37 [ divr16u::i#2 divr16u::i#1 ] 7.46: zp ZP_WORD:33 [ divr16u::dividend#2 divr16u::dividend#0 ] 4: zp ZP_WORD:71 [ divr16u::return#2 ] 
 Uplift Scope [] 186.27: zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] 
 Uplift Scope [sin8s] 27.5: zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] 22: zp ZP_BYTE:46 [ sin8s::return#0 ] 13: zp ZP_BYTE:21 [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ] 10: zp ZP_BYTE:20 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] 4: zp ZP_WORD:48 [ sin8s::$4 ] 4: zp ZP_BYTE:52 [ sin8s::x2#0 ] 4: zp ZP_BYTE:56 [ sin8s::x3_6#0 ] 4: zp ZP_BYTE:59 [ sin8s::x4#0 ] 4: zp ZP_BYTE:61 [ sin8s::x5#0 ] 4: zp ZP_BYTE:62 [ sin8s::x5_128#0 ] 1: zp ZP_BYTE:54 [ sin8s::x3#0 ] 0.64: zp ZP_BYTE:50 [ sin8s::x1#0 ] 0.33: zp ZP_BYTE:57 [ sin8s::usinx#0 ] 0.06: zp ZP_BYTE:17 [ sin8s::isUpper#10 ] 
-Uplift Scope [sin8s_gen] 25.67: zp ZP_WORD:11 [ sin8s_gen::i#2 sin8s_gen::i#1 ] 22: zp ZP_BYTE:47 [ sin8s_gen::$2 ] 15.12: zp ZP_WORD:13 [ sin8s_gen::x#2 sin8s_gen::x#1 ] 12.05: zp ZP_WORD:15 [ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ] 1.18: zp ZP_WORD:44 [ sin8s_gen::step#0 ] 
 Uplift Scope [mulu8_sel] 24: zp ZP_BYTE:22 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] 21: zp ZP_BYTE:23 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] 4: zp ZP_BYTE:51 [ mulu8_sel::return#0 ] 4: zp ZP_BYTE:53 [ mulu8_sel::return#1 ] 4: zp ZP_BYTE:55 [ mulu8_sel::return#2 ] 4: zp ZP_BYTE:58 [ mulu8_sel::return#10 ] 4: zp ZP_BYTE:60 [ mulu8_sel::return#11 ] 4: zp ZP_WORD:65 [ mulu8_sel::$0 ] 4: zp ZP_WORD:67 [ mulu8_sel::$1 ] 1.71: zp ZP_BYTE:69 [ mulu8_sel::return#12 ] 0.33: zp ZP_BYTE:24 [ mulu8_sel::select#5 ] 
-Uplift Scope [memset] 36.67: zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [sin8s_gen] 22: zp ZP_BYTE:47 [ sin8s_gen::$2 ] 19.25: zp ZP_WORD:11 [ sin8s_gen::i#5 sin8s_gen::i#1 ] 12.05: zp ZP_WORD:13 [ sin8s_gen::x#5 sin8s_gen::x#1 ] 11: zp ZP_WORD:15 [ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ] 1.18: zp ZP_WORD:44 [ sin8s_gen::step#0 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 ] 
 Uplift Scope [main] 19.8: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 6.6: zp ZP_BYTE:38 [ main::sb#0 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:6 [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
 Uplift Scope [print_sbyte] 10.83: zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
@@ -3973,57 +4004,57 @@ Uplift Scope [div16u] 4: zp ZP_WORD:42 [ div16u::return#2 ] 1.33: zp ZP_WORD:73 
 Uplift Scope [RADIX] 
 Uplift Scope [print_cls] 
 
-Uplifting [mul8u] best 19827 combination zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:28 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:63 [ mul8u::return#2 ] reg byte a [ mul8u::b#0 ] 
-Uplifting [print_str] best 19827 combination zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
-Uplifting [divr16u] best 19617 combination zp ZP_WORD:31 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:35 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:33 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:71 [ divr16u::return#2 ] 
-Uplifting [] best 19617 combination zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] 
-Uplifting [sin8s] best 19512 combination zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] reg byte a [ sin8s::return#0 ] reg byte a [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:48 [ sin8s::$4 ] zp ZP_BYTE:52 [ sin8s::x2#0 ] zp ZP_BYTE:56 [ sin8s::x3_6#0 ] zp ZP_BYTE:59 [ sin8s::x4#0 ] zp ZP_BYTE:61 [ sin8s::x5#0 ] zp ZP_BYTE:62 [ sin8s::x5_128#0 ] zp ZP_BYTE:54 [ sin8s::x3#0 ] zp ZP_BYTE:50 [ sin8s::x1#0 ] zp ZP_BYTE:57 [ sin8s::usinx#0 ] zp ZP_BYTE:17 [ sin8s::isUpper#10 ] 
+Uplifting [mul8u] best 19887 combination zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:28 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:63 [ mul8u::return#2 ] reg byte a [ mul8u::b#0 ] 
+Uplifting [print_str] best 19887 combination zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
+Uplifting [divr16u] best 19677 combination zp ZP_WORD:31 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:35 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:33 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:71 [ divr16u::return#2 ] 
+Uplifting [] best 19677 combination zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] 
+Uplifting [sin8s] best 19572 combination zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] reg byte a [ sin8s::return#0 ] reg byte a [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:48 [ sin8s::$4 ] zp ZP_BYTE:52 [ sin8s::x2#0 ] zp ZP_BYTE:56 [ sin8s::x3_6#0 ] zp ZP_BYTE:59 [ sin8s::x4#0 ] zp ZP_BYTE:61 [ sin8s::x5#0 ] zp ZP_BYTE:62 [ sin8s::x5_128#0 ] zp ZP_BYTE:54 [ sin8s::x3#0 ] zp ZP_BYTE:50 [ sin8s::x1#0 ] zp ZP_BYTE:57 [ sin8s::usinx#0 ] zp ZP_BYTE:17 [ sin8s::isUpper#10 ] 
 Limited combination testing to 100 combinations of 5308416 possible.
-Uplifting [sin8s_gen] best 19452 combination zp ZP_WORD:11 [ sin8s_gen::i#2 sin8s_gen::i#1 ] reg byte a [ sin8s_gen::$2 ] zp ZP_WORD:13 [ sin8s_gen::x#2 sin8s_gen::x#1 ] zp ZP_WORD:15 [ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ] zp ZP_WORD:44 [ sin8s_gen::step#0 ] 
-Uplifting [mulu8_sel] best 19406 combination reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] reg byte a [ mulu8_sel::return#0 ] reg byte a [ mulu8_sel::return#1 ] zp ZP_BYTE:55 [ mulu8_sel::return#2 ] zp ZP_BYTE:58 [ mulu8_sel::return#10 ] zp ZP_BYTE:60 [ mulu8_sel::return#11 ] zp ZP_WORD:65 [ mulu8_sel::$0 ] zp ZP_WORD:67 [ mulu8_sel::$1 ] zp ZP_BYTE:69 [ mulu8_sel::return#12 ] zp ZP_BYTE:24 [ mulu8_sel::select#5 ] 
+Uplifting [mulu8_sel] best 19526 combination reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] reg byte a [ mulu8_sel::return#0 ] reg byte a [ mulu8_sel::return#1 ] zp ZP_BYTE:55 [ mulu8_sel::return#2 ] zp ZP_BYTE:58 [ mulu8_sel::return#10 ] zp ZP_BYTE:60 [ mulu8_sel::return#11 ] zp ZP_WORD:65 [ mulu8_sel::$0 ] zp ZP_WORD:67 [ mulu8_sel::$1 ] zp ZP_BYTE:69 [ mulu8_sel::return#12 ] zp ZP_BYTE:24 [ mulu8_sel::select#5 ] 
 Limited combination testing to 100 combinations of 196608 possible.
-Uplifting [memset] best 19406 combination zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [main] best 19286 combination reg byte x [ main::i#2 main::i#1 ] zp ZP_BYTE:38 [ main::sb#0 ] 
-Uplifting [print_char] best 19271 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
-Uplifting [print_sbyte] best 19271 combination zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
-Uplifting [print_byte] best 19263 combination reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] zp ZP_BYTE:39 [ print_byte::b#0 ] 
-Uplifting [div16u] best 19263 combination zp ZP_WORD:42 [ div16u::return#2 ] zp ZP_WORD:73 [ div16u::return#0 ] 
-Uplifting [RADIX] best 19263 combination 
-Uplifting [print_cls] best 19263 combination 
+Uplifting [sin8s_gen] best 19466 combination reg byte a [ sin8s_gen::$2 ] zp ZP_WORD:11 [ sin8s_gen::i#5 sin8s_gen::i#1 ] zp ZP_WORD:13 [ sin8s_gen::x#5 sin8s_gen::x#1 ] zp ZP_WORD:15 [ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ] zp ZP_WORD:44 [ sin8s_gen::step#0 ] 
+Uplifting [memset] best 19466 combination zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 ] 
+Uplifting [main] best 19346 combination reg byte x [ main::i#2 main::i#1 ] zp ZP_BYTE:38 [ main::sb#0 ] 
+Uplifting [print_char] best 19331 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
+Uplifting [print_sbyte] best 19331 combination zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
+Uplifting [print_byte] best 19323 combination reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] zp ZP_BYTE:39 [ print_byte::b#0 ] 
+Uplifting [div16u] best 19323 combination zp ZP_WORD:42 [ div16u::return#2 ] zp ZP_WORD:73 [ div16u::return#0 ] 
+Uplifting [RADIX] best 19323 combination 
+Uplifting [print_cls] best 19323 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ]
-Uplifting [print_sbyte] best 19263 combination zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
+Uplifting [print_sbyte] best 19323 combination zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:38 [ main::sb#0 ]
-Uplifting [main] best 19263 combination zp ZP_BYTE:38 [ main::sb#0 ] 
+Uplifting [main] best 19323 combination zp ZP_BYTE:38 [ main::sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:52 [ sin8s::x2#0 ]
-Uplifting [sin8s] best 19259 combination reg byte a [ sin8s::x2#0 ] 
+Uplifting [sin8s] best 19319 combination reg byte a [ sin8s::x2#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:55 [ mulu8_sel::return#2 ]
-Uplifting [mulu8_sel] best 19253 combination reg byte a [ mulu8_sel::return#2 ] 
+Uplifting [mulu8_sel] best 19313 combination reg byte a [ mulu8_sel::return#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:56 [ sin8s::x3_6#0 ]
-Uplifting [sin8s] best 19249 combination reg byte a [ sin8s::x3_6#0 ] 
+Uplifting [sin8s] best 19309 combination reg byte a [ sin8s::x3_6#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:58 [ mulu8_sel::return#10 ]
-Uplifting [mulu8_sel] best 19243 combination reg byte a [ mulu8_sel::return#10 ] 
+Uplifting [mulu8_sel] best 19303 combination reg byte a [ mulu8_sel::return#10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:59 [ sin8s::x4#0 ]
-Uplifting [sin8s] best 19239 combination reg byte a [ sin8s::x4#0 ] 
+Uplifting [sin8s] best 19299 combination reg byte a [ sin8s::x4#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:60 [ mulu8_sel::return#11 ]
-Uplifting [mulu8_sel] best 19233 combination reg byte a [ mulu8_sel::return#11 ] 
+Uplifting [mulu8_sel] best 19293 combination reg byte a [ mulu8_sel::return#11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:61 [ sin8s::x5#0 ]
-Uplifting [sin8s] best 19227 combination reg byte a [ sin8s::x5#0 ] 
+Uplifting [sin8s] best 19287 combination reg byte a [ sin8s::x5#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:62 [ sin8s::x5_128#0 ]
-Uplifting [sin8s] best 19221 combination reg byte a [ sin8s::x5_128#0 ] 
+Uplifting [sin8s] best 19281 combination reg byte a [ sin8s::x5_128#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:69 [ mulu8_sel::return#12 ]
-Uplifting [mulu8_sel] best 19203 combination reg byte a [ mulu8_sel::return#12 ] 
+Uplifting [mulu8_sel] best 19263 combination reg byte a [ mulu8_sel::return#12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:39 [ print_byte::b#0 ]
-Uplifting [print_byte] best 19203 combination zp ZP_BYTE:39 [ print_byte::b#0 ] 
+Uplifting [print_byte] best 19263 combination zp ZP_BYTE:39 [ print_byte::b#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:54 [ sin8s::x3#0 ]
-Uplifting [sin8s] best 19203 combination zp ZP_BYTE:54 [ sin8s::x3#0 ] 
+Uplifting [sin8s] best 19263 combination zp ZP_BYTE:54 [ sin8s::x3#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:50 [ sin8s::x1#0 ]
-Uplifting [sin8s] best 19203 combination zp ZP_BYTE:50 [ sin8s::x1#0 ] 
+Uplifting [sin8s] best 19263 combination zp ZP_BYTE:50 [ sin8s::x1#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:24 [ mulu8_sel::select#5 ]
-Uplifting [mulu8_sel] best 19203 combination zp ZP_BYTE:24 [ mulu8_sel::select#5 ] 
+Uplifting [mulu8_sel] best 19263 combination zp ZP_BYTE:24 [ mulu8_sel::select#5 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:57 [ sin8s::usinx#0 ]
-Uplifting [sin8s] best 19203 combination zp ZP_BYTE:57 [ sin8s::usinx#0 ] 
+Uplifting [sin8s] best 19263 combination zp ZP_BYTE:57 [ sin8s::usinx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ sin8s::isUpper#10 ]
-Uplifting [sin8s] best 19203 combination zp ZP_BYTE:17 [ sin8s::isUpper#10 ] 
+Uplifting [sin8s] best 19263 combination zp ZP_BYTE:17 [ sin8s::isUpper#10 ] 
 Coalescing zero page register [ zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] ] with [ zp ZP_BYTE:38 [ main::sb#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 main::sb#0 ] ] with [ zp ZP_BYTE:39 [ print_byte::b#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] ] with [ zp ZP_WORD:48 [ sin8s::$4 ] ] - score: 1
@@ -4034,20 +4065,20 @@ Coalescing zero page register [ zp ZP_WORD:42 [ div16u::return#2 sin8s_gen::step
 Coalescing zero page register [ zp ZP_WORD:65 [ mulu8_sel::$0 ] ] with [ zp ZP_WORD:67 [ mulu8_sel::$1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp ZP_WORD:65 [ mulu8_sel::$0 mulu8_sel::$1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:35 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 ] ] with [ zp ZP_WORD:42 [ div16u::return#2 sin8s_gen::step#0 div16u::return#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::str#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ sin8s_gen::i#2 sin8s_gen::i#1 ] ] with [ zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:3 [ print_str::str#3 print_str::str#5 print_str::str#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ sin8s_gen::i#5 sin8s_gen::i#1 ] ] with [ zp ZP_WORD:7 [ print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:17 [ sin8s::isUpper#10 ] ] with [ zp ZP_BYTE:5 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 main::sb#0 print_byte::b#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 ] ] with [ zp ZP_WORD:18 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 ] ]
-Coalescing zero page register [ zp ZP_WORD:31 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ] with [ zp ZP_WORD:13 [ sin8s_gen::x#2 sin8s_gen::x#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:33 [ divr16u::dividend#2 divr16u::dividend#0 ] ] with [ zp ZP_WORD:15 [ sin8s_gen::sintab#2 sin8s_gen::sintab#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 ] ] with [ zp ZP_WORD:9 [ memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ] ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:2 [ sin8s_gen::i#2 sin8s_gen::i#1 print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
+Coalescing zero page register [ zp ZP_WORD:31 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ] with [ zp ZP_WORD:13 [ sin8s_gen::x#5 sin8s_gen::x#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:33 [ divr16u::dividend#2 divr16u::dividend#0 ] ] with [ zp ZP_WORD:15 [ sin8s_gen::sintab#7 sin8s_gen::sintab#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:26 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 ] ] with [ zp ZP_WORD:9 [ memset::dst#4 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ] ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:2 [ sin8s_gen::i#5 sin8s_gen::i#1 print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
 Allocated (was zp ZP_BYTE:17) zp ZP_BYTE:4 [ sin8s::isUpper#10 print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 main::sb#0 print_byte::b#0 ]
 Allocated (was zp ZP_BYTE:24) zp ZP_BYTE:5 [ mulu8_sel::select#5 ]
-Allocated (was zp ZP_WORD:26) zp ZP_WORD:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
+Allocated (was zp ZP_WORD:26) zp ZP_WORD:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 memset::dst#4 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
 Allocated (was zp ZP_WORD:28) zp ZP_WORD:8 [ mul8u::mb#2 mul8u::mb#1 ]
-Allocated (was zp ZP_WORD:31) zp ZP_WORD:10 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 sin8s_gen::x#2 sin8s_gen::x#1 ]
-Allocated (was zp ZP_WORD:33) zp ZP_WORD:12 [ divr16u::dividend#2 divr16u::dividend#0 sin8s_gen::sintab#2 sin8s_gen::sintab#0 ]
+Allocated (was zp ZP_WORD:31) zp ZP_WORD:10 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 sin8s_gen::x#5 sin8s_gen::x#1 ]
+Allocated (was zp ZP_WORD:33) zp ZP_WORD:12 [ divr16u::dividend#2 divr16u::dividend#0 sin8s_gen::sintab#7 sin8s_gen::sintab#0 ]
 Allocated (was zp ZP_WORD:35) zp ZP_WORD:14 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 div16u::return#2 sin8s_gen::step#0 div16u::return#0 ]
 Allocated (was zp ZP_BYTE:50) zp ZP_BYTE:16 [ sin8s::x1#0 ]
 Allocated (was zp ZP_BYTE:54) zp ZP_BYTE:17 [ sin8s::x3#0 ]
@@ -4365,43 +4396,44 @@ memset: {
     .label str = print_line_cursor
     .label end = str+num
     .label dst = 6
-    // [53] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
-    // [53] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [53] phi from memset to memset::@2 [phi:memset->memset::@2]
+  b2_from_memset:
+    // [53] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    jmp b1
-    // memset::@1
-  b1:
-    // [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [55] return 
-    rts
+    jmp b2
+    // [53] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+  b2_from_b1:
+    // [53] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    jmp b2
     // memset::@2
   b2:
-    // [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [53] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
-    // [53] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
+    // memset::@1
+  b1:
+    // [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2_from_b1
+    lda dst
+    cmp #<end
+    bne b2_from_b1
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [57] return 
+    rts
 }
   // sin8s_gen
 // Generate signed byte sinus table - on the full -$7f - $7f range
@@ -4422,64 +4454,53 @@ sin8s_gen: {
     // sin8s_gen::@3
   b3:
     // [61] (word) sin8s_gen::step#0 ← (word) div16u::return#2
-    // [62] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
-  b1_from_b3:
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [62] phi from sin8s_gen::@3 to sin8s_gen::@2 [phi:sin8s_gen::@3->sin8s_gen::@2]
+  b2_from_b3:
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@2#0] -- pbsz1=pbsc1 
     lda #<main.sintab2
     sta sintab
     lda #>main.sintab2
     sta sintab+1
-    // [62] phi (word) sin8s_gen::x#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#1] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::x#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#1] -- vwuz1=vbuc1 
     lda #<0
     sta x
     lda #>0
     sta x+1
-    // [62] phi (word) sin8s_gen::i#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#2] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::i#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#2] -- vwuz1=vbuc1 
     lda #<0
     sta i
     lda #>0
     sta i+1
-    jmp b1
-  // u[4.12]
-    // sin8s_gen::@1
-  b1:
-    // [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    jmp breturn
-    // sin8s_gen::@return
-  breturn:
-    // [64] return 
-    rts
+    jmp b2
+    // [62] phi from sin8s_gen::@1 to sin8s_gen::@2 [phi:sin8s_gen::@1->sin8s_gen::@2]
+  b2_from_b1:
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@1->sin8s_gen::@2#0] -- register_copy 
+    // [62] phi (word) sin8s_gen::x#5 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@1->sin8s_gen::@2#1] -- register_copy 
+    // [62] phi (word) sin8s_gen::i#5 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@1->sin8s_gen::@2#2] -- register_copy 
+    jmp b2
     // sin8s_gen::@2
   b2:
-    // [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2 -- vwuz1=vwuz2 
+    // [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5 -- vwuz1=vwuz2 
     lda x
     sta sin8s.x
     lda x+1
     sta sin8s.x+1
-    // [66] call sin8s 
+    // [64] call sin8s 
     jsr sin8s
-    // [67] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
+    // [65] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
     jmp b4
     // sin8s_gen::@4
   b4:
-    // [68] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
-    // [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsaa 
+    // [66] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
+    // [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsaa 
     ldy #0
     sta (sintab),y
-    // [70] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#2 -- pbsz1=_inc_pbsz1 
+    // [68] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#7 -- pbsz1=_inc_pbsz1 
     inc sintab
     bne !+
     inc sintab+1
   !:
-    // [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
+    // [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda x
     clc
     adc step
@@ -4487,17 +4508,29 @@ sin8s_gen: {
     lda x+1
     adc step+1
     sta x+1
-    // [72] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#2 -- vwuz1=_inc_vwuz1 
+    // [70] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#5 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-    // [62] phi from sin8s_gen::@4 to sin8s_gen::@1 [phi:sin8s_gen::@4->sin8s_gen::@1]
-  b1_from_b4:
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@4->sin8s_gen::@1#0] -- register_copy 
-    // [62] phi (word) sin8s_gen::x#2 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@4->sin8s_gen::@1#1] -- register_copy 
-    // [62] phi (word) sin8s_gen::i#2 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@4->sin8s_gen::@1#2] -- register_copy 
     jmp b1
+  // u[4.12]
+    // sin8s_gen::@1
+  b1:
+    // [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
+    lda i+1
+    cmp #>main.wavelength
+    bcc b2_from_b1
+    bne !+
+    lda i
+    cmp #<main.wavelength
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // sin8s_gen::@return
+  breturn:
+    // [72] return 
+    rts
 }
   // sin8s
 // Calculate signed byte sinus sin(x)
@@ -5002,12 +5035,14 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b3
+Removing instruction jmp b2
+Removing instruction jmp b4
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp b4
 Removing instruction jmp b5
 Removing instruction jmp b1
 Removing instruction jmp b6
@@ -5059,6 +5094,10 @@ Replacing label b1_from_print_sbyte with b1
 Replacing label b2_from_b4 with b2
 Replacing label b2_from_b1 with b2
 Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Replacing label b3_from_b13 with b3
 Replacing label b4_from_b14 with b4
 Replacing label b3_from_b2 with b3
@@ -5087,7 +5126,9 @@ Removing instruction b2_from_b3:
 Removing instruction b2_from_b4:
 Removing instruction b1_from_print_sbyte:
 Removing instruction print_char_from_b1:
-Removing instruction b1_from_b3:
+Removing instruction b2_from_b1:
+Removing instruction b2_from_b3:
+Removing instruction b2_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b6:
 Removing instruction b3_from_b13:
@@ -5123,14 +5164,14 @@ Removing instruction print_char_from_b1:
 Removing instruction breturn:
 Removing instruction memset_from_print_cls:
 Removing instruction breturn:
-Removing instruction b1_from_memset:
+Removing instruction b2_from_memset:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Removing instruction div16u_from_sin8s_gen:
 Removing instruction b3:
-Removing instruction breturn:
 Removing instruction b4:
-Removing instruction b1_from_b4:
+Removing instruction b1:
+Removing instruction breturn:
 Removing instruction b5:
 Removing instruction b1_from_b5:
 Removing instruction b6:
@@ -5168,6 +5209,8 @@ Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b1_from_sin8s to b5
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b2
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
@@ -5254,8 +5297,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:6 22.0
-(byte*) memset::dst#2 dst zp ZP_WORD:6 14.666666666666666
+(byte*) memset::dst#1 dst zp ZP_WORD:6 16.5
+(byte*) memset::dst#4 dst zp ZP_WORD:6 16.5
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -5418,21 +5461,21 @@ FINAL SYMBOL TABLE
 (label) sin8s_gen::@4
 (label) sin8s_gen::@return
 (word) sin8s_gen::i
-(word) sin8s_gen::i#1 i zp ZP_WORD:2 22.0
-(word) sin8s_gen::i#2 i zp ZP_WORD:2 3.666666666666667
+(word) sin8s_gen::i#1 i zp ZP_WORD:2 16.5
+(word) sin8s_gen::i#5 i zp ZP_WORD:2 2.75
 (signed byte*) sin8s_gen::sintab
-(signed byte*) sin8s_gen::sintab#0 sintab zp ZP_WORD:12 7.333333333333333
-(signed byte*) sin8s_gen::sintab#2 sintab zp ZP_WORD:12 4.714285714285714
+(signed byte*) sin8s_gen::sintab#0 sintab zp ZP_WORD:12 5.5
+(signed byte*) sin8s_gen::sintab#7 sintab zp ZP_WORD:12 5.5
 (word) sin8s_gen::step
 (word) sin8s_gen::step#0 step zp ZP_WORD:14 1.1818181818181819
 (word) sin8s_gen::wavelength
 (word) sin8s_gen::x
-(word) sin8s_gen::x#1 x zp ZP_WORD:10 11.0
-(word) sin8s_gen::x#2 x zp ZP_WORD:10 4.125
+(word) sin8s_gen::x#1 x zp ZP_WORD:10 7.333333333333333
+(word) sin8s_gen::x#5 x zp ZP_WORD:10 4.714285714285714
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
-zp ZP_WORD:2 [ sin8s_gen::i#2 sin8s_gen::i#1 print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
+zp ZP_WORD:2 [ sin8s_gen::i#5 sin8s_gen::i#1 print_char_cursor#29 print_char_cursor#47 print_char_cursor#44 print_char_cursor#45 print_char_cursor#2 print_char_cursor#10 print_char_cursor#1 ]
 zp ZP_BYTE:4 [ sin8s::isUpper#10 print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 main::sb#0 print_byte::b#0 ]
 reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ]
 reg byte a [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ]
@@ -5440,11 +5483,11 @@ reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mul
 reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ]
 zp ZP_BYTE:5 [ mulu8_sel::select#5 ]
 reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-zp ZP_WORD:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
+zp ZP_WORD:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mulu8_sel::$0 mulu8_sel::$1 sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 sin8s::$4 memset::dst#4 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
 zp ZP_WORD:8 [ mul8u::mb#2 mul8u::mb#1 ]
 reg byte a [ mul8u::b#0 ]
-zp ZP_WORD:10 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 sin8s_gen::x#2 sin8s_gen::x#1 ]
-zp ZP_WORD:12 [ divr16u::dividend#2 divr16u::dividend#0 sin8s_gen::sintab#2 sin8s_gen::sintab#0 ]
+zp ZP_WORD:10 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 sin8s_gen::x#5 sin8s_gen::x#1 ]
+zp ZP_WORD:12 [ divr16u::dividend#2 divr16u::dividend#0 sin8s_gen::sintab#7 sin8s_gen::sintab#0 ]
 zp ZP_WORD:14 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 div16u::return#2 sin8s_gen::step#0 div16u::return#0 ]
 reg byte x [ divr16u::i#2 divr16u::i#1 ]
 reg byte a [ print_byte::$0 ]
@@ -5471,7 +5514,7 @@ reg byte a [ divr16u::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 15848
+Score: 15788
 
   // File Comments
   // Upstart
@@ -5748,16 +5791,29 @@ memset: {
     .label str = print_line_cursor
     .label end = str+num
     .label dst = 6
-    // [53] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [53] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [53] phi from memset to memset::@2 [phi:memset->memset::@2]
+    // [53] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
     lda #<str
     sta dst
     lda #>str
     sta dst+1
-    // memset::@1
-  b1:
+    // [53] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
+    // [53] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
+    // memset::@2
+  b2:
+    // *dst = c
+    // [54] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [54] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [55] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    // memset::@1
+    // [56] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda dst+1
     cmp #>end
     bne b2
@@ -5766,24 +5822,8 @@ memset: {
     bne b2
     // memset::@return
     // }
-    // [55] return 
+    // [57] return 
     rts
-    // memset::@2
-  b2:
-    // *dst = c
-    // [56] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    // [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc dst
-    bne !+
-    inc dst+1
-  !:
-    // [53] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [53] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
 }
   // sin8s_gen
 // Generate signed byte sinus table - on the full -$7f - $7f range
@@ -5804,24 +5844,64 @@ sin8s_gen: {
     // sin8s_gen::@3
     // step = div16u(PI2_u4f12, wavelength)
     // [61] (word) sin8s_gen::step#0 ← (word) div16u::return#2
-    // [62] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [62] phi from sin8s_gen::@3 to sin8s_gen::@2 [phi:sin8s_gen::@3->sin8s_gen::@2]
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (const signed byte[$c0]) main::sintab2#0 [phi:sin8s_gen::@3->sin8s_gen::@2#0] -- pbsz1=pbsc1 
     lda #<main.sintab2
     sta sintab
     lda #>main.sintab2
     sta sintab+1
-    // [62] phi (word) sin8s_gen::x#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#1] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::x#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#1] -- vwuz1=vbuc1 
     lda #<0
     sta x
     sta x+1
-    // [62] phi (word) sin8s_gen::i#2 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@1#2] -- vwuz1=vbuc1 
+    // [62] phi (word) sin8s_gen::i#5 = (byte) 0 [phi:sin8s_gen::@3->sin8s_gen::@2#2] -- vwuz1=vbuc1 
     sta i
     sta i+1
+    // [62] phi from sin8s_gen::@1 to sin8s_gen::@2 [phi:sin8s_gen::@1->sin8s_gen::@2]
+    // [62] phi (signed byte*) sin8s_gen::sintab#7 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@1->sin8s_gen::@2#0] -- register_copy 
+    // [62] phi (word) sin8s_gen::x#5 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@1->sin8s_gen::@2#1] -- register_copy 
+    // [62] phi (word) sin8s_gen::i#5 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@1->sin8s_gen::@2#2] -- register_copy 
+    // sin8s_gen::@2
+  b2:
+    // sin8s(x)
+    // [63] (word) sin8s::x#0 ← (word) sin8s_gen::x#5 -- vwuz1=vwuz2 
+    lda x
+    sta sin8s.x
+    lda x+1
+    sta sin8s.x+1
+    // [64] call sin8s 
+    jsr sin8s
+    // [65] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
+    // sin8s_gen::@4
+    // [66] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
+    // *sintab++ = sin8s(x)
+    // [67] *((signed byte*) sin8s_gen::sintab#7) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsaa 
+    ldy #0
+    sta (sintab),y
+    // *sintab++ = sin8s(x);
+    // [68] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#7 -- pbsz1=_inc_pbsz1 
+    inc sintab
+    bne !+
+    inc sintab+1
+  !:
+    // x = x + step
+    // [69] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#5 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
+    lda x
+    clc
+    adc step
+    sta x
+    lda x+1
+    adc step+1
+    sta x+1
+    // for( word i=0; i<wavelength; i++)
+    // [70] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#5 -- vwuz1=_inc_vwuz1 
+    inc i
+    bne !+
+    inc i+1
+  !:
   // u[4.12]
     // sin8s_gen::@1
-  b1:
-    // for( word i=0; i<wavelength; i++)
-    // [63] if((word) sin8s_gen::i#2<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
+    // [71] if((word) sin8s_gen::i#1<(const word) main::wavelength#0) goto sin8s_gen::@2 -- vwuz1_lt_vwuc1_then_la1 
     lda i+1
     cmp #>main.wavelength
     bcc b2
@@ -5832,51 +5912,8 @@ sin8s_gen: {
   !:
     // sin8s_gen::@return
     // }
-    // [64] return 
+    // [72] return 
     rts
-    // sin8s_gen::@2
-  b2:
-    // sin8s(x)
-    // [65] (word) sin8s::x#0 ← (word) sin8s_gen::x#2 -- vwuz1=vwuz2 
-    lda x
-    sta sin8s.x
-    lda x+1
-    sta sin8s.x+1
-    // [66] call sin8s 
-    jsr sin8s
-    // [67] (signed byte) sin8s::return#0 ← (signed byte) sin8s::return#1
-    // sin8s_gen::@4
-    // [68] (signed byte~) sin8s_gen::$2 ← (signed byte) sin8s::return#0
-    // *sintab++ = sin8s(x)
-    // [69] *((signed byte*) sin8s_gen::sintab#2) ← (signed byte~) sin8s_gen::$2 -- _deref_pbsz1=vbsaa 
-    ldy #0
-    sta (sintab),y
-    // *sintab++ = sin8s(x);
-    // [70] (signed byte*) sin8s_gen::sintab#0 ← ++ (signed byte*) sin8s_gen::sintab#2 -- pbsz1=_inc_pbsz1 
-    inc sintab
-    bne !+
-    inc sintab+1
-  !:
-    // x = x + step
-    // [71] (word) sin8s_gen::x#1 ← (word) sin8s_gen::x#2 + (word) sin8s_gen::step#0 -- vwuz1=vwuz1_plus_vwuz2 
-    lda x
-    clc
-    adc step
-    sta x
-    lda x+1
-    adc step+1
-    sta x+1
-    // for( word i=0; i<wavelength; i++)
-    // [72] (word) sin8s_gen::i#1 ← ++ (word) sin8s_gen::i#2 -- vwuz1=_inc_vwuz1 
-    inc i
-    bne !+
-    inc i+1
-  !:
-    // [62] phi from sin8s_gen::@4 to sin8s_gen::@1 [phi:sin8s_gen::@4->sin8s_gen::@1]
-    // [62] phi (signed byte*) sin8s_gen::sintab#2 = (signed byte*) sin8s_gen::sintab#0 [phi:sin8s_gen::@4->sin8s_gen::@1#0] -- register_copy 
-    // [62] phi (word) sin8s_gen::x#2 = (word) sin8s_gen::x#1 [phi:sin8s_gen::@4->sin8s_gen::@1#1] -- register_copy 
-    // [62] phi (word) sin8s_gen::i#2 = (word) sin8s_gen::i#1 [phi:sin8s_gen::@4->sin8s_gen::@1#2] -- register_copy 
-    jmp b1
 }
   // sin8s
 // Calculate signed byte sinus sin(x)

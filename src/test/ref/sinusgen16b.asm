@@ -188,14 +188,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -204,7 +196,13 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
@@ -228,17 +226,6 @@ sin16s_genb: {
     sta x+3
     sta i
     sta i+1
-  // u[4.28]
-  b1:
-    lda i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    rts
   b2:
     lda x+2
     sta sin16sb.x
@@ -275,7 +262,16 @@ sin16s_genb: {
     bne !+
     inc i+1
   !:
-    jmp b1
+  // u[4.28]
+    lda i+1
+    cmp #>main.wavelength
+    bcc b2
+    bne !+
+    lda i
+    cmp #<main.wavelength
+    bcc b2
+  !:
+    rts
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
@@ -612,17 +608,6 @@ sin16s_gen: {
     sta x+3
     sta i
     sta i+1
-  // u[4.28]
-  b1:
-    lda i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    rts
   b2:
     lda x
     sta sin16s.x
@@ -663,7 +648,16 @@ sin16s_gen: {
     bne !+
     inc i+1
   !:
-    jmp b1
+  // u[4.28]
+    lda i+1
+    cmp #>main.wavelength
+    bcc b2
+    bne !+
+    lda i
+    cmp #<main.wavelength
+    bcc b2
+  !:
+    rts
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28

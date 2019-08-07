@@ -116,33 +116,50 @@ Replacing constant pointer function [7] call fn1
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::cls#0
 Successful SSA optimization PassNEliminateUnusedVars
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) main::cols#1 = (byte*) main::cols#2 
+Alias (byte*) fn1::screen#1 = (byte*) fn1::screen#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) main::cols#5 (const byte*) main::cols#0
+Identical Phi Values (byte*) fn1::screen#5 (const byte*) fn1::screen#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [17] if((const byte*) main::cols#0<(word)(number) $d800+(number) $3e8) goto main::@2
+if() condition always true - replacing block destination [19] if((const byte*) fn1::screen#0<(word)(number) $400+(number) $3e8) goto fn1::@2
+Successful SSA optimization Pass2ConstantIfs
 Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
 Constant inlined fn1::screen#0 = (byte*) 1024
 Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@7(between main::@1 and main::@2)
+Added new block during phi lifting fn1::@7(between fn1::@1 and fn1::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@1_1
 Adding NOP phi() at start of fn1
+Adding NOP phi() at start of fn1::@1_1
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to fn1:10 
+Calls in [main] to fn1:8 
 
 Created 2 initial phi equivalence classes
-Coalesced [13] main::cols#4 ← main::cols#1
-Coalesced [20] fn1::screen#4 ← fn1::screen#1
+Coalesced [13] main::cols#6 ← main::cols#1
+Coalesced [21] fn1::screen#6 ← fn1::screen#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1_1
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) fn1::@1_1
+Culled Empty Block (label) fn1::@7
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of fn1
 
 FINAL CONTROL FLOW GRAPH
@@ -157,55 +174,54 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] phi()
+  to:main::@2
+main::@2: scope:[main]  from main main::@1
+  [5] (byte*) main::cols#4 ← phi( main::@1/(byte*) main::cols#1 main/(byte*) 55296 )
+  [6] call fn1 
+  [7] *((byte*) main::cols#4) ← ++ *((byte*) main::cols#4)
+  [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#4
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [5] (byte*) main::cols#2 ← phi( main/(byte*) 55296 main::@2/(byte*) main::cols#1 )
-  [6] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2
+main::@1: scope:[main]  from main::@2
+  [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [7] return 
+  [10] return 
   to:@return
-main::@2: scope:[main]  from main::@1
-  [8] phi()
-  [9] call fn1 
-  [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
-  [11] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
-  to:main::@1
 fn1: scope:[fn1]  from main::@2
-  [12] phi()
+  [11] phi()
+  to:fn1::@2
+fn1::@2: scope:[fn1]  from fn1 fn1::@1
+  [12] (byte*) fn1::screen#4 ← phi( fn1::@1/(byte*) fn1::screen#1 fn1/(byte*) 1024 )
+  [13] *((byte*) fn1::screen#4) ← ++ *((byte*) fn1::screen#4)
+  [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#4
   to:fn1::@1
-fn1::@1: scope:[fn1]  from fn1 fn1::@2
-  [13] (byte*) fn1::screen#2 ← phi( fn1/(byte*) 1024 fn1::@2/(byte*) fn1::screen#1 )
-  [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2
+fn1::@1: scope:[fn1]  from fn1::@2
+  [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@2
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1::@1
-  [15] return 
+  [16] return 
   to:@return
-fn1::@2: scope:[fn1]  from fn1::@1
-  [16] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2)
-  [17] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2
-  to:fn1::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
 (byte*) fn1::screen
-(byte*) fn1::screen#1 202.0
-(byte*) fn1::screen#2 168.33333333333331
+(byte*) fn1::screen#1 151.5
+(byte*) fn1::screen#4 202.0
 (void()) main()
 (void()*) main::cls
 (byte*) main::cols
-(byte*) main::cols#1 22.0
-(byte*) main::cols#2 11.0
+(byte*) main::cols#1 16.5
+(byte*) main::cols#4 14.666666666666666
 
 Initial phi equivalence classes
-[ main::cols#2 main::cols#1 ]
-[ fn1::screen#2 fn1::screen#1 ]
+[ main::cols#4 main::cols#1 ]
+[ fn1::screen#4 fn1::screen#1 ]
 Complete equivalence classes
-[ main::cols#2 main::cols#1 ]
-[ fn1::screen#2 fn1::screen#1 ]
-Allocated zp ZP_WORD:2 [ main::cols#2 main::cols#1 ]
-Allocated zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ]
+[ main::cols#4 main::cols#1 ]
+[ fn1::screen#4 fn1::screen#1 ]
+Allocated zp ZP_WORD:2 [ main::cols#4 main::cols#1 ]
+Allocated zp ZP_WORD:4 [ fn1::screen#4 fn1::screen#1 ]
 
 INITIAL ASM
 Target platform is c64basic
@@ -235,17 +251,40 @@ bend:
   // main
 main: {
     .label cols = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    // [5] phi (byte*) main::cols#4 = (byte*) 55296 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
+    jmp b2
+    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [5] phi (byte*) main::cols#4 = (byte*) main::cols#1 [phi:main::@1->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [6] call fn1 
+    // [11] phi from main::@2 to fn1 [phi:main::@2->fn1]
+  fn1_from_b2:
+    jsr fn1
+    // [7] *((byte*) main::cols#4) ← ++ *((byte*) main::cols#4) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    ldy #0
+    sta (cols),y
+    // [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#4 -- pbuz1=_inc_pbuz1 
+    inc cols
+    bne !+
+    inc cols+1
+  !:
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
+    // [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b2_from_b1
@@ -257,98 +296,74 @@ main: {
     jmp breturn
     // main::@return
   breturn:
-    // [7] return 
+    // [10] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
-  fn1_from_b2:
-    jsr fn1
-    // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
-    ldy #0
-    lda (cols),y
-    clc
-    adc #1
-    ldy #0
-    sta (cols),y
-    // [11] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
-    inc cols
-    bne !+
-    inc cols+1
-  !:
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
 }
   // fn1
 fn1: {
     .label screen = 4
-    // [13] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-  b1_from_fn1:
-    // [13] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+    // [12] phi from fn1 to fn1::@2 [phi:fn1->fn1::@2]
+  b2_from_fn1:
+    // [12] phi (byte*) fn1::screen#4 = (byte*) 1024 [phi:fn1->fn1::@2#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    jmp b1
-    // fn1::@1
-  b1:
-    // [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
-    lda screen+1
-    cmp #>$400+$3e8
-    bcc b2
-    bne !+
-    lda screen
-    cmp #<$400+$3e8
-    bcc b2
-  !:
-    jmp breturn
-    // fn1::@return
-  breturn:
-    // [15] return 
-    rts
+    jmp b2
+    // [12] phi from fn1::@1 to fn1::@2 [phi:fn1::@1->fn1::@2]
+  b2_from_b1:
+    // [12] phi (byte*) fn1::screen#4 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@2#0] -- register_copy 
+    jmp b2
     // fn1::@2
   b2:
-    // [16] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+    // [13] *((byte*) fn1::screen#4) ← ++ *((byte*) fn1::screen#4) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (screen),y
     clc
     adc #1
     ldy #0
     sta (screen),y
-    // [17] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
+    // [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#4 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [13] phi from fn1::@2 to fn1::@1 [phi:fn1::@2->fn1::@1]
-  b1_from_b2:
-    // [13] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@2->fn1::@1#0] -- register_copy 
     jmp b1
+    // fn1::@1
+  b1:
+    // [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
+    lda screen+1
+    cmp #>$400+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda screen
+    cmp #<$400+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // fn1::@return
+  breturn:
+    // [16] return 
+    rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2 [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a 
-Statement [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a reg byte y 
-Statement [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2 [ fn1::screen#2 ] ( main:2::fn1:9 [ main::cols#2 fn1::screen#2 ] ) always clobbers reg byte a 
-Statement [16] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) [ fn1::screen#2 ] ( main:2::fn1:9 [ main::cols#2 fn1::screen#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] : zp ZP_WORD:4 , 
+Statement [7] *((byte*) main::cols#4) ← ++ *((byte*) main::cols#4) [ main::cols#4 ] ( main:2 [ main::cols#4 ] ) always clobbers reg byte a reg byte y 
+Statement [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@2 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
+Statement [13] *((byte*) fn1::screen#4) ← ++ *((byte*) fn1::screen#4) [ fn1::screen#4 ] ( main:2::fn1:6 [ main::cols#4 fn1::screen#4 ] ) always clobbers reg byte a reg byte y 
+Statement [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@2 [ fn1::screen#1 ] ( main:2::fn1:6 [ main::cols#4 fn1::screen#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::cols#4 main::cols#1 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:4 [ fn1::screen#4 fn1::screen#1 ] : zp ZP_WORD:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fn1] 370.33: zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplift Scope [main] 33: zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
+Uplift Scope [fn1] 353.5: zp ZP_WORD:4 [ fn1::screen#4 fn1::screen#1 ] 
+Uplift Scope [main] 31.17: zp ZP_WORD:2 [ main::cols#4 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [fn1] best 7595 combination zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [main] best 7595 combination zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
-Uplifting [] best 7595 combination 
+Uplifting [fn1] best 7895 combination zp ZP_WORD:4 [ fn1::screen#4 fn1::screen#1 ] 
+Uplifting [main] best 7895 combination zp ZP_WORD:2 [ main::cols#4 main::cols#1 ] 
+Uplifting [] best 7895 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -377,17 +392,40 @@ bend:
   // main
 main: {
     .label cols = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@2 [phi:main->main::@2]
+  b2_from_main:
+    // [5] phi (byte*) main::cols#4 = (byte*) 55296 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
+    jmp b2
+    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    // [5] phi (byte*) main::cols#4 = (byte*) main::cols#1 [phi:main::@1->main::@2#0] -- register_copy 
+    jmp b2
+    // main::@2
+  b2:
+    // [6] call fn1 
+    // [11] phi from main::@2 to fn1 [phi:main::@2->fn1]
+  fn1_from_b2:
+    jsr fn1
+    // [7] *((byte*) main::cols#4) ← ++ *((byte*) main::cols#4) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    ldy #0
+    sta (cols),y
+    // [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#4 -- pbuz1=_inc_pbuz1 
+    inc cols
+    bne !+
+    inc cols+1
+  !:
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
+    // [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b2_from_b1
@@ -399,85 +437,62 @@ main: {
     jmp breturn
     // main::@return
   breturn:
-    // [7] return 
+    // [10] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
-  fn1_from_b2:
-    jsr fn1
-    // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
-    ldy #0
-    lda (cols),y
-    clc
-    adc #1
-    ldy #0
-    sta (cols),y
-    // [11] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
-    inc cols
-    bne !+
-    inc cols+1
-  !:
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
 }
   // fn1
 fn1: {
     .label screen = 4
-    // [13] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-  b1_from_fn1:
-    // [13] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+    // [12] phi from fn1 to fn1::@2 [phi:fn1->fn1::@2]
+  b2_from_fn1:
+    // [12] phi (byte*) fn1::screen#4 = (byte*) 1024 [phi:fn1->fn1::@2#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    jmp b1
-    // fn1::@1
-  b1:
-    // [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
-    lda screen+1
-    cmp #>$400+$3e8
-    bcc b2
-    bne !+
-    lda screen
-    cmp #<$400+$3e8
-    bcc b2
-  !:
-    jmp breturn
-    // fn1::@return
-  breturn:
-    // [15] return 
-    rts
+    jmp b2
+    // [12] phi from fn1::@1 to fn1::@2 [phi:fn1::@1->fn1::@2]
+  b2_from_b1:
+    // [12] phi (byte*) fn1::screen#4 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@2#0] -- register_copy 
+    jmp b2
     // fn1::@2
   b2:
-    // [16] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+    // [13] *((byte*) fn1::screen#4) ← ++ *((byte*) fn1::screen#4) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (screen),y
     clc
     adc #1
     ldy #0
     sta (screen),y
-    // [17] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
+    // [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#4 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [13] phi from fn1::@2 to fn1::@1 [phi:fn1::@2->fn1::@1]
-  b1_from_b2:
-    // [13] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@2->fn1::@1#0] -- register_copy 
     jmp b1
+    // fn1::@1
+  b1:
+    // [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
+    lda screen+1
+    cmp #>$400+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda screen
+    cmp #<$400+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // fn1::@return
+  breturn:
+    // [16] return 
+    rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b2
@@ -489,24 +504,30 @@ Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b2_from_b1 with b2
 Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction fn1_from_b2:
+Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b1_from_main:
+Removing instruction b2_from_main:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_fn1:
+Removing instruction b2_from_fn1:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b2
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -519,23 +540,23 @@ FINAL SYMBOL TABLE
 (label) fn1::@2
 (label) fn1::@return
 (byte*) fn1::screen
-(byte*) fn1::screen#1 screen zp ZP_WORD:4 202.0
-(byte*) fn1::screen#2 screen zp ZP_WORD:4 168.33333333333331
+(byte*) fn1::screen#1 screen zp ZP_WORD:4 151.5
+(byte*) fn1::screen#4 screen zp ZP_WORD:4 202.0
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (void()*) main::cls
 (byte*) main::cols
-(byte*) main::cols#1 cols zp ZP_WORD:2 22.0
-(byte*) main::cols#2 cols zp ZP_WORD:2 11.0
+(byte*) main::cols#1 cols zp ZP_WORD:2 16.5
+(byte*) main::cols#4 cols zp ZP_WORD:2 14.666666666666666
 
-zp ZP_WORD:2 [ main::cols#2 main::cols#1 ]
-zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ]
+zp ZP_WORD:2 [ main::cols#4 main::cols#1 ]
+zp ZP_WORD:4 [ fn1::screen#4 fn1::screen#1 ]
 
 
 FINAL ASSEMBLER
-Score: 6673
+Score: 6343
 
   // File Comments
 // Tests calling into a function pointer with local variables
@@ -554,16 +575,35 @@ Score: 6673
   // main
 main: {
     .label cols = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi from main to main::@2 [phi:main->main::@2]
+    // [5] phi (byte*) main::cols#4 = (byte*) 55296 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
-    // main::@1
-  b1:
+    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [5] phi (byte*) main::cols#4 = (byte*) main::cols#1 [phi:main::@1->main::@2#0] -- register_copy 
+    // main::@2
+  b2:
+    // (*cls)()
+    // [6] call fn1 
+    // [11] phi from main::@2 to fn1 [phi:main::@2->fn1]
+    jsr fn1
+    // (*cols)++;
+    // [7] *((byte*) main::cols#4) ← ++ *((byte*) main::cols#4) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    sta (cols),y
     // for(byte* cols = $d800; cols<$d800+1000;cols++)
-    // [6] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
+    // [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#4 -- pbuz1=_inc_pbuz1 
+    inc cols
+    bne !+
+    inc cols+1
+  !:
+    // main::@1
+    // [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b2
@@ -574,45 +614,37 @@ main: {
   !:
     // main::@return
     // }
-    // [7] return 
+    // [10] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // main::@2
-  b2:
-    // (*cls)()
-    // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
-    jsr fn1
-    // (*cols)++;
-    // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
-    ldy #0
-    lda (cols),y
-    clc
-    adc #1
-    sta (cols),y
-    // for(byte* cols = $d800; cols<$d800+1000;cols++)
-    // [11] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
-    inc cols
-    bne !+
-    inc cols+1
-  !:
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
 }
   // fn1
 fn1: {
     .label screen = 4
-    // [13] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-    // [13] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+    // [12] phi from fn1 to fn1::@2 [phi:fn1->fn1::@2]
+    // [12] phi (byte*) fn1::screen#4 = (byte*) 1024 [phi:fn1->fn1::@2#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    // fn1::@1
-  b1:
+    // [12] phi from fn1::@1 to fn1::@2 [phi:fn1::@1->fn1::@2]
+    // [12] phi (byte*) fn1::screen#4 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@2#0] -- register_copy 
+    // fn1::@2
+  b2:
+    // (*screen)++;
+    // [13] *((byte*) fn1::screen#4) ← ++ *((byte*) fn1::screen#4) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (screen),y
+    clc
+    adc #1
+    sta (screen),y
     // for(byte* screen=$400;screen<$400+1000;screen++)
-    // [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
+    // [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#4 -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    // fn1::@1
+    // [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@2 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b2
@@ -623,26 +655,8 @@ fn1: {
   !:
     // fn1::@return
     // }
-    // [15] return 
+    // [16] return 
     rts
-    // fn1::@2
-  b2:
-    // (*screen)++;
-    // [16] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
-    ldy #0
-    lda (screen),y
-    clc
-    adc #1
-    sta (screen),y
-    // for(byte* screen=$400;screen<$400+1000;screen++)
-    // [17] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    // [13] phi from fn1::@2 to fn1::@1 [phi:fn1::@2->fn1::@1]
-    // [13] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@2->fn1::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
 

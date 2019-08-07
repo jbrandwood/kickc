@@ -187,7 +187,14 @@ init: {
     sta sc
     lda #>SCREEN
     sta sc+1
-  b1:
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc sc
+    bne !+
+    inc sc+1
+  !:
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -202,13 +209,4 @@ init: {
     cpx #$40
     bne b3
     rts
-  b2:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    jmp b1
 }

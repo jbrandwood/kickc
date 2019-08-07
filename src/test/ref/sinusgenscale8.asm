@@ -95,17 +95,6 @@ sin8u_table: {
     sta x+1
     sta i
     sta i+1
-  // u[4.12]
-  b1:
-    lda i+1
-    cmp #>main.tabsize
-    bcc b2
-    bne !+
-    lda i
-    cmp #<main.tabsize
-    bcc b2
-  !:
-    rts
   b2:
     lda x
     sta sin8s.x
@@ -176,7 +165,20 @@ sin8u_table: {
     bne !+
     inc i+1
   !:
-    jmp b1
+  // u[4.12]
+    lda i+1
+    cmp #>main.tabsize
+    bcs !b2+
+    jmp b2
+  !b2:
+    bne !+
+    lda i
+    cmp #<main.tabsize
+    bcs !b2+
+    jmp b2
+  !b2:
+  !:
+    rts
     str: .text "step:@"
     str1: .text " min:@"
     str2: .text " max:@"
@@ -593,14 +595,6 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-  b1:
-    lda dst+1
-    cmp #>end
-    bne b2
-    lda dst
-    cmp #<end
-    bne b2
-    rts
   b2:
     lda #c
     ldy #0
@@ -609,6 +603,12 @@ memset: {
     bne !+
     inc dst+1
   !:
-    jmp b1
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
 }
   print_hextab: .text "0123456789abcdef"

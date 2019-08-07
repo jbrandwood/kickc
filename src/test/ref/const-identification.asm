@@ -21,14 +21,12 @@ line: {
     .const x0 = 0
     .const x1 = $a
     ldy #x0
-  b1:
-    cpy #x1+1
-    bcc b2
-    rts
   b2:
     jsr plot
     iny
-    jmp b1
+    cpy #x1+1
+    bcc b2
+    rts
 }
 // plot(byte register(Y) x)
 plot: {

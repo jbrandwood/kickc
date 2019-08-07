@@ -27,13 +27,6 @@ main: {
     lda #0
     sta a
     sta i
-  b1:
-    lda #8
-    cmp i
-    bne b2
-  b3:
-    inc SCREEN+$3e7
-    jmp b3
   b2:
     ldy a
     lda COSTAB,y
@@ -73,7 +66,12 @@ main: {
     axs #-[$20]
     stx a
     inc i
-    jmp b1
+    lda #8
+    cmp i
+    bne b2
+  b3:
+    inc SCREEN+$3e7
+    jmp b3
 }
 // Draw a line on the bitmap using bresenhams algorithm
 // bitmap_line(word zeropage($b) x1, word zeropage(9) y1, word zeropage($f) x2, word zeropage($11) y2)

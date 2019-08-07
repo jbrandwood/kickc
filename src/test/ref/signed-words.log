@@ -688,8 +688,15 @@ Constant (const byte*) init::$2 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (byte)init::$0 in [12] (byte~) init::$1 ← (byte)(const byte*) init::$0
 Successful SSA optimization Pass2ConstantValues
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) init::sc#1 = (byte*) init::sc#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) init::sc#5 (const byte*) init::sc#0
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) init::$1 = (byte)init::$0
 Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [45] if((const byte*) init::sc#0!=(const byte*) init::$2) goto init::@2
+Successful SSA optimization Pass2ConstantIfs
 Inlining constant with var siblings (const byte) init::i#0
 Inlining constant with var siblings (const byte*) init::sc#0
 Inlining constant with var siblings (const signed word) xpos#15
@@ -713,7 +720,8 @@ Constant inlined init::$1 = (byte)(const byte*) SPRITE#0/(byte) $40
 Constant inlined init::$0 = (const byte*) SPRITE#0/(byte) $40
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
-Added new block during phi lifting init::@9(between init::@7 and init::@7)
+Added new block during phi lifting init::@9(between init::@1 and init::@2)
+Added new block during phi lifting init::@10(between init::@7 and init::@7)
 Added new block during phi lifting anim::@5(between anim and anim::@1)
 Added new block during phi lifting anim::@6(between anim::@2 and anim::@4)
 Adding NOP phi() at start of @begin
@@ -726,6 +734,7 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of anim::@3
+Adding NOP phi() at start of init::@1_1
 Adding NOP phi() at start of init::@3
 CALL GRAPH
 Calls in [] to main:4 
@@ -751,8 +760,8 @@ Coalesced [50] xpos#22 ← xpos#12
 Coalesced (already) [51] xvel#22 ← xvel#12
 Coalesced [52] ypos#22 ← ypos#13
 Coalesced (already) [53] yvel_init#22 ← yvel_init#13
-Coalesced [69] init::i#3 ← init::i#1
-Coalesced [72] init::sc#4 ← init::sc#1
+Coalesced [72] init::i#3 ← init::i#1
+Coalesced [73] init::sc#6 ← init::sc#1
 Coalesced down to 7 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @6
@@ -762,7 +771,9 @@ Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) anim::@3
 Culled Empty Block (label) anim::@5
+Culled Empty Block (label) init::@1_1
 Culled Empty Block (label) init::@3
+Culled Empty Block (label) init::@10
 Culled Empty Block (label) init::@9
 Renumbering block @7 to @1
 Renumbering block main::@2 to main::@1
@@ -849,24 +860,24 @@ init: scope:[init]  from main
   [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64
   [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
   [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40
+  to:init::@2
+init::@2: scope:[init]  from init init::@1
+  [39] (byte*) init::sc#4 ← phi( init::@1/(byte*) init::sc#1 init/(const byte*) SCREEN#0 )
+  [40] *((byte*) init::sc#4) ← (byte) ' '
+  [41] (byte*) init::sc#1 ← ++ (byte*) init::sc#4
   to:init::@1
-init::@1: scope:[init]  from init init::@2
-  [39] (byte*) init::sc#2 ← phi( init/(const byte*) SCREEN#0 init::@2/(byte*) init::sc#1 )
-  [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2
+init::@1: scope:[init]  from init::@2
+  [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2
   to:init::@3
 init::@3: scope:[init]  from init::@1 init::@3
-  [41] (byte) init::i#2 ← phi( init::@1/(byte) 0 init::@3/(byte) init::i#1 )
-  [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff
-  [43] (byte) init::i#1 ← ++ (byte) init::i#2
-  [44] if((byte) init::i#1!=(byte) $40) goto init::@3
+  [43] (byte) init::i#2 ← phi( init::@1/(byte) 0 init::@3/(byte) init::i#1 )
+  [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff
+  [45] (byte) init::i#1 ← ++ (byte) init::i#2
+  [46] if((byte) init::i#1!=(byte) $40) goto init::@3
   to:init::@return
 init::@return: scope:[init]  from init::@3
-  [45] return 
+  [47] return 
   to:@return
-init::@2: scope:[init]  from init::@1
-  [46] *((byte*) init::sc#2) ← (byte) ' '
-  [47] (byte*) init::sc#1 ← ++ (byte*) init::sc#2
-  to:init::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -898,8 +909,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) init::i#1 16.5
 (byte) init::i#2 16.5
 (byte*) init::sc
-(byte*) init::sc#1 22.0
-(byte*) init::sc#2 14.666666666666666
+(byte*) init::sc#1 16.5
+(byte*) init::sc#4 16.5
 (void()) main()
 (signed word) xpos
 (signed word) xpos#10 1.0714285714285714
@@ -930,7 +941,7 @@ Initial phi equivalence classes
 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
 [ xpos#9 xpos#12 xpos#10 ]
 [ ypos#10 ypos#13 ypos#11 ]
-[ init::sc#2 init::sc#1 ]
+[ init::sc#4 init::sc#1 ]
 [ init::i#2 init::i#1 ]
 Added variable anim::$5 to zero page equivalence class [ anim::$5 ]
 Added variable anim::sprite_x#0 to zero page equivalence class [ anim::sprite_x#0 ]
@@ -945,7 +956,7 @@ Complete equivalence classes
 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
 [ xpos#9 xpos#12 xpos#10 ]
 [ ypos#10 ypos#13 ypos#11 ]
-[ init::sc#2 init::sc#1 ]
+[ init::sc#4 init::sc#1 ]
 [ init::i#2 init::i#1 ]
 [ anim::$5 ]
 [ anim::sprite_x#0 ]
@@ -959,7 +970,7 @@ Allocated zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
 Allocated zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
 Allocated zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ]
 Allocated zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ]
-Allocated zp ZP_WORD:12 [ init::sc#2 init::sc#1 ]
+Allocated zp ZP_WORD:12 [ init::sc#4 init::sc#1 ]
 Allocated zp ZP_BYTE:14 [ init::i#2 init::i#1 ]
 Allocated zp ZP_WORD:15 [ anim::$5 ]
 Allocated zp ZP_WORD:17 [ anim::sprite_x#0 ]
@@ -1285,65 +1296,66 @@ init: {
     // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
-    // [39] phi from init to init::@1 [phi:init->init::@1]
-  b1_from_init:
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi from init to init::@2 [phi:init->init::@2]
+  b2_from_init:
+    // [39] phi (byte*) init::sc#4 = (const byte*) SCREEN#0 [phi:init->init::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
+    jmp b2
+    // [39] phi from init::@1 to init::@2 [phi:init::@1->init::@2]
+  b2_from_b1:
+    // [39] phi (byte*) init::sc#4 = (byte*) init::sc#1 [phi:init::@1->init::@2#0] -- register_copy 
+    jmp b2
+    // init::@2
+  b2:
+    // [40] *((byte*) init::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // [41] (byte*) init::sc#1 ← ++ (byte*) init::sc#4 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
     jmp b1
     // init::@1
   b1:
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne b2_from_b1
     lda sc
     cmp #<SCREEN+$3e8
-    bne b2
-    // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
+    bne b2_from_b1
+    // [43] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
   b3_from_b1:
-    // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuz1=vbuc1 
+    // [43] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b3
-    // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [43] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
   b3_from_b3:
-    // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // [43] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
     jmp b3
     // init::@3
   b3:
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$ff
     ldy i
     sta SPRITE,y
-    // [43] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuz1=_inc_vbuz1 
+    // [45] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-    // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [46] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp i
     bne b3_from_b3
     jmp breturn
     // init::@return
   breturn:
-    // [45] return 
+    // [47] return 
     rts
-    // init::@2
-  b2:
-    // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [47] (byte*) init::sc#1 ← ++ (byte*) init::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
-    // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
 
@@ -1371,10 +1383,10 @@ Statement [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 [ ] ( main:2::init
 Statement [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
-Statement [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
+Statement [40] *((byte*) init::sc#4) ← (byte) ' ' [ init::sc#4 ] ( main:2::init:5 [ init::sc#4 ] ) always clobbers reg byte a reg byte y 
+Statement [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#1 ] ( main:2::init:5 [ init::sc#1 ] ) always clobbers reg byte a 
+Statement [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ init::i#2 init::i#1 ]
-Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2::anim:9 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [11] (signed word) xvel#14 ← - (signed word) xvel#12 [ yvel_init#13 xvel#14 ] ( main:2::anim:9 [ yvel_init#13 xvel#14 ] ) always clobbers reg byte a 
@@ -1398,15 +1410,15 @@ Statement [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 [ ] ( main:2::init
 Statement [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
-Statement [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
-Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [40] *((byte*) init::sc#4) ← (byte) ' ' [ init::sc#4 ] ( main:2::init:5 [ init::sc#4 ] ) always clobbers reg byte a reg byte y 
+Statement [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#1 ] ( main:2::init:5 [ init::sc#1 ] ) always clobbers reg byte a 
+Statement [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] : zp ZP_WORD:6 , 
 Potential registers zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] : zp ZP_WORD:8 , 
 Potential registers zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] : zp ZP_WORD:12 , 
+Potential registers zp ZP_WORD:12 [ init::sc#4 init::sc#1 ] : zp ZP_WORD:12 , 
 Potential registers zp ZP_BYTE:14 [ init::i#2 init::i#1 ] : zp ZP_BYTE:14 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:15 [ anim::$5 ] : zp ZP_WORD:15 , 
 Potential registers zp ZP_WORD:17 [ anim::sprite_x#0 ] : zp ZP_WORD:17 , 
@@ -1418,22 +1430,22 @@ Potential registers zp ZP_BYTE:25 [ anim::$11 ] : zp ZP_BYTE:25 , reg byte a , r
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 64.75: zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] 56.82: zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] 56.74: zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] 55.98: zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] 49.34: zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
-Uplift Scope [init] 36.67: zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] 33: zp ZP_BYTE:14 [ init::i#2 init::i#1 ] 
+Uplift Scope [init] 33: zp ZP_WORD:12 [ init::sc#4 init::sc#1 ] 33: zp ZP_BYTE:14 [ init::i#2 init::i#1 ] 
 Uplift Scope [anim] 4: zp ZP_WORD:15 [ anim::$5 ] 4: zp ZP_WORD:19 [ anim::$7 ] 4: zp ZP_BYTE:23 [ anim::$9 ] 4: zp ZP_BYTE:24 [ anim::$10 ] 4: zp ZP_BYTE:25 [ anim::$11 ] 0.67: zp ZP_WORD:21 [ anim::sprite_y#0 ] 0.57: zp ZP_WORD:17 [ anim::sprite_x#0 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 7904 combination zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
-Uplifting [init] best 7784 combination zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] reg byte x [ init::i#2 init::i#1 ] 
-Uplifting [anim] best 7766 combination zp ZP_WORD:15 [ anim::$5 ] zp ZP_WORD:19 [ anim::$7 ] reg byte a [ anim::$9 ] reg byte a [ anim::$10 ] reg byte a [ anim::$11 ] zp ZP_WORD:21 [ anim::sprite_y#0 ] zp ZP_WORD:17 [ anim::sprite_x#0 ] 
-Uplifting [main] best 7766 combination 
+Uplifting [] best 7934 combination zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
+Uplifting [init] best 7814 combination zp ZP_WORD:12 [ init::sc#4 init::sc#1 ] reg byte x [ init::i#2 init::i#1 ] 
+Uplifting [anim] best 7796 combination zp ZP_WORD:15 [ anim::$5 ] zp ZP_WORD:19 [ anim::$7 ] reg byte a [ anim::$9 ] reg byte a [ anim::$10 ] reg byte a [ anim::$11 ] zp ZP_WORD:21 [ anim::sprite_y#0 ] zp ZP_WORD:17 [ anim::sprite_x#0 ] 
+Uplifting [main] best 7796 combination 
 Coalescing zero page register [ zp ZP_WORD:15 [ anim::$5 ] ] with [ zp ZP_WORD:17 [ anim::sprite_x#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:19 [ anim::$7 ] ] with [ zp ZP_WORD:21 [ anim::sprite_y#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] ] with [ zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] ]
+Coalescing zero page register [ zp ZP_WORD:12 [ init::sc#4 init::sc#1 ] ] with [ zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] ]
 Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
 Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ xpos#9 xpos#12 xpos#10 ]
 Allocated (was zp ZP_WORD:10) zp ZP_WORD:8 [ ypos#10 ypos#13 ypos#11 ]
-Allocated (was zp ZP_WORD:12) zp ZP_WORD:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
+Allocated (was zp ZP_WORD:12) zp ZP_WORD:10 [ init::sc#4 init::sc#1 xvel#12 xvel#10 xvel#14 ]
 Allocated (was zp ZP_WORD:15) zp ZP_WORD:12 [ anim::$5 anim::sprite_x#0 ]
 Allocated (was zp ZP_WORD:19) zp ZP_WORD:14 [ anim::$7 anim::sprite_y#0 ]
 
@@ -1742,62 +1754,63 @@ init: {
     // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
-    // [39] phi from init to init::@1 [phi:init->init::@1]
-  b1_from_init:
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi from init to init::@2 [phi:init->init::@2]
+  b2_from_init:
+    // [39] phi (byte*) init::sc#4 = (const byte*) SCREEN#0 [phi:init->init::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
+    jmp b2
+    // [39] phi from init::@1 to init::@2 [phi:init::@1->init::@2]
+  b2_from_b1:
+    // [39] phi (byte*) init::sc#4 = (byte*) init::sc#1 [phi:init::@1->init::@2#0] -- register_copy 
+    jmp b2
+    // init::@2
+  b2:
+    // [40] *((byte*) init::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // [41] (byte*) init::sc#1 ← ++ (byte*) init::sc#4 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
     jmp b1
     // init::@1
   b1:
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne b2_from_b1
     lda sc
     cmp #<SCREEN+$3e8
-    bne b2
-    // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
+    bne b2_from_b1
+    // [43] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
   b3_from_b1:
-    // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
+    // [43] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-    // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [43] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
   b3_from_b3:
-    // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // [43] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
     jmp b3
     // init::@3
   b3:
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
     sta SPRITE,x
-    // [43] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
+    // [45] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [46] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$40
     bne b3_from_b3
     jmp breturn
     // init::@return
   breturn:
-    // [45] return 
+    // [47] return 
     rts
-    // init::@2
-  b2:
-    // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // [47] (byte*) init::sc#1 ← ++ (byte*) init::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
-    // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
 
@@ -1811,6 +1824,7 @@ Removing instruction jmp b4
 Removing instruction jmp b3
 Removing instruction jmp b1
 Removing instruction jmp breturn
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp b3
 Removing instruction jmp breturn
@@ -1828,6 +1842,8 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
 Replacing label b1_from_anim with b1
 Replacing label b4_from_b2 with b3
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Replacing label b3_from_b3 with b3
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
@@ -1840,6 +1856,7 @@ Removing instruction b4_from_b2:
 Removing instruction b4:
 Removing instruction b3_from_b4:
 Removing instruction b1_from_anim:
+Removing instruction b2_from_b1:
 Removing instruction b3_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -1849,10 +1866,10 @@ Removing instruction b2:
 Removing instruction b3_from_b2:
 Removing instruction b1_from_b3:
 Removing instruction breturn:
-Removing instruction b1_from_init:
+Removing instruction b2_from_init:
+Removing instruction b1:
 Removing instruction b3_from_b1:
 Removing instruction breturn:
-Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -1860,6 +1877,7 @@ Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Removing instruction jmp b3
 Removing instruction jmp b1
+Removing instruction jmp b2
 Removing instruction jmp b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
@@ -1919,8 +1937,8 @@ FINAL SYMBOL TABLE
 (byte) init::i#1 reg byte x 16.5
 (byte) init::i#2 reg byte x 16.5
 (byte*) init::sc
-(byte*) init::sc#1 sc zp ZP_WORD:10 22.0
-(byte*) init::sc#2 sc zp ZP_WORD:10 14.666666666666666
+(byte*) init::sc#1 sc zp ZP_WORD:10 16.5
+(byte*) init::sc#4 sc zp ZP_WORD:10 16.5
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -1951,7 +1969,7 @@ zp ZP_WORD:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
 zp ZP_WORD:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
 zp ZP_WORD:6 [ xpos#9 xpos#12 xpos#10 ]
 zp ZP_WORD:8 [ ypos#10 ypos#13 ypos#11 ]
-zp ZP_WORD:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
+zp ZP_WORD:10 [ init::sc#4 init::sc#1 xvel#12 xvel#10 xvel#14 ]
 reg byte x [ init::i#2 init::i#1 ]
 zp ZP_WORD:12 [ anim::$5 anim::sprite_x#0 ]
 zp ZP_WORD:14 [ anim::$7 anim::sprite_y#0 ]
@@ -1961,7 +1979,7 @@ reg byte a [ anim::$11 ]
 
 
 FINAL ASSEMBLER
-Score: 6373
+Score: 6343
 
   // File Comments
   // Upstart
@@ -2255,59 +2273,56 @@ init: {
     // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
-    // [39] phi from init to init::@1 [phi:init->init::@1]
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi from init to init::@2 [phi:init->init::@2]
+    // [39] phi (byte*) init::sc#4 = (const byte*) SCREEN#0 [phi:init->init::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-    // init::@1
-  b1:
+    // [39] phi from init::@1 to init::@2 [phi:init::@1->init::@2]
+    // [39] phi (byte*) init::sc#4 = (byte*) init::sc#1 [phi:init::@1->init::@2#0] -- register_copy 
+    // init::@2
+  b2:
+    // *sc = ' '
+    // [40] *((byte*) init::sc#4) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [41] (byte*) init::sc#1 ← ++ (byte*) init::sc#4 -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    // init::@1
+    // [42] if((byte*) init::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b2
     lda sc
     cmp #<SCREEN+$3e8
     bne b2
-    // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
-    // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
+    // [43] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
+    // [43] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
-    // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
-    // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
+    // [43] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
+    // [43] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
     // init::@3
   b3:
     // SPRITE[i] = $ff
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [44] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
     sta SPRITE,x
     // for(byte i : 0..63)
-    // [43] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
+    // [45] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [46] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$40
     bne b3
     // init::@return
     // }
-    // [45] return 
+    // [47] return 
     rts
-    // init::@2
-  b2:
-    // *sc = ' '
-    // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
-    // [47] (byte*) init::sc#1 ← ++ (byte*) init::sc#2 -- pbuz1=_inc_pbuz1 
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-    // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
 }
   // File Data
 

@@ -32,7 +32,7 @@ public class Compiler {
    private boolean enableZeroPageCoalasce = false;
 
    /** Disable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
-   private boolean disableLoopHeadConstant = true;
+   private boolean disableLoopHeadConstant = false;
 
    public Compiler() {
       this.program = new Program();
@@ -47,7 +47,7 @@ public class Compiler {
    }
 
    void disableLoopHeadConstant() {
-      this.disableLoopHeadConstant = false;
+      this.disableLoopHeadConstant = true;
    }
 
    void setTargetPlatform(TargetPlatform targetPlatform) {

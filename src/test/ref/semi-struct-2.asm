@@ -198,9 +198,12 @@ main: {
     beq b3
     jsr print_cls
     rts
-    str: .text "** entry 1 **@"
-    str1: .text "- press space -@"
-    str2: .text "** entry 2 **@"
+    str: .text "** entry 1 **"
+    .byte 0
+    str1: .text "- press space -"
+    .byte 0
+    str2: .text "** entry 2 **"
+    .byte 0
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -560,19 +563,32 @@ printEntry: {
     sta print_line_cursor_173+1
     jsr print_ln
     rts
-    str: .text "bufdisk   @"
-    str1: .text "bufedit   @"
-    str2: .text "tslen     @"
-    str3: .text "tsorder   @"
-    str4: .text "tlastlink   @"
-    str5: .text "slastlink   @"
-    str6: .text "bflag       @"
-    str7: .text "berror      @"
-    str8: .text "ucross    @"
-    str9: .text "baddrlo     @"
-    str10: .text "baddrhi     @"
-    str11: .text "thi         @"
-    str12: .text "tlo         @"
+    str: .text "bufdisk   "
+    .byte 0
+    str1: .text "bufedit   "
+    .byte 0
+    str2: .text "tslen     "
+    .byte 0
+    str3: .text "tsorder   "
+    .byte 0
+    str4: .text "tlastlink   "
+    .byte 0
+    str5: .text "slastlink   "
+    .byte 0
+    str6: .text "bflag       "
+    .byte 0
+    str7: .text "berror      "
+    .byte 0
+    str8: .text "ucross    "
+    .byte 0
+    str9: .text "baddrlo     "
+    .byte 0
+    str10: .text "baddrhi     "
+    .byte 0
+    str11: .text "thi         "
+    .byte 0
+    str12: .text "tlo         "
+    .byte 0
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)

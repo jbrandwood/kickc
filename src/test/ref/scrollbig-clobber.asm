@@ -38,4 +38,5 @@ next_char: {
   !:
     rts
 }
-  TEXT: .text "cml @"
+  TEXT: .text "cml "
+  .byte 0

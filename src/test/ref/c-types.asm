@@ -58,7 +58,8 @@ testLong: {
     jsr print_sdword
     jsr print_ln
     rts
-    str: .text "long: @"
+    str: .text "long: "
+    .byte 0
 }
 // Print a newline
 print_ln: {
@@ -227,7 +228,8 @@ testInt: {
     jsr print_sword
     jsr print_ln
     rts
-    str: .text "int: @"
+    str: .text "int: "
+    .byte 0
 }
 // Print a signed word as HEX
 // print_sword(signed word zeropage(8) w)
@@ -286,7 +288,8 @@ testShort: {
     jsr print_sword
     jsr print_ln
     rts
-    str: .text "short: @"
+    str: .text "short: "
+    .byte 0
 }
 testChar: {
     .const u = $e
@@ -316,7 +319,8 @@ testChar: {
     sta print_line_cursor+1
     jsr print_ln
     rts
-    str: .text "char: @"
+    str: .text "char: "
+    .byte 0
 }
 // Print a signed byte as HEX
 print_sbyte: {

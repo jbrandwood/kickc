@@ -537,5 +537,7 @@ draw_window: {
     inx
     jmp b1
 }
-  text: .text "this is a small test with word wrap, if a word is too long it moves it to the next line. isn't that supercalifragilisticexpialidocious? i think it's cool!@"
-  text2: .text "textbox by scan of desire@"
+  text: .text "this is a small test with word wrap, if a word is too long it moves it to the next line. isn't that supercalifragilisticexpialidocious? i think it's cool!"
+  .byte 0
+  text2: .text "textbox by scan of desire"
+  .byte 0

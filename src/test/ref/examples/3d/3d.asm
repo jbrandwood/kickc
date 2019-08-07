@@ -910,18 +910,30 @@ debug_print_init: {
     jmp b1
   !b1:
     rts
-    str: .text "sx@"
-    str1: .text "sy@"
-    str2: .text "sz@"
-    str3: .text "x@"
-    str4: .text "y@"
-    str5: .text "z@"
-    str6: .text "xr@"
-    str7: .text "yr@"
-    str8: .text "zr@"
-    str9: .text "pp@"
-    str10: .text "xp@"
-    str11: .text "yp@"
+    str: .text "sx"
+    .byte 0
+    str1: .text "sy"
+    .byte 0
+    str2: .text "sz"
+    .byte 0
+    str3: .text "x"
+    .byte 0
+    str4: .text "y"
+    .byte 0
+    str5: .text "z"
+    .byte 0
+    str6: .text "xr"
+    .byte 0
+    str7: .text "yr"
+    .byte 0
+    str8: .text "zr"
+    .byte 0
+    str9: .text "pp"
+    .byte 0
+    str10: .text "xp"
+    .byte 0
+    str11: .text "yp"
+    .byte 0
 }
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage($d) str, byte* zeropage($f) at)

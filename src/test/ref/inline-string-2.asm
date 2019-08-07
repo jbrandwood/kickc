@@ -32,8 +32,10 @@ print_msg: {
   b2:
     jsr print
     rts
-    msg_1: .text "Hello @"
-    msg_2: .text "World!@"
+    msg_1: .text "Hello "
+    .byte 0
+    msg_2: .text "World!"
+    .byte 0
 }
 // print(byte* zeropage(4) msg)
 print: {

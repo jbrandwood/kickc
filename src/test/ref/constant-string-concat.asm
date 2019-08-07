@@ -12,5 +12,6 @@ main: {
     cpx #8
     bne b1
     rts
-    s: .text "camelot@"
+    s: .text "camelot"
+    .byte 0
 }

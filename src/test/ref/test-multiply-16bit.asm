@@ -122,7 +122,8 @@ mul16s_compare: {
     jsr print_str
     jsr print_ln
     rts
-    str1: .text "signed word multiply results match!@"
+    str1: .text "signed word multiply results match!"
+    .byte 0
 }
 // Print a newline
 print_ln: {
@@ -227,7 +228,8 @@ mul16s_error: {
     jsr print_sdword
     jsr print_ln
     rts
-    str: .text "signed word multiply mismatch @"
+    str: .text "signed word multiply mismatch "
+    .byte 0
 }
 // Print a signed dword as HEX
 // print_sdword(signed dword zeropage(2) dw)
@@ -865,7 +867,8 @@ mul16u_compare: {
     jsr print_str
     jsr print_ln
     rts
-    str1: .text "word multiply results match!@"
+    str1: .text "word multiply results match!"
+    .byte 0
 }
 // mul16u_error(word zeropage($e) a, word zeropage($1e) b, dword zeropage(2) ms, dword zeropage(6) mn, dword zeropage($a) mf)
 mul16u_error: {
@@ -930,7 +933,8 @@ mul16u_error: {
     sta print_line_cursor+1
     jsr print_ln
     rts
-    str: .text "multiply mismatch @"
+    str: .text "multiply mismatch "
+    .byte 0
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
@@ -1145,8 +1149,13 @@ memset: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  str: .text ".@"
-  str1: .text "*@"
-  str2: .text " slow:@"
-  str3: .text " / normal:@"
-  str4: .text " / fast:@"
+  str: .text "."
+  .byte 0
+  str1: .text "*"
+  .byte 0
+  str2: .text " slow:"
+  .byte 0
+  str3: .text " / normal:"
+  .byte 0
+  str4: .text " / fast:"
+  .byte 0

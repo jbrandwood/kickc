@@ -416,10 +416,11 @@ public class Pass4CodeGeneration {
                String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                asm.addDataAlignment(alignment);
             }
-            if(constantVar.getValue() instanceof ConstantArrayList) {
+            ConstantValue constantValue = constantVar.getValue();
+            if(constantValue instanceof ConstantArrayList) {
                SymbolTypeArray constTypeArray = (SymbolTypeArray) constantVar.getType();
                SymbolType elementType = constTypeArray.getElementType();
-               ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
+               ConstantArrayList constantArrayList = (ConstantArrayList) constantValue;
                if(elementType instanceof SymbolTypeStruct) {
                   // Constant array of structs - output each struct as a separate chunk
                   asm.addLabel(asmName).setDontOptimize(true);
@@ -441,8 +442,8 @@ public class Pass4CodeGeneration {
                   }
                   asm.addDataNumeric(asmName, asmDataChunk);
                }
-            } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
-               ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
+            } else if(constantValue instanceof ConstantArrayFilled) {
+               ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantValue;
                ConstantValue arraySize = constantArrayFilled.getSize();
                // ensure encoding is good
                ensureEncoding(asm, arraySize);
@@ -487,8 +488,8 @@ public class Pass4CodeGeneration {
                } else {
                   throw new InternalError("Unhandled constant array element type " + constantArrayFilled.toString(program));
                }
-            } else if(constantVar.getValue() instanceof ConstantArrayKickAsm) {
-               ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) constantVar.getValue();
+            } else if(constantValue instanceof ConstantArrayKickAsm) {
+               ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) constantValue;
                SymbolType type = constantVar.getType();
                // default - larger then 256
                int bytes = 1023;
@@ -505,12 +506,15 @@ public class Pass4CodeGeneration {
                asm.addDataKickAsm(asmName.replace("#", "_").replace("$", "_"), bytes, kickAsm.getKickAsmCode());
             } else {
                try {
-                  ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
+                  ConstantLiteral literal = constantValue.calculateLiteral(getScope());
                   if(literal instanceof ConstantString) {
                      // Ensure encoding is good
-                     ensureEncoding(asm, constantVar.getValue());
-                     String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+                     ensureEncoding(asm, constantValue);
+                     String asmConstant = AsmFormat.getAsmConstant(program, constantValue, 99, scopeRef);
                      asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                     if(((ConstantString) literal).isZeroTerminated()) {
+                        asm.addDataNumeric(null, AsmDataNumeric.Type.BYTE, Collections.singletonList(AsmFormat.getAsmNumber(0L)));
+                     }
                      added.add(asmName);
                   }
                } catch(ConstantNotLiteral e) {

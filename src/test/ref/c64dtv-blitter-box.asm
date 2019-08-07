@@ -144,5 +144,6 @@ main: {
     bne b1
     rts
 }
-  SRCA: .text "camelot rules!@"
+  SRCA: .text "camelot rules!"
+  .byte 0
   SRCB: .byte $80

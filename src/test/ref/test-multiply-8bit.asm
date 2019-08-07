@@ -29,7 +29,8 @@ mul8s_compare: {
     jsr print_str
     jsr print_ln
     rts
-    str: .text "signed multiply results match!@"
+    str: .text "signed multiply results match!"
+    .byte 0
 }
 // Print a newline
 print_ln: {
@@ -140,7 +141,8 @@ mul8u_compare: {
     jsr print_str
     jsr print_ln
     rts
-    str: .text "multiply results match!@"
+    str: .text "multiply results match!"
+    .byte 0
 }
 // mul8u_error(byte register(X) a, byte zeropage($b) b, word zeropage(4) ms, word zeropage(9) mn, word zeropage($e) mf)
 mul8u_error: {
@@ -189,7 +191,8 @@ mul8u_error: {
     jsr print_word
     jsr print_ln
     rts
-    str: .text "multiply mismatch @"
+    str: .text "multiply mismatch "
+    .byte 0
 }
 // Print a word as HEX
 // print_word(word zeropage(4) w)
@@ -428,9 +431,12 @@ mulf_tables_cmp: {
     inc kc_sqr+1
   !:
     jmp b1
-    str: .text "multiply tables match!@"
-    str1: .text "multiply table mismatch at @"
-    str2: .text " / @"
+    str: .text "multiply tables match!"
+    .byte 0
+    str1: .text "multiply table mismatch at "
+    .byte 0
+    str2: .text " / "
+    .byte 0
 }
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
@@ -655,7 +661,11 @@ memset: {
   // >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mula_sqr2_hi: .fill $200, 0
-  str1: .text "*@"
-  str2: .text " slow:@"
-  str3: .text " / normal:@"
-  str4: .text " / fast:@"
+  str1: .text "*"
+  .byte 0
+  str2: .text " slow:"
+  .byte 0
+  str3: .text " / normal:"
+  .byte 0
+  str4: .text " / fast:"
+  .byte 0

@@ -135,8 +135,10 @@ main: {
     jsr div16u
     inc zp2
     jmp b4
-    str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm@"
-    str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm@"
+    str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm"
+    .byte 0
+    str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
+    .byte 0
 }
 // Performs division on two 16 bit unsigned words
 // Returns the quotient dividend/divisor.

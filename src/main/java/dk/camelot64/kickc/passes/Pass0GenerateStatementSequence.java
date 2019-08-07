@@ -1603,7 +1603,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
       String stringValue = "";
-      String subText = "";
+      String subText;
       String lastSuffix = "";
       ConstantString.Encoding encoding = null;
       for(TerminalNode stringNode : ctx.STRING()) {
@@ -1619,10 +1619,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          lastSuffix = suffix;
          stringValue += subText.substring(1, subText.lastIndexOf('"'));
       }
-      if(!lastSuffix.contains("z")) {
-         stringValue += "@";
-      }
-      return new ConstantString(stringValue, encoding);
+      boolean zeroTerminated = !lastSuffix.contains("z");
+      return new ConstantString(stringValue, encoding, zeroTerminated);
    }
 
    /**

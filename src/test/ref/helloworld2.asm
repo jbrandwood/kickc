@@ -14,7 +14,8 @@ main: {
     sta print2.at+1
     jsr print2
     rts
-    hello: .text "hello world!@"
+    hello: .text "hello world!"
+    .byte 0
 }
 // print2(byte* zeropage(2) at)
 print2: {

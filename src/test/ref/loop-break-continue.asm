@@ -32,5 +32,6 @@ main: {
     cpx #0
     beq breturn
     jmp b1
-    str: .text "hello brave new world@"
+    str: .text "hello brave new world"
+    .byte 0
 }

@@ -64,8 +64,10 @@ main: {
     inc st1+1
   !:
     jmp b1
-    str: .text "   @"
-    str1: .text " @"
+    str: .text "   "
+    .byte 0
+    str1: .text " "
+    .byte 0
     sintab1: .fill 2*$78, 0
 }
 // Print a zero-terminated string

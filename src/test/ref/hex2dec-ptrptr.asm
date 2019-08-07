@@ -124,4 +124,5 @@ cls: {
     rts
 }
   // Digits used for utoa()
-  DIGITS: .text "0123456789abcdef@"
+  DIGITS: .text "0123456789abcdef"
+  .byte 0

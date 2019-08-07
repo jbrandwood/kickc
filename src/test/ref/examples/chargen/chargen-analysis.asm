@@ -208,10 +208,14 @@ main: {
     cmp ch
     bne b12
     jmp b5
-    str: .text "f1@"
-    str1: .text "f3@"
-    str2: .text "f5@"
-    str3: .text "f7@"
+    str: .text "f1"
+    .byte 0
+    str1: .text "f3"
+    .byte 0
+    str2: .text "f5"
+    .byte 0
+    str3: .text "f7"
+    .byte 0
 }
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)

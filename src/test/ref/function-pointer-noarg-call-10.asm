@@ -45,7 +45,8 @@ world: {
     sta print.msg+1
     jsr print
     rts
-    msg: .text "world @"
+    msg: .text "world "
+    .byte 0
 }
 // print(byte* zeropage(5) msg)
 print: {
@@ -69,5 +70,6 @@ hello: {
     sta print.msg+1
     jsr print
     rts
-    msg: .text "hello @"
+    msg: .text "hello "
+    .byte 0
 }

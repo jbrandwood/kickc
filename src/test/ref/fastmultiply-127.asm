@@ -107,8 +107,10 @@ main: {
     tay
     jsr print_mulf8s127
     rts
-    str: .text "unsigned@"
-    str1: .text "signed@"
+    str: .text "unsigned"
+    .byte 0
+    str1: .text "signed"
+    .byte 0
 }
 // print_mulf8s127(signed byte register(Y) a, signed byte zeropage(4) b)
 print_mulf8s127: {

@@ -371,11 +371,16 @@ main: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jmp b1
-    op: .text "< @"
-    op4: .text "> @"
-    op8: .text "<=@"
-    op12: .text ">=@"
-    op16: .text "==@"
+    op: .text "< "
+    .byte 0
+    op4: .text "> "
+    .byte 0
+    op8: .text "<="
+    .byte 0
+    op12: .text ">="
+    .byte 0
+    op16: .text "=="
+    .byte 0
     cs: .byte 7, $c7, $37, $97, $67
 }
 // Print a newline

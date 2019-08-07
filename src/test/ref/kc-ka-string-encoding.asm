@@ -17,4 +17,5 @@ main: {
   done:
     rts
 }
-  strTemp: .text "v=X@"
+  strTemp: .text "v=X"
+  .byte 0

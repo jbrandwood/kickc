@@ -78,8 +78,10 @@ main: {
     cpx #$78
     bne b1
     rts
-    str: .text "   @"
-    str1: .text " @"
+    str: .text "   "
+    .byte 0
+    str1: .text " "
+    .byte 0
     sintab1: .fill 2*$78, 0
     sintab2: .fill 2*$78, 0
 }

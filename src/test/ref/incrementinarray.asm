@@ -112,4 +112,5 @@ memset: {
     bne b2
     rts
 }
-  txt: .text "camelot@"
+  txt: .text "camelot"
+  .byte 0

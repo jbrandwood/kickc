@@ -24,14 +24,20 @@ main: {
     rts
 }
   // Default encoding (screencode_mixed)
-  screencode_mixed1: .text "abcABC1@"
+  screencode_mixed1: .text "abcABC1"
+  .byte 0
 .encoding "petscii_mixed"
-  petscii_mixed1: .text "abcABC2@"
-  petscii_mixed2: .text "abcABC3@"
+  petscii_mixed1: .text "abcABC2"
+  .byte 0
+  petscii_mixed2: .text "abcABC3"
+  .byte 0
 .encoding "screencode_mixed"
-  screencode_mixed2: .text "abcABC4@"
+  screencode_mixed2: .text "abcABC4"
+  .byte 0
   // Override default encoding using suffix
 .encoding "screencode_upper"
-  screencode_upper: .text "abcABC5@"
+  screencode_upper: .text "abcABC5"
+  .byte 0
 .encoding "screencode_mixed"
-  screencode_mixed3: .text "abcABC6@"
+  screencode_mixed3: .text "abcABC6"
+  .byte 0

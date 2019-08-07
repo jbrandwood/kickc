@@ -50,5 +50,7 @@ hello: {
     bne b1
     rts
 }
-  msg1: .text "hello @"
-  msg2: .text "world @"
+  msg1: .text "hello "
+  .byte 0
+  msg2: .text "world "
+  .byte 0

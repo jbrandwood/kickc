@@ -692,6 +692,9 @@ memset: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
-  str: .text " / @"
-  str1: .text " = @"
-  str2: .text " @"
+  str: .text " / "
+  .byte 0
+  str1: .text " = "
+  .byte 0
+  str2: .text " "
+  .byte 0

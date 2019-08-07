@@ -38,4 +38,5 @@ hello: {
     bne b1
     rts
 }
-  msg: .text "hello @"
+  msg: .text "hello "
+  .byte 0

@@ -1088,17 +1088,28 @@ render_preset_name: {
   b2:
     jsr print_str_at
     rts
-    name_1: .text "Standard Charset              @"
-    name_2: .text "Extended Color Charset        @"
-    name_3: .text "Standard Bitmap               @"
-    name_4: .text "Multicolor Bitmap             @"
-    name_5: .text "Hicolor Charset               @"
-    name_6: .text "Hicolor Extended Color Charset@"
-    name_7: .text "Twoplane Bitmap               @"
-    name_8: .text "Chunky 8bpp                   @"
-    name_9: .text "Sixs Fred                     @"
-    name_10: .text "Sixs Fred 2                   @"
-    name_11: .text "8bpp Pixel Cell               @"
+    name_1: .text "Standard Charset              "
+    .byte 0
+    name_2: .text "Extended Color Charset        "
+    .byte 0
+    name_3: .text "Standard Bitmap               "
+    .byte 0
+    name_4: .text "Multicolor Bitmap             "
+    .byte 0
+    name_5: .text "Hicolor Charset               "
+    .byte 0
+    name_6: .text "Hicolor Extended Color Charset"
+    .byte 0
+    name_7: .text "Twoplane Bitmap               "
+    .byte 0
+    name_8: .text "Chunky 8bpp                   "
+    .byte 0
+    name_9: .text "Sixs Fred                     "
+    .byte 0
+    name_10: .text "Sixs Fred 2                   "
+    .byte 0
+    name_11: .text "8bpp Pixel Cell               "
+    .byte 0
 }
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage(6) str, byte* zeropage($b) at)
@@ -2541,8 +2552,10 @@ keyboard_init: {
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
   // Charset ROM
-  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @@"
-  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @@"
+  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @"
+  .byte 0
+  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"
+  .byte 0
   // Form fields x/y-positions
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e

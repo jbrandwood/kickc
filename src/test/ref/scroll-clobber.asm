@@ -30,4 +30,5 @@ main: {
   !:
     jmp b1
 }
-  TEXT: .text "01234567@"
+  TEXT: .text "01234567"
+  .byte 0

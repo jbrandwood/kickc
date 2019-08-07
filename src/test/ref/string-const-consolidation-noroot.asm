@@ -12,7 +12,8 @@ main: {
     jsr print
     jsr print
     rts
-    string: .text "rex@"
+    string: .text "rex"
+    .byte 0
 }
 // print(byte* zeropage(4) string)
 print: {

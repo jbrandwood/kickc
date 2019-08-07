@@ -13,4 +13,5 @@ main: {
     bne b1
     rts
 }
-  msg: .text "hello world!@"
+  msg: .text "hello world!"
+  .byte 0

@@ -263,12 +263,18 @@ compare: {
     lda #>ops_6
     sta ops+1
     jmp b6
-    ops_1: .text "!=@"
-    ops_2: .text "==@"
-    ops_3: .text ">=@"
-    ops_4: .text "> @"
-    ops_5: .text "<=@"
-    ops_6: .text "< @"
+    ops_1: .text "!="
+    .byte 0
+    ops_2: .text "=="
+    .byte 0
+    ops_3: .text ">="
+    .byte 0
+    ops_4: .text "> "
+    .byte 0
+    ops_5: .text "<="
+    .byte 0
+    ops_6: .text "< "
+    .byte 0
 }
 // Print a single char
 // print_char(byte register(A) ch)

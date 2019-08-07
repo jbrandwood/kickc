@@ -1535,7 +1535,7 @@ mul16s_error::@return: scope:[mul16s_error]  from mul16s_error::@11
 @end: scope:[]  from @58
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"
+(const string) $0 = (string) "0123456789abcdef"z
 (label) @12
 (label) @29
 (label) @41
@@ -1770,8 +1770,8 @@ SYMBOL TABLE SSA
 (byte) mul16s_compare::ok#2
 (byte) mul16s_compare::ok#3
 (byte) mul16s_compare::ok#4
-(const string) mul16s_compare::str = (string) ".@"
-(const string) mul16s_compare::str1 = (string) "signed word multiply results match!@"
+(const string) mul16s_compare::str = (string) "."
+(const string) mul16s_compare::str1 = (string) "signed word multiply results match!"
 (void()) mul16s_error((signed word) mul16s_error::a , (signed word) mul16s_error::b , (signed dword) mul16s_error::ms , (signed dword) mul16s_error::mn , (signed dword) mul16s_error::mf)
 (label) mul16s_error::@1
 (label) mul16s_error::@10
@@ -1825,11 +1825,11 @@ SYMBOL TABLE SSA
 (signed dword) mul16s_error::ms#4
 (signed dword) mul16s_error::ms#5
 (signed dword) mul16s_error::ms#6
-(const string) mul16s_error::str = (string) "signed word multiply mismatch @"
-(const string) mul16s_error::str1 = (string) "*@"
-(const string) mul16s_error::str2 = (string) " slow:@"
-(const string) mul16s_error::str3 = (string) " / normal:@"
-(const string) mul16s_error::str4 = (string) " / fast:@"
+(const string) mul16s_error::str = (string) "signed word multiply mismatch "
+(const string) mul16s_error::str1 = (string) "*"
+(const string) mul16s_error::str2 = (string) " slow:"
+(const string) mul16s_error::str3 = (string) " / normal:"
+(const string) mul16s_error::str4 = (string) " / fast:"
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 (bool~) mul16u::$0
 (number~) mul16u::$1
@@ -2002,8 +2002,8 @@ SYMBOL TABLE SSA
 (byte) mul16u_compare::ok#2
 (byte) mul16u_compare::ok#3
 (byte) mul16u_compare::ok#4
-(const string) mul16u_compare::str = (string) ".@"
-(const string) mul16u_compare::str1 = (string) "word multiply results match!@"
+(const string) mul16u_compare::str = (string) "."
+(const string) mul16u_compare::str1 = (string) "word multiply results match!"
 (void()) mul16u_error((word) mul16u_error::a , (word) mul16u_error::b , (dword) mul16u_error::ms , (dword) mul16u_error::mn , (dword) mul16u_error::mf)
 (label) mul16u_error::@1
 (label) mul16u_error::@10
@@ -2057,11 +2057,11 @@ SYMBOL TABLE SSA
 (dword) mul16u_error::ms#4
 (dword) mul16u_error::ms#5
 (dword) mul16u_error::ms#6
-(const string) mul16u_error::str = (string) "multiply mismatch @"
-(const string) mul16u_error::str1 = (string) "*@"
-(const string) mul16u_error::str2 = (string) " slow:@"
-(const string) mul16u_error::str3 = (string) " / normal:@"
-(const string) mul16u_error::str4 = (string) " / fast:@"
+(const string) mul16u_error::str = (string) "multiply mismatch "
+(const string) mul16u_error::str1 = (string) "*"
+(const string) mul16u_error::str2 = (string) " slow:"
+(const string) mul16u_error::str3 = (string) " / normal:"
+(const string) mul16u_error::str4 = (string) " / fast:"
 (signed dword()) mulf16s((signed word) mulf16s::a , (signed word) mulf16s::b)
 (word~) mulf16s::$0
 (word~) mulf16s::$1
@@ -5713,7 +5713,8 @@ mul16s_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp breturn
-    str1: .text "signed word multiply results match!@"
+    str1: .text "signed word multiply results match!"
+    .byte 0
 }
   // print_ln
 // Print a newline
@@ -5961,7 +5962,8 @@ mul16s_error: {
   breturn:
     // [93] return 
     rts
-    str: .text "signed word multiply mismatch @"
+    str: .text "signed word multiply mismatch "
+    .byte 0
 }
   // print_sdword
 // Print a signed dword as HEX
@@ -7272,7 +7274,8 @@ mul16u_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp breturn
-    str1: .text "word multiply results match!@"
+    str1: .text "word multiply results match!"
+    .byte 0
 }
   // mul16u_error
 // mul16u_error(word zeropage($d3) a, word zeropage($d5) b, dword zeropage($d7) ms, dword zeropage($db) mn, dword zeropage($df) mf)
@@ -7454,7 +7457,8 @@ mul16u_error: {
   breturn:
     // [270] return 
     rts
-    str: .text "multiply mismatch @"
+    str: .text "multiply mismatch "
+    .byte 0
 }
   // muls16u
 // Slow multiplication of unsigned words
@@ -7837,11 +7841,16 @@ memset: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  str: .text ".@"
-  str1: .text "*@"
-  str2: .text " slow:@"
-  str3: .text " / normal:@"
-  str4: .text " / fast:@"
+  str: .text "."
+  .byte 0
+  str1: .text "*"
+  .byte 0
+  str2: .text " slow:"
+  .byte 0
+  str3: .text " / normal:"
+  .byte 0
+  str4: .text " / fast:"
+  .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) BGCOL#0) ← (byte) 5 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -8682,7 +8691,8 @@ mul16s_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp breturn
-    str1: .text "signed word multiply results match!@"
+    str1: .text "signed word multiply results match!"
+    .byte 0
 }
   // print_ln
 // Print a newline
@@ -8918,7 +8928,8 @@ mul16s_error: {
   breturn:
     // [93] return 
     rts
-    str: .text "signed word multiply mismatch @"
+    str: .text "signed word multiply mismatch "
+    .byte 0
 }
   // print_sdword
 // Print a signed dword as HEX
@@ -10042,7 +10053,8 @@ mul16u_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp breturn
-    str1: .text "word multiply results match!@"
+    str1: .text "word multiply results match!"
+    .byte 0
 }
   // mul16u_error
 // mul16u_error(word zeropage($e) a, word zeropage($1e) b, dword zeropage(2) ms, dword zeropage(6) mn, dword zeropage($a) mf)
@@ -10212,7 +10224,8 @@ mul16u_error: {
   breturn:
     // [270] return 
     rts
-    str: .text "multiply mismatch @"
+    str: .text "multiply mismatch "
+    .byte 0
 }
   // muls16u
 // Slow multiplication of unsigned words
@@ -10578,11 +10591,16 @@ memset: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  str: .text ".@"
-  str1: .text "*@"
-  str2: .text " slow:@"
-  str3: .text " / normal:@"
-  str4: .text " / fast:@"
+  str: .text "."
+  .byte 0
+  str1: .text "*"
+  .byte 0
+  str2: .text " slow:"
+  .byte 0
+  str3: .text " / normal:"
+  .byte 0
+  str4: .text " / fast:"
+  .byte 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -11002,8 +11020,8 @@ Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [109] bne b1 to beq
-Fixing long branch [842] bne b2 to beq
-Fixing long branch [848] bne b1 to beq
+Fixing long branch [844] bne b2 to beq
+Fixing long branch [850] bne b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -11100,7 +11118,7 @@ FINAL SYMBOL TABLE
 (byte) mul16s_compare::ok
 (byte) mul16s_compare::ok#3 reg byte x 202.0
 (byte) mul16s_compare::ok#4 reg byte x 33.666666666666664
-(const string) mul16s_compare::str1 str1 = (string) "signed word multiply results match!@"
+(const string) mul16s_compare::str1 str1 = (string) "signed word multiply results match!"
 (void()) mul16s_error((signed word) mul16s_error::a , (signed word) mul16s_error::b , (signed dword) mul16s_error::ms , (signed dword) mul16s_error::mn , (signed dword) mul16s_error::mf)
 (label) mul16s_error::@1
 (label) mul16s_error::@10
@@ -11123,7 +11141,7 @@ FINAL SYMBOL TABLE
 (signed dword) mul16s_error::mn#0 mn zp ZP_DWORD:6 0.25
 (signed dword) mul16s_error::ms
 (signed dword) mul16s_error::ms#0 ms zp ZP_DWORD:2 0.3076923076923077
-(const string) mul16s_error::str str = (string) "signed word multiply mismatch @"
+(const string) mul16s_error::str str = (string) "signed word multiply mismatch "
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 (byte~) mul16u::$1 reg byte a 2002.0
 (label) mul16u::@1
@@ -11191,7 +11209,7 @@ FINAL SYMBOL TABLE
 (byte) mul16u_compare::ok
 (byte) mul16u_compare::ok#3 reg byte x 202.0
 (byte) mul16u_compare::ok#4 reg byte x 33.666666666666664
-(const string) mul16u_compare::str1 str1 = (string) "word multiply results match!@"
+(const string) mul16u_compare::str1 str1 = (string) "word multiply results match!"
 (void()) mul16u_error((word) mul16u_error::a , (word) mul16u_error::b , (dword) mul16u_error::ms , (dword) mul16u_error::mn , (dword) mul16u_error::mf)
 (label) mul16u_error::@1
 (label) mul16u_error::@10
@@ -11214,7 +11232,7 @@ FINAL SYMBOL TABLE
 (dword) mul16u_error::mn#0 mn zp ZP_DWORD:6 0.25
 (dword) mul16u_error::ms
 (dword) mul16u_error::ms#0 ms zp ZP_DWORD:2 0.3076923076923077
-(const string) mul16u_error::str str = (string) "multiply mismatch @"
+(const string) mul16u_error::str str = (string) "multiply mismatch "
 (signed dword()) mulf16s((signed word) mulf16s::a , (signed word) mulf16s::b)
 (word~) mulf16s::$13 $13 zp ZP_WORD:30 4.0
 (word~) mulf16s::$16 $16 zp ZP_WORD:28 4.0
@@ -11397,7 +11415,7 @@ FINAL SYMBOL TABLE
 (dword) print_dword::dw#3 dw zp ZP_DWORD:2 4.0
 (dword) print_dword::dw#4 dw zp ZP_DWORD:2 3.9999999999999996
 (byte[]) print_hextab
-(const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"
+(const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:19 0.6025641025641025
 (byte*) print_line_cursor#22 print_line_cursor zp ZP_WORD:19 24.0
@@ -11449,11 +11467,11 @@ FINAL SYMBOL TABLE
 (word) print_word::w#3 w zp ZP_WORD:14 4.0
 (word) print_word::w#4 w zp ZP_WORD:14 4.0
 (word) print_word::w#5 w zp ZP_WORD:14 4.666666666666666
-(const string) str str = (string) ".@"
-(const string) str1 str1 = (string) "*@"
-(const string) str2 str2 = (string) " slow:@"
-(const string) str3 str3 = (string) " / normal:@"
-(const string) str4 str4 = (string) " / fast:@"
+(const string) str str = (string) "."
+(const string) str1 str1 = (string) "*"
+(const string) str2 str2 = (string) " slow:"
+(const string) str3 str3 = (string) " / normal:"
+(const string) str4 str4 = (string) " / fast:"
 
 reg byte y [ mul16s_compare::j#10 mul16s_compare::j#1 ]
 reg byte x [ mul16s_compare::ok#3 mul16s_compare::ok#4 ]
@@ -11761,7 +11779,8 @@ mul16s_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     rts
-    str1: .text "signed word multiply results match!@"
+    str1: .text "signed word multiply results match!"
+    .byte 0
 }
   // print_ln
 // Print a newline
@@ -11967,7 +11986,8 @@ mul16s_error: {
     // }
     // [93] return 
     rts
-    str: .text "signed word multiply mismatch @"
+    str: .text "signed word multiply mismatch "
+    .byte 0
 }
   // print_sdword
 // Print a signed dword as HEX
@@ -13021,7 +13041,8 @@ mul16u_compare: {
     // [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     rts
-    str1: .text "word multiply results match!@"
+    str1: .text "word multiply results match!"
+    .byte 0
 }
   // mul16u_error
 // mul16u_error(word zeropage($e) a, word zeropage($1e) b, dword zeropage(2) ms, dword zeropage(6) mn, dword zeropage($a) mf)
@@ -13165,7 +13186,8 @@ mul16u_error: {
     // }
     // [270] return 
     rts
-    str: .text "multiply mismatch @"
+    str: .text "multiply mismatch "
+    .byte 0
 }
   // muls16u
 // Slow multiplication of unsigned words
@@ -13515,9 +13537,14 @@ memset: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  str: .text ".@"
-  str1: .text "*@"
-  str2: .text " slow:@"
-  str3: .text " / normal:@"
-  str4: .text " / fast:@"
+  str: .text "."
+  .byte 0
+  str1: .text "*"
+  .byte 0
+  str2: .text " slow:"
+  .byte 0
+  str3: .text " / normal:"
+  .byte 0
+  str4: .text " / fast:"
+  .byte 0
 

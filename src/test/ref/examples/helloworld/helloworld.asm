@@ -7,7 +7,8 @@ main: {
     jsr print_str
     jsr print_ln
     rts
-    str: .text "hello world!@"
+    str: .text "hello world!"
+    .byte 0
 }
 // Print a newline
 print_ln: {

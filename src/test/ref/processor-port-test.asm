@@ -200,7 +200,8 @@ main: {
   b1:
     inc SCREEN+$3e7
     jmp b1
-    str: .text "ddr port ddr2 $00 $01 $a000 $d000 $e000@"
+    str: .text "ddr port ddr2 $00 $01 $a000 $d000 $e000"
+    .byte 0
 }
 // testProcport(byte register(X) ddr, byte zeropage(2) port, byte zeropage(3) ddr2)
 testProcport: {
@@ -276,10 +277,14 @@ testProcport: {
     jsr print_byte
     jsr print_ln
     rts
-    str: .text " @"
-    str1: .text "   @"
-    str3: .text "  @"
-    str5: .text "    @"
+    str: .text " "
+    .byte 0
+    str1: .text "   "
+    .byte 0
+    str3: .text "  "
+    .byte 0
+    str5: .text "    "
+    .byte 0
 }
 // Print a newline
 print_ln: {

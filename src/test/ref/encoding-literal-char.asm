@@ -31,10 +31,14 @@ main: {
     rts
 }
 .encoding "petscii_mixed"
-  spm: .text "A@"
+  spm: .text "A"
+  .byte 0
 .encoding "petscii_upper"
-  spu: .text "A@"
+  spu: .text "A"
+  .byte 0
 .encoding "screencode_mixed"
-  ssm: .text "A@"
+  ssm: .text "A"
+  .byte 0
 .encoding "screencode_upper"
-  ssu: .text "A@"
+  ssu: .text "A"
+  .byte 0

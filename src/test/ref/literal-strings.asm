@@ -16,4 +16,5 @@ main: {
     rts
 }
   msgz: .text "cml"
-  msg: .text "cml@"
+  msg: .text "cml"
+  .byte 0

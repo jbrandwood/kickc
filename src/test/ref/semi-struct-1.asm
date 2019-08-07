@@ -65,7 +65,8 @@ print_points: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jmp b1
-    str: .text " @"
+    str: .text " "
+    .byte 0
 }
 // Print a newline
 print_ln: {

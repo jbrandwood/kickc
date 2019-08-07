@@ -40,4 +40,5 @@ print: {
   !:
     jmp b1
 }
-  rex1: .text "rex@"
+  rex1: .text "rex"
+  .byte 0

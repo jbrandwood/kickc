@@ -92,7 +92,8 @@ main: {
     sta $400+$28+$28+$28+$28+$50+3,x
     inx
     jmp b3
-    msg: .text "raster lines@"
+    msg: .text "raster lines"
+    .byte 0
 }
 // Decimal utoa() without using multiply or divide
 // utoa10w(word zeropage(2) value, byte* zeropage(6) dst)
@@ -249,7 +250,8 @@ cls: {
     rts
 }
   // Digits used for utoa()
-  DIGITS: .text "0123456789abcdef@"
+  DIGITS: .text "0123456789abcdef"
+  .byte 0
   // Subtraction values used for decimal utoa()
   UTOA10_SUB: .word $7530, $2710, $bb8, $3e8, $12c, $64, $1e, $a
   // Digit addition values used for decimal utoa()

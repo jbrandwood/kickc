@@ -28,5 +28,7 @@ first: {
     .label return = 2
     rts
 }
-  msg1: .text "hello world!@"
-  msg2: .text "goodbye sky?@"
+  msg1: .text "hello world!"
+  .byte 0
+  msg2: .text "goodbye sky?"
+  .byte 0

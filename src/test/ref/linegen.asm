@@ -172,8 +172,10 @@ main: {
     jsr print_word
     jsr print_ln
     rts
-    str: .text "   @"
-    str1: .text " @"
+    str: .text "   "
+    .byte 0
+    str1: .text " "
+    .byte 0
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0

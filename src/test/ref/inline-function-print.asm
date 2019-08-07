@@ -32,5 +32,6 @@ main: {
     inx
     iny
     jmp print1_b1
-    hello: .text "hello world!@"
+    hello: .text "hello world!"
+    .byte 0
 }

@@ -62,9 +62,12 @@ test_sbytes: {
     sta assert_sbyte.msg+1
     jsr assert_sbyte
     rts
-    msg2: .text "0+2-4=-2@"
-    msg3: .text "-(0+2-4)=2@"
-    msg4: .text "-127-127=2@"
+    msg2: .text "0+2-4=-2"
+    .byte 0
+    msg3: .text "-(0+2-4)=2"
+    .byte 0
+    msg4: .text "-127-127=2"
+    .byte 0
 }
 // assert_sbyte(byte* zeropage(7) msg, signed byte register(X) b, signed byte zeropage(6) c)
 assert_sbyte: {
@@ -190,7 +193,8 @@ test_bytes: {
     sta assert_byte.msg+1
     jsr assert_byte
     rts
-    msg2: .text "0+2-4=254@"
+    msg2: .text "0+2-4=254"
+    .byte 0
 }
 // assert_byte(byte* zeropage(7) msg, byte register(X) b, byte zeropage(6) c)
 assert_byte: {
@@ -254,8 +258,13 @@ memset: {
     bne b2
     rts
 }
-  msg: .text "0=0@"
-  msg1: .text "0+2=2@"
-  str: .text " @"
-  str1: .text "fail!@"
-  str2: .text "ok@"
+  msg: .text "0=0"
+  .byte 0
+  msg1: .text "0+2=2"
+  .byte 0
+  str: .text " "
+  .byte 0
+  str1: .text "fail!"
+  .byte 0
+  str2: .text "ok"
+  .byte 0

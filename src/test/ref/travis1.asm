@@ -45,7 +45,8 @@ main: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jmp b1
-    str: .text "ready!@"
+    str: .text "ready!"
+    .byte 0
 }
 // Print a zero-terminated string followed by a newline
 // print_str_ln(byte* zeropage(3) str)
@@ -116,5 +117,6 @@ game_ready: {
     lda #0
   !:
     rts
-    str: .text "ready@"
+    str: .text "ready"
+    .byte 0
 }

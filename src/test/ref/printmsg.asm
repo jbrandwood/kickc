@@ -84,6 +84,9 @@ print_str: {
   !:
     jmp b1
 }
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
+  msg: .text "hello world! "
+  .byte 0
+  msg2: .text "hello c64! "
+  .byte 0
+  msg3: .text "hello 2017! "
+  .byte 0

@@ -179,15 +179,24 @@ sin8u_table: {
   !b2:
   !:
     rts
-    str: .text "step:@"
-    str1: .text " min:@"
-    str2: .text " max:@"
-    str3: .text " ampl:@"
-    str4: .text " mid:@"
-    str5: .text "x: @"
-    str6: .text " sin: @"
-    str7: .text " scaled: @"
-    str8: .text " trans: @"
+    str: .text "step:"
+    .byte 0
+    str1: .text " min:"
+    .byte 0
+    str2: .text " max:"
+    .byte 0
+    str3: .text " ampl:"
+    .byte 0
+    str4: .text " mid:"
+    .byte 0
+    str5: .text "x: "
+    .byte 0
+    str6: .text " sin: "
+    .byte 0
+    str7: .text " scaled: "
+    .byte 0
+    str8: .text " trans: "
+    .byte 0
 }
 // Print a newline
 print_ln: {

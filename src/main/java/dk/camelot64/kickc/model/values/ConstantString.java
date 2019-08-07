@@ -29,13 +29,19 @@ public class ConstantString implements ConstantLiteral<String> {
 
    }
 
+   /** The string value. */
    private String value;
 
+   /** The encoding to use for the string. */
    private Encoding encoding;
 
-   public ConstantString(String value, Encoding encoding) {
+   /** true if the string should be zero terminated. */
+   private boolean zeroTerminated;
+
+   public ConstantString(String value, Encoding encoding, boolean zeroTerminated) {
       this.value = value;
       this.encoding = encoding;
+      this.zeroTerminated = zeroTerminated;
    }
 
    @Override
@@ -56,6 +62,10 @@ public class ConstantString implements ConstantLiteral<String> {
       return encoding;
    }
 
+   public boolean isZeroTerminated() {
+      return zeroTerminated;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -63,11 +73,12 @@ public class ConstantString implements ConstantLiteral<String> {
 
    @Override
    public String toString(Program program) {
-      String enc = (encoding.equals(Encoding.SCREENCODE_MIXED))?"":encoding.suffix;
+      String suffix = (encoding.equals(Encoding.SCREENCODE_MIXED))?"":encoding.suffix;
+      suffix += zeroTerminated?"":"z";
       if(program == null) {
-         return "\"" + value + "\""+enc;
+         return "\"" + value + "\""+suffix;
       } else {
-         return "(" + SymbolType.STRING.getTypeName() + ") "+"\"" + value + "\""+enc;
+         return "(" + SymbolType.STRING.getTypeName() + ") "+"\"" + value + "\""+suffix;
       }
    }
 
@@ -76,12 +87,13 @@ public class ConstantString implements ConstantLiteral<String> {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       ConstantString that = (ConstantString) o;
-      return Objects.equals(value, that.value) &&
+      return zeroTerminated == that.zeroTerminated &&
+            Objects.equals(value, that.value) &&
             encoding == that.encoding;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(value, encoding);
+      return Objects.hash(value, encoding, zeroTerminated);
    }
 }

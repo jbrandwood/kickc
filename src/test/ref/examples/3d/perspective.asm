@@ -80,10 +80,14 @@ do_perspective: {
     jsr print_str
     jsr print_ln
     rts
-    str: .text "(@"
-    str1: .text ",@"
-    str3: .text ") -> (@"
-    str5: .text ")@"
+    str: .text "("
+    .byte 0
+    str1: .text ","
+    .byte 0
+    str3: .text ") -> ("
+    .byte 0
+    str5: .text ")"
+    .byte 0
 }
 // Print a newline
 print_ln: {

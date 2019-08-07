@@ -64,7 +64,8 @@ main: {
     cpx #$c0
     bne b1
     rts
-    str: .text "  @"
+    str: .text "  "
+    .byte 0
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
 }

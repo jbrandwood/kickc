@@ -26,15 +26,22 @@ main: {
     rts
 }
 .encoding "petscii_mixed"
-  petscii_mixed: .text "abcABC1@"
+  petscii_mixed: .text "abcABC1"
+  .byte 0
 .encoding "petscii_upper"
-  petscii_upper: .text "abcABC2@"
+  petscii_upper: .text "abcABC2"
+  .byte 0
 .encoding "petscii_mixed"
-  petscii_standard: .text "abcABC3@"
+  petscii_standard: .text "abcABC3"
+  .byte 0
 .encoding "screencode_mixed"
-  screencode_mixed: .text "abcABC4@"
+  screencode_mixed: .text "abcABC4"
+  .byte 0
 .encoding "screencode_upper"
-  screencode_upper: .text "abcABC5@"
+  screencode_upper: .text "abcABC5"
+  .byte 0
 .encoding "screencode_mixed"
-  screencode_standard: .text "abcABC6@"
-  standard: .text "abcABC7@"
+  screencode_standard: .text "abcABC6"
+  .byte 0
+  standard: .text "abcABC7"
+  .byte 0

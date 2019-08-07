@@ -95,5 +95,7 @@ strip: {
     sta p_8+1
     jmp b1
 }
-  msg1: .text "hello world!@"
-  msg2: .text "goodbye blue sky!@"
+  msg1: .text "hello world!"
+  .byte 0
+  msg2: .text "goodbye blue sky!"
+  .byte 0

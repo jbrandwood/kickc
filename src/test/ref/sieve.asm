@@ -258,11 +258,16 @@ main: {
     adc i_17+1
     sta j+1
     jmp b5
-    str: .text "Sieve benchmark - calculating primes@"
-    str1: .text "between 2 and @"
-    str2: .text "100ths seconds used: @"
-    str3: .text " cycles: @"
-    str4: .text "...@"
+    str: .text "Sieve benchmark - calculating primes"
+    .byte 0
+    str1: .text "between 2 and "
+    .byte 0
+    str2: .text "100ths seconds used: "
+    .byte 0
+    str3: .text " cycles: "
+    .byte 0
+    str4: .text "..."
+    .byte 0
 }
 // Print a zero-terminated string
 // print_str(byte* zeropage($d) str)

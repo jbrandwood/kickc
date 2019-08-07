@@ -15,5 +15,6 @@ main: {
     sta SCREEN,x
     inx
     jmp b1
-    msg: .text "camelot@"
+    msg: .text "camelot"
+    .byte 0
 }

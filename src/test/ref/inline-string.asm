@@ -24,8 +24,10 @@ main: {
     sta print.msg+1
     jsr print
     rts
-    msg: .text "message 3 @"
-    msg2: .text "message 2 @"
+    msg: .text "message 3 "
+    .byte 0
+    msg2: .text "message 2 "
+    .byte 0
 }
 // print(byte* zeropage(4) msg)
 print: {
@@ -50,4 +52,5 @@ print: {
   !:
     jmp b1
 }
-  msg1: .text "message 1 @"
+  msg1: .text "message 1 "
+  .byte 0

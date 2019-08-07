@@ -89,5 +89,6 @@ main: {
     sta $400,x
     inx
     jmp b2
-    header: .text "  <  <= == >= >@"
+    header: .text "  <  <= == >= >"
+    .byte 0
 }

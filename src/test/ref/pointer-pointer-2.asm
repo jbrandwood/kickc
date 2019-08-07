@@ -61,5 +61,7 @@ nexttext: {
     sta textp+1
     rts
 }
-  text1: .text "camelot @"
-  text2: .text "rex @"
+  text1: .text "camelot "
+  .byte 0
+  text2: .text "rex "
+  .byte 0

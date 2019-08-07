@@ -1166,6 +1166,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -1173,14 +1182,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
@@ -1229,77 +1231,58 @@ bitmap_init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    .label c = $12
     .label sqr1_hi = $16
-    .label sqr = $18
+    .label sqr = $1c
     .label sqr1_lo = $14
-    .label x_2 = $12
-    .label sqr2_hi = $1c
-    .label sqr2_lo = $1a
+    .label sqr2_hi = $1a
+    .label sqr2_lo = $18
     .label dir = $13
-    lda #0
-    sta x_2
+    ldx #0
     lda #<mulf_sqr1_hi+1
     sta sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta sqr1_hi+1
+    txa
+    sta sqr
+    sta sqr+1
+    sta c
     lda #<mulf_sqr1_lo+1
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
-    sta sqr
-    sta sqr+1
-    tax
   b1:
-    inx
-    txa
-    and #1
-    cmp #0
-    bne b2
-    inc x_2
-    inc sqr
-    bne !+
-    inc sqr+1
-  !:
-  b2:
-    lda sqr
-    ldy #0
-    sta (sqr1_lo),y
-    lda sqr+1
-    sta (sqr1_hi),y
-    inc sqr1_hi
-    bne !+
-    inc sqr1_hi+1
-  !:
-    lda x_2
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inc sqr1_lo
-    bne !+
-    inc sqr1_lo+1
-  !:
     lda sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda #$ff
     sta dir
     lda #<mulf_sqr2_hi
     sta sqr2_hi
     lda #>mulf_sqr2_hi
     sta sqr2_hi+1
+    ldx #-1
     lda #<mulf_sqr2_lo
     sta sqr2_lo
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
-    ldx #-1
-  b4:
+  b5:
+    lda sqr2_lo+1
+    cmp #>mulf_sqr2_lo+$1ff
+    bne b6
+    lda sqr2_lo
+    cmp #<mulf_sqr2_lo+$1ff
+    bne b6
+    // Set the very last value g(511) = f(256)
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
+    rts
+  b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -1314,26 +1297,48 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b5
+    bne b8
     lda #1
     sta dir
-  b5:
+  b8:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
-    lda sqr2_lo+1
-    cmp #>mulf_sqr2_lo+$1ff
-    bne b4
-    lda sqr2_lo
-    cmp #<mulf_sqr2_lo+$1ff
-    bne b4
-    // Set the very last value g(511) = f(256)
-    lda mulf_sqr1_lo+$100
-    sta mulf_sqr2_lo+$1ff
-    lda mulf_sqr1_hi+$100
-    sta mulf_sqr2_hi+$1ff
-    rts
+    jmp b5
+  b2:
+    inc c
+    lda #1
+    and c
+    cmp #0
+    bne b3
+    inx
+    inc sqr
+    bne !+
+    inc sqr+1
+  !:
+  b3:
+    lda sqr
+    ldy #0
+    sta (sqr1_lo),y
+    lda sqr+1
+    sta (sqr1_hi),y
+    inc sqr1_hi
+    bne !+
+    inc sqr1_hi+1
+  !:
+    txa
+    clc
+    adc sqr
+    sta sqr
+    bcc !+
+    inc sqr+1
+  !:
+    inc sqr1_lo
+    bne !+
+    inc sqr1_lo+1
+  !:
+    jmp b1
 }
   // Array filled with spline segment points by splinePlot_8()
   SPLINE_8SEG: .fill 4*9, 0

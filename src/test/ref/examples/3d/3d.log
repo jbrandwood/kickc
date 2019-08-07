@@ -128,7 +128,10 @@ Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
-Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@7
+Culled Empty Block (label) memset::@6
+Culled Empty Block (label) memset::@8
+Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
@@ -221,7 +224,7 @@ CONTROL FLOW GRAPH SSA
   (byte) LIGHT_GREY#0 ← (number) $f
   to:@16
 memset: scope:[memset]  from print_cls
-  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (byte) memset::c#4 ← phi( print_cls/(byte) memset::c#0 )
   (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
   (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
   (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
@@ -233,7 +236,7 @@ memset::@1: scope:[memset]  from memset memset::@4
   (void*) memset::return#0 ← (void*) memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
   (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
@@ -241,16 +244,22 @@ memset::@2: scope:[memset]  from memset
   (byte*) memset::end#0 ← (byte*~) memset::$3
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
-memset::@4: scope:[memset]  from memset::@2 memset::@4
-  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
-  *((byte*) memset::dst#2) ← (byte) memset::c#1
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@5
+  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@5/(byte) memset::c#1 )
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
+  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@5
   to:memset::@1
+memset::@5: scope:[memset]  from memset::@4
+  (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#2 ← phi( memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#3 ← phi( memset::@4/(byte*) memset::dst#2 )
+  (byte) memset::c#1 ← phi( memset::@4/(byte) memset::c#2 )
+  *((byte*) memset::dst#3) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  to:memset::@4
 memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
   (void*) memset::return#1 ← (void*) memset::return#3
@@ -1862,19 +1871,23 @@ SYMBOL TABLE SSA
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
+(label) memset::@5
 (label) memset::@return
 (byte) memset::c
 (byte) memset::c#0
 (byte) memset::c#1
 (byte) memset::c#2
 (byte) memset::c#3
+(byte) memset::c#4
 (byte*) memset::dst
 (byte*) memset::dst#0
 (byte*) memset::dst#1
 (byte*) memset::dst#2
+(byte*) memset::dst#3
 (byte*) memset::end
 (byte*) memset::end#0
 (byte*) memset::end#1
+(byte*) memset::end#2
 (word) memset::num
 (word) memset::num#0
 (word) memset::num#1
@@ -1890,6 +1903,7 @@ SYMBOL TABLE SSA
 (void*) memset::str#2
 (void*) memset::str#3
 (void*) memset::str#4
+(void*) memset::str#5
 (byte[$200]) mulf_sqr1
 (byte[$200]) mulf_sqr1#0
 (byte[$200]) mulf_sqr2
@@ -2672,8 +2686,12 @@ Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
 Alias (word) memset::num#1 = (word) memset::num#2 
-Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte) memset::c#3 = (byte) memset::c#4 
 Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte) memset::c#1 = (byte) memset::c#2 
+Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
+Alias (byte*) memset::end#1 = (byte*) memset::end#2 
+Alias (void*) memset::str#4 = (void*) memset::str#5 
 Alias (byte*) print_str_at::str#13 = (byte*) print_str_at::str#14 
 Alias (byte*) print_str_at::at#13 = (byte*) print_str_at::at#14 
 Alias (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#24 (byte*) print_sbyte_at::at#25 (byte*) print_sbyte_at::at#22 (byte*) print_sbyte_at::at#26 
@@ -2814,10 +2832,10 @@ Alias (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#23
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) memset::num#1 (word) memset::num#0
 Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
-Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
-Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte) memset::c#3 (byte) memset::c#0
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
 Identical Phi Values (byte) print_byte_at::b#1 (byte) print_byte_at::b#0
 Identical Phi Values (byte*) print_byte_at::at#1 (byte*) print_byte_at::at#0
 Identical Phi Values (byte*) print_screen#1 (byte*) print_screen#14
@@ -2882,25 +2900,25 @@ Identical Phi Values (byte*) debug_print_init::at_line#1 (byte*) debug_print_ini
 Identical Phi Values (byte*) debug_print_init::at_cols#2 (byte*) debug_print_init::at_cols#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [12] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [24] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) print_str_at::$0 [32] if(*((byte*) print_str_at::str#13)!=(byte) '@') goto print_str_at::@2
-Simple Condition (bool~) print_sbyte_at::$0 [40] if((signed byte) print_sbyte_at::b#22<(signed byte) 0) goto print_sbyte_at::@1
-Simple Condition (bool~) anim::$0 [130] if(*((byte*) RASTER#0)!=(byte) $ff) goto anim::@4
-Simple Condition (bool~) anim::$1 [133] if(*((byte*) RASTER#0)!=(byte) $fe) goto anim::@10
-Simple Condition (bool~) anim::$2 [136] if(*((byte*) RASTER#0)!=(byte) $fd) goto anim::@16
-Simple Condition (bool~) anim::$11 [170] if((byte) anim::i#1!=rangelast(0,7)) goto anim::@22
-Simple Condition (bool~) debug_print_init::$67 [303] if((byte) debug_print_init::j#1!=rangelast(0,3)) goto debug_print_init::@2
-Simple Condition (bool~) debug_print_init::$68 [308] if((byte) debug_print_init::i#1!=rangelast(0,7)) goto debug_print_init::@1
-Simple Condition (bool~) debug_print::$31 [497] if((byte) debug_print::i#1!=rangelast(0,7)) goto debug_print::@1
-Simple Condition (bool~) sprites_init::$3 [511] if((byte) sprites_init::i#1!=rangelast(0,7)) goto sprites_init::@1
+Simple Condition (bool~) memset::$4 [22] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) print_str_at::$0 [33] if(*((byte*) print_str_at::str#13)!=(byte) '@') goto print_str_at::@2
+Simple Condition (bool~) print_sbyte_at::$0 [41] if((signed byte) print_sbyte_at::b#22<(signed byte) 0) goto print_sbyte_at::@1
+Simple Condition (bool~) anim::$0 [131] if(*((byte*) RASTER#0)!=(byte) $ff) goto anim::@4
+Simple Condition (bool~) anim::$1 [134] if(*((byte*) RASTER#0)!=(byte) $fe) goto anim::@10
+Simple Condition (bool~) anim::$2 [137] if(*((byte*) RASTER#0)!=(byte) $fd) goto anim::@16
+Simple Condition (bool~) anim::$11 [171] if((byte) anim::i#1!=rangelast(0,7)) goto anim::@22
+Simple Condition (bool~) debug_print_init::$67 [304] if((byte) debug_print_init::j#1!=rangelast(0,3)) goto debug_print_init::@2
+Simple Condition (bool~) debug_print_init::$68 [309] if((byte) debug_print_init::i#1!=rangelast(0,7)) goto debug_print_init::@1
+Simple Condition (bool~) debug_print::$31 [498] if((byte) debug_print::i#1!=rangelast(0,7)) goto debug_print::@1
+Simple Condition (bool~) sprites_init::$3 [512] if((byte) sprites_init::i#1!=rangelast(0,7)) goto sprites_init::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [116] (signed byte[8]) xrs#0 ← { fill( 8, 0) }
-Constant right-side identified [117] (signed byte[8]) yrs#0 ← { fill( 8, 0) }
-Constant right-side identified [118] (signed byte[8]) zrs#0 ← { fill( 8, 0) }
-Constant right-side identified [119] (signed byte[8]) pps#0 ← { fill( 8, 0) }
-Constant right-side identified [120] (signed byte[8]) xps#0 ← { fill( 8, 0) }
-Constant right-side identified [121] (signed byte[8]) yps#0 ← { fill( 8, 0) }
-Constant right-side identified [514] (signed byte[9]) rotation_matrix#0 ← { fill( 9, 0) }
+Constant right-side identified [117] (signed byte[8]) xrs#0 ← { fill( 8, 0) }
+Constant right-side identified [118] (signed byte[8]) yrs#0 ← { fill( 8, 0) }
+Constant right-side identified [119] (signed byte[8]) zrs#0 ← { fill( 8, 0) }
+Constant right-side identified [120] (signed byte[8]) pps#0 ← { fill( 8, 0) }
+Constant right-side identified [121] (signed byte[8]) xps#0 ← { fill( 8, 0) }
+Constant right-side identified [122] (signed byte[8]) yps#0 ← { fill( 8, 0) }
+Constant right-side identified [515] (signed byte[9]) rotation_matrix#0 ← { fill( 9, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (signed byte[8]) { (signed byte) -$34, (signed byte) -$34, (signed byte) -$34, (signed byte) 0, (signed byte) 0, (signed byte) $34, (signed byte) $34, (signed byte) $34 }
 Identified constant from value list (signed byte[8]) { (signed byte) -$34, (signed byte) 0, (signed byte) $34, (signed byte) -$34, (signed byte) $34, (signed byte) -$34, (signed byte) 0, (signed byte) $34 }
@@ -3040,48 +3058,48 @@ Constant (const signed byte) debug_print::print_sbyte_pos3_sb#0 = sz#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed byte) print_sbyte_at::b#6 = debug_print::print_sbyte_pos3_sb#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)print_screen#0 in [78] (void*) memset::str#0 ← (void*)(const byte*) print_screen#0
-Constant value identified (word)mulf_sqr1#0 in [98] (word~) main::$1 ← (word)(const byte[$200]) mulf_sqr1#0
-Constant value identified (word)mulf_sqr2#0 in [100] (word~) main::$2 ← (word)(const byte[$200]) mulf_sqr2#0
+Constant value identified (void*)print_screen#0 in [79] (void*) memset::str#0 ← (void*)(const byte*) print_screen#0
+Constant value identified (word)mulf_sqr1#0 in [99] (word~) main::$1 ← (word)(const byte[$200]) mulf_sqr1#0
+Constant value identified (word)mulf_sqr2#0 in [101] (word~) main::$2 ← (word)(const byte[$200]) mulf_sqr2#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [12] if((const word) memset::num#0<=(byte) 0) goto memset::@1
-if() condition always true - replacing block destination [127] if(true) goto anim::@4
+if() condition always true - replacing block destination [128] if(true) goto anim::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [168] anim::i#1 ← ++ anim::i#2 to ++
-Resolved ranged comparison value [170] if(anim::i#1!=rangelast(0,7)) goto anim::@22 to (number) 8
-Resolved ranged next value [301] debug_print_init::j#1 ← ++ debug_print_init::j#2 to ++
-Resolved ranged comparison value [303] if(debug_print_init::j#1!=rangelast(0,3)) goto debug_print_init::@2 to (number) 4
-Resolved ranged next value [306] debug_print_init::i#1 ← ++ debug_print_init::i#2 to ++
-Resolved ranged comparison value [308] if(debug_print_init::i#1!=rangelast(0,7)) goto debug_print_init::@1 to (number) 8
-Resolved ranged next value [495] debug_print::i#1 ← ++ debug_print::i#2 to ++
-Resolved ranged comparison value [497] if(debug_print::i#1!=rangelast(0,7)) goto debug_print::@1 to (number) 8
-Resolved ranged next value [509] sprites_init::i#1 ← ++ sprites_init::i#2 to ++
-Resolved ranged comparison value [511] if(sprites_init::i#1!=rangelast(0,7)) goto sprites_init::@1 to (number) 8
-Converting *(pointer+n) to pointer[n] [268] *((byte*~) debug_print_init::$42) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$41 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [272] *((byte*~) debug_print_init::$45) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$44 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [276] *((byte*~) debug_print_init::$48) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$47 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [280] *((byte*~) debug_print_init::$51) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$50 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [284] *((byte*~) debug_print_init::$54) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$53 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [288] *((byte*~) debug_print_init::$57) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$56 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [292] *((byte*~) debug_print_init::$60) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$59 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [296] *((byte*~) debug_print_init::$63) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$62 + debug_print_init::j#2)
-Converting *(pointer+n) to pointer[n] [300] *((byte*~) debug_print_init::$66) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$65 + debug_print_init::j#2)
+Resolved ranged next value [169] anim::i#1 ← ++ anim::i#2 to ++
+Resolved ranged comparison value [171] if(anim::i#1!=rangelast(0,7)) goto anim::@22 to (number) 8
+Resolved ranged next value [302] debug_print_init::j#1 ← ++ debug_print_init::j#2 to ++
+Resolved ranged comparison value [304] if(debug_print_init::j#1!=rangelast(0,3)) goto debug_print_init::@2 to (number) 4
+Resolved ranged next value [307] debug_print_init::i#1 ← ++ debug_print_init::i#2 to ++
+Resolved ranged comparison value [309] if(debug_print_init::i#1!=rangelast(0,7)) goto debug_print_init::@1 to (number) 8
+Resolved ranged next value [496] debug_print::i#1 ← ++ debug_print::i#2 to ++
+Resolved ranged comparison value [498] if(debug_print::i#1!=rangelast(0,7)) goto debug_print::@1 to (number) 8
+Resolved ranged next value [510] sprites_init::i#1 ← ++ sprites_init::i#2 to ++
+Resolved ranged comparison value [512] if(sprites_init::i#1!=rangelast(0,7)) goto sprites_init::@1 to (number) 8
+Converting *(pointer+n) to pointer[n] [269] *((byte*~) debug_print_init::$42) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$41 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [273] *((byte*~) debug_print_init::$45) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$44 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [277] *((byte*~) debug_print_init::$48) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$47 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [281] *((byte*~) debug_print_init::$51) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$50 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [285] *((byte*~) debug_print_init::$54) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$53 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [289] *((byte*~) debug_print_init::$57) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$56 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [293] *((byte*~) debug_print_init::$60) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$59 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [297] *((byte*~) debug_print_init::$63) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$62 + debug_print_init::j#2)
+Converting *(pointer+n) to pointer[n] [301] *((byte*~) debug_print_init::$66) ← (byte) debug_print_init::col#0  -- *(debug_print_init::$65 + debug_print_init::j#2)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [184] (byte*~) debug_print_init::$1 ← (const byte*) SCREEN#0 + (byte)(number) $28*(number) 0
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [243] (byte*~) debug_print_init::$30 ← (byte*) debug_print_init::at_line#0 + (byte)(number) $28*(number) 0
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [265] (byte*~) debug_print_init::$40 ← (byte*) debug_print_init::at_cols#0 + (byte)(number) $28*(number) 0
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [458] (byte*~) debug_print::$13 ← (byte*) debug_print::at_line#0 + (byte)(number) $28*(number) 0
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [185] (byte*~) debug_print_init::$1 ← (const byte*) SCREEN#0 + (byte)(number) $28*(number) 0
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [244] (byte*~) debug_print_init::$30 ← (byte*) debug_print_init::at_line#0 + (byte)(number) $28*(number) 0
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [266] (byte*~) debug_print_init::$40 ← (byte*) debug_print_init::at_cols#0 + (byte)(number) $28*(number) 0
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [459] (byte*~) debug_print::$13 ← (byte*) debug_print::at_line#0 + (byte)(number) $28*(number) 0
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [184] (byte*~) debug_print_init::$1 ← (const byte*) SCREEN#0 + (byte) 0
-Simplifying expression containing zero debug_print_init::at_line#0 in [243] (byte*~) debug_print_init::$30 ← (byte*) debug_print_init::at_line#0 + (byte) 0
-Simplifying expression containing zero debug_print_init::at_cols#0 in [265] (byte*~) debug_print_init::$40 ← (byte*) debug_print_init::at_cols#0 + (byte) 0
-Simplifying expression containing zero rotation_matrix#0 in [347] (signed byte) debug_print::print_sbyte_pos4_sb#0 ← *((const signed byte[9]) rotation_matrix#0 + (byte) 0)
-Simplifying expression containing zero debug_print::at_line#0 in [458] (byte*~) debug_print::$13 ← (byte*) debug_print::at_line#0 + (byte) 0
-Simplifying expression containing zero calculate_matrix::sy#0 in [516] (signed byte) calculate_matrix::t1#0 ← (signed byte) calculate_matrix::sy#0 - (const signed byte) calculate_matrix::sz#0
-Simplifying expression containing zero calculate_matrix::sy#0 in [518] (signed byte) calculate_matrix::t2#0 ← (signed byte) calculate_matrix::sy#0 + (const signed byte) calculate_matrix::sz#0
-Simplifying expression containing zero calculate_matrix::sx#0 in [520] (signed byte) calculate_matrix::t3#0 ← (signed byte) calculate_matrix::sx#0 + (const signed byte) calculate_matrix::sz#0
-Simplifying expression containing zero calculate_matrix::sx#0 in [522] (signed byte) calculate_matrix::t4#0 ← (signed byte) calculate_matrix::sx#0 - (const signed byte) calculate_matrix::sz#0
-Simplifying expression containing zero rotation_matrix#0 in [537] *((const signed byte[9]) rotation_matrix#0 + (byte) 0) ← (signed byte~) calculate_matrix::$10
+Simplifying expression containing zero SCREEN#0 in [185] (byte*~) debug_print_init::$1 ← (const byte*) SCREEN#0 + (byte) 0
+Simplifying expression containing zero debug_print_init::at_line#0 in [244] (byte*~) debug_print_init::$30 ← (byte*) debug_print_init::at_line#0 + (byte) 0
+Simplifying expression containing zero debug_print_init::at_cols#0 in [266] (byte*~) debug_print_init::$40 ← (byte*) debug_print_init::at_cols#0 + (byte) 0
+Simplifying expression containing zero rotation_matrix#0 in [348] (signed byte) debug_print::print_sbyte_pos4_sb#0 ← *((const signed byte[9]) rotation_matrix#0 + (byte) 0)
+Simplifying expression containing zero debug_print::at_line#0 in [459] (byte*~) debug_print::$13 ← (byte*) debug_print::at_line#0 + (byte) 0
+Simplifying expression containing zero calculate_matrix::sy#0 in [517] (signed byte) calculate_matrix::t1#0 ← (signed byte) calculate_matrix::sy#0 - (const signed byte) calculate_matrix::sz#0
+Simplifying expression containing zero calculate_matrix::sy#0 in [519] (signed byte) calculate_matrix::t2#0 ← (signed byte) calculate_matrix::sy#0 + (const signed byte) calculate_matrix::sz#0
+Simplifying expression containing zero calculate_matrix::sx#0 in [521] (signed byte) calculate_matrix::t3#0 ← (signed byte) calculate_matrix::sx#0 + (const signed byte) calculate_matrix::sz#0
+Simplifying expression containing zero calculate_matrix::sx#0 in [523] (signed byte) calculate_matrix::t4#0 ← (signed byte) calculate_matrix::sx#0 - (const signed byte) calculate_matrix::sz#0
+Simplifying expression containing zero rotation_matrix#0 in [538] *((const signed byte[9]) rotation_matrix#0 + (byte) 0) ← (signed byte~) calculate_matrix::$10
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [41] (void*) memset::return#2 ← (void*) memset::str#0
 Eliminating unused variable (byte*~) debug_print_init::$42 and assignment [135] (byte*~) debug_print_init::$42 ← (byte*~) debug_print_init::$41 + (byte) debug_print_init::j#2
@@ -3457,7 +3475,6 @@ Consolidated array index constant in *(rotation_matrix#0+6)
 Consolidated array index constant in *(rotation_matrix#0+7)
 Consolidated array index constant in *(rotation_matrix#0+8)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting anim::@31(between anim::@29 and anim::@22)
 Added new block during phi lifting debug_print_init::@21(between debug_print_init::@3 and debug_print_init::@1)
 Added new block during phi lifting debug_print_init::@22(between debug_print_init::@2 and debug_print_init::@2)
@@ -3573,7 +3590,7 @@ Coalesced [315] print_str_at::str#16 ← print_str_at::str#15
 Coalesced [316] print_str_at::at#16 ← print_str_at::at#15
 Coalesced [323] print_str_at::str#17 ← print_str_at::str#0
 Coalesced [324] print_str_at::at#17 ← print_str_at::at#0
-Coalesced [337] memset::dst#3 ← memset::dst#1
+Coalesced [337] memset::dst#4 ← memset::dst#1
 Coalesced [345] sprites_init::i#3 ← sprites_init::i#1
 Coalesced down to 16 phi equivalence classes
 Culled Empty Block (label) @16
@@ -3610,10 +3627,10 @@ Culled Empty Block (label) debug_print_init::@22
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@6
 Culled Empty Block (label) sprites_init::@3
 Renumbering block @50 to @1
 Renumbering block memset::@4 to memset::@1
+Renumbering block memset::@5 to memset::@2
 Renumbering block print_sbyte_at::@5 to print_sbyte_at::@4
 Renumbering block anim::@4 to anim::@2
 Renumbering block anim::@10 to anim::@3
@@ -4125,15 +4142,17 @@ print_cls::@return: scope:[print_cls]  from print_cls
 memset: scope:[memset]  from print_cls
   [253] phi()
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@1
-  [254] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
-  [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+memset::@1: scope:[memset]  from memset memset::@2
+  [254] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [258] return 
+  [256] return 
   to:@return
+memset::@2: scope:[memset]  from memset::@1
+  [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@1
 sprites_init: scope:[sprites_init]  from main
   [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff
   to:sprites_init::@1
@@ -4350,8 +4369,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#2 16.5
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 14.666666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -6586,33 +6605,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [254] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [256] return 
+    rts
+    // memset::@2
+  b2:
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [258] return 
-    rts
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // sprites_init
 // Initialize sprites
@@ -6874,8 +6895,8 @@ Removing always clobbered register reg byte x as potential for zp ZP_BYTE:14 [ d
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if(*((byte*) print_str_at::str#13)!=(byte) '@') goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ]
@@ -6983,8 +7004,8 @@ Statement [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + 
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if(*((byte*) print_str_at::str#13)!=(byte) '@') goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Statement [262] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::i#2) ← (const byte) GREEN#0 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
@@ -7094,8 +7115,8 @@ Statement [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + 
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if(*((byte*) print_str_at::str#13)!=(byte) '@') goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Statement [262] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::i#2) ← (const byte) GREEN#0 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
@@ -7192,9 +7213,9 @@ Uplift Scope [debug_print] 191.9: zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i
 Uplift Scope [calculate_matrix] 4: zp ZP_BYTE:57 [ calculate_matrix::$10 ] 4: zp ZP_BYTE:58 [ calculate_matrix::$11 ] 4: zp ZP_BYTE:59 [ calculate_matrix::$12 ] 4: zp ZP_BYTE:60 [ calculate_matrix::$13 ] 4: zp ZP_BYTE:61 [ calculate_matrix::$14 ] 4: zp ZP_BYTE:62 [ calculate_matrix::$15 ] 4: zp ZP_BYTE:63 [ calculate_matrix::$16 ] 4: zp ZP_BYTE:64 [ calculate_matrix::$17 ] 4: zp ZP_BYTE:65 [ calculate_matrix::$18 ] 4: zp ZP_BYTE:66 [ calculate_matrix::$19 ] 4: zp ZP_BYTE:67 [ calculate_matrix::$20 ] 4: zp ZP_BYTE:68 [ calculate_matrix::$21 ] 4: zp ZP_BYTE:69 [ calculate_matrix::$22 ] 4: zp ZP_BYTE:70 [ calculate_matrix::$23 ] 4: zp ZP_BYTE:71 [ calculate_matrix::$24 ] 4: zp ZP_BYTE:72 [ calculate_matrix::$25 ] 4: zp ZP_BYTE:73 [ calculate_matrix::$26 ] 4: zp ZP_BYTE:74 [ calculate_matrix::$27 ] 4: zp ZP_BYTE:75 [ calculate_matrix::$28 ] 4: zp ZP_BYTE:76 [ calculate_matrix::$29 ] 4: zp ZP_BYTE:77 [ calculate_matrix::$30 ] 4: zp ZP_BYTE:78 [ calculate_matrix::$31 ] 4: zp ZP_BYTE:79 [ calculate_matrix::$32 ] 4: zp ZP_BYTE:80 [ calculate_matrix::$33 ] 4: zp ZP_BYTE:81 [ calculate_matrix::$34 ] 2.45: zp ZP_BYTE:23 [ calculate_matrix::sx#0 ] 1.53: zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] 0.91: zp ZP_BYTE:48 [ calculate_matrix::t2#0 ] 0.83: zp ZP_BYTE:47 [ calculate_matrix::t1#0 ] 0.31: zp ZP_BYTE:52 [ calculate_matrix::t6#0 ] 0.3: zp ZP_BYTE:50 [ calculate_matrix::t4#0 ] 0.3: zp ZP_BYTE:53 [ calculate_matrix::t7#0 ] 0.3: zp ZP_BYTE:54 [ calculate_matrix::t8#0 ] 0.29: zp ZP_BYTE:49 [ calculate_matrix::t3#0 ] 0.29: zp ZP_BYTE:51 [ calculate_matrix::t5#0 ] 0.18: zp ZP_BYTE:56 [ calculate_matrix::t10#0 ] 0.18: zp ZP_BYTE:55 [ calculate_matrix::t9#0 ] 
 Uplift Scope [rotate_matrix] 34.33: zp ZP_BYTE:25 [ rotate_matrix::x#0 ] 34.33: zp ZP_BYTE:26 [ rotate_matrix::y#0 ] 34.33: zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
 Uplift Scope [print_str_at] 35.5: zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] 24.67: zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] 
+Uplift Scope [memset] 36.67: zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_char_at] 24: zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] 12: zp ZP_BYTE:10 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
 Uplift Scope [] 22.38: zp ZP_BYTE:3 [ sy#10 sy#3 ] 11.39: zp ZP_BYTE:2 [ sx#10 sx#3 ] 
-Uplift Scope [memset] 33: zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [sprites_init] 31.17: zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ] 
 Uplift Scope [print_byte_at] 4: zp ZP_BYTE:45 [ print_byte_at::$0 ] 2: zp ZP_BYTE:46 [ print_byte_at::$2 ] 1: zp ZP_BYTE:42 [ print_byte_at::b#0 ] 1: zp ZP_WORD:43 [ print_byte_at::at#0 ] 
 Uplift Scope [RADIX] 
@@ -7209,9 +7230,9 @@ Uplifting [debug_print] best 73013 combination zp ZP_BYTE:6 [ debug_print::i#2 d
 Limited combination testing to 100 combinations of 8388608 possible.
 Uplifting [rotate_matrix] best 72712 combination reg byte x [ rotate_matrix::x#0 ] zp ZP_BYTE:26 [ rotate_matrix::y#0 ] zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
 Uplifting [print_str_at] best 72712 combination zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] 
+Uplifting [memset] best 72712 combination zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [print_char_at] best 72699 combination zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] reg byte y [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
 Uplifting [] best 72699 combination zp ZP_BYTE:3 [ sy#10 sy#3 ] zp ZP_BYTE:2 [ sx#10 sx#3 ] 
-Uplifting [memset] best 72699 combination zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [sprites_init] best 72549 combination reg byte x [ sprites_init::i#2 sprites_init::i#1 ] 
 Uplifting [print_byte_at] best 72536 combination reg byte y [ print_byte_at::$0 ] reg byte x [ print_byte_at::$2 ] reg byte x [ print_byte_at::b#0 ] zp ZP_WORD:43 [ print_byte_at::at#0 ] 
 Uplifting [RADIX] best 72536 combination 
@@ -9035,33 +9056,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [254] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [256] return 
+    rts
+    // memset::@2
+  b2:
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [258] return 
-    rts
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // sprites_init
 // Initialize sprites
@@ -9288,8 +9311,6 @@ Replacing label b2_from_b2 with b2
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b2 with b1
 Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction b2_from_b1:
@@ -9343,7 +9364,6 @@ Removing instruction b1_from_b3:
 Removing instruction b2_from_b2:
 Removing instruction b1_from_print_str_at:
 Removing instruction b1_from_b2:
-Removing instruction b1_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -9433,6 +9453,7 @@ Removing instruction memset_from_print_cls:
 Removing instruction breturn:
 Removing instruction b1_from_memset:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Removing instruction b1_from_sprites_init:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -9443,7 +9464,6 @@ Removing instruction jmp b6
 Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b1
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
@@ -9800,12 +9820,13 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
+(label) memset::@2
 (label) memset::@return
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:15 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:15 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:15 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:15 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -10045,7 +10066,7 @@ zp ZP_WORD:29 [ debug_print_init::$65 ]
 
 
 FINAL ASSEMBLER
-Score: 66016
+Score: 66046
 
   // File Comments
 // 3D Rotation using a Rotation Matrix
@@ -11670,32 +11691,36 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-    // [254] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     // memset::@1
   b1:
+    // for(char* dst = str; dst!=end; dst++)
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    // memset::@return
+    // }
+    // [256] return 
+    rts
+    // memset::@2
+  b2:
     // *dst = c
-    // [255] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    // memset::@return
-    // }
-    // [258] return 
-    rts
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // sprites_init
 // Initialize sprites

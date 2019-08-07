@@ -28,6 +28,14 @@ print_cls: {
     lda #>SCREEN
     sta sc+1
   b1:
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    rts
+  b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -35,11 +43,5 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b1
-    rts
+    jmp b1
 }

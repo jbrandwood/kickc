@@ -8,104 +8,66 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label _2 = $17
     .label _3 = $17
-    .label _4 = $f
-    .label _11 = $17
+    .label _4 = $17
+    .label _5 = $11
     .label _12 = $17
-    .label _13 = $11
+    .label _13 = $17
+    .label _14 = $f
     .label v = 4
     .label u = 2
     lda #$17
     sta VICBANK
     lda #0
     sta zp1
+    sta v
+    sta v+1
     lda #<$6e85
     sta u
     lda #>$6e85
     sta u+1
   b1:
-    lda #0
-    sta TIMEHI
-    sta TIMELO
-    sta zp2
-  b2:
-    jsr div16u
-    inc zp2
-    lda zp2
-    cmp #$c8
-    bcc b2
-    lda TIMEHI
-    sta _2
-    lda #0
-    sta _2+1
-    lda _3
-    sta _3+1
-    lda #0
-    sta _3
-    lda TIMELO
-    sta _4
-    lda #0
-    sta _4+1
-    lda myprintf.w3
-    clc
-    adc _4
-    sta myprintf.w3
-    lda myprintf.w3+1
-    adc _4+1
-    sta myprintf.w3+1
-    lda #<str
-    sta myprintf.str
-    lda #>str
-    sta myprintf.str+1
-    jsr myprintf
-    jsr Print
-    lda u
-    sec
-    sbc #<$4d2
-    sta u
-    lda u+1
-    sbc #>$4d2
-    sta u+1
-    inc zp1
     lda zp1
     cmp #$a
-    bcc b1
+    bcc b2
     lda #0
     sta zp1
     lda #<$6e85
     sta u
     lda #>$6e85
     sta u+1
-  b5:
+  b7:
+    lda zp1
+    cmp #$a
+    bcc b8
+    rts
+  b8:
     lda #0
     sta TIMEHI
     sta TIMELO
     sta zp2
-  b6:
-    jsr div10
-    inc zp2
+  b9:
     lda zp2
     cmp #$c8
-    bcc b6
+    bcc b10
     lda TIMEHI
-    sta _11
-    lda #0
-    sta _11+1
-    lda _12
-    sta _12+1
-    lda #0
     sta _12
-    lda TIMELO
-    sta _13
     lda #0
+    sta _12+1
+    lda _13
     sta _13+1
+    lda #0
+    sta _13
+    lda TIMELO
+    sta _14
+    lda #0
+    sta _14+1
     lda myprintf.w3
     clc
-    adc _13
+    adc _14
     sta myprintf.w3
     lda myprintf.w3+1
-    adc _13+1
+    adc _14+1
     sta myprintf.w3+1
     lda #<str1
     sta myprintf.str
@@ -121,12 +83,132 @@ main: {
     sbc #>$4d2
     sta u+1
     inc zp1
-    lda zp1
-    cmp #$a
+    jmp b7
+  b10:
+    jsr div10
+    inc zp2
+    jmp b9
+  b2:
+    lda #0
+    sta TIMEHI
+    sta TIMELO
+    sta zp2
+  b4:
+    lda zp2
+    cmp #$c8
     bcc b5
-    rts
+    lda TIMEHI
+    sta _3
+    lda #0
+    sta _3+1
+    lda _4
+    sta _4+1
+    lda #0
+    sta _4
+    lda TIMELO
+    sta _5
+    lda #0
+    sta _5+1
+    lda myprintf.w3
+    clc
+    adc _5
+    sta myprintf.w3
+    lda myprintf.w3+1
+    adc _5+1
+    sta myprintf.w3+1
+    lda #<str
+    sta myprintf.str
+    lda #>str
+    sta myprintf.str+1
+    jsr myprintf
+    jsr Print
+    lda u
+    sec
+    sbc #<$4d2
+    sta u
+    lda u+1
+    sbc #>$4d2
+    sta u+1
+    inc zp1
+    jmp b1
+  b5:
+    jsr div16u
+    inc zp2
+    jmp b4
     str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm@"
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm@"
+}
+// Performs division on two 16 bit unsigned words
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// div16u(word zeropage(2) dividend)
+div16u: {
+    .label divisor = $a
+    .label return = 4
+    .label dividend = 2
+    lda dividend
+    sta divr16u.dividend
+    lda dividend+1
+    sta divr16u.dividend+1
+    jsr divr16u
+    rts
+}
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// divr16u(word zeropage(6) dividend, word zeropage($17) rem)
+divr16u: {
+    .label rem = $17
+    .label dividend = 6
+    .label quotient = 4
+    .label return = 4
+    ldx #0
+    txa
+    sta quotient
+    sta quotient+1
+    sta rem
+    sta rem+1
+  b1:
+    asl rem
+    rol rem+1
+    lda dividend+1
+    and #$80
+    cmp #0
+    beq b2
+    lda #1
+    ora rem
+    sta rem
+  b2:
+    asl dividend
+    rol dividend+1
+    asl quotient
+    rol quotient+1
+    lda rem+1
+    cmp #>div16u.divisor
+    bcc b3
+    bne !+
+    lda rem
+    cmp #<div16u.divisor
+    bcc b3
+  !:
+    inc quotient
+    bne !+
+    inc quotient+1
+  !:
+    lda rem
+    sec
+    sbc #<div16u.divisor
+    sta rem
+    lda rem+1
+    sbc #>div16u.divisor
+    sta rem+1
+  b3:
+    inx
+    cpx #$10
+    bne b1
+    rts
 }
 Print: {
     // can this assembly be placed in a separate file and call it from the C code here?
@@ -140,109 +222,89 @@ Print: {
   done:
     rts
 }
-// myprintf(byte* zeropage($d) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
+// myprintf(byte* zeropage(6) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
 myprintf: {
-    .label str = $d
-    .label bDigits = $c
-    .label bLen = $b
-    .label b = $a
-    .label bArg = 7
-    .label return = $b
+    .label bDigits = $d
+    .label bLen = $e
+    .label b = $c
+    .label bArg = 9
+    .label str = 6
     .label w1 = 2
     .label w2 = 4
     .label w3 = $17
-    .label bFormat = 6
     .label w = $f
-    .label bTrailing = 8
-    .label bLeadZero = 9
+    .label bFormat = 8
+    .label bTrailing = $a
+    .label bLeadZero = $b
     lda #0
     sta bLeadZero
     sta bDigits
     sta bTrailing
     sta w
     sta w+1
-    sta bLen
     sta bArg
+    sta bLen
     sta bFormat
   b1:
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne b2
+    tya
+    ldy bLen
+    sta strTemp,y
+    rts
+  b2:
     ldy #0
     lda (str),y
     tax
     lda bFormat
     cmp #0
-    bne !b2+
-    jmp b2
-  !b2:
+    bne !b4+
+    jmp b4
+  !b4:
     cpx #'0'
-    bne b3
-    lda #1
-    sta bLeadZero
-  b27:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne b1
-    tya
-    ldy return
-    sta strTemp,y
-    rts
-  b3:
-    cpx #'1'
-    bcc b4
-    cpx #'9'
-    bcs !b23+
-    jmp b23
-  !b23:
-    bne !b23+
-    jmp b23
-  !b23:
-  b4:
-    cpx #'-'
     bne b5
     lda #1
-    sta bTrailing
-    jmp b27
+    sta bLeadZero
+    jmp b1
   b5:
+    cpx #'1'
+    bcc b6
+    cpx #'9'
+    bcs !b28+
+    jmp b28
+  !b28:
+    bne !b28+
+    jmp b28
+  !b28:
+  b6:
+    cpx #'-'
+    bne b7
+    lda #1
+    sta bTrailing
+    jmp b1
+  b7:
     cpx #'c'
-    bne !b6+
-    jmp b6
-  !b6:
+    bne !b8+
+    jmp b8
+  !b8:
     cpx #'d'
-    beq b7
+    beq b9
     cpx #'x'
-    beq b26
+    beq b31
     cpx #'X'
-    beq b26
-  b22:
+    beq b31
+  b3:
     lda #0
     sta bFormat
-    jmp b27
-  b26:
+    jmp b1
+  b31:
     lda w
     lsr
     lsr
     lsr
     lsr
-    ldx #$f
-    axs #0
-    cpx #$a
-    bcc b8
-    lda #$57
-    jmp b9
-  b8:
-    lda #'0'
-  b9:
-    stx $ff
-    clc
-    adc $ff
-    ldy bLen
-    sta strTemp,y
-    iny
-    lda w
     ldx #$f
     axs #0
     cpx #$a
@@ -255,11 +317,27 @@ myprintf: {
     stx $ff
     clc
     adc $ff
+    ldy bLen
+    sta strTemp,y
+    iny
+    lda w
+    ldx #$f
+    axs #0
+    cpx #$a
+    bcc b12
+    lda #$57
+    jmp b13
+  b12:
+    lda #'0'
+  b13:
+    stx $ff
+    clc
+    adc $ff
     sta strTemp,y
     iny
     sty bLen
-    jmp b22
-  b7:
+    jmp b3
+  b9:
     lda w
     sta utoa.value
     lda w+1
@@ -267,95 +345,98 @@ myprintf: {
     jsr utoa
     lda #1
     sta b
-  b12:
+  b14:
     ldy b
     lda buf6,y
     cmp #0
-    bne b13
+    bne b15
     lda bTrailing
     cmp #0
-    bne b15
+    bne b17
     tya
     cmp bDigits
-    bcc b16
-  b15:
+    bcs b17
+  b18:
+    lda b
+    cmp bDigits
+    bcc b19
+  b17:
     ldx #0
-  b19:
+  b22:
+    cpx b
+    bcc b23
+    lda bTrailing
+    cmp #0
+    beq b3
+    lda b
+    cmp bDigits
+    bcc !b3+
+    jmp b3
+  !b3:
+  b25:
+    lda b
+    cmp bDigits
+    bcc b26
+    jmp b3
+  b26:
+    lda #' '
+    ldy bLen
+    sta strTemp,y
+    inc bLen
+    dec bDigits
+    jmp b25
+  b23:
     lda buf6,x
     ldy bLen
     sta strTemp,y
     inc bLen
     inx
-    cpx b
-    bcc b19
-    lda bTrailing
-    cmp #0
-    bne !b22+
     jmp b22
-  !b22:
-    lda b
-    cmp bDigits
-    bcc !b22+
-    jmp b22
-  !b22:
-  b21:
-    lda #' '
-    ldy bLen
-    sta strTemp,y
-    inc bLen
-    dec bDigits
-    lda b
-    cmp bDigits
-    bcc b21
-    jmp b22
-  b16:
+  b19:
     lda bLeadZero
     cmp #0
-    beq b17
+    beq b20
     lda #'0'
-    jmp b18
-  b17:
+    jmp b21
+  b20:
     lda #' '
-  b18:
+  b21:
     ldy bLen
     sta strTemp,y
     inc bLen
     dec bDigits
-    lda b
-    cmp bDigits
-    bcc b16
-    jmp b15
-  b13:
+    jmp b18
+  b15:
     inc b
-    jmp b12
-  b6:
+    jmp b14
+  b8:
     lda w
     // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     ldy bLen
     sta strTemp,y
     inc bLen
-    jmp b22
-  b23:
+    jmp b3
+  b28:
     txa
     axs #'0'
     stx bDigits
-    jmp b27
-  b2:
+    jmp b1
+  b4:
     cpx #'%'
-    bne b28
+    bne b32
     // default format
     //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
     lda bArg
     cmp #0
-    beq b29
+    beq b33
     lda #1
     cmp bArg
-    beq b30
+    beq b34
     lda w3
     sta w
     lda w3+1
     sta w+1
-  b31:
+  b35:
     inc bArg
     lda #0
     sta bLeadZero
@@ -365,33 +446,37 @@ myprintf: {
     sta bTrailing
     lda #1
     sta bFormat
-    jmp b27
-  b30:
+    jmp b1
+  b34:
     lda w2
     sta w
     lda w2+1
     sta w+1
-    jmp b31
-  b29:
+    jmp b35
+  b33:
     lda w1
     sta w
     lda w1+1
     sta w+1
-    jmp b31
-  b28:
+    jmp b35
+  b32:
     cpx #$41
-    bcc b32
+    bcc b36
     cpx #$5a+1
-    bcs b32
+    bcs b36
     txa
     axs #-[$20]
-  b32:
+  b36:
     // swap 0x41 / 0x61 when in lower case mode
     ldy bLen
     txa
     sta strTemp,y
     inc bLen
-    jmp b27
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
     buf6: .fill 6, 0
 }
 // utoa(word zeropage($11) value, byte* zeropage($13) dst)
@@ -620,78 +705,6 @@ div10: {
     ror return
     lsr return+1
     ror return
-    rts
-}
-// Performs division on two 16 bit unsigned words
-// Returns the quotient dividend/divisor.
-// The remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// div16u(word zeropage(2) dividend)
-div16u: {
-    .label divisor = $a
-    .label return = 4
-    .label dividend = 2
-    lda dividend
-    sta divr16u.dividend
-    lda dividend+1
-    sta divr16u.dividend+1
-    jsr divr16u
-    rts
-}
-// Performs division on two 16 bit unsigned words and an initial remainder
-// Returns the quotient dividend/divisor.
-// The final remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// divr16u(word zeropage($d) dividend, word zeropage($17) rem)
-divr16u: {
-    .label rem = $17
-    .label dividend = $d
-    .label quotient = 4
-    .label return = 4
-    ldx #0
-    txa
-    sta quotient
-    sta quotient+1
-    sta rem
-    sta rem+1
-  b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
-    and #$80
-    cmp #0
-    beq b2
-    lda #1
-    ora rem
-    sta rem
-  b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
-    cmp #>div16u.divisor
-    bcc b3
-    bne !+
-    lda rem
-    cmp #<div16u.divisor
-    bcc b3
-  !:
-    inc quotient
-    bne !+
-    inc quotient+1
-  !:
-    lda rem
-    sec
-    sbc #<div16u.divisor
-    sta rem
-    lda rem+1
-    sbc #>div16u.divisor
-    sta rem+1
-  b3:
-    inx
-    cpx #$10
-    bne b1
     rts
 }
   // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162

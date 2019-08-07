@@ -44,7 +44,7 @@ main: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label _10 = 4
+    .label _11 = 4
     .label xw = $13
     .label yw = $15
     .label angle_w = 4
@@ -71,6 +71,29 @@ init_angle_screen: {
     sta x
   b2:
     lda x
+    cmp #$13+1
+    bcc b3
+    lda screen_topline
+    sec
+    sbc #<$28
+    sta screen_topline
+    lda screen_topline+1
+    sbc #>$28
+    sta screen_topline+1
+    lda #$28
+    clc
+    adc screen_bottomline
+    sta screen_bottomline
+    bcc !+
+    inc screen_bottomline+1
+  !:
+    inc y
+    lda #$d
+    cmp y
+    bne b1
+    rts
+  b3:
+    lda x
     asl
     eor #$ff
     clc
@@ -85,12 +108,12 @@ init_angle_screen: {
     jsr atan2_16
     lda #$80
     clc
-    adc _10
-    sta _10
+    adc _11
+    sta _11
     bcc !+
-    inc _10+1
+    inc _11+1
   !:
-    lda _10+1
+    lda _11+1
     sta ang_w
     lda #$80
     clc
@@ -111,28 +134,7 @@ init_angle_screen: {
     sta (screen_bottomline),y
     inc x
     dec xb
-    lda x
-    cmp #$13+1
-    bcc b2
-    lda screen_topline
-    sec
-    sbc #<$28
-    sta screen_topline
-    lda screen_topline+1
-    sbc #>$28
-    sta screen_topline+1
-    lda #$28
-    clc
-    adc screen_bottomline
-    sta screen_bottomline
-    bcc !+
-    inc screen_bottomline+1
-  !:
-    inc y
-    lda #$d
-    cmp y
-    bne b1
-    rts
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16

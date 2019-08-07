@@ -139,6 +139,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -146,27 +154,18 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zeropage($a) sintab)
+// sin8s_gen(signed byte* zeropage($c) sintab)
 sin8s_gen: {
     .label step = $e
-    .label sintab = $a
-    .label x = 2
-    .label i = $c
+    .label sintab = $c
+    .label x = $a
+    .label i = 2
     jsr div16u
-    lda #<0
-    sta i
-    sta i+1
     lda #<main.sintab2
     sta sintab
     lda #>main.sintab2
@@ -174,8 +173,20 @@ sin8s_gen: {
     lda #<0
     sta x
     sta x+1
+    sta i
+    sta i+1
   // u[4.12]
   b1:
+    lda i+1
+    cmp #>main.wavelength
+    bcc b2
+    bne !+
+    lda i
+    cmp #<main.wavelength
+    bcc b2
+  !:
+    rts
+  b2:
     lda x
     sta sin8s.x
     lda x+1
@@ -198,15 +209,7 @@ sin8s_gen: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp #>main.wavelength
-    bcc b1
-    bne !+
-    lda i
-    cmp #<main.wavelength
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12

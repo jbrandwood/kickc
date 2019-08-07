@@ -32,8 +32,9 @@
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
+  .label print_char_cursor_10 = 6
   .label print_char_cursor_62 = 6
-  .label print_char_cursor_99 = 6
+  .label print_char_cursor_78 = 6
 main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
@@ -154,6 +155,27 @@ main: {
     lda #>2
     sta i_10+1
   b8:
+    lda i_10+1
+    cmp #>$514
+    bcc b9
+    bne !+
+    lda i_10
+    cmp #<$514
+    bcc b9
+  !:
+    lda print_char_cursor_62
+    sta print_char_cursor
+    lda print_char_cursor_62+1
+    sta print_char_cursor+1
+    lda #<str4
+    sta print_str.str
+    lda #>str4
+    sta print_str.str+1
+    jsr print_str
+  b13:
+    inc SCREEN+$3e7
+    jmp b13
+  b9:
     lda i_10
     clc
     adc #<sieve
@@ -164,46 +186,19 @@ main: {
     ldy #0
     lda (_38),y
     cmp #0
-    bne b29
+    bne b11
     lda print_char_cursor_62
     sta print_char_cursor
     lda print_char_cursor_62+1
     sta print_char_cursor+1
     jsr print_word_decimal
     jsr print_char
-  b9:
+  b11:
     inc i_3
     bne !+
     inc i_3+1
   !:
-    lda i_3+1
-    cmp #>$514
-    bcc b28
-    bne !+
-    lda i_3
-    cmp #<$514
-    bcc b28
-  !:
-    lda #<str4
-    sta print_str.str
-    lda #>str4
-    sta print_str.str+1
-    jsr print_str
-  b12:
-    inc SCREEN+$3e7
-    jmp b12
-  b28:
-    lda print_char_cursor
-    sta print_char_cursor_99
-    lda print_char_cursor+1
-    sta print_char_cursor_99+1
     jmp b8
-  b29:
-    lda print_char_cursor_62
-    sta print_char_cursor
-    lda print_char_cursor_62+1
-    sta print_char_cursor+1
-    jmp b9
   b2:
     ldy #0
     lda (sieve_i),y
@@ -266,6 +261,37 @@ main: {
     str3: .text " cycles: @"
     str4: .text "...@"
 }
+// Print a single char
+print_char: {
+    .const ch = ' '
+    lda #ch
+    ldy #0
+    sta (print_char_cursor),y
+    lda print_char_cursor
+    clc
+    adc #1
+    sta print_char_cursor_10
+    lda print_char_cursor+1
+    adc #0
+    sta print_char_cursor_10+1
+    rts
+}
+// Print a word as DECIMAL
+// print_word_decimal(word zeropage($d) w)
+print_word_decimal: {
+    .label w = $d
+    lda w
+    sta utoa.value
+    lda w+1
+    sta utoa.value+1
+    jsr utoa
+    lda #<decimal_digits
+    sta print_str.str
+    lda #>decimal_digits
+    sta print_str.str+1
+    jsr print_str
+    rts
+}
 // Print a zero-terminated string
 // print_str(byte* zeropage($f) str)
 print_str: {
@@ -290,34 +316,6 @@ print_str: {
   !:
     jmp b1
 }
-// Print a single char
-print_char: {
-    .const ch = ' '
-    lda #ch
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
-    rts
-}
-// Print a word as DECIMAL
-// print_word_decimal(word zeropage($d) w)
-print_word_decimal: {
-    .label w = $d
-    lda w
-    sta utoa.value
-    lda w+1
-    sta utoa.value+1
-    jsr utoa
-    lda #<decimal_digits
-    sta print_str.str
-    lda #>decimal_digits
-    sta print_str.str+1
-    jsr print_str
-    rts
-}
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
@@ -327,9 +325,9 @@ print_word_decimal: {
 utoa: {
     .const max_digits = 5
     .label digit_value = $19
+    .label buffer = 4
     .label digit = 8
     .label value = 2
-    .label buffer = 4
     lda #<decimal_digits
     sta buffer
     lda #>decimal_digits
@@ -339,26 +337,8 @@ utoa: {
     sta digit
   b1:
     lda digit
-    asl
-    tay
-    lda RADIX_DECIMAL_VALUES,y
-    sta digit_value
-    lda RADIX_DECIMAL_VALUES+1,y
-    sta digit_value+1
-    cpx #0
-    bne b3
-    cmp value+1
-    bne !+
-    lda digit_value
-    cmp value
-    beq b3
-  !:
-    bcc b3
-  b2:
-    inc digit
-    lda digit
     cmp #max_digits-1
-    bcc b1
+    bcc b2
     lda value
     tay
     lda DIGITS,y
@@ -372,14 +352,34 @@ utoa: {
     tay
     sta (buffer),y
     rts
-  b3:
+  b2:
+    lda digit
+    asl
+    tay
+    lda RADIX_DECIMAL_VALUES,y
+    sta digit_value
+    lda RADIX_DECIMAL_VALUES+1,y
+    sta digit_value+1
+    cpx #0
+    bne b5
+    cmp value+1
+    bne !+
+    lda digit_value
+    cmp value
+    beq b5
+  !:
+    bcc b5
+  b4:
+    inc digit
+    jmp b1
+  b5:
     jsr utoa_append
     inc buffer
     bne !+
     inc buffer+1
   !:
     ldx #1
-    jmp b2
+    jmp b4
 }
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
@@ -461,9 +461,9 @@ print_dword_decimal: {
 ultoa: {
     .const max_digits = $a
     .label digit_value = $15
+    .label buffer = $d
     .label digit = 8
     .label value = 9
-    .label buffer = $d
     lda #<decimal_digits_long
     sta buffer
     lda #>decimal_digits_long
@@ -473,40 +473,8 @@ ultoa: {
     sta digit
   b1:
     lda digit
-    asl
-    asl
-    tay
-    lda RADIX_DECIMAL_VALUES_LONG,y
-    sta digit_value
-    lda RADIX_DECIMAL_VALUES_LONG+1,y
-    sta digit_value+1
-    lda RADIX_DECIMAL_VALUES_LONG+2,y
-    sta digit_value+2
-    lda RADIX_DECIMAL_VALUES_LONG+3,y
-    sta digit_value+3
-    cpx #0
-    bne b3
-    lda value+3
-    cmp digit_value+3
-    bcc !+
-    bne b3
-    lda value+2
-    cmp digit_value+2
-    bcc !+
-    bne b3
-    lda value+1
-    cmp digit_value+1
-    bcc !+
-    bne b3
-    lda value
-    cmp digit_value
-    bcs b3
-  !:
-  b2:
-    inc digit
-    lda digit
     cmp #max_digits-1
-    bcc b1
+    bcc b2
     lda value
     tay
     lda DIGITS,y
@@ -520,14 +488,48 @@ ultoa: {
     tay
     sta (buffer),y
     rts
-  b3:
+  b2:
+    lda digit
+    asl
+    asl
+    tay
+    lda RADIX_DECIMAL_VALUES_LONG,y
+    sta digit_value
+    lda RADIX_DECIMAL_VALUES_LONG+1,y
+    sta digit_value+1
+    lda RADIX_DECIMAL_VALUES_LONG+2,y
+    sta digit_value+2
+    lda RADIX_DECIMAL_VALUES_LONG+3,y
+    sta digit_value+3
+    cpx #0
+    bne b5
+    lda value+3
+    cmp digit_value+3
+    bcc !+
+    bne b5
+    lda value+2
+    cmp digit_value+2
+    bcc !+
+    bne b5
+    lda value+1
+    cmp digit_value+1
+    bcc !+
+    bne b5
+    lda value
+    cmp digit_value
+    bcs b5
+  !:
+  b4:
+    inc digit
+    jmp b1
+  b5:
     jsr ultoa_append
     inc buffer
     bne !+
     inc buffer+1
   !:
     ldx #1
-    jmp b2
+    jmp b4
 }
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
@@ -733,6 +735,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -740,14 +751,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {

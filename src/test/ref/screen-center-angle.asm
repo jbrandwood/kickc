@@ -160,24 +160,24 @@ clock: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label _10 = $d
+    .label _11 = $d
     .label xw = $16
     .label yw = $18
     .label angle_w = $d
     .label ang_w = $1a
     .label x = $c
     .label xb = $11
-    .label screen_topline = 4
-    .label screen_bottomline = 2
+    .label screen_topline = 2
+    .label screen_bottomline = 4
     .label y = $1b
-    lda #<SCREEN+$28*$c
-    sta screen_topline
-    lda #>SCREEN+$28*$c
-    sta screen_topline+1
     lda #<SCREEN+$28*$c
     sta screen_bottomline
     lda #>SCREEN+$28*$c
     sta screen_bottomline+1
+    lda #<SCREEN+$28*$c
+    sta screen_topline
+    lda #>SCREEN+$28*$c
+    sta screen_topline+1
     lda #0
     sta y
   b1:
@@ -187,47 +187,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -247,6 +208,47 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16

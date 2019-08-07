@@ -188,6 +188,21 @@ init: {
     lda #>SCREEN
     sta sc+1
   b1:
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    ldx #0
+  b3:
+    lda #$ff
+    sta SPRITE,x
+    inx
+    cpx #$40
+    bne b3
+    rts
+  b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -195,18 +210,5 @@ init: {
     bne !+
     inc sc+1
   !:
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1
-    lda sc
-    cmp #<SCREEN+$3e8
-    bne b1
-    ldx #0
-  b2:
-    lda #$ff
-    sta SPRITE,x
-    inx
-    cpx #$40
-    bne b2
-    rts
+    jmp b1
 }

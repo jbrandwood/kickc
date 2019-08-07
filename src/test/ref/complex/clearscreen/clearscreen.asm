@@ -111,27 +111,16 @@ main: {
     sta src+1
   // Copy screen to screen copy
   b1:
-    ldy #0
-    lda (src),y
-    sta (dst),y
-    inc src
-    bne !+
-    inc src+1
-  !:
-    inc dst
-    bne !+
-    inc dst+1
-  !:
     lda src+1
     cmp #>SCREEN+$3e8
-    bne b1
+    bne b2
     lda src
     cmp #<SCREEN+$3e8
-    bne b1
+    bne b2
     lda #0
     sta i
   // Init processing array
-  b2:
+  b3:
     lda i
     asl
     clc
@@ -161,10 +150,10 @@ main: {
     inc i
     lda #NUM_PROCESSING-1+1
     cmp i
-    bne b2
+    bne b3
     jsr initSprites
     jsr setupRasterIrq
-  b3:
+  b4:
   // Main loop
     jsr getCharToProcess
     ldy getCharToProcess.return_x
@@ -172,16 +161,29 @@ main: {
     sta center_y
     txa
     cmp #NOT_FOUND
-    bne b5
+    bne b6
     lda #'.'
     sta SCREEN+$3e7
-  b7:
+  b8:
     inc COLS+$3e7
-    jmp b7
-  b5:
+    jmp b8
+  b6:
     sty startProcessing.center_x
     jsr startProcessing
-    jmp b3
+    jmp b4
+  b2:
+    ldy #0
+    lda (src),y
+    sta (dst),y
+    inc src
+    bne !+
+    inc src+1
+  !:
+    inc dst
+    bne !+
+    inc dst+1
+  !:
+    jmp b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
 // startProcessing(byte zeropage($1e) center_x, byte zeropage($b) center_y)
@@ -621,6 +623,28 @@ initSprites: {
     sta sp+1
   // Clear sprite data
   b1:
+    lda sp+1
+    cmp #>SPRITE_DATA+NUM_PROCESSING*$40
+    bcc b2
+    bne !+
+    lda sp
+    cmp #<SPRITE_DATA+NUM_PROCESSING*$40
+    bcc b2
+  !:
+    ldx #0
+  // Initialize sprite registers
+  b3:
+    lda #LIGHT_BLUE
+    sta SPRITES_COLS,x
+    inx
+    cpx #8
+    bne b3
+    lda #0
+    sta SPRITES_MC
+    sta SPRITES_EXPAND_X
+    sta SPRITES_EXPAND_Y
+    rts
+  b2:
     lda #0
     tay
     sta (sp),y
@@ -628,36 +652,16 @@ initSprites: {
     bne !+
     inc sp+1
   !:
-    lda sp+1
-    cmp #>SPRITE_DATA+NUM_PROCESSING*$40
-    bcc b1
-    bne !+
-    lda sp
-    cmp #<SPRITE_DATA+NUM_PROCESSING*$40
-    bcc b1
-  !:
-    ldx #0
-  // Initialize sprite registers
-  b2:
-    lda #LIGHT_BLUE
-    sta SPRITES_COLS,x
-    inx
-    cpx #8
-    bne b2
-    lda #0
-    sta SPRITES_MC
-    sta SPRITES_EXPAND_X
-    sta SPRITES_EXPAND_Y
-    rts
+    jmp b1
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(3) screen)
+// init_angle_screen(byte* zeropage($18) screen)
 init_angle_screen: {
-    .label _10 = $10
-    .label screen = 3
-    .label screen_topline = $18
-    .label screen_bottomline = 3
+    .label _11 = $10
+    .label screen = $18
+    .label screen_topline = 3
+    .label screen_bottomline = $18
     .label xw = $1a
     .label yw = $1c
     .label angle_w = $10
@@ -688,47 +692,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -748,6 +713,47 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16

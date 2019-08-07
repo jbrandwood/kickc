@@ -21,7 +21,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
-// sin8u_table(byte* zeropage($d) sintab)
+// sin8u_table(byte* zeropage($11) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -31,9 +31,9 @@ sin8u_table: {
     .label step = $f
     .label sinx = $13
     .label sinx_sc = 9
-    .label sintab = $d
-    .label x = $b
-    .label i = $11
+    .label sintab = $11
+    .label x = $d
+    .label i = $b
     jsr div16u
     lda #<$400
     sta print_char_cursor
@@ -86,9 +86,6 @@ sin8u_table: {
     lda #>$400
     sta print_line_cursor+1
     jsr print_ln
-    lda #<0
-    sta i
-    sta i+1
     lda #<main.sintab
     sta sintab
     lda #>main.sintab
@@ -96,8 +93,20 @@ sin8u_table: {
     lda #<0
     sta x
     sta x+1
+    sta i
+    sta i+1
   // u[4.12]
   b1:
+    lda i+1
+    cmp #>main.tabsize
+    bcc b2
+    bne !+
+    lda i
+    cmp #<main.tabsize
+    bcc b2
+  !:
+    rts
+  b2:
     lda x
     sta sin8s.x
     lda x+1
@@ -167,19 +176,7 @@ sin8u_table: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp #>main.tabsize
-    bcs !b1+
     jmp b1
-  !b1:
-    bne !+
-    lda i
-    cmp #<main.tabsize
-    bcs !b1+
-    jmp b1
-  !b1:
-  !:
-    rts
     str: .text "step:@"
     str1: .text " min:@"
     str2: .text " max:@"
@@ -597,6 +594,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -604,12 +609,6 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
   print_hextab: .text "0123456789abcdef"

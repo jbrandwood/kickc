@@ -4,7 +4,7 @@
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label SCREEN = $400
-  .label print_char_cursor = 4
+  .label print_char_cursor = 5
 main: {
     .label a = $4d2
     .label b = $929
@@ -209,77 +209,58 @@ mulf16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 4
-    .label sqr = 7
+    .label c = 4
+    .label sqr1_hi = 5
+    .label sqr = $c
     .label sqr1_lo = 2
-    .label x_2 = 6
-    .label sqr2_hi = $b
-    .label sqr2_lo = 9
-    .label dir = $d
-    lda #0
-    sta x_2
+    .label sqr2_hi = 9
+    .label sqr2_lo = 7
+    .label dir = $b
+    ldx #0
     lda #<mulf_sqr1_hi+1
     sta sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta sqr1_hi+1
+    txa
+    sta sqr
+    sta sqr+1
+    sta c
     lda #<mulf_sqr1_lo+1
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
-    sta sqr
-    sta sqr+1
-    tax
   b1:
-    inx
-    txa
-    and #1
-    cmp #0
-    bne b2
-    inc x_2
-    inc sqr
-    bne !+
-    inc sqr+1
-  !:
-  b2:
-    lda sqr
-    ldy #0
-    sta (sqr1_lo),y
-    lda sqr+1
-    sta (sqr1_hi),y
-    inc sqr1_hi
-    bne !+
-    inc sqr1_hi+1
-  !:
-    lda x_2
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inc sqr1_lo
-    bne !+
-    inc sqr1_lo+1
-  !:
     lda sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda #$ff
     sta dir
     lda #<mulf_sqr2_hi
     sta sqr2_hi
     lda #>mulf_sqr2_hi
     sta sqr2_hi+1
+    ldx #-1
     lda #<mulf_sqr2_lo
     sta sqr2_lo
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
-    ldx #-1
-  b4:
+  b5:
+    lda sqr2_lo+1
+    cmp #>mulf_sqr2_lo+$1ff
+    bne b6
+    lda sqr2_lo
+    cmp #<mulf_sqr2_lo+$1ff
+    bne b6
+    // Set the very last value g(511) = f(256)
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
+    rts
+  b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -294,26 +275,48 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b5
+    bne b8
     lda #1
     sta dir
-  b5:
+  b8:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
-    lda sqr2_lo+1
-    cmp #>mulf_sqr2_lo+$1ff
-    bne b4
-    lda sqr2_lo
-    cmp #<mulf_sqr2_lo+$1ff
-    bne b4
-    // Set the very last value g(511) = f(256)
-    lda mulf_sqr1_lo+$100
-    sta mulf_sqr2_lo+$1ff
-    lda mulf_sqr1_hi+$100
-    sta mulf_sqr2_hi+$1ff
-    rts
+    jmp b5
+  b2:
+    inc c
+    lda #1
+    and c
+    cmp #0
+    bne b3
+    inx
+    inc sqr
+    bne !+
+    inc sqr+1
+  !:
+  b3:
+    lda sqr
+    ldy #0
+    sta (sqr1_lo),y
+    lda sqr+1
+    sta (sqr1_hi),y
+    inc sqr1_hi
+    bne !+
+    inc sqr1_hi+1
+  !:
+    txa
+    clc
+    adc sqr
+    sta sqr
+    bcc !+
+    inc sqr+1
+  !:
+    inc sqr1_lo
+    bne !+
+    inc sqr1_lo+1
+  !:
+    jmp b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

@@ -8,16 +8,16 @@ main: {
     lda #7
   b1:
     tax
-    sta SCREEN,x
-    tax
     inx
     cmp #7
-    bcc b3
+    bcc b2
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
     sta SCREEN,x
     rts
-  b3:
+  b2:
+    txa
+    sta SCREEN,x
     txa
     jmp b1
 }

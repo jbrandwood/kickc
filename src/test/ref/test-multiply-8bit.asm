@@ -21,14 +21,35 @@ mul8s_compare: {
     .label ms = 4
     .label mf = $a
     .label mn = 8
-    .label b = $f
     .label a = $c
+    .label b = $f
     lda #-$80
     sta a
   b1:
     lda #-$80
-    sta b
+    cmp a
+    bne b2
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_ln
+    rts
   b2:
+    lda #-$80
+    sta b
+  b3:
+    lda #-$80
+    cmp b
+    bne b4
+    inc a
+    jmp b1
+  b4:
     ldx b
     jsr muls8s
     lda a
@@ -41,93 +62,33 @@ mul8s_compare: {
     bne !+
     lda ms+1
     cmp mf+1
-    beq b6
+    beq b5
   !:
     ldx #0
-    jmp b3
-  b6:
+    jmp b6
+  b5:
     ldx #1
-  b3:
+  b6:
     lda ms
     cmp mn
     bne !+
     lda ms+1
     cmp mn+1
-    beq b4
+    beq b7
   !:
     ldx #0
-  b4:
+  b7:
     cpx #0
-    bne b5
+    bne b8
     lda #2
     sta BGCOL
     ldx a
     jsr mul8s_error
     rts
-  b5:
+  b8:
     inc b
-    lda #-$80
-    cmp b
-    bne b2
-    inc a
-    cmp a
-    bne b1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
-    jsr print_ln
-    rts
+    jmp b3
     str: .text "signed multiply results match!@"
-}
-// Print a newline
-print_ln: {
-  b1:
-    lda #$28
-    clc
-    adc print_line_cursor
-    sta print_line_cursor
-    bcc !+
-    inc print_line_cursor+1
-  !:
-    lda print_line_cursor+1
-    cmp print_char_cursor+1
-    bcc b1
-    bne !+
-    lda print_line_cursor
-    cmp print_char_cursor
-    bcc b1
-  !:
-    rts
-}
-// Print a zero-terminated string
-// print_str(byte* zeropage($d) str)
-print_str: {
-    .label str = $d
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
 }
 // mul8s_error(signed byte register(X) a, signed byte zeropage($f) b, signed word zeropage(4) ms, signed word zeropage(8) mn, signed word zeropage($a) mf)
 mul8s_error: {
@@ -181,6 +142,26 @@ mul8s_error: {
     jsr print_ln
     rts
     str: .text "signed multiply mismatch @"
+}
+// Print a newline
+print_ln: {
+  b1:
+    lda #$28
+    clc
+    adc print_line_cursor
+    sta print_line_cursor
+    bcc !+
+    inc print_line_cursor+1
+  !:
+    lda print_line_cursor+1
+    cmp print_char_cursor+1
+    bcc b1
+    bne !+
+    lda print_line_cursor
+    cmp print_char_cursor
+    bcc b1
+  !:
+    rts
 }
 // Print a signed word as HEX
 // print_sword(signed word zeropage(4) w)
@@ -244,6 +225,30 @@ print_byte: {
     lda print_hextab,x
     jsr print_char
     rts
+}
+// Print a zero-terminated string
+// print_str(byte* zeropage($d) str)
+print_str: {
+    .label str = $d
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
 }
 // Print a signed byte as HEX
 // print_sbyte(signed byte register(X) b)
@@ -409,14 +414,23 @@ muls8s: {
     .label return = 4
     .label a = $c
     lda a
-    bmi b6
+    bmi b8
     cmp #1
-    bmi b5
-    ldy #0
-    tya
+    bmi b7
+    lda #<0
     sta m
     sta m+1
+    tay
   b3:
+    cpy a
+    bne b4
+    rts
+  b7:
+    lda #<0
+    sta return
+    sta return+1
+    rts
+  b4:
     txa
     sta $fe
     ora #$7f
@@ -432,20 +446,17 @@ muls8s: {
     adc $ff
     sta m+1
     iny
-    cpy a
-    bne b3
-    rts
-  b5:
+    jmp b3
+  b8:
     lda #<0
-    sta return
-    sta return+1
-    rts
-  b6:
-    ldy #0
-    tya
     sta m
     sta m+1
-  b4:
+    tay
+  b5:
+    cpy a
+    bne b6
+    rts
+  b6:
     txa
     sta $fe
     ora #$7f
@@ -461,9 +472,7 @@ muls8s: {
     sbc $ff
     sta m+1
     dey
-    cpy a
-    bne b4
-    rts
+    jmp b5
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
@@ -601,12 +610,21 @@ muls8u: {
     .label a = $c
     lda a
     cmp #0
-    beq b3
-    ldy #0
-    tya
+    beq b4
+    lda #<0
     sta m
     sta m+1
+    tay
   b2:
+    cpy a
+    bne b3
+    rts
+  b4:
+    lda #<0
+    sta return
+    sta return+1
+    rts
+  b3:
     txa
     clc
     adc m
@@ -615,14 +633,7 @@ muls8u: {
     inc m+1
   !:
     iny
-    cpy a
-    bne b2
-    rts
-  b3:
-    lda #<0
-    sta return
-    sta return+1
-    rts
+    jmp b2
 }
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
@@ -638,12 +649,14 @@ mulf_tables_cmp: {
     lda #>mulf_sqr1_lo
     sta kc_sqr+1
   b1:
-    ldy #0
-    lda (kc_sqr),y
-    cmp (asm_sqr),y
-    beq b2
-    lda #2
-    sta BGCOL
+    lda kc_sqr+1
+    cmp #>mulf_sqr1_lo+$200*4
+    bcc b2
+    bne !+
+    lda kc_sqr
+    cmp #<mulf_sqr1_lo+$200*4
+    bcc b2
+  !:
     lda #<$400
     sta print_char_cursor
     lda #>$400
@@ -651,48 +664,6 @@ mulf_tables_cmp: {
     lda #<str
     sta print_str.str
     lda #>str
-    sta print_str.str+1
-    jsr print_str
-    jsr print_word
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-    lda kc_sqr
-    sta print_word.w
-    lda kc_sqr+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<$400
-    sta print_line_cursor
-    lda #>$400
-    sta print_line_cursor+1
-    rts
-  b2:
-    inc asm_sqr
-    bne !+
-    inc asm_sqr+1
-  !:
-    inc kc_sqr
-    bne !+
-    inc kc_sqr+1
-  !:
-    lda kc_sqr+1
-    cmp #>mulf_sqr1_lo+$200*4
-    bcc b1
-    bne !+
-    lda kc_sqr
-    cmp #<mulf_sqr1_lo+$200*4
-    bcc b1
-  !:
-    lda #<$400
-    sta print_char_cursor
-    lda #>$400
-    sta print_char_cursor+1
-    lda #<str2
-    sta print_str.str
-    lda #>str2
     sta print_str.str+1
     jsr print_str
     lda #<$400
@@ -705,9 +676,51 @@ mulf_tables_cmp: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     rts
-    str: .text "multiply table mismatch at @"
-    str1: .text " / @"
-    str2: .text "multiply tables match!@"
+  b2:
+    ldy #0
+    lda (kc_sqr),y
+    cmp (asm_sqr),y
+    beq b4
+    lda #2
+    sta BGCOL
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    jsr print_word
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda kc_sqr
+    sta print_word.w
+    lda kc_sqr+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<$400
+    sta print_line_cursor
+    lda #>$400
+    sta print_line_cursor+1
+    rts
+  b4:
+    inc asm_sqr
+    bne !+
+    inc asm_sqr+1
+  !:
+    inc kc_sqr
+    bne !+
+    inc kc_sqr+1
+  !:
+    jmp b1
+    str: .text "multiply tables match!@"
+    str1: .text "multiply table mismatch at @"
+    str2: .text " / @"
 }
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
@@ -764,77 +777,58 @@ mulf_init_asm: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    .label c = $f
     .label sqr1_hi = 6
-    .label sqr = 8
+    .label sqr = $d
     .label sqr1_lo = 4
-    .label x_2 = $f
-    .label sqr2_hi = $d
-    .label sqr2_lo = $a
+    .label sqr2_hi = $a
+    .label sqr2_lo = 8
     .label dir = $c
-    lda #0
-    sta x_2
+    ldx #0
     lda #<mulf_sqr1_hi+1
     sta sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta sqr1_hi+1
+    txa
+    sta sqr
+    sta sqr+1
+    sta c
     lda #<mulf_sqr1_lo+1
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
-    sta sqr
-    sta sqr+1
-    tax
   b1:
-    inx
-    txa
-    and #1
-    cmp #0
-    bne b2
-    inc x_2
-    inc sqr
-    bne !+
-    inc sqr+1
-  !:
-  b2:
-    lda sqr
-    ldy #0
-    sta (sqr1_lo),y
-    lda sqr+1
-    sta (sqr1_hi),y
-    inc sqr1_hi
-    bne !+
-    inc sqr1_hi+1
-  !:
-    lda x_2
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inc sqr1_lo
-    bne !+
-    inc sqr1_lo+1
-  !:
     lda sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b1
+    bne b2
     lda #$ff
     sta dir
     lda #<mulf_sqr2_hi
     sta sqr2_hi
     lda #>mulf_sqr2_hi
     sta sqr2_hi+1
+    ldx #-1
     lda #<mulf_sqr2_lo
     sta sqr2_lo
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
-    ldx #-1
-  b4:
+  b5:
+    lda sqr2_lo+1
+    cmp #>mulf_sqr2_lo+$1ff
+    bne b6
+    lda sqr2_lo
+    cmp #<mulf_sqr2_lo+$1ff
+    bne b6
+    // Set the very last value g(511) = f(256)
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
+    rts
+  b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -849,26 +843,48 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b5
+    bne b8
     lda #1
     sta dir
-  b5:
+  b8:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
-    lda sqr2_lo+1
-    cmp #>mulf_sqr2_lo+$1ff
-    bne b4
-    lda sqr2_lo
-    cmp #<mulf_sqr2_lo+$1ff
-    bne b4
-    // Set the very last value g(511) = f(256)
-    lda mulf_sqr1_lo+$100
-    sta mulf_sqr2_lo+$1ff
-    lda mulf_sqr1_hi+$100
-    sta mulf_sqr2_hi+$1ff
-    rts
+    jmp b5
+  b2:
+    inc c
+    lda #1
+    and c
+    cmp #0
+    bne b3
+    inx
+    inc sqr
+    bne !+
+    inc sqr+1
+  !:
+  b3:
+    lda sqr
+    ldy #0
+    sta (sqr1_lo),y
+    lda sqr+1
+    sta (sqr1_hi),y
+    inc sqr1_hi
+    bne !+
+    inc sqr1_hi+1
+  !:
+    txa
+    clc
+    adc sqr
+    sta sqr
+    bcc !+
+    inc sqr+1
+  !:
+    inc sqr1_lo
+    bne !+
+    inc sqr1_lo+1
+  !:
+    jmp b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -887,6 +903,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -894,13 +918,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

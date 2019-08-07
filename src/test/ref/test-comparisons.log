@@ -7,7 +7,10 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) HEAP_TOP
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@7
+Culled Empty Block (label) memset::@6
+Culled Empty Block (label) memset::@8
+Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
@@ -53,7 +56,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@12
 memset: scope:[memset]  from print_cls
-  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (byte) memset::c#4 ← phi( print_cls/(byte) memset::c#0 )
   (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
   (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
   (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
@@ -65,7 +68,7 @@ memset::@1: scope:[memset]  from memset memset::@4
   (void*) memset::return#0 ← (void*) memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
   (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
@@ -73,16 +76,22 @@ memset::@2: scope:[memset]  from memset
   (byte*) memset::end#0 ← (byte*~) memset::$3
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
-memset::@4: scope:[memset]  from memset::@2 memset::@4
-  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
-  *((byte*) memset::dst#2) ← (byte) memset::c#1
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@5
+  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@5/(byte) memset::c#1 )
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
+  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@5
   to:memset::@1
+memset::@5: scope:[memset]  from memset::@4
+  (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#2 ← phi( memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#3 ← phi( memset::@4/(byte*) memset::dst#2 )
+  (byte) memset::c#1 ← phi( memset::@4/(byte) memset::c#2 )
+  *((byte*) memset::dst#3) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  to:memset::@4
 memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
   (void*) memset::return#1 ← (void*) memset::return#3
@@ -1424,19 +1433,23 @@ SYMBOL TABLE SSA
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
+(label) memset::@5
 (label) memset::@return
 (byte) memset::c
 (byte) memset::c#0
 (byte) memset::c#1
 (byte) memset::c#2
 (byte) memset::c#3
+(byte) memset::c#4
 (byte*) memset::dst
 (byte*) memset::dst#0
 (byte*) memset::dst#1
 (byte*) memset::dst#2
+(byte*) memset::dst#3
 (byte*) memset::end
 (byte*) memset::end#0
 (byte*) memset::end#1
+(byte*) memset::end#2
 (word) memset::num
 (word) memset::num#0
 (word) memset::num#1
@@ -1452,6 +1465,7 @@ SYMBOL TABLE SSA
 (void*) memset::str#2
 (void*) memset::str#3
 (void*) memset::str#4
+(void*) memset::str#5
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -1927,32 +1941,36 @@ Inferred type updated to byte in (unumber~) print_byte::$2 ← (byte) print_byte
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) $ce - (byte) main::a#2
 Inferred type updated to byte in (unumber~) main::$67 ← (byte) main::a#42 + (byte) $30
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [94] (bool~) main::$3 ← (byte) main::a#2 >= (byte) main::b#0 from [93] (bool~) main::$2 ← (byte) main::a#2 < (byte) main::b#0
-Inversing boolean not [106] (bool~) main::$6 ← (byte) main::a#4 >= (byte) $37 from [105] (bool~) main::$5 ← (byte) main::a#4 < (byte) $37
-Inversing boolean not [120] (bool~) main::$9 ← (byte) main::a#6 >= *((byte[5]) main::cs#0 + (byte) main::i#2) from [119] (bool~) main::$8 ← (byte) main::a#6 < *((byte[5]) main::cs#0 + (byte) main::i#2)
-Inversing boolean not [134] (bool~) main::$12 ← (byte) main::a#8 >= (byte) main::a#8 from [133] (bool~) main::$11 ← (byte) main::a#8 < (byte) main::a#8
-Inversing boolean not [152] (bool~) main::$16 ← (byte) main::a#10 <= (byte) main::b#2 from [151] (bool~) main::$15 ← (byte) main::a#10 > (byte) main::b#2
-Inversing boolean not [166] (bool~) main::$19 ← (byte) main::a#12 <= (byte) $37 from [165] (bool~) main::$18 ← (byte) main::a#12 > (byte) $37
-Inversing boolean not [180] (bool~) main::$22 ← (byte) main::a#14 <= *((byte[5]) main::cs#0 + (byte) main::i#4) from [179] (bool~) main::$21 ← (byte) main::a#14 > *((byte[5]) main::cs#0 + (byte) main::i#4)
-Inversing boolean not [194] (bool~) main::$25 ← (byte) main::a#16 <= (byte) main::a#16 from [193] (bool~) main::$24 ← (byte) main::a#16 > (byte) main::a#16
-Inversing boolean not [212] (bool~) main::$29 ← (byte) main::a#18 > (byte) main::b#4 from [211] (bool~) main::$28 ← (byte) main::a#18 <= (byte) main::b#4
-Inversing boolean not [226] (bool~) main::$32 ← (byte) main::a#20 > (byte) $37 from [225] (bool~) main::$31 ← (byte) main::a#20 <= (byte) $37
-Inversing boolean not [240] (bool~) main::$35 ← (byte) main::a#22 > *((byte[5]) main::cs#0 + (byte) main::i#6) from [239] (bool~) main::$34 ← (byte) main::a#22 <= *((byte[5]) main::cs#0 + (byte) main::i#6)
-Inversing boolean not [254] (bool~) main::$38 ← (byte) main::a#24 > (byte) main::a#24 from [253] (bool~) main::$37 ← (byte) main::a#24 <= (byte) main::a#24
-Inversing boolean not [272] (bool~) main::$42 ← (byte) main::a#26 < (byte) main::b#6 from [271] (bool~) main::$41 ← (byte) main::a#26 >= (byte) main::b#6
-Inversing boolean not [286] (bool~) main::$45 ← (byte) main::a#28 < (byte) $37 from [285] (bool~) main::$44 ← (byte) main::a#28 >= (byte) $37
-Inversing boolean not [300] (bool~) main::$48 ← (byte) main::a#30 < *((byte[5]) main::cs#0 + (byte) main::i#8) from [299] (bool~) main::$47 ← (byte) main::a#30 >= *((byte[5]) main::cs#0 + (byte) main::i#8)
-Inversing boolean not [314] (bool~) main::$51 ← (byte) main::a#32 < (byte) main::a#32 from [313] (bool~) main::$50 ← (byte) main::a#32 >= (byte) main::a#32
-Inversing boolean not [332] (bool~) main::$55 ← (byte) main::a#34 != (byte) main::b#8 from [331] (bool~) main::$54 ← (byte) main::a#34 == (byte) main::b#8
-Inversing boolean not [346] (bool~) main::$58 ← (byte) main::a#36 != (byte) $37 from [345] (bool~) main::$57 ← (byte) main::a#36 == (byte) $37
-Inversing boolean not [360] (bool~) main::$61 ← (byte) main::a#38 != *((byte[5]) main::cs#0 + (byte) main::i#10) from [359] (bool~) main::$60 ← (byte) main::a#38 == *((byte[5]) main::cs#0 + (byte) main::i#10)
-Inversing boolean not [374] (bool~) main::$64 ← (byte) main::a#40 != (byte) main::a#40 from [373] (bool~) main::$63 ← (byte) main::a#40 == (byte) main::a#40
+Inversing boolean not [95] (bool~) main::$3 ← (byte) main::a#2 >= (byte) main::b#0 from [94] (bool~) main::$2 ← (byte) main::a#2 < (byte) main::b#0
+Inversing boolean not [107] (bool~) main::$6 ← (byte) main::a#4 >= (byte) $37 from [106] (bool~) main::$5 ← (byte) main::a#4 < (byte) $37
+Inversing boolean not [121] (bool~) main::$9 ← (byte) main::a#6 >= *((byte[5]) main::cs#0 + (byte) main::i#2) from [120] (bool~) main::$8 ← (byte) main::a#6 < *((byte[5]) main::cs#0 + (byte) main::i#2)
+Inversing boolean not [135] (bool~) main::$12 ← (byte) main::a#8 >= (byte) main::a#8 from [134] (bool~) main::$11 ← (byte) main::a#8 < (byte) main::a#8
+Inversing boolean not [153] (bool~) main::$16 ← (byte) main::a#10 <= (byte) main::b#2 from [152] (bool~) main::$15 ← (byte) main::a#10 > (byte) main::b#2
+Inversing boolean not [167] (bool~) main::$19 ← (byte) main::a#12 <= (byte) $37 from [166] (bool~) main::$18 ← (byte) main::a#12 > (byte) $37
+Inversing boolean not [181] (bool~) main::$22 ← (byte) main::a#14 <= *((byte[5]) main::cs#0 + (byte) main::i#4) from [180] (bool~) main::$21 ← (byte) main::a#14 > *((byte[5]) main::cs#0 + (byte) main::i#4)
+Inversing boolean not [195] (bool~) main::$25 ← (byte) main::a#16 <= (byte) main::a#16 from [194] (bool~) main::$24 ← (byte) main::a#16 > (byte) main::a#16
+Inversing boolean not [213] (bool~) main::$29 ← (byte) main::a#18 > (byte) main::b#4 from [212] (bool~) main::$28 ← (byte) main::a#18 <= (byte) main::b#4
+Inversing boolean not [227] (bool~) main::$32 ← (byte) main::a#20 > (byte) $37 from [226] (bool~) main::$31 ← (byte) main::a#20 <= (byte) $37
+Inversing boolean not [241] (bool~) main::$35 ← (byte) main::a#22 > *((byte[5]) main::cs#0 + (byte) main::i#6) from [240] (bool~) main::$34 ← (byte) main::a#22 <= *((byte[5]) main::cs#0 + (byte) main::i#6)
+Inversing boolean not [255] (bool~) main::$38 ← (byte) main::a#24 > (byte) main::a#24 from [254] (bool~) main::$37 ← (byte) main::a#24 <= (byte) main::a#24
+Inversing boolean not [273] (bool~) main::$42 ← (byte) main::a#26 < (byte) main::b#6 from [272] (bool~) main::$41 ← (byte) main::a#26 >= (byte) main::b#6
+Inversing boolean not [287] (bool~) main::$45 ← (byte) main::a#28 < (byte) $37 from [286] (bool~) main::$44 ← (byte) main::a#28 >= (byte) $37
+Inversing boolean not [301] (bool~) main::$48 ← (byte) main::a#30 < *((byte[5]) main::cs#0 + (byte) main::i#8) from [300] (bool~) main::$47 ← (byte) main::a#30 >= *((byte[5]) main::cs#0 + (byte) main::i#8)
+Inversing boolean not [315] (bool~) main::$51 ← (byte) main::a#32 < (byte) main::a#32 from [314] (bool~) main::$50 ← (byte) main::a#32 >= (byte) main::a#32
+Inversing boolean not [333] (bool~) main::$55 ← (byte) main::a#34 != (byte) main::b#8 from [332] (bool~) main::$54 ← (byte) main::a#34 == (byte) main::b#8
+Inversing boolean not [347] (bool~) main::$58 ← (byte) main::a#36 != (byte) $37 from [346] (bool~) main::$57 ← (byte) main::a#36 == (byte) $37
+Inversing boolean not [361] (bool~) main::$61 ← (byte) main::a#38 != *((byte[5]) main::cs#0 + (byte) main::i#10) from [360] (bool~) main::$60 ← (byte) main::a#38 == *((byte[5]) main::cs#0 + (byte) main::i#10)
+Inversing boolean not [375] (bool~) main::$64 ← (byte) main::a#40 != (byte) main::a#40 from [374] (bool~) main::$63 ← (byte) main::a#40 == (byte) main::a#40
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
 Alias (word) memset::num#1 = (word) memset::num#2 
-Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte) memset::c#3 = (byte) memset::c#4 
 Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte) memset::c#1 = (byte) memset::c#2 
+Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
+Alias (byte*) memset::end#1 = (byte*) memset::end#2 
+Alias (void*) memset::str#4 = (void*) memset::str#5 
 Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#39 (byte*) print_char_cursor#141 (byte*) print_screen#5 (byte*) print_line_cursor#33 (byte*) print_char_cursor#118 (byte*) print_screen#4 
 Alias (byte*) print_str::str#2 = (byte*) print_str::str#3 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#47 (byte*) print_char_cursor#92 (byte*) print_char_cursor#48 
@@ -2122,10 +2140,10 @@ Alias (byte*) print_char_cursor#116 = (byte*) print_char_cursor#140
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) memset::num#1 (word) memset::num#0
 Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
-Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
-Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte) memset::c#3 (byte) memset::c#0
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
 Identical Phi Values (byte*) print_str::str#4 (byte*) print_str::str#1
 Identical Phi Values (byte*) print_char_cursor#119 (byte*) print_char_cursor#40
 Identical Phi Values (byte*) print_char_cursor#49 (byte*) print_char_cursor#93
@@ -2182,30 +2200,30 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Identical Phi Values (byte*) print_char_cursor#93 (byte*) print_char_cursor#55
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [15] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) print_str::$0 [25] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [38] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#55) goto print_ln::@1
-Simple Condition (bool~) main::$3 [95] if((byte) main::a#10>=(byte) main::b#0) goto main::@2
-Simple Condition (bool~) main::$6 [107] if((byte) main::a#10>=(byte) $37) goto main::@3
-Simple Condition (bool~) main::$9 [121] if((byte) main::a#10>=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4
-Simple Condition (bool~) main::$12 [135] if((byte) main::a#10>=(byte) main::a#10) goto main::@5
-Simple Condition (bool~) main::$16 [153] if((byte) main::a#10<=(byte) main::b#0) goto main::@6
-Simple Condition (bool~) main::$19 [167] if((byte) main::a#10<=(byte) $37) goto main::@7
-Simple Condition (bool~) main::$22 [181] if((byte) main::a#10<=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8
-Simple Condition (bool~) main::$25 [195] if((byte) main::a#10<=(byte) main::a#10) goto main::@9
-Simple Condition (bool~) main::$29 [213] if((byte) main::a#10>(byte) main::b#0) goto main::@10
-Simple Condition (bool~) main::$32 [227] if((byte) main::a#10>(byte) $37) goto main::@11
-Simple Condition (bool~) main::$35 [241] if((byte) main::a#10>*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12
-Simple Condition (bool~) main::$38 [255] if((byte) main::a#10>(byte) main::a#10) goto main::@13
-Simple Condition (bool~) main::$42 [273] if((byte) main::a#10<(byte) main::b#0) goto main::@14
-Simple Condition (bool~) main::$45 [287] if((byte) main::a#10<(byte) $37) goto main::@15
-Simple Condition (bool~) main::$48 [301] if((byte) main::a#10<*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16
-Simple Condition (bool~) main::$51 [315] if((byte) main::a#10<(byte) main::a#10) goto main::@17
-Simple Condition (bool~) main::$55 [333] if((byte) main::a#10!=(byte) main::b#0) goto main::@18
-Simple Condition (bool~) main::$58 [347] if((byte) main::a#10!=(byte) $37) goto main::@19
-Simple Condition (bool~) main::$61 [361] if((byte) main::a#10!=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20
-Simple Condition (bool~) main::$64 [375] if((byte) main::a#10!=(byte) main::a#10) goto main::@21
-Simple Condition (bool~) main::$68 [394] if((byte) main::i#1!=rangelast(0,4)) goto main::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) print_str::$0 [26] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#55) goto print_ln::@1
+Simple Condition (bool~) main::$3 [96] if((byte) main::a#10>=(byte) main::b#0) goto main::@2
+Simple Condition (bool~) main::$6 [108] if((byte) main::a#10>=(byte) $37) goto main::@3
+Simple Condition (bool~) main::$9 [122] if((byte) main::a#10>=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4
+Simple Condition (bool~) main::$12 [136] if((byte) main::a#10>=(byte) main::a#10) goto main::@5
+Simple Condition (bool~) main::$16 [154] if((byte) main::a#10<=(byte) main::b#0) goto main::@6
+Simple Condition (bool~) main::$19 [168] if((byte) main::a#10<=(byte) $37) goto main::@7
+Simple Condition (bool~) main::$22 [182] if((byte) main::a#10<=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8
+Simple Condition (bool~) main::$25 [196] if((byte) main::a#10<=(byte) main::a#10) goto main::@9
+Simple Condition (bool~) main::$29 [214] if((byte) main::a#10>(byte) main::b#0) goto main::@10
+Simple Condition (bool~) main::$32 [228] if((byte) main::a#10>(byte) $37) goto main::@11
+Simple Condition (bool~) main::$35 [242] if((byte) main::a#10>*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12
+Simple Condition (bool~) main::$38 [256] if((byte) main::a#10>(byte) main::a#10) goto main::@13
+Simple Condition (bool~) main::$42 [274] if((byte) main::a#10<(byte) main::b#0) goto main::@14
+Simple Condition (bool~) main::$45 [288] if((byte) main::a#10<(byte) $37) goto main::@15
+Simple Condition (bool~) main::$48 [302] if((byte) main::a#10<*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16
+Simple Condition (bool~) main::$51 [316] if((byte) main::a#10<(byte) main::a#10) goto main::@17
+Simple Condition (bool~) main::$55 [334] if((byte) main::a#10!=(byte) main::b#0) goto main::@18
+Simple Condition (bool~) main::$58 [348] if((byte) main::a#10!=(byte) $37) goto main::@19
+Simple Condition (bool~) main::$61 [362] if((byte) main::a#10!=*((byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20
+Simple Condition (bool~) main::$64 [376] if((byte) main::a#10!=(byte) main::a#10) goto main::@21
+Simple Condition (bool~) main::$68 [395] if((byte) main::i#1!=rangelast(0,4)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[5]) { (byte) 7, (byte) $c7, (byte) $37, (byte) $97, (byte) $67 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
@@ -2285,16 +2303,16 @@ Constant (const byte) main::r#40 = '+'
 Constant (const byte) print_char::ch#2 = ' '
 Constant (const byte) print_char::ch#3 = ' '
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)print_line_cursor#0 in [68] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
+Constant value identified (void*)print_line_cursor#0 in [69] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
-if() condition always true - replacing block destination [398] if(true) goto main::@43
+if() condition always true - replacing block destination [399] if(true) goto main::@43
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization Pass2ConstantStringConsolidation
-Resolved ranged next value [392] main::i#1 ← ++ main::i#10 to ++
-Resolved ranged comparison value [394] if(main::i#1!=rangelast(0,4)) goto main::@1 to (number) 5
-Rewriting conditional comparison [167] if((byte) main::a#10<=(byte) $37) goto main::@7
-Rewriting conditional comparison [227] if((byte) main::a#10>(byte) $37) goto main::@11
+Resolved ranged next value [393] main::i#1 ← ++ main::i#10 to ++
+Resolved ranged comparison value [395] if(main::i#1!=rangelast(0,4)) goto main::@1 to (number) 5
+Rewriting conditional comparison [168] if((byte) main::a#10<=(byte) $37) goto main::@7
+Rewriting conditional comparison [228] if((byte) main::a#10>(byte) $37) goto main::@11
 Eliminating unused variable (void*) memset::return#2 and assignment [33] (void*) memset::return#2 ← (void*) memset::str#0
 Eliminating unused constant (const byte) main::r#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -2488,7 +2506,6 @@ Constant inlined main::op5 = (const string) main::op4
 Constant inlined main::op2 = (const string) main::op
 Constant inlined main::op3 = (const string) main::op
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@71(between main::@70 and main::@1)
 Adding NOP phi() at start of @begin
@@ -2638,7 +2655,7 @@ Coalesced [286] print_str::str#5 ← print_str::str#1
 Coalesced (already) [287] print_char_cursor#142 ← print_char_cursor#55
 Coalesced [294] print_str::str#6 ← print_str::str#0
 Coalesced [295] print_char_cursor#143 ← print_char_cursor#1
-Coalesced [308] memset::dst#3 ← memset::dst#1
+Coalesced [308] memset::dst#4 ← memset::dst#1
 Coalesced down to 32 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @29
@@ -2651,9 +2668,9 @@ Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@6
 Renumbering block @38 to @1
 Renumbering block memset::@4 to memset::@1
+Renumbering block memset::@5 to memset::@2
 Renumbering block main::@43 to main::@42
 Renumbering block main::@46 to main::@43
 Renumbering block main::@47 to main::@44
@@ -3117,15 +3134,17 @@ print_cls::@return: scope:[print_cls]  from print_cls
 memset: scope:[memset]  from print_cls
   [202] phi()
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@1
-  [203] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
-  [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [205] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+memset::@1: scope:[memset]  from memset memset::@2
+  [203] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [207] return 
+  [205] return 
   to:@return
+memset::@2: scope:[memset]  from memset::@1
+  [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [207] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -3163,8 +3182,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#2 16.5
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 14.666666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -4789,33 +4808,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [203] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [205] return 
+    rts
+    // memset::@2
+  b2:
+    // [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [205] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [207] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [207] return 
-    rts
+    // [203] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -4860,8 +4881,8 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:34 [ p
 Statement [188] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#55 print_byte::$2 ] ( main:2::printu:14::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:14::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [194] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [196] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:200 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte) main::b#0 ← (byte) $ce - (byte) main::a#10 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ( main:2 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ) always clobbers reg byte a 
 Statement [21] if((byte) main::a#10>=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a reg byte y 
 Statement [28] if((byte) main::a#10>=(byte) main::a#10) goto main::@5 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
@@ -4889,8 +4910,8 @@ Statement [185] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ 
 Statement [188] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#55 print_byte::$2 ] ( main:2::printu:14::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:14::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [194] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [196] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:200 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte) main::b#0 ← (byte) $ce - (byte) main::a#10 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ( main:2 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ) always clobbers reg byte a 
 Statement [21] if((byte) main::a#10>=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a reg byte y 
 Statement [25] (byte) printu::b#2 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 main::r#43 printu::a#2 printu::b#2 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 main::r#43 printu::a#2 printu::b#2 print_char_cursor#55 ] ) always clobbers reg byte y 
@@ -4927,8 +4948,8 @@ Statement [185] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ 
 Statement [188] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#55 print_byte::$2 ] ( main:2::printu:14::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:14::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [194] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [196] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:200 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte) main::b#0 ← (byte) $ce - (byte) main::a#10 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ( main:2 [ main::a#10 print_char_cursor#120 main::i#10 print_line_cursor#27 main::b#0 ] ) always clobbers reg byte a 
 Statement [21] if((byte) main::a#10>=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a reg byte y 
 Statement [25] (byte) printu::b#2 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 main::r#43 printu::a#2 printu::b#2 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 main::r#43 printu::a#2 printu::b#2 print_char_cursor#55 ] ) always clobbers reg byte y 
@@ -4960,8 +4981,8 @@ Statement [185] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ 
 Statement [188] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#55 print_byte::$2 ] ( main:2::printu:14::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:170 [ main::a#10 main::i#10 print_line_cursor#1 printu::op#20 printu::b#20 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:14::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:20::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:27::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:34::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:44::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:50::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:57::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:64::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:74::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:80::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:87::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:94::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:104::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:110::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:117::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:124::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:134::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:140::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:147::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] main:2::printu:154::print_byte:174 [ main::a#10 main::i#10 print_line_cursor#1 printu::res#20 print_char_cursor#55 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [194] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [196] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ print_char_cursor#2 print_str::str#2 ] ( main:2::printu:14::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:20::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:27::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:34::print_str:172 [ main::a#10 main::i#10 print_line_cursor#27 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:44::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:50::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:57::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:64::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:74::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:80::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:87::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:94::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:104::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:110::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:117::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:124::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:134::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:140::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:147::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] main:2::printu:154::print_str:172 [ main::a#10 main::i#10 print_line_cursor#1 printu::b#20 printu::res#20 print_char_cursor#2 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
-Statement [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:200 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:200 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::a#10 main::a#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::i#10 main::i#1 ] : zp ZP_BYTE:3 , 
 Potential registers zp ZP_BYTE:4 [ main::r#41 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -5003,7 +5024,7 @@ Uplift Scope [printu] 418.2: zp ZP_BYTE:30 [ printu::res#20 printu::res#8 printu
 Uplift Scope [] 498.02: zp ZP_WORD:32 [ print_char_cursor#54 print_char_cursor#94 print_char_cursor#95 print_char_cursor#152 print_char_cursor#55 print_char_cursor#156 print_char_cursor#160 print_char_cursor#120 print_char_cursor#151 print_char_cursor#168 print_char_cursor#2 print_char_cursor#1 ] 264.96: zp ZP_WORD:24 [ print_line_cursor#13 print_line_cursor#25 print_line_cursor#27 print_line_cursor#1 ] 
 Uplift Scope [print_str] 305.5: zp ZP_WORD:35 [ print_str::str#2 print_str::str#1 print_str::str#0 ] 
 Uplift Scope [main] 11.87: zp ZP_BYTE:3 [ main::i#10 main::i#1 ] 9.36: zp ZP_BYTE:2 [ main::a#10 main::a#1 ] 5.5: zp ZP_BYTE:5 [ main::r#42 ] 5.5: zp ZP_BYTE:9 [ main::r#46 ] 5.5: zp ZP_BYTE:13 [ main::r#50 ] 5.5: zp ZP_BYTE:17 [ main::r#54 ] 5.5: zp ZP_BYTE:21 [ main::r#58 ] 3.67: zp ZP_BYTE:4 [ main::r#41 ] 3.67: zp ZP_BYTE:6 [ main::r#43 ] 3.67: zp ZP_BYTE:7 [ main::r#44 ] 3.67: zp ZP_BYTE:8 [ main::r#45 ] 3.67: zp ZP_BYTE:10 [ main::r#47 ] 3.67: zp ZP_BYTE:11 [ main::r#48 ] 3.67: zp ZP_BYTE:12 [ main::r#49 ] 3.67: zp ZP_BYTE:14 [ main::r#51 ] 3.67: zp ZP_BYTE:15 [ main::r#52 ] 3.67: zp ZP_BYTE:16 [ main::r#53 ] 3.67: zp ZP_BYTE:18 [ main::r#55 ] 3.67: zp ZP_BYTE:19 [ main::r#56 ] 3.67: zp ZP_BYTE:20 [ main::r#57 ] 3.67: zp ZP_BYTE:22 [ main::r#59 ] 3.67: zp ZP_BYTE:23 [ main::r#60 ] 0.98: zp ZP_BYTE:39 [ main::b#0 ] 
-Uplift Scope [memset] 33: zp ZP_WORD:37 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 36.67: zp ZP_WORD:37 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_char] 20: zp ZP_BYTE:31 [ print_char::ch#5 print_char::ch#0 print_char::ch#1 print_char::ch#4 ] 
 Uplift Scope [print_byte] 10: zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:40 [ print_byte::$0 ] 4: zp ZP_BYTE:41 [ print_byte::$2 ] 
 Uplift Scope [RADIX] 
@@ -6334,33 +6355,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [203] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [205] return 
+    rts
+    // memset::@2
+  b2:
+    // [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [205] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [207] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [207] return 
-    rts
+    // [203] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -6458,8 +6481,6 @@ Replacing label b42_from_b42 with b42
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -6528,7 +6549,6 @@ Removing instruction b4_from_b3:
 Removing instruction print_char_from_b4:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
@@ -6615,6 +6635,7 @@ Removing instruction memset_from_print_cls:
 Removing instruction breturn:
 Removing instruction b1_from_memset:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -6640,8 +6661,6 @@ Relabelling long label b19_from_b63 to b39
 Relabelling long label b20_from_b64 to b40
 Relabelling long label b21_from_b65 to b41
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -6760,12 +6779,13 @@ FINAL SYMBOL TABLE
 (byte) main::r#60 reg byte x 3.6666666666666665
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
+(label) memset::@2
 (label) memset::@return
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:10 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:10 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:10 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:10 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -6929,7 +6949,7 @@ reg byte a [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 15733
+Score: 15763
 
   // File Comments
   // Upstart
@@ -8018,32 +8038,36 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-    // [203] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     // memset::@1
   b1:
+    // for(char* dst = str; dst!=end; dst++)
+    // [204] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    // memset::@return
+    // }
+    // [205] return 
+    rts
+    // memset::@2
+  b2:
     // *dst = c
-    // [204] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [206] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [205] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [207] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [206] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    // memset::@return
-    // }
-    // [207] return 
-    rts
+    // [203] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [203] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"

@@ -4,8 +4,10 @@
 main: {
     ldx #0
   b1:
-    inx
     cpx #$64
-    bcc b1
+    bcc b2
     rts
+  b2:
+    inx
+    jmp b1
 }

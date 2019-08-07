@@ -1,4 +1,7 @@
-Culled Empty Block (label) main::@2
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,13 +10,16 @@ main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (number) $400
   (word) main::i#0 ← (number) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (word) main::i#2 ← phi( main/(word) main::i#0 main::@1/(word) main::i#1 )
-  *((byte*) main::screen#0 + (word) main::i#2) ← (byte) 'a'
-  (word) main::i#1 ← (word) main::i#2 + (number) $28
-  (bool~) main::$0 ← (word) main::i#1 < (number) $3e8
-  if((bool~) main::$0) goto main::@1
+main::@1: scope:[main]  from main main::@2
+  (word) main::i#2 ← phi( main/(word) main::i#0 main::@2/(word) main::i#1 )
+  (bool~) main::$0 ← (word) main::i#2 < (number) $3e8
+  if((bool~) main::$0) goto main::@2
   to:main::@return
+main::@2: scope:[main]  from main::@1
+  (word) main::i#3 ← phi( main::@1/(word) main::i#2 )
+  *((byte*) main::screen#0 + (word) main::i#3) ← (byte) 'a'
+  (word) main::i#1 ← (word) main::i#3 + (number) $28
+  to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
@@ -32,41 +38,44 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$0
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (word) main::i
 (word) main::i#0
 (word) main::i#1
 (word) main::i#2
+(word) main::i#3
 (byte*) main::screen
 (byte*) main::screen#0
 
 Adding number conversion cast (unumber) 0 in (word) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) $28 in (word) main::i#1 ← (word) main::i#2 + (number) $28
-Adding number conversion cast (unumber) $3e8 in (bool~) main::$0 ← (word) main::i#1 < (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) main::$0 ← (word) main::i#2 < (number) $3e8
+Adding number conversion cast (unumber) $28 in (word) main::i#1 ← (word) main::i#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Inlining cast (word) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast $28
 Simplifying constant integer cast $3e8
+Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
 Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [6] if((word) main::i#1<(word) $3e8) goto main::@1
+Alias (word) main::i#2 = (word) main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition (bool~) main::$0 [4] if((word) main::i#2<(word) $3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [3] *((const byte*) main::screen#0 + (word) main::i#2) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [6] *((const byte*) main::screen#0 + (word) main::i#2) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const word) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -76,10 +85,9 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::i#3 ← main::i#1
+Coalesced [12] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
-Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -98,23 +106,25 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] (word) main::i#2 ← phi( main/(byte) 0 main::@1/(word) main::i#1 )
-  [6] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2
-  [7] *((byte*~) main::$1) ← (byte) 'a'
-  [8] (word) main::i#1 ← (word) main::i#2 + (byte) $28
-  [9] if((word) main::i#1<(word) $3e8) goto main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (word) main::i#2 ← phi( main/(byte) 0 main::@2/(word) main::i#1 )
+  [6] if((word) main::i#2<(word) $3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [10] return 
+  [7] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2
+  [9] *((byte*~) main::$1) ← (byte) 'a'
+  [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*~) main::$1 22.0
 (word) main::i
-(word) main::i#1 16.5
+(word) main::i#1 22.0
 (word) main::i#2 11.0
 (byte*) main::screen
 
@@ -165,13 +175,25 @@ main: {
     lda #>0
     sta i+1
     jmp b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [6] if((word) main::i#2<(word) $3e8) goto main::@2 -- vwuz1_lt_vwuc1_then_la1 
+    lda i+1
+    cmp #>$3e8
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$3e8
+    bcc b2
+  !:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda i
     clc
     adc #<screen
@@ -179,11 +201,11 @@ main: {
     lda i+1
     adc #>screen
     sta _1+1
-    // [7] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (_1),y
-    // [8] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
+    // [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$28
     clc
     adc i
@@ -191,33 +213,23 @@ main: {
     bcc !+
     inc i+1
   !:
-    // [9] if((word) main::i#1<(word) $3e8) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
-    cmp #>$3e8
-    bcc b1_from_b1
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b1_from_b1
-  !:
-    jmp breturn
-    // main::@return
-  breturn:
-    // [10] return 
-    rts
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
-Statement [7] *((byte*~) main::$1) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [8] (word) main::i#1 ← (word) main::i#2 + (byte) $28 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
-Statement [9] if((word) main::i#1<(word) $3e8) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
+Statement [6] if((word) main::i#2<(word) $3e8) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
+Statement [9] *((byte*~) main::$1) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::i#2 main::i#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ main::$1 ] : zp ZP_WORD:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_WORD:2 [ main::i#2 main::i#1 ] 22: zp ZP_WORD:4 [ main::$1 ] 
+Uplift Scope [main] 33: zp ZP_WORD:2 [ main::i#2 main::i#1 ] 22: zp ZP_WORD:4 [ main::$1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 838 combination zp ZP_WORD:2 [ main::i#2 main::i#1 ] zp ZP_WORD:4 [ main::$1 ] 
@@ -260,13 +272,25 @@ main: {
     lda #>0
     sta i+1
     jmp b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
     // main::@1
   b1:
-    // [6] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [6] if((word) main::i#2<(word) $3e8) goto main::@2 -- vwuz1_lt_vwuc1_then_la1 
+    lda i+1
+    cmp #>$3e8
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$3e8
+    bcc b2
+  !:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda i
     clc
     adc #<screen
@@ -274,11 +298,11 @@ main: {
     lda i+1
     adc #>screen
     sta _1+1
-    // [7] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (_1),y
-    // [8] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
+    // [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$28
     clc
     adc i
@@ -286,20 +310,10 @@ main: {
     bcc !+
     inc i+1
   !:
-    // [9] if((word) main::i#1<(word) $3e8) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
-    cmp #>$3e8
-    bcc b1_from_b1
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b1_from_b1
-  !:
-    jmp breturn
-    // main::@return
-  breturn:
-    // [10] return 
-    rts
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 
@@ -311,23 +325,19 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -338,9 +348,10 @@ FINAL SYMBOL TABLE
 (void()) main()
 (byte*~) main::$1 $1 zp ZP_WORD:4 22.0
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (word) main::i
-(word) main::i#1 i zp ZP_WORD:2 16.5
+(word) main::i#1 i zp ZP_WORD:2 22.0
 (word) main::i#2 i zp ZP_WORD:2 11.0
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
@@ -350,7 +361,7 @@ zp ZP_WORD:4 [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 716
+Score: 746
 
   // File Comments
 // Tests that array-indexing by a word variable is turned into pointer addition
@@ -376,12 +387,26 @@ main: {
     lda #<0
     sta i
     sta i+1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   b1:
+    // for( word i=0;i<1000;i+=40)
+    // [6] if((word) main::i#2<(word) $3e8) goto main::@2 -- vwuz1_lt_vwuc1_then_la1 
+    lda i+1
+    cmp #>$3e8
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$3e8
+    bcc b2
+  !:
+    // main::@return
+    // }
+    // [7] return 
+    rts
+    // main::@2
+  b2:
     // screen[i] = 'a'
-    // [6] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda i
     clc
     adc #<screen
@@ -389,12 +414,12 @@ main: {
     lda i+1
     adc #>screen
     sta _1+1
-    // [7] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*~) main::$1) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (_1),y
     // i+=40
-    // [8] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
+    // [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$28
     clc
     adc i
@@ -402,20 +427,9 @@ main: {
     bcc !+
     inc i+1
   !:
-    // for( word i=0;i<1000;i+=40)
-    // [9] if((word) main::i#1<(word) $3e8) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
-    lda i+1
-    cmp #>$3e8
-    bcc b1
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b1
-  !:
-    // main::@return
-    // }
-    // [10] return 
-    rts
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
 

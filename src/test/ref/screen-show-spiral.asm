@@ -161,12 +161,12 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(7) screen)
+// init_angle_screen(byte* zeropage(9) screen)
 init_angle_screen: {
-    .label _10 = $18
-    .label screen = 7
-    .label screen_topline = 9
-    .label screen_bottomline = 7
+    .label _11 = $18
+    .label screen = 9
+    .label screen_topline = 7
+    .label screen_bottomline = 9
     .label xw = $f
     .label yw = $11
     .label angle_w = $18
@@ -197,47 +197,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -257,6 +218,47 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
@@ -454,12 +456,12 @@ init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 7
     .label yds = $14
+    .label screen_topline = 3
+    .label y = 2
     .label xds = $16
     .label ds = $16
     .label x = 5
     .label xb = 6
-    .label screen_topline = 3
-    .label y = 2
     jsr init_squares
     lda screen
     clc
@@ -490,33 +492,8 @@ init_dist_screen: {
     sta x
   b5:
     lda x
-    asl
-    cmp #$27
-    bcs b6
-    eor #$ff
-    clc
-    adc #$27+1
-  b8:
-    jsr sqr
-    lda ds
-    clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
-    jsr sqrt
-    ldy x
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    ldy xb
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b5
+    bcc b6
     lda #$28
     clc
     adc screen_topline
@@ -537,9 +514,36 @@ init_dist_screen: {
     bne b1
     rts
   b6:
+    lda x
+    asl
+    cmp #$27
+    bcs b8
+    eor #$ff
+    clc
+    adc #$27+1
+  b10:
+    jsr sqr
+    lda ds
+    clc
+    adc yds
+    sta ds
+    lda ds+1
+    adc yds+1
+    sta ds+1
+    jsr sqrt
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b5
+  b8:
     sec
     sbc #$27
-    jmp b8
+    jmp b10
   b2:
     sec
     sbc #$18

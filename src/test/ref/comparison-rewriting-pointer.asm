@@ -12,26 +12,29 @@ main: {
     lda #>screen
     sta sc+1
   b1:
-    lda #'a'
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
     lda sc+1
     cmp #>screen+$3e7
     bne !+
     lda sc
     cmp #<screen+$3e7
   !:
-    bcc b1
-    beq b1
+    bcc b2
+    beq b2
     lda #<cols+$3e7
     sta cc
     lda #>cols+$3e7
     sta cc+1
-  b2:
+  b3:
+    lda #>cols-1
+    cmp cc+1
+    bcc b4
+    bne !+
+    lda #<cols-1
+    cmp cc
+    bcc b4
+  !:
+    rts
+  b4:
     lda #2
     ldy #0
     sta (cc),y
@@ -40,13 +43,14 @@ main: {
     dec cc+1
   !:
     dec cc
-    lda #>cols-1
-    cmp cc+1
-    bcc b2
+    jmp b3
+  b2:
+    lda #'a'
+    ldy #0
+    sta (sc),y
+    inc sc
     bne !+
-    lda #<cols-1
-    cmp cc
-    bcc b2
+    inc sc+1
   !:
-    rts
+    jmp b1
 }

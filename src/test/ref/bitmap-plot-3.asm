@@ -14,10 +14,10 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _6 = $b
-    .label _10 = $f
-    .label a = $1b
-    .label i = 2
+    .label _7 = $b
+    .label _11 = $f
+    .label a = 2
+    .label i = $1b
     jsr bitmap_init
     jsr bitmap_clear
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -25,14 +25,21 @@ main: {
     lda #toD0181_return
     sta D018
     lda #0
-    sta i
     sta a
+    sta i
   b1:
+    lda #8
+    cmp i
+    bne b2
+  b3:
+    inc SCREEN+$3e7
+    jmp b3
+  b2:
     ldy a
     lda COSTAB,y
-    sta _6
+    sta _7
     lda #0
-    sta _6+1
+    sta _7+1
     lda #$78
     clc
     adc bitmap_line.x1
@@ -46,9 +53,9 @@ main: {
     lda #0
     sta bitmap_line.y1+1
     lda COSTAB+$20,y
-    sta _10
+    sta _11
     lda #0
-    sta _10+1
+    sta _11+1
     lda #$78
     clc
     adc bitmap_line.x2
@@ -66,12 +73,7 @@ main: {
     axs #-[$20]
     stx a
     inc i
-    lda #8
-    cmp i
-    bne b1
-  b2:
-    inc SCREEN+$3e7
-    jmp b2
+    jmp b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
 // bitmap_line(word zeropage($b) x1, word zeropage(9) y1, word zeropage($f) x2, word zeropage($11) y2)
@@ -385,6 +387,15 @@ memset: {
     adc str+1
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+  breturn:
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -392,14 +403,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-  breturn:
-    rts
+    jmp b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {

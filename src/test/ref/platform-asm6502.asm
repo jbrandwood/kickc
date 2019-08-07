@@ -3,11 +3,13 @@
 main: {
     ldx #0
   b1:
+    cpx #$a
+    bcc b2
+    rts
+  b2:
     txa
     sta TABLE,x
     inx
-    cpx #$a
-    bcc b1
-    rts
+    jmp b1
 }
   TABLE: .fill $a, 0

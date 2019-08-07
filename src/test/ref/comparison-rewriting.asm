@@ -26,17 +26,18 @@ main: {
     ldx #0
   b2:
     lda header,x
-    sta $400,x
-    inx
-    lda header,x
     cmp #0
-    bne b2
-    ldx #0
+    bne b3
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  b3:
+    ldx #0
+  b4:
+    cpx #9+1
+    bcc b5
+    rts
+  b5:
     lda #$28
     clc
     adc screen
@@ -50,38 +51,41 @@ main: {
     ldy #0
     sta (screen),y
     cpx #5
-    bcs b4
+    bcs b6
     lda #'+'
     ldy #2
     sta (screen),y
-  b4:
+  b6:
     cpx #5+1
-    bcs b5
+    bcs b7
     lda #'+'
     ldy #5
     sta (screen),y
-  b5:
+  b7:
     cpx #5
-    bne b6
+    bne b8
     lda #'+'
     ldy #8
     sta (screen),y
-  b6:
+  b8:
     cpx #5
-    bcc b7
+    bcc b9
     lda #'+'
     ldy #$b
     sta (screen),y
-  b7:
+  b9:
     cpx #5+1
-    bcc b8
+    bcc b10
     lda #'+'
     ldy #$e
     sta (screen),y
-  b8:
+  b10:
     inx
-    cpx #9+1
-    bcc b3
-    rts
+    jmp b4
+  b3:
+    lda header,x
+    sta $400,x
+    inx
+    jmp b2
     header: .text "  <  <= == >= >@"
 }

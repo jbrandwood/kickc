@@ -33,9 +33,21 @@ main: {
     lda #0
     sta x
   b1:
+    lda x
+    cmp #$10
+    bcc b4
+  b5:
+    jmp b5
+  b4:
     lda #0
     sta y
   b2:
+    lda y
+    cmp #9
+    bcc b3
+    inc x
+    jmp b1
+  b3:
     lda x
     clc
     adc y
@@ -45,15 +57,7 @@ main: {
     ldx y
     jsr draw_block
     inc y
-    lda y
-    cmp #9
-    bcc b2
-    inc x
-    lda x
-    cmp #$10
-    bcc b1
-  b4:
-    jmp b4
+    jmp b2
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
@@ -248,6 +252,14 @@ memset: {
     adc #>$3e8
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -255,13 +267,7 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-    rts
+    jmp b2
 }
 init_sprites: {
     lda #1

@@ -84,12 +84,14 @@ main: {
     ldx #0
   b3:
     lda msg,x
+    cmp #0
+    bne b4
+    jmp b1
+  b4:
+    lda msg,x
     sta $400+$28+$28+$28+$28+$50+3,x
     inx
-    lda msg,x
-    cmp #0
-    bne b3
-    jmp b1
+    jmp b3
     msg: .text "raster lines@"
 }
 // Decimal utoa() without using multiply or divide

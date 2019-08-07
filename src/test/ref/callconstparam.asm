@@ -6,12 +6,12 @@
 .pc = $80d "Program"
   .label screen = 3
 main: {
-    lda #2
-    sta line.x1
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
+    lda #2
+    sta line.x1
     ldx #1
     jsr line
     lda #5
@@ -24,6 +24,10 @@ main: {
 line: {
     .label x1 = 2
   b1:
+    cpx x1
+    bcc b2
+    rts
+  b2:
     txa
     ldy #0
     sta (screen),y
@@ -32,7 +36,5 @@ line: {
     inc screen+1
   !:
     inx
-    cpx x1
-    bcc b1
-    rts
+    jmp b1
 }

@@ -9,6 +9,16 @@ main: {
     lda #>$d800
     sta cols+1
   b1:
+    lda cols+1
+    cmp #>$d800+$3e8
+    bcc b2
+    bne !+
+    lda cols
+    cmp #<$d800+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     jsr fn1
     ldy #0
     lda (cols),y
@@ -19,15 +29,7 @@ main: {
     bne !+
     inc cols+1
   !:
-    lda cols+1
-    cmp #>$d800+$3e8
-    bcc b1
-    bne !+
-    lda cols
-    cmp #<$d800+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 fn1: {
     .label screen = 4
@@ -36,6 +38,16 @@ fn1: {
     lda #>$400
     sta screen+1
   b1:
+    lda screen+1
+    cmp #>$400+$3e8
+    bcc b2
+    bne !+
+    lda screen
+    cmp #<$400+$3e8
+    bcc b2
+  !:
+    rts
+  b2:
     ldy #0
     lda (screen),y
     clc
@@ -45,13 +57,5 @@ fn1: {
     bne !+
     inc screen+1
   !:
-    lda screen+1
-    cmp #>$400+$3e8
-    bcc b1
-    bne !+
-    lda screen
-    cmp #<$400+$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }

@@ -106,9 +106,9 @@ doplasma: {
     .label angle = 3
     .label dist = 5
     .label sin_x = $1a
-    .label sin_y = $11
+    .label sin_y = $10
     .label screen = 7
-    .label y = $10
+    .label y = $12
     lda SCREEN_ANGLE
     sta angle
     lda SCREEN_ANGLE+1
@@ -199,6 +199,14 @@ memset: {
     adc #>$3e8
     sta end+1
   b2:
+    lda dst+1
+    cmp end+1
+    bne b3
+    lda dst
+    cmp end
+    bne b3
+    rts
+  b3:
     txa
     ldy #0
     sta (dst),y
@@ -206,23 +214,17 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp end+1
-    bne b2
-    lda dst
-    cmp end
-    bne b2
-    rts
+    jmp b2
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 make_plasma_charset: {
-    .label _4 = $10
-    .label _8 = $11
-    .label _9 = $11
+    .label _7 = $12
+    .label _10 = $10
+    .label _11 = $10
     .label s = $f
     .label i = 2
     .label c = 5
-    .label _16 = $11
+    .label _16 = $10
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -233,45 +235,59 @@ make_plasma_charset: {
     sta c
     sta c+1
   b1:
+    lda c+1
+    cmp #>$100
+    bcc b2
+    bne !+
+    lda c
+    cmp #<$100
+    bcc b2
+  !:
+    rts
+  b2:
     lda c
     tay
     lda SINTABLE,y
     sta s
     lda #0
     sta i
-  b2:
+  b3:
+    lda i
+    cmp #8
+    bcc b4
+    lda c
+    and #7
+    cmp #0
+    bne b11
+    jsr print_char
+  b11:
+    inc c
+    bne !+
+    inc c+1
+  !:
+    jmp b1
+  b4:
     ldy #0
     ldx #0
-  b3:
-    jsr sid_rnd
-    and #$ff
-    sta _4
-    lda s
-    cmp _4
-    bcs b4
-    tya
-    ora bittab,x
-    tay
-  b4:
-    inx
+  b5:
     cpx #8
-    bcc b3
+    bcc b6
     lda c
     asl
-    sta _8
+    sta _10
     lda c+1
     rol
-    sta _8+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
+    sta _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
     lda i
     clc
-    adc _9
-    sta _9
+    adc _11
+    sta _11
     bcc !+
-    inc _9+1
+    inc _11+1
   !:
     clc
     lda _16
@@ -284,29 +300,27 @@ make_plasma_charset: {
     ldy #0
     sta (_16),y
     inc i
-    lda i
-    cmp #8
-    bcc b2
-    lda c
-    and #7
-    cmp #0
-    bne b9
-    jsr print_char
-  b9:
-    inc c
-    bne !+
-    inc c+1
-  !:
-    lda c+1
-    cmp #>$100
-    bcc b1
-    bne !+
-    lda c
-    cmp #<$100
-    bcc b1
-  !:
-    rts
+    jmp b3
+  b6:
+    jsr sid_rnd
+    and #$ff
+    sta _7
+    lda s
+    cmp _7
+    bcs b8
+    tya
+    ora bittab,x
+    tay
+  b8:
+    inx
+    jmp b5
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
+}
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+sid_rnd: {
+    lda SID_VOICE3_OSC
+    rts
 }
 // Print a single char
 print_char: {
@@ -318,12 +332,6 @@ print_char: {
     bne !+
     inc print_char_cursor+1
   !:
-    rts
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -348,17 +356,17 @@ sid_rnd_init: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(3) screen)
+// init_angle_screen(byte* zeropage(5) screen)
 init_angle_screen: {
-    .label _10 = $11
-    .label screen = 3
-    .label screen_topline = 5
-    .label screen_bottomline = 3
+    .label _11 = $10
+    .label screen = 5
+    .label screen_topline = 3
+    .label screen_bottomline = 5
     .label xw = $14
     .label yw = $16
-    .label angle_w = $11
+    .label angle_w = $10
     .label ang_w = $13
-    .label x = $10
+    .label x = $12
     .label xb = 2
     .label y = $f
     lda screen
@@ -384,47 +392,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -444,6 +413,47 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
@@ -454,10 +464,10 @@ atan2_16: {
     .label _7 = $1a
     .label yi = 7
     .label xi = $1a
-    .label angle = $11
+    .label angle = $10
     .label xd = 9
     .label yd = $18
-    .label return = $11
+    .label return = $10
     .label x = $14
     .label y = $16
     lda y+1
@@ -641,12 +651,12 @@ init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 5
     .label yds = $14
+    .label screen_topline = 3
+    .label y = 2
     .label xds = $16
     .label ds = $16
     .label x = $f
-    .label xb = $10
-    .label screen_topline = 3
-    .label y = 2
+    .label xb = $12
     jsr init_squares
     lda screen
     clc
@@ -677,33 +687,8 @@ init_dist_screen: {
     sta x
   b5:
     lda x
-    asl
-    cmp #$27
-    bcs b6
-    eor #$ff
-    clc
-    adc #$27+1
-  b8:
-    jsr sqr
-    lda ds
-    clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
-    jsr sqrt
-    ldy x
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    ldy xb
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b5
+    bcc b6
     lda #$28
     clc
     adc screen_topline
@@ -724,9 +709,36 @@ init_dist_screen: {
     bne b1
     rts
   b6:
+    lda x
+    asl
+    cmp #$27
+    bcs b8
+    eor #$ff
+    clc
+    adc #$27+1
+  b10:
+    jsr sqr
+    lda ds
+    clc
+    adc yds
+    sta ds
+    lda ds+1
+    adc yds+1
+    sta ds+1
+    jsr sqrt
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b5
+  b8:
     sec
     sbc #$27
-    jmp b8
+    jmp b10
   b2:
     sec
     sbc #$18
@@ -860,7 +872,7 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $11
+    .label squares = $10
     .label sqr = $1a
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta malloc.size

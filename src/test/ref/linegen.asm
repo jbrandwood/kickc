@@ -87,6 +87,45 @@ main: {
     jsr print_ln
     ldx #0
   b1:
+    cpx #$14
+    bcc b2
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    lda #<$7461
+    sta print_word.w
+    lda #>$7461
+    sta print_word.w+1
+    jsr print_word
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda #<$f781
+    sta print_word.w
+    lda #>$f781
+    sta print_word.w+1
+    jsr print_word
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda #<$6488
+    sta print_word.w
+    lda #>$6488
+    sta print_word.w+1
+    jsr print_word
+    jsr print_ln
+    rts
+  b2:
     stx print_byte.b
     lda print_line_cursor
     sta print_char_cursor
@@ -134,44 +173,7 @@ main: {
     jsr print_word
     jsr print_ln
     inx
-    cpx #$14
-    bcc b1
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
-    lda #<$7461
-    sta print_word.w
-    lda #>$7461
-    sta print_word.w+1
-    jsr print_word
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-    lda #<$f781
-    sta print_word.w
-    lda #>$f781
-    sta print_word.w+1
-    jsr print_word
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-    lda #<$6488
-    sta print_word.w
-    lda #>$6488
-    sta print_word.w+1
-    jsr print_word
-    jsr print_ln
-    rts
+    jmp b1
     str: .text "   @"
     str1: .text " @"
     lintab1: .fill 2*$14, 0
@@ -281,6 +283,14 @@ memset: {
     lda #>str
     sta dst+1
   b1:
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    rts
+  b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -288,20 +298,14 @@ memset: {
     bne !+
     inc dst+1
   !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    rts
+    jmp b1
 }
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
 // lin16u_gen(word zeropage(5) min, word zeropage(3) max, word* zeropage($b) lintab)
 lin16u_gen: {
-    .label _5 = $17
+    .label _6 = $17
     .label ampl = 3
     .label stepi = $11
     .label stepf = $f
@@ -357,15 +361,25 @@ lin16u_gen: {
     sta i
     sta i+1
   b1:
+    lda i+1
+    cmp #>$14
+    bcc b2
+    bne !+
+    lda i
+    cmp #<$14
+    bcc b2
+  !:
+    rts
+  b2:
     lda val+2
-    sta _5
+    sta _6
     lda val+3
-    sta _5+1
+    sta _6+1
     ldy #0
-    lda _5
+    lda _6
     sta (lintab),y
     iny
-    lda _5+1
+    lda _6+1
     sta (lintab),y
     lda val
     clc
@@ -391,15 +405,7 @@ lin16u_gen: {
     bne !+
     inc i+1
   !:
-    lda i+1
-    cmp #>$14
-    bcc b1
-    bne !+
-    lda i
-    cmp #<$14
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
 // Returns the quotient dividend/divisor.

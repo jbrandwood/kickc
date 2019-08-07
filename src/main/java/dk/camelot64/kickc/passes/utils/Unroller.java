@@ -9,7 +9,6 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.passes.AliasReplacer;
 import dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 

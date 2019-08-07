@@ -19,6 +19,17 @@ main: {
     lda #>SCREEN
     sta s+1
   b1:
+    lda s+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda s
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    jsr testSimpleTypes
+    rts
+  b2:
     lda #' '
     ldy #0
     sta (s),y
@@ -26,16 +37,7 @@ main: {
     bne !+
     inc s+1
   !:
-    lda s+1
-    cmp #>SCREEN+$3e8
-    bcc b1
-    bne !+
-    lda s
-    cmp #<SCREEN+$3e8
-    bcc b1
-  !:
-    jsr testSimpleTypes
-    rts
+    jmp b1
 }
 testSimpleTypes: {
     ldx #0

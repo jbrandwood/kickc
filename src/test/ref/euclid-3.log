@@ -7,7 +7,10 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) HEAP_TOP
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
-Culled Empty Block (label) memset::@5
+Culled Empty Block (label) memset::@7
+Culled Empty Block (label) memset::@6
+Culled Empty Block (label) memset::@8
+Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
@@ -54,7 +57,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@12
 memset: scope:[memset]  from print_cls
-  (byte) memset::c#3 ← phi( print_cls/(byte) memset::c#0 )
+  (byte) memset::c#4 ← phi( print_cls/(byte) memset::c#0 )
   (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
   (word) memset::num#1 ← phi( print_cls/(word) memset::num#0 )
   (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
@@ -66,7 +69,7 @@ memset::@1: scope:[memset]  from memset memset::@4
   (void*) memset::return#0 ← (void*) memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 )
+  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
   (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
@@ -74,16 +77,22 @@ memset::@2: scope:[memset]  from memset
   (byte*) memset::end#0 ← (byte*~) memset::$3
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
-memset::@4: scope:[memset]  from memset::@2 memset::@4
-  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#4 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#1 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (byte) memset::c#1 ← phi( memset::@2/(byte) memset::c#2 memset::@4/(byte) memset::c#1 )
-  *((byte*) memset::dst#2) ← (byte) memset::c#1
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  (bool~) memset::$4 ← (byte*) memset::dst#1 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@4
+memset::@4: scope:[memset]  from memset::@2 memset::@5
+  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@5/(byte) memset::c#1 )
+  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
+  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
+  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
+  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$4) goto memset::@5
   to:memset::@1
+memset::@5: scope:[memset]  from memset::@4
+  (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
+  (byte*) memset::end#2 ← phi( memset::@4/(byte*) memset::end#1 )
+  (byte*) memset::dst#3 ← phi( memset::@4/(byte*) memset::dst#2 )
+  (byte) memset::c#1 ← phi( memset::@4/(byte) memset::c#2 )
+  *((byte*) memset::dst#3) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  to:memset::@4
 memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
   (void*) memset::return#1 ← (void*) memset::return#3
@@ -439,19 +448,23 @@ SYMBOL TABLE SSA
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
+(label) memset::@5
 (label) memset::@return
 (byte) memset::c
 (byte) memset::c#0
 (byte) memset::c#1
 (byte) memset::c#2
 (byte) memset::c#3
+(byte) memset::c#4
 (byte*) memset::dst
 (byte*) memset::dst#0
 (byte*) memset::dst#1
 (byte*) memset::dst#2
+(byte*) memset::dst#3
 (byte*) memset::end
 (byte*) memset::end#0
 (byte*) memset::end#1
+(byte*) memset::end#2
 (word) memset::num
 (word) memset::num#0
 (word) memset::num#1
@@ -467,6 +480,7 @@ SYMBOL TABLE SSA
 (void*) memset::str#2
 (void*) memset::str#3
 (void*) memset::str#4
+(void*) memset::str#5
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -720,8 +734,12 @@ Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
 Alias (word) memset::num#1 = (word) memset::num#2 
-Alias (byte) memset::c#2 = (byte) memset::c#3 
+Alias (byte) memset::c#3 = (byte) memset::c#4 
 Alias (byte*) memset::end#0 = (byte*~) memset::$3 
+Alias (byte) memset::c#1 = (byte) memset::c#2 
+Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
+Alias (byte*) memset::end#1 = (byte*) memset::end#2 
+Alias (void*) memset::str#4 = (void*) memset::str#5 
 Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#36 (byte*) print_char_cursor#56 (byte*) print_screen#5 (byte*) print_line_cursor#34 (byte*) print_char_cursor#55 (byte*) print_screen#4 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#17 (byte*) print_char_cursor#1 (byte*) print_line_cursor#18 (byte*) print_char_cursor#27 (byte*) print_line_cursor#2 (byte*) print_char_cursor#2 
 Alias (byte) print_byte::b#3 = (byte) print_byte::b#4 
@@ -764,10 +782,10 @@ Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#49
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) memset::num#1 (word) memset::num#0
 Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
-Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
-Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte) memset::c#3 (byte) memset::c#0
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
 Identical Phi Values (byte*) print_line_cursor#31 (byte*) print_line_cursor#33
 Identical Phi Values (byte*) print_char_cursor#50 (byte*) print_char_cursor#22
 Identical Phi Values (byte*) print_char_cursor#26 (byte*) print_char_cursor#50
@@ -806,10 +824,10 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [15] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) print_ln::$1 [27] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#32) goto print_ln::@1
-Simple Condition (bool~) euclid::$0 [152] if((byte) euclid::a#2!=(byte) euclid::b#2) goto euclid::@2
-Simple Condition (bool~) euclid::$1 [155] if((byte) euclid::a#2>(byte) euclid::b#2) goto euclid::@4
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) print_ln::$1 [28] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#32) goto print_ln::@1
+Simple Condition (bool~) euclid::$0 [153] if((byte) euclid::a#2!=(byte) euclid::b#2) goto euclid::@2
+Simple Condition (bool~) euclid::$1 [156] if((byte) euclid::a#2>(byte) euclid::b#2) goto euclid::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte[]) print_hextab#0 = $0
@@ -830,7 +848,7 @@ Constant (const byte) print_euclid::b#5 = $bb
 Constant (const byte) print_char::ch#2 = ' '
 Constant (const byte) print_char::ch#3 = ' '
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)print_line_cursor#0 in [57] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
+Constant value identified (void*)print_line_cursor#0 in [58] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
@@ -883,7 +901,6 @@ Constant inlined print_euclid::b#1 = (byte) $45
 Constant inlined print_euclid::a#2 = (byte) $9b
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting memset::@6(between memset::@4 and memset::@4)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
@@ -942,7 +959,7 @@ Coalesced (already) [85] euclid::a#10 ← euclid::a#2
 Coalesced [86] euclid::b#9 ← euclid::b#1
 Coalesced [88] euclid::a#9 ← euclid::a#1
 Coalesced (already) [89] euclid::b#8 ← euclid::b#2
-Coalesced [102] memset::dst#3 ← memset::dst#1
+Coalesced [102] memset::dst#4 ← memset::dst#1
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @29
@@ -956,9 +973,9 @@ Culled Empty Block (label) euclid::@3
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@6
 Renumbering block @39 to @1
 Renumbering block memset::@4 to memset::@1
+Renumbering block memset::@5 to memset::@2
 Renumbering block euclid::@4 to euclid::@3
 Renumbering block euclid::@8 to euclid::@4
 Adding NOP phi() at start of @begin
@@ -1117,15 +1134,17 @@ print_cls::@return: scope:[print_cls]  from print_cls
 memset: scope:[memset]  from print_cls
   [64] phi()
   to:memset::@1
-memset::@1: scope:[memset]  from memset memset::@1
-  [65] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
-  [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [67] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
-  [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+memset::@1: scope:[memset]  from memset memset::@2
+  [65] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [69] return 
+  [67] return 
   to:@return
+memset::@2: scope:[memset]  from memset::@1
+  [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [69] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -1144,8 +1163,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#2 16.5
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 14.666666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -1666,33 +1685,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [65] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [67] return 
+    rts
+    // memset::@2
+  b2:
+    // [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [67] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [69] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [69] return 
-    rts
+    // [65] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -1718,8 +1739,8 @@ Statement [59] (byte) euclid::b#1 ← (byte) euclid::b#2 - (byte) euclid::a#2 [ 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ euclid::a#2 euclid::a#0 euclid::a#1 ]
 Statement [60] (byte) euclid::a#1 ← (byte) euclid::a#2 - (byte) euclid::b#2 [ euclid::b#2 euclid::a#1 ] ( main:2::print_euclid:7::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:9::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:11::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:13::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:15::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:17::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ euclid::b#2 euclid::b#0 euclid::b#1 ]
-Statement [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:62 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [8] (byte*~) print_char_cursor#64 ← (byte*) print_line_cursor#1 [ print_char_cursor#64 print_line_cursor#1 ] ( main:2 [ print_char_cursor#64 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [10] (byte*~) print_char_cursor#65 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#65 ] ( main:2 [ print_line_cursor#1 print_char_cursor#65 ] ) always clobbers reg byte a 
 Statement [12] (byte*~) print_char_cursor#66 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#66 ] ( main:2 [ print_line_cursor#1 print_char_cursor#66 ] ) always clobbers reg byte a 
@@ -1732,8 +1753,8 @@ Statement [46] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f [ p
 Statement [51] *((byte*) print_char_cursor#31) ← (byte) print_char::ch#4 [ print_char_cursor#31 ] ( main:2::print_euclid:7::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:9::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:11::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:13::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:15::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:17::print_char:23 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:7::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:9::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:11::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:13::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:15::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:17::print_char:27 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:21::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:25::print_char:45 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:33::print_char:45 [ print_line_cursor#33 print_byte::b#3 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:21::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:25::print_char:48 [ print_euclid::a#10 print_euclid::b#10 print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:7::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:9::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:11::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:13::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:15::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] main:2::print_euclid:17::print_byte:33::print_char:48 [ print_line_cursor#33 print_char_cursor#31 ] ) always clobbers reg byte y 
 Statement [59] (byte) euclid::b#1 ← (byte) euclid::b#2 - (byte) euclid::a#2 [ euclid::a#2 euclid::b#1 ] ( main:2::print_euclid:7::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] main:2::print_euclid:9::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] main:2::print_euclid:11::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] main:2::print_euclid:13::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] main:2::print_euclid:15::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] main:2::print_euclid:17::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::a#2 euclid::b#1 ] ) always clobbers reg byte a 
 Statement [60] (byte) euclid::a#1 ← (byte) euclid::a#2 - (byte) euclid::b#2 [ euclid::b#2 euclid::a#1 ] ( main:2::print_euclid:7::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:9::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:11::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:13::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:15::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] main:2::print_euclid:17::euclid:30 [ print_line_cursor#33 print_char_cursor#32 euclid::b#2 euclid::a#1 ] ) always clobbers reg byte a 
-Statement [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:2::print_cls:5::memset:62 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:62 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ print_euclid::a#10 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ print_euclid::b#10 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_WORD:4 [ print_line_cursor#16 print_line_cursor#33 print_line_cursor#1 ] : zp ZP_WORD:4 , 
@@ -1750,7 +1771,7 @@ Potential registers zp ZP_BYTE:16 [ print_byte::$2 ] : zp ZP_BYTE:16 , reg byte 
 REGISTER UPLIFT SCOPES
 Uplift Scope [euclid] 43.75: zp ZP_BYTE:11 [ euclid::b#2 euclid::b#0 euclid::b#1 ] 36.83: zp ZP_BYTE:10 [ euclid::a#2 euclid::a#0 euclid::a#1 ] 4: zp ZP_BYTE:14 [ euclid::return#0 ] 
 Uplift Scope [] 35.59: zp ZP_WORD:8 [ print_char_cursor#31 print_char_cursor#51 print_char_cursor#53 print_char_cursor#64 print_char_cursor#65 print_char_cursor#66 print_char_cursor#67 print_char_cursor#68 print_char_cursor#32 ] 28.24: zp ZP_WORD:4 [ print_line_cursor#16 print_line_cursor#33 print_line_cursor#1 ] 
-Uplift Scope [memset] 33: zp ZP_WORD:12 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 36.67: zp ZP_WORD:12 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_byte] 14.5: zp ZP_BYTE:6 [ print_byte::b#3 print_byte::b#0 print_byte::b#1 print_byte::b#2 ] 4: zp ZP_BYTE:15 [ print_byte::$0 ] 4: zp ZP_BYTE:16 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:7 [ print_char::ch#4 print_char::ch#0 print_char::ch#1 ] 
 Uplift Scope [print_euclid] 0.44: zp ZP_BYTE:2 [ print_euclid::a#10 ] 0.4: zp ZP_BYTE:3 [ print_euclid::b#10 ] 
@@ -2197,33 +2218,35 @@ memset: {
     lda #>str
     sta dst+1
     jmp b1
-    // [65] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-  b1_from_b1:
-    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
-    jmp b1
     // memset::@1
   b1:
-    // [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [67] return 
+    rts
+    // memset::@2
+  b2:
+    // [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [67] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [69] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1_from_b1
-    lda dst
-    cmp #<end
-    bne b1_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [69] return 
-    rts
+    // [65] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -2261,8 +2284,6 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b4 with b1
 Replacing label b1_from_b3 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -2280,7 +2301,6 @@ Removing instruction b1_from_b1:
 Removing instruction b1_from_euclid:
 Removing instruction b1_from_b3:
 Removing instruction b1_from_b4:
-Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction print_cls_from_main:
@@ -2319,12 +2339,11 @@ Removing instruction memset_from_print_cls:
 Removing instruction breturn:
 Removing instruction b1_from_memset:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -2362,12 +2381,13 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
+(label) memset::@2
 (label) memset::@return
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:6 16.5
-(byte*) memset::dst#2 dst zp ZP_WORD:6 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:6 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:6 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -2439,7 +2459,7 @@ reg byte x [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 1577
+Score: 1607
 
   // File Comments
 /*
@@ -2811,32 +2831,36 @@ memset: {
     sta dst
     lda #>str
     sta dst+1
-    // [65] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
-    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     // memset::@1
   b1:
+    // for(char* dst = str; dst!=end; dst++)
+    // [66] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
+    cmp #>end
+    bne b2
+    lda dst
+    cmp #<end
+    bne b2
+    // memset::@return
+    // }
+    // [67] return 
+    rts
+    // memset::@2
+  b2:
     // *dst = c
-    // [66] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [68] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [67] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [69] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc dst
     bne !+
     inc dst+1
   !:
-    // [68] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
-    // memset::@return
-    // }
-    // [69] return 
-    rts
+    // [65] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [65] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"

@@ -95,10 +95,11 @@ main: {
     .label fill = $16
     .label angle = $18
     .label min_angle = 4
-    .label fill1 = $a
-    .label min_offset = $a
-    .label min_offset_5 = 8
-    .label min_offset_7 = 8
+    .label fill1 = 8
+    .label min_offset = 8
+    .label min_offset_5 = $a
+    .label min_offset_9 = $a
+    .label min_offset_11 = $a
     sei
     lda SCREEN_DIST
     sta init_dist_screen.screen
@@ -131,14 +132,48 @@ main: {
     sta bucket_size
     cmp #0
     beq b4
-    lda #<$ffff
-    sta min_offset_5
-    lda #>$ffff
-    sta min_offset_5+1
     lda #$ff
     sta min_angle
+    lda #<$ffff
+    sta min_offset
+    lda #>$ffff
+    sta min_offset+1
     ldx #0
   b5:
+    cpx bucket_size
+    bcc b6
+    lda min_offset
+    cmp #<$ffff
+    bne !+
+    lda min_offset+1
+    cmp #>$ffff
+    beq b4
+  !:
+    clc
+    lda fill1
+    adc #<SCREEN_FILL
+    sta fill1
+    lda fill1+1
+    adc #>SCREEN_FILL
+    sta fill1+1
+    lda #FILL_CHAR
+    ldy #0
+    sta (fill1),y
+    dec BORDERCOL
+    jmp b2
+  b4:
+    inc bucket_idx
+    lda #NUM_BUCKETS
+    cmp bucket_idx
+    bne b12
+    dec BORDERCOL
+  b14:
+    inc COLS+$3e7
+    jmp b14
+  b12:
+    dec BORDERCOL
+    jmp b2
+  b6:
     txa
     asl
     tay
@@ -173,59 +208,25 @@ main: {
     ldy #0
     lda (angle),y
     sta min_angle
-  b6:
+  b8:
     inx
-    cpx bucket_size
-    bcc b16
-    lda min_offset
-    cmp #<$ffff
-    bne !+
-    lda min_offset+1
-    cmp #>$ffff
-    beq b4
-  !:
-    clc
-    lda fill1
-    adc #<SCREEN_FILL
-    sta fill1
-    lda fill1+1
-    adc #>SCREEN_FILL
-    sta fill1+1
-    lda #FILL_CHAR
-    ldy #0
-    sta (fill1),y
-    dec BORDERCOL
-    jmp b2
-  b4:
-    inc bucket_idx
-    lda #NUM_BUCKETS
-    cmp bucket_idx
-    bne b11
-    dec BORDERCOL
-  b13:
-    inc COLS+$3e7
-    jmp b13
-  b11:
-    dec BORDERCOL
-    jmp b2
-  b16:
-    lda min_offset
-    sta min_offset_7
-    lda min_offset+1
-    sta min_offset_7+1
+    lda min_offset_5
+    sta min_offset
+    lda min_offset_5+1
+    sta min_offset+1
     jmp b5
   b17:
-    lda min_offset_5
-    sta min_offset
-    lda min_offset_5+1
-    sta min_offset+1
-    jmp b6
+    lda min_offset
+    sta min_offset_9
+    lda min_offset+1
+    sta min_offset_9+1
+    jmp b8
   b18:
-    lda min_offset_5
-    sta min_offset
-    lda min_offset_5+1
-    sta min_offset+1
-    jmp b6
+    lda min_offset
+    sta min_offset_11
+    lda min_offset+1
+    sta min_offset_11+1
+    jmp b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 // init_buckets(byte* zeropage($16) screen)
@@ -430,12 +431,12 @@ malloc: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the center
-// init_angle_screen(byte* zeropage($14) screen)
+// init_angle_screen(byte* zeropage($1e) screen)
 init_angle_screen: {
-    .label _10 = $a
-    .label screen = $14
-    .label screen_topline = $1e
-    .label screen_bottomline = $14
+    .label _11 = $a
+    .label screen = $1e
+    .label screen_topline = $14
+    .label screen_bottomline = $1e
     .label xw = $20
     .label yw = $22
     .label angle_w = $a
@@ -466,47 +467,8 @@ init_angle_screen: {
     sta x
   b2:
     lda x
-    asl
-    eor #$ff
-    clc
-    adc #$27+1
-    ldy #0
-    sta xw+1
-    sty xw
-    lda y
-    asl
-    sta yw+1
-    sty yw
-    jsr atan2_16
-    lda #$80
-    clc
-    adc _10
-    sta _10
-    bcc !+
-    inc _10+1
-  !:
-    lda _10+1
-    sta ang_w
-    ldy xb
-    sta (screen_bottomline),y
-    eor #$ff
-    clc
-    adc #1
-    sta (screen_topline),y
-    lda #$80
-    clc
-    adc ang_w
-    ldy x
-    sta (screen_topline),y
-    lda #$80
-    sec
-    sbc ang_w
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b2
+    bcc b3
     lda screen_topline
     sec
     sbc #<$28
@@ -526,6 +488,47 @@ init_angle_screen: {
     cmp y
     bne b1
     rts
+  b3:
+    lda x
+    asl
+    eor #$ff
+    clc
+    adc #$27+1
+    ldy #0
+    sta xw+1
+    sty xw
+    lda y
+    asl
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sta ang_w
+    ldy xb
+    sta (screen_bottomline),y
+    eor #$ff
+    clc
+    adc #1
+    sta (screen_topline),y
+    lda #$80
+    clc
+    adc ang_w
+    ldy x
+    sta (screen_topline),y
+    lda #$80
+    sec
+    sbc ang_w
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
@@ -724,12 +727,12 @@ init_dist_screen: {
     .label screen = 8
     .label screen_bottomline = $a
     .label yds = $1c
+    .label screen_topline = 8
+    .label y = 7
     .label xds = $1e
     .label ds = $1e
     .label x = $1b
     .label xb = $1a
-    .label screen_topline = 8
-    .label y = 7
     jsr init_squares
     lda screen
     clc
@@ -760,33 +763,8 @@ init_dist_screen: {
     sta x
   b5:
     lda x
-    asl
-    cmp #$27
-    bcs b6
-    eor #$ff
-    clc
-    adc #$27+1
-  b8:
-    jsr sqr
-    lda ds
-    clc
-    adc yds
-    sta ds
-    lda ds+1
-    adc yds+1
-    sta ds+1
-    jsr sqrt
-    ldy x
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    ldy xb
-    sta (screen_topline),y
-    sta (screen_bottomline),y
-    inc x
-    dec xb
-    lda x
     cmp #$13+1
-    bcc b5
+    bcc b6
     lda #$28
     clc
     adc screen_topline
@@ -807,9 +785,36 @@ init_dist_screen: {
     bne b1
     rts
   b6:
+    lda x
+    asl
+    cmp #$27
+    bcs b8
+    eor #$ff
+    clc
+    adc #$27+1
+  b10:
+    jsr sqr
+    lda ds
+    clc
+    adc yds
+    sta ds
+    lda ds+1
+    adc yds+1
+    sta ds+1
+    jsr sqrt
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    jmp b5
+  b8:
     sec
     sbc #$27
-    jmp b8
+    jmp b10
   b2:
     sec
     sbc #$18

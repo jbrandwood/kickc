@@ -24,8 +24,8 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       // Scope->Set<Labels>
       Map<String, Set<String>> allLabels = new LinkedHashMap<>();
       String currentScope = "";
-      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for(AsmLine asmLine : asmSegment.getLines()) {
+      for(AsmChunk asmChunk : getAsmProgram().getChunks()) {
+         for(AsmLine asmLine : asmChunk.getLines()) {
             if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
             } else if(asmLine instanceof AsmScopeEnd) {
@@ -47,8 +47,8 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       // Find relabels for all long labels
       // Scope->(Label->NewLabel)
       Map<String, Map<String, String>> relabels = new LinkedHashMap<>();
-      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for(AsmLine asmLine : asmSegment.getLines()) {
+      for(AsmChunk asmChunk : getAsmProgram().getChunks()) {
+         for(AsmLine asmLine : asmChunk.getLines()) {
             if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
             } else if(asmLine instanceof AsmScopeEnd) {
@@ -78,8 +78,8 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       }
 
       // Execute relabelling
-      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for(AsmLine asmLine : asmSegment.getLines()) {
+      for(AsmChunk asmChunk : getAsmProgram().getChunks()) {
+         for(AsmLine asmLine : asmChunk.getLines()) {
             if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
             } else if(asmLine instanceof AsmScopeEnd) {

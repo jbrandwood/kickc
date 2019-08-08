@@ -12,49 +12,49 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /**
- * A segment of an ASM program. The segment has a number of methods/attributes that describe the lines of the segment.
- * Typically each ICL statement becomes a single ASM segment through the AsmFragment subsystem.
+ * A chunk of an ASM program. The chunk has a number of methods/attributes that describe the lines of the chunk.
+ * Typically each ICL statement becomes a single ASM chunk through the AsmFragment subsystem.
  */
-public class AsmSegment {
+public class AsmChunk {
 
    /**
-    * The lines of the segment.
+    * The lines of the chunk.
     */
    private List<AsmLine> lines;
 
    /**
-    * Index of the segment.
+    * Index of the chunk.
     */
    private int index;
 
    /**
-    * Index of the ICL statement that the segment is generated from,
+    * Index of the ICL statement that the chunk is generated from,
     */
    private Integer statementIdx;
 
    /**
-    * Readable name of the ICL source of the segment.
+    * Readable name of the ICL source of the chunk.
     */
    private String source;
 
    /**
-    * Readable name of the fragment used to generate the segment.
+    * Readable name of the fragment used to generate the chunk.
     */
    private String fragment;
 
-   /** If the segment represents a PHI transition (See. {@link PhiTransitions}) this contains the transition ID. */
+   /** If the chunk represents a PHI transition (See. {@link PhiTransitions}) this contains the transition ID. */
    private String phiTransitionId;
 
-   /** If the segment is an assignment in a PHI transition this contains the index of the assignment within the transition. */
+   /** If the chunk is an assignment in a PHI transition this contains the index of the assignment within the transition. */
    private Integer phiTransitionAssignmentIdx;
 
    /** The full name of the containing scope (procedure). */
    private String scopeLabel;
 
-   /** If non-null this overwrites the clobber of the segment that is calculated by examining the ASM instruction lines. */
+   /** If non-null this overwrites the clobber of the chunk that is calculated by examining the ASM instruction lines. */
    private AsmClobber clobberOverwrite;
 
-   public AsmSegment(int index, ScopeRef scope, Integer statementIdx, String source) {
+   public AsmChunk(int index, ScopeRef scope, Integer statementIdx, String source) {
       this.lines = new ArrayList<>();
       this.scopeLabel = scope.getFullName();
       this.index = index;
@@ -133,8 +133,8 @@ public class AsmSegment {
    }
 
    /**
-    * Get the number of bytes the segment occupies in memory.
-    * Per default calculated by adding up the bytes of each ASM line in the segment.
+    * Get the number of bytes the chunk occupies in memory.
+    * Per default calculated by adding up the bytes of each ASM line in the chunk.
     *
     * @return The number of bytes
     */
@@ -147,8 +147,8 @@ public class AsmSegment {
    }
 
    /**
-    * Get the number of cycles it takes to execute the segment
-    * Per default calculated by adding up the cycles of each ASM line in the segment.
+    * Get the number of cycles it takes to execute the chunk
+    * Per default calculated by adding up the cycles of each ASM line in the chunk.
     *
     * @return The number of cycles
     */
@@ -161,8 +161,8 @@ public class AsmSegment {
    }
 
    /**
-    * Get the registers clobbered when executing the segment
-    * Per default calculated by adding up the clobber of each ASM line in the segment.
+    * Get the registers clobbered when executing the chunk
+    * Per default calculated by adding up the clobber of each ASM line in the chunk.
     *
     * @return The registers clobbered
     */
@@ -186,7 +186,7 @@ public class AsmSegment {
     * Get ASM line by index
     *
     * @param idx The index of the line to get
-    * @return The line with the passed index. Null if not found inside the segment.
+    * @return The line with the passed index. Null if not found inside the chunk.
     */
    public AsmLine getAsmLine(int idx) {
       for(AsmLine asmLine : getLines()) {
@@ -246,7 +246,7 @@ public class AsmSegment {
       }
       if(printState.isSourceIclInfo()) {
          out.append(printState.getIndent()).append("  //");
-         if(printState.isSourceSegmentIdInfo()) {
+         if(printState.isSourceChunkIdInfo()) {
             out.append("SEG").append(getIndex());
          }
          if(source != null) {

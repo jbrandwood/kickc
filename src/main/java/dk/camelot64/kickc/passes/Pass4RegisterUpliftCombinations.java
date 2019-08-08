@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmSegment;
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
@@ -158,16 +158,16 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       int score = 0;
       AsmProgram asm = program.getAsm();
       NaturalLoopSet loopSet = program.getLoopSet();
-      for(AsmSegment asmSegment : asm.getSegments()) {
-         double asmSegmentCycles = asmSegment.getCycles();
-         if(asmSegmentCycles > 0) {
-            Integer statementIdx = asmSegment.getStatementIdx();
+      for(AsmChunk asmChunk : asm.getChunks()) {
+         double asmChunkCycles = asmChunk.getCycles();
+         if(asmChunkCycles > 0) {
+            Integer statementIdx = asmChunk.getStatementIdx();
             int maxLoopDepth = 1;
             if(statementIdx != null) {
                ControlFlowBlock block = program.getStatementInfos().getBlock(statementIdx);
                maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
             }
-            score += asmSegmentCycles * Math.pow(10, maxLoopDepth);
+            score += asmChunkCycles * Math.pow(10, maxLoopDepth);
          }
       }
       return score;

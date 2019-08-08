@@ -74,7 +74,7 @@ public class Pass4CodeGeneration {
       ScopeRef currentScope = ScopeRef.ROOT;
 
       // Add file level comments
-      asm.startSegment(currentScope, null, "File Comments");
+      asm.startChunk(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
 
       Number programPc;
@@ -88,7 +88,7 @@ public class Pass4CodeGeneration {
          }
       }
 
-      asm.startSegment(currentScope, null, "Upstart");
+      asm.startChunk(currentScope, null, "Upstart");
       if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
          asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
          asm.addLine(new AsmBasicUpstart("bbegin"));
@@ -96,7 +96,7 @@ public class Pass4CodeGeneration {
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
 
       // Generate global ZP labels
-      asm.startSegment(currentScope, null, "Global Constants & labels");
+      asm.startChunk(currentScope, null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -104,7 +104,7 @@ public class Pass4CodeGeneration {
             // The current block is in a different scope. End the old scope.
             generateScopeEnding(asm, currentScope);
             currentScope = block.getScope();
-            asm.startSegment(currentScope, null, block.getLabel().getFullName());
+            asm.startChunk(currentScope, null, block.getLabel().getFullName());
             // Add any procedure comments
             if(block.isProcedureEntry(program)) {
                Procedure procedure = block.getProcedure(program);
@@ -132,7 +132,7 @@ public class Pass4CodeGeneration {
             }
          } else {
             // Generate label for block inside procedure
-            asm.startSegment(currentScope, null, block.getLabel().getFullName());
+            asm.startChunk(currentScope, null, block.getLabel().getFullName());
             asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
          // Generate statements
@@ -159,7 +159,7 @@ public class Pass4CodeGeneration {
       generateScopeEnding(asm, currentScope);
 
       currentScope = ScopeRef.ROOT;
-      asm.startSegment(currentScope, null, "File Data");
+      asm.startChunk(currentScope, null, "File Data");
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -168,11 +168,11 @@ public class Pass4CodeGeneration {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
                   String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT);
-                  String segmentName = "Inline";
+                  String chunkName = "Inline";
                   if(asmLocation.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-                     segmentName = asmLocation;
+                     chunkName = asmLocation;
                   }
-                  asm.addLine(new AsmSetPc(segmentName, asmLocation));
+                  asm.addLine(new AsmSetPc(chunkName, asmLocation));
                   addKickAsm(asm, statementKasm);
                }
             }
@@ -606,7 +606,7 @@ public class Pass4CodeGeneration {
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState
          aluState, boolean genCallPhiEntry) {
 
-      asm.startSegment(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+      asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
       generateComments(asm, statement.getComments());
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
       if(aluState.hasAluAssignment()) {
@@ -680,16 +680,16 @@ public class Pass4CodeGeneration {
             HashMap<String, Value> bindings = new HashMap<>();
             AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
             asmFragmentInstance.generate(asm);
-            AsmSegment currentSegment = asm.getCurrentSegment();
+            AsmChunk currentChunk = asm.getCurrentChunk();
 
             if(statementAsm.getDeclaredClobber() != null) {
-               currentSegment.setClobberOverwrite(statementAsm.getDeclaredClobber());
+               currentChunk.setClobberOverwrite(statementAsm.getDeclaredClobber());
             } else {
-               for(AsmLine asmLine : currentSegment.getLines()) {
+               for(AsmLine asmLine : currentChunk.getLines()) {
                   if(asmLine instanceof AsmInstruction) {
                      AsmInstruction asmInstruction = (AsmInstruction) asmLine;
                      if(asmInstruction.getType().getMnemnonic().equals("jsr")) {
-                        currentSegment.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+                        currentChunk.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
                      }
                   }
                }
@@ -700,7 +700,7 @@ public class Pass4CodeGeneration {
                addKickAsm(asm, statementKasm);
             }
             if(statementKasm.getDeclaredClobber() != null) {
-               asm.getCurrentSegment().setClobberOverwrite(statementKasm.getDeclaredClobber());
+               asm.getCurrentChunk().setClobberOverwrite(statementKasm.getDeclaredClobber());
             }
          } else if(statement instanceof StatementCallPointer) {
             StatementCallPointer callPointer = (StatementCallPointer) statement;
@@ -738,7 +738,7 @@ public class Pass4CodeGeneration {
                }
             }
             if(supported) {
-               asm.getCurrentSegment().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+               asm.getCurrentChunk().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
             }
             if(!supported) {
                throw new RuntimeException("Call Pointer not supported " + statement);
@@ -778,7 +778,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+      asm.getCurrentChunk().setFragment(asmFragmentInstance.getFragmentName());
       asmFragmentInstance.generate(asm);
    }
 
@@ -790,8 +790,8 @@ public class Pass4CodeGeneration {
     */
    private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
       Procedure.InterruptType interruptType = procedure.getInterruptType();
-      asm.startSegment(procedure.getRef(), null, "entry interrupt(" + interruptType.name() + ")");
-      //asm.getCurrentSegment().setXXX();
+      asm.startChunk(procedure.getRef(), null, "entry interrupt(" + interruptType.name() + ")");
+      //asm.getCurrentChunk().setXXX();
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
@@ -819,7 +819,7 @@ public class Pass4CodeGeneration {
     * @param interruptType The type of interrupt to generate
     */
    private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
-      asm.getCurrentSegment().setSource(asm.getCurrentSegment().getSource() + " - exit interrupt(" + interruptType.name() + ")");
+      asm.getCurrentChunk().setSource(asm.getCurrentChunk().getSource() + " - exit interrupt(" + interruptType.name() + ")");
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
@@ -898,13 +898,13 @@ public class Pass4CodeGeneration {
       PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
       if(!transitionIsGenerated(transition)) {
          Statement toFirstStatement = toBlock.getStatements().get(0);
-         String segmentSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
+         String chunkSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
-            segmentSrc += fBlock.getLabel().getFullName() + " ";
+            chunkSrc += fBlock.getLabel().getFullName() + " ";
          }
-         segmentSrc += "to " + toBlock.getLabel().getFullName();
-         asm.startSegment(scope, toFirstStatement.getIndex(), segmentSrc);
-         asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
+         chunkSrc += "to " + toBlock.getLabel().getFullName();
+         asm.startChunk(scope, toFirstStatement.getIndex(), chunkSrc);
+         asm.getCurrentChunk().setPhiTransitionId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
          }
@@ -914,11 +914,11 @@ public class Pass4CodeGeneration {
             RValue rValue = assignment.getrValue();
             Statement statement = assignment.getPhiBlock();
             // Generate an ASM move fragment
-            asm.startSegment(scope, statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
-            asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
-            asm.getCurrentSegment().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
+            asm.startChunk(scope, statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
+            asm.getCurrentChunk().setPhiTransitionId(transition.getTransitionId());
+            asm.getCurrentChunk().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
             if(isRegisterCopy(lValue, rValue)) {
-               asm.getCurrentSegment().setFragment("register_copy");
+               asm.getCurrentChunk().setFragment("register_copy");
             } else {
                AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, rValue, program, scope);
                generateAsm(asm, asmFragmentInstanceSpecFactory);

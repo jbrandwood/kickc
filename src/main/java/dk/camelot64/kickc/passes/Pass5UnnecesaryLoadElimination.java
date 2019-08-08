@@ -20,8 +20,8 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
       AsmProgramStaticRegisterValues staticValues = new AsmProgramStaticRegisterValues(getAsmProgram());
       boolean modified = false;
 
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         List<AsmLine> lines = segment.getLines();
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         List<AsmLine> lines = chunk.getLines();
          ListIterator<AsmLine> lineIt = lines.listIterator();
          while(lineIt.hasNext()) {
             AsmLine line = lineIt.next();

@@ -131,10 +131,10 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
     */
    private boolean fixLongBranch(int idx) {
       AsmProgram asm = getProgram().getAsm();
-      AsmSegment asmSegment = asm.getAsmSegment(idx);
-      if(asmSegment != null) {
-         //getLog().append("Found ASM segment "+asmSegment);
-         AsmLine asmLine = asmSegment.getAsmLine(idx);
+      AsmChunk asmChunk = asm.getAsmChunk(idx);
+      if(asmChunk != null) {
+         //getLog().append("Found ASM chunk "+asmChunk);
+         AsmLine asmLine = asmChunk.getAsmLine(idx);
          if(asmLine != null && asmLine instanceof AsmInstruction) {
             //getLog().append("Found ASM line "+asmLine);
             AsmInstruction asmInstruction = (AsmInstruction) asmLine;
@@ -149,8 +149,8 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                asmInstruction.setParameter(newLabel+"+");
                AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);
-               asmSegment.addLineAfter(asmInstruction, jmpInstruction);
-               asmSegment.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
+               asmChunk.addLineAfter(asmInstruction, jmpInstruction);
+               asmChunk.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
                return true;
             }
          }

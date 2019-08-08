@@ -30,8 +30,8 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
    private Set<String> findUsedLabels() {
       Set<String> usedLabels = new LinkedHashSet<>();
       String currentScope = "";
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
@@ -55,8 +55,8 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
    private List<AsmLine> findUnusedLabelLines(Set<String> usedLabels) {
       List<AsmLine> removeLines = new ArrayList<>();
       String currentScope = "";
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         Integer statementIdx = segment.getStatementIdx();
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         Integer statementIdx = chunk.getStatementIdx();
          if(statementIdx != null) {
             Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
             if(statement instanceof StatementAsm) {
@@ -64,7 +64,7 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
                continue;
             }
          }
-         for(AsmLine line : segment.getLines()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {

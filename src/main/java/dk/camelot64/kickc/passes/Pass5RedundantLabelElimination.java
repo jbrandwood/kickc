@@ -23,8 +23,8 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
 
       List<AsmLine> removeLines = new ArrayList<>();
       String currentScope = "";
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
@@ -95,8 +95,8 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
       List<RedundantLabels> redundantLabelSet = new ArrayList<>();
       RedundantLabels current = null;
       String currentScope = "";
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             boolean handled = false;
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();

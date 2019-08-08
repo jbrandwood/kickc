@@ -22,8 +22,8 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
       String currentScope = "";
       String currentLabel = null;
       Map<String, String> immediateJumps = new LinkedHashMap<>();
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
                currentLabel = null;
@@ -56,8 +56,8 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
       }
 
       // Look through the code for double-jumps
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {

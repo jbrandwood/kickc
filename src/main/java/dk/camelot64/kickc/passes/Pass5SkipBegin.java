@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmBasicUpstart;
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLine;
-import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -31,8 +31,8 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
       boolean optimized = false;
       if(canSkip) {
          // Change BasicUpstart() to call main directly and remove the JSR main
-         for(AsmSegment segment : getAsmProgram().getSegments()) {
-            ListIterator<AsmLine> lineIterator = segment.getLines().listIterator();
+         for(AsmChunk chunk : getAsmProgram().getChunks()) {
+            ListIterator<AsmLine> lineIterator = chunk.getLines().listIterator();
             while(lineIterator.hasNext()) {
                AsmLine line = lineIterator.next();
                if(line instanceof AsmBasicUpstart) {

@@ -18,8 +18,8 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
    public boolean optimize() {
       List<AsmLine> removeLines = new ArrayList<>();
       AsmInstruction candidate = null;
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             if(line instanceof AsmScopeBegin || line instanceof AsmScopeEnd) {
                candidate = null;
             }

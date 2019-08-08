@@ -14,14 +14,14 @@ import java.util.List;
 public class AsmProgram {
 
    /**
-    * The segments of the program. The segments hold the ASM lines.
+    * The chunks of the program. The chunks hold the ASM lines.
     */
-   private List<AsmSegment> segments;
+   private List<AsmChunk> chunks;
 
    /**
-    * The index of the next segment.
+    * The index of the next chunk.
     */
-   private int nextSegmentIndex;
+   private int nextChunkIndex;
 
    /**
     * The index of the next line.
@@ -29,28 +29,28 @@ public class AsmProgram {
    private int nextLineIndex;
 
    public AsmProgram() {
-      this.segments = new ArrayList<>();
+      this.chunks = new ArrayList<>();
       this.nextLineIndex = 0;
-      this.nextSegmentIndex = 0;
+      this.nextChunkIndex = 0;
    }
 
-   public Collection<AsmSegment> getSegments() {
-      return segments;
+   public Collection<AsmChunk> getChunks() {
+      return chunks;
    }
 
-   public AsmSegment startSegment(ScopeRef scopeRef, Integer statementIndex, String source) {
-      AsmSegment segment = new AsmSegment(nextSegmentIndex++, scopeRef, statementIndex, source);
-      segments.add(segment);
-      return segment;
+   public AsmChunk startChunk(ScopeRef scopeRef, Integer statementIndex, String source) {
+      AsmChunk chunk = new AsmChunk(nextChunkIndex++, scopeRef, statementIndex, source);
+      chunks.add(chunk);
+      return chunk;
    }
 
-   public AsmSegment getCurrentSegment() {
-      return segments.get(segments.size() - 1);
+   public AsmChunk getCurrentChunk() {
+      return chunks.get(chunks.size() - 1);
    }
 
    public void addLine(AsmLine line) {
       line.setIndex(nextLineIndex++);
-      getCurrentSegment().addLine(line);
+      getCurrentChunk().addLine(line);
    }
 
    public void addComment(String comment, boolean isBlock) {
@@ -236,51 +236,51 @@ public class AsmProgram {
    }
 
    /**
-    * Get the number of bytes the segment occupies in memory.
-    * Calculated by adding up the bytes of each ASM segment in the program.
+    * Get the number of bytes the program occupies in memory.
+    * Calculated by adding up the bytes of each ASM chunk in the program.
     *
     * @return The number of bytes
     */
    public int getBytes() {
       int bytes = 0;
-      for(AsmSegment segment : segments) {
-         bytes += segment.getBytes();
+      for(AsmChunk chunk : chunks) {
+         bytes += chunk.getBytes();
       }
       return bytes;
    }
 
    /**
-    * Get the number of cycles it takes to execute the segment
-    * Calculated by adding up the cycles of each ASM segments in the program.
+    * Get the number of cycles it takes to execute the program
+    * Calculated by adding up the cycles of each ASM chunks in the program.
     *
     * @return The number of cycles
     */
    public double getCycles() {
       double cycles = 0.0;
-      for(AsmSegment segment : segments) {
-         cycles += segment.getCycles();
+      for(AsmChunk chunk : chunks) {
+         cycles += chunk.getCycles();
       }
       return cycles;
    }
 
 
    /**
-    * Get the CPU registers clobbered by the instructions of the fragment
+    * Get the CPU registers clobbered by the instructions of the program
     *
     * @return The clobbered registers
     */
    public AsmClobber getClobber() {
       AsmClobber clobber = new AsmClobber();
-      for(AsmSegment segment : segments) {
-         clobber.add(segment.getClobber());
+      for(AsmChunk chunk : chunks) {
+         clobber.add(chunk.getClobber());
       }
       return clobber;
    }
 
    public String toString(AsmPrintState printState, Program program) {
       StringBuilder out = new StringBuilder();
-      for(AsmSegment segment : segments) {
-         out.append(segment.toString(printState, program));
+      for(AsmChunk chunk : chunks) {
+         out.append(chunk.toString(printState, program));
       }
       return out.toString();
    }
@@ -300,16 +300,16 @@ public class AsmProgram {
    }
 
    /**
-    * Get ASM segment by line index
+    * Get ASM chunk by line index
     *
-    * @param idx The index of the line to get the segment for
-    * @return The segment with the line that has the passed index. Null if not found
+    * @param idx The index of the line to get the chunk for
+    * @return The chunk with the line that has the passed index. Null if not found
     */
-   public AsmSegment getAsmSegment(int idx) {
-      for(AsmSegment segment : segments) {
-         for(AsmLine asmLine : segment.getLines()) {
+   public AsmChunk getAsmChunk(int idx) {
+      for(AsmChunk chunk : chunks) {
+         for(AsmLine asmLine : chunk.getLines()) {
             if(asmLine.getIndex() == idx) {
-               return segment;
+               return chunk;
             }
          }
       }
@@ -323,8 +323,8 @@ public class AsmProgram {
       private boolean sourceCodeInfo;
       // Output comments with ICL-code and the ASM fragment name
       private boolean sourceIclInfo;
-      // Output segment ID in the ICL-comment
-      private boolean sourceSegmentIdInfo;
+      // Output chunk ID in the ICL-comment
+      private boolean sourceChunkIdInfo;
       // Output ASM line numbers
       private boolean asmLineNumber;
       // Current indent - used during printing
@@ -366,12 +366,12 @@ public class AsmProgram {
          return sourceIclInfo;
       }
 
-      public boolean isSourceSegmentIdInfo() {
-         return sourceSegmentIdInfo;
+      public boolean isSourceChunkIdInfo() {
+         return sourceChunkIdInfo;
       }
 
-      public void setSourceSegmentIdInfo(boolean sourceSegmentIdInfo) {
-         this.sourceSegmentIdInfo = sourceSegmentIdInfo;
+      public void setSourceChunkIdInfo(boolean sourceChunkIdInfo) {
+         this.sourceChunkIdInfo = sourceChunkIdInfo;
       }
 
       public void setSourceIclInfo(boolean sourceIclInfo) {

@@ -2,9 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmSegment;
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -61,23 +60,23 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
 
       AsmProgram asm = getProgram().getAsm();
       boolean clobberProblem = false;
-      for(AsmSegment asmSegment : asm.getSegments()) {
-         if(asmSegment.getStatementIdx() != null) {
+      for(AsmChunk asmChunk : asm.getChunks()) {
+         if(asmChunk.getStatementIdx() != null) {
             // Find the ICL statement
-            int statementIdx = asmSegment.getStatementIdx();
+            int statementIdx = asmChunk.getStatementIdx();
             Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
-            // Find the registered clobbered by the ASM asmSegment
-            AsmClobber asmSegmentClobber = asmSegment.getClobber();
-            Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
+            // Find the registered clobbered by the ASM asmChunk
+            AsmClobber asmChunkClobber = asmChunk.getClobber();
+            Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmChunkClobber);
             // Find vars assigned to in the statement
             Collection<VariableRef> assignedVars = Pass4RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
 
             // Find alive variables
             List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement));
-            // If the segment is an assignment in a phi transition, examine the later phi transition assignments and update alive variables alive and variables assigned
-            if(asmSegment.getPhiTransitionId() != null && asmSegment.getPhiTransitionAssignmentIdx() != null) {
-               String phiTransitionId = asmSegment.getPhiTransitionId();
-               int transitionAssignmentIdx = asmSegment.getPhiTransitionAssignmentIdx();
+            // If the chunk is an assignment in a phi transition, examine the later phi transition assignments and update alive variables alive and variables assigned
+            if(asmChunk.getPhiTransitionId() != null && asmChunk.getPhiTransitionAssignmentIdx() != null) {
+               String phiTransitionId = asmChunk.getPhiTransitionId();
+               int transitionAssignmentIdx = asmChunk.getPhiTransitionAssignmentIdx();
                ControlFlowBlock statementBlock = getProgram().getStatementInfos().getBlock(statementIdx);
                Map<LabelRef, PhiTransitions> programPhiTransitions = getProgram().getPhiTransitions();
                PhiTransitions phiTransitions = programPhiTransitions.get(statementBlock.getLabel());

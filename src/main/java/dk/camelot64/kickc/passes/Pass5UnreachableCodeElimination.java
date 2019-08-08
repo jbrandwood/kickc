@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmComment;
 import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLine;
-import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.Program;
 
 import java.util.ListIterator;
@@ -23,8 +23,8 @@ public class Pass5UnreachableCodeElimination extends Pass5AsmOptimization {
 
       // Find RTS/JMP followed by code
       boolean afterExit = false;
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         ListIterator<AsmLine> lineIt = segment.getLines().listIterator();
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         ListIterator<AsmLine> lineIt = chunk.getLines().listIterator();
          while(lineIt.hasNext()) {
             AsmLine line = lineIt.next();
             if(line instanceof AsmInstruction) {

@@ -65,8 +65,8 @@ public class AsmProgramStaticRegisterValues {
 
    private void initValues() {
       AsmRegisterValues current = new AsmRegisterValues();
-      for(AsmSegment segment : program.getSegments()) {
-         for(AsmLine line : segment.getLines()) {
+      for(AsmChunk chunk : program.getChunks()) {
+         for(AsmLine line : chunk.getLines()) {
             current = updateStaticRegisterValues(current, line);
          }
       }

@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -35,17 +35,17 @@ public class Pass4InterruptClobberFix extends Pass2Base {
             getLog().append("Interrupt procedure "+procedure.getFullName()+" clobbers "+procClobber.toString());
 
             // Find the entry/exit blocks for the interrupt
-            AsmSegment interruptEntry = null;
-            AsmSegment interruptExit = null;
-            for(AsmSegment asmSegment : getProgram().getAsm().getSegments()) {
-               if(procedure.getFullName().equals(asmSegment.getScopeLabel())) {
-                  if(asmSegment.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
-                     if(asmSegment.getSource().contains("entry interrupt")) {
-                        interruptEntry = asmSegment;
-                     } else if(asmSegment.getSource().contains("exit interrupt")) {
-                        interruptExit = asmSegment;
+            AsmChunk interruptEntry = null;
+            AsmChunk interruptExit = null;
+            for(AsmChunk asmChunk : getProgram().getAsm().getChunks()) {
+               if(procedure.getFullName().equals(asmChunk.getScopeLabel())) {
+                  if(asmChunk.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
+                     if(asmChunk.getSource().contains("entry interrupt")) {
+                        interruptEntry = asmChunk;
+                     } else if(asmChunk.getSource().contains("exit interrupt")) {
+                        interruptExit = asmChunk;
                      } else {
-                        throw new RuntimeException("Unknown interrupt ASM segment "+asmSegment.getSource());
+                        throw new RuntimeException("Unknown interrupt ASM chunk "+ asmChunk.getSource());
                      }
                      continue;
                   }
@@ -71,14 +71,14 @@ public class Pass4InterruptClobberFix extends Pass2Base {
    private AsmClobber getProcedureClobber(Procedure procedure) {
       AsmProgram asm = getProgram().getAsm();
       AsmClobber procClobber =new AsmClobber();
-      for(AsmSegment asmSegment : asm.getSegments()) {
-         if(procedure.getFullName().equals(asmSegment.getScopeLabel())) {
-            if(asmSegment.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
+      for(AsmChunk asmChunk : asm.getChunks()) {
+         if(procedure.getFullName().equals(asmChunk.getScopeLabel())) {
+            if(asmChunk.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
                // Do not count clobber in the entry/exit
                continue;
             }
-            AsmClobber asmSegmentClobber = asmSegment.getClobber();
-            procClobber.add(asmSegmentClobber);
+            AsmClobber asmChunkClobber = asmChunk.getClobber();
+            procClobber.add(asmChunkClobber);
          }
       }
 
@@ -110,7 +110,7 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       return notClobberedRegisters;
    }
 
-   private void pruneNonClobberedInterruptLines(AsmSegment interruptEntryExit, List<String> notClobberedRegisters) {
+   private void pruneNonClobberedInterruptLines(AsmChunk interruptEntryExit, List<String> notClobberedRegisters) {
       ListIterator<AsmLine> entryLines = interruptEntryExit.getLines().listIterator();
       while(entryLines.hasNext()) {
          AsmLine line = entryLines.next();

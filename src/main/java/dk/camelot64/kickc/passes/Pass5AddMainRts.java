@@ -17,10 +17,10 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
    }
 
    public boolean optimize() {
-      for(AsmSegment segment : getAsmProgram().getSegments()) {
-         String scopeLabel = segment.getScopeLabel();
+      for(AsmChunk chunk : getAsmProgram().getChunks()) {
+         String scopeLabel = chunk.getScopeLabel();
          if(scopeLabel.equals(ScopeRef.ROOT.getFullName())) {
-            ListIterator<AsmLine> lineIterator = segment.getLines().listIterator();
+            ListIterator<AsmLine> lineIterator = chunk.getLines().listIterator();
             while(lineIterator.hasNext()) {
                AsmLine line = lineIterator.next();
                if(line instanceof AsmInstruction) {

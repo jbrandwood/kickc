@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -319,16 +319,6 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#directiveReserve}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveReserve(KickCParser.DirectiveReserveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#directiveReserve}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveReserve(KickCParser.DirectiveReserveContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

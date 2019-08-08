@@ -66,7 +66,7 @@ parameterDecl
     ;
 
 globalDirective
-    : '#' directiveReserve #globalDirectiveReserve
+    : '#reserve' '(' NUMBER ( ',' NUMBER )* ')' #globalDirectiveReserve
     | '#pc' '(' NUMBER ')' #globalDirectivePc
     | '#target' '(' NAME ')' #globalDirectivePlatform
     | '#encoding' '(' NAME')' #globalDirectiveEncoding
@@ -80,11 +80,7 @@ directive
     | 'inline' #directiveInline
     | 'volatile' #directiveVolatile
     | 'interrupt' ( '(' NAME ')' )? #directiveInterrupt
-    | directiveReserve  #directiveReserveZp
-    ;
-
-directiveReserve
-    :  'reserve' '(' NUMBER ( ',' NUMBER )* ')'
+    | 'reserve' '(' NUMBER ( ',' NUMBER )* ')'  #directiveReserveZp
     ;
 
 stmtSeq

@@ -112,18 +112,19 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
-      DirectiveReserveZp reserveDirective = (DirectiveReserveZp) this.visit(ctx.directiveReserve());
-      if(reserveDirective != null) {
-         program.addReservedZps(reserveDirective.getReservedZp());
+      List<Number> reservedZps = new ArrayList<>();
+      for(TerminalNode reservedNum : ctx.NUMBER()) {
+         Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
+         reservedZps.add(reservedZp);
       }
+      program.addReservedZps(reservedZps);
       return null;
    }
 
    @Override
    public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
       try {
-         ConstantString.Encoding encoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase());
-         this.currentEncoding = encoding;
+         this.currentEncoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase());
       } catch(IllegalArgumentException e) {
          throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
       }
@@ -757,7 +758,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitDirectiveReserve(KickCParser.DirectiveReserveContext ctx) {
+   public Directive visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) {
       List<Number> reservedZps = new ArrayList<>();
       for(TerminalNode reservedNum : ctx.NUMBER()) {
          Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
@@ -1610,7 +1611,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          subText = stringNode.getText();
          String suffix = subText.substring(subText.lastIndexOf('"') + 1);
          ConstantString.Encoding suffixEncoding = getEncodingFromSuffix(suffix);
-         if(suffixEncoding!=null) {
+         if(suffixEncoding != null) {
             if(encoding != null && !encoding.equals(suffixEncoding)) {
                throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
             }
@@ -1625,6 +1626,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Examine a string suffix, and find any encoding information inside it.
+    *
     * @param suffix The string suffix
     * @return The encoding specified by the suffix. If not the current source encoding is returned.
     */

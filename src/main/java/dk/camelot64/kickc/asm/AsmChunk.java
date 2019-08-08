@@ -247,7 +247,7 @@ public class AsmChunk {
       if(printState.isSourceIclInfo()) {
          out.append(printState.getIndent()).append("  //");
          if(printState.isSourceChunkIdInfo()) {
-            out.append("SEG").append(getIndex());
+            out.append("CHU").append(getIndex());
          }
          if(source != null) {
             out.append(" ").append(source.replace('\r', ' ').replace('\n', ' '));

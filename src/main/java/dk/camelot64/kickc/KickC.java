@@ -132,9 +132,9 @@ public class KickC implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      System.out.println("//-------------------------------------------");
+      System.out.println("//--------------------------------------------------");
       System.out.println("//   " + getVersion() + " by Jesper Gravgaard   ");
-      System.out.println("//-------------------------------------------");
+      System.out.println("//--------------------------------------------------");
 
       Compiler compiler = new Compiler();
 

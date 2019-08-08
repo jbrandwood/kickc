@@ -66,10 +66,10 @@ parameterDecl
     ;
 
 globalDirective
-    : '#reserve' '(' NUMBER ( ',' NUMBER )* ')' #globalDirectiveReserve
-    | '#pc' '(' NUMBER ')' #globalDirectivePc
-    | '#target' '(' NAME ')' #globalDirectivePlatform
-    | '#encoding' '(' NAME')' #globalDirectiveEncoding
+    : ('#pragma' 'reserve'|'#reserve') '(' NUMBER ( ',' NUMBER )* ')' #globalDirectiveReserve
+    | ('#pragma' 'pc'|'#pc') '(' NUMBER ')' #globalDirectivePc
+    | ('#pragma' 'target'|'#target') '(' NAME ')' #globalDirectivePlatform
+    | ('#pragma' 'encoding'|'#encoding') '(' NAME')' #globalDirectiveEncoding
     ;
 
 directive

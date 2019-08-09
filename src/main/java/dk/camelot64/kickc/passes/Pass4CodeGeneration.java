@@ -772,6 +772,10 @@ public class Pass4CodeGeneration {
                   Variable variable = getScope().getVariable((VariableRef) pointer);
                   generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
+               } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
+                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
+                  generateIndirectCall(asm, variable, block.getScope());
+                  supported = true;
                }
             } else if(procedure instanceof VariableRef) {
                Variable procedureVariable = getScope().getVariable((VariableRef) procedure);

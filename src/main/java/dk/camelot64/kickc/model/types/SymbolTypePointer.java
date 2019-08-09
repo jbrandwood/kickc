@@ -8,8 +8,7 @@ public class SymbolTypePointer implements SymbolType {
 
    private SymbolType elementType;
 
-   public SymbolTypePointer(
-         SymbolType elementType) {
+   public SymbolTypePointer(SymbolType elementType) {
       this.elementType = elementType;
    }
 

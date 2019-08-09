@@ -123,17 +123,19 @@ public class LiveRangeVariablesEffective {
             CallPaths calledRefs = procedureCallPaths.get(calledRef);
             for(CallPath calledPath : calledRefs.getCallPaths()) {
                List<CallGraph.CallBlock.Call> path = calledPath.getPath();
-               CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
-               Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
-               LabelRef lastCallBlockRef = program.getStatementInfos().getBlockRef(lastCallStatementIdx);
-               if(lastCallBlockRef.equals(block.getLabel())) {
-                  if(callAliases == null) {
-                     // Found a matching call!
-                     callAliases = calledPath.getInnerAliases();
-                  } else {
-                     // Found another matching call!
-                     callAliases = new Pass2AliasElimination.Aliases(callAliases);
-                     callAliases.addAll(calledPath.getInnerAliases());
+               if(path.size() > 0) {
+                  CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
+                  Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
+                  LabelRef lastCallBlockRef = program.getStatementInfos().getBlockRef(lastCallStatementIdx);
+                  if(lastCallBlockRef.equals(block.getLabel())) {
+                     if(callAliases == null) {
+                        // Found a matching call!
+                        callAliases = calledPath.getInnerAliases();
+                     } else {
+                        // Found another matching call!
+                        callAliases = new Pass2AliasElimination.Aliases(callAliases);
+                        callAliases.addAll(calledPath.getInnerAliases());
+                     }
                   }
                }
             }

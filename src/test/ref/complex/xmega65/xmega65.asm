@@ -10,17 +10,43 @@
 .segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
-  .label BGCOL = $d021
+  .const JMP = $4c
+  .const NOP = $ea
+  .label CALLS = SYSCALLS+1
 .segment Code
 main: {
+    .label fn = 3
+    .label i = 2
   b1:
-    lda SYSCALLS
-    sta BGCOL
-    inc BGCOL
+    lda #0
+    sta.z i
+  b2:
+    lda.z i
+    asl
+    asl
+    tay
+    lda CALLS,y
+    sta.z fn
+    lda CALLS+1,y
+    sta.z fn+1
+    jsr bi_fn
+    inc.z i
+    lda #2
+    cmp.z i
+    bne b2
     jmp b1
+  bi_fn:
+    jmp (fn)
+}
+fn2: {
+    .label BGCOL = $d021
+    inc BGCOL
+    rts
+}
+fn1: {
+    .label BORDERCOL = $d020
+    inc BORDERCOL
+    rts
 }
 .segment Syscall
-SYSCALLS:
-jmp main
-    nop
-
+  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP, JMP, <main, >main, NOP

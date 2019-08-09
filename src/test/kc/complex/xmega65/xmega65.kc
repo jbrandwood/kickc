@@ -6,18 +6,39 @@
 
 #pragma link("xmega65.ld")
 
+void main() {
+    char i=0;
+    while(true) {
+        unsigned int fn = CALLS[i*2];
+        void()* f = (void()*)fn;
+        (*f)();
+        if(++i==2) i=0;
+    }
+}
+
+char* BORDERCOL = 0xd020;
+
+void fn1() {
+    const byte* BORDERCOL = $d020;
+    (*BORDERCOL)++;
+}
+
 char* BGCOL = 0xd021;
 
-void main() {
-    while(true) {
-        *BGCOL = SYSCALLS[0];
-        (*BGCOL)++;
-    }
+void fn2() {
+    const byte* BGCOL = $d021;
+    (*BGCOL)++;
 }
 
 #pragma data_seg(Syscall)
 
-byte[] SYSCALLS = kickasm {{
-    jmp main
-    nop
-}};
+const char JMP = 0x4c;
+const char NOP = 0xea;
+
+char[] SYSCALLS = {
+    JMP, <&fn1, >&fn1, NOP,
+    JMP, <&fn2, >&fn2, NOP,
+    JMP, <&main, >&main, NOP
+    };
+
+const unsigned int* CALLS = (word*)(SYSCALLS+1);

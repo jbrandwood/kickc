@@ -69,12 +69,13 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             }  else if(symbol instanceof VariableUnversioned) {
                String name = findLocalName(procedure, symbol);
-               VariableUnversioned unwound = procedure.addVariable(name, symbol.getType());
-               unwound.setDeclaredAlignment(((VariableUnversioned) symbol).getDeclaredAlignment());
-               unwound.setDeclaredConstant(((VariableUnversioned) symbol).isDeclaredConstant());
-               unwound.setDeclaredVolatile(((VariableUnversioned) symbol).isDeclaredVolatile());
-               unwound.setInferedVolatile(((VariableUnversioned) symbol).isInferedVolatile());
-               unwound.setDeclaredRegister((((VariableUnversioned) symbol).getDeclaredRegister()));
+               VariableUnversioned var = (VariableUnversioned) symbol;
+               VariableUnversioned unwound = procedure.addVariable(name, symbol.getType(), var.getDataSegment());
+               unwound.setDeclaredAlignment(var.getDeclaredAlignment());
+               unwound.setDeclaredConstant(var.isDeclaredConstant());
+               unwound.setDeclaredVolatile(var.isDeclaredVolatile());
+               unwound.setInferedVolatile(var.isInferedVolatile());
+               unwound.setDeclaredRegister((var.getDeclaredRegister()));
                unwoundSymbols.put(symbol.getRef(), unwound.getRef());
             }  else if(symbol instanceof VariableIntermediate) {
                VariableIntermediate unwound = procedure.addVariableIntermediate();

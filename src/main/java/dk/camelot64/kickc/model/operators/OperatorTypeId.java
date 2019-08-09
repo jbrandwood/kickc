@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -41,7 +42,7 @@ public class OperatorTypeId extends OperatorUnary {
       if(typeIdConstant == null) {
          // Constant not found - create it
          long typeSize = getTypeId(type);
-         typeIdConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(typeSize));
+         typeIdConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(typeSize), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeIdConstant);
       }
       return typeIdConstant.getRef();

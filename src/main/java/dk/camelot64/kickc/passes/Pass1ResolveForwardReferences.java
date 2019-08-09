@@ -26,7 +26,7 @@ public class Pass1ResolveForwardReferences extends Pass1Base {
             Symbol symbol = currentScope.getSymbol(varName);
             if(symbol!=null) {
                getLog().append("Resolved forward reference " + varName+" to "+symbol.toString(getProgram()));
-               programValue.set((RValue) symbol.getRef());
+               programValue.set(symbol.getRef());
             }  else {
                getLog().append("ERROR! Unknown variable " + varName);
                throw new CompileError("ERROR! Unknown variable " + varName, currentStmt.getSource());

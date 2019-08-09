@@ -4,30 +4,20 @@
 // Specifying the linker script file is done using the #pragma link(<file>)
 // It can also be specified using kickc command line option -T <file>
 
-#pragma link("linking.ld")
+#pragma link("xmega65.ld")
 
 char* BGCOL = 0xd021;
 
 void main() {
-    for(char i:0..255)
-        base[i] = i;
-
     while(true) {
-        fillscreen(*BGCOL);
+        *BGCOL = SYSCALLS[0];
         (*BGCOL)++;
     }
 }
 
-#pragma code_seg(CodeHigh)
-#pragma data_seg(DataHigh)
+#pragma data_seg(Syscall)
 
-byte* SCREEN = 0x0400;
-
-void fillscreen(char c) {
-    char i = 0;
-    for( char *screen = SCREEN; screen<SCREEN+1000; screen++)
-        *screen = c+base[i++];
-}
-
-byte[256] base;
-
+byte[] SYSCALLS = kickasm {{
+    jmp main
+    nop
+}};

@@ -11,7 +11,7 @@ public class ProgramScope extends Scope {
 
 
    public ProgramScope() {
-      super("", null);
+      super("", null, Scope.SEGMENT_DATA_DEFAULT);
    }
 
    @Override

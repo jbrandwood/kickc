@@ -11,8 +11,8 @@ public class ConstantVar extends SymbolVariable {
    /** The constant value. */
    private ConstantValue value;
 
-   public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value) {
-      super(name, scope, type);
+   public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value, String dataSegment) {
+      super(name, scope, type, dataSegment);
       this.value = value;
    }
 

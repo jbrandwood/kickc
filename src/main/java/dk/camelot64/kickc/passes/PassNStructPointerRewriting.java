@@ -99,7 +99,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
          // Constant not found - create it
          Variable memberDef = structDefinition.getMember(memberName);
          long memberByteOffset = structDefinition.getMemberByteOffset(memberDef);
-         memberOffsetConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE));
+         memberOffsetConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(memberOffsetConstant);
       }
       return memberOffsetConstant.getRef();

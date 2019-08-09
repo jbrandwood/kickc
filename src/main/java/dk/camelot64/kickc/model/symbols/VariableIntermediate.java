@@ -7,8 +7,8 @@ import dk.camelot64.kickc.model.types.SymbolType;
  */
 public class VariableIntermediate extends Variable {
 
-   public VariableIntermediate(String name, Scope scope, SymbolType type) {
-      super(name, scope, type);
+   public VariableIntermediate(String name, Scope scope, SymbolType type, String dataSegment) {
+      super(name, scope, type, dataSegment);
    }
 
    @Override

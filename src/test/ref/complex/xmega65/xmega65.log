@@ -1,0 +1,309 @@
+Loading link script "xmega65.ld"
+Resolved forward reference SYSCALLS to (byte[]) SYSCALLS
+Identified constant variable (byte*) BGCOL
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  *((byte*) BGCOL#0) ← *((byte[]) SYSCALLS#0 + (number) 0)
+  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte[]) SYSCALLS#0 ← kickasm {{ jmp main
+    nop
+ }}
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte[]) SYSCALLS
+(byte[]) SYSCALLS#0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((byte*) BGCOL#0) ← *((byte[]) SYSCALLS#0 + (number) 0)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte*) BGCOL#0 = (byte*) 53281
+Constant (const byte[]) SYSCALLS#0 = kickasm {{ jmp main
+    nop
+ }}
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [1] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Simplifying expression containing zero SYSCALLS#0 in [2] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0 + (byte) 0)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@1
+Renumbering block main::@2 to main::@1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0)
+  [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte[]) SYSCALLS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is custom
+  // File Comments
+// Example showing how to perform linking using a linker-file
+// The linker file is created using KickAssembler segments.
+// See the KickAssembler manual for description of the format http://theweb.dk/KickAssembler/
+// Specifying the linker script file is done using the #pragma link(<file>)
+// It can also be specified using kickc command line option -T <file>
+  // Upstart
+  .file [name="xmega65.bin", type="bin", segments="XMega65Bin"]
+.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
+.segmentdef Syscall [start=$8000, max=$81ff]
+.segmentdef Code [start=$8200, min=$8200, max=$bdff]
+.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
+.segmentdef Stack [min=$be00, max=$beff, fill]
+.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  // Global Constants & labels
+  .label BGCOL = $d021
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+.segment Code
+  // main
+main: {
+    jmp b1
+    // main::@1
+  b1:
+    // [5] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SYSCALLS
+    sta BGCOL
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+    jmp b1
+}
+  // File Data
+.segment Syscall
+SYSCALLS:
+jmp main
+    nop
+
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 212 combination 
+Uplifting [] best 212 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Example showing how to perform linking using a linker-file
+// The linker file is created using KickAssembler segments.
+// See the KickAssembler manual for description of the format http://theweb.dk/KickAssembler/
+// Specifying the linker script file is done using the #pragma link(<file>)
+// It can also be specified using kickc command line option -T <file>
+  // Upstart
+  .file [name="xmega65.bin", type="bin", segments="XMega65Bin"]
+.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
+.segmentdef Syscall [start=$8000, max=$81ff]
+.segmentdef Code [start=$8200, min=$8200, max=$bdff]
+.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
+.segmentdef Stack [min=$be00, max=$beff, fill]
+.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  // Global Constants & labels
+  .label BGCOL = $d021
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+.segment Code
+  // main
+main: {
+    jmp b1
+    // main::@1
+  b1:
+    // [5] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SYSCALLS
+    sta BGCOL
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+    jmp b1
+}
+  // File Data
+.segment Syscall
+SYSCALLS:
+jmp main
+    nop
+
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bbegin:
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = (byte*) 53281
+(byte[]) SYSCALLS
+(const byte[]) SYSCALLS#0 SYSCALLS = kickasm {{ jmp main
+    nop
+ }}
+(void()) main()
+(label) main::@1
+
+
+
+FINAL ASSEMBLER
+Score: 170
+
+  // File Comments
+// Example showing how to perform linking using a linker-file
+// The linker file is created using KickAssembler segments.
+// See the KickAssembler manual for description of the format http://theweb.dk/KickAssembler/
+// Specifying the linker script file is done using the #pragma link(<file>)
+// It can also be specified using kickc command line option -T <file>
+  // Upstart
+  .file [name="xmega65.bin", type="bin", segments="XMega65Bin"]
+.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
+.segmentdef Syscall [start=$8000, max=$81ff]
+.segmentdef Code [start=$8200, min=$8200, max=$bdff]
+.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
+.segmentdef Stack [min=$be00, max=$beff, fill]
+.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  // Global Constants & labels
+  .label BGCOL = $d021
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+.segment Code
+  // main
+main: {
+    // main::@1
+  b1:
+    // *BGCOL = SYSCALLS[0]
+    // [5] *((const byte*) BGCOL#0) ← *((const byte[]) SYSCALLS#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SYSCALLS
+    sta BGCOL
+    // (*BGCOL)++;
+    // [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+    jmp b1
+}
+  // File Data
+.segment Syscall
+SYSCALLS:
+jmp main
+    nop
+
+

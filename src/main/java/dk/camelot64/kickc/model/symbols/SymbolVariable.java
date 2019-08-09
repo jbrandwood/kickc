@@ -47,18 +47,26 @@ public abstract class SymbolVariable implements Symbol {
    /** Full name of variable (scope::name or name) */
    private String fullName;
 
-   public SymbolVariable(String name, Scope scope, SymbolType type) {
+   /** The data segment to put the variable into (if it is allocated in memory). */
+   private String dataSegment;
+
+   public SymbolVariable(String name, Scope scope, SymbolType type, String dataSegment) {
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.inferredType = false;
       this.comments = new ArrayList<>();
+      this.dataSegment = dataSegment;
       setFullName();
    }
 
    private void setFullName() {
       String scopeName = (scope == null) ? "" : scope.getFullName();
       fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
+   }
+
+   public String getDataSegment() {
+      return dataSegment;
    }
 
    @Override

@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 public class StructDefinition extends Scope {
 
    public StructDefinition(String name, Scope parentScope) {
-      super(name, parentScope);
+      super(name, parentScope, SEGMENT_DATA_DEFAULT);
    }
 
    @Override

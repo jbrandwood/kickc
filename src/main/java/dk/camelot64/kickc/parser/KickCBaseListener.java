@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7.2
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -251,6 +251,30 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

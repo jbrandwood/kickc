@@ -163,20 +163,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
+   /** The current code segment - if null the default segment is used. */
+   String currentCodeSegment = Scope.SEGMENT_CODE_DEFAULT;
+
+   @Override
+   public Object visitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) {
+      this.currentCodeSegment = ctx.NAME().getText();
+      return null;
+   }
+
+   /** The current data segment - if null the default segment is used. */
+   String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
+
+   @Override
+   public Object visitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) {
+      this.currentDataSegment = ctx.NAME().getText();
+      return null;
+   }
+
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
       String name = ctx.NAME().getText();
-      Procedure procedure = getCurrentScope().addProcedure(name, type);
+      Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment);
       addDirectives(procedure, directives, StatementSource.procedureBegin(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         returnVar = procedure.addVariable("return", type);
+         returnVar = procedure.addVariable("return", type, procedure.getSegmentData());
       }
       List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
@@ -229,7 +247,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type);
+      VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment);
       // Add directives
       addDirectives(param, type, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -354,17 +372,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** KickAssembler directive specifying a constant used by the kickasm code. */
    public static class AsmDirectiveUses implements AsmDirective {
       /** constant/variable used by the KickAssembler-code. */
-      private SymbolVariableRef uses;
+      private SymbolRef uses;
 
-      public SymbolVariableRef getUses() {
+      public SymbolRef getUses() {
          return uses;
       }
 
-      AsmDirectiveUses(SymbolVariableRef uses) {
+      AsmDirectiveUses(SymbolRef uses) {
          this.uses = uses;
       }
 
-      public void setUses(SymbolVariableRef uses) {
+      public void setUses(SymbolRef uses) {
          this.uses = uses;
       }
 
@@ -378,12 +396,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) {
       String varName = ctx.NAME().getText();
-      SymbolVariableRef variableRef;
+      SymbolRef variableRef;
       Symbol symbol = getCurrentScope().getSymbol(varName);
-      if(symbol instanceof Variable) {
+      if(symbol!=null) {
          //Found an existing variable
-         Variable variable = (Variable) symbol;
-         variableRef = variable.getRef();
+         variableRef = symbol.getRef();
       } else {
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          variableRef = new ForwardVariableRef(varName);
@@ -557,9 +574,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       // Add KickAsm statement
       StatementKickAsm kasm = (StatementKickAsm) this.visit(ctx.declKasm());
-      if(kasm.getUses().size() > 0) {
-         throw new CompileError("KickAsm initializers does not support 'uses' directive.", new StatementSource(ctx));
-      }
       if(kasm.getLocation() != null) {
          throw new CompileError("KickAsm initializers does not support 'location' directive.", new StatementSource(ctx));
       }
@@ -572,7 +586,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(kasm.getDeclaredClobber() != null) {
          throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", new StatementSource(ctx));
       }
-      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypeArray) type).getElementType(), kasm.getKickAsmCode());
+      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypeArray) type).getElementType(), kasm.getKickAsmCode(), kasm.getUses());
       // Remove the KickAsm statement
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add an initializer statement instead
@@ -588,7 +602,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
       VariableUnversioned lValue;
       try {
-         lValue = getCurrentScope().addVariable(varName, type);
+         lValue = getCurrentScope().addVariable(varName, type, currentDataSegment);
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
@@ -1026,7 +1040,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Variable lValue;
       if(varType != null) {
          try {
-            lValue = getCurrentScope().addVariable(varName, varType);
+            lValue = getCurrentScope().addVariable(varName, varType, currentDataSegment);
          } catch(CompileError e) {
             throw new CompileError(e.getMessage(), statementSource);
          }
@@ -1327,7 +1341,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(ConstantVar member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue()));
+            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue(), currentDataSegment));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1361,7 +1375,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
          }
       }
-      currentEnum.add(new ConstantVar(memberName, getCurrentScope(), SymbolType.BYTE, enumValue));
+      currentEnum.add(new ConstantVar(memberName, getCurrentScope(), SymbolType.BYTE, enumValue, currentDataSegment));
       return null;
    }
 

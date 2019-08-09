@@ -8,7 +8,7 @@ public class VariableVersion extends Variable {
    private String versionOfName;
 
    public VariableVersion(VariableUnversioned versionOf, int version) {
-      super(versionOf.getLocalName() + "#" + version, versionOf.getScope(), versionOf.getType());
+      super(versionOf.getLocalName() + "#" + version, versionOf.getScope(), versionOf.getType(), versionOf.getDataSegment());
       this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
       this.setDeclaredRegister(versionOf.getDeclaredRegister());
       this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
@@ -22,7 +22,7 @@ public class VariableVersion extends Variable {
          String name,
          SymbolType type,
          String versionOfName) {
-      super(name, null, type);
+      super(name, null, type, Scope.SEGMENT_DATA_DEFAULT);
       this.versionOfName = versionOfName;
    }
 

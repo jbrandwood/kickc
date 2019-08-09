@@ -1,72 +1,229 @@
-Loading link script "xmega65.ld"
+Loading link script "linking.ld"
+Resolved forward reference base to (byte[$100]) base
+Resolved forward reference base to (byte[$100]) base
 Identified constant variable (byte*) BGCOL
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@5
+Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) fillscreen::@4
+Culled Empty Block (label) fillscreen::@3
+Culled Empty Block (label) fillscreen::@5
+Culled Empty Block (label) fillscreen::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) BGCOL#0 ← ((byte*)) (number) $d021
   to:@1
-main: scope:[main]  from @1
+main: scope:[main]  from @2
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  if(true) goto main::@2
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  *((byte[$100]) base#0 + (byte) main::i#2) ← (byte) main::i#2
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
+  (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,$ff)
+  if((bool~) main::$0) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1 main::@9
+  if(true) goto main::@4
   to:main::@return
-main::@2: scope:[main]  from main::@1
+main::@4: scope:[main]  from main::@3
+  (byte) fillscreen::c#0 ← *((byte*) BGCOL#0)
+  call fillscreen 
+  to:main::@9
+main::@9: scope:[main]  from main::@4
   *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
-  to:main::@1
-main::@return: scope:[main]  from main::@1
+  to:main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  call main 
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@2
+fillscreen: scope:[fillscreen]  from main::@4
+  (byte) fillscreen::c#3 ← phi( main::@4/(byte) fillscreen::c#0 )
+  (byte) fillscreen::i#0 ← (number) 0
+  (byte*) fillscreen::screen#0 ← (byte*) SCREEN#0
+  to:fillscreen::@1
+fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@2
+  (byte) fillscreen::i#3 ← phi( fillscreen/(byte) fillscreen::i#0 fillscreen::@2/(byte) fillscreen::i#1 )
+  (byte) fillscreen::c#2 ← phi( fillscreen/(byte) fillscreen::c#3 fillscreen::@2/(byte) fillscreen::c#1 )
+  (byte*) fillscreen::screen#2 ← phi( fillscreen/(byte*) fillscreen::screen#0 fillscreen::@2/(byte*) fillscreen::screen#1 )
+  (byte*~) fillscreen::$0 ← (byte*) SCREEN#0 + (number) $3e8
+  (bool~) fillscreen::$1 ← (byte*) fillscreen::screen#2 < (byte*~) fillscreen::$0
+  if((bool~) fillscreen::$1) goto fillscreen::@2
+  to:fillscreen::@return
+fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
+  (byte*) fillscreen::screen#3 ← phi( fillscreen::@1/(byte*) fillscreen::screen#2 )
+  (byte) fillscreen::i#2 ← phi( fillscreen::@1/(byte) fillscreen::i#3 )
+  (byte) fillscreen::c#1 ← phi( fillscreen::@1/(byte) fillscreen::c#2 )
+  (byte~) fillscreen::$2 ← (byte) fillscreen::c#1 + *((byte[$100]) base#0 + (byte) fillscreen::i#2)
+  *((byte*) fillscreen::screen#3) ← (byte~) fillscreen::$2
+  (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#2
+  (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#3
+  to:fillscreen::@1
+fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
+  return 
+  to:@return
 @2: scope:[]  from @1
+  (byte[$100]) base#0 ← { fill( $100, 0) }
+  call main 
+  to:@3
+@3: scope:[]  from @2
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @3
 
 SYMBOL TABLE SSA
 (label) @1
 (label) @2
+(label) @3
 (label) @begin
 (label) @end
 (byte*) BGCOL
 (byte*) BGCOL#0
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte[$100]) base
+(byte[$100]) base#0
+(void()) fillscreen((byte) fillscreen::c)
+(byte*~) fillscreen::$0
+(bool~) fillscreen::$1
+(byte~) fillscreen::$2
+(label) fillscreen::@1
+(label) fillscreen::@2
+(label) fillscreen::@return
+(byte) fillscreen::c
+(byte) fillscreen::c#0
+(byte) fillscreen::c#1
+(byte) fillscreen::c#2
+(byte) fillscreen::c#3
+(byte) fillscreen::i
+(byte) fillscreen::i#0
+(byte) fillscreen::i#1
+(byte) fillscreen::i#2
+(byte) fillscreen::i#3
+(byte*) fillscreen::screen
+(byte*) fillscreen::screen#0
+(byte*) fillscreen::screen#1
+(byte*) fillscreen::screen#2
+(byte*) fillscreen::screen#3
 (void()) main()
+(bool~) main::$0
 (label) main::@1
-(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@9
 (label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
 
+Adding number conversion cast (unumber) 0 in (byte) fillscreen::i#0 ← (number) 0
+Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$0 ← (byte*) SCREEN#0 + (number) $3e8
+Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) fillscreen::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3e8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte) fillscreen::c#1 = (byte) fillscreen::c#2 
+Alias (byte) fillscreen::i#2 = (byte) fillscreen::i#3 
+Alias (byte*) fillscreen::screen#2 = (byte*) fillscreen::screen#3 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) fillscreen::c#3 (byte) fillscreen::c#0
+Identical Phi Values (byte) fillscreen::c#1 (byte) fillscreen::c#3
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) fillscreen::$1 [19] if((byte*) fillscreen::screen#2<(byte*~) fillscreen::$0) goto fillscreen::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [26] (byte[$100]) base#0 ← { fill( $100, 0) }
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) BGCOL#0 = (byte*) 53281
+Constant (const byte) main::i#0 = 0
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte) fillscreen::i#0 = 0
+Constant (const byte[$100]) base#0 = { fill( $100, 0) }
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@2
+Constant (const byte*) fillscreen::screen#0 = SCREEN#0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [7] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [8] (byte*~) fillscreen::$0 ← (const byte*) SCREEN#0 + (word) $3e8
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) fillscreen::$0 = SCREEN#0+$3e8
+Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization Pass2LoopHeadConstantIdentification
+Alias (byte*) fillscreen::screen#1 = (byte*) fillscreen::screen#2 
+Alias (byte) fillscreen::i#1 = (byte) fillscreen::i#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) fillscreen::screen#5 (const byte*) fillscreen::screen#0
+Identical Phi Values (byte) fillscreen::i#5 (const byte) fillscreen::i#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always true - replacing block destination [18] if((const byte*) fillscreen::screen#0<(const byte*) fillscreen::$0) goto fillscreen::@2
+Successful SSA optimization Pass2ConstantIfs
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) fillscreen::i#0
+Inlining constant with var siblings (const byte*) fillscreen::screen#0
+Constant inlined fillscreen::i#0 = (byte) 0
+Constant inlined main::i#0 = (byte) 0
+Constant inlined fillscreen::screen#0 = (const byte*) SCREEN#0
+Constant inlined fillscreen::$0 = (const byte*) SCREEN#0+(word) $3e8
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@10(between main::@1 and main::@1)
+Added new block during phi lifting fillscreen::@7(between fillscreen::@1 and fillscreen::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of fillscreen
+Adding NOP phi() at start of fillscreen::@1_1
 CALL GRAPH
-Calls in [] to main:2 
+Calls in [] to main:3 
+Calls in [main] to fillscreen:13 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Culled Empty Block (label) main::@1
-Renumbering block main::@2 to main::@1
+Created 3 initial phi equivalence classes
+Coalesced [15] main::i#3 ← main::i#1
+Coalesced [25] fillscreen::screen#6 ← fillscreen::screen#1
+Coalesced [26] fillscreen::i#6 ← fillscreen::i#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@10
+Culled Empty Block (label) fillscreen::@1_1
+Culled Empty Block (label) fillscreen::@7
+Renumbering block @2 to @1
+Renumbering block main::@4 to main::@2
+Renumbering block main::@9 to main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of fillscreen
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -82,16 +239,73 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
-  to:main::@1
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [6] *((const byte[$100]) base#0 + (byte) main::i#2) ← (byte) main::i#2
+  [7] (byte) main::i#1 ← ++ (byte) main::i#2
+  [8] if((byte) main::i#1!=(byte) 0) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL#0)
+  [10] call fillscreen 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  to:main::@2
+fillscreen: scope:[fillscreen]  from main::@2
+  [12] phi()
+  to:fillscreen::@2
+fillscreen::@2: scope:[fillscreen]  from fillscreen fillscreen::@1
+  [13] (byte) fillscreen::i#4 ← phi( fillscreen::@1/(byte) fillscreen::i#1 fillscreen/(byte) 0 )
+  [13] (byte*) fillscreen::screen#4 ← phi( fillscreen::@1/(byte*) fillscreen::screen#1 fillscreen/(const byte*) SCREEN#0 )
+  [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4)
+  [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2
+  [16] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#4
+  [17] (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#4
+  to:fillscreen::@1
+fillscreen::@1: scope:[fillscreen]  from fillscreen::@2
+  [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2
+  to:fillscreen::@return
+fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
+  [19] return 
+  to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (byte*) BGCOL
+(byte*) SCREEN
+(byte[$100]) base
+(void()) fillscreen((byte) fillscreen::c)
+(byte~) fillscreen::$2 202.0
+(byte) fillscreen::c
+(byte) fillscreen::c#0 14.0
+(byte) fillscreen::i
+(byte) fillscreen::i#1 67.33333333333333
+(byte) fillscreen::i#4 101.0
+(byte*) fillscreen::screen
+(byte*) fillscreen::screen#1 151.5
+(byte*) fillscreen::screen#4 75.75
 (void()) main()
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#2 22.0
 
 Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ fillscreen::screen#4 fillscreen::screen#1 ]
+[ fillscreen::i#4 fillscreen::i#1 ]
+Added variable fillscreen::c#0 to zero page equivalence class [ fillscreen::c#0 ]
+Added variable fillscreen::$2 to zero page equivalence class [ fillscreen::$2 ]
 Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ fillscreen::screen#4 fillscreen::screen#1 ]
+[ fillscreen::i#4 fillscreen::i#1 ]
+[ fillscreen::c#0 ]
+[ fillscreen::$2 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_WORD:3 [ fillscreen::screen#4 fillscreen::screen#1 ]
+Allocated zp ZP_BYTE:5 [ fillscreen::i#4 fillscreen::i#1 ]
+Allocated zp ZP_BYTE:6 [ fillscreen::c#0 ]
+Allocated zp ZP_BYTE:7 [ fillscreen::$2 ]
 
 INITIAL ASM
 Target platform is custom
@@ -102,15 +316,20 @@ Target platform is custom
 // Specifying the linker script file is done using the #pragma link(<file>)
 // It can also be specified using kickc command line option -T <file>
   // Upstart
-  .file [name="linking.bin", type="bin", segments="XMega65Bin"]
-.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
-.segmentdef Syscall [start=$8000, max=$81ff]
-.segmentdef Code [start=$8200, min=$8200, max=$bdff]
-.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
-.segmentdef Stack [min=$be00, max=$beff, fill]
-.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  .file [name="linking.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data, CodeHigh, DataHigh"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$0810]
+.segmentdef Data [startAfter="Code"]
+.segmentdef CodeHigh [start=$4000]
+.segmentdef DataHigh [startAfter="CodeHigh"]
+.segment Basic
+:BasicUpstart(main)
+
+
   // Global Constants & labels
   .label BGCOL = $d021
+  .label SCREEN = $400
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -130,23 +349,140 @@ bend:
 .segment Code
   // main
 main: {
+    .label i = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp b1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const byte[$100]) base#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta base,y
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    lda.z i
+    cmp #0
+    bne b1_from_b1
+    jmp b2
+    // main::@2
+  b2:
+    // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL#0) -- vbuz1=_deref_pbuc1 
+    lda BGCOL
+    sta.z fillscreen.c
+    // [10] call fillscreen 
+    // [12] phi from main::@2 to fillscreen [phi:main::@2->fillscreen]
+  fillscreen_from_b2:
+    jsr fillscreen
+    jmp b3
+    // main::@3
+  b3:
+    // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
+    jmp b2
+}
+.segment CodeHigh
+  // fillscreen
+// fillscreen(byte zeropage(6) c)
+fillscreen: {
+    .label _2 = 7
+    .label c = 6
+    .label i = 5
+    .label screen = 3
+    // [13] phi from fillscreen to fillscreen::@2 [phi:fillscreen->fillscreen::@2]
+  b2_from_fillscreen:
+    // [13] phi (byte) fillscreen::i#4 = (byte) 0 [phi:fillscreen->fillscreen::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // [13] phi (byte*) fillscreen::screen#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z screen
+    lda #>SCREEN
+    sta.z screen+1
+    jmp b2
+    // [13] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
+  b2_from_b1:
+    // [13] phi (byte) fillscreen::i#4 = (byte) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@2#0] -- register_copy 
+    // [13] phi (byte*) fillscreen::screen#4 = (byte*) fillscreen::screen#1 [phi:fillscreen::@1->fillscreen::@2#1] -- register_copy 
+    jmp b2
+    // fillscreen::@2
+  b2:
+    // [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4) -- vbuz1=vbuz2_plus_pbuc1_derefidx_vbuz3 
+    lda.z c
+    ldy.z i
+    clc
+    adc base,y
+    sta.z _2
+    // [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2 -- _deref_pbuz1=vbuz2 
+    lda.z _2
+    ldy #0
+    sta (screen),y
+    // [16] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#4 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [17] (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#4 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
     jmp b1
+    // fillscreen::@1
+  b1:
+    // [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda.z screen
+    cmp #<SCREEN+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // fillscreen::@return
+  breturn:
+    // [19] return 
+    rts
 }
   // File Data
+.segment DataHigh
+  base: .fill $100, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4) [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 fillscreen::$2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ fillscreen::c#0 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ fillscreen::i#4 fillscreen::i#1 ]
+Statement [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 ] ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ fillscreen::c#0 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ fillscreen::i#4 fillscreen::i#1 ]
+Statement [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 [ fillscreen::c#0 fillscreen::screen#1 fillscreen::i#1 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#1 fillscreen::i#1 ] ) always clobbers reg byte a 
+Statement [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4) [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 fillscreen::$2 ] ) always clobbers reg byte a 
+Statement [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#4 fillscreen::i#4 ] ) always clobbers reg byte y 
+Statement [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 [ fillscreen::c#0 fillscreen::screen#1 fillscreen::i#1 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#1 fillscreen::i#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:3 [ fillscreen::screen#4 fillscreen::screen#1 ] : zp ZP_WORD:3 , 
+Potential registers zp ZP_BYTE:5 [ fillscreen::i#4 fillscreen::i#1 ] : zp ZP_BYTE:5 , reg byte x , 
+Potential registers zp ZP_BYTE:6 [ fillscreen::c#0 ] : zp ZP_BYTE:6 , reg byte x , 
+Potential registers zp ZP_BYTE:7 [ fillscreen::$2 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
+Uplift Scope [fillscreen] 227.25: zp ZP_WORD:3 [ fillscreen::screen#4 fillscreen::screen#1 ] 202: zp ZP_BYTE:7 [ fillscreen::$2 ] 168.33: zp ZP_BYTE:5 [ fillscreen::i#4 fillscreen::i#1 ] 14: zp ZP_BYTE:6 [ fillscreen::c#0 ] 
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 132 combination 
-Uplifting [] best 132 combination 
+Uplifting [fillscreen] best 7902 combination zp ZP_WORD:3 [ fillscreen::screen#4 fillscreen::screen#1 ] reg byte a [ fillscreen::$2 ] reg byte x [ fillscreen::i#4 fillscreen::i#1 ] zp ZP_BYTE:6 [ fillscreen::c#0 ] 
+Uplifting [main] best 7782 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 7782 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:6 [ fillscreen::c#0 ]
+Uplifting [fillscreen] best 7782 combination zp ZP_BYTE:6 [ fillscreen::c#0 ] 
+Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ fillscreen::screen#4 fillscreen::screen#1 ]
+Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:4 [ fillscreen::c#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -156,15 +492,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Specifying the linker script file is done using the #pragma link(<file>)
 // It can also be specified using kickc command line option -T <file>
   // Upstart
-  .file [name="linking.bin", type="bin", segments="XMega65Bin"]
-.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
-.segmentdef Syscall [start=$8000, max=$81ff]
-.segmentdef Code [start=$8200, min=$8200, max=$bdff]
-.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
-.segmentdef Stack [min=$be00, max=$beff, fill]
-.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  .file [name="linking.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data, CodeHigh, DataHigh"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$0810]
+.segmentdef Data [startAfter="Code"]
+.segmentdef CodeHigh [start=$4000]
+.segmentdef DataHigh [startAfter="CodeHigh"]
+.segment Basic
+:BasicUpstart(main)
+
+
   // Global Constants & labels
   .label BGCOL = $d021
+  .label SCREEN = $400
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -184,30 +525,135 @@ bend:
 .segment Code
   // main
 main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const byte[$100]) base#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta base,x
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1_from_b1
+    jmp b2
+    // main::@2
+  b2:
+    // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL#0) -- vbuz1=_deref_pbuc1 
+    lda BGCOL
+    sta.z fillscreen.c
+    // [10] call fillscreen 
+    // [12] phi from main::@2 to fillscreen [phi:main::@2->fillscreen]
+  fillscreen_from_b2:
+    jsr fillscreen
+    jmp b3
+    // main::@3
+  b3:
+    // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
+    jmp b2
+}
+.segment CodeHigh
+  // fillscreen
+// fillscreen(byte zeropage(4) c)
+fillscreen: {
+    .label c = 4
+    .label screen = 2
+    // [13] phi from fillscreen to fillscreen::@2 [phi:fillscreen->fillscreen::@2]
+  b2_from_fillscreen:
+    // [13] phi (byte) fillscreen::i#4 = (byte) 0 [phi:fillscreen->fillscreen::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [13] phi (byte*) fillscreen::screen#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z screen
+    lda #>SCREEN
+    sta.z screen+1
+    jmp b2
+    // [13] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
+  b2_from_b1:
+    // [13] phi (byte) fillscreen::i#4 = (byte) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@2#0] -- register_copy 
+    // [13] phi (byte*) fillscreen::screen#4 = (byte*) fillscreen::screen#1 [phi:fillscreen::@1->fillscreen::@2#1] -- register_copy 
+    jmp b2
+    // fillscreen::@2
+  b2:
+    // [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    lda base,x
+    clc
+    adc.z c
+    // [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (screen),y
+    // [16] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#4 -- vbuxx=_inc_vbuxx 
+    inx
+    // [17] (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#4 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
     jmp b1
+    // fillscreen::@1
+  b1:
+    // [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2_from_b1
+    bne !+
+    lda.z screen
+    cmp #<SCREEN+$3e8
+    bcc b2_from_b1
+  !:
+    jmp breturn
+    // fillscreen::@return
+  breturn:
+    // [19] return 
+    rts
 }
   // File Data
+.segment DataHigh
+  base: .fill $100, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp b2
+Removing instruction jmp b1
+Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Replacing label b2_from_b1 with b2
+Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bbegin:
 Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction fillscreen_from_b2:
+Removing instruction b3:
+Removing instruction b2_from_fillscreen:
+Removing instruction b1:
+Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -215,13 +661,40 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) BGCOL
 (const byte*) BGCOL#0 BGCOL = (byte*) 53281
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(byte[$100]) base
+(const byte[$100]) base#0 base = { fill( $100, 0) }
+(void()) fillscreen((byte) fillscreen::c)
+(byte~) fillscreen::$2 reg byte a 202.0
+(label) fillscreen::@1
+(label) fillscreen::@2
+(label) fillscreen::@return
+(byte) fillscreen::c
+(byte) fillscreen::c#0 c zp ZP_BYTE:4 14.0
+(byte) fillscreen::i
+(byte) fillscreen::i#1 reg byte x 67.33333333333333
+(byte) fillscreen::i#4 reg byte x 101.0
+(byte*) fillscreen::screen
+(byte*) fillscreen::screen#1 screen zp ZP_WORD:2 151.5
+(byte*) fillscreen::screen#4 screen zp ZP_WORD:2 75.75
 (void()) main()
 (label) main::@1
+(label) main::@2
+(label) main::@3
+(byte) main::i
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 22.0
 
+reg byte x [ main::i#2 main::i#1 ]
+zp ZP_WORD:2 [ fillscreen::screen#4 fillscreen::screen#1 ]
+reg byte x [ fillscreen::i#4 fillscreen::i#1 ]
+zp ZP_BYTE:4 [ fillscreen::c#0 ]
+reg byte a [ fillscreen::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 90
+Score: 6477
 
   // File Comments
 // Example showing how to perform linking using a linker-file
@@ -230,15 +703,20 @@ Score: 90
 // Specifying the linker script file is done using the #pragma link(<file>)
 // It can also be specified using kickc command line option -T <file>
   // Upstart
-  .file [name="linking.bin", type="bin", segments="XMega65Bin"]
-.segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
-.segmentdef Syscall [start=$8000, max=$81ff]
-.segmentdef Code [start=$8200, min=$8200, max=$bdff]
-.segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
-.segmentdef Stack [min=$be00, max=$beff, fill]
-.segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  .file [name="linking.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data, CodeHigh, DataHigh"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$0810]
+.segmentdef Data [startAfter="Code"]
+.segmentdef CodeHigh [start=$4000]
+.segmentdef DataHigh [startAfter="CodeHigh"]
+.segment Basic
+:BasicUpstart(main)
+
+
   // Global Constants & labels
   .label BGCOL = $d021
+  .label SCREEN = $400
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -249,12 +727,91 @@ Score: 90
 .segment Code
   // main
 main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   b1:
+    // base[i] = i
+    // [6] *((const byte[$100]) base#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta base,x
+    // for(char i:0..255)
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1
+    // main::@2
+  b2:
+    // fillscreen(*BGCOL)
+    // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL#0) -- vbuz1=_deref_pbuc1 
+    lda BGCOL
+    sta.z fillscreen.c
+    // [10] call fillscreen 
+    // [12] phi from main::@2 to fillscreen [phi:main::@2->fillscreen]
+    jsr fillscreen
+    // main::@3
     // (*BGCOL)++;
-    // [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp b1
+    jmp b2
+}
+.segment CodeHigh
+  // fillscreen
+// fillscreen(byte zeropage(4) c)
+fillscreen: {
+    .label c = 4
+    .label screen = 2
+    // [13] phi from fillscreen to fillscreen::@2 [phi:fillscreen->fillscreen::@2]
+    // [13] phi (byte) fillscreen::i#4 = (byte) 0 [phi:fillscreen->fillscreen::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [13] phi (byte*) fillscreen::screen#4 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@2#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z screen
+    lda #>SCREEN
+    sta.z screen+1
+    // [13] phi from fillscreen::@1 to fillscreen::@2 [phi:fillscreen::@1->fillscreen::@2]
+    // [13] phi (byte) fillscreen::i#4 = (byte) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@2#0] -- register_copy 
+    // [13] phi (byte*) fillscreen::screen#4 = (byte*) fillscreen::screen#1 [phi:fillscreen::@1->fillscreen::@2#1] -- register_copy 
+    // fillscreen::@2
+  b2:
+    // c+base[i++]
+    // [14] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base#0 + (byte) fillscreen::i#4) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    lda base,x
+    clc
+    adc.z c
+    // *screen = c+base[i++]
+    // [15] *((byte*) fillscreen::screen#4) ← (byte~) fillscreen::$2 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (screen),y
+    // *screen = c+base[i++];
+    // [16] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#4 -- vbuxx=_inc_vbuxx 
+    inx
+    // for( char *screen = SCREEN; screen<SCREEN+1000; screen++)
+    // [17] (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#4 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // fillscreen::@1
+    // [18] if((byte*) fillscreen::screen#1<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda.z screen
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    // fillscreen::@return
+    // }
+    // [19] return 
+    rts
 }
   // File Data
+.segment DataHigh
+  base: .fill $100, 0
 

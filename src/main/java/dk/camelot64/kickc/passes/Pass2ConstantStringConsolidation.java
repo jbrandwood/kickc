@@ -63,8 +63,10 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       ConstantVar rootConstant = null;
       boolean isCommonScope = true;
       ScopeRef commonScope = null;
+      String segmentData = null;
       for(ConstantVar constantVar : constantVars) {
          ScopeRef constScope = constantVar.getScope().getRef();
+         segmentData = constantVar.getDataSegment();
          if(constScope.equals(ScopeRef.ROOT)) {
             rootConstant = constantVar;
             break;
@@ -87,7 +89,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             // Create a new root - and roll around again
             ProgramScope rootScope = getScope();
             String localName = getRootName(constantVars);
-            ConstantVar newRootConstant = new ConstantVar(localName, rootScope, SymbolType.STRING, constString);
+            ConstantVar newRootConstant = new ConstantVar(localName, rootScope, SymbolType.STRING, constString, segmentData);
             rootScope.add(newRootConstant);
             rootConstant = newRootConstant;
          }

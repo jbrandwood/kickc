@@ -15,6 +15,11 @@ import java.util.*;
  */
 public abstract class Scope implements Symbol, Serializable {
 
+   /** The default code segment. */
+   public static final String SEGMENT_CODE_DEFAULT = "Code";
+   /** The default data segment. */
+   public static final String SEGMENT_DATA_DEFAULT = "Data";
+
    private String name;
    private HashMap<String, Symbol> symbols;
    private int intermediateVarCount = 0;
@@ -22,24 +27,23 @@ public abstract class Scope implements Symbol, Serializable {
    private int blockCount = 1;
    private Scope parentScope;
    private String fullName;
+   private String segmentData;
 
-   public Scope(String name, Scope parentScope) {
+   public Scope(String name, Scope parentScope, String segmentData) {
       this.name = name;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
-      setFullName();
-   }
-
-   public Scope() {
-      this.name = "";
-      this.parentScope = null;
-      this.symbols = new LinkedHashMap<>();
+      this.segmentData = segmentData;
       setFullName();
    }
 
    private void setFullName() {
       String scopeName = (parentScope == null) ? "" : parentScope.getFullName();
       fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
+   }
+
+   public String getSegmentData() {
+      return segmentData;
    }
 
    public HashMap<String, Symbol> getSymbols() {
@@ -95,13 +99,13 @@ public abstract class Scope implements Symbol, Serializable {
       symbols.remove(symbol.getLocalName());
    }
 
-   public VariableUnversioned addVariable(String name, SymbolType type) {
-      return add(new VariableUnversioned(name, this, type));
+   public VariableUnversioned addVariable(String name, SymbolType type, String dataSegment) {
+      return add(new VariableUnversioned(name, this, type, dataSegment));
    }
 
    public VariableIntermediate addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new VariableIntermediate(name, this, SymbolType.VAR));
+      return add(new VariableIntermediate(name, this, SymbolType.VAR, getSegmentData()));
    }
 
    /**
@@ -276,8 +280,8 @@ public abstract class Scope implements Symbol, Serializable {
       return (BlockScope) getSymbol(name);
    }
 
-   public Procedure addProcedure(String name, SymbolType type) {
-      return add(new Procedure(name, type, this));
+   public Procedure addProcedure(String name, SymbolType type, String codeSegment, String dataSegment) {
+      return add(new Procedure(name, type, this, codeSegment, dataSegment));
    }
 
    public Procedure getProcedure(String name) {

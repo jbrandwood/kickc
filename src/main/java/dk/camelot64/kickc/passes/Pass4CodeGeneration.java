@@ -83,14 +83,14 @@ public class Pass4CodeGeneration {
       Number programPc = program.getProgramPc();
       if(TargetPlatform.C64BASIC_SEGMENTS.equals(program.getTargetPlatform())) {
          useSegments = true;
-         currentCodeSegmentName = "Code";
-         currentDataSegmentName = "Data";
+         currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
+         currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
          if(programPc==null) programPc = 0x080d;
          asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
          asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Basic,Code,Data\""));
          asm.addLine(new AsmSegmentDef("Basic").param("start", "$0801"));
-         asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
-         asm.addLine(new AsmSegmentDef("Data").param("startAfter", "\"Code\""));
+         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_CODE_DEFAULT).param("start", AsmFormat.getAsmNumber(programPc)));
+         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_DATA_DEFAULT).param("startAfter", "\"Code\""));
          asm.addLine(new AsmSegment("Basic"));
          asm.addLine(new AsmBasicUpstart("bbegin"));
          setCurrentSegment(currentCodeSegmentName, asm);
@@ -102,13 +102,13 @@ public class Pass4CodeGeneration {
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       } else if(TargetPlatform.ASM6502_SEGMENTS.equals(program.getTargetPlatform())) {
          useSegments = true;
-         currentCodeSegmentName = "Code";
-         currentDataSegmentName = "Data";
+         currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
+         currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
          if(programPc==null) programPc = 0x2000;
          asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
          asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Code,Data\""));
-         asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
-         asm.addLine(new AsmSegmentDef("Data").param("startAfter", "\"Code\""));
+         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_CODE_DEFAULT).param("start", AsmFormat.getAsmNumber(programPc)));
+         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_DATA_DEFAULT).param("startAfter", "\"Code\""));
          setCurrentSegment(currentCodeSegmentName, asm);
       } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
          useSegments = false;
@@ -133,6 +133,10 @@ public class Pass4CodeGeneration {
             // The current block is in a different scope. End the old scope.
             generateScopeEnding(asm, currentScope);
             currentScope = block.getScope();
+            if(block.isProcedureEntry(program)) {
+               Procedure procedure = block.getProcedure(program);
+               currentCodeSegmentName = procedure.getCodeSegment();
+            }
             setCurrentSegment(currentCodeSegmentName, asm);
             asm.startChunk(currentScope, null, block.getLabel().getFullName());
             // Add any procedure comments
@@ -189,9 +193,6 @@ public class Pass4CodeGeneration {
 
       currentScope = ScopeRef.ROOT;
       asm.startChunk(currentScope, null, "File Data");
-      if(hasData(currentScope)) {
-         setCurrentSegment(currentDataSegmentName, asm);
-      }
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -214,11 +215,11 @@ public class Pass4CodeGeneration {
    }
 
    // Should the generated program use segments?
-   boolean useSegments = false;
+   private boolean useSegments = false;
    // Name of the current data segment
-   private String currentCodeSegmentName = "Code";
+   private String currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
    // Name of the current code segment
-   private String currentDataSegmentName = "Data";
+   private String currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
    // Name of the current active segment
    private String currentSegmentName = "";
 
@@ -255,9 +256,6 @@ public class Pass4CodeGeneration {
             asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
          }
          indirectCallAsmNames = new ArrayList<>();
-         if(hasData(currentScope)) {
-            setCurrentSegment(currentDataSegmentName, asm);
-         }
          addData(asm, currentScope);
          asm.addScopeEnd();
       }
@@ -275,7 +273,6 @@ public class Pass4CodeGeneration {
       indirectCallAsmNames.add(varAsmName);
       asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
    }
-
 
    /**
     * Generate a comment that describes the procedure signature and parameter transfer
@@ -448,23 +445,6 @@ public class Pass4CodeGeneration {
       return useLabel;
    }
 
-
-   /**
-    * Examine whether there are any data directives to be added
-    *
-    * @param scopeRef The scope
-    */
-   private boolean hasData(ScopeRef scopeRef) {
-      Scope scope = program.getScope().getScope(scopeRef);
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
-      for(ConstantVar constantVar : scopeConstants) {
-         if(hasData(constantVar)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
    /**
     * Add data directives for constants declarations
     *
@@ -482,6 +462,8 @@ public class Pass4CodeGeneration {
             if(added.contains(asmName)) {
                continue;
             }
+            // Set segment
+            setCurrentSegment(constantVar.getDataSegment(), asm);
             // Add any comments
             generateComments(asm, constantVar.getComments());
             // Add any alignment

@@ -145,7 +145,7 @@ public class ProgramValueIterator {
          if(cycles!=null) {
             execute(new ProgramValue.ProgramValueKickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }
-         List<SymbolVariableRef> uses = statementKickAsm.getUses();
+         List<SymbolRef> uses = statementKickAsm.getUses();
          for(int i = 0; i < uses.size(); i++) {
             execute(new ProgramValue.KickAsmUses(statementKickAsm, i), handler, statement, statementsIt, block);
          }
@@ -226,6 +226,12 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueArrayFilledSize((ArrayFilled) value));
       } else if(value instanceof ConstantArrayFilled) {
          subValues.add(new ProgramValue.ProgramValueConstantArrayFilledSize((ConstantArrayFilled) value));
+      } else if(value instanceof ConstantArrayKickAsm) {
+         ConstantArrayKickAsm constantArrayKickAsm = (ConstantArrayKickAsm) value;
+         List<SymbolRef> uses = constantArrayKickAsm.getUses();
+         for(int i = 0; i < uses.size(); i++) {
+            subValues.add(new ProgramValue.ProgramValueConstantArrayKickAsmUses(constantArrayKickAsm, i));
+         }
       } else if(value instanceof LvalueIntermediate) {
          subValues.add(new ProgramValue.ProgramValueLValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value == null ||
@@ -236,7 +242,6 @@ public class ProgramValueIterator {
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
             value instanceof StructZero ||
-            value instanceof ConstantArrayKickAsm ||
             value instanceof LabelRef
             ) {
          // No sub values

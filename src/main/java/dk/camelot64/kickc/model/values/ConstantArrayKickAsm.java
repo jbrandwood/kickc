@@ -19,9 +19,21 @@ public class ConstantArrayKickAsm implements ConstantArray {
    /** KickAssembler code generating the data. */
    private String kickAsmCode;
 
-   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode) {
+   /** Variables/constants used by the kickasm code. */
+   private List<SymbolRef> uses;
+
+   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode, List<SymbolRef> uses) {
       this.elementType = elementType;
       this.kickAsmCode = kickAsmCode;
+      this.uses = uses;
+   }
+
+   public List<SymbolRef> getUses() {
+      return uses;
+   }
+
+   public void setUses(List<SymbolRef> uses) {
+      this.uses = uses;
    }
 
    @Override
@@ -54,7 +66,16 @@ public class ConstantArrayKickAsm implements ConstantArray {
    @Override
    public String toString(Program program) {
       StringBuilder txt = new StringBuilder();
-      txt.append("kickasm {{ ");
+      txt.append("kickasm");
+      if(uses.size()>0) {
+         txt.append("( ");
+         for(SymbolRef use : uses) {
+            txt.append(" uses ");
+            txt.append(use.getFullName());
+         }
+         txt.append(")");
+      }
+      txt.append(" {{ ");
       txt.append(kickAsmCode);
       txt.append(" }}");
       return txt.toString();

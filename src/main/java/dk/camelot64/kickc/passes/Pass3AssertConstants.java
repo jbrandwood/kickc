@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAsm;
 import dk.camelot64.kickc.model.statements.StatementKickAsm;
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.List;
 import java.util.Map;
@@ -56,8 +53,8 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
                }
             } else if(statement instanceof StatementKickAsm) {
                StatementKickAsm statementAsm = (StatementKickAsm) statement;
-               List<SymbolVariableRef> uses = statementAsm.getUses();
-               for(SymbolVariableRef use : uses) {
+               List<SymbolRef> uses = statementAsm.getUses();
+               for(SymbolRef use : uses) {
                   if(!(use instanceof ConstantRef)) {
                      throw new CompileError("Error! Inline KickAsm reference is not constant " + use, statement);
                   }

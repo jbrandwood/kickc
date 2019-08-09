@@ -289,7 +289,6 @@ public interface ProgramValue {
       @Override
       public void set(Value value) {
          statementKickAsm.getUses().set(idx, (SymbolVariableRef) value);
-
       }
 
    }
@@ -902,5 +901,26 @@ public interface ProgramValue {
          array.setSize((RValue) val);
       }
 
+   }
+
+   /** Uses inside a constant array initialized using inline kickasm. */
+   class ProgramValueConstantArrayKickAsmUses implements ProgramValue {
+      private final ConstantArrayKickAsm constantArrayKickAsm;
+      private final int idx;
+
+      public ProgramValueConstantArrayKickAsmUses(ConstantArrayKickAsm constantArrayKickAsm, int idx) {
+         this.constantArrayKickAsm = constantArrayKickAsm;
+         this.idx = idx;
+      }
+
+      @Override
+      public Value get() {
+         return constantArrayKickAsm.getUses().get(idx);
+      }
+
+      @Override
+      public void set(Value value) {
+         constantArrayKickAsm.getUses().set(idx, (SymbolVariableRef) value);
+      }
    }
 }

@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeEnum;
 public class EnumDefinition extends Scope {
 
    public EnumDefinition(String name, Scope parentScope) {
-      super(name, parentScope);
+      super(name, parentScope, parentScope.getSegmentData());
    }
 
    @Override

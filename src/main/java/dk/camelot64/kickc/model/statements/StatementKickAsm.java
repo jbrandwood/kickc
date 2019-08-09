@@ -4,6 +4,7 @@ import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class StatementKickAsm extends StatementBase {
    private RValue cycles;
 
    /** Variables/constants used by the kickasm code. */
-   private List<SymbolVariableRef> uses;
+   private List<SymbolRef> uses;
 
    /** Declared clobber for the inline kick-assembler . */
    private AsmClobber declaredClobber;
@@ -36,7 +37,7 @@ public class StatementKickAsm extends StatementBase {
       this.uses = new ArrayList<>();
    }
 
-   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolVariableRef> uses, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
+   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolRef> uses, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
       this.location = location;
@@ -62,11 +63,11 @@ public class StatementKickAsm extends StatementBase {
       this.location = location;
    }
 
-   public List<SymbolVariableRef> getUses() {
+   public List<SymbolRef> getUses() {
       return uses;
    }
 
-   public void setUses(List<SymbolVariableRef> uses) {
+   public void setUses(List<SymbolRef> uses) {
       this.uses = uses;
    }
 
@@ -78,7 +79,7 @@ public class StatementKickAsm extends StatementBase {
          txt.append("location ");
          txt.append(location.toString(program));
       }
-      for(SymbolVariableRef use : uses) {
+      for(SymbolRef use : uses) {
          txt.append(" uses ");
          txt.append(use.getFullName());
       }
@@ -109,7 +110,7 @@ public class StatementKickAsm extends StatementBase {
       return cycles;
    }
 
-   public void addUses(SymbolVariableRef symbolVariableRef) {
+   public void addUses(SymbolRef symbolVariableRef) {
       uses.add(symbolVariableRef);
    }
 }

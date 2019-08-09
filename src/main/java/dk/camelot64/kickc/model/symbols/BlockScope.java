@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeBlockScope;
 public class BlockScope extends Scope {
 
    public BlockScope(String name, Scope parentScope) {
-      super(name, parentScope);
+      super(name, parentScope, parentScope.getSegmentData());
    }
 
    @Override

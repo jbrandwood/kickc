@@ -10,8 +10,8 @@ public abstract class Variable extends SymbolVariable {
    /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public Variable(String name, Scope scope, SymbolType type) {
-      super(name, scope, type);
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment) {
+      super(name, scope, type, dataSegment);
    }
 
    public Registers.Register getAllocation() {

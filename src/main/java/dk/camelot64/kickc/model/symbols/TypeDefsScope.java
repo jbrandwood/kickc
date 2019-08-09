@@ -7,7 +7,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeTypeDefScope;
 public class TypeDefsScope extends Scope {
 
    public TypeDefsScope(String name, Scope parentScope) {
-      super(name, parentScope);
+      super(name, parentScope, parentScope.getSegmentData());
    }
 
    @Override

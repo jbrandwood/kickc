@@ -12,7 +12,8 @@ import java.util.List;
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
 
-   /** The return type. {@link SymbolType#VOID} if the procedure does not return a value.  */
+
+   /** The return type. {@link SymbolType#VOID} if the procedure does not return a value. */
    private final SymbolType returnType;
    /** The names of the parameters of the procedure. */
    private List<String> parameterNames;
@@ -24,13 +25,20 @@ public class Procedure extends Scope {
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
    private List<Number> reservedZps;
+   /** The code segment to put the procedure into. */
+   private String codeSegment;
 
-   public Procedure(String name, SymbolType returnType, Scope parentScope) {
-      super(name, parentScope);
+   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment) {
+      super(name, parentScope, dataSegment);
       this.returnType = returnType;
       this.declaredInline = false;
       this.interruptType = null;
       this.comments = new ArrayList<>();
+      this.codeSegment = codeSegment;
+   }
+
+   public String getCodeSegment() {
+      return codeSegment;
    }
 
    public List<String> getParameterNames() {
@@ -109,6 +117,7 @@ public class Procedure extends Scope {
 
    /**
     * Sets any zero-page addresses reserved by the procedure. The KickC-compiler is not allowed to use these addresses.
+    *
     * @return reserved addresses
     */
    public List<Number> getReservedZps() {
@@ -117,6 +126,7 @@ public class Procedure extends Scope {
 
    /**
     * Gets any reserved zero-page addresses that the compiler is not allowed to use.
+    *
     * @param reservedZp reserved addresses
     */
    public void setReservedZps(List<Number> reservedZps) {
@@ -134,8 +144,7 @@ public class Procedure extends Scope {
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers. */
       HARDWARE_ALL,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
-      HARDWARE_CLOBBER
-      ;
+      HARDWARE_CLOBBER;
 
       /** The default interrupt type if none is explicitly declared (KERNEL_MIN). */
       public static InterruptType DEFAULT = InterruptType.KERNEL_MIN;
@@ -154,8 +163,8 @@ public class Procedure extends Scope {
       if(declaredInline) {
          res.append("inline ");
       }
-      if(interruptType !=null) {
-         res.append("interrupt("+ interruptType +")");
+      if(interruptType != null) {
+         res.append("interrupt(" + interruptType + ")");
       }
       res.append("(" + getType().getTypeName() + ") ");
       res.append(getFullName());

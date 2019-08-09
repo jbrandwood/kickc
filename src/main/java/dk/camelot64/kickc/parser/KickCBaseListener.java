@@ -244,6 +244,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) { }
 	/**
 	 * {@inheritDoc}

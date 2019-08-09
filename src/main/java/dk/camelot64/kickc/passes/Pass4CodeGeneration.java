@@ -116,8 +116,12 @@ public class Pass4CodeGeneration {
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       } else if(TargetPlatform.CUSTOM.equals(program.getTargetPlatform())) {
          useSegments = true;
-         if(programPc==null) programPc = 0x2000;
-         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
+         if(program.getLinkScriptBody()!=null) {
+            asm.addLine(new AsmInlineKickAsm(program.getLinkScriptBody(), 0L, 0L));
+         }
+         if(programPc!=null) {
+            asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
+         }
       }
 
       // Generate global ZP labels

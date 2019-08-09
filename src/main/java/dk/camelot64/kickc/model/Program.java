@@ -27,6 +27,10 @@ public class Program {
    private List<String> importPaths;
    /** Imported files. PASS 0 (STATIC) */
    private List<String> imported;
+   /** Path to any custom link script file used for linking (STATIC) */
+   private Path linkScriptFilePath;
+   /** Body to any custom link script file used for linking (STATIC) */
+   private String linkScriptBody;
 
    /** The target platform that the program is being build for. PASS 0-5 (STATIC) */
    private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
@@ -427,4 +431,16 @@ public class Program {
       this.log = log;
    }
 
+   public void setLinkScript(Path linkScriptFilePath, String linkScriptBody) {
+      this.linkScriptFilePath = linkScriptFilePath;
+      this.linkScriptBody = linkScriptBody;
+   }
+
+   public Path getLinkScriptFilePath() {
+      return linkScriptFilePath;
+   }
+
+   public String getLinkScriptBody() {
+      return linkScriptBody;
+   }
 }

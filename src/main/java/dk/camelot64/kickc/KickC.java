@@ -123,6 +123,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. ")
    private String target = TargetPlatform.C64BASIC.getName();
 
+   @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format.")
+   private String linkScript = null;
+
    /** Program Exit Code signaling a compile error. */
    public static final int COMPILE_ERROR = 1;
 
@@ -212,11 +215,15 @@ public class KickC implements Callable<Void> {
          }
 
          if(optimizeZeroPageCoalesce) {
-            compiler.enableZeroPageCoalasce();
+            compiler.enableZeroPageCoalesce();
          }
 
          if(optimizeNoLoopHeadConstant) {
             compiler.disableLoopHeadConstant();
+         }
+
+         if(linkScript!=null) {
+            compiler.setLinkScriptFileName(linkScript);
          }
 
          System.out.println("Compiling " + kcFile);

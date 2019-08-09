@@ -111,6 +111,16 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) {
+      String linkName = ctx.STRING().getText();
+      String linkFileName = linkName.substring(1, linkName.length() - 1);
+      program.getLog().append("Loading link script " + linkName);
+      Path currentPath = file.toPath().getParent();
+      Compiler.loadLinkScriptFile(linkFileName, program, currentPath);
+      return null;
+   }
+
+   @Override
    public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
       List<Number> reservedZps = new ArrayList<>();
       for(TerminalNode reservedNum : ctx.NUMBER()) {

@@ -212,6 +212,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code globalDirectiveLinkScript}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code globalDirectiveLinkScript}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code globalDirectiveEncoding}
 	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree

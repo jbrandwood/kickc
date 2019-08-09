@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLinking() throws IOException, URISyntaxException {
+      compileAndCompare("examples/linking/linking");
+   }
+
+   @Test
    public void testNmiSamples() throws IOException, URISyntaxException {
       compileAndCompare("examples/nmisamples/nmisamples");
    }

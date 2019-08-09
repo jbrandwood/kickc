@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +35,22 @@ public class Compiler {
    /** Disable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
    private boolean disableLoopHeadConstant = false;
 
+   /** File name of link script to use (from command line parameter). */
+   private String linkScriptFileName;
+
    public Compiler() {
       this.program = new Program();
+   }
+
+   public void setLinkScriptFileName(String linkScript) {
+      linkScriptFileName = linkScript;
    }
 
    public void setUpliftCombinations(int upliftCombinations) {
       this.upliftCombinations = upliftCombinations;
    }
 
-   void enableZeroPageCoalasce() {
+   void enableZeroPageCoalesce() {
       this.enableZeroPageCoalasce = true;
    }
 
@@ -56,6 +64,20 @@ public class Compiler {
 
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
+   }
+
+   public static void loadLinkScriptFile(String fileName, Program program, Path currentPath) {
+      try {
+         File file = loadFile(fileName, currentPath, program);
+         Path filePath = file.toPath();
+         String outputFileName = new File(program.getFileName()).getName();
+         String linkScript = new String(Files.readAllBytes(filePath));
+         linkScript = linkScript.replace("%O", outputFileName);
+         program.setLinkScript(filePath, linkScript);
+         program.setTargetPlatform(TargetPlatform.CUSTOM);
+      } catch(IOException e) {
+         throw new CompileError("Error loading link script file " + fileName, e);
+      }
    }
 
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
@@ -138,14 +160,16 @@ public class Compiler {
 
    public Program compile(String fileName) {
       if(fileName.endsWith(".kc")) {
-         fileName = fileName.substring(0, fileName.length()-3);
+         fileName = fileName.substring(0, fileName.length() - 3);
       }
       program.setFileName(fileName);
-      program.setStatementSequence(new StatementSequence());
       try {
-         File currentPath = new File(".");
-         loadAndParseFile(fileName, program, currentPath.toPath());
-
+         Path currentPath = new File(".").toPath();
+         if(this.linkScriptFileName != null) {
+            loadLinkScriptFile(linkScriptFileName, program, currentPath);
+         }
+         program.setStatementSequence(new StatementSequence());
+         loadAndParseFile(fileName, program, currentPath);
          StatementSequence sequence = program.getStatementSequence();
          sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          program.setStatementSequence(sequence);
@@ -288,7 +312,10 @@ public class Compiler {
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
+      optimizations.add(() -> {
+         program.clearVariableReferenceInfos();
+         return false;
+      });
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
@@ -317,10 +344,19 @@ public class Compiler {
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       if(!disableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
-         optimizations.add(() -> { program.clearDominators(); return false; });
-         optimizations.add(() -> { program.clearLoopSet(); return false; });
+         optimizations.add(() -> {
+            program.clearDominators();
+            return false;
+         });
+         optimizations.add(() -> {
+            program.clearLoopSet();
+            return false;
+         });
          optimizations.add(new Pass2LoopHeadConstantIdentification(program));
-         optimizations.add(() -> { program.clearStatementIndices(); return false; });
+         optimizations.add(() -> {
+            program.clearStatementIndices();
+            return false;
+         });
       }
       return optimizations;
    }
@@ -333,10 +369,22 @@ public class Compiler {
    private void pass2UnrollLoops() {
       List<PassStep> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
-      loopUnrolling.add(() -> { program.clearVariableReferenceInfos(); return false; });
-      loopUnrolling.add(() -> { program.clearStatementInfos(); return false; });
-      loopUnrolling.add(() -> { program.clearDominators(); return false; });
-      loopUnrolling.add(() -> { program.clearLoopSet(); return false; });
+      loopUnrolling.add(() -> {
+         program.clearVariableReferenceInfos();
+         return false;
+      });
+      loopUnrolling.add(() -> {
+         program.clearStatementInfos();
+         return false;
+      });
+      loopUnrolling.add(() -> {
+         program.clearDominators();
+         return false;
+      });
+      loopUnrolling.add(() -> {
+         program.clearLoopSet();
+         return false;
+      });
       loopUnrolling.add(new Pass2LoopUnroll(program));
 
       if(getLog().isVerboseLoopUnroll()) {
@@ -364,7 +412,10 @@ public class Compiler {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<PassStep> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
-      constantOptimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
+      constantOptimizations.add(() -> {
+         program.clearVariableReferenceInfos();
+         return false;
+      });
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
@@ -509,7 +560,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is "+program.getTargetPlatform().getName());
+      getLog().append("Target platform is " + program.getTargetPlatform().getName());
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments

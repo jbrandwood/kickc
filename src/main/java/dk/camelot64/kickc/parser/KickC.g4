@@ -69,6 +69,7 @@ globalDirective
     : ('#pragma' 'reserve'|'#reserve') '(' NUMBER ( ',' NUMBER )* ')' #globalDirectiveReserve
     | ('#pragma' 'pc'|'#pc') '(' NUMBER ')' #globalDirectivePc
     | ('#pragma' 'target'|'#target') '(' NAME ')' #globalDirectivePlatform
+    | ('#pragma' 'link'|'#link') '(' STRING ')' #globalDirectiveLinkScript
     | ('#pragma' 'encoding'|'#encoding') '(' NAME')' #globalDirectiveEncoding
     ;
 

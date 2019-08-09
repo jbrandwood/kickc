@@ -1,13 +1,12 @@
-// Example showing how to perform linking using a linker-file
-// The linker file is created using KickAssembler segments.
-// See the KickAssembler manual for description of the format http://theweb.dk/KickAssembler/
-// Specifying the linker script file is done using the #pragma link(<file>)
-// It can also be specified using kickc command line option -T <file>
+// XMega65 Kernal Development Template
+// Each function of the kernal is a no-args function
+// The functions are placed in the SYSCALLS table surrounded by JMP and NOP
 
 #pragma link("xmega65.ld")
 
 void main() {
     char i=0;
+    // Call functions one at a time
     while(true) {
         unsigned int fn = CALLS[i*2];
         void()* f = (void()*)fn;
@@ -33,8 +32,7 @@ const char NOP = 0xea;
 
 char[] SYSCALLS = {
     JMP, <&fn1, >&fn1, NOP,
-    JMP, <&fn2, >&fn2, NOP,
-    JMP, <&main, >&main, NOP
+    JMP, <&fn2, >&fn2, NOP
     };
 
 const unsigned int* CALLS = (unsigned int*)(SYSCALLS+1);

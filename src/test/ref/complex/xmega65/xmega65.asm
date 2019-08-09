@@ -1,8 +1,6 @@
-// Example showing how to perform linking using a linker-file
-// The linker file is created using KickAssembler segments.
-// See the KickAssembler manual for description of the format http://theweb.dk/KickAssembler/
-// Specifying the linker script file is done using the #pragma link(<file>)
-// It can also be specified using kickc command line option -T <file>
+// XMega65 Kernal Development Template
+// Each function of the kernal is a no-args function
+// The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   .file [name="xmega65.bin", type="bin", segments="XMega65Bin"]
 .segmentdef XMega65Bin [segments="Syscall, Code, Data, Stack, Zeropage"]
 .segmentdef Syscall [start=$8000, max=$81ff]
@@ -20,6 +18,7 @@ main: {
   b1:
     lda #0
     sta.z i
+  // Call functions one at a time
   b2:
     lda.z i
     asl
@@ -49,4 +48,4 @@ fn1: {
     rts
 }
 .segment Syscall
-  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP, JMP, <main, >main, NOP
+  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP

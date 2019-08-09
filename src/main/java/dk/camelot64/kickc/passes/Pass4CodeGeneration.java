@@ -14,6 +14,7 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -77,23 +78,15 @@ public class Pass4CodeGeneration {
       asm.startChunk(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
 
-      Number programPc;
-      if(program.getProgramPc() != null) {
-         programPc = program.getProgramPc();
-      } else {
-         if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
-            programPc = 0x080d;
-         } else {
-            programPc = 0x2000;
-         }
-      }
-
+      String outputPrgPath = new File(program.getFileName()).getName()+".prg";
       asm.startChunk(currentScope, null, "Upstart");
+      Number programPc = program.getProgramPc();
       if(TargetPlatform.C64BASIC_SEGMENTS.equals(program.getTargetPlatform())) {
          useSegments = true;
          currentCodeSegmentName = "Code";
          currentDataSegmentName = "Data";
-         asm.addLine(new AsmFile(program.getFileName() + ".prg").param("type", "\"prg\"").param("segments", "\"Program\""));
+         if(programPc==null) programPc = 0x080d;
+         asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
          asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Basic,Code,Data\""));
          asm.addLine(new AsmSegmentDef("Basic").param("start", "$0801"));
          asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
@@ -101,22 +94,29 @@ public class Pass4CodeGeneration {
          asm.addLine(new AsmSegment("Basic"));
          asm.addLine(new AsmBasicUpstart("bbegin"));
          setCurrentSegment(currentCodeSegmentName, asm);
+      } else if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+         useSegments = false;
+         if(programPc==null) programPc = 0x080d;
+         asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
+         asm.addLine(new AsmBasicUpstart("bbegin"));
+         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       } else if(TargetPlatform.ASM6502_SEGMENTS.equals(program.getTargetPlatform())) {
          useSegments = true;
          currentCodeSegmentName = "Code";
          currentDataSegmentName = "Data";
-         asm.addLine(new AsmFile(program.getFileName() + ".prg").param("type", "\"prg\"").param("segments", "\"Program\""));
+         if(programPc==null) programPc = 0x2000;
+         asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
          asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Code,Data\""));
          asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
          asm.addLine(new AsmSegmentDef("Data").param("startAfter", "\"Code\""));
          setCurrentSegment(currentCodeSegmentName, asm);
       } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
          useSegments = false;
+         if(programPc==null) programPc = 0x2000;
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
-      } else if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
-         useSegments = false;
-         asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-         asm.addLine(new AsmBasicUpstart("bbegin"));
+      } else if(TargetPlatform.CUSTOM.equals(program.getTargetPlatform())) {
+         useSegments = true;
+         if(programPc==null) programPc = 0x2000;
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       }
 

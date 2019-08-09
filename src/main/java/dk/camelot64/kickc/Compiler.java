@@ -137,6 +137,9 @@ public class Compiler {
    }
 
    public Program compile(String fileName) {
+      if(fileName.endsWith(".kc")) {
+         fileName = fileName.substring(0, fileName.length()-3);
+      }
       program.setFileName(fileName);
       program.setStatementSequence(new StatementSequence());
       try {

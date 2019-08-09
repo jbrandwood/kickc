@@ -11,7 +11,9 @@ public enum TargetPlatform {
    /** 6502 assembler (with no upstart code.)*/
    ASM6502("asm6502"),
    /** 6502 assembler (with no upstart code.)*/
-   ASM6502_SEGMENTS("asm6502_segments");
+   ASM6502_SEGMENTS("asm6502_segments"),
+   /** Custom target platform specified in a separate linker file passed using -T option or using #pragma link() */
+   CUSTOM("custom");
 
    /** The default target platform. */
    public static final TargetPlatform DEFAULT = C64BASIC;

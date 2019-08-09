@@ -7,3 +7,4 @@ popd
 rm -r ${C64_HOME}/kickc_local/*
 unzip -d ${C64_HOME}/kickc_local ${C64_HOME}/kickc/target/kickc-release.zip
 mv ${C64_HOME}/kickc_local/kickc/* ${C64_HOME}/kickc_local/
+rmdir ${C64_HOME}/kickc_local/kickc

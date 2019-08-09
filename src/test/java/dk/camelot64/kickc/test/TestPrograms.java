@@ -107,6 +107,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPlatformC64BasicSegments() throws IOException, URISyntaxException {
+      compileAndCompare("platform-c64basic_segments");
+   }
+
+   @Test
+   public void testPlatformAsm6502Segments() throws IOException, URISyntaxException {
+      compileAndCompare("platform-asm6502_segments");
+   }
+
+   @Test
    public void testEuclid2() throws IOException, URISyntaxException {
       compileAndCompare("euclid-3");
    }

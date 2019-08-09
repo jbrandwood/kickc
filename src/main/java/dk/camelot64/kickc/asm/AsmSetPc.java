@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.fragment.AsmFormat;
-
 /** Set the program counter */
 public class AsmSetPc implements AsmLine {
 

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
+import dk.camelot64.kickc.fragment.AsmFormat;
 import dk.camelot64.kickc.model.Program;
 
 import java.util.LinkedHashMap;
@@ -34,7 +35,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                currentLabel = ((AsmLabel) line).getLabel();
             } else if(line instanceof AsmComment || line instanceof AsmConstant || line instanceof AsmLabelDecl) {
                // ignore
-            } else if(line instanceof AsmBasicUpstart || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmSetPc || line instanceof AsmInlineKickAsm|| line instanceof AsmSetEncoding|| line instanceof AsmDataKickAsm) {
+            } else if(line instanceof AsmBasicUpstart || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmSetPc || line instanceof AsmInlineKickAsm|| line instanceof AsmSetEncoding|| line instanceof AsmDataKickAsm|| line instanceof AsmSegmentDef|| line instanceof AsmSegment|| line instanceof AsmFile) {
                currentLabel = null;
             } else if(line instanceof AsmInstruction) {
                if(currentLabel != null) {

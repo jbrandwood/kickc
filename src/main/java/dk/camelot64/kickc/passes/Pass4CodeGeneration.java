@@ -84,16 +84,41 @@ public class Pass4CodeGeneration {
          if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
             programPc = 0x080d;
          } else {
-            programPc = 0x1000;
+            programPc = 0x2000;
          }
       }
 
       asm.startChunk(currentScope, null, "Upstart");
-      if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+      if(TargetPlatform.C64BASIC_SEGMENTS.equals(program.getTargetPlatform())) {
+         useSegments = true;
+         currentCodeSegmentName = "Code";
+         currentDataSegmentName = "Data";
+         asm.addLine(new AsmFile(program.getFileName() + ".prg").param("type", "\"prg\"").param("segments", "\"Program\""));
+         asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Basic,Code,Data\""));
+         asm.addLine(new AsmSegmentDef("Basic").param("start", "$0801"));
+         asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
+         asm.addLine(new AsmSegmentDef("Data").param("startAfter", "\"Code\""));
+         asm.addLine(new AsmSegment("Basic"));
+         asm.addLine(new AsmBasicUpstart("bbegin"));
+         setCurrentSegment(currentCodeSegmentName, asm);
+      } else if(TargetPlatform.ASM6502_SEGMENTS.equals(program.getTargetPlatform())) {
+         useSegments = true;
+         currentCodeSegmentName = "Code";
+         currentDataSegmentName = "Data";
+         asm.addLine(new AsmFile(program.getFileName() + ".prg").param("type", "\"prg\"").param("segments", "\"Program\""));
+         asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Code,Data\""));
+         asm.addLine(new AsmSegmentDef("Code").param("start", AsmFormat.getAsmNumber(programPc)));
+         asm.addLine(new AsmSegmentDef("Data").param("startAfter", "\"Code\""));
+         setCurrentSegment(currentCodeSegmentName, asm);
+      } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
+         useSegments = false;
+         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
+      } else if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+         useSegments = false;
          asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
          asm.addLine(new AsmBasicUpstart("bbegin"));
+         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       }
-      asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
@@ -104,6 +129,7 @@ public class Pass4CodeGeneration {
             // The current block is in a different scope. End the old scope.
             generateScopeEnding(asm, currentScope);
             currentScope = block.getScope();
+            setCurrentSegment(currentCodeSegmentName, asm);
             asm.startChunk(currentScope, null, block.getLabel().getFullName());
             // Add any procedure comments
             if(block.isProcedureEntry(program)) {
@@ -120,7 +146,6 @@ public class Pass4CodeGeneration {
          }
 
          generateComments(asm, block.getComments());
-
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
 
@@ -160,6 +185,9 @@ public class Pass4CodeGeneration {
 
       currentScope = ScopeRef.ROOT;
       asm.startChunk(currentScope, null, "File Data");
+      if(hasData(currentScope)) {
+         setCurrentSegment(currentDataSegmentName, asm);
+      }
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -179,6 +207,28 @@ public class Pass4CodeGeneration {
          }
       }
       program.setAsm(asm);
+   }
+
+   // Should the generated program use segments?
+   boolean useSegments = false;
+   // Name of the current data segment
+   private String currentCodeSegmentName = "Code";
+   // Name of the current code segment
+   private String currentDataSegmentName = "Data";
+   // Name of the current active segment
+   private String currentSegmentName = "";
+
+   /**
+    * Set the current ASM segment - if needed
+    *
+    * @param segmentName The segment name we want
+    * @param asm The ASM program (where a .segment line is added if needed)
+    */
+   private void setCurrentSegment(String segmentName, AsmProgram asm) {
+      if(useSegments && !currentSegmentName.equals(segmentName)) {
+         asm.addLine(new AsmSegment(segmentName));
+         currentSegmentName = segmentName;
+      }
    }
 
    /**
@@ -201,6 +251,9 @@ public class Pass4CodeGeneration {
             asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
          }
          indirectCallAsmNames = new ArrayList<>();
+         if(hasData(currentScope)) {
+            setCurrentSegment(currentDataSegmentName, asm);
+         }
          addData(asm, currentScope);
          asm.addScopeEnd();
       }
@@ -389,6 +442,23 @@ public class Pass4CodeGeneration {
          }
       }
       return useLabel;
+   }
+
+
+   /**
+    * Examine whether there are any data directives to be added
+    *
+    * @param scopeRef The scope
+    */
+   private boolean hasData(ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
+      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+      for(ConstantVar constantVar : scopeConstants) {
+         if(hasData(constantVar)) {
+            return true;
+         }
+      }
+      return false;
    }
 
    /**
@@ -952,8 +1022,8 @@ public class Pass4CodeGeneration {
     * @param encodings The encodings to ensure
     */
    private void ensureEncoding(AsmProgram asm, Collection<ConstantString.Encoding> encodings) {
-      if(encodings == null || encodings.size()==0) return;
-      if(encodings.size()>1) {
+      if(encodings == null || encodings.size() == 0) return;
+      if(encodings.size() > 1) {
          throw new CompileError("Different character encodings in one ASM statement not supported!");
       }
       // Size is 1 - grab it!
@@ -1000,7 +1070,6 @@ public class Pass4CodeGeneration {
       }
       return encodings;
    }
-
 
 
    /**

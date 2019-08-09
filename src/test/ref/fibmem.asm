@@ -1,7 +1,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label fibs = $1100
 main: {
     lda #0
     sta fibs
@@ -18,3 +17,4 @@ main: {
     bcc b1
     rts
 }
+  fibs: .fill $f, 0

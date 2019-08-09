@@ -2,7 +2,7 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[$f]) fibs#0 ← ((byte[$f])) (number) $1100
+  (byte[$f]) fibs#0 ← { fill( $f, 0) }
   to:@1
 main: scope:[main]  from @1
   *((byte[$f]) fibs#0 + (number) 0) ← (number) 0
@@ -59,12 +59,10 @@ Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main:
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#2 + (unumber)(number) 1
 Adding number conversion cast (unumber) $f in (bool~) main::$3 ← (byte) main::i#1 < (number) $f
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$f]) fibs#0 ← (byte[$f])(number) $1100
 Inlining cast *((byte[$f]) fibs#0 + (unumber)(number) 0) ← (unumber)(number) 0
 Inlining cast *((byte[$f]) fibs#0 + (unumber)(number) 1) ← (unumber)(number) 1
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 4352
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -87,7 +85,9 @@ Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#2 + (byt
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::i#2 + (byte) 1
 Simple Condition (bool~) main::$3 [11] if((byte) main::i#1<(byte) $f) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$f]) fibs#0 = (byte*) 4352
+Constant right-side identified [0] (byte[$f]) fibs#0 ← { fill( $f, 0) }
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte[$f]) fibs#0 = { fill( $f, 0) }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero fibs#0 in [1] *((const byte[$f]) fibs#0 + (byte) 0) ← (byte) 0
@@ -169,7 +169,6 @@ Target platform is c64basic
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label fibs = $1100
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -229,6 +228,7 @@ main: {
     rts
 }
   // File Data
+  fibs: .fill $f, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte[$f]) fibs#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -255,7 +255,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label fibs = $1100
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -307,6 +306,7 @@ main: {
     rts
 }
   // File Data
+  fibs: .fill $f, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -337,7 +337,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte[$f]) fibs
-(const byte[$f]) fibs#0 fibs = (byte*) 4352
+(const byte[$f]) fibs#0 fibs = { fill( $f, 0) }
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
@@ -359,7 +359,6 @@ Score: 263
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label fibs = $1100
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -403,4 +402,5 @@ main: {
     rts
 }
   // File Data
+  fibs: .fill $f, 0
 

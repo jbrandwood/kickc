@@ -1,5 +1,5 @@
 // Tests the target platform ASM6502
-.pc = $1000 "Program"
+.pc = $2000 "Program"
 main: {
     ldx #0
   b2:

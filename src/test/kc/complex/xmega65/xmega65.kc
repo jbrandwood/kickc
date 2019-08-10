@@ -2,11 +2,17 @@
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
 
+import "string"
+
 #pragma link("xmega65.ld")
 
+
+const char* RASTER = 0xd012;
 const char* VIC_MEMORY = 0xd018;
 const char* SCREEN = 0x0400;
+const char* BGCOL = 0xd021;
 const char* COLS = 0xd800;
+const char BLACK = 0;
 const char WHITE = 1;
 
 char[] MESSAGE = "hello world!";
@@ -14,19 +20,26 @@ char[] MESSAGE = "hello world!";
 void main() {
     // Initialize screen memory
     *VIC_MEMORY = 0x14;
-
-    // Print message in white
-    char* sc = SCREEN;
-    char* cols = COLS;
-    for(char* msg = MESSAGE; *msg; msg++, sc++, cols++) {
-        *sc = *msg;
-        *cols = WHITE;
+    *BGCOL = 0x0f;
+    // Init screen/colors
+    memset(SCREEN, ' ', 40*25);
+    memset(COLS, WHITE, 40*25);
+    // Print message
+    char* sc = SCREEN+40;
+    char* msg = MESSAGE;
+    while(*msg) {
+        *sc++ = *msg++;
     }
-
-    // Loop forever
+    // Loop forever with 2 bars
     while(true) {
+        if(*RASTER==54 || *RASTER==66) {
+            *BGCOL = WHITE;
+        } else {
+            *BGCOL = BLACK;
+        }
     }
 }
+
 
 void syscall1() {
     const char* BORDERCOL = $d020;

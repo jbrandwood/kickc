@@ -24,8 +24,6 @@ main: {
     // Initialize screen memory
     lda #$14
     sta VIC_MEMORY
-    lda #$f
-    sta BGCOL
     ldx #' '
     lda #<SCREEN
     sta.z memset.str
@@ -126,13 +124,13 @@ memset: {
     jmp b2
 }
 syscall2: {
-    .label BGCOL = $d021
-    inc BGCOL
+    lda #'<'
+    sta SCREEN+$4e
     rts
 }
 syscall1: {
-    .label BORDERCOL = $d020
-    inc BORDERCOL
+    lda #'>'
+    sta SCREEN+$4f
     rts
 }
 .segment Data

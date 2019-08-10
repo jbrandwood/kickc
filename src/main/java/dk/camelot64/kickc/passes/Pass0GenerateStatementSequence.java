@@ -1157,7 +1157,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Find all defined labels in the ASM
       List<String> definedLabels = getAsmDefinedLabels(ctx);
       // Find all referenced symbols in the ASM
-      Map<String, SymbolVariableRef> referenced = getAsmReferencedSymbolVariables(ctx, definedLabels);
+      Map<String, SymbolRef> referenced = getAsmReferencedSymbolVariables(ctx, definedLabels);
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
 
       AsmClobber declaredClobber = null;
@@ -1199,8 +1199,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     * @param definedLabels All labels defined in the ASM
     * @return All variables/constants referenced in the ASM. Some may be ForwardVariableRefs to be resolved later.
     */
-   private Map<String, SymbolVariableRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext ctx, List<String> definedLabels) {
-      Map<String, SymbolVariableRef> referenced = new LinkedHashMap<>();
+   private Map<String, SymbolRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext ctx, List<String> definedLabels) {
+      Map<String, SymbolRef> referenced = new LinkedHashMap<>();
       KickCBaseVisitor<Void> findReferenced = new KickCBaseVisitor<Void>() {
 
          @Override
@@ -1221,9 +1221,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             if(!definedLabels.contains(label)) {
                // Look for the symbol
                Symbol symbol = getCurrentScope().getSymbol(ctxLabel.NAME().getText());
-               if(symbol instanceof Variable) {
-                  Variable variable = (Variable) symbol;
-                  referenced.put(label, variable.getRef());
+               if(symbol!=null) {
+                  referenced.put(label, symbol.getRef());
                } else {
                   // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
                   referenced.put(label, new ForwardVariableRef(ctxLabel.NAME().getText()));

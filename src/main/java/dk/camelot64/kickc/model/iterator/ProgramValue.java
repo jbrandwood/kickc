@@ -410,7 +410,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value value) {
-         statementAsm.getReferenced().put(label, (SymbolVariableRef) value);
+         statementAsm.getReferenced().put(label, (SymbolRef) value);
       }
    }
 

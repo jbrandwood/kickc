@@ -44,10 +44,10 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
                }
             } else if(statement instanceof StatementAsm) {
                StatementAsm statementAsm = (StatementAsm) statement;
-               Map<String, SymbolVariableRef> referenced = statementAsm.getReferenced();
+               Map<String, SymbolRef> referenced = statementAsm.getReferenced();
                for(String label : referenced.keySet()) {
-                  SymbolVariableRef symbolRef = referenced.get(label);
-                  if(!(symbolRef instanceof ConstantRef)) {
+                  SymbolRef symbolRef = referenced.get(label);
+                  if(!(symbolRef instanceof ConstantRef) && !(symbolRef instanceof ProcedureRef)) {
                      throw new CompileError("Error! Inline ASM reference is not constant " + label, statement);
                   }
                }

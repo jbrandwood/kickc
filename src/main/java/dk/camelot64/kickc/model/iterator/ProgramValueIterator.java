@@ -151,7 +151,7 @@ public class ProgramValueIterator {
          }
       } else if(statement instanceof StatementAsm) {
          StatementAsm statementAsm = (StatementAsm) statement;
-         Map<String, SymbolVariableRef> referenced = statementAsm.getReferenced();
+         Map<String, SymbolRef> referenced = statementAsm.getReferenced();
          for(String label : referenced.keySet()) {
             execute(new ProgramValue.ProgramValueAsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
          }

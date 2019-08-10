@@ -10,6 +10,15 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
+Inlined call call prepareMEM (word) setFAC::w 
+Inlined call call prepareMEM (word~) setMEMtoFAC::$0 
+Inlined call call prepareMEM (word~) setFACtoMEM::$0 
+Inlined call call prepareMEM (word~) setARGtoMEM::$0 
+Inlined call call prepareMEM (word~) addMEMtoFAC::$0 
+Inlined call call prepareMEM (word~) subFACfromMEM::$0 
+Inlined call call prepareMEM (word~) divMEMbyFAC::$0 
+Inlined call call prepareMEM (word~) mulFACbyMEM::$0 
+Inlined call call prepareMEM (word~) pwrMEMbyFAC::$0 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -44,21 +53,26 @@ Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
 Culled Empty Block (label) @37
+Culled Empty Block (label) setFAC::prepareMEM1_@return
 Culled Empty Block (label) @38
 Culled Empty Block (label) getFAC::@1
 Culled Empty Block (label) @39
 Culled Empty Block (label) @40
 Culled Empty Block (label) @41
+Culled Empty Block (label) setMEMtoFAC::prepareMEM1_@return
 Culled Empty Block (label) @42
 Culled Empty Block (label) @43
 Culled Empty Block (label) @44
 Culled Empty Block (label) @45
 Culled Empty Block (label) @46
+Culled Empty Block (label) addMEMtoFAC::prepareMEM1_@return
 Culled Empty Block (label) @47
 Culled Empty Block (label) @48
 Culled Empty Block (label) @49
 Culled Empty Block (label) @50
+Culled Empty Block (label) divMEMbyFAC::prepareMEM1_@return
 Culled Empty Block (label) @51
+Culled Empty Block (label) mulFACbyMEM::prepareMEM1_@return
 Culled Empty Block (label) @52
 Culled Empty Block (label) @53
 Culled Empty Block (label) @54
@@ -174,30 +188,25 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) memLo#0 ← ((byte*)) (number) $fe
   (byte*) memHi#0 ← ((byte*)) (number) $ff
   to:@64
-prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
-  (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
-  (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
-  *((byte*) memLo#0) ← (byte~) prepareMEM::$0
-  (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5
-  *((byte*) memHi#0) ← (byte~) prepareMEM::$1
-  to:prepareMEM::@return
-prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
-  return 
-  to:@return
 setFAC: scope:[setFAC]  from main main::@1 main::@8
   (word) setFAC::w#3 ← phi( main/(word) setFAC::w#0 main::@1/(word) setFAC::w#1 main::@8/(word) setFAC::w#2 )
-  (byte*~) setFAC::$0 ← ((byte*)) (word) setFAC::w#3
-  (byte*) prepareMEM::mem#0 ← (byte*~) setFAC::$0
-  call prepareMEM 
+  (word) setFAC::prepareMEM1_mem#0 ← (word) setFAC::w#3
+  to:setFAC::prepareMEM1
+setFAC::prepareMEM1: scope:[setFAC]  from setFAC
+  (word) setFAC::prepareMEM1_mem#1 ← phi( setFAC/(word) setFAC::prepareMEM1_mem#0 )
+  (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#1
+  *((byte*) memLo#0) ← (byte~) setFAC::prepareMEM1_$0#0
+  (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#1
+  *((byte*) memHi#0) ← (byte~) setFAC::prepareMEM1_$1#0
   to:setFAC::@1
-setFAC::@1: scope:[setFAC]  from setFAC
-  asm { ldy$fe lda$ff jsr$b391  }
+setFAC::@1: scope:[setFAC]  from setFAC::prepareMEM1
+  asm { ldymemLo ldamemHi jsr$b391  }
   to:setFAC::@return
 setFAC::@return: scope:[setFAC]  from setFAC::@1
   return 
   to:@return
 getFAC: scope:[getFAC]  from main::@13
-  asm { jsr$b1aa sty$fe sta$ff  }
+  asm { jsr$b1aa stymemLo stamemHi  }
   (word) getFAC::w#0 ← ((word)) { *((byte*) memHi#0), *((byte*) memLo#0) }
   (word) getFAC::return#0 ← (word) getFAC::w#0
   to:getFAC::@return
@@ -208,44 +217,72 @@ getFAC::@return: scope:[getFAC]  from getFAC
   to:@return
 setMEMtoFAC: scope:[setMEMtoFAC]  from main::@4 main::@7
   (byte*) setMEMtoFAC::mem#2 ← phi( main::@4/(byte*) setMEMtoFAC::mem#0 main::@7/(byte*) setMEMtoFAC::mem#1 )
-  (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-  call prepareMEM 
+  (word~) setMEMtoFAC::$0 ← ((word)) (byte*) setMEMtoFAC::mem#2
+  (word) setMEMtoFAC::prepareMEM1_mem#0 ← (word~) setMEMtoFAC::$0
+  to:setMEMtoFAC::prepareMEM1
+setMEMtoFAC::prepareMEM1: scope:[setMEMtoFAC]  from setMEMtoFAC
+  (word) setMEMtoFAC::prepareMEM1_mem#1 ← phi( setMEMtoFAC/(word) setMEMtoFAC::prepareMEM1_mem#0 )
+  (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word) setMEMtoFAC::prepareMEM1_mem#1
+  *((byte*) memLo#0) ← (byte~) setMEMtoFAC::prepareMEM1_$0#0
+  (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word) setMEMtoFAC::prepareMEM1_mem#1
+  *((byte*) memHi#0) ← (byte~) setMEMtoFAC::prepareMEM1_$1#0
   to:setMEMtoFAC::@1
-setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC
-  asm { ldx$fe ldy$ff jsr$bbd4  }
+setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC::prepareMEM1
+  asm { ldxmemLo ldymemHi jsr$bbd4  }
   to:setMEMtoFAC::@return
 setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC::@1
   return 
   to:@return
 addMEMtoFAC: scope:[addMEMtoFAC]  from main::@12
   (byte*) addMEMtoFAC::mem#1 ← phi( main::@12/(byte*) addMEMtoFAC::mem#0 )
-  (byte*) prepareMEM::mem#2 ← (byte*) addMEMtoFAC::mem#1
-  call prepareMEM 
+  (word~) addMEMtoFAC::$0 ← ((word)) (byte*) addMEMtoFAC::mem#1
+  (word) addMEMtoFAC::prepareMEM1_mem#0 ← (word~) addMEMtoFAC::$0
+  to:addMEMtoFAC::prepareMEM1
+addMEMtoFAC::prepareMEM1: scope:[addMEMtoFAC]  from addMEMtoFAC
+  (word) addMEMtoFAC::prepareMEM1_mem#1 ← phi( addMEMtoFAC/(word) addMEMtoFAC::prepareMEM1_mem#0 )
+  (byte~) addMEMtoFAC::prepareMEM1_$0#0 ← < (word) addMEMtoFAC::prepareMEM1_mem#1
+  *((byte*) memLo#0) ← (byte~) addMEMtoFAC::prepareMEM1_$0#0
+  (byte~) addMEMtoFAC::prepareMEM1_$1#0 ← > (word) addMEMtoFAC::prepareMEM1_mem#1
+  *((byte*) memHi#0) ← (byte~) addMEMtoFAC::prepareMEM1_$1#0
   to:addMEMtoFAC::@1
-addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC
-  asm { lda$fe ldy$ff jsr$b867  }
+addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$b867  }
   to:addMEMtoFAC::@return
 addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC::@1
   return 
   to:@return
 divMEMbyFAC: scope:[divMEMbyFAC]  from main::@9
   (byte*) divMEMbyFAC::mem#1 ← phi( main::@9/(byte*) divMEMbyFAC::mem#0 )
-  (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#1
-  call prepareMEM 
+  (word~) divMEMbyFAC::$0 ← ((word)) (byte*) divMEMbyFAC::mem#1
+  (word) divMEMbyFAC::prepareMEM1_mem#0 ← (word~) divMEMbyFAC::$0
+  to:divMEMbyFAC::prepareMEM1
+divMEMbyFAC::prepareMEM1: scope:[divMEMbyFAC]  from divMEMbyFAC
+  (word) divMEMbyFAC::prepareMEM1_mem#1 ← phi( divMEMbyFAC/(word) divMEMbyFAC::prepareMEM1_mem#0 )
+  (byte~) divMEMbyFAC::prepareMEM1_$0#0 ← < (word) divMEMbyFAC::prepareMEM1_mem#1
+  *((byte*) memLo#0) ← (byte~) divMEMbyFAC::prepareMEM1_$0#0
+  (byte~) divMEMbyFAC::prepareMEM1_$1#0 ← > (word) divMEMbyFAC::prepareMEM1_mem#1
+  *((byte*) memHi#0) ← (byte~) divMEMbyFAC::prepareMEM1_$1#0
   to:divMEMbyFAC::@1
-divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC
-  asm { lda$fe ldy$ff jsr$bb0f  }
+divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$bb0f  }
   to:divMEMbyFAC::@return
 divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC::@1
   return 
   to:@return
 mulFACbyMEM: scope:[mulFACbyMEM]  from main::@11 main::@6
   (byte*) mulFACbyMEM::mem#2 ← phi( main::@11/(byte*) mulFACbyMEM::mem#1 main::@6/(byte*) mulFACbyMEM::mem#0 )
-  (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-  call prepareMEM 
+  (word~) mulFACbyMEM::$0 ← ((word)) (byte*) mulFACbyMEM::mem#2
+  (word) mulFACbyMEM::prepareMEM1_mem#0 ← (word~) mulFACbyMEM::$0
+  to:mulFACbyMEM::prepareMEM1
+mulFACbyMEM::prepareMEM1: scope:[mulFACbyMEM]  from mulFACbyMEM
+  (word) mulFACbyMEM::prepareMEM1_mem#1 ← phi( mulFACbyMEM/(word) mulFACbyMEM::prepareMEM1_mem#0 )
+  (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word) mulFACbyMEM::prepareMEM1_mem#1
+  *((byte*) memLo#0) ← (byte~) mulFACbyMEM::prepareMEM1_$0#0
+  (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word) mulFACbyMEM::prepareMEM1_mem#1
+  *((byte*) memHi#0) ← (byte~) mulFACbyMEM::prepareMEM1_$1#0
   to:mulFACbyMEM::@1
-mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM
-  asm { lda$fe ldy$ff jsr$ba28  }
+mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$ba28  }
   to:mulFACbyMEM::@return
 mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM::@1
   return 
@@ -410,19 +447,37 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
+(word~) addMEMtoFAC::$0
 (label) addMEMtoFAC::@1
 (label) addMEMtoFAC::@return
 (byte*) addMEMtoFAC::mem
 (byte*) addMEMtoFAC::mem#0
 (byte*) addMEMtoFAC::mem#1
+(label) addMEMtoFAC::prepareMEM1
+(byte~) addMEMtoFAC::prepareMEM1_$0
+(byte~) addMEMtoFAC::prepareMEM1_$0#0
+(byte~) addMEMtoFAC::prepareMEM1_$1
+(byte~) addMEMtoFAC::prepareMEM1_$1#0
+(word) addMEMtoFAC::prepareMEM1_mem
+(word) addMEMtoFAC::prepareMEM1_mem#0
+(word) addMEMtoFAC::prepareMEM1_mem#1
 (void()) divFACby10()
 (label) divFACby10::@return
 (void()) divMEMbyFAC((byte*) divMEMbyFAC::mem)
+(word~) divMEMbyFAC::$0
 (label) divMEMbyFAC::@1
 (label) divMEMbyFAC::@return
 (byte*) divMEMbyFAC::mem
 (byte*) divMEMbyFAC::mem#0
 (byte*) divMEMbyFAC::mem#1
+(label) divMEMbyFAC::prepareMEM1
+(byte~) divMEMbyFAC::prepareMEM1_$0
+(byte~) divMEMbyFAC::prepareMEM1_$0#0
+(byte~) divMEMbyFAC::prepareMEM1_$1
+(byte~) divMEMbyFAC::prepareMEM1_$1#0
+(word) divMEMbyFAC::prepareMEM1_mem
+(word) divMEMbyFAC::prepareMEM1_mem#0
+(word) divMEMbyFAC::prepareMEM1_mem#1
 (word()) getFAC()
 (label) getFAC::@return
 (word) getFAC::return
@@ -479,23 +534,21 @@ SYMBOL TABLE SSA
 (byte*) memLo
 (byte*) memLo#0
 (void()) mulFACbyMEM((byte*) mulFACbyMEM::mem)
+(word~) mulFACbyMEM::$0
 (label) mulFACbyMEM::@1
 (label) mulFACbyMEM::@return
 (byte*) mulFACbyMEM::mem
 (byte*) mulFACbyMEM::mem#0
 (byte*) mulFACbyMEM::mem#1
 (byte*) mulFACbyMEM::mem#2
-(void()) prepareMEM((byte*) prepareMEM::mem)
-(byte~) prepareMEM::$0
-(byte~) prepareMEM::$1
-(label) prepareMEM::@return
-(byte*) prepareMEM::mem
-(byte*) prepareMEM::mem#0
-(byte*) prepareMEM::mem#1
-(byte*) prepareMEM::mem#2
-(byte*) prepareMEM::mem#3
-(byte*) prepareMEM::mem#4
-(byte*) prepareMEM::mem#5
+(label) mulFACbyMEM::prepareMEM1
+(byte~) mulFACbyMEM::prepareMEM1_$0
+(byte~) mulFACbyMEM::prepareMEM1_$0#0
+(byte~) mulFACbyMEM::prepareMEM1_$1
+(byte~) mulFACbyMEM::prepareMEM1_$1#0
+(word) mulFACbyMEM::prepareMEM1_mem
+(word) mulFACbyMEM::prepareMEM1_mem#0
+(word) mulFACbyMEM::prepareMEM1_mem#1
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -616,21 +669,37 @@ SYMBOL TABLE SSA
 (word) print_word::w#1
 (word) print_word::w#2
 (void()) setFAC((word) setFAC::w)
-(byte*~) setFAC::$0
 (label) setFAC::@1
 (label) setFAC::@return
+(label) setFAC::prepareMEM1
+(byte~) setFAC::prepareMEM1_$0
+(byte~) setFAC::prepareMEM1_$0#0
+(byte~) setFAC::prepareMEM1_$1
+(byte~) setFAC::prepareMEM1_$1#0
+(word) setFAC::prepareMEM1_mem
+(word) setFAC::prepareMEM1_mem#0
+(word) setFAC::prepareMEM1_mem#1
 (word) setFAC::w
 (word) setFAC::w#0
 (word) setFAC::w#1
 (word) setFAC::w#2
 (word) setFAC::w#3
 (void()) setMEMtoFAC((byte*) setMEMtoFAC::mem)
+(word~) setMEMtoFAC::$0
 (label) setMEMtoFAC::@1
 (label) setMEMtoFAC::@return
 (byte*) setMEMtoFAC::mem
 (byte*) setMEMtoFAC::mem#0
 (byte*) setMEMtoFAC::mem#1
 (byte*) setMEMtoFAC::mem#2
+(label) setMEMtoFAC::prepareMEM1
+(byte~) setMEMtoFAC::prepareMEM1_$0
+(byte~) setMEMtoFAC::prepareMEM1_$0#0
+(byte~) setMEMtoFAC::prepareMEM1_$1
+(byte~) setMEMtoFAC::prepareMEM1_$1#0
+(word) setMEMtoFAC::prepareMEM1_mem
+(word) setMEMtoFAC::prepareMEM1_mem#0
+(word) setMEMtoFAC::prepareMEM1_mem#1
 (void()) sinFAC()
 (label) sinFAC::@return
 
@@ -649,7 +718,10 @@ Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (byte*) memLo#0 ← (byte*)(number) $fe
 Inlining cast (byte*) memHi#0 ← (byte*)(number) $ff
-Inlining cast (byte*~) setFAC::$0 ← (byte*)(word) setFAC::w#3
+Inlining cast (word~) setMEMtoFAC::$0 ← (word)(byte*) setMEMtoFAC::mem#2
+Inlining cast (word~) addMEMtoFAC::$0 ← (word)(byte*) addMEMtoFAC::mem#1
+Inlining cast (word~) divMEMbyFAC::$0 ← (word)(byte*) divMEMbyFAC::mem#1
+Inlining cast (word~) mulFACbyMEM::$0 ← (word)(byte*) mulFACbyMEM::mem#2
 Inlining cast (byte*) main::f_2pi#0 ← (byte*)(number) $e2e5
 Inlining cast (word) setFAC::w#0 ← (unumber)(number) $4fb
 Inlining cast (word~) main::$3 ← (word)(byte) main::i#2
@@ -695,8 +767,12 @@ Alias (byte) print_byte::b#2 = (byte) print_byte::b#3
 Alias (byte*) print_char_cursor#20 = (byte*) print_char_cursor#6 
 Alias (byte*) print_char_cursor#21 = (byte*) print_char_cursor#7 (byte*) print_char_cursor#22 (byte*) print_char_cursor#8 
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#24 (byte*) print_char_cursor#9 
-Alias (byte*) prepareMEM::mem#0 = (byte*~) setFAC::$0 
+Alias (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#3 (word) setFAC::prepareMEM1_mem#1 
 Alias (word) getFAC::return#0 = (word) getFAC::w#0 (word~) getFAC::$0 (word) getFAC::return#3 (word) getFAC::return#1 
+Alias (word) setMEMtoFAC::prepareMEM1_mem#0 = (word~) setMEMtoFAC::$0 (word) setMEMtoFAC::prepareMEM1_mem#1 
+Alias (word) addMEMtoFAC::prepareMEM1_mem#0 = (word~) addMEMtoFAC::$0 (word) addMEMtoFAC::prepareMEM1_mem#1 
+Alias (word) divMEMbyFAC::prepareMEM1_mem#0 = (word~) divMEMbyFAC::$0 (word) divMEMbyFAC::prepareMEM1_mem#1 
+Alias (word) mulFACbyMEM::prepareMEM1_mem#0 = (word~) mulFACbyMEM::$0 (word) mulFACbyMEM::prepareMEM1_mem#1 
 Alias (byte*) print_char_cursor#45 = (byte*) print_char_cursor#47 (byte*) print_char_cursor#48 (byte*) print_char_cursor#46 
 Alias (byte*) print_line_cursor#27 = (byte*) print_line_cursor#29 (byte*) print_line_cursor#30 (byte*) print_line_cursor#28 
 Alias (word) setFAC::w#1 = (word~) main::$3 
@@ -731,7 +807,7 @@ Identical Phi Values (byte*) print_char_cursor#14 (byte*) print_char_cursor#12
 Identical Phi Values (byte*) print_line_cursor#11 (byte*) print_line_cursor#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_ln::$1 [8] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
-Simple Condition (bool~) main::$15 [149] if((byte) main::i#1!=rangelast(1,$19)) goto main::@1
+Simple Condition (bool~) main::$15 [166] if((byte) main::i#1!=rangelast(1,$19)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 Identified constant from value list (byte[]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
@@ -754,19 +830,33 @@ Constant (const byte*) divMEMbyFAC::mem#0 = main::f_i#0
 Constant (const byte*) mulFACbyMEM::mem#1 = main::f_127#0
 Constant (const byte*) addMEMtoFAC::mem#0 = main::f_127#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) prepareMEM::mem#2 = addMEMtoFAC::mem#0
-Constant (const byte*) prepareMEM::mem#3 = divMEMbyFAC::mem#0
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [147] main::i#1 ← ++ main::i#10 to ++
-Resolved ranged comparison value [149] if(main::i#1!=rangelast(1,$19)) goto main::@1 to (number) $1a
+Constant value identified (word)addMEMtoFAC::mem#0 in [81] (word) addMEMtoFAC::prepareMEM1_mem#0 ← (word)(const byte*) addMEMtoFAC::mem#0
+Constant value identified (word)divMEMbyFAC::mem#0 in [91] (word) divMEMbyFAC::prepareMEM1_mem#0 ← (word)(const byte*) divMEMbyFAC::mem#0
+Successful SSA optimization Pass2ConstantValues
+Resolved ranged next value [164] main::i#1 ← ++ main::i#10 to ++
+Resolved ranged comparison value [166] if(main::i#1!=rangelast(1,$19)) goto main::@1 to (number) $1a
 Adding number conversion cast (unumber) $1a in if((byte) main::i#1!=(number) $1a) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $1a
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $1a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte*) prepareMEM::mem#2
-Inlining constant with var siblings (const byte*) prepareMEM::mem#3
+Constant (const word) addMEMtoFAC::prepareMEM1_mem#0 = (word)addMEMtoFAC::mem#0
+Constant (const word) divMEMbyFAC::prepareMEM1_mem#0 = (word)divMEMbyFAC::mem#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [39] (byte~) addMEMtoFAC::prepareMEM1_$0#0 ← < (const word) addMEMtoFAC::prepareMEM1_mem#0
+Constant right-side identified [41] (byte~) addMEMtoFAC::prepareMEM1_$1#0 ← > (const word) addMEMtoFAC::prepareMEM1_mem#0
+Constant right-side identified [45] (byte~) divMEMbyFAC::prepareMEM1_$0#0 ← < (const word) divMEMbyFAC::prepareMEM1_mem#0
+Constant right-side identified [47] (byte~) divMEMbyFAC::prepareMEM1_$1#0 ← > (const word) divMEMbyFAC::prepareMEM1_mem#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) addMEMtoFAC::prepareMEM1_$0#0 = <addMEMtoFAC::prepareMEM1_mem#0
+Constant (const byte) addMEMtoFAC::prepareMEM1_$1#0 = >addMEMtoFAC::prepareMEM1_mem#0
+Constant (const byte) divMEMbyFAC::prepareMEM1_$0#0 = <divMEMbyFAC::prepareMEM1_mem#0
+Constant (const byte) divMEMbyFAC::prepareMEM1_$1#0 = >divMEMbyFAC::prepareMEM1_mem#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining Noop Cast [32] (word) setMEMtoFAC::prepareMEM1_mem#0 ← (word)(byte*) setMEMtoFAC::mem#2 keeping setMEMtoFAC::mem#2
+Inlining Noop Cast [48] (word) mulFACbyMEM::prepareMEM1_mem#0 ← (word)(byte*) mulFACbyMEM::mem#2 keeping mulFACbyMEM::mem#2
+Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const word) setFAC::w#0
 Inlining constant with var siblings (const word) setFAC::w#2
 Inlining constant with var siblings (const byte*) setMEMtoFAC::mem#0
@@ -777,10 +867,12 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) print_char_cursor#0
 Constant inlined addMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#2 = (byte) $19
-Constant inlined prepareMEM::mem#2 = (const byte[]) main::f_127#0
-Constant inlined prepareMEM::mem#3 = (const byte[]) main::f_i#0
 Constant inlined $0 = (const byte[]) print_hextab#0
 Constant inlined print_char_cursor#0 = (byte*) 1024
+Constant inlined addMEMtoFAC::prepareMEM1_$1#0 = >(const word) addMEMtoFAC::prepareMEM1_mem#0
+Constant inlined divMEMbyFAC::prepareMEM1_$1#0 = >(const word) divMEMbyFAC::prepareMEM1_mem#0
+Constant inlined addMEMtoFAC::prepareMEM1_$0#0 = <(const word) addMEMtoFAC::prepareMEM1_mem#0
+Constant inlined divMEMbyFAC::prepareMEM1_$0#0 = <(const word) divMEMbyFAC::prepareMEM1_mem#0
 Constant inlined divMEMbyFAC::mem#0 = (const byte[]) main::f_i#0
 Constant inlined main::i#0 = (byte) 1
 Constant inlined setMEMtoFAC::mem#1 = (const byte[]) main::f_i#0
@@ -821,14 +913,9 @@ Calls in [] to main:5
 Calls in [main] to setFAC:9 divFACby10:11 setMEMtoFAC:13 setFAC:18 mulFACbyMEM:20 setMEMtoFAC:22 setFAC:24 divMEMbyFAC:26 sinFAC:28 mulFACbyMEM:30 addMEMtoFAC:32 getFAC:34 print_word:37 print_ln:39 
 Calls in [print_word] to print_byte:56 print_byte:60 
 Calls in [print_byte] to print_char:68 print_char:73 
-Calls in [addMEMtoFAC] to prepareMEM:84 
-Calls in [mulFACbyMEM] to prepareMEM:96 
-Calls in [divMEMbyFAC] to prepareMEM:102 
-Calls in [setFAC] to prepareMEM:108 
-Calls in [setMEMtoFAC] to prepareMEM:114 
 
-Created 12 initial phi equivalence classes
-Coalesced [17] setFAC::w#4 ← setFAC::w#1
+Created 11 initial phi equivalence classes
+Coalesced [17] setFAC::prepareMEM1_mem#2 ← setFAC::w#1
 Coalesced [43] main::i#14 ← main::i#1
 Not coalescing [44] print_char_cursor#53 ← print_line_cursor#1
 Coalesced [45] print_line_cursor#33 ← print_line_cursor#1
@@ -842,10 +929,7 @@ Coalesced [66] print_char::ch#3 ← print_char::ch#0
 Coalesced [67] print_char_cursor#51 ← print_char_cursor#31
 Coalesced [71] print_char::ch#4 ← print_char::ch#1
 Coalesced (already) [72] print_char_cursor#52 ← print_char_cursor#10
-Coalesced [95] prepareMEM::mem#6 ← prepareMEM::mem#4
-Coalesced [107] prepareMEM::mem#7 ← prepareMEM::mem#0
-Coalesced [113] prepareMEM::mem#8 ← prepareMEM::mem#1
-Coalesced down to 9 phi equivalence classes
+Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @29
 Culled Empty Block (label) @36
@@ -1016,7 +1100,7 @@ print_char::@return: scope:[print_char]  from print_char
   [59] return 
   to:@return
 getFAC: scope:[getFAC]  from main::@11
-  asm { jsr$b1aa sty$fe sta$ff  }
+  asm { jsr$b1aa stymemLo stamemHi  }
   [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0)
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
@@ -1024,87 +1108,101 @@ getFAC::@return: scope:[getFAC]  from getFAC
   to:@return
 addMEMtoFAC: scope:[addMEMtoFAC]  from main::@10
   [63] phi()
-  [64] call prepareMEM 
+  to:addMEMtoFAC::prepareMEM1
+addMEMtoFAC::prepareMEM1: scope:[addMEMtoFAC]  from addMEMtoFAC
+  [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0
+  [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0
   to:addMEMtoFAC::@1
-addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC
-  asm { lda$fe ldy$ff jsr$b867  }
+addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$b867  }
   to:addMEMtoFAC::@return
 addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC::@1
-  [66] return 
-  to:@return
-prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
-  [67] (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(const byte[]) main::f_127#0 divMEMbyFAC/(const byte[]) main::f_i#0 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
-  [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
-  [69] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0
-  [70] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5
-  [71] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1
-  to:prepareMEM::@return
-prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
-  [72] return 
+  [67] return 
   to:@return
 mulFACbyMEM: scope:[mulFACbyMEM]  from main::@4 main::@9
-  [73] (byte*) mulFACbyMEM::mem#2 ← phi( main::@9/(const byte[]) main::f_127#0 main::@4/(const byte*) main::f_2pi#0 )
-  [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-  [75] call prepareMEM 
+  [68] (byte*) mulFACbyMEM::mem#2 ← phi( main::@9/(const byte[]) main::f_127#0 main::@4/(const byte*) main::f_2pi#0 )
+  to:mulFACbyMEM::prepareMEM1
+mulFACbyMEM::prepareMEM1: scope:[mulFACbyMEM]  from mulFACbyMEM
+  [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2
+  [70] *((const byte*) memLo#0) ← (byte~) mulFACbyMEM::prepareMEM1_$0#0
+  [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2
+  [72] *((const byte*) memHi#0) ← (byte~) mulFACbyMEM::prepareMEM1_$1#0
   to:mulFACbyMEM::@1
-mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM
-  asm { lda$fe ldy$ff jsr$ba28  }
+mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$ba28  }
   to:mulFACbyMEM::@return
 mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM::@1
-  [77] return 
+  [74] return 
   to:@return
 sinFAC: scope:[sinFAC]  from main::@8
   asm { jsr$e26b  }
   to:sinFAC::@return
 sinFAC::@return: scope:[sinFAC]  from sinFAC
-  [79] return 
+  [76] return 
   to:@return
 divMEMbyFAC: scope:[divMEMbyFAC]  from main::@7
-  [80] phi()
-  [81] call prepareMEM 
+  [77] phi()
+  to:divMEMbyFAC::prepareMEM1
+divMEMbyFAC::prepareMEM1: scope:[divMEMbyFAC]  from divMEMbyFAC
+  [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0
+  [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0
   to:divMEMbyFAC::@1
-divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC
-  asm { lda$fe ldy$ff jsr$bb0f  }
+divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC::prepareMEM1
+  asm { ldamemLo ldymemHi jsr$bb0f  }
   to:divMEMbyFAC::@return
 divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC::@1
-  [83] return 
+  [81] return 
   to:@return
 setFAC: scope:[setFAC]  from main main::@1 main::@6
-  [84] (word) setFAC::w#3 ← phi( main/(word) $4fb main::@1/(word) setFAC::w#1 main::@6/(byte) $19 )
-  [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3
-  [86] call prepareMEM 
+  [82] (word) setFAC::prepareMEM1_mem#0 ← phi( main/(word) $4fb main::@1/(word) setFAC::w#1 main::@6/(byte) $19 )
+  to:setFAC::prepareMEM1
+setFAC::prepareMEM1: scope:[setFAC]  from setFAC
+  [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0
+  [84] *((const byte*) memLo#0) ← (byte~) setFAC::prepareMEM1_$0#0
+  [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0
+  [86] *((const byte*) memHi#0) ← (byte~) setFAC::prepareMEM1_$1#0
   to:setFAC::@1
-setFAC::@1: scope:[setFAC]  from setFAC
-  asm { ldy$fe lda$ff jsr$b391  }
+setFAC::@1: scope:[setFAC]  from setFAC::prepareMEM1
+  asm { ldymemLo ldamemHi jsr$b391  }
   to:setFAC::@return
 setFAC::@return: scope:[setFAC]  from setFAC::@1
   [88] return 
   to:@return
 setMEMtoFAC: scope:[setMEMtoFAC]  from main::@3 main::@5
   [89] (byte*) setMEMtoFAC::mem#2 ← phi( main::@3/(const byte[]) main::f_127#0 main::@5/(const byte[]) main::f_i#0 )
-  [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-  [91] call prepareMEM 
+  to:setMEMtoFAC::prepareMEM1
+setMEMtoFAC::prepareMEM1: scope:[setMEMtoFAC]  from setMEMtoFAC
+  [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2
+  [91] *((const byte*) memLo#0) ← (byte~) setMEMtoFAC::prepareMEM1_$0#0
+  [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2
+  [93] *((const byte*) memHi#0) ← (byte~) setMEMtoFAC::prepareMEM1_$1#0
   to:setMEMtoFAC::@1
-setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC
-  asm { ldx$fe ldy$ff jsr$bbd4  }
+setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC::prepareMEM1
+  asm { ldxmemLo ldymemHi jsr$bbd4  }
   to:setMEMtoFAC::@return
 setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC::@1
-  [93] return 
+  [95] return 
   to:@return
 divFACby10: scope:[divFACby10]  from main::@2
   asm { jsr$bafe  }
   to:divFACby10::@return
 divFACby10::@return: scope:[divFACby10]  from divFACby10
-  [95] return 
+  [97] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
 (byte*) addMEMtoFAC::mem
+(byte~) addMEMtoFAC::prepareMEM1_$0
+(byte~) addMEMtoFAC::prepareMEM1_$1
+(word) addMEMtoFAC::prepareMEM1_mem
 (void()) divFACby10()
 (void()) divMEMbyFAC((byte*) divMEMbyFAC::mem)
 (byte*) divMEMbyFAC::mem
+(byte~) divMEMbyFAC::prepareMEM1_$0
+(byte~) divMEMbyFAC::prepareMEM1_$1
+(word) divMEMbyFAC::prepareMEM1_mem
 (word()) getFAC()
 (word) getFAC::return
 (word) getFAC::return#0 4.333333333333333
@@ -1121,15 +1219,12 @@ VARIABLE REGISTER WEIGHTS
 (byte*) memLo
 (void()) mulFACbyMEM((byte*) mulFACbyMEM::mem)
 (byte*) mulFACbyMEM::mem
-(byte*) mulFACbyMEM::mem#2 2.0
-(void()) prepareMEM((byte*) prepareMEM::mem)
-(byte~) prepareMEM::$0 4.0
-(byte~) prepareMEM::$1 4.0
-(byte*) prepareMEM::mem
-(byte*) prepareMEM::mem#0 4.0
-(byte*) prepareMEM::mem#1 4.0
-(byte*) prepareMEM::mem#4 4.0
-(byte*) prepareMEM::mem#5 3.333333333333333
+(byte*) mulFACbyMEM::mem#2
+(byte~) mulFACbyMEM::prepareMEM1_$0
+(byte~) mulFACbyMEM::prepareMEM1_$0#0 4.0
+(byte~) mulFACbyMEM::prepareMEM1_$1
+(byte~) mulFACbyMEM::prepareMEM1_$1#0 4.0
+(word) mulFACbyMEM::prepareMEM1_mem
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 4.0
 (byte~) print_byte::$2 4.0
@@ -1159,12 +1254,22 @@ VARIABLE REGISTER WEIGHTS
 (word) print_word::w
 (word) print_word::w#0 5.0
 (void()) setFAC((word) setFAC::w)
+(byte~) setFAC::prepareMEM1_$0
+(byte~) setFAC::prepareMEM1_$0#0 4.0
+(byte~) setFAC::prepareMEM1_$1
+(byte~) setFAC::prepareMEM1_$1#0 4.0
+(word) setFAC::prepareMEM1_mem
+(word) setFAC::prepareMEM1_mem#0 5.0
 (word) setFAC::w
 (word) setFAC::w#1 22.0
-(word) setFAC::w#3 11.0
 (void()) setMEMtoFAC((byte*) setMEMtoFAC::mem)
 (byte*) setMEMtoFAC::mem
-(byte*) setMEMtoFAC::mem#2 2.0
+(byte*) setMEMtoFAC::mem#2
+(byte~) setMEMtoFAC::prepareMEM1_$0
+(byte~) setMEMtoFAC::prepareMEM1_$0#0 4.0
+(byte~) setMEMtoFAC::prepareMEM1_$1
+(byte~) setMEMtoFAC::prepareMEM1_$1#0 4.0
+(word) setMEMtoFAC::prepareMEM1_mem
 (void()) sinFAC()
 
 Initial phi equivalence classes
@@ -1173,50 +1278,59 @@ Initial phi equivalence classes
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-[ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ]
 [ mulFACbyMEM::mem#2 ]
-[ setFAC::w#3 setFAC::w#1 ]
+[ setFAC::prepareMEM1_mem#0 setFAC::w#1 ]
 [ setMEMtoFAC::mem#2 ]
 Added variable getFAC::return#2 to zero page equivalence class [ getFAC::return#2 ]
 Added variable print_word::w#0 to zero page equivalence class [ print_word::w#0 ]
 Added variable print_byte::$0 to zero page equivalence class [ print_byte::$0 ]
 Added variable print_byte::$2 to zero page equivalence class [ print_byte::$2 ]
 Added variable getFAC::return#0 to zero page equivalence class [ getFAC::return#0 ]
-Added variable prepareMEM::$0 to zero page equivalence class [ prepareMEM::$0 ]
-Added variable prepareMEM::$1 to zero page equivalence class [ prepareMEM::$1 ]
+Added variable mulFACbyMEM::prepareMEM1_$0#0 to zero page equivalence class [ mulFACbyMEM::prepareMEM1_$0#0 ]
+Added variable mulFACbyMEM::prepareMEM1_$1#0 to zero page equivalence class [ mulFACbyMEM::prepareMEM1_$1#0 ]
+Added variable setFAC::prepareMEM1_$0#0 to zero page equivalence class [ setFAC::prepareMEM1_$0#0 ]
+Added variable setFAC::prepareMEM1_$1#0 to zero page equivalence class [ setFAC::prepareMEM1_$1#0 ]
+Added variable setMEMtoFAC::prepareMEM1_$0#0 to zero page equivalence class [ setMEMtoFAC::prepareMEM1_$0#0 ]
+Added variable setMEMtoFAC::prepareMEM1_$1#0 to zero page equivalence class [ setMEMtoFAC::prepareMEM1_$1#0 ]
 Complete equivalence classes
 [ main::i#10 main::i#1 ]
 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-[ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ]
 [ mulFACbyMEM::mem#2 ]
-[ setFAC::w#3 setFAC::w#1 ]
+[ setFAC::prepareMEM1_mem#0 setFAC::w#1 ]
 [ setMEMtoFAC::mem#2 ]
 [ getFAC::return#2 ]
 [ print_word::w#0 ]
 [ print_byte::$0 ]
 [ print_byte::$2 ]
 [ getFAC::return#0 ]
-[ prepareMEM::$0 ]
-[ prepareMEM::$1 ]
+[ mulFACbyMEM::prepareMEM1_$0#0 ]
+[ mulFACbyMEM::prepareMEM1_$1#0 ]
+[ setFAC::prepareMEM1_$0#0 ]
+[ setFAC::prepareMEM1_$1#0 ]
+[ setMEMtoFAC::prepareMEM1_$0#0 ]
+[ setMEMtoFAC::prepareMEM1_$1#0 ]
 Allocated zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 Allocated zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 Allocated zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 Allocated zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-Allocated zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ]
-Allocated zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ]
-Allocated zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ]
-Allocated zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ]
-Allocated zp ZP_WORD:17 [ getFAC::return#2 ]
-Allocated zp ZP_WORD:19 [ print_word::w#0 ]
-Allocated zp ZP_BYTE:21 [ print_byte::$0 ]
-Allocated zp ZP_BYTE:22 [ print_byte::$2 ]
-Allocated zp ZP_WORD:23 [ getFAC::return#0 ]
-Allocated zp ZP_BYTE:25 [ prepareMEM::$0 ]
-Allocated zp ZP_BYTE:26 [ prepareMEM::$1 ]
+Allocated zp ZP_WORD:9 [ mulFACbyMEM::mem#2 ]
+Allocated zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 ]
+Allocated zp ZP_WORD:13 [ setMEMtoFAC::mem#2 ]
+Allocated zp ZP_WORD:15 [ getFAC::return#2 ]
+Allocated zp ZP_WORD:17 [ print_word::w#0 ]
+Allocated zp ZP_BYTE:19 [ print_byte::$0 ]
+Allocated zp ZP_BYTE:20 [ print_byte::$2 ]
+Allocated zp ZP_WORD:21 [ getFAC::return#0 ]
+Allocated zp ZP_BYTE:23 [ mulFACbyMEM::prepareMEM1_$0#0 ]
+Allocated zp ZP_BYTE:24 [ mulFACbyMEM::prepareMEM1_$1#0 ]
+Allocated zp ZP_BYTE:25 [ setFAC::prepareMEM1_$0#0 ]
+Allocated zp ZP_BYTE:26 [ setFAC::prepareMEM1_$1#0 ]
+Allocated zp ZP_BYTE:27 [ setMEMtoFAC::prepareMEM1_$0#0 ]
+Allocated zp ZP_BYTE:28 [ setMEMtoFAC::prepareMEM1_$1#0 ]
 
 INITIAL ASM
 Target platform is c64basic
@@ -1252,13 +1366,13 @@ main: {
     .label f_2pi = $e2e5
     .label i = 2
     // [5] call setFAC 
-    // [84] phi from main to setFAC [phi:main->setFAC]
+    // [82] phi from main to setFAC [phi:main->setFAC]
   setFAC_from_main:
-    // [84] phi (word) setFAC::w#3 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
     lda #<$4fb
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$4fb
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
@@ -1305,9 +1419,9 @@ main: {
     lda #0
     sta.z setFAC.w+1
     // [12] call setFAC 
-    // [84] phi from main::@1 to setFAC [phi:main::@1->setFAC]
+    // [82] phi from main::@1 to setFAC [phi:main::@1->setFAC]
   setFAC_from_b1:
-    // [84] phi (word) setFAC::w#3 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
     jsr setFAC
     // [13] phi from main::@1 to main::@4 [phi:main::@1->main::@4]
   b4_from_b1:
@@ -1315,9 +1429,9 @@ main: {
     // main::@4
   b4:
     // [14] call mulFACbyMEM 
-    // [73] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
+    // [68] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
   mulFACbyMEM_from_b4:
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
     sta.z mulFACbyMEM.mem
     lda #>f_2pi
@@ -1343,13 +1457,13 @@ main: {
     // main::@6
   b6:
     // [18] call setFAC 
-    // [84] phi from main::@6 to setFAC [phi:main::@6->setFAC]
+    // [82] phi from main::@6 to setFAC [phi:main::@6->setFAC]
   setFAC_from_b6:
-    // [84] phi (word) setFAC::w#3 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
     lda #<$19
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$19
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [19] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
   b7_from_b6:
@@ -1357,7 +1471,7 @@ main: {
     // main::@7
   b7:
     // [20] call divMEMbyFAC 
-    // [80] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
+    // [77] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
   divMEMbyFAC_from_b7:
     jsr divMEMbyFAC
     // [21] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
@@ -1373,9 +1487,9 @@ main: {
     // main::@9
   b9:
     // [24] call mulFACbyMEM 
-    // [73] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
+    // [68] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
   mulFACbyMEM_from_b9:
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_127
     sta.z mulFACbyMEM.mem
     lda #>f_127
@@ -1486,9 +1600,9 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($13) w)
+// print_word(word zeropage($11) w)
 print_word: {
-    .label w = $13
+    .label w = $11
     // [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z print_byte.b
@@ -1520,8 +1634,8 @@ print_word: {
 // Print a byte as HEX
 // print_byte(byte zeropage(5) b)
 print_byte: {
-    .label _0 = $15
-    .label _2 = $16
+    .label _0 = $13
+    .label _2 = $14
     .label b = 5
     // [49] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z b
@@ -1588,13 +1702,13 @@ print_char: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = $17
-    .label return_2 = $11
-    // asm { jsr$b1aa sty$fe sta$ff  }
+    .label return = $15
+    .label return_2 = $f
+    // asm { jsr$b1aa stymemLo stamemHi  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty.z $fe
-    sta.z $ff
+    sty memLo
+    sta memHi
     // [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memLo
     sta.z return
@@ -1611,81 +1725,64 @@ getFAC: {
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 bytes from memory
 addMEMtoFAC: {
-    // [64] call prepareMEM 
-    // [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
-  prepareMEM_from_addMEMtoFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_127#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_127
-    sta.z prepareMEM.mem
-    lda #>main.f_127
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_127
+    jmp prepareMEM1
+    // addMEMtoFAC::prepareMEM1
+  prepareMEM1:
+    // [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     jmp b1
     // addMEMtoFAC::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$b867  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$b867  }
+    lda memLo
+    ldy memHi
     jsr $b867
     jmp breturn
     // addMEMtoFAC::@return
   breturn:
-    // [66] return 
-    rts
-}
-  // prepareMEM
-// Prepare MEM pointers for operations using MEM
-// prepareMEM(byte* zeropage(9) mem)
-prepareMEM: {
-    .label _0 = $19
-    .label _1 = $1a
-    .label mem = 9
-    // [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuz1=_lo_pbuz2 
-    lda.z mem
-    sta.z _0
-    // [69] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuz1 
-    lda.z _0
-    sta memLo
-    // [70] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuz1=_hi_pbuz2 
-    lda.z mem+1
-    sta.z _1
-    // [71] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
-    sta memHi
-    jmp breturn
-    // prepareMEM::@return
-  breturn:
-    // [72] return 
+    // [67] return 
     rts
 }
   // mulFACbyMEM
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-// mulFACbyMEM(byte* zeropage($b) mem)
+// mulFACbyMEM(byte* zeropage(9) mem)
 mulFACbyMEM: {
-    .label mem = $b
-    // [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
+    .label prepareMEM1__0 = $17
+    .label prepareMEM1__1 = $18
+    .label mem = 9
+    jmp prepareMEM1
+    // mulFACbyMEM::prepareMEM1
+  prepareMEM1:
+    // [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2 -- vbuz1=_lo_vwuz2 
     lda.z mem
-    sta.z prepareMEM.mem
+    sta.z prepareMEM1__0
+    // [70] *((const byte*) memLo#0) ← (byte~) mulFACbyMEM::prepareMEM1_$0#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__0
+    sta memLo
+    // [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2 -- vbuz1=_hi_vwuz2 
     lda.z mem+1
-    sta.z prepareMEM.mem+1
-    // [75] call prepareMEM 
-    // [67] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
-  prepareMEM_from_mulFACbyMEM:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#4 [phi:mulFACbyMEM->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    sta.z prepareMEM1__1
+    // [72] *((const byte*) memHi#0) ← (byte~) mulFACbyMEM::prepareMEM1_$1#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__1
+    sta memHi
     jmp b1
     // mulFACbyMEM::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$ba28  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$ba28  }
+    lda memLo
+    ldy memHi
     jsr $ba28
     jmp breturn
     // mulFACbyMEM::@return
   breturn:
-    // [77] return 
+    // [74] return 
     rts
 }
   // sinFAC
@@ -1698,7 +1795,7 @@ sinFAC: {
     jmp breturn
     // sinFAC::@return
   breturn:
-    // [79] return 
+    // [76] return 
     rts
 }
   // divMEMbyFAC
@@ -1706,51 +1803,60 @@ sinFAC: {
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
 divMEMbyFAC: {
-    // [81] call prepareMEM 
-    // [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
-  prepareMEM_from_divMEMbyFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_i#0 [phi:divMEMbyFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_i
-    sta.z prepareMEM.mem
-    lda #>main.f_i
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_i
+    jmp prepareMEM1
+    // divMEMbyFAC::prepareMEM1
+  prepareMEM1:
+    // [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     jmp b1
     // divMEMbyFAC::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$bb0f  }
+    lda memLo
+    ldy memHi
     jsr $bb0f
     jmp breturn
     // divMEMbyFAC::@return
   breturn:
-    // [83] return 
+    // [81] return 
     rts
 }
   // setFAC
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-// setFAC(word zeropage($d) w)
+// setFAC(word zeropage($b) w)
 setFAC: {
-    .label w = $d
-    // [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3 -- pbuz1=pbuz2 
-    lda.z w
-    sta.z prepareMEM.mem
-    lda.z w+1
-    sta.z prepareMEM.mem+1
-    // [86] call prepareMEM 
-    // [67] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
-  prepareMEM_from_setFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#0 [phi:setFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    .label prepareMEM1_mem = $b
+    .label prepareMEM1__0 = $19
+    .label prepareMEM1__1 = $1a
+    .label w = $b
+    jmp prepareMEM1
+    // setFAC::prepareMEM1
+  prepareMEM1:
+    // [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0 -- vbuz1=_lo_vwuz2 
+    lda.z prepareMEM1_mem
+    sta.z prepareMEM1__0
+    // [84] *((const byte*) memLo#0) ← (byte~) setFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__0
+    sta memLo
+    // [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0 -- vbuz1=_hi_vwuz2 
+    lda.z prepareMEM1_mem+1
+    sta.z prepareMEM1__1
+    // [86] *((const byte*) memHi#0) ← (byte~) setFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__1
+    sta memHi
     jmp b1
     // setFAC::@1
   b1:
-    // asm { ldy$fe lda$ff jsr$b391  }
+    // asm { ldymemLo ldamemHi jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy.z $fe
-    lda.z $ff
+    ldy memLo
+    lda memHi
     jsr $b391
     jmp breturn
     // setFAC::@return
@@ -1762,30 +1868,37 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zeropage($f) mem)
+// setMEMtoFAC(byte* zeropage($d) mem)
 setMEMtoFAC: {
-    .label mem = $f
-    // [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2 -- pbuz1=pbuz2 
+    .label prepareMEM1__0 = $1b
+    .label prepareMEM1__1 = $1c
+    .label mem = $d
+    jmp prepareMEM1
+    // setMEMtoFAC::prepareMEM1
+  prepareMEM1:
+    // [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2 -- vbuz1=_lo_vwuz2 
     lda.z mem
-    sta.z prepareMEM.mem
+    sta.z prepareMEM1__0
+    // [91] *((const byte*) memLo#0) ← (byte~) setMEMtoFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__0
+    sta memLo
+    // [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2 -- vbuz1=_hi_vwuz2 
     lda.z mem+1
-    sta.z prepareMEM.mem+1
-    // [91] call prepareMEM 
-    // [67] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
-  prepareMEM_from_setMEMtoFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#1 [phi:setMEMtoFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    sta.z prepareMEM1__1
+    // [93] *((const byte*) memHi#0) ← (byte~) setMEMtoFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuz1 
+    lda.z prepareMEM1__1
+    sta memHi
     jmp b1
     // setMEMtoFAC::@1
   b1:
-    // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx.z $fe
-    ldy.z $ff
+    // asm { ldxmemLo ldymemHi jsr$bbd4  }
+    ldx memLo
+    ldy memHi
     jsr $bbd4
     jmp breturn
     // setMEMtoFAC::@return
   breturn:
-    // [93] return 
+    // [95] return 
     rts
 }
   // divFACby10
@@ -1797,7 +1910,7 @@ divFACby10: {
     jmp breturn
     // divFACby10::@return
   breturn:
-    // [95] return 
+    // [97] return 
     rts
 }
   // File Data
@@ -1819,18 +1932,25 @@ Statement [52] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [57] *((byte*) print_char_cursor#23) ← (byte) print_char::ch#2 [ print_char_cursor#23 ] ( main:2::print_word:31::print_byte:44::print_char:51 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#23 ] main:2::print_word:31::print_byte:46::print_char:51 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#23 ] main:2::print_word:31::print_byte:44::print_char:54 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#23 ] main:2::print_word:31::print_byte:46::print_char:54 [ main::i#10 print_line_cursor#13 print_char_cursor#23 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
-Statement asm { jsr$b1aa sty$fe sta$ff  } always clobbers reg byte a reg byte x reg byte y 
+Statement asm { jsr$b1aa stymemLo stamemHi  } always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 Statement [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) [ getFAC::return#0 ] ( main:2::getFAC:28 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#0 ] ) always clobbers reg byte a 
-Statement asm { lda$fe ldy$ff jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
-Statement [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 [ prepareMEM::mem#4 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#4 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#4 ] ) always clobbers reg byte a 
-Statement asm { lda$fe ldy$ff jsr$ba28  } always clobbers reg byte a reg byte x reg byte y 
+Statement [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0 [ ] ( main:2::addMEMtoFAC:26 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0 [ ] ( main:2::addMEMtoFAC:26 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
+Statement [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::prepareMEM1_$1#0 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::prepareMEM1_$1#0 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$ba28  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { jsr$e26b  } always clobbers reg byte a reg byte x reg byte y 
-Statement asm { lda$fe ldy$ff jsr$bb0f  } always clobbers reg byte a reg byte x reg byte y 
-Statement [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3 [ prepareMEM::mem#0 ] ( main:2::setFAC:5 [ prepareMEM::mem#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#0 ] ) always clobbers reg byte a 
-Statement asm { ldy$fe lda$ff jsr$b391  } always clobbers reg byte a reg byte x reg byte y 
-Statement [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2 [ prepareMEM::mem#1 ] ( main:2::setMEMtoFAC:9 [ prepareMEM::mem#1 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#1 ] ) always clobbers reg byte a 
-Statement asm { ldx$fe ldy$ff jsr$bbd4  } always clobbers reg byte a reg byte x reg byte y 
+Statement [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0 [ ] ( main:2::divMEMbyFAC:20 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0 [ ] ( main:2::divMEMbyFAC:20 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$bb0f  } always clobbers reg byte a reg byte x reg byte y 
+Statement [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0 [ setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] ( main:2::setFAC:5 [ setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0 [ setFAC::prepareMEM1_$1#0 ] ( main:2::setFAC:5 [ setFAC::prepareMEM1_$1#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_$1#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldymemLo ldamemHi jsr$b391  } always clobbers reg byte a reg byte x reg byte y 
+Statement [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2 [ setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] ( main:2::setMEMtoFAC:9 [ setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2 [ setMEMtoFAC::prepareMEM1_$1#0 ] ( main:2::setMEMtoFAC:9 [ setMEMtoFAC::prepareMEM1_$1#0 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setMEMtoFAC::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldxmemLo ldymemHi jsr$bbd4  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { jsr$bafe  } always clobbers reg byte a reg byte x reg byte y 
 Statement [11] (word) setFAC::w#1 ← (word)(byte) main::i#10 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] ) always clobbers reg byte a 
 Statement [29] (word) getFAC::return#2 ← (word) getFAC::return#0 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ) always clobbers reg byte a 
@@ -1844,46 +1964,55 @@ Statement [45] (byte) print_byte::b#1 ← < (word) print_word::w#0 [ print_char_
 Statement [49] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#31 print_byte::$0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_byte::$0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_byte::$0 ] ) always clobbers reg byte a 
 Statement [52] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::$2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [57] *((byte*) print_char_cursor#23) ← (byte) print_char::ch#2 [ print_char_cursor#23 ] ( main:2::print_word:31::print_byte:44::print_char:51 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#23 ] main:2::print_word:31::print_byte:46::print_char:51 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#23 ] main:2::print_word:31::print_byte:44::print_char:54 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#23 ] main:2::print_word:31::print_byte:46::print_char:54 [ main::i#10 print_line_cursor#13 print_char_cursor#23 ] ) always clobbers reg byte y 
-Statement asm { jsr$b1aa sty$fe sta$ff  } always clobbers reg byte a reg byte x reg byte y 
+Statement asm { jsr$b1aa stymemLo stamemHi  } always clobbers reg byte a reg byte x reg byte y 
 Statement [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) [ getFAC::return#0 ] ( main:2::getFAC:28 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#0 ] ) always clobbers reg byte a 
-Statement asm { lda$fe ldy$ff jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
-Statement [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 [ prepareMEM::mem#4 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#4 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#4 ] ) always clobbers reg byte a 
-Statement asm { lda$fe ldy$ff jsr$ba28  } always clobbers reg byte a reg byte x reg byte y 
+Statement [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0 [ ] ( main:2::addMEMtoFAC:26 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0 [ ] ( main:2::addMEMtoFAC:26 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
+Statement [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::prepareMEM1_$1#0 ] ( main:2::mulFACbyMEM:14 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::prepareMEM1_$1#0 ] main:2::mulFACbyMEM:24 [ main::i#10 print_char_cursor#32 print_line_cursor#13 mulFACbyMEM::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$ba28  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { jsr$e26b  } always clobbers reg byte a reg byte x reg byte y 
-Statement asm { lda$fe ldy$ff jsr$bb0f  } always clobbers reg byte a reg byte x reg byte y 
-Statement [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3 [ prepareMEM::mem#0 ] ( main:2::setFAC:5 [ prepareMEM::mem#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#0 ] ) always clobbers reg byte a 
-Statement asm { ldy$fe lda$ff jsr$b391  } always clobbers reg byte a reg byte x reg byte y 
-Statement [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2 [ prepareMEM::mem#1 ] ( main:2::setMEMtoFAC:9 [ prepareMEM::mem#1 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 prepareMEM::mem#1 ] ) always clobbers reg byte a 
-Statement asm { ldx$fe ldy$ff jsr$bbd4  } always clobbers reg byte a reg byte x reg byte y 
+Statement [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0 [ ] ( main:2::divMEMbyFAC:20 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0 [ ] ( main:2::divMEMbyFAC:20 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ) always clobbers reg byte a 
+Statement asm { ldamemLo ldymemHi jsr$bb0f  } always clobbers reg byte a reg byte x reg byte y 
+Statement [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0 [ setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] ( main:2::setFAC:5 [ setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_mem#0 setFAC::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0 [ setFAC::prepareMEM1_$1#0 ] ( main:2::setFAC:5 [ setFAC::prepareMEM1_$1#0 ] main:2::setFAC:12 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_$1#0 ] main:2::setFAC:18 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldymemLo ldamemHi jsr$b391  } always clobbers reg byte a reg byte x reg byte y 
+Statement [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2 [ setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] ( main:2::setMEMtoFAC:9 [ setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setMEMtoFAC::mem#2 setMEMtoFAC::prepareMEM1_$0#0 ] ) always clobbers reg byte a 
+Statement [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2 [ setMEMtoFAC::prepareMEM1_$1#0 ] ( main:2::setMEMtoFAC:9 [ setMEMtoFAC::prepareMEM1_$1#0 ] main:2::setMEMtoFAC:16 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setMEMtoFAC::prepareMEM1_$1#0 ] ) always clobbers reg byte a 
+Statement asm { ldxmemLo ldymemHi jsr$bbd4  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { jsr$bafe  } always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#10 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:5 , reg byte x , 
 Potential registers zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ] : zp ZP_WORD:9 , 
-Potential registers zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ] : zp ZP_WORD:11 , 
-Potential registers zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] : zp ZP_WORD:13 , 
-Potential registers zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ] : zp ZP_WORD:15 , 
-Potential registers zp ZP_WORD:17 [ getFAC::return#2 ] : zp ZP_WORD:17 , 
-Potential registers zp ZP_WORD:19 [ print_word::w#0 ] : zp ZP_WORD:19 , 
-Potential registers zp ZP_BYTE:21 [ print_byte::$0 ] : zp ZP_BYTE:21 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:22 [ print_byte::$2 ] : zp ZP_BYTE:22 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:23 [ getFAC::return#0 ] : zp ZP_WORD:23 , 
-Potential registers zp ZP_BYTE:25 [ prepareMEM::$0 ] : zp ZP_BYTE:25 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:26 [ prepareMEM::$1 ] : zp ZP_BYTE:26 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:9 [ mulFACbyMEM::mem#2 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 ] : zp ZP_WORD:11 , 
+Potential registers zp ZP_WORD:13 [ setMEMtoFAC::mem#2 ] : zp ZP_WORD:13 , 
+Potential registers zp ZP_WORD:15 [ getFAC::return#2 ] : zp ZP_WORD:15 , 
+Potential registers zp ZP_WORD:17 [ print_word::w#0 ] : zp ZP_WORD:17 , 
+Potential registers zp ZP_BYTE:19 [ print_byte::$0 ] : zp ZP_BYTE:19 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:20 [ print_byte::$2 ] : zp ZP_BYTE:20 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:21 [ getFAC::return#0 ] : zp ZP_WORD:21 , 
+Potential registers zp ZP_BYTE:23 [ mulFACbyMEM::prepareMEM1_$0#0 ] : zp ZP_BYTE:23 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:24 [ mulFACbyMEM::prepareMEM1_$1#0 ] : zp ZP_BYTE:24 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:25 [ setFAC::prepareMEM1_$0#0 ] : zp ZP_BYTE:25 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:26 [ setFAC::prepareMEM1_$1#0 ] : zp ZP_BYTE:26 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:27 [ setMEMtoFAC::prepareMEM1_$0#0 ] : zp ZP_BYTE:27 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:28 [ setMEMtoFAC::prepareMEM1_$1#0 ] : zp ZP_BYTE:28 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 250.97: zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] 34.89: zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ] 
-Uplift Scope [setFAC] 33: zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] 
-Uplift Scope [getFAC] 22: zp ZP_WORD:17 [ getFAC::return#2 ] 4.33: zp ZP_WORD:23 [ getFAC::return#0 ] 
-Uplift Scope [prepareMEM] 15.33: zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ] 4: zp ZP_BYTE:25 [ prepareMEM::$0 ] 4: zp ZP_BYTE:26 [ prepareMEM::$1 ] 
-Uplift Scope [print_byte] 10: zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:21 [ print_byte::$0 ] 4: zp ZP_BYTE:22 [ print_byte::$2 ] 
+Uplift Scope [setFAC] 27: zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 ] 4: zp ZP_BYTE:25 [ setFAC::prepareMEM1_$0#0 ] 4: zp ZP_BYTE:26 [ setFAC::prepareMEM1_$1#0 ] 
+Uplift Scope [getFAC] 22: zp ZP_WORD:15 [ getFAC::return#2 ] 4.33: zp ZP_WORD:21 [ getFAC::return#0 ] 
+Uplift Scope [print_byte] 10: zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:19 [ print_byte::$0 ] 4: zp ZP_BYTE:20 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
 Uplift Scope [main] 11.92: zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
-Uplift Scope [print_word] 5: zp ZP_WORD:19 [ print_word::w#0 ] 
-Uplift Scope [setMEMtoFAC] 2: zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ] 
-Uplift Scope [mulFACbyMEM] 2: zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ] 
+Uplift Scope [setMEMtoFAC] 4: zp ZP_BYTE:27 [ setMEMtoFAC::prepareMEM1_$0#0 ] 4: zp ZP_BYTE:28 [ setMEMtoFAC::prepareMEM1_$1#0 ] 0: zp ZP_WORD:13 [ setMEMtoFAC::mem#2 ] 
+Uplift Scope [mulFACbyMEM] 4: zp ZP_BYTE:23 [ mulFACbyMEM::prepareMEM1_$0#0 ] 4: zp ZP_BYTE:24 [ mulFACbyMEM::prepareMEM1_$1#0 ] 0: zp ZP_WORD:9 [ mulFACbyMEM::mem#2 ] 
+Uplift Scope [print_word] 5: zp ZP_WORD:17 [ print_word::w#0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [addMEMtoFAC] 
@@ -1891,32 +2020,30 @@ Uplift Scope [divMEMbyFAC]
 Uplift Scope [sinFAC] 
 Uplift Scope [divFACby10] 
 
-Uplifting [] best 6314 combination zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ] 
-Uplifting [setFAC] best 6314 combination zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] 
-Uplifting [getFAC] best 6314 combination zp ZP_WORD:17 [ getFAC::return#2 ] zp ZP_WORD:23 [ getFAC::return#0 ] 
-Uplifting [prepareMEM] best 6302 combination zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ] reg byte a [ prepareMEM::$0 ] reg byte a [ prepareMEM::$1 ] 
-Uplifting [print_byte] best 6288 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_char] best 6279 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [main] best 6279 combination zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
-Uplifting [print_word] best 6279 combination zp ZP_WORD:19 [ print_word::w#0 ] 
-Uplifting [setMEMtoFAC] best 6279 combination zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ] 
-Uplifting [mulFACbyMEM] best 6279 combination zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ] 
-Uplifting [RADIX] best 6279 combination 
-Uplifting [print_ln] best 6279 combination 
-Uplifting [addMEMtoFAC] best 6279 combination 
-Uplifting [divMEMbyFAC] best 6279 combination 
-Uplifting [sinFAC] best 6279 combination 
-Uplifting [divFACby10] best 6279 combination 
+Uplifting [] best 6457 combination zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ] 
+Uplifting [setFAC] best 6445 combination zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 ] reg byte a [ setFAC::prepareMEM1_$0#0 ] reg byte a [ setFAC::prepareMEM1_$1#0 ] 
+Uplifting [getFAC] best 6445 combination zp ZP_WORD:15 [ getFAC::return#2 ] zp ZP_WORD:21 [ getFAC::return#0 ] 
+Uplifting [print_byte] best 6431 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_char] best 6422 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [main] best 6422 combination zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
+Uplifting [setMEMtoFAC] best 6410 combination reg byte a [ setMEMtoFAC::prepareMEM1_$0#0 ] reg byte a [ setMEMtoFAC::prepareMEM1_$1#0 ] zp ZP_WORD:13 [ setMEMtoFAC::mem#2 ] 
+Uplifting [mulFACbyMEM] best 6398 combination reg byte a [ mulFACbyMEM::prepareMEM1_$0#0 ] reg byte a [ mulFACbyMEM::prepareMEM1_$1#0 ] zp ZP_WORD:9 [ mulFACbyMEM::mem#2 ] 
+Uplifting [print_word] best 6398 combination zp ZP_WORD:17 [ print_word::w#0 ] 
+Uplifting [RADIX] best 6398 combination 
+Uplifting [print_ln] best 6398 combination 
+Uplifting [addMEMtoFAC] best 6398 combination 
+Uplifting [divMEMbyFAC] best 6398 combination 
+Uplifting [sinFAC] best 6398 combination 
+Uplifting [divFACby10] best 6398 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#10 main::i#1 ]
-Uplifting [main] best 6279 combination zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
-Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 ] ] with [ zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 ] ] with [ zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 ] ] with [ zp ZP_WORD:15 [ setMEMtoFAC::mem#2 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 ] ] with [ zp ZP_WORD:19 [ print_word::w#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 ] ] with [ zp ZP_WORD:23 [ getFAC::return#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ] ] with [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ] ]
+Uplifting [main] best 6398 combination zp ZP_BYTE:2 [ main::i#10 main::i#1 ] 
+Coalescing zero page register [ zp ZP_WORD:15 [ getFAC::return#2 ] ] with [ zp ZP_WORD:17 [ print_word::w#0 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:15 [ getFAC::return#2 print_word::w#0 ] ] with [ zp ZP_WORD:21 [ getFAC::return#0 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 ] ] with [ zp ZP_WORD:9 [ mulFACbyMEM::mem#2 ] ]
+Coalescing zero page register [ zp ZP_WORD:15 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ] ] with [ zp ZP_WORD:13 [ setMEMtoFAC::mem#2 ] ]
+Coalescing zero page register [ zp ZP_WORD:15 [ getFAC::return#2 print_word::w#0 getFAC::return#0 setMEMtoFAC::mem#2 ] ] with [ zp ZP_WORD:11 [ setFAC::prepareMEM1_mem#0 setFAC::w#1 mulFACbyMEM::mem#2 ] ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-Allocated (was zp ZP_WORD:17) zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
+Allocated (was zp ZP_WORD:15) zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 setMEMtoFAC::mem#2 setFAC::prepareMEM1_mem#0 setFAC::w#1 mulFACbyMEM::mem#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1951,13 +2078,13 @@ main: {
     .label f_2pi = $e2e5
     .label i = 2
     // [5] call setFAC 
-    // [84] phi from main to setFAC [phi:main->setFAC]
+    // [82] phi from main to setFAC [phi:main->setFAC]
   setFAC_from_main:
-    // [84] phi (word) setFAC::w#3 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
     lda #<$4fb
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$4fb
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
@@ -2004,9 +2131,9 @@ main: {
     lda #0
     sta.z setFAC.w+1
     // [12] call setFAC 
-    // [84] phi from main::@1 to setFAC [phi:main::@1->setFAC]
+    // [82] phi from main::@1 to setFAC [phi:main::@1->setFAC]
   setFAC_from_b1:
-    // [84] phi (word) setFAC::w#3 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
     jsr setFAC
     // [13] phi from main::@1 to main::@4 [phi:main::@1->main::@4]
   b4_from_b1:
@@ -2014,9 +2141,9 @@ main: {
     // main::@4
   b4:
     // [14] call mulFACbyMEM 
-    // [73] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
+    // [68] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
   mulFACbyMEM_from_b4:
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
     sta.z mulFACbyMEM.mem
     lda #>f_2pi
@@ -2042,13 +2169,13 @@ main: {
     // main::@6
   b6:
     // [18] call setFAC 
-    // [84] phi from main::@6 to setFAC [phi:main::@6->setFAC]
+    // [82] phi from main::@6 to setFAC [phi:main::@6->setFAC]
   setFAC_from_b6:
-    // [84] phi (word) setFAC::w#3 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
     lda #<$19
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$19
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [19] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
   b7_from_b6:
@@ -2056,7 +2183,7 @@ main: {
     // main::@7
   b7:
     // [20] call divMEMbyFAC 
-    // [80] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
+    // [77] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
   divMEMbyFAC_from_b7:
     jsr divMEMbyFAC
     // [21] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
@@ -2072,9 +2199,9 @@ main: {
     // main::@9
   b9:
     // [24] call mulFACbyMEM 
-    // [73] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
+    // [68] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
   mulFACbyMEM_from_b9:
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_127
     sta.z mulFACbyMEM.mem
     lda #>f_127
@@ -2270,11 +2397,11 @@ print_char: {
 // Destroys the value in the FAC in the process
 getFAC: {
     .label return = 7
-    // asm { jsr$b1aa sty$fe sta$ff  }
+    // asm { jsr$b1aa stymemLo stamemHi  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty.z $fe
-    sta.z $ff
+    sty memLo
+    sta memHi
     // [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda memLo
     sta.z return
@@ -2291,45 +2418,27 @@ getFAC: {
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 bytes from memory
 addMEMtoFAC: {
-    // [64] call prepareMEM 
-    // [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
-  prepareMEM_from_addMEMtoFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_127#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_127
-    sta.z prepareMEM.mem
-    lda #>main.f_127
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_127
+    jmp prepareMEM1
+    // addMEMtoFAC::prepareMEM1
+  prepareMEM1:
+    // [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     jmp b1
     // addMEMtoFAC::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$b867  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$b867  }
+    lda memLo
+    ldy memHi
     jsr $b867
     jmp breturn
     // addMEMtoFAC::@return
   breturn:
-    // [66] return 
-    rts
-}
-  // prepareMEM
-// Prepare MEM pointers for operations using MEM
-// prepareMEM(byte* zeropage(7) mem)
-prepareMEM: {
-    .label mem = 7
-    // [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
-    lda.z mem
-    // [69] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuaa 
-    sta memLo
-    // [70] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuaa=_hi_pbuz1 
-    lda.z mem+1
-    // [71] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuaa 
-    sta memHi
-    jmp breturn
-    // prepareMEM::@return
-  breturn:
-    // [72] return 
+    // [67] return 
     rts
 }
   // mulFACbyMEM
@@ -2339,23 +2448,28 @@ prepareMEM: {
 // mulFACbyMEM(byte* zeropage(7) mem)
 mulFACbyMEM: {
     .label mem = 7
-    // [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // [75] call prepareMEM 
-    // [67] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
-  prepareMEM_from_mulFACbyMEM:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#4 [phi:mulFACbyMEM->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    jmp prepareMEM1
+    // mulFACbyMEM::prepareMEM1
+  prepareMEM1:
+    // [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2 -- vbuaa=_lo_vwuz1 
+    lda.z mem
+    // [70] *((const byte*) memLo#0) ← (byte~) mulFACbyMEM::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2 -- vbuaa=_hi_vwuz1 
+    lda.z mem+1
+    // [72] *((const byte*) memHi#0) ← (byte~) mulFACbyMEM::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     jmp b1
     // mulFACbyMEM::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$ba28  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$ba28  }
+    lda memLo
+    ldy memHi
     jsr $ba28
     jmp breturn
     // mulFACbyMEM::@return
   breturn:
-    // [77] return 
+    // [74] return 
     rts
 }
   // sinFAC
@@ -2368,7 +2482,7 @@ sinFAC: {
     jmp breturn
     // sinFAC::@return
   breturn:
-    // [79] return 
+    // [76] return 
     rts
 }
   // divMEMbyFAC
@@ -2376,26 +2490,27 @@ sinFAC: {
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
 divMEMbyFAC: {
-    // [81] call prepareMEM 
-    // [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
-  prepareMEM_from_divMEMbyFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_i#0 [phi:divMEMbyFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_i
-    sta.z prepareMEM.mem
-    lda #>main.f_i
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_i
+    jmp prepareMEM1
+    // divMEMbyFAC::prepareMEM1
+  prepareMEM1:
+    // [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     jmp b1
     // divMEMbyFAC::@1
   b1:
-    // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$bb0f  }
+    lda memLo
+    ldy memHi
     jsr $bb0f
     jmp breturn
     // divMEMbyFAC::@return
   breturn:
-    // [83] return 
+    // [81] return 
     rts
 }
   // setFAC
@@ -2403,20 +2518,26 @@ divMEMbyFAC: {
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
 // setFAC(word zeropage(7) w)
 setFAC: {
+    .label prepareMEM1_mem = 7
     .label w = 7
-    // [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3
-    // [86] call prepareMEM 
-    // [67] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
-  prepareMEM_from_setFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#0 [phi:setFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    jmp prepareMEM1
+    // setFAC::prepareMEM1
+  prepareMEM1:
+    // [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0 -- vbuaa=_lo_vwuz1 
+    lda.z prepareMEM1_mem
+    // [84] *((const byte*) memLo#0) ← (byte~) setFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0 -- vbuaa=_hi_vwuz1 
+    lda.z prepareMEM1_mem+1
+    // [86] *((const byte*) memHi#0) ← (byte~) setFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     jmp b1
     // setFAC::@1
   b1:
-    // asm { ldy$fe lda$ff jsr$b391  }
+    // asm { ldymemLo ldamemHi jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy.z $fe
-    lda.z $ff
+    ldy memLo
+    lda memHi
     jsr $b391
     jmp breturn
     // setFAC::@return
@@ -2431,23 +2552,28 @@ setFAC: {
 // setMEMtoFAC(byte* zeropage(7) mem)
 setMEMtoFAC: {
     .label mem = 7
-    // [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-    // [91] call prepareMEM 
-    // [67] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
-  prepareMEM_from_setMEMtoFAC:
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#1 [phi:setMEMtoFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    jmp prepareMEM1
+    // setMEMtoFAC::prepareMEM1
+  prepareMEM1:
+    // [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2 -- vbuaa=_lo_vwuz1 
+    lda.z mem
+    // [91] *((const byte*) memLo#0) ← (byte~) setMEMtoFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2 -- vbuaa=_hi_vwuz1 
+    lda.z mem+1
+    // [93] *((const byte*) memHi#0) ← (byte~) setMEMtoFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     jmp b1
     // setMEMtoFAC::@1
   b1:
-    // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx.z $fe
-    ldy.z $ff
+    // asm { ldxmemLo ldymemHi jsr$bbd4  }
+    ldx memLo
+    ldy memHi
     jsr $bbd4
     jmp breturn
     // setMEMtoFAC::@return
   breturn:
-    // [93] return 
+    // [95] return 
     rts
 }
   // divFACby10
@@ -2459,7 +2585,7 @@ divFACby10: {
     jmp breturn
     // divFACby10::@return
   breturn:
-    // [95] return 
+    // [97] return 
     rts
 }
   // File Data
@@ -2491,20 +2617,25 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp prepareMEM1
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp prepareMEM1
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp prepareMEM1
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp prepareMEM1
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp prepareMEM1
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction lda memLo with TYA
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
@@ -2563,21 +2694,20 @@ Removing instruction print_char_from_b1:
 Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
-Removing instruction prepareMEM_from_addMEMtoFAC:
+Removing instruction prepareMEM1:
+Removing instruction b1:
+Removing instruction breturn:
+Removing instruction prepareMEM1:
 Removing instruction b1:
 Removing instruction breturn:
 Removing instruction breturn:
-Removing instruction prepareMEM_from_mulFACbyMEM:
+Removing instruction prepareMEM1:
 Removing instruction b1:
 Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction prepareMEM_from_divMEMbyFAC:
+Removing instruction prepareMEM1:
 Removing instruction b1:
 Removing instruction breturn:
-Removing instruction prepareMEM_from_setFAC:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction prepareMEM_from_setMEMtoFAC:
+Removing instruction prepareMEM1:
 Removing instruction b1:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -2585,6 +2715,9 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction lda memHi
+Replacing instruction ldy memHi with TAY
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -2600,12 +2733,22 @@ FINAL SYMBOL TABLE
 (label) addMEMtoFAC::@1
 (label) addMEMtoFAC::@return
 (byte*) addMEMtoFAC::mem
+(label) addMEMtoFAC::prepareMEM1
+(byte~) addMEMtoFAC::prepareMEM1_$0
+(byte~) addMEMtoFAC::prepareMEM1_$1
+(word) addMEMtoFAC::prepareMEM1_mem
+(const word) addMEMtoFAC::prepareMEM1_mem#0 prepareMEM1_mem = (word)(const byte[]) main::f_127#0
 (void()) divFACby10()
 (label) divFACby10::@return
 (void()) divMEMbyFAC((byte*) divMEMbyFAC::mem)
 (label) divMEMbyFAC::@1
 (label) divMEMbyFAC::@return
 (byte*) divMEMbyFAC::mem
+(label) divMEMbyFAC::prepareMEM1
+(byte~) divMEMbyFAC::prepareMEM1_$0
+(byte~) divMEMbyFAC::prepareMEM1_$1
+(word) divMEMbyFAC::prepareMEM1_mem
+(const word) divMEMbyFAC::prepareMEM1_mem#0 prepareMEM1_mem = (word)(const byte[]) main::f_i#0
 (word()) getFAC()
 (label) getFAC::@return
 (word) getFAC::return
@@ -2646,16 +2789,13 @@ FINAL SYMBOL TABLE
 (label) mulFACbyMEM::@1
 (label) mulFACbyMEM::@return
 (byte*) mulFACbyMEM::mem
-(byte*) mulFACbyMEM::mem#2 mem zp ZP_WORD:7 2.0
-(void()) prepareMEM((byte*) prepareMEM::mem)
-(byte~) prepareMEM::$0 reg byte a 4.0
-(byte~) prepareMEM::$1 reg byte a 4.0
-(label) prepareMEM::@return
-(byte*) prepareMEM::mem
-(byte*) prepareMEM::mem#0 mem zp ZP_WORD:7 4.0
-(byte*) prepareMEM::mem#1 mem zp ZP_WORD:7 4.0
-(byte*) prepareMEM::mem#4 mem zp ZP_WORD:7 4.0
-(byte*) prepareMEM::mem#5 mem zp ZP_WORD:7 3.333333333333333
+(byte*) mulFACbyMEM::mem#2 mem zp ZP_WORD:7
+(label) mulFACbyMEM::prepareMEM1
+(byte~) mulFACbyMEM::prepareMEM1_$0
+(byte~) mulFACbyMEM::prepareMEM1_$0#0 reg byte a 4.0
+(byte~) mulFACbyMEM::prepareMEM1_$1
+(byte~) mulFACbyMEM::prepareMEM1_$1#0 reg byte a 4.0
+(word) mulFACbyMEM::prepareMEM1_mem
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
 (byte~) print_byte::$2 reg byte x 4.0
@@ -2695,14 +2835,26 @@ FINAL SYMBOL TABLE
 (void()) setFAC((word) setFAC::w)
 (label) setFAC::@1
 (label) setFAC::@return
+(label) setFAC::prepareMEM1
+(byte~) setFAC::prepareMEM1_$0
+(byte~) setFAC::prepareMEM1_$0#0 reg byte a 4.0
+(byte~) setFAC::prepareMEM1_$1
+(byte~) setFAC::prepareMEM1_$1#0 reg byte a 4.0
+(word) setFAC::prepareMEM1_mem
+(word) setFAC::prepareMEM1_mem#0 prepareMEM1_mem zp ZP_WORD:7 5.0
 (word) setFAC::w
 (word) setFAC::w#1 w zp ZP_WORD:7 22.0
-(word) setFAC::w#3 w zp ZP_WORD:7 11.0
 (void()) setMEMtoFAC((byte*) setMEMtoFAC::mem)
 (label) setMEMtoFAC::@1
 (label) setMEMtoFAC::@return
 (byte*) setMEMtoFAC::mem
-(byte*) setMEMtoFAC::mem#2 mem zp ZP_WORD:7 2.0
+(byte*) setMEMtoFAC::mem#2 mem zp ZP_WORD:7
+(label) setMEMtoFAC::prepareMEM1
+(byte~) setMEMtoFAC::prepareMEM1_$0
+(byte~) setMEMtoFAC::prepareMEM1_$0#0 reg byte a 4.0
+(byte~) setMEMtoFAC::prepareMEM1_$1
+(byte~) setMEMtoFAC::prepareMEM1_$1#0 reg byte a 4.0
+(word) setMEMtoFAC::prepareMEM1_mem
 (void()) sinFAC()
 (label) sinFAC::@return
 
@@ -2711,11 +2863,15 @@ zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#53 print_char_cursor#10 ]
-zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#0 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ]
+zp ZP_WORD:7 [ getFAC::return#2 print_word::w#0 getFAC::return#0 setMEMtoFAC::mem#2 setFAC::prepareMEM1_mem#0 setFAC::w#1 mulFACbyMEM::mem#2 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
-reg byte a [ prepareMEM::$0 ]
-reg byte a [ prepareMEM::$1 ]
+reg byte a [ mulFACbyMEM::prepareMEM1_$0#0 ]
+reg byte a [ mulFACbyMEM::prepareMEM1_$1#0 ]
+reg byte a [ setFAC::prepareMEM1_$0#0 ]
+reg byte a [ setFAC::prepareMEM1_$1#0 ]
+reg byte a [ setMEMtoFAC::prepareMEM1_$0#0 ]
+reg byte a [ setMEMtoFAC::prepareMEM1_$1#0 ]
 
 
 FINAL ASSEMBLER
@@ -2745,12 +2901,12 @@ main: {
     .label i = 2
     // setFAC(1275)
     // [5] call setFAC 
-    // [84] phi from main to setFAC [phi:main->setFAC]
-    // [84] phi (word) setFAC::w#3 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
+    // [82] phi from main to setFAC [phi:main->setFAC]
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) $4fb [phi:main->setFAC#0] -- vwuz1=vwuc1 
     lda #<$4fb
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$4fb
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [6] phi from main to main::@2 [phi:main->main::@2]
     // main::@2
@@ -2791,15 +2947,15 @@ main: {
     lda #0
     sta.z setFAC.w+1
     // [12] call setFAC 
-    // [84] phi from main::@1 to setFAC [phi:main::@1->setFAC]
-    // [84] phi (word) setFAC::w#3 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
+    // [82] phi from main::@1 to setFAC [phi:main::@1->setFAC]
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#1 [phi:main::@1->setFAC#0] -- register_copy 
     jsr setFAC
     // [13] phi from main::@1 to main::@4 [phi:main::@1->main::@4]
     // main::@4
     // mulFACbyMEM(f_2pi)
     // [14] call mulFACbyMEM 
-    // [73] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi from main::@4 to mulFACbyMEM [phi:main::@4->mulFACbyMEM]
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) main::f_2pi#0 [phi:main::@4->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_2pi
     sta.z mulFACbyMEM.mem
     lda #>f_2pi
@@ -2820,18 +2976,18 @@ main: {
     // main::@6
     // setFAC(25)
     // [18] call setFAC 
-    // [84] phi from main::@6 to setFAC [phi:main::@6->setFAC]
-    // [84] phi (word) setFAC::w#3 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
+    // [82] phi from main::@6 to setFAC [phi:main::@6->setFAC]
+    // [82] phi (word) setFAC::prepareMEM1_mem#0 = (byte) $19 [phi:main::@6->setFAC#0] -- vwuz1=vbuc1 
     lda #<$19
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>$19
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // [19] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
     // main::@7
     // divMEMbyFAC(f_i)
     // [20] call divMEMbyFAC 
-    // [80] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
+    // [77] phi from main::@7 to divMEMbyFAC [phi:main::@7->divMEMbyFAC]
     jsr divMEMbyFAC
     // [21] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
     // main::@8
@@ -2842,8 +2998,8 @@ main: {
     // main::@9
     // mulFACbyMEM(f_127)
     // [24] call mulFACbyMEM 
-    // [73] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
-    // [73] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [68] phi from main::@9 to mulFACbyMEM [phi:main::@9->mulFACbyMEM]
+    // [68] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) main::f_127#0 [phi:main::@9->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_127
     sta.z mulFACbyMEM.mem
     lda #>f_127
@@ -3023,14 +3179,14 @@ print_char: {
 getFAC: {
     .label return = 7
     // asm
-    // asm { jsr$b1aa sty$fe sta$ff  }
+    // asm { jsr$b1aa stymemLo stamemHi  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty.z $fe
-    sta.z $ff
-    // w = { *memHi, *memLo}
+    sty memLo
+    sta memHi
+    // w = { *memHi, *memLo }
     // [61] (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda memLo
+    tya
     sta.z return
     lda memHi
     sta.z return+1
@@ -3044,46 +3200,25 @@ getFAC: {
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 bytes from memory
 addMEMtoFAC: {
-    // prepareMEM(mem)
-    // [64] call prepareMEM 
-    // [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_127#0 [phi:addMEMtoFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_127
-    sta.z prepareMEM.mem
-    lda #>main.f_127
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_127
+    // addMEMtoFAC::prepareMEM1
+    // *memLo = <mem
+    // [64] *((const byte*) memLo#0) ← <(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // *memHi = >mem
+    // [65] *((const byte*) memHi#0) ← >(const word) addMEMtoFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     // addMEMtoFAC::@1
     // asm
-    // asm { lda$fe ldy$ff jsr$b867  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$b867  }
+    lda memLo
+    ldy memHi
     jsr $b867
     // addMEMtoFAC::@return
     // }
-    // [66] return 
-    rts
-}
-  // prepareMEM
-// Prepare MEM pointers for operations using MEM
-// prepareMEM(byte* zeropage(7) mem)
-prepareMEM: {
-    .label mem = 7
-    // <mem
-    // [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
-    lda.z mem
-    // *memLo = <mem
-    // [69] *((const byte*) memLo#0) ← (byte~) prepareMEM::$0 -- _deref_pbuc1=vbuaa 
-    sta memLo
-    // >mem
-    // [70] (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5 -- vbuaa=_hi_pbuz1 
-    lda.z mem+1
-    // *memHi = >mem
-    // [71] *((const byte*) memHi#0) ← (byte~) prepareMEM::$1 -- _deref_pbuc1=vbuaa 
-    sta memHi
-    // prepareMEM::@return
-    // }
-    // [72] return 
+    // [67] return 
     rts
 }
   // mulFACbyMEM
@@ -3093,21 +3228,28 @@ prepareMEM: {
 // mulFACbyMEM(byte* zeropage(7) mem)
 mulFACbyMEM: {
     .label mem = 7
-    // prepareMEM(mem)
-    // [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // [75] call prepareMEM 
-    // [67] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#4 [phi:mulFACbyMEM->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    // mulFACbyMEM::prepareMEM1
+    // <mem
+    // [69] (byte~) mulFACbyMEM::prepareMEM1_$0#0 ← < (word)(byte*) mulFACbyMEM::mem#2 -- vbuaa=_lo_vwuz1 
+    lda.z mem
+    // *memLo = <mem
+    // [70] *((const byte*) memLo#0) ← (byte~) mulFACbyMEM::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // >mem
+    // [71] (byte~) mulFACbyMEM::prepareMEM1_$1#0 ← > (word)(byte*) mulFACbyMEM::mem#2 -- vbuaa=_hi_vwuz1 
+    lda.z mem+1
+    // *memHi = >mem
+    // [72] *((const byte*) memHi#0) ← (byte~) mulFACbyMEM::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     // mulFACbyMEM::@1
     // asm
-    // asm { lda$fe ldy$ff jsr$ba28  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$ba28  }
+    lda memLo
+    ldy memHi
     jsr $ba28
     // mulFACbyMEM::@return
     // }
-    // [77] return 
+    // [74] return 
     rts
 }
   // sinFAC
@@ -3120,7 +3262,7 @@ sinFAC: {
     jsr $e26b
     // sinFAC::@return
     // }
-    // [79] return 
+    // [76] return 
     rts
 }
   // divMEMbyFAC
@@ -3128,24 +3270,25 @@ sinFAC: {
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
 divMEMbyFAC: {
-    // prepareMEM(mem)
-    // [81] call prepareMEM 
-    // [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
-    // [67] phi (byte*) prepareMEM::mem#5 = (const byte[]) main::f_i#0 [phi:divMEMbyFAC->prepareMEM#0] -- pbuz1=pbuc1 
-    lda #<main.f_i
-    sta.z prepareMEM.mem
-    lda #>main.f_i
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
+    .const prepareMEM1_mem = main.f_i
+    // divMEMbyFAC::prepareMEM1
+    // *memLo = <mem
+    // [78] *((const byte*) memLo#0) ← <(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #<prepareMEM1_mem
+    sta memLo
+    // *memHi = >mem
+    // [79] *((const byte*) memHi#0) ← >(const word) divMEMbyFAC::prepareMEM1_mem#0 -- _deref_pbuc1=vbuc2 
+    lda #>prepareMEM1_mem
+    sta memHi
     // divMEMbyFAC::@1
     // asm
-    // asm { lda$fe ldy$ff jsr$bb0f  }
-    lda.z $fe
-    ldy.z $ff
+    // asm { ldamemLo ldymemHi jsr$bb0f  }
+    lda memLo
+    ldy memHi
     jsr $bb0f
     // divMEMbyFAC::@return
     // }
-    // [83] return 
+    // [81] return 
     rts
 }
   // setFAC
@@ -3153,19 +3296,26 @@ divMEMbyFAC: {
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
 // setFAC(word zeropage(7) w)
 setFAC: {
+    .label prepareMEM1_mem = 7
     .label w = 7
-    // prepareMEM((byte*)w)
-    // [85] (byte*) prepareMEM::mem#0 ← (byte*)(word) setFAC::w#3
-    // [86] call prepareMEM 
-    // [67] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#0 [phi:setFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    // setFAC::prepareMEM1
+    // <mem
+    // [83] (byte~) setFAC::prepareMEM1_$0#0 ← < (word) setFAC::prepareMEM1_mem#0 -- vbuaa=_lo_vwuz1 
+    lda.z prepareMEM1_mem
+    // *memLo = <mem
+    // [84] *((const byte*) memLo#0) ← (byte~) setFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // >mem
+    // [85] (byte~) setFAC::prepareMEM1_$1#0 ← > (word) setFAC::prepareMEM1_mem#0 -- vbuaa=_hi_vwuz1 
+    lda.z prepareMEM1_mem+1
+    // *memHi = >mem
+    // [86] *((const byte*) memHi#0) ← (byte~) setFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     // setFAC::@1
     // asm
-    // asm { ldy$fe lda$ff jsr$b391  }
+    // asm { ldymemLo ldamemHi jsr$b391  }
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy.z $fe
-    lda.z $ff
+    ldy memLo
     jsr $b391
     // setFAC::@return
     // }
@@ -3179,21 +3329,28 @@ setFAC: {
 // setMEMtoFAC(byte* zeropage(7) mem)
 setMEMtoFAC: {
     .label mem = 7
-    // prepareMEM(mem)
-    // [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-    // [91] call prepareMEM 
-    // [67] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
-    // [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#1 [phi:setMEMtoFAC->prepareMEM#0] -- register_copy 
-    jsr prepareMEM
+    // setMEMtoFAC::prepareMEM1
+    // <mem
+    // [90] (byte~) setMEMtoFAC::prepareMEM1_$0#0 ← < (word)(byte*) setMEMtoFAC::mem#2 -- vbuaa=_lo_vwuz1 
+    lda.z mem
+    // *memLo = <mem
+    // [91] *((const byte*) memLo#0) ← (byte~) setMEMtoFAC::prepareMEM1_$0#0 -- _deref_pbuc1=vbuaa 
+    sta memLo
+    // >mem
+    // [92] (byte~) setMEMtoFAC::prepareMEM1_$1#0 ← > (word)(byte*) setMEMtoFAC::mem#2 -- vbuaa=_hi_vwuz1 
+    lda.z mem+1
+    // *memHi = >mem
+    // [93] *((const byte*) memHi#0) ← (byte~) setMEMtoFAC::prepareMEM1_$1#0 -- _deref_pbuc1=vbuaa 
+    sta memHi
     // setMEMtoFAC::@1
     // asm
-    // asm { ldx$fe ldy$ff jsr$bbd4  }
-    ldx.z $fe
-    ldy.z $ff
+    // asm { ldxmemLo ldymemHi jsr$bbd4  }
+    ldx memLo
+    tay
     jsr $bbd4
     // setMEMtoFAC::@return
     // }
-    // [93] return 
+    // [95] return 
     rts
 }
   // divFACby10
@@ -3205,7 +3362,7 @@ divFACby10: {
     jsr $bafe
     // divFACby10::@return
     // }
-    // [95] return 
+    // [97] return 
     rts
 }
   // File Data

@@ -169,7 +169,7 @@ init: {
     rts
 }
 clear_screen: {
-    .label sc = $13
+    .label sc = $f
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -197,15 +197,15 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-// gen_sintab(byte* zeropage($13) sintab, byte zeropage(8) length, byte zeropage(6) min, byte register(X) max)
+// gen_sintab(byte* zeropage($f) sintab, byte zeropage(8) length, byte zeropage(6) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label _24 = $f
+    .label _24 = $13
     .label i = 9
     .label min = 6
     .label length = 8
-    .label sintab = $13
+    .label sintab = $f
     txa
     sta.z setFAC.w
     lda #0
@@ -229,9 +229,9 @@ gen_sintab: {
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #<2
-    sta.z setFAC.w
+    sta.z setFAC.prepareMEM1_mem
     lda #>2
-    sta.z setFAC.w+1
+    sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     lda #<f_amp
     sta.z divMEMbyFAC.mem
@@ -334,12 +334,12 @@ progress_inc: {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 getFAC: {
-    .label return = $f
+    .label return = $13
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
-    sty.z $fe
-    sta.z $ff
-    lda memLo
+    sty memLo
+    sta memHi
+    tya
     sta.z return
     lda memHi
     sta.z return+1
@@ -350,34 +350,26 @@ getFAC: {
 // Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<gen_sintab.f_min
-    sta.z prepareMEM.mem
-    lda #>gen_sintab.f_min
-    sta.z prepareMEM.mem+1
-    jsr prepareMEM
-    lda.z $fe
-    ldy.z $ff
-    jsr $b867
-    rts
-}
-// Prepare MEM pointers for operations using MEM
-// prepareMEM(byte* zeropage($f) mem)
-prepareMEM: {
-    .label mem = $f
-    lda.z mem
     sta memLo
-    lda.z mem+1
+    lda #>gen_sintab.f_min
     sta memHi
+    lda memLo
+    ldy memHi
+    jsr $b867
     rts
 }
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-// mulFACbyMEM(byte* zeropage($f) mem)
+// mulFACbyMEM(byte* zeropage($13) mem)
 mulFACbyMEM: {
-    .label mem = $f
-    jsr prepareMEM
-    lda.z $fe
-    ldy.z $ff
+    .label mem = $13
+    lda.z mem
+    sta memLo
+    lda.z mem+1
+    sta memHi
+    lda memLo
+    ldy memHi
     jsr $ba28
     rts
 }
@@ -391,36 +383,45 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
-// divMEMbyFAC(byte* zeropage($f) mem)
+// divMEMbyFAC(byte* zeropage($13) mem)
 divMEMbyFAC: {
-    .label mem = $f
-    jsr prepareMEM
-    lda.z $fe
-    ldy.z $ff
+    .label mem = $13
+    lda.z mem
+    sta memLo
+    lda.z mem+1
+    sta memHi
+    lda memLo
+    ldy memHi
     jsr $bb0f
     rts
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-// setFAC(word zeropage($f) w)
+// setFAC(word zeropage($13) w)
 setFAC: {
-    .label w = $f
-    jsr prepareMEM
+    .label prepareMEM1_mem = $13
+    .label w = $13
+    lda.z prepareMEM1_mem
+    sta memLo
+    lda.z prepareMEM1_mem+1
+    sta memHi
     // Load word register Y,A into FAC (floating point accumulator)
-    ldy.z $fe
-    lda.z $ff
+    ldy memLo
     jsr $b391
     rts
 }
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zeropage($f) mem)
+// setMEMtoFAC(byte* zeropage($13) mem)
 setMEMtoFAC: {
-    .label mem = $f
-    jsr prepareMEM
-    ldx.z $fe
-    ldy.z $ff
+    .label mem = $13
+    lda.z mem
+    sta memLo
+    lda.z mem+1
+    sta memHi
+    ldx memLo
+    tay
     jsr $bbd4
     rts
 }

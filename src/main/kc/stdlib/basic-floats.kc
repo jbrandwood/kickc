@@ -3,23 +3,23 @@
 // See http://www.pagetable.com/c64rom/c64rom_sc.html
 
 // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
-const byte* memLo = $fe;
-const byte* memHi = $ff;
+const char* memLo = 0xfe;
+const char* memHi = 0xff;
 
 // Prepare MEM pointers for operations using MEM
-void prepareMEM(byte* mem) {
+inline void prepareMEM(unsigned int mem) {
     *memLo = <mem;
     *memHi = >mem;
 }
 
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-void setFAC(word w) {
-    prepareMEM((byte*)w);
+void setFAC(unsigned int w) {
+    prepareMEM(w);
     // Load word register Y,A into FAC (floating point accumulator)
     asm {
-        ldy $fe
-        lda $ff
+        ldy memLo
+        lda memHi
         jsr $b391
     }
 }
@@ -27,14 +27,14 @@ void setFAC(word w) {
 // word = FAC
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
-word getFAC() {
+unsigned int getFAC() {
     // Load FAC (floating point accumulator) integer part into word register Y,A
     asm {
         jsr $b1aa
-        sty $fe
-        sta $ff
+        sty memLo
+        sta memHi
     }
-    word w = { *memHi, *memLo};
+    unsigned int w = { *memHi, *memLo };
     return w;
 }
 
@@ -57,11 +57,11 @@ void setFACtoARG() {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-void setMEMtoFAC(byte* mem) {
-    prepareMEM(mem);
+void setMEMtoFAC(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        ldx $fe
-        ldy $ff
+        ldx memLo
+        ldy memHi
         jsr $bbd4
     }
 }
@@ -69,11 +69,11 @@ void setMEMtoFAC(byte* mem) {
 // FAC = MEM
 // Set the FAC to value from MEM (float saved in memory)
 // Reads 5 bytes
-void setFACtoMEM(byte* mem) {
-    prepareMEM(mem);
+void setFACtoMEM(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm(clobbers "AY") {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $bba2
     }
 }
@@ -103,11 +103,11 @@ void setFACto2PI() {
 // ARG = MEM
 // Load the ARG from memory
 // Reads 5 bytes
-void setARGtoMEM(byte* mem) {
-    prepareMEM(mem);
+void setARGtoMEM(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm(clobbers "AY") {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $ba8c
     }
 }
@@ -115,11 +115,11 @@ void setARGtoMEM(byte* mem) {
 // FAC = MEM+FAC
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
 // Reads 5 bytes from memory
-void addMEMtoFAC(byte* mem) {
-    prepareMEM(mem);
+void addMEMtoFAC(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        lda $fe //memLo
-        ldy $ff //memHi
+        lda memLo //memLo
+        ldy memHi //memHi
         jsr $b867
     }
 }
@@ -135,11 +135,11 @@ void addARGtoFAC() {
 // FAC = MEM-FAC
 // Set FAC to MEM (float saved in memory) minus FAC (float accumulator)
 // Reads 5 bytes from memory
-void subFACfromMEM(byte* mem) {
-    prepareMEM(mem);
+void subFACfromMEM(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $b850
     }
 }
@@ -155,11 +155,11 @@ void subFACfromARG() {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
-void divMEMbyFAC(byte* mem) {
-    prepareMEM(mem);
+void divMEMbyFAC(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $bb0f
     }
 }
@@ -167,11 +167,11 @@ void divMEMbyFAC(byte* mem) {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-void mulFACbyMEM(byte* mem) {
-    prepareMEM(mem);
+void mulFACbyMEM(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $ba28
     }
 }
@@ -179,11 +179,11 @@ void mulFACbyMEM(byte* mem) {
 // FAC = MEM^FAC
 // Set FAC to MEM (float saved in memory) raised to power of FAC (float accumulator)
 // Reads 5 bytes from memory
-void pwrMEMbyFAC(byte* mem) {
-    prepareMEM(mem);
+void pwrMEMbyFAC(char* mem) {
+    prepareMEM((unsigned int)mem);
     asm {
-        lda $fe
-        ldy $ff
+        lda memLo
+        ldy memHi
         jsr $bf78
     }
 }

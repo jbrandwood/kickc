@@ -1,39 +1,22 @@
-// XMega65 Kernal Development Template
+// Atari Tempest ROM Development Template
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
 
-#pragma link("xmega65.ld")
+#pragma link("ataritempest.ld")
+
+const char* BGCOL = 0xc01a;
 
 void main() {
-    char i=0;
-    // Call SYSCALL functions one at a time
-    while(true) {
-        void()* fsyscall = FSYSCALLS[i*2];
-        (*fsyscall)();
-        if(++i==2) i=0;
-    }
-}
-
-void fn1() {
-    const char* BORDERCOL = $d020;
-    (*BORDERCOL)++;
-}
-
-void fn2() {
-    const char* BGCOL = $d021;
     (*BGCOL)++;
 }
 
-#pragma data_seg(Syscall)
+void entryPoint() {
+    (*BGCOL)++;
+}
 
-const char JMP = 0x4c;
-const char NOP = 0xea;
+void interrupt(HARDWARE_ALL) nmiHandler() {
+    (*BGCOL)++;
+}
 
-export char[] SYSCALLS = {
-    JMP, <&fn1, >&fn1, NOP,
-    JMP, <&fn2, >&fn2, NOP
-    };
-
-export align(0x100) char[] SYSCALL_RESET = { JMP, <&main, >&main, NOP };
-
-const void()** FSYSCALLS = (void()**)(SYSCALLS+1);
+#pragma data_seg(Vectors)
+export const void()*[] VECTORS = { &nmiHandler, &entryPoint };

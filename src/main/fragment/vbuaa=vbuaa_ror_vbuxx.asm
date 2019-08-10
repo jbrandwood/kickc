@@ -1,4 +1,4 @@
-ldx {z1}
+cpx #0
 beq !e+
 !:
 ror

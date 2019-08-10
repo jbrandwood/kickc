@@ -517,22 +517,18 @@ utoa: {
     cpx #1
     beq b7
     lda.z value+1
-    cmp #>$64
-    bcc !+
     bne b7
     lda.z value
-    cmp #<$64
+    cmp #$64
     bcs b7
   !:
   b3:
     cpx #1
     beq b8
     lda.z value+1
-    cmp #>$a
-    bcc !+
     bne b8
     lda.z value
-    cmp #<$a
+    cmp #$a
     bcs b8
   !:
   b4:

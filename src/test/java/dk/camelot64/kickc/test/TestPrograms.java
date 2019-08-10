@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtariTempest() throws IOException, URISyntaxException {
+      compileAndCompare("complex/ataritempest/ataritempest");
+   }
+
+   @Test
    public void testXMega65() throws IOException, URISyntaxException {
       compileAndCompare("complex/xmega65/xmega65");
    }
@@ -2173,7 +2178,7 @@ public class TestPrograms {
 
    @Test
    public void testVarRegisterNoarg() throws IOException, URISyntaxException {
-      compileAndCompare("var-register-noarg", log());
+      compileAndCompare("var-register-noarg");
    }
 
    @Test

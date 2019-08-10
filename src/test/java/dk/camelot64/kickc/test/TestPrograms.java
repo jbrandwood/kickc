@@ -2167,6 +2167,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarRegisterNoarg() throws IOException, URISyntaxException {
+      compileAndCompare("var-register-noarg", log());
+   }
+
+   @Test
    public void testDword() throws IOException, URISyntaxException {
       compileAndCompare("dword");
    }

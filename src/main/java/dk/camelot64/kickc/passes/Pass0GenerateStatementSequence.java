@@ -678,11 +678,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
-            Registers.Register register = Registers.getRegister(directiveRegister.getName());
-            if(register == null) {
-               throw new CompileError("Error! Unknown register " + directiveRegister.getName(), source);
+            if(directiveRegister.getName()!=null) {
+               // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
+               Registers.Register register = Registers.getRegister(directiveRegister.getName());
+               if(register == null) {
+                  throw new CompileError("Error! Unknown register " + directiveRegister.getName(), source);
+               }
+               lValue.setDeclaredRegister(register);
             }
-            lValue.setDeclaredRegister(register);
          } else {
             throw new CompileError("Unsupported variable directive " + directive, source);
          }
@@ -772,7 +775,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
-      String name = ctx.NAME().getText();
+      String name = null;
+      if(ctx.NAME()!=null) {
+         name = ctx.NAME().getText();
+      }
       return new DirectiveRegister(name);
    }
 

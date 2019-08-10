@@ -79,7 +79,7 @@ directive
     : 'const' #directiveConst
     | 'extern' #directiveExtern
     | 'align' '(' NUMBER ')' #directiveAlign
-    | 'register' '(' NAME ')' #directiveRegister
+    | 'register' ( '(' NAME ')')? #directiveRegister
     | 'inline' #directiveInline
     | 'volatile' #directiveVolatile
     | 'interrupt' ( '(' NAME ')' )? #directiveInterrupt

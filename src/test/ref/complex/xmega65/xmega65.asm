@@ -8,46 +8,83 @@
 .segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  .label VIC_MEMORY = $d018
+  .label SCREEN = $400
+  .label COLS = $d800
+  .const WHITE = 1
   .const JMP = $4c
   .const NOP = $ea
-  .label FSYSCALLS = SYSCALLS+1
 .segment Code
 main: {
-    .label fsyscall = 3
-    .label i = 2
+    .label msg = 2
+    .label sc = 4
+    .label cols = 6
+    // Initialize screen memory
+    lda #$14
+    sta VIC_MEMORY
+    lda #<COLS
+    sta.z cols
+    lda #>COLS
+    sta.z cols+1
+    lda #<SCREEN
+    sta.z sc
+    lda #>SCREEN
+    sta.z sc+1
+    lda #<MESSAGE
+    sta.z msg
+    lda #>MESSAGE
+    sta.z msg+1
   b1:
-    lda #0
-    sta.z i
-  // Call SYSCALL functions one at a time
-  b2:
-    lda.z i
-    asl
-    asl
-    tay
-    lda FSYSCALLS,y
-    sta.z fsyscall
-    lda FSYSCALLS+1,y
-    sta.z fsyscall+1
-    jsr bi_fsyscall
-    inc.z i
-    lda #2
-    cmp.z i
+    ldy #0
+    lda (msg),y
+    cmp #0
     bne b2
+  b3:
+  // Loop forever
+    jmp b3
+  b2:
+    ldy #0
+    lda (msg),y
+    sta (sc),y
+    lda #WHITE
+    sta (cols),y
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
     jmp b1
-  bi_fsyscall:
-    jmp (fsyscall)
 }
-fn2: {
+syscall2: {
     .label BGCOL = $d021
     inc BGCOL
     rts
 }
-fn1: {
+syscall1: {
     .label BORDERCOL = $d020
     inc BORDERCOL
     rts
 }
+.segment Data
+  MESSAGE: .text "hello world!"
+  .byte 0
 .segment Syscall
-  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP
+SYSCALLS:
+  .byte JMP
+  .word syscall1
+  .byte NOP
+  .byte JMP
+  .word syscall2
+  .byte NOP
   .align $100
-  SYSCALL_RESET: .byte JMP, <main, >main, NOP
+SYSCALL_RESET:
+  .byte JMP
+  .word main
+  .byte NOP

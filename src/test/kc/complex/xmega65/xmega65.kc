@@ -4,36 +4,56 @@
 
 #pragma link("xmega65.ld")
 
+const char* VIC_MEMORY = 0xd018;
+const char* SCREEN = 0x0400;
+const char* COLS = 0xd800;
+const char WHITE = 1;
+
+char[] MESSAGE = "hello world!";
+
 void main() {
-    char i=0;
-    // Call SYSCALL functions one at a time
+    // Initialize screen memory
+    *VIC_MEMORY = 0x14;
+
+    // Print message in white
+    char* sc = SCREEN;
+    char* cols = COLS;
+    for(char* msg = MESSAGE; *msg; msg++, sc++, cols++) {
+        *sc = *msg;
+        *cols = WHITE;
+    }
+
+    // Loop forever
     while(true) {
-        void()* fsyscall = FSYSCALLS[i*2];
-        (*fsyscall)();
-        if(++i==2) i=0;
     }
 }
 
-void fn1() {
+void syscall1() {
     const char* BORDERCOL = $d020;
     (*BORDERCOL)++;
 }
 
-void fn2() {
+void syscall2() {
     const char* BGCOL = $d021;
     (*BGCOL)++;
 }
 
 #pragma data_seg(Syscall)
 
+struct SysCall {
+    char xjmp;
+    void()* syscall;
+    char xnop;
+};
+
 const char JMP = 0x4c;
 const char NOP = 0xea;
 
-export char[] SYSCALLS = {
-    JMP, <&fn1, >&fn1, NOP,
-    JMP, <&fn2, >&fn2, NOP
+export struct SysCall[] SYSCALLS = {
+    { JMP, &syscall1, NOP },
+    { JMP, &syscall2, NOP }
     };
 
-export align(0x100) char[] SYSCALL_RESET = { JMP, <&main, >&main, NOP };
-
-const void()** FSYSCALLS = (void()**)(SYSCALLS+1);
+export align(0x100) struct SysCall[] SYSCALL_RESET = {
+    { JMP, &main, NOP }
+};

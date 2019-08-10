@@ -1,75 +1,76 @@
 Loading link script "xmega65.ld"
-Resolved forward reference FSYSCALLS to (void()**) FSYSCALLS
-Fixing pointer array-indexing *((void()**) FSYSCALLS + (number~) main::$0)
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@6
+Warning! Adding boolean cast to non-boolean condition *((byte*) main::msg)
 Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@8
+Culled Empty Block (label) main::@10
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@11
+Culled Empty Block (label) main::@12
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  (byte*) VIC_MEMORY#0 ← ((byte*)) (number) $d018
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) COLS#0 ← ((byte*)) (number) $d800
+  (byte) WHITE#0 ← (number) 1
+  (byte[]) MESSAGE#0 ← (const string) $3
   to:@3
 main: scope:[main]  from @3
-  (byte) main::i#0 ← (number) 0
+  *((byte*) VIC_MEMORY#0) ← (number) $14
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte*) main::cols#0 ← (byte*) COLS#0
+  (byte*) main::msg#0 ← (byte[]) MESSAGE#0
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@7
-  (byte) main::i#4 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 main::@7/(byte) main::i#2 )
-  if(true) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#4 )
-  (number~) main::$0 ← (byte) main::i#3 * (number) 2
-  (number~) main::$4 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::fsyscall#0 ← *((void()**) FSYSCALLS#0 + (number~) main::$4)
-  call *((void()*) main::fsyscall#0) 
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  (bool~) main::$2 ← (byte) main::i#1 == (number) 2
-  (bool~) main::$3 ← ! (bool~) main::$2
-  if((bool~) main::$3) goto main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte*) main::cols#3 ← phi( main/(byte*) main::cols#0 main::@2/(byte*) main::cols#1 )
+  (byte*) main::sc#3 ← phi( main/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
+  (byte*) main::msg#2 ← phi( main/(byte*) main::msg#0 main::@2/(byte*) main::msg#1 )
+  (bool~) main::$0 ← (number) 0 != *((byte*) main::msg#2)
+  if((bool~) main::$0) goto main::@2
   to:main::@7
-main::@7: scope:[main]  from main::@2
-  (byte) main::i#2 ← (number) 0
+main::@2: scope:[main]  from main::@1
+  (byte*) main::cols#2 ← phi( main::@1/(byte*) main::cols#3 )
+  (byte*) main::sc#2 ← phi( main::@1/(byte*) main::sc#3 )
+  (byte*) main::msg#3 ← phi( main::@1/(byte*) main::msg#2 )
+  *((byte*) main::sc#2) ← *((byte*) main::msg#3)
+  *((byte*) main::cols#2) ← (byte) WHITE#0
+  (byte*) main::msg#1 ← ++ (byte*) main::msg#3
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#2
+  (byte*) main::cols#1 ← ++ (byte*) main::cols#2
   to:main::@1
-main::@return: scope:[main]  from main::@1
+main::@7: scope:[main]  from main::@1 main::@7
+  if(true) goto main::@7
+  to:main::@return
+main::@return: scope:[main]  from main::@7
   return 
   to:@return
-fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
-  to:fn1::@return
-fn1::@return: scope:[fn1]  from fn1
+syscall1: scope:[syscall1]  from
+  (byte*) syscall1::BORDERCOL#0 ← ((byte*)) (number) $d020
+  *((byte*) syscall1::BORDERCOL#0) ← ++ *((byte*) syscall1::BORDERCOL#0)
+  to:syscall1::@return
+syscall1::@return: scope:[syscall1]  from syscall1
   return 
   to:@return
-fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL#0 ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL#0) ← ++ *((byte*) fn2::BGCOL#0)
-  to:fn2::@return
-fn2::@return: scope:[fn2]  from fn2
+syscall2: scope:[syscall2]  from
+  (byte*) syscall2::BGCOL#0 ← ((byte*)) (number) $d021
+  *((byte*) syscall2::BGCOL#0) ← ++ *((byte*) syscall2::BGCOL#0)
+  to:syscall2::@return
+syscall2::@return: scope:[syscall2]  from syscall2
   return 
   to:@return
 @3: scope:[]  from @begin
   (byte) JMP#0 ← (number) $4c
   (byte) NOP#0 ← (number) $ea
-  (void()*~) $0 ← & (void()) fn1()
-  (byte~) $1 ← < (void()*~) $0
-  (void()*~) $2 ← & (void()) fn1()
-  (byte~) $3 ← > (void()*~) $2
-  (void()*~) $4 ← & (void()) fn2()
-  (byte~) $5 ← < (void()*~) $4
-  (void()*~) $6 ← & (void()) fn2()
-  (byte~) $7 ← > (void()*~) $6
-  (byte[]) SYSCALLS#0 ← { (byte) JMP#0, (byte~) $1, (byte~) $3, (byte) NOP#0, (byte) JMP#0, (byte~) $5, (byte~) $7, (byte) NOP#0 }
-  (void()*~) $8 ← & (void()) main()
-  (byte~) $9 ← < (void()*~) $8
-  (void()*~) $10 ← & (void()) main()
-  (byte~) $11 ← > (void()*~) $10
-  (byte[]) SYSCALL_RESET#0 ← { (byte) JMP#0, (byte~) $9, (byte~) $11, (byte) NOP#0 }
-  (byte*~) $12 ← (byte[]) SYSCALLS#0 + (number) 1
-  (void()**~) $13 ← ((void()**)) (byte*~) $12
-  (void()**) FSYSCALLS#0 ← (void()**~) $13
+  (void()*~) $0 ← & (void()) syscall1()
+  (void()*~) $1 ← & (void()) syscall2()
+  (struct SysCall[]) SYSCALLS#0 ← { { (byte) JMP#0, (void()*~) $0, (byte) NOP#0 }, { (byte) JMP#0, (void()*~) $1, (byte) NOP#0 } }
+  (void()*~) $2 ← & (void()) main()
+  (struct SysCall[]) SYSCALL_RESET#0 ← { { (byte) JMP#0, (void()*~) $2, (byte) NOP#0 } }
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -78,203 +79,168 @@ fn2::@return: scope:[fn2]  from fn2
 
 SYMBOL TABLE SSA
 (void()*~) $0
-(byte~) $1
-(void()*~) $10
-(byte~) $11
-(byte*~) $12
-(void()**~) $13
+(void()*~) $1
 (void()*~) $2
-(byte~) $3
-(void()*~) $4
-(byte~) $5
-(void()*~) $6
-(byte~) $7
-(void()*~) $8
-(byte~) $9
+(const string) $3 = (string) "hello world!"
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(void()**) FSYSCALLS
-(void()**) FSYSCALLS#0
+(byte*) COLS
+(byte*) COLS#0
 (byte) JMP
 (byte) JMP#0
+(byte[]) MESSAGE
+(byte[]) MESSAGE#0
 (byte) NOP
 (byte) NOP#0
-(const byte) SIZEOF_POINTER = (byte) 2
-(byte[]) SYSCALLS
-(byte[]) SYSCALLS#0
-(byte[]) SYSCALL_RESET
-(byte[]) SYSCALL_RESET#0
-(void()) fn1()
-(label) fn1::@return
-(byte*) fn1::BORDERCOL
-(byte*) fn1::BORDERCOL#0
-(void()) fn2()
-(label) fn2::@return
-(byte*) fn2::BGCOL
-(byte*) fn2::BGCOL#0
+(byte*) SCREEN
+(byte*) SCREEN#0
+(struct SysCall[]) SYSCALLS
+(struct SysCall[]) SYSCALLS#0
+(struct SysCall[]) SYSCALL_RESET
+(struct SysCall[]) SYSCALL_RESET#0
+(void()*) SysCall::syscall
+(byte) SysCall::xjmp
+(byte) SysCall::xnop
+(byte*) VIC_MEMORY
+(byte*) VIC_MEMORY#0
+(byte) WHITE
+(byte) WHITE#0
 (void()) main()
-(number~) main::$0
-(bool~) main::$2
-(bool~) main::$3
-(number~) main::$4
+(bool~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@7
 (label) main::@return
-(void()*) main::fsyscall
-(void()*) main::fsyscall#0
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(byte) main::i#4
+(byte*) main::cols
+(byte*) main::cols#0
+(byte*) main::cols#1
+(byte*) main::cols#2
+(byte*) main::cols#3
+(byte*) main::msg
+(byte*) main::msg#0
+(byte*) main::msg#1
+(byte*) main::msg#2
+(byte*) main::msg#3
+(byte*) main::sc
+(byte*) main::sc#0
+(byte*) main::sc#1
+(byte*) main::sc#2
+(byte*) main::sc#3
+(void()) syscall1()
+(label) syscall1::@return
+(byte*) syscall1::BORDERCOL
+(byte*) syscall1::BORDERCOL#0
+(void()) syscall2()
+(label) syscall2::@return
+(byte*) syscall2::BGCOL
+(byte*) syscall2::BGCOL#0
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) 2 in (number~) main::$0 ← (byte) main::i#3 * (number) 2
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#3 * (unumber)(number) 2
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber~) main::$0 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) 2 in (bool~) main::$2 ← (byte) main::i#1 == (number) 2
-Adding number conversion cast (unumber) 0 in (byte) main::i#2 ← (number) 0
+Adding number conversion cast (unumber) 1 in (byte) WHITE#0 ← (number) 1
+Adding number conversion cast (unumber) $14 in *((byte*) VIC_MEMORY#0) ← (number) $14
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((byte*) main::msg#2)
 Adding number conversion cast (unumber) $4c in (byte) JMP#0 ← (number) $4c
 Adding number conversion cast (unumber) $ea in (byte) NOP#0 ← (number) $ea
-Adding number conversion cast (unumber) 1 in (byte*~) $12 ← (byte[]) SYSCALLS#0 + (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte) main::i#2 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) VIC_MEMORY#0 ← (byte*)(number) $d018
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) COLS#0 ← (byte*)(number) $d800
+Inlining cast (byte) WHITE#0 ← (unumber)(number) 1
+Inlining cast *((byte*) VIC_MEMORY#0) ← (unumber)(number) $14
+Inlining cast (byte*) syscall1::BORDERCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte*) syscall2::BGCOL#0 ← (byte*)(number) $d021
 Inlining cast (byte) JMP#0 ← (unumber)(number) $4c
 Inlining cast (byte) NOP#0 ← (unumber)(number) $ea
-Inlining cast (void()**~) $13 ← (void()**)(byte*~) $12
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 2
-Simplifying constant integer cast 2
+Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
+Simplifying constant integer cast 1
+Simplifying constant integer cast $14
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast $4c
 Simplifying constant integer cast $ea
-Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $4c
 Finalized unsigned number type (byte) $ea
-Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#3 * (byte) 2
-Inferred type updated to byte in (unumber~) main::$4 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
-Inversing boolean not [10] (bool~) main::$3 ← (byte) main::i#1 != (byte) 2 from [9] (bool~) main::$2 ← (byte) main::i#1 == (byte) 2
-Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) main::i#3 = (byte) main::i#4 
-Alias (void()**) FSYSCALLS#0 = (void()**~) $13 
+Alias (byte*) main::msg#2 = (byte*) main::msg#3 
+Alias (byte*) main::sc#2 = (byte*) main::sc#3 
+Alias (byte*) main::cols#2 = (byte*) main::cols#3 
 Successful SSA optimization Pass2AliasElimination
-Identified duplicate assignment right side [24] (void()*~) $2 ← & (void()) fn1()
-Identified duplicate assignment right side [28] (void()*~) $6 ← & (void()) fn2()
-Identified duplicate assignment right side [33] (void()*~) $10 ← & (void()) main()
-Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$3 [11] if((byte) main::i#1!=(byte) 2) goto main::@1
+Simple Condition (bool~) main::$0 [11] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [22] (void()*~) $0 ← & (void()) fn1()
-Constant right-side identified [26] (void()*~) $4 ← & (void()) fn2()
-Constant right-side identified [31] (void()*~) $8 ← & (void()) main()
+Constant right-side identified [28] (void()*~) $0 ← & (void()) syscall1()
+Constant right-side identified [29] (void()*~) $1 ← & (void()) syscall2()
+Constant right-side identified [31] (void()*~) $2 ← & (void()) main()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#0 = 0
-Constant (const byte) main::i#2 = 0
-Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) fn2::BGCOL#0 = (byte*) 53281
+Constant (const byte*) VIC_MEMORY#0 = (byte*) 53272
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) COLS#0 = (byte*) 55296
+Constant (const byte) WHITE#0 = 1
+Constant (const byte[]) MESSAGE#0 = $3
+Constant (const byte*) syscall1::BORDERCOL#0 = (byte*) 53280
+Constant (const byte*) syscall2::BGCOL#0 = (byte*) 53281
 Constant (const byte) JMP#0 = $4c
 Constant (const byte) NOP#0 = $ea
-Constant (const void()*) $0 = &fn1
-Constant (const void()*) $4 = &fn2
-Constant (const void()*) $8 = &main
+Constant (const void()*) $0 = &syscall1
+Constant (const void()*) $1 = &syscall2
+Constant (const void()*) $2 = &main
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const void()*) $2 = $0
-Constant (const void()*) $6 = $4
-Constant (const void()*) $10 = $8
+Constant (const byte*) main::sc#0 = SCREEN#0
+Constant (const byte*) main::cols#0 = COLS#0
+Constant (const byte*) main::msg#0 = MESSAGE#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [2] if(true) goto main::@2
+if() condition always true - replacing block destination [18] if(true) goto main::@7
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [11] (byte~) $1 ← < (const void()*) $0
-Constant right-side identified [12] (byte~) $3 ← > (const void()*) $2
-Constant right-side identified [13] (byte~) $5 ← < (const void()*) $4
-Constant right-side identified [14] (byte~) $7 ← > (const void()*) $6
-Constant right-side identified [16] (byte~) $9 ← < (const void()*) $8
-Constant right-side identified [17] (byte~) $11 ← > (const void()*) $10
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) $1 = <$0
-Constant (const byte) $3 = >$2
-Constant (const byte) $5 = <$4
-Constant (const byte) $7 = >$6
-Constant (const byte) $9 = <$8
-Constant (const byte) $11 = >$10
-Successful SSA optimization Pass2ConstantIdentification
-Identified constant from value list (byte[]) { (const byte) JMP#0, (const byte) $1, (const byte) $3, (const byte) NOP#0, (const byte) JMP#0, (const byte) $5, (const byte) $7, (const byte) NOP#0 }
-Identified constant from value list (byte[]) { (const byte) JMP#0, (const byte) $9, (const byte) $11, (const byte) NOP#0 }
+Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP#0, syscall: (const void()*) $0, xnop: (const byte) NOP#0 }
+Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP#0, syscall: (const void()*) $1, xnop: (const byte) NOP#0 }
+Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP#0, syscall: (const void()*) $2, xnop: (const byte) NOP#0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) SYSCALLS#0 = { JMP#0, $1, $3, NOP#0, JMP#0, $5, $7, NOP#0 }
-Constant (const byte[]) SYSCALL_RESET#0 = { JMP#0, $9, $11, NOP#0 }
+Identified constant from value list (struct SysCall[]) { { xjmp: (const byte) JMP#0, syscall: (const void()*) $0, xnop: (const byte) NOP#0 }, { xjmp: (const byte) JMP#0, syscall: (const void()*) $1, xnop: (const byte) NOP#0 } }
+Identified constant from value list (struct SysCall[]) { { xjmp: (const byte) JMP#0, syscall: (const void()*) $2, xnop: (const byte) NOP#0 } }
+Successful SSA optimization Pass2ConstantInitializerValueLists
+Constant (const struct SysCall[]) SYSCALLS#0 = { { xjmp: JMP#0, syscall: $0, xnop: NOP#0 }, { xjmp: JMP#0, syscall: $1, xnop: NOP#0 } }
+Constant (const struct SysCall[]) SYSCALL_RESET#0 = { { xjmp: JMP#0, syscall: $2, xnop: NOP#0 } }
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [11] (byte*~) $12 ← (const byte[]) SYSCALLS#0 + (byte) 1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) $12 = SYSCALLS#0+1
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void()**)$12 in [12] (void()**) FSYSCALLS#0 ← (void()**)(const byte*) $12
-Successful SSA optimization Pass2ConstantValues
-Constant (const void()**) FSYSCALLS#0 = (void()**)$12
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [1] (byte~) main::$0 ← (byte) main::i#3 * (byte) 2
-Rewriting multiplication to use shift [2] (byte~) main::$4 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
-Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte) main::i#2
-Constant inlined $10 = &(void()) main()
-Constant inlined $11 = >&(void()) main()
-Constant inlined $12 = (const byte[]) SYSCALLS#0+(byte) 1
-Constant inlined $0 = &(void()) fn1()
-Constant inlined $1 = <&(void()) fn1()
-Constant inlined $2 = &(void()) fn1()
-Constant inlined $3 = >&(void()) fn1()
-Constant inlined $4 = &(void()) fn2()
-Constant inlined $5 = <&(void()) fn2()
-Constant inlined $6 = &(void()) fn2()
-Constant inlined $7 = >&(void()) fn2()
-Constant inlined $8 = &(void()) main()
-Constant inlined $9 = <&(void()) main()
-Constant inlined main::i#0 = (byte) 0
-Constant inlined main::i#2 = (byte) 0
+Inlining constant with var siblings (const byte*) main::sc#0
+Inlining constant with var siblings (const byte*) main::cols#0
+Inlining constant with var siblings (const byte*) main::msg#0
+Constant inlined main::cols#0 = (const byte*) COLS#0
+Constant inlined main::sc#0 = (const byte*) SCREEN#0
+Constant inlined main::msg#0 = (const byte[]) MESSAGE#0
+Constant inlined $0 = &(void()) syscall1()
+Constant inlined $1 = &(void()) syscall2()
+Constant inlined $2 = &(void()) main()
+Constant inlined $3 = (const byte[]) MESSAGE#0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant (const byte) SIZEOF_POINTER
-Successful SSA optimization PassNEliminateUnusedVars
-Added new block during phi lifting main::@9(between main::@2 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@7
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 1 initial phi equivalence classes
-Coalesced [14] main::i#5 ← main::i#1
-Coalesced down to 1 phi equivalence classes
+Created 3 initial phi equivalence classes
+Coalesced [14] main::msg#4 ← main::msg#1
+Coalesced [15] main::sc#4 ← main::sc#1
+Coalesced [16] main::cols#4 ← main::cols#1
+Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) main::@7
 Renumbering block @3 to @1
-Renumbering block main::@9 to main::@3
+Renumbering block main::@7 to main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
@@ -288,69 +254,77 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] phi()
+  [4] *((const byte*) VIC_MEMORY#0) ← (byte) $14
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@3
-  [5] (byte) main::i#3 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 main::@2/(byte) 0 )
-  to:main::@2
+main::@1: scope:[main]  from main main::@2
+  [5] (byte*) main::cols#2 ← phi( main/(const byte*) COLS#0 main::@2/(byte*) main::cols#1 )
+  [5] (byte*) main::sc#2 ← phi( main/(const byte*) SCREEN#0 main::@2/(byte*) main::sc#1 )
+  [5] (byte*) main::msg#2 ← phi( main/(const byte[]) MESSAGE#0 main::@2/(byte*) main::msg#1 )
+  [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@1 main::@3
+  [7] phi()
+  to:main::@3
 main::@2: scope:[main]  from main::@1
-  [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1
-  [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1
-  [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4)
-  [9] call *((void()*) main::fsyscall#0) 
-  [10] (byte) main::i#1 ← ++ (byte) main::i#3
-  [11] if((byte) main::i#1!=(byte) 2) goto main::@3
+  [8] *((byte*) main::sc#2) ← *((byte*) main::msg#2)
+  [9] *((byte*) main::cols#2) ← (const byte) WHITE#0
+  [10] (byte*) main::msg#1 ← ++ (byte*) main::msg#2
+  [11] (byte*) main::sc#1 ← ++ (byte*) main::sc#2
+  [12] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
   to:main::@1
-main::@3: scope:[main]  from main::@2
-  [12] phi()
-  to:main::@1
-fn2: scope:[fn2]  from
-  [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0)
-  to:fn2::@return
-fn2::@return: scope:[fn2]  from fn2
+syscall2: scope:[syscall2]  from
+  [13] *((const byte*) syscall2::BGCOL#0) ← ++ *((const byte*) syscall2::BGCOL#0)
+  to:syscall2::@return
+syscall2::@return: scope:[syscall2]  from syscall2
   [14] return 
   to:@return
-fn1: scope:[fn1]  from
-  [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0)
-  to:fn1::@return
-fn1::@return: scope:[fn1]  from fn1
+syscall1: scope:[syscall1]  from
+  [15] *((const byte*) syscall1::BORDERCOL#0) ← ++ *((const byte*) syscall1::BORDERCOL#0)
+  to:syscall1::@return
+syscall1::@return: scope:[syscall1]  from syscall1
   [16] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-(void()**) FSYSCALLS
+(byte*) COLS
 (byte) JMP
+(byte[]) MESSAGE
 (byte) NOP
-(byte[]) SYSCALLS
-(byte[]) SYSCALL_RESET
-(void()) fn1()
-(byte*) fn1::BORDERCOL
-(void()) fn2()
-(byte*) fn2::BGCOL
+(byte*) SCREEN
+(struct SysCall[]) SYSCALLS
+(struct SysCall[]) SYSCALL_RESET
+(void()*) SysCall::syscall
+(byte) SysCall::xjmp
+(byte) SysCall::xnop
+(byte*) VIC_MEMORY
+(byte) WHITE
 (void()) main()
-(byte~) main::$0 202.0
-(byte~) main::$4 202.0
-(void()*) main::fsyscall
-(void()*) main::fsyscall#0 101.0
-(byte) main::i
-(byte) main::i#1 71.0
-(byte) main::i#3 42.599999999999994
+(byte*) main::cols
+(byte*) main::cols#1 22.0
+(byte*) main::cols#2 5.5
+(byte*) main::msg
+(byte*) main::msg#1 7.333333333333333
+(byte*) main::msg#2 11.0
+(byte*) main::sc
+(byte*) main::sc#1 11.0
+(byte*) main::sc#2 6.6000000000000005
+(void()) syscall1()
+(byte*) syscall1::BORDERCOL
+(void()) syscall2()
+(byte*) syscall2::BGCOL
 
 Initial phi equivalence classes
-[ main::i#3 main::i#1 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::$4 to zero page equivalence class [ main::$4 ]
-Added variable main::fsyscall#0 to zero page equivalence class [ main::fsyscall#0 ]
+[ main::msg#2 main::msg#1 ]
+[ main::sc#2 main::sc#1 ]
+[ main::cols#2 main::cols#1 ]
 Complete equivalence classes
-[ main::i#3 main::i#1 ]
-[ main::$0 ]
-[ main::$4 ]
-[ main::fsyscall#0 ]
-Allocated zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::$0 ]
-Allocated zp ZP_BYTE:4 [ main::$4 ]
-Allocated zp ZP_WORD:5 [ main::fsyscall#0 ]
+[ main::msg#2 main::msg#1 ]
+[ main::sc#2 main::sc#1 ]
+[ main::cols#2 main::cols#1 ]
+Allocated zp ZP_WORD:2 [ main::msg#2 main::msg#1 ]
+Allocated zp ZP_WORD:4 [ main::sc#2 main::sc#1 ]
+Allocated zp ZP_WORD:6 [ main::cols#2 main::cols#1 ]
 
 INITIAL ASM
 Target platform is custom
@@ -367,9 +341,12 @@ Target platform is custom
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
   // Global Constants & labels
+  .label VIC_MEMORY = $d018
+  .label SCREEN = $400
+  .label COLS = $d800
+  .const WHITE = 1
   .const JMP = $4c
   .const NOP = $ea
-  .label FSYSCALLS = SYSCALLS+1
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -378,8 +355,6 @@ b1_from_bbegin:
   // @1
 b1:
   // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
@@ -389,118 +364,140 @@ bend:
 .segment Code
   // main
 main: {
-    .label _0 = 3
-    .label _4 = 4
-    .label fsyscall = 5
-    .label i = 2
-    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+    .label msg = 2
+    .label sc = 4
+    .label cols = 6
+    // [4] *((const byte*) VIC_MEMORY#0) ← (byte) $14 -- _deref_pbuc1=vbuc2 
+    // Initialize screen memory
+    lda #$14
+    sta VIC_MEMORY
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  b1_from_b2:
-    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main/main::@2->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi (byte*) main::cols#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<COLS
+    sta.z cols
+    lda #>COLS
+    sta.z cols+1
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z sc
+    lda #>SCREEN
+    sta.z sc+1
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    lda #<MESSAGE
+    sta.z msg
+    lda #>MESSAGE
+    sta.z msg+1
     jmp b1
-  // Call SYSCALL functions one at a time
     // main::@1
   b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z i
-    asl
-    sta.z _0
-    // [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z _0
-    asl
-    sta.z _4
-    // [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4) -- pprz1=pptc1_derefidx_vbuz2 
-    ldy.z _4
-    lda FSYSCALLS,y
-    sta.z fsyscall
-    lda FSYSCALLS+1,y
-    sta.z fsyscall+1
-    // [9] call *((void()*) main::fsyscall#0) 
-    jsr bi_fsyscall
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [11] if((byte) main::i#1!=(byte) 2) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
-    lda #2
-    cmp.z i
-    bne b3_from_b2
-    jmp b1_from_b2
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #0
+    bne b2
+    // [7] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
+  b3_from_b1:
+  b3_from_b3:
     jmp b3
+  // Loop forever
     // main::@3
   b3:
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-    // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b3_from_b3
+    // main::@2
+  b2:
+    // [8] *((byte*) main::sc#2) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    ldy #0
+    sta (sc),y
+    // [9] *((byte*) main::cols#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+    lda #WHITE
+    ldy #0
+    sta (cols),y
+    // [10] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    // [11] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    // [12] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@2->main::@1#2] -- register_copy 
     jmp b1
-  bi_fsyscall:
-    jmp (fsyscall)
 }
-  // fn2
-fn2: {
+  // syscall2
+syscall2: {
     .label BGCOL = $d021
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) syscall2::BGCOL#0) ← ++ *((const byte*) syscall2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-    // fn2::@return
+    // syscall2::@return
   breturn:
     // [14] return 
     rts
 }
-  // fn1
-fn1: {
+  // syscall1
+syscall1: {
     .label BORDERCOL = $d020
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) syscall1::BORDERCOL#0) ← ++ *((const byte*) syscall1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-    // fn1::@return
+    // syscall1::@return
   breturn:
     // [16] return 
     rts
 }
   // File Data
+.segment Data
+  MESSAGE: .text "hello world!"
+  .byte 0
 .segment Syscall
-  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP
+SYSCALLS:
+  .byte JMP
+  .word syscall1
+  .byte NOP
+  .byte JMP
+  .word syscall2
+  .byte NOP
   .align $100
-  SYSCALL_RESET: .byte JMP, <main, >main, NOP
+SYSCALL_RESET:
+  .byte JMP
+  .word main
+  .byte NOP
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1 [ main::i#3 main::$0 ] (  [ main::i#3 main::$0 ] main:2 [ main::i#3 main::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Statement [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1 [ main::i#3 main::$4 ] (  [ main::i#3 main::$4 ] main:2 [ main::i#3 main::$4 ] ) always clobbers reg byte a 
-Statement [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4) [ main::i#3 main::fsyscall#0 ] (  [ main::i#3 main::fsyscall#0 ] main:2 [ main::i#3 main::fsyscall#0 ] ) always clobbers reg byte a 
-Statement [9] call *((void()*) main::fsyscall#0)  [ main::i#3 ] (  [ main::i#3 ] main:2 [ main::i#3 ] ) always clobbers reg byte a reg byte x reg byte y 
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Statement [11] if((byte) main::i#1!=(byte) 2) goto main::@3 [ main::i#1 ] (  [ main::i#1 ] main:2 [ main::i#1 ] ) always clobbers reg byte a 
-Statement [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1 [ main::i#3 main::$0 ] (  [ main::i#3 main::$0 ] main:2 [ main::i#3 main::$0 ] ) always clobbers reg byte a 
-Statement [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1 [ main::i#3 main::$4 ] (  [ main::i#3 main::$4 ] main:2 [ main::i#3 main::$4 ] ) always clobbers reg byte a 
-Statement [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4) [ main::i#3 main::fsyscall#0 ] (  [ main::i#3 main::fsyscall#0 ] main:2 [ main::i#3 main::fsyscall#0 ] ) always clobbers reg byte a 
-Statement [9] call *((void()*) main::fsyscall#0)  [ main::i#3 ] (  [ main::i#3 ] main:2 [ main::i#3 ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [11] if((byte) main::i#1!=(byte) 2) goto main::@3 [ main::i#1 ] (  [ main::i#1 ] main:2 [ main::i#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ main::$4 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:5 [ main::fsyscall#0 ] : zp ZP_WORD:5 , 
+Statement [4] *((const byte*) VIC_MEMORY#0) ← (byte) $14 [ ] (  [ ] main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 [ main::msg#2 main::sc#2 main::cols#2 ] (  [ main::msg#2 main::sc#2 main::cols#2 ] main:2 [ main::msg#2 main::sc#2 main::cols#2 ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((byte*) main::sc#2) ← *((byte*) main::msg#2) [ main::msg#2 main::sc#2 main::cols#2 ] (  [ main::msg#2 main::sc#2 main::cols#2 ] main:2 [ main::msg#2 main::sc#2 main::cols#2 ] ) always clobbers reg byte a reg byte y 
+Statement [9] *((byte*) main::cols#2) ← (const byte) WHITE#0 [ main::msg#2 main::sc#2 main::cols#2 ] (  [ main::msg#2 main::sc#2 main::cols#2 ] main:2 [ main::msg#2 main::sc#2 main::cols#2 ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:4 [ main::sc#2 main::sc#1 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_WORD:6 [ main::cols#2 main::cols#1 ] : zp ZP_WORD:6 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 202: zp ZP_BYTE:3 [ main::$0 ] 202: zp ZP_BYTE:4 [ main::$4 ] 113.6: zp ZP_BYTE:2 [ main::i#3 main::i#1 ] 101: zp ZP_WORD:5 [ main::fsyscall#0 ] 
-Uplift Scope [fn1] 
-Uplift Scope [fn2] 
+Uplift Scope [main] 27.5: zp ZP_WORD:6 [ main::cols#2 main::cols#1 ] 18.33: zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] 17.6: zp ZP_WORD:4 [ main::sc#2 main::sc#1 ] 
+Uplift Scope [syscall1] 
+Uplift Scope [syscall2] 
+Uplift Scope [SysCall] 
 Uplift Scope [] 
 
-Uplifting [main] best 6252 combination reg byte a [ main::$0 ] reg byte a [ main::$4 ] zp ZP_BYTE:2 [ main::i#3 main::i#1 ] zp ZP_WORD:5 [ main::fsyscall#0 ] 
-Uplifting [fn1] best 6252 combination 
-Uplifting [fn2] best 6252 combination 
-Uplifting [] best 6252 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Uplifting [main] best 6252 combination zp ZP_BYTE:2 [ main::i#3 main::i#1 ] 
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:3 [ main::fsyscall#0 ]
+Uplifting [main] best 1218 combination zp ZP_WORD:6 [ main::cols#2 main::cols#1 ] zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] zp ZP_WORD:4 [ main::sc#2 main::sc#1 ] 
+Uplifting [syscall1] best 1218 combination 
+Uplifting [syscall2] best 1218 combination 
+Uplifting [SysCall] best 1218 combination 
+Uplifting [] best 1218 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -516,9 +513,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
   // Global Constants & labels
+  .label VIC_MEMORY = $d018
+  .label SCREEN = $400
+  .label COLS = $d800
+  .const WHITE = 1
   .const JMP = $4c
   .const NOP = $ea
-  .label FSYSCALLS = SYSCALLS+1
   // @begin
 bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -527,8 +527,6 @@ b1_from_bbegin:
   // @1
 b1:
   // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
@@ -538,159 +536,202 @@ bend:
 .segment Code
   // main
 main: {
-    .label fsyscall = 3
-    .label i = 2
-    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
+    .label msg = 2
+    .label sc = 4
+    .label cols = 6
+    // [4] *((const byte*) VIC_MEMORY#0) ← (byte) $14 -- _deref_pbuc1=vbuc2 
+    // Initialize screen memory
+    lda #$14
+    sta VIC_MEMORY
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  b1_from_b2:
-    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main/main::@2->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi (byte*) main::cols#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<COLS
+    sta.z cols
+    lda #>COLS
+    sta.z cols+1
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z sc
+    lda #>SCREEN
+    sta.z sc+1
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    lda #<MESSAGE
+    sta.z msg
+    lda #>MESSAGE
+    sta.z msg+1
     jmp b1
-  // Call SYSCALL functions one at a time
     // main::@1
   b1:
-    jmp b2
-    // main::@2
-  b2:
-    // [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
-    asl
-    // [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4) -- pprz1=pptc1_derefidx_vbuaa 
-    tay
-    lda FSYSCALLS,y
-    sta.z fsyscall
-    lda FSYSCALLS+1,y
-    sta.z fsyscall+1
-    // [9] call *((void()*) main::fsyscall#0) 
-    jsr bi_fsyscall
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [11] if((byte) main::i#1!=(byte) 2) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
-    lda #2
-    cmp.z i
-    bne b3_from_b2
-    jmp b1_from_b2
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #0
+    bne b2
+    // [7] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
+  b3_from_b1:
+  b3_from_b3:
     jmp b3
+  // Loop forever
     // main::@3
   b3:
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-    // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b3_from_b3
+    // main::@2
+  b2:
+    // [8] *((byte*) main::sc#2) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    ldy #0
+    sta (sc),y
+    // [9] *((byte*) main::cols#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+    lda #WHITE
+    ldy #0
+    sta (cols),y
+    // [10] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    // [11] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    // [12] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@2->main::@1#2] -- register_copy 
     jmp b1
-  bi_fsyscall:
-    jmp (fsyscall)
 }
-  // fn2
-fn2: {
+  // syscall2
+syscall2: {
     .label BGCOL = $d021
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) syscall2::BGCOL#0) ← ++ *((const byte*) syscall2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
-    // fn2::@return
+    // syscall2::@return
   breturn:
     // [14] return 
     rts
 }
-  // fn1
-fn1: {
+  // syscall1
+syscall1: {
     .label BORDERCOL = $d020
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) syscall1::BORDERCOL#0) ← ++ *((const byte*) syscall1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
-    // fn1::@return
+    // syscall1::@return
   breturn:
     // [16] return 
     rts
 }
   // File Data
+.segment Data
+  MESSAGE: .text "hello world!"
+  .byte 0
 .segment Syscall
-  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP
+SYSCALLS:
+  .byte JMP
+  .word syscall1
+  .byte NOP
+  .byte JMP
+  .word syscall2
+  .byte NOP
   .align $100
-  SYSCALL_RESET: .byte JMP, <main, >main, NOP
+SYSCALL_RESET:
+  .byte JMP
+  .word main
+  .byte NOP
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b2
 Removing instruction jmp b3
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b2 with b3
-Replacing label b1 with b2
+Removing instruction ldy #0
+Removing instruction ldy #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
-Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction b1:
-Removing instruction b3_from_b2:
-Removing instruction b1_from_b3:
+Removing instruction b3_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bbegin:
 Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b3:
+Removing instruction b1_from_b2:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b2 in bne b3
-Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b2 to b1
+Relabelling long label b3_from_b3 to b3
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction b3:
-Succesful ASM optimization Pass5UnusedLabelElimination
-Removing unreachable instruction jmp b2
-Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(void()**) FSYSCALLS
-(const void()**) FSYSCALLS#0 FSYSCALLS = (void()**)(const byte[]) SYSCALLS#0+(byte) 1
+(byte*) COLS
+(const byte*) COLS#0 COLS = (byte*) 55296
 (byte) JMP
 (const byte) JMP#0 JMP = (byte) $4c
+(byte[]) MESSAGE
+(const byte[]) MESSAGE#0 MESSAGE = (string) "hello world!"
 (byte) NOP
 (const byte) NOP#0 NOP = (byte) $ea
-(byte[]) SYSCALLS
-(const byte[]) SYSCALLS#0 SYSCALLS = { (const byte) JMP#0, <&(void()) fn1(), >&(void()) fn1(), (const byte) NOP#0, (const byte) JMP#0, <&(void()) fn2(), >&(void()) fn2(), (const byte) NOP#0 }
-(byte[]) SYSCALL_RESET
-(const byte[]) SYSCALL_RESET#0 SYSCALL_RESET = { (const byte) JMP#0, <&(void()) main(), >&(void()) main(), (const byte) NOP#0 }
-(void()) fn1()
-(label) fn1::@return
-(byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
-(void()) fn2()
-(label) fn2::@return
-(byte*) fn2::BGCOL
-(const byte*) fn2::BGCOL#0 BGCOL = (byte*) 53281
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(struct SysCall[]) SYSCALLS
+(const struct SysCall[]) SYSCALLS#0 SYSCALLS = { { xjmp: (const byte) JMP#0, syscall: &(void()) syscall1(), xnop: (const byte) NOP#0 }, { xjmp: (const byte) JMP#0, syscall: &(void()) syscall2(), xnop: (const byte) NOP#0 } }
+(struct SysCall[]) SYSCALL_RESET
+(const struct SysCall[]) SYSCALL_RESET#0 SYSCALL_RESET = { { xjmp: (const byte) JMP#0, syscall: &(void()) main(), xnop: (const byte) NOP#0 } }
+(void()*) SysCall::syscall
+(byte) SysCall::xjmp
+(byte) SysCall::xnop
+(byte*) VIC_MEMORY
+(const byte*) VIC_MEMORY#0 VIC_MEMORY = (byte*) 53272
+(byte) WHITE
+(const byte) WHITE#0 WHITE = (byte) 1
 (void()) main()
-(byte~) main::$0 reg byte a 202.0
-(byte~) main::$4 reg byte a 202.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
-(void()*) main::fsyscall
-(void()*) main::fsyscall#0 fsyscall zp ZP_WORD:3 101.0
-(byte) main::i
-(byte) main::i#1 i zp ZP_BYTE:2 71.0
-(byte) main::i#3 i zp ZP_BYTE:2 42.599999999999994
+(byte*) main::cols
+(byte*) main::cols#1 cols zp ZP_WORD:6 22.0
+(byte*) main::cols#2 cols zp ZP_WORD:6 5.5
+(byte*) main::msg
+(byte*) main::msg#1 msg zp ZP_WORD:2 7.333333333333333
+(byte*) main::msg#2 msg zp ZP_WORD:2 11.0
+(byte*) main::sc
+(byte*) main::sc#1 sc zp ZP_WORD:4 11.0
+(byte*) main::sc#2 sc zp ZP_WORD:4 6.6000000000000005
+(void()) syscall1()
+(label) syscall1::@return
+(byte*) syscall1::BORDERCOL
+(const byte*) syscall1::BORDERCOL#0 BORDERCOL = (byte*) 53280
+(void()) syscall2()
+(label) syscall2::@return
+(byte*) syscall2::BGCOL
+(const byte*) syscall2::BGCOL#0 BGCOL = (byte*) 53281
 
-zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-reg byte a [ main::$0 ]
-reg byte a [ main::$4 ]
-zp ZP_WORD:3 [ main::fsyscall#0 ]
+zp ZP_WORD:2 [ main::msg#2 main::msg#1 ]
+zp ZP_WORD:4 [ main::sc#2 main::sc#1 ]
+zp ZP_WORD:6 [ main::cols#2 main::cols#1 ]
 
 
 FINAL ASSEMBLER
-Score: 5574
+Score: 1100
 
   // File Comments
 // XMega65 Kernal Development Template
@@ -705,86 +746,128 @@ Score: 5574
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
   // Global Constants & labels
+  .label VIC_MEMORY = $d018
+  .label SCREEN = $400
+  .label COLS = $d800
+  .const WHITE = 1
   .const JMP = $4c
   .const NOP = $ea
-  .label FSYSCALLS = SYSCALLS+1
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
 .segment Code
   // main
 main: {
-    .label fsyscall = 3
-    .label i = 2
-    // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
-  b1:
-    // [5] phi (byte) main::i#3 = (byte) 0 [phi:main/main::@2->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-  // Call SYSCALL functions one at a time
+    .label msg = 2
+    .label sc = 4
+    .label cols = 6
+    // *VIC_MEMORY = 0x14
+    // [4] *((const byte*) VIC_MEMORY#0) ← (byte) $14 -- _deref_pbuc1=vbuc2 
+    // Initialize screen memory
+    lda #$14
+    sta VIC_MEMORY
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte*) main::cols#2 = (const byte*) COLS#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<COLS
+    sta.z cols
+    lda #>COLS
+    sta.z cols+1
+    // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta.z sc
+    lda #>SCREEN
+    sta.z sc+1
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    lda #<MESSAGE
+    sta.z msg
+    lda #>MESSAGE
+    sta.z msg+1
     // main::@1
+  b1:
+    // for(char* msg = MESSAGE; *msg; msg++, sc++, cols++)
+    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #0
+    bne b2
+    // [7] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
+  b3:
+  // Loop forever
+    // main::@3
+    jmp b3
     // main::@2
   b2:
-    // i*2
-    // [6] (byte~) main::$0 ← (byte) main::i#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // fsyscall = FSYSCALLS[i*2]
-    // [7] (byte~) main::$4 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
-    asl
-    // [8] (void()*) main::fsyscall#0 ← *((const void()**) FSYSCALLS#0 + (byte~) main::$4) -- pprz1=pptc1_derefidx_vbuaa 
-    tay
-    lda FSYSCALLS,y
-    sta.z fsyscall
-    lda FSYSCALLS+1,y
-    sta.z fsyscall+1
-    // (*fsyscall)()
-    // [9] call *((void()*) main::fsyscall#0) 
-    jsr bi_fsyscall
-    // if(++i==2)
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [11] if((byte) main::i#1!=(byte) 2) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
-    lda #2
-    cmp.z i
-    bne b2
+    // *sc = *msg
+    // [8] *((byte*) main::sc#2) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    sta (sc),y
+    // *cols = WHITE
+    // [9] *((byte*) main::cols#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+    lda #WHITE
+    sta (cols),y
+    // for(char* msg = MESSAGE; *msg; msg++, sc++, cols++)
+    // [10] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    // [11] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    // [12] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@2->main::@1#2] -- register_copy 
     jmp b1
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // main::@3
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  bi_fsyscall:
-    jmp (fsyscall)
 }
-  // fn2
-fn2: {
+  // syscall2
+syscall2: {
     .label BGCOL = $d021
     // (*BGCOL)++;
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) syscall2::BGCOL#0) ← ++ *((const byte*) syscall2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    // fn2::@return
+    // syscall2::@return
     // }
     // [14] return 
     rts
 }
-  // fn1
-fn1: {
+  // syscall1
+syscall1: {
     .label BORDERCOL = $d020
     // (*BORDERCOL)++;
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) syscall1::BORDERCOL#0) ← ++ *((const byte*) syscall1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    // fn1::@return
+    // syscall1::@return
     // }
     // [16] return 
     rts
 }
   // File Data
+.segment Data
+  MESSAGE: .text "hello world!"
+  .byte 0
 .segment Syscall
-  SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP
+SYSCALLS:
+  .byte JMP
+  .word syscall1
+  .byte NOP
+  .byte JMP
+  .word syscall2
+  .byte NOP
   .align $100
-  SYSCALL_RESET: .byte JMP, <main, >main, NOP
+SYSCALL_RESET:
+  .byte JMP
+  .word main
+  .byte NOP
 

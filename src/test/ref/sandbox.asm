@@ -226,11 +226,11 @@ Print: {
 }
 // myprintf(byte* zeropage(6) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
 myprintf: {
+    .label str = 6
     .label bDigits = $d
     .label bLen = $e
     .label b = $c
     .label bArg = 9
-    .label str = 6
     .label w1 = 2
     .label w2 = 4
     .label w3 = $17
@@ -269,6 +269,11 @@ myprintf: {
     bne b5
     lda #1
     sta.z bLeadZero
+  b32:
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
     jmp b1
   b5:
     cpx #'1'
@@ -285,7 +290,7 @@ myprintf: {
     bne b7
     lda #1
     sta.z bTrailing
-    jmp b1
+    jmp b32
   b7:
     cpx #'c'
     bne !b8+
@@ -300,7 +305,7 @@ myprintf: {
   b3:
     lda #0
     sta.z bFormat
-    jmp b1
+    jmp b32
   b31:
     lda.z w
     lsr
@@ -422,23 +427,23 @@ myprintf: {
     txa
     axs #'0'
     stx.z bDigits
-    jmp b1
+    jmp b32
   b4:
     cpx #'%'
-    bne b32
+    bne b33
     // default format
     //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
     lda.z bArg
     cmp #0
-    beq b33
+    beq b34
     lda #1
     cmp.z bArg
-    beq b34
+    beq b35
     lda.z w3
     sta.z w
     lda.z w3+1
     sta.z w+1
-  b35:
+  b36:
     inc.z bArg
     lda #0
     sta.z bLeadZero
@@ -448,37 +453,33 @@ myprintf: {
     sta.z bTrailing
     lda #1
     sta.z bFormat
-    jmp b1
-  b34:
+    jmp b32
+  b35:
     lda.z w2
     sta.z w
     lda.z w2+1
     sta.z w+1
-    jmp b35
-  b33:
+    jmp b36
+  b34:
     lda.z w1
     sta.z w
     lda.z w1+1
     sta.z w+1
-    jmp b35
-  b32:
+    jmp b36
+  b33:
     cpx #$41
-    bcc b36
+    bcc b37
     cpx #$5a+1
-    bcs b36
+    bcs b37
     txa
     axs #-[$20]
-  b36:
+  b37:
     // swap 0x41 / 0x61 when in lower case mode
     ldy.z bLen
     txa
     sta strTemp,y
     inc.z bLen
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp b1
+    jmp b32
     buf6: .fill 6, 0
 }
 // utoa(word zeropage($11) value, byte* zeropage($13) dst)

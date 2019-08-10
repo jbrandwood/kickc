@@ -1005,11 +1005,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(endJmpStmt);
       StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJumpTarget);
-      // Reuse the begin jump target for continue.
-      loopStack.peek().setContinueLabel(beginJumpLabel);
       // Add body
       addLoopBody(stmtForCtx.stmt());
       // Add increment
+      addLoopContinueLabel(loopStack.peek(), ctx);
       KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
       if(incrementCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, incrementCtx, StatementSource.forClassic(ctx));

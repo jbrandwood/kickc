@@ -1302,6 +1302,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopForContinue() throws IOException, URISyntaxException {
+      compileAndCompare("loop-for-continue");
+   }
+
+   @Test
    public void testLoopWhileContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-while-continue");
    }

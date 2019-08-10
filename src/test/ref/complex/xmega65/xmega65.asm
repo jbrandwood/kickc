@@ -10,32 +10,32 @@
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
   .const JMP = $4c
   .const NOP = $ea
-  .label CALLS = SYSCALLS+1
+  .label FSYSCALLS = SYSCALLS+1
 .segment Code
 main: {
-    .label fn = 3
+    .label fsyscall = 3
     .label i = 2
   b1:
     lda #0
     sta.z i
-  // Call functions one at a time
+  // Call SYSCALL functions one at a time
   b2:
     lda.z i
     asl
     asl
     tay
-    lda CALLS,y
-    sta.z fn
-    lda CALLS+1,y
-    sta.z fn+1
-    jsr bi_fn
+    lda FSYSCALLS,y
+    sta.z fsyscall
+    lda FSYSCALLS+1,y
+    sta.z fsyscall+1
+    jsr bi_fsyscall
     inc.z i
     lda #2
     cmp.z i
     bne b2
     jmp b1
-  bi_fn:
-    jmp (fn)
+  bi_fsyscall:
+    jmp (fsyscall)
 }
 fn2: {
     .label BGCOL = $d021

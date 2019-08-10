@@ -78,6 +78,7 @@ globalDirective
 directive
     : 'const' #directiveConst
     | 'extern' #directiveExtern
+    | 'export' #directiveExport
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' ( '(' NAME ')')? #directiveRegister
     | 'inline' #directiveInline

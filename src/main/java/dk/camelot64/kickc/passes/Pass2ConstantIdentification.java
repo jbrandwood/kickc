@@ -82,6 +82,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          constantVar.setInferredType(variable.isInferredType());
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
+         constantVar.setDeclaredExport(variable.isDeclaredExport());
          if(variable.getComments().size() > 0) {
             constantVar.setComments(variable.getComments());
          } else {

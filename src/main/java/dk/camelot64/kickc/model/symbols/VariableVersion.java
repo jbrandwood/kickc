@@ -12,6 +12,7 @@ public class VariableVersion extends Variable {
       this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
       this.setDeclaredRegister(versionOf.getDeclaredRegister());
       this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
+      this.setDeclaredExport(versionOf.isDeclaredExport());
       this.setInferedVolatile(versionOf.isInferedVolatile());
       this.setInferredType(versionOf.isInferredType());
       this.versionOfName = versionOf.getLocalName();

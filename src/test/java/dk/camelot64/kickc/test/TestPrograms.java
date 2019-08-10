@@ -2162,6 +2162,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarExport() throws IOException, URISyntaxException {
+      compileAndCompare("var-export");
+   }
+
+   @Test
    public void testVarRegister() throws IOException, URISyntaxException {
       compileAndCompare("var-register");
    }

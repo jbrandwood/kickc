@@ -47,7 +47,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(variable == null) {
                      // Already deleted
                      eliminate = true;
-                  } else if(!variable.isVolatile()) {
+                  } else if(!variable.isVolatile() && !variable.isDeclaredExport()) {
                      // Not volatile
                      eliminate = true;
                   } else if(variable.isVolatile() && variable.getType() instanceof SymbolTypeStruct) {
@@ -130,6 +130,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       for(ConstantVar constant : allConstants) {
          if(!(constant.getScope() instanceof EnumDefinition)) {
             if(referenceInfos.isUnused(constant.getRef())) {
+               if(constant.isDeclaredExport()) {
+                  // Do not eliminate constants declared as export
+                  continue;
+               }
                if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                   getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
                }

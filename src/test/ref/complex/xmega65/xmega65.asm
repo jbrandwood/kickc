@@ -49,3 +49,5 @@ fn1: {
 }
 .segment Syscall
   SYSCALLS: .byte JMP, <fn1, >fn1, NOP, JMP, <fn2, >fn2, NOP
+  .align $100
+  SYSCALL_RESET: .byte JMP, <main, >main, NOP

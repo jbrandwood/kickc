@@ -76,6 +76,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                unwound.setDeclaredVolatile(var.isDeclaredVolatile());
                unwound.setInferedVolatile(var.isInferedVolatile());
                unwound.setDeclaredRegister((var.getDeclaredRegister()));
+               unwound.setDeclaredExport(var.isDeclaredExport());
                unwoundSymbols.put(symbol.getRef(), unwound.getRef());
             }  else if(symbol instanceof VariableIntermediate) {
                VariableIntermediate unwound = procedure.addVariableIntermediate();

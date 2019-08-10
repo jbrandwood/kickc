@@ -41,6 +41,9 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
    private boolean inferedVolatile;
 
+   /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. */
+   private boolean declaredExport;
+
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
 
@@ -177,6 +180,14 @@ public abstract class SymbolVariable implements Symbol {
 
    public boolean isVolatile() {
       return declaredVolatile || inferedVolatile;
+   }
+
+   public boolean isDeclaredExport() {
+      return declaredExport;
+   }
+
+   public void setDeclaredExport(boolean declaredExport) {
+      this.declaredExport = declaredExport;
    }
 
    public List<Comment> getComments() {

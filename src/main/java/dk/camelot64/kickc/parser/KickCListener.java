@@ -284,6 +284,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

@@ -115,7 +115,6 @@ switchCase:
     'case' expr ':' stmtSeq?
     ;
 
-
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
     | declTypes? NAME ':' expr ( '..' ) expr #forRange

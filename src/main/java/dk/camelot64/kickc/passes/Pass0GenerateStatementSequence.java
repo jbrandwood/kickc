@@ -4,6 +4,7 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -970,6 +971,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
       return null;
+   }
+
+   @Override
+   public Object visitStmtSwitch(KickCParser.StmtSwitchContext ctx) {
+      throw new InternalError("switch() is not supported in this version of the compiler.");
    }
 
    @Override

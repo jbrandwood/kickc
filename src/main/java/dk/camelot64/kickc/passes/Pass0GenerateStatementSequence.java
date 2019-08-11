@@ -975,6 +975,26 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtSwitch(KickCParser.StmtSwitchContext ctx) {
+      /*
+      // Create a block scope - to keep all statements of the loop inside it
+      BlockScope blockScope = getCurrentScope().addBlockScope();
+      scopeStack.push(blockScope);
+      loopStack.push(new Loop(blockScope));
+      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
+      // TODO: Add comments to next stmt
+      // Evaluate the switch-expression
+      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
+      RValue rValue = (RValue) this.visit(ctx.commaExpr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
+
+      // TODO: Iterate cases
+      // TODO: Handle default
+
+      // TODO: Do something to handle continue!
+      addLoopBreakLabel(loopStack.pop(), ctx);
+      scopeStack.pop();
+      return null;
+      */
       throw new InternalError("switch() is not supported in this version of the compiler.");
    }
 

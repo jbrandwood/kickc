@@ -116,6 +116,12 @@ public class StatementSource implements Serializable {
       return new StatementSource(nodeStart, nodeStop);
    }
 
+   public static StatementSource switchExpr(KickCParser.StmtSwitchContext ctx) {
+      ParseTree nodeStart = ctx;
+      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 4);
+      return new StatementSource(nodeStart, nodeStop);
+   }
+
    public static StatementSource procedureEnd(KickCParser.DeclFunctionContext ctx) {
       ParseTree nodeStart = ctx.getChild(ctx.getChildCount() - 1);
       ParseTree nodeStop = ctx;

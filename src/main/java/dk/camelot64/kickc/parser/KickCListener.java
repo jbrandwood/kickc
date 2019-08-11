@@ -462,6 +462,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitStmtFor(KickCParser.StmtForContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code stmtSwitch}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtSwitch(KickCParser.StmtSwitchContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtSwitch}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtSwitch(KickCParser.StmtSwitchContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code stmtReturn}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
@@ -521,6 +533,26 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#switchCases}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchCases(KickCParser.SwitchCasesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#switchCases}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchCases(KickCParser.SwitchCasesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#switchCase}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchCase(KickCParser.SwitchCaseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#switchCase}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchCase(KickCParser.SwitchCaseContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code forClassic}
 	 * labeled alternative in {@link KickCParser#forLoop}.

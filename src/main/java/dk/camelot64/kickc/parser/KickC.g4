@@ -99,12 +99,22 @@ stmt
     | directive* 'while' '(' commaExpr ')' stmt  #stmtWhile
     | directive* 'do' stmt 'while' '(' commaExpr ')' ';' #stmtDoWhile
     | directive* 'for' '(' forLoop ')' stmt  #stmtFor
+    | 'switch' '(' commaExpr ')' '{' switchCases '}' #stmtSwitch
     | 'return' commaExpr? ';' #stmtReturn
     | 'break' ';' #stmtBreak
     | 'continue' ';' #stmtContinue
     | 'asm' asmDirectives? '{' asmLines '}' #stmtAsm
     | declKasm #stmtDeclKasm
     ;
+
+switchCases:
+    switchCase+ ( 'default:' stmtSeq? )
+    ;
+
+switchCase:
+    'case' expr ':' stmtSeq?
+    ;
+
 
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic

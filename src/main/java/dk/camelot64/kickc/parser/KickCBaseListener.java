@@ -496,6 +496,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStmtSwitch(KickCParser.StmtSwitchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStmtSwitch(KickCParser.StmtSwitchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterStmtReturn(KickCParser.StmtReturnContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -551,6 +563,30 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSwitchCases(KickCParser.SwitchCasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSwitchCases(KickCParser.SwitchCasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSwitchCase(KickCParser.SwitchCaseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSwitchCase(KickCParser.SwitchCaseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

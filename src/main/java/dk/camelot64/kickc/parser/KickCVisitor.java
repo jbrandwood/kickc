@@ -278,6 +278,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtFor(KickCParser.StmtForContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code stmtSwitch}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtSwitch(KickCParser.StmtSwitchContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code stmtReturn}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
@@ -312,6 +319,18 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#switchCases}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchCases(KickCParser.SwitchCasesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#switchCase}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchCase(KickCParser.SwitchCaseContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code forClassic}
 	 * labeled alternative in {@link KickCParser#forLoop}.

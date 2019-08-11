@@ -297,6 +297,13 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitStmtSwitch(KickCParser.StmtSwitchContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitStmtReturn(KickCParser.StmtReturnContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -326,6 +333,20 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitSwitchCases(KickCParser.SwitchCasesContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitSwitchCase(KickCParser.SwitchCaseContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

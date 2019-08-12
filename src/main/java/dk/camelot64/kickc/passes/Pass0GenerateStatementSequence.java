@@ -399,7 +399,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String varName = ctx.NAME().getText();
       SymbolRef variableRef;
       Symbol symbol = getCurrentScope().getSymbol(varName);
-      if(symbol!=null) {
+      if(symbol != null) {
          //Found an existing variable
          variableRef = symbol.getRef();
       } else {
@@ -681,7 +681,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
-            if(directiveRegister.getName()!=null) {
+            if(directiveRegister.getName() != null) {
                // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
                Registers.Register register = Registers.getRegister(directiveRegister.getName());
                if(register == null) {
@@ -779,7 +779,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
       String name = null;
-      if(ctx.NAME()!=null) {
+      if(ctx.NAME() != null) {
          name = ctx.NAME().getText();
       }
       return new DirectiveRegister(name);
@@ -975,7 +975,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtSwitch(KickCParser.StmtSwitchContext ctx) {
-      /*
       // Create a block scope - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
@@ -984,19 +983,60 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // TODO: Add comments to next stmt
       // Evaluate the switch-expression
       PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
-      RValue rValue = (RValue) this.visit(ctx.commaExpr());
+      RValue eValue = (RValue) this.visit(ctx.commaExpr());
       PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
-
-      // TODO: Iterate cases
-      // TODO: Handle default
-
+      // Add case conditional jumps
+      List<SwitchCaseBody> caseBodies = new ArrayList<>();
+      for(KickCParser.SwitchCaseContext caseContext : ctx.switchCases().switchCase()) {
+         List<Comment> caseComments = ensureUnusedComments(getCommentsSymbol(caseContext));
+         RValue cValue = (RValue) this.visit(caseContext.expr());
+         Label cJumpLabel = getCurrentScope().addLabelIntermediate();
+         caseBodies.add(new SwitchCaseBody(cJumpLabel, caseContext.stmtSeq(), StatementSource.switchCase(caseContext)));
+         StatementConditionalJump cJmpStmt = new StatementConditionalJump(eValue, Operators.EQ, cValue, cJumpLabel.getRef(), StatementSource.switchCase(caseContext), caseComments);
+         sequence.addStatement(cJmpStmt);
+      }
+      // Add default ending jump
+      Label dJumpLabel = getCurrentScope().addLabelIntermediate();
+      StatementJump dJmpStmt = new StatementJump(dJumpLabel.getRef(), StatementSource.switchDefault(ctx.switchCases()), Comment.NO_COMMENTS);
+      sequence.addStatement(dJmpStmt);
+      // Add case labels & bodies
+      for(SwitchCaseBody caseBody : caseBodies) {
+         StatementLabel cJumpTarget = new StatementLabel(caseBody.cJumpLabel.getRef(), caseBody.statementSource, Comment.NO_COMMENTS);
+         sequence.addStatement(cJumpTarget);
+         if(caseBody.stmtSequence != null) {
+            this.visit(caseBody.stmtSequence);
+         }
+      }
+      // Add default label
+      StatementLabel dJumpTarget = new StatementLabel(dJumpLabel.getRef(), StatementSource.switchDefault(ctx.switchCases()), Comment.NO_COMMENTS);
+      sequence.addStatement(dJumpTarget);
+      if(ctx.switchCases().stmtSeq() != null) {
+         this.visit(ctx.switchCases().stmtSeq());
+      }
       // TODO: Do something to handle continue!
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
       return null;
-      */
-      throw new InternalError("switch() is not supported in this version of the compiler.");
    }
+
+   /** Holds the body of a switch() case. */
+   public static class SwitchCaseBody {
+      /** Label for the statments of the case. */
+      Label cJumpLabel;
+
+      /** Statments of the case. */
+      KickCParser.StmtSeqContext stmtSequence;
+
+      /** Source of the case. */
+      StatementSource statementSource;
+
+      public SwitchCaseBody(Label cJumpLabel, KickCParser.StmtSeqContext stmtSequence, StatementSource statementSource) {
+         this.cJumpLabel = cJumpLabel;
+         this.stmtSequence = stmtSequence;
+         this.statementSource = statementSource;
+      }
+   }
+
 
    @Override
    public Object visitStmtFor(KickCParser.StmtForContext ctx) {
@@ -1247,7 +1287,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             if(!definedLabels.contains(label)) {
                // Look for the symbol
                Symbol symbol = getCurrentScope().getSymbol(ctxLabel.NAME().getText());
-               if(symbol!=null) {
+               if(symbol != null) {
                   referenced.put(label, symbol.getRef());
                } else {
                   // Either forward reference or a non-existing variable. Create a forward reference for later resolving.

@@ -122,6 +122,18 @@ public class StatementSource implements Serializable {
       return new StatementSource(nodeStart, nodeStop);
    }
 
+   public static StatementSource switchCase(KickCParser.SwitchCaseContext ctx) {
+      ParseTree nodeStart = ctx;
+      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 1);
+      return new StatementSource(nodeStart, nodeStop);
+   }
+
+   public static StatementSource switchDefault(KickCParser.SwitchCasesContext ctx) {
+      ParseTree nodeStart = ctx.getChild(ctx.getChildCount() - 2);
+      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 1);
+      return new StatementSource(nodeStart, nodeStop);
+   }
+
    public static StatementSource procedureEnd(KickCParser.DeclFunctionContext ctx) {
       ParseTree nodeStart = ctx.getChild(ctx.getChildCount() - 1);
       ParseTree nodeStop = ctx;

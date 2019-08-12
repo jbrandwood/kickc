@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSwitch0() throws IOException, URISyntaxException {
+      compileAndCompare("switch-0");
+   }
+
+   @Test
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param");
    }

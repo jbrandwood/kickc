@@ -42,6 +42,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCastError() throws IOException, URISyntaxException {
+      assertError("cast-error", "Cannot infer pointer element type from type");
+   }
+
+   @Test
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param");
    }
@@ -579,6 +584,11 @@ public class TestPrograms {
    @Test
    public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
+   }
+   
+   @Test
+   public void testStruct11() throws IOException, URISyntaxException {
+      compileAndCompare("struct-11");
    }
 
    @Test

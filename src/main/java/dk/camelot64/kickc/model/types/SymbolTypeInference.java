@@ -50,7 +50,7 @@ public class SymbolTypeInference {
          } else if(pointerType.equals(SymbolType.STRING)) {
             return SymbolType.BYTE;
          } else {
-            throw new InternalError("Cannot infer pointer element type from pointer type " + pointerType);
+            throw new CompileError("Cannot infer pointer element type from type: " + pointerType);
          }
       } else if(rValue instanceof ConstantArrayList) {
          return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());

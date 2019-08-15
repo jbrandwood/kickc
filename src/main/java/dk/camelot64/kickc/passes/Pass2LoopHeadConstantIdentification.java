@@ -104,6 +104,8 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
                return blocks;
             };
 
+            //getLog().append("Unrolling Constant Loop Head " +loopHeadBlock.getLabel());
+
             // Copy the block and all statements - enter through the copy - finish through the original
             Unroller.UnrollStrategy unrollStrategy = new Unroller.UnrollStrategy() {
                @Override

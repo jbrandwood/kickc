@@ -36,6 +36,11 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testLoopheadProblem() throws IOException, URISyntaxException {
+   //   compileAndCompare("loophead-problem");
+   //}
+
    @Test
    public void testSwitch0() throws IOException, URISyntaxException {
       compileAndCompare("switch-0");
@@ -1638,7 +1643,7 @@ public class TestPrograms {
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle_c64/robozzle64", log());
+   //   compileAndCompare("complex/robozzle_c64/robozzle64", log().verboseSSAOptimize().verboseLoopUnroll());
    //}
 
    //@Test

@@ -344,19 +344,10 @@ public class Compiler {
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       if(!disableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
-         optimizations.add(() -> {
-            program.clearDominators();
-            return false;
-         });
-         optimizations.add(() -> {
-            program.clearLoopSet();
-            return false;
-         });
+         optimizations.add(() -> { program.clearDominators(); return false; });
+         optimizations.add(() -> { program.clearLoopSet(); return false; });
          optimizations.add(new Pass2LoopHeadConstantIdentification(program));
-         optimizations.add(() -> {
-            program.clearStatementIndices();
-            return false;
-         });
+         optimizations.add(() -> { program.clearStatementIndices(); return false; });
       }
       return optimizations;
    }

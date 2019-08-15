@@ -75,6 +75,7 @@ public class Unroller {
     * Ensure that variables defined inside and used outside the blocks to be copied has different versions in different successors blocks.
     */
    private void prepare() {
+      // TODO Handle variables modified inside called functions!
       for(VariableRef origVarRef : getVarsDefinedIn(unrollBlocks, program)) {
          // Find out if the variable is ever referenced outside the loop
          if(isReferencedOutside(origVarRef, unrollBlocks, program)) {
@@ -204,6 +205,7 @@ public class Unroller {
                   // Variable has no version in the predecessor block - add a new PHI and populate later!
                   VariableRef newVarRef = createNewVersion(doingVarRef);
                   predecessor.getPhiBlock().addPhiVariable(newVarRef);
+                  //program.getLog().append("Adding PHI for "+newVarRef+" to "+predecessor.getLabel());
                   varVersions.put(predecessor.getLabel(), newVarRef);
                   todo.put(predecessor.getLabel(), newVarRef);
                   predecessorVarRef = newVarRef;
@@ -211,6 +213,8 @@ public class Unroller {
                doingPhiVariable.setrValue(predecessor.getLabel(), predecessorVarRef);
             }
          }
+         //program.getLog().append("Completing PHI-functions...");
+         //program.getLog().append(program.getGraph().toString(program));
       }
    }
 

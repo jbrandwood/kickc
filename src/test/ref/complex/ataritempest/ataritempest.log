@@ -1,27 +1,37 @@
 Loading link script "ataritempest.ld"
+Culled Empty Block (label) entryPoint::@2
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) BGCOL#0 ← ((byte*)) (number) $c01a
+  (byte[]) MESSAGE#0 ← (const string) $2
+  (byte[$32]) SCREEN#0 ← { fill( $32, 0) }
   to:@3
-main: scope:[main]  from @3
-  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
 entryPoint: scope:[entryPoint]  from
-  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  (byte) entryPoint::i#0 ← (byte) 0
+  to:entryPoint::@1
+entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
+  (byte) entryPoint::i#2 ← phi( entryPoint/(byte) entryPoint::i#0 entryPoint::@1/(byte) entryPoint::i#1 )
+  *((byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((byte[]) MESSAGE#0 + (byte) entryPoint::i#2)
+  (byte) entryPoint::i#1 ← (byte) entryPoint::i#2 + rangenext(0,$31)
+  (bool~) entryPoint::$0 ← (byte) entryPoint::i#1 != rangelast(0,$31)
+  if((bool~) entryPoint::$0) goto entryPoint::@1
   to:entryPoint::@return
-entryPoint::@return: scope:[entryPoint]  from entryPoint
+entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
   return 
   to:@return
 nmiHandler: scope:[nmiHandler]  from
   *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
+  return 
+  to:@return
+main: scope:[main]  from @3
+  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  to:main::@return
+main::@return: scope:[main]  from main
   return 
   to:@return
 @3: scope:[]  from @begin
@@ -37,16 +47,27 @@ nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
 SYMBOL TABLE SSA
 (void()*~) $0
 (void()*~) $1
+(const string) $2 = (string) "hello world"
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
 (byte*) BGCOL
 (byte*) BGCOL#0
+(byte[]) MESSAGE
+(byte[]) MESSAGE#0
+(byte[$32]) SCREEN
+(byte[$32]) SCREEN#0
 (void()*[]) VECTORS
 (void()*[]) VECTORS#0
 (void()) entryPoint()
+(bool~) entryPoint::$0
+(label) entryPoint::@1
 (label) entryPoint::@return
+(byte) entryPoint::i
+(byte) entryPoint::i#0
+(byte) entryPoint::i#1
+(byte) entryPoint::i#2
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
@@ -56,34 +77,56 @@ Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $c01a
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 49178
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [7] (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
-Constant right-side identified [8] (void()*~) $1 ← & (void()) entryPoint()
+Simple Condition (bool~) entryPoint::$0 [8] if((byte) entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [2] (byte[$32]) SCREEN#0 ← { fill( $32, 0) }
+Constant right-side identified [14] (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
+Constant right-side identified [15] (void()*~) $1 ← & (void()) entryPoint()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) BGCOL#0 = (byte*) 49178
+Constant (const byte[]) MESSAGE#0 = $2
+Constant (const byte[$32]) SCREEN#0 = { fill( $32, 0) }
+Constant (const byte) entryPoint::i#0 = 0
 Constant (const void()*) $0 = &nmiHandler
 Constant (const void()*) $1 = &entryPoint
 Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [6] entryPoint::i#1 ← ++ entryPoint::i#2 to ++
+Resolved ranged comparison value [8] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to (number) $32
+Adding number conversion cast (unumber) $32 in if((byte) entryPoint::i#1!=(number) $32) goto entryPoint::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $32
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $32
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identified constant from value list (void()*[]) { (const void()*) $0, (const void()*) $1 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const void()*[]) VECTORS#0 = { $0, $1 }
 Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const byte) entryPoint::i#0
+Constant inlined entryPoint::i#0 = (byte) 0
 Constant inlined $0 = &interrupt(HARDWARE_ALL)(void()) nmiHandler()
 Constant inlined $1 = &(void()) entryPoint()
+Constant inlined $2 = (const byte[]) MESSAGE#0
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting entryPoint::@3(between entryPoint::@1 and entryPoint::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of entryPoint
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced [15] entryPoint::i#3 ← entryPoint::i#1
+Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
+Culled Empty Block (label) entryPoint::@3
 Renumbering block @3 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of entryPoint
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -108,22 +151,36 @@ nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   [7] return 
   to:@return
 entryPoint: scope:[entryPoint]  from
-  [8] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  [8] phi()
+  to:entryPoint::@1
+entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
+  [9] (byte) entryPoint::i#2 ← phi( entryPoint/(byte) 0 entryPoint::@1/(byte) entryPoint::i#1 )
+  [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2)
+  [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2
+  [12] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1
   to:entryPoint::@return
-entryPoint::@return: scope:[entryPoint]  from entryPoint
-  [9] return 
+entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
+  [13] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (byte*) BGCOL
+(byte[]) MESSAGE
+(byte[$32]) SCREEN
 (void()*[]) VECTORS
 (void()) entryPoint()
+(byte) entryPoint::i
+(byte) entryPoint::i#1 16.5
+(byte) entryPoint::i#2 22.0
 (void()) main()
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 
 Initial phi equivalence classes
+[ entryPoint::i#2 entryPoint::i#1 ]
 Complete equivalence classes
+[ entryPoint::i#2 entryPoint::i#1 ]
+Allocated zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ]
 
 INITIAL ASM
 Target platform is custom
@@ -133,10 +190,13 @@ Target platform is custom
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   // Upstart
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
-.segmentdef AtariTempest [segments="Code, Data, Vectors"]
-.segmentdef Code [start=$4000, min=$4000, max=$bff9]
-.segmentdef Data [startAfter="Code"]
-.segmentdef Vectors [start=$bffa, min=$bffa, max=$bfff]
+.segmentdef AtariTempest [segments="Code, RomData, Vectors"]
+.segmentdef Code [start=$9000, min=$9000, max=$Fff9]
+.segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]
+.segmentdef RamData [start=$200, min=$200, max=$7ff]
+.segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
+.segment Code
+init:
   // Global Constants & labels
   .label BGCOL = $c01a
   // @begin
@@ -186,31 +246,62 @@ nmiHandler: {
 }
   // entryPoint
 entryPoint: {
-    // [8] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    .label i = 2
+    // [9] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
+  b1_from_entryPoint:
+    // [9] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp b1
+    // [9] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
+  b1_from_b1:
+    // [9] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
+    jmp b1
+    // entryPoint::@1
+  b1:
+    // [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z i
+    lda MESSAGE,y
+    sta SCREEN,y
+    // [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [12] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$32
+    cmp.z i
+    bne b1_from_b1
     jmp breturn
     // entryPoint::@return
   breturn:
-    // [9] return 
+    // [13] return 
     rts
 }
   // File Data
+.segment RomData
+  MESSAGE: .text "hello world"
+  .byte 0
+.segment RamData
+  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ]
+Statement [7] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
-Uplift Scope [entryPoint] 
+Uplift Scope [entryPoint] 38.5: zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ] 
 Uplift Scope [nmiHandler] 
+Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 183 combination 
-Uplifting [entryPoint] best 183 combination 
-Uplifting [nmiHandler] best 183 combination 
-Uplifting [] best 183 combination 
+Uplifting [entryPoint] best 444 combination reg byte x [ entryPoint::i#2 entryPoint::i#1 ] 
+Uplifting [nmiHandler] best 444 combination 
+Uplifting [main] best 444 combination 
+Uplifting [] best 444 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -219,10 +310,13 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   // Upstart
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
-.segmentdef AtariTempest [segments="Code, Data, Vectors"]
-.segmentdef Code [start=$4000, min=$4000, max=$bff9]
-.segmentdef Data [startAfter="Code"]
-.segmentdef Vectors [start=$bffa, min=$bffa, max=$bfff]
+.segmentdef AtariTempest [segments="Code, RomData, Vectors"]
+.segmentdef Code [start=$9000, min=$9000, max=$Fff9]
+.segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]
+.segmentdef RamData [start=$200, min=$200, max=$7ff]
+.segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
+.segment Code
+init:
   // Global Constants & labels
   .label BGCOL = $c01a
   // @begin
@@ -272,15 +366,37 @@ nmiHandler: {
 }
   // entryPoint
 entryPoint: {
-    // [8] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [9] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
+  b1_from_entryPoint:
+    // [9] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+    // [9] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
+  b1_from_b1:
+    // [9] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
+    jmp b1
+    // entryPoint::@1
+  b1:
+    // [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MESSAGE,x
+    sta SCREEN,x
+    // [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [12] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$32
+    bne b1_from_b1
     jmp breturn
     // entryPoint::@return
   breturn:
-    // [9] return 
+    // [13] return 
     rts
 }
   // File Data
+.segment RomData
+  MESSAGE: .text "hello world"
+  .byte 0
+.segment RamData
+  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
 
@@ -289,20 +405,26 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp breturn
 Removing instruction jmp breturn
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction breturn:
+Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bbegin:
 Removing instruction bend:
 Removing instruction breturn:
+Removing instruction b1_from_entryPoint:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -310,19 +432,28 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) BGCOL
 (const byte*) BGCOL#0 BGCOL = (byte*) 49178
+(byte[]) MESSAGE
+(const byte[]) MESSAGE#0 MESSAGE = (string) "hello world"
+(byte[$32]) SCREEN
+(const byte[$32]) SCREEN#0 SCREEN = { fill( $32, 0) }
 (void()*[]) VECTORS
 (const void()*[]) VECTORS#0 VECTORS = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
+(label) entryPoint::@1
 (label) entryPoint::@return
+(byte) entryPoint::i
+(byte) entryPoint::i#1 reg byte x 16.5
+(byte) entryPoint::i#2 reg byte x 22.0
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 (label) nmiHandler::@return
 
+reg byte x [ entryPoint::i#2 entryPoint::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 162
+Score: 336
 
   // File Comments
 // Atari Tempest ROM Development Template
@@ -330,10 +461,13 @@ Score: 162
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   // Upstart
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
-.segmentdef AtariTempest [segments="Code, Data, Vectors"]
-.segmentdef Code [start=$4000, min=$4000, max=$bff9]
-.segmentdef Data [startAfter="Code"]
-.segmentdef Vectors [start=$bffa, min=$bffa, max=$bfff]
+.segmentdef AtariTempest [segments="Code, RomData, Vectors"]
+.segmentdef Code [start=$9000, min=$9000, max=$Fff9]
+.segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]
+.segmentdef RamData [start=$200, min=$200, max=$7ff]
+.segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
+.segment Code
+init:
   // Global Constants & labels
   .label BGCOL = $c01a
   // @begin
@@ -375,15 +509,34 @@ nmiHandler: {
 }
   // entryPoint
 entryPoint: {
-    // (*BGCOL)++;
-    // [8] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [9] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
+    // [9] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [9] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
+    // [9] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
+    // entryPoint::@1
+  b1:
+    // SCREEN[i] = MESSAGE[i]
+    // [10] *((const byte[$32]) SCREEN#0 + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE#0 + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MESSAGE,x
+    sta SCREEN,x
+    // for( char i:0..49)
+    // [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [12] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$32
+    bne b1
     // entryPoint::@return
     // }
-    // [9] return 
+    // [13] return 
     rts
 }
   // File Data
+.segment RomData
+  MESSAGE: .text "hello world"
+  .byte 0
+.segment RamData
+  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
 

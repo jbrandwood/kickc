@@ -1,5 +1,8 @@
 .file [name="%O.bin", type="bin", segments="AtariTempest"]
-.segmentdef AtariTempest [segments="Code, Data, Vectors"]
-.segmentdef Code [start=$4000, min=$4000, max=$bff9]
-.segmentdef Data [startAfter="Code"]
-.segmentdef Vectors [start=$bffa, min=$bffa, max=$bfff]
+.segmentdef AtariTempest [segments="Code, RomData, Vectors"]
+.segmentdef Code [start=$9000, min=$9000, max=$Fff9]
+.segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]
+.segmentdef RamData [start=$200, min=$200, max=$7ff]
+.segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
+.segment Code
+init:

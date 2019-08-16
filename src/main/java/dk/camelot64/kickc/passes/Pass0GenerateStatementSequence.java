@@ -135,7 +135,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
       try {
-         this.currentEncoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase());
+         this.currentEncoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
       } catch(IllegalArgumentException e) {
          throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
       }
@@ -474,7 +474,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public AsmDirectiveClobber visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) {
-      String clobberString = ctx.STRING().getText().toUpperCase();
+      String clobberString = ctx.STRING().getText().toUpperCase(Locale.ENGLISH);
       clobberString = clobberString.substring(1, clobberString.length() - 1);
       if(!clobberString.matches("[AXY]*")) {
          throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
@@ -761,7 +761,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) {
       String interruptType;
       if(ctx.getChildCount() > 1) {
-         interruptType = ctx.getChild(2).getText().toUpperCase();
+         interruptType = ctx.getChild(2).getText().toUpperCase(Locale.ENGLISH);
       } else {
          // The default interrupt type
          interruptType = Procedure.InterruptType.DEFAULT.name();

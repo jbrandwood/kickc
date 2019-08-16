@@ -3,6 +3,8 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.Value;
 
+import java.util.Locale;
+
 /** The different registers available for a program */
 public class Registers {
 
@@ -24,7 +26,7 @@ public class Registers {
    }
 
    public static Register getRegister(String name) {
-      switch(name.toUpperCase()) {
+      switch(name.toUpperCase(Locale.ENGLISH)) {
          case "A":
             return getRegisterA();
          case "X":

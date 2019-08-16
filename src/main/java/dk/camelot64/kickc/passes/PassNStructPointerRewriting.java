@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -113,7 +114,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
     * @return The name of the constant
     */
    private static String getMemberOffsetConstantName(StructDefinition structDefinition, String memberName) {
-      return "OFFSET_" + structDefinition.getType().getTypeName().toUpperCase().replace(" ", "_") + "_" + memberName.toUpperCase();
+      return "OFFSET_" + structDefinition.getType().getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_") + "_" + memberName.toUpperCase();
    }
 
 

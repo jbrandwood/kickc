@@ -9,6 +9,8 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantRef;
 
+import java.util.Locale;
+
 /** SizeOf operator sizeof(expr). Will be resolved into a constant as soon as the expression has been resolved enough. */
 public class OperatorSizeOf extends OperatorUnary {
 
@@ -56,7 +58,7 @@ public class OperatorSizeOf extends OperatorUnary {
       if(type instanceof SymbolTypePointer) {
          return "SIZEOF_POINTER";
       } else {
-         return "SIZEOF_" + type.getTypeName().toUpperCase().replace(" ", "_");
+         return "SIZEOF_" + type.getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
       }
    }
 

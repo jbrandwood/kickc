@@ -8,6 +8,8 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantRef;
 
+import java.util.Locale;
+
 /**
  * TypeId operator typeid(expr) returns byte value representing the type of the expression.
  * Will be resolved into a constant as soon as the expression has been resolved enough.
@@ -60,7 +62,7 @@ public class OperatorTypeId extends OperatorUnary {
       } else if(type instanceof SymbolTypePointer) {
          return "POINTER_" + getTypeIdConstantName(((SymbolTypePointer) type).getElementType());
       } else {
-         return type.getTypeName().toUpperCase().replace(" ", "_");
+         return type.getTypeName().toUpperCase(Locale.ENGLISH).replace(" ", "_");
       }
    }
 

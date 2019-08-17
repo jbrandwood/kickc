@@ -44,5 +44,51 @@ public class TestKickAssRun {
       return new File(tmpDir.toFile(), kcPath.getFileName().toString() + extension);
    }
 
+   @Test
+   public void testPetsciiEscapeSequences() {
+
+      printPetscii("petscii_mixed", '\b', "\\b");
+      printPetscii("petscii_mixed", '\f', "\\f");
+      printPetscii("petscii_mixed", '\n', "\\n");
+      printPetscii("petscii_mixed", '\r', "\\r");
+      printPetscii("petscii_mixed", '\t', "\\t");
+      printPetscii("petscii_mixed", '\\', "\\\\");
+      printPetscii("petscii_mixed", '\'', "\\'");
+      printPetscii("petscii_mixed", '\"', "\\\"");
+
+      printPetscii("petscii_upper", '\b', "\\b");
+      printPetscii("petscii_upper", '\f', "\\f");
+      printPetscii("petscii_upper", '\n', "\\n");
+      printPetscii("petscii_upper", '\r', "\\r");
+      printPetscii("petscii_upper", '\t', "\\t");
+      printPetscii("petscii_upper", '\\', "\\\\");
+      printPetscii("petscii_upper", '\'', "\\'");
+      printPetscii("petscii_upper", '\"', "\\\"");
+
+      printPetscii("screencode_mixed", '\b', "\\b");
+      printPetscii("screencode_mixed", '\f', "\\f");
+      printPetscii("screencode_mixed", '\n', "\\n");
+      printPetscii("screencode_mixed", '\r', "\\r");
+      printPetscii("screencode_mixed", '\t', "\\t");
+      printPetscii("screencode_mixed", '\\', "\\\\");
+      printPetscii("screencode_mixed", '\'', "\\'");
+      printPetscii("screencode_mixed", '\"', "\\\"");
+
+      printPetscii("screencode_upper", '\b', "\\b");
+      printPetscii("screencode_upper", '\f', "\\f");
+      printPetscii("screencode_upper", '\n', "\\n");
+      printPetscii("screencode_upper", '\r', "\\r");
+      printPetscii("screencode_upper", '\t', "\\t");
+      printPetscii("screencode_upper", '\\', "\\\\");
+      printPetscii("screencode_upper", '\'', "\\'");
+      printPetscii("screencode_upper", '\"', "\\\"");
+   }
+
+   private void printPetscii(String encoding, char ch, String sCh) {
+      CharToPetsciiConverter.setCurrentEncoding(encoding);
+      Byte petscii = CharToPetsciiConverter.convert(ch);
+      System.out.println(encoding+": "+sCh+" > "+(petscii==null?"null":(int)petscii));
+   }
+
 
 }

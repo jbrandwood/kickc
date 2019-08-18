@@ -47,7 +47,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
                         }
                      }
                   }
-                  if(identical) {
+                  if(identical && rValue!=null) {
                      // Found a phi-value with all rValues being identical
                      phiIdentical.put(phiVariable.getVariable(), rValue);
                      phiVariableIt.remove();

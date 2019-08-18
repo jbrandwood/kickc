@@ -37,8 +37,13 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCodeAfterReturn1() throws IOException, URISyntaxException {
+      compileAndCompare("code-after-return-1");
+   }
+
+   @Test
    public void testCodeAfterReturn() throws IOException, URISyntaxException {
-      compileAndCompare("code-after-return",log());
+      compileAndCompare("code-after-return");
    }
 
    @Test

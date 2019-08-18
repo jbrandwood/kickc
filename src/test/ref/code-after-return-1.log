@@ -1,0 +1,303 @@
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte) b#0 ← (number) 0
+  to:@2
+main: scope:[main]  from @2
+  (byte) b#6 ← phi( @2/(byte) b#12 )
+  *((byte*) SCREEN#0 + (number) 0) ← (byte) b#6
+  to:main::@return
+main::@return: scope:[main]  from main main::@2
+  (byte) b#7 ← phi( main/(byte) b#6 main::@2/(byte) b#2 )
+  (byte) b#1 ← (byte) b#7
+  return 
+  to:@return
+main::@1: scope:[main]  from
+  (byte) b#13 ← phi( )
+  call bb 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte) b#8 ← phi( main::@1/(byte) b#4 )
+  (byte) b#2 ← (byte) b#8
+  *((byte*) SCREEN#0 + (number) 1) ← (byte) b#2
+  to:main::@return
+bb: scope:[bb]  from main::@1
+  (byte) b#9 ← phi( main::@1/(byte) b#13 )
+  (byte) b#3 ← ++ (byte) b#9
+  to:bb::@return
+bb::@return: scope:[bb]  from bb
+  (byte) b#10 ← phi( bb/(byte) b#3 )
+  (byte) b#4 ← (byte) b#10
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte) b#12 ← phi( @begin/(byte) b#0 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  (byte) b#11 ← phi( @2/(byte) b#1 )
+  (byte) b#5 ← (byte) b#11
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte) b
+(byte) b#0
+(byte) b#1
+(byte) b#10
+(byte) b#11
+(byte) b#12
+(byte) b#13
+(byte) b#2
+(byte) b#3
+(byte) b#4
+(byte) b#5
+(byte) b#6
+(byte) b#7
+(byte) b#8
+(byte) b#9
+(void()) bb()
+(label) bb::@return
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in (byte) b#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) b#6
+Adding number conversion cast (unumber) 1 in *((byte*) SCREEN#0 + (number) 1) ← (byte) b#2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) b#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte) b#1 = (byte) b#7 
+Alias (byte) b#2 = (byte) b#8 
+Alias (byte) b#10 = (byte) b#3 (byte) b#4 
+Alias (byte) b#0 = (byte) b#12 
+Alias (byte) b#11 = (byte) b#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) b#6 (byte) b#0
+Identical Phi Values (byte) b#2 (byte) b#10
+Identical Phi Values (byte) b#9 (byte) b#13
+Identical Phi Values (byte) b#11 (byte) b#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte) b#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN#0 in [3] *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) b#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable - keeping the phi block (byte) b#1
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating variable (byte) b#13 from unused block main::@1
+Eliminating variable (byte) b#10 from unused block bb
+Removing unused block main::@1
+Removing unused block main::@2
+Removing unused procedure bb
+Removing unused procedure block bb
+Removing unused procedure block bb::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) SCREEN#0) ← (const byte) b#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte) b
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test code after return in main()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const b = 0
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) SCREEN#0) ← (const byte) b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test code after return in main()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const b = 0
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(byte) b
+(const byte) b#0 b = (byte) 0
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+  // File Comments
+// Test code after return in main()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const b = 0
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // SCREEN[0] = b
+    // [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+

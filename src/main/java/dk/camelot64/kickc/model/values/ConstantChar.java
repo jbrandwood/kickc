@@ -76,6 +76,8 @@ public class ConstantChar implements ConstantLiteral<Character> {
                return '\"';
             case '\'':
                return '\'';
+            case '\\':
+               return '\\';
             default:
                throw new CompileError("Illegal char escape sequence \\" + charString.charAt(1));
          }
@@ -99,6 +101,8 @@ public class ConstantChar implements ConstantLiteral<Character> {
             return "\\f";
          case '\'':
             return "\\'";
+         case '\\':
+            return "\\\\";
          default:
             return Character.toString(aChar);
       }

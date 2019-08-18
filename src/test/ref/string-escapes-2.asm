@@ -27,5 +27,5 @@ chrout: {
     rts
 }
 .encoding "petscii_mixed"
-  MESSAGE: .text @"hello\nworld"
+  MESSAGE: .text @"hello\nworld\\"
   .byte 0

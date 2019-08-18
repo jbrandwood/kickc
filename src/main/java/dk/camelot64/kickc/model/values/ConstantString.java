@@ -133,6 +133,9 @@ public class ConstantString implements ConstantLiteral<String> {
                case '\'':
                   stringChar = '\'';
                   break;
+               case '\\':
+                  stringChar = '\\';
+                  break;
                default:
                   throw new CompileError("Illegal string escape sequence \\" + escapeChar);
             }
@@ -166,6 +169,9 @@ public class ConstantString implements ConstantLiteral<String> {
                break;
             case '"':
                stringResult.append("\\\"");
+               break;
+            case '\\':
+               stringResult.append("\\\\");
                break;
             default:
                stringResult.append(stringChar);

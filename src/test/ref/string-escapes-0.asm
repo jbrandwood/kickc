@@ -16,5 +16,5 @@ main: {
     iny
     jmp b1
 }
-  MESSAGE: .text @"\r\f\n\"'"
+  MESSAGE: .text @"\r\f\n\"'\\"
   .byte 0

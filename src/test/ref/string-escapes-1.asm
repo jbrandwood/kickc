@@ -1,0 +1,59 @@
+// Test using some simple supported string escape \n in both string and char
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+main: {
+    .label cursor = 6
+    .label msg = 2
+    .label line = 4
+    lda #<$400
+    sta.z cursor
+    lda #>$400
+    sta.z cursor+1
+    lda #<$400
+    sta.z line
+    lda #>$400
+    sta.z line+1
+    lda #<MESSAGE
+    sta.z msg
+    lda #>MESSAGE
+    sta.z msg+1
+  b1:
+    ldy #0
+    lda (msg),y
+    cmp #0
+    bne b2
+    rts
+  b2:
+    lda #-$33
+    ldy #0
+    cmp (msg),y
+    beq b3
+    lda (msg),y
+    sta (cursor),y
+    inc.z cursor
+    bne !+
+    inc.z cursor+1
+  !:
+  b5:
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    jmp b1
+  b3:
+    lda #$28
+    clc
+    adc.z line
+    sta.z cursor
+    lda #0
+    adc.z line+1
+    sta.z cursor+1
+    lda.z cursor
+    sta.z line
+    lda.z cursor+1
+    sta.z line+1
+    jmp b5
+}
+  MESSAGE: .text @"hello\nworld"
+  .byte 0

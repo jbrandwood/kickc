@@ -34,15 +34,27 @@ public class AsmFormat {
       } else if(value instanceof ConstantChar) {
             ConstantChar constantChar = (ConstantChar) value;
             if(!ConstantString.Encoding.SCREENCODE_MIXED.equals(constantChar.getEncoding())) {
+               // Current KickAsm does not support encoded literal chars
                // Manually convert literal chars in non-standard encodings
                CharToPetsciiConverter.setCurrentEncoding(constantChar.getEncoding().name);
                byte converted = CharToPetsciiConverter.convertOrChar(constantChar.getChar(), true);
                return getAsmNumber(new Long(converted));
             } else {
-               return "'" + constantChar.getValue() + "'";
+               String escapedChar = ConstantChar.asciiToCharEscape(((ConstantChar) value).getChar());
+               if(escapedChar.length()>1) {
+                  // Currently KickAss does not support escaped characters - so instead we must output the number value instead
+                  CharToPetsciiConverter.setCurrentEncoding(constantChar.getEncoding().name);
+                  byte converted = CharToPetsciiConverter.convertOrChar(constantChar.getChar(), true);
+                  return getAsmNumber(new Long(converted));
+               }  else {
+                  return "'" + escapedChar + "'";
+               }
             }
       } else if(value instanceof ConstantString) {
-         return "\"" + ((ConstantString) value).getValue() + "\"";
+         String stringValue = ((ConstantString) value).getValue();
+         String escapedString = ConstantString.asciiToStringEscape(stringValue);
+         boolean hasEscape = !stringValue.equals(escapedString);
+         return (hasEscape?"@":"")+"\"" + escapedString + "\"";
       } else if(value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();

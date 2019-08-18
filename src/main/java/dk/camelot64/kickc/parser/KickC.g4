@@ -285,7 +285,7 @@ MNEMONIC:
 KICKASM: '{{' .*? '}}';
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]?;
-CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
+CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;
 NUMFLOAT : BINFLOAT | DECFLOAT | HEXFLOAT;

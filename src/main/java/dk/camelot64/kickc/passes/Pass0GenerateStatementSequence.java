@@ -4,7 +4,6 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -1700,11 +1699,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    /** The current string encoding used if no explicit encoding is specified. */
-   ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+   private ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
-      String stringValue = "";
+      StringBuilder stringValue = new StringBuilder();
       String subText;
       String lastSuffix = "";
       ConstantString.Encoding encoding = null;
@@ -1719,10 +1718,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             encoding = suffixEncoding;
          }
          lastSuffix = suffix;
-         stringValue += subText.substring(1, subText.lastIndexOf('"'));
+         stringValue.append(subText, 1, subText.lastIndexOf('"'));
       }
       boolean zeroTerminated = !lastSuffix.contains("z");
-      return new ConstantString(stringValue, encoding, zeroTerminated);
+      try {
+         return new ConstantString(ConstantString.stringEscapeToAscii(stringValue.toString()), encoding, zeroTerminated);
+      } catch(CompileError e) {
+         // Rethrow - adding statement context!
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      }
    }
 
    /**
@@ -1757,7 +1761,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprChar(KickCParser.ExprCharContext ctx) {
-      return new ConstantChar(ctx.getText().charAt(1), currentEncoding);
+      try {
+         String charText = ctx.getText();
+         charText = charText.substring(1, charText.length() - 1);
+         char constChar = ConstantChar.charEscapeToAscii(charText);
+         return new ConstantChar(constChar, currentEncoding);
+      } catch (CompileError e) {
+         // Rethrow adding source location
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      }
    }
 
    @Override

@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -193,6 +194,10 @@ public class Pass1ProcedureInline extends Pass1Base {
          StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource(), Comment.NO_COMMENTS);
          inlinedCall.setProcedure(procCall.getProcedure());
          inlinedStatement = inlinedCall;
+      } else if(procStatement instanceof StatementAsm) {
+         StatementAsm procAsm = (StatementAsm) procStatement;
+         StatementAsm inlinedAsm = new StatementAsm(procAsm.getAsmBody(), new LinkedHashMap<>(procAsm.getReferenced()), procAsm.getDeclaredClobber(), procAsm.getSource(), Comment.NO_COMMENTS);
+         inlinedStatement = inlinedAsm;
       } else if(procStatement instanceof StatementConditionalJump) {
          StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
          LabelRef procDestinationRef = procConditional.getDestination();

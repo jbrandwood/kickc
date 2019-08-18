@@ -1,0 +1,496 @@
+Warning! Adding boolean cast to non-boolean condition *((byte[]) MESSAGE + (byte) main::i)
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte[]) MESSAGE#0 ← (const string) $0
+  (byte*) memA#0 ← ((byte*)) (number) $ff
+  to:@2
+main: scope:[main]  from @2
+  (byte) main::i#0 ← (number) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@7
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#1 )
+  (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE#0 + (byte) main::i#2)
+  if((bool~) main::$1) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
+  (byte) chrout::c#0 ← *((byte[]) MESSAGE#0 + (byte) main::i#3)
+  call chrout 
+  to:main::@7
+main::@7: scope:[main]  from main::@2
+  (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
+  (byte) main::i#1 ← ++ (byte) main::i#4
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+chrout: scope:[chrout]  from main::@2
+  (byte) chrout::c#1 ← phi( main::@2/(byte) chrout::c#0 )
+  *((byte*) memA#0) ← (byte) chrout::c#1
+  asm { ldamemA jsr$ffd2  }
+  to:chrout::@return
+chrout::@return: scope:[chrout]  from chrout
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(const string) $0 = (string) "hello
+world"pm
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte[]) MESSAGE
+(byte[]) MESSAGE#0
+(void()) chrout((byte) chrout::c)
+(label) chrout::@return
+(byte) chrout::c
+(byte) chrout::c#0
+(byte) chrout::c#1
+(void()) main()
+(bool~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@7
+(label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(byte) main::i#4
+(byte*) memA
+(byte*) memA#0
+
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE#0 + (byte) main::i#2)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) memA#0 ← (byte*)(number) $ff
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte) chrout::c#1 (byte) chrout::c#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$1 [5] if((byte) 0!=*((byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte[]) MESSAGE#0 = $0
+Constant (const byte*) memA#0 = (byte*) 255
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined $0 = (const byte[]) MESSAGE#0
+Constant inlined main::i#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to chrout:10 
+
+Created 1 initial phi equivalence classes
+Coalesced [12] main::i#5 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Renumbering block main::@7 to main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
+  [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [7] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2)
+  [9] call chrout 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [10] (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+chrout: scope:[chrout]  from main::@2
+  [11] *((const byte*) memA#0) ← (byte) chrout::c#0
+  asm { ldamemA jsr$ffd2  }
+  to:chrout::@return
+chrout::@return: scope:[chrout]  from chrout
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte[]) MESSAGE
+(void()) chrout((byte) chrout::c)
+(byte) chrout::c
+(byte) chrout::c#0 13.0
+(void()) main()
+(byte) main::i
+(byte) main::i#1 22.0
+(byte) main::i#2 11.0
+(byte*) memA
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable chrout::c#0 to zero page equivalence class [ chrout::c#0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ chrout::c#0 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ chrout::c#0 ]
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test using some simple supported string escape characters in PETSCII
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label memA = $ff
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label i = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp b1
+    // main::@1
+  b1:
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
+    ldy.z i
+    cmp MESSAGE,y
+    bne b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z i
+    lda MESSAGE,y
+    sta.z chrout.c
+    // [9] call chrout 
+    jsr chrout
+    jmp b3
+    // main::@3
+  b3:
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+}
+  // chrout
+// chrout(byte zeropage(3) c)
+chrout: {
+    .label c = 3
+    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuz1 
+    lda.z c
+    sta memA
+    // asm { ldamemA jsr$ffd2  }
+    lda memA
+    jsr $ffd2
+    jmp breturn
+    // chrout::@return
+  breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  MESSAGE: .text @"hello\nworld"
+  .byte 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement asm { ldamemA jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) [ main::i#2 chrout::c#0 ] ( main:2 [ main::i#2 chrout::c#0 ] ) always clobbers reg byte y 
+Statement asm { ldamemA jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:3 [ chrout::c#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [chrout] 13: zp ZP_BYTE:3 [ chrout::c#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 549 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplifting [chrout] best 516 combination reg byte a [ chrout::c#0 ] 
+Uplifting [] best 516 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 516 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test using some simple supported string escape characters in PETSCII
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label memA = $ff
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label i = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp b1
+    // main::@1
+  b1:
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
+    ldy.z i
+    cmp MESSAGE,y
+    bne b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy.z i
+    lda MESSAGE,y
+    // [9] call chrout 
+    jsr chrout
+    jmp b3
+    // main::@3
+  b3:
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+}
+  // chrout
+// chrout(byte register(A) c)
+chrout: {
+    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
+    sta memA
+    // asm { ldamemA jsr$ffd2  }
+    lda memA
+    jsr $ffd2
+    jmp breturn
+    // chrout::@return
+  breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  MESSAGE: .text @"hello\nworld"
+  .byte 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda memA
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction breturn:
+Removing instruction b3:
+Removing instruction b1_from_b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte[]) MESSAGE
+(const byte[]) MESSAGE#0 MESSAGE = (string) "hello
+world"pm
+(void()) chrout((byte) chrout::c)
+(label) chrout::@return
+(byte) chrout::c
+(byte) chrout::c#0 reg byte a 13.0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::i
+(byte) main::i#1 i zp ZP_BYTE:2 22.0
+(byte) main::i#2 i zp ZP_BYTE:2 11.0
+(byte*) memA
+(const byte*) memA#0 memA = (byte*) 255
+
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+reg byte a [ chrout::c#0 ]
+
+
+FINAL ASSEMBLER
+Score: 407
+
+  // File Comments
+// Test using some simple supported string escape characters in PETSCII
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label memA = $ff
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label i = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // main::@1
+  b1:
+    // while(MESSAGE[i])
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
+    ldy.z i
+    cmp MESSAGE,y
+    bne b2
+    // main::@return
+    // }
+    // [7] return 
+    rts
+    // main::@2
+  b2:
+    // chrout(MESSAGE[i++])
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy.z i
+    lda MESSAGE,y
+    // [9] call chrout 
+    jsr chrout
+    // main::@3
+    // chrout(MESSAGE[i++]);
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+}
+  // chrout
+// chrout(byte register(A) c)
+chrout: {
+    // *memA = c
+    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
+    sta memA
+    // asm
+    // asm { ldamemA jsr$ffd2  }
+    jsr $ffd2
+    // chrout::@return
+    // }
+    // [13] return 
+    rts
+}
+  // File Data
+.encoding "petscii_mixed"
+  MESSAGE: .text @"hello\nworld"
+  .byte 0
+

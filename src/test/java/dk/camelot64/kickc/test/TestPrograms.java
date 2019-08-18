@@ -36,6 +36,31 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testStringEscapesErr1() throws IOException, URISyntaxException {
+      assertError("string-escapes-err-1", "Illegal string escape sequence");
+   }
+
+   @Test
+   public void testStringEscapesErr0() throws IOException, URISyntaxException {
+      assertError("string-escapes-err-0", "Unfinished string escape sequence at end of string");
+   }
+
+   @Test
+   public void testStringEscapes2() throws IOException, URISyntaxException {
+      compileAndCompare("string-escapes-2");
+   }
+
+   @Test
+   public void testStringEscapes1() throws IOException, URISyntaxException {
+      compileAndCompare("string-escapes-1");
+   }
+
+   @Test
+   public void testStringEscapes0() throws IOException, URISyntaxException {
+      compileAndCompare("string-escapes-0");
+   }
+
    //@Test
    //public void testLoopheadProblem() throws IOException, URISyntaxException {
    //   compileAndCompare("loophead-problem");

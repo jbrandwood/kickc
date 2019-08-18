@@ -974,10 +974,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtSwitch(KickCParser.StmtSwitchContext ctx) {
+      Loop containingLoop = loopStack.peek();
       // Create a block scope - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      loopStack.push(new Loop(blockScope));
+      Loop switchLoop = new Loop(blockScope);
+      switchLoop.setContinueLabel(containingLoop.getOrCreateContinueLabel());
+      loopStack.push(switchLoop);
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       // TODO: Add comments to next stmt
       // Evaluate the switch-expression
@@ -1012,7 +1015,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(ctx.switchCases().stmtSeq() != null) {
          this.visit(ctx.switchCases().stmtSeq());
       }
-      // TODO: Do something to handle continue!
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
       return null;

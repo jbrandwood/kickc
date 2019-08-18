@@ -1,9 +1,10 @@
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@14
 Culled Empty Block (label) main::@15
+Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@9
-Culled Empty Block (label) main::@10
+Culled Empty Block (label) main::@16
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -12,14 +13,14 @@ main: scope:[main]  from @1
   (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@7
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#1 )
+main::@1: scope:[main]  from main main::@10
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@10/(byte) main::i#1 )
   if((byte) main::i#2==(number) 1) goto main::@2
   to:main::@11
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   *((byte*) main::SCREEN#0 + (byte) main::i#3) ← (byte) '1'
-  to:main::@7
+  to:main::@10
 main::@11: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
   if((byte) main::i#4==(number) 2) goto main::@4
@@ -39,18 +40,18 @@ main::@13: scope:[main]  from main::@12
 main::@5: scope:[main]  from main::@13 main::@4
   (byte) main::i#8 ← phi( main::@13/(byte) main::i#7 main::@4/(byte) main::i#6 )
   *((byte*) main::SCREEN#0 + (byte) main::i#8) ← (byte) '4'
-  to:main::@7
+  to:main::@10
 main::@6: scope:[main]  from main::@13
   (byte) main::i#9 ← phi( main::@13/(byte) main::i#7 )
   *((byte*) main::SCREEN#0 + (byte) main::i#9) ← (byte) 'd'
-  to:main::@7
-main::@7: scope:[main]  from main::@2 main::@5 main::@6
+  to:main::@10
+main::@10: scope:[main]  from main::@2 main::@5 main::@6
   (byte) main::i#10 ← phi( main::@2/(byte) main::i#3 main::@5/(byte) main::i#8 main::@6/(byte) main::i#9 )
   (byte) main::i#1 ← (byte) main::i#10 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
   if((bool~) main::$0) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@7
+main::@return: scope:[main]  from main::@10
   return 
   to:@return
 @1: scope:[]  from @begin
@@ -68,6 +69,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$0
 (label) main::@1
+(label) main::@10
 (label) main::@11
 (label) main::@12
 (label) main::@13
@@ -75,7 +77,6 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@5
 (label) main::@6
-(label) main::@7
 (label) main::@return
 (byte*) main::SCREEN
 (byte*) main::SCREEN#0
@@ -175,7 +176,7 @@ Successful SSA optimization Pass2AliasElimination
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@16(between main::@13 and main::@6)
+Added new block during phi lifting main::@17(between main::@13 and main::@6)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -199,11 +200,11 @@ Culled Empty Block (label) main::@1_1
 Culled Empty Block (label) main::@11_1
 Culled Empty Block (label) main::@12_1
 Culled Empty Block (label) main::@13_1
-Culled Empty Block (label) main::@16
+Culled Empty Block (label) main::@17
 Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
 Renumbering block main::@6 to main::@5
-Renumbering block main::@7 to main::@6
+Renumbering block main::@10 to main::@6
 Renumbering block main::@11 to main::@7
 Renumbering block main::@12 to main::@8
 Renumbering block main::@13 to main::@9
@@ -313,6 +314,7 @@ main: {
     // main::@5
   b5:
     // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#29) ← (byte) 'd' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // No case for 0 & 5
     lda #'d'
     ldy.z i
     sta SCREEN,y
@@ -338,7 +340,6 @@ main: {
     // main::@1
   b1:
     // [11] if((byte) main::i#1==(byte) 1) goto main::@2 -- vbuz1_eq_vbuc1_then_la1 
-    // A simple case with a break
     lda #1
     cmp.z i
     beq b2
@@ -346,7 +347,6 @@ main: {
     // main::@7
   b7:
     // [12] if((byte) main::i#1==(byte) 2) goto main::@3 -- vbuz1_eq_vbuc1_then_la1 
-    // A case with no body
     lda #2
     cmp.z i
     beq b3
@@ -354,7 +354,7 @@ main: {
     // main::@8
   b8:
     // [13] if((byte) main::i#1==(byte) 3) goto main::@3 -- vbuz1_eq_vbuc1_then_la1 
-    // A case with fall-through
+    // A case with no body
     lda #3
     cmp.z i
     beq b3
@@ -379,6 +379,7 @@ main: {
     // main::@3
   b3:
     // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '3' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // A case with fall-through
     lda #'3'
     ldy.z i
     sta SCREEN,y
@@ -386,6 +387,7 @@ main: {
     // main::@2
   b2:
     // [17] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '1' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // A simple case with a break
     lda #'1'
     ldy.z i
     sta SCREEN,y
@@ -448,6 +450,7 @@ main: {
     // main::@5
   b5:
     // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#29) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // No case for 0 & 5
     lda #'d'
     sta SCREEN,x
     // [7] phi from main::@2 main::@4 main::@5 to main::@6 [phi:main::@2/main::@4/main::@5->main::@6]
@@ -471,21 +474,19 @@ main: {
     // main::@1
   b1:
     // [11] if((byte) main::i#1==(byte) 1) goto main::@2 -- vbuxx_eq_vbuc1_then_la1 
-    // A simple case with a break
     cpx #1
     beq b2
     jmp b7
     // main::@7
   b7:
     // [12] if((byte) main::i#1==(byte) 2) goto main::@3 -- vbuxx_eq_vbuc1_then_la1 
-    // A case with no body
     cpx #2
     beq b3
     jmp b8
     // main::@8
   b8:
     // [13] if((byte) main::i#1==(byte) 3) goto main::@3 -- vbuxx_eq_vbuc1_then_la1 
-    // A case with fall-through
+    // A case with no body
     cpx #3
     beq b3
     jmp b9
@@ -507,12 +508,14 @@ main: {
     // main::@3
   b3:
     // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // A case with fall-through
     lda #'3'
     sta SCREEN,x
     jmp b4
     // main::@2
   b2:
     // [17] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // A simple case with a break
     lda #'1'
     sta SCREEN,x
     jmp b6_from_b2
@@ -606,6 +609,7 @@ main: {
   b5:
     // SCREEN[i] = 'd'
     // [6] *((const byte*) main::SCREEN#0 + (byte) main::i#29) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // No case for 0 & 5
     lda #'d'
     sta SCREEN,x
     // [7] phi from main::@2 main::@4 main::@5 to main::@6 [phi:main::@2/main::@4/main::@5->main::@6]
@@ -625,23 +629,23 @@ main: {
     // main::@1
   b1:
     // case 1:
+    //                 // A simple case with a break
     //                 SCREEN[i] = '1';
     //                 break;
     // [11] if((byte) main::i#1==(byte) 1) goto main::@2 -- vbuxx_eq_vbuc1_then_la1 
-    // A simple case with a break
     cpx #1
     beq b2
     // main::@7
     // case 2:
     // [12] if((byte) main::i#1==(byte) 2) goto main::@3 -- vbuxx_eq_vbuc1_then_la1 
-    // A case with no body
     cpx #2
     beq b3
     // main::@8
     // case 3:
+    //                 // A case with fall-through
     //                 SCREEN[i] = '3';
     // [13] if((byte) main::i#1==(byte) 3) goto main::@3 -- vbuxx_eq_vbuc1_then_la1 
-    // A case with fall-through
+    // A case with no body
     cpx #3
     beq b3
     // main::@9
@@ -665,6 +669,7 @@ main: {
   b3:
     // SCREEN[i] = '3'
     // [16] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // A case with fall-through
     lda #'3'
     sta SCREEN,x
     jmp b4
@@ -672,6 +677,7 @@ main: {
   b2:
     // SCREEN[i] = '1'
     // [17] *((const byte*) main::SCREEN#0 + (byte) main::i#1) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // A simple case with a break
     lda #'1'
     sta SCREEN,x
     jmp b6

@@ -273,9 +273,16 @@ public class AsmFragmentInstance {
       public AsmParameter visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
          AsmParameter left = (AsmParameter) this.visit(ctx.asmExpr(0));
          AsmParameter right = (AsmParameter) this.visit(ctx.asmExpr(1));
-         String param = "" + left.getParam() + ctx.getChild(1).getText() + right.getParam();
+         StringBuilder param = new StringBuilder();
+         param.append(left.getParam());
+         if(ctx.asmExpr(0) instanceof KickCParser.AsmExprLabelRelContext) {
+            // Add an extra space if we are doing a binary expression with a relative label as the left part
+            param.append(" ");
+         }
+         param.append(ctx.getChild(1).getText());
+         param.append(right.getParam());
          boolean zp = left.isZp() && right.isZp();
-         return new AsmParameter(param, zp);
+         return new AsmParameter(param.toString(), zp);
       }
 
       @Override

@@ -1032,10 +1032,10 @@ processChars: {
     ldx #' '
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR
     lda (processing),y
-    sta !++1
+    sta !+ +1
     iny
     lda (processing),y
-    sta !++2
+    sta !+ +2
     txa
   !:
     sta $ffff

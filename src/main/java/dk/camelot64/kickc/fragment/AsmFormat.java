@@ -7,9 +7,10 @@ import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
-import kickass.nonasm.c64.CharToPetsciiConverter;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
@@ -32,29 +33,14 @@ public class AsmFormat {
       } else if(value instanceof ConstantBool) {
          return getAsmBool(((ConstantBool) value).getBool());
       } else if(value instanceof ConstantChar) {
-            ConstantChar constantChar = (ConstantChar) value;
-            if(!ConstantString.Encoding.SCREENCODE_MIXED.equals(constantChar.getEncoding())) {
-               // Current KickAsm does not support encoded literal chars
-               // Manually convert literal chars in non-standard encodings
-               CharToPetsciiConverter.setCurrentEncoding(constantChar.getEncoding().name);
-               byte converted = CharToPetsciiConverter.convertOrChar(constantChar.getChar(), true);
-               return getAsmNumber(new Long(converted));
-            } else {
-               String escapedChar = ConstantChar.asciiToCharEscape(((ConstantChar) value).getChar());
-               if(escapedChar.length()>1) {
-                  // Currently KickAss does not support escaped characters - so instead we must output the number value instead
-                  CharToPetsciiConverter.setCurrentEncoding(constantChar.getEncoding().name);
-                  byte converted = CharToPetsciiConverter.convertOrChar(constantChar.getChar(), true);
-                  return getAsmNumber(new Long(converted));
-               }  else {
-                  return "'" + escapedChar + "'";
-               }
-            }
+         ConstantChar constantChar = (ConstantChar) value;
+         String escapedChar = ConstantChar.asciiToCharEscape(constantChar.getChar());
+         return "'" + escapedChar + "'";
       } else if(value instanceof ConstantString) {
          String stringValue = ((ConstantString) value).getValue();
          String escapedString = ConstantString.asciiToStringEscape(stringValue);
          boolean hasEscape = !stringValue.equals(escapedString);
-         return (hasEscape?"@":"")+"\"" + escapedString + "\"";
+         return (hasEscape ? "@" : "") + "\"" + escapedString + "\"";
       } else if(value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();
@@ -151,15 +137,15 @@ public class AsmFormat {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
          ConstantLiteral constantLiteral = operand.calculateLiteral(program.getScope());
-         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_WORD.equals(operator)&& SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_WORD.equals(operator) && SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_SWORD.equals(operator)&& SymbolType.SWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_SWORD.equals(operator) && SymbolType.SWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(constantLiteral instanceof ConstantInteger  && (operator instanceof OperatorCastPtr) && SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+         if(constantLiteral instanceof ConstantInteger && (operator instanceof OperatorCastPtr) && SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
@@ -172,11 +158,11 @@ public class AsmFormat {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
          ConstantLiteral constantLiteral = operand.calculateLiteral(program.getScope());
-         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_DWORD.equals(operator)&& SymbolType.DWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_DWORD.equals(operator) && SymbolType.DWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_SDWORD.equals(operator)&& SymbolType.SDWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_SDWORD.equals(operator) && SymbolType.SDWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
@@ -251,8 +237,8 @@ public class AsmFormat {
          if(number.longValue() >= 0L && number.longValue() <= 255L) {
             return SHORT_ASM_NUMBERS[number.intValue()];
          } else {
-            if(number.longValue()<0) {
-               return "-"+getAsmNumber(-number.longValue());
+            if(number.longValue() < 0) {
+               return "-" + getAsmNumber(-number.longValue());
             } else {
                return String.format("$%x", number.longValue());
             }

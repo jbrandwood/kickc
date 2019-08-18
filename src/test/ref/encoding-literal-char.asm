@@ -3,13 +3,13 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 .encoding "petscii_mixed"
-  .const cpm = -$3f
+  .const cpm = 'A'
 .encoding "petscii_upper"
-  .const cpu = $41
+  .const cpu = 'A'
 .encoding "screencode_mixed"
   .const csm = 'A'
 .encoding "screencode_upper"
-  .const csu = 1
+  .const csu = 'A'
   .label screen = $400
 main: {
     lda #cpm

@@ -52,6 +52,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStringEscapes3() throws IOException, URISyntaxException {
+      compileAndCompare("string-escapes-3");
+   }
+
+   @Test
    public void testStringEscapes2() throws IOException, URISyntaxException {
       compileAndCompare("string-escapes-2");
    }

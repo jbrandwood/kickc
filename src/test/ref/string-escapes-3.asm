@@ -1,4 +1,5 @@
 // Test using some simple supported string escape \n in both string and char
+// Uses encoding PETSCII mixed
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -25,11 +26,13 @@ main: {
     bne b2
     rts
   b2:
+  .encoding "petscii_mixed"
     lda #'\n'
     ldy #0
     cmp (msg),y
     beq b3
-    lda (msg),y
+    lda #$3f
+    and (msg),y
     sta (cursor),y
     inc.z cursor
     bne !+

@@ -672,6 +672,7 @@ public class Pass4CodeGeneration {
          }
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, assignmentAlu, program);
+         ensureEncoding(asm, asmFragmentInstanceSpecFactory);
          generateAsm(asm, asmFragmentInstanceSpecFactory);
          aluState.clear();
          return;
@@ -703,6 +704,7 @@ public class Pass4CodeGeneration {
             }
          } else if(statement instanceof StatementConditionalJump) {
             AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementConditionalJump) statement, block, program, getGraph());
+            ensureEncoding(asm, asmFragmentInstanceSpecFactory);
             generateAsm(asm, asmFragmentInstanceSpecFactory);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
@@ -981,6 +983,7 @@ public class Pass4CodeGeneration {
                asm.getCurrentChunk().setFragment("register_copy");
             } else {
                AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, rValue, program, scope);
+               ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                generateAsm(asm, asmFragmentInstanceSpecFactory);
             }
          }

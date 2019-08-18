@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 /** KickC Commandline */
 @CommandLine.Command(
       description = "Compiles a KickC source file, creating a KickAssembler source file. " +
-            "KickC is a compiler for a C-family language creating optimized and readable 6502 assembler code.%n%n" +
+            "KickC is a C-compiler creating optimized and readable 6502 assembler code.%n%n" +
             "See https://gitlab.com/camelot/kickc for detailed information about KickC.",
       name = "kickc",
       mixinStandardHelpOptions = true,
@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
       descriptionHeading = "%nDescription:%n%n",
       parameterListHeading = "%nParameters:%n",
       optionListHeading = "%nOptions:%n",
-      version = "KickC 0.7.x BETA (master)"
+      version = "KickC 0.7.8 BETA (master)"
 )
 public class KickC implements Callable<Void> {
 

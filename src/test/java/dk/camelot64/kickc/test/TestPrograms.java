@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCodeAfterReturn() throws IOException, URISyntaxException {
+      compileAndCompare("code-after-return",log());
+   }
+
+   @Test
    public void testStringEscapesErr1() throws IOException, URISyntaxException {
       assertError("string-escapes-err-1", "Illegal string escape sequence");
    }
@@ -416,6 +421,12 @@ public class TestPrograms {
       compileAndCompare("enum-0");
    }
 
+   // TODO: Fix https://gitlab.com/camelot/kickc/issues/269
+   //@Test
+   //public void testTypedef2() throws IOException, URISyntaxException {
+   //   compileAndCompare("typedef-2");
+   //}
+
    @Test
    public void testTypedef1() throws IOException, URISyntaxException {
       compileAndCompare("typedef-1");
@@ -480,6 +491,16 @@ public class TestPrograms {
       compileAndCompare("problem-inline-struct-return", log().verboseCreateSsa());
    }
    */
+
+   @Test
+   public void testStructPtr21() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-21");
+   }
+
+   @Test
+   public void testStructPtr20() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-20");
+   }
 
    @Test
    public void testStructPtr19() throws IOException, URISyntaxException {
@@ -1349,6 +1370,11 @@ public class TestPrograms {
    @Test
    public void testLoopBreakContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-break-continue");
+   }
+
+   @Test
+   public void testLoopForEmptyBody() throws IOException, URISyntaxException {
+      compileAndCompare("loop-for-empty-body");
    }
 
    @Test

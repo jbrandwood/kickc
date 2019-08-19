@@ -1885,6 +1885,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIrqHardwareStack() throws IOException, URISyntaxException {
+      compileAndCompare("irq-hardware-stack");
+   }
+
+   @Test
    public void testIrqHardware() throws IOException, URISyntaxException {
       compileAndCompare("irq-hardware");
    }

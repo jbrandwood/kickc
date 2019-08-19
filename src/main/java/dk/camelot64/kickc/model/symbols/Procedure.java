@@ -143,6 +143,8 @@ public class Procedure extends Scope {
       HARDWARE_NONE,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers. */
       HARDWARE_ALL,
+      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers using the stack. */
+      HARDWARE_STACK,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
       HARDWARE_CLOBBER;
 

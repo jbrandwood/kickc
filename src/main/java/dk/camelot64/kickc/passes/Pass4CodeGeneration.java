@@ -853,7 +853,6 @@ public class Pass4CodeGeneration {
    private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
       Procedure.InterruptType interruptType = procedure.getInterruptType();
       asm.startChunk(procedure.getRef(), null, "entry interrupt(" + interruptType.name() + ")");
-      //asm.getCurrentChunk().setXXX();
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
@@ -862,6 +861,12 @@ public class Pass4CodeGeneration {
          asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
          asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
          asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+      } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
+         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("txa", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tya", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
@@ -893,6 +898,13 @@ public class Pass4CodeGeneration {
          asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addLabel("regy").setDontOptimize(true);
          asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+      } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
+         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tay", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tax", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
          asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
          asm.addInstruction("rti", AsmAddressingMode.NON, null, false);

@@ -1055,15 +1055,14 @@ main: {
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- _deref_pptc1_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
-    ldx files,y
-    stx !+ +1
-    ldx files+1,y
-    stx !+ +2
-  !:
-    sta $ffff
+    ldx files
+    stx.z $fe
+    ldx files+1
+    stx.z $ff
+    sta ($fe),y
     // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files#0) -- pbuz1=_deref_pptc1 
     lda files
     sta.z _0
@@ -1430,16 +1429,16 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 Uplift Scope [fileentry] 
 
-Uplifting [] best 1979 combination zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] 
-Uplifting [print_str] best 1979 combination zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
-Uplifting [memset] best 1979 combination zp ZP_WORD:10 [ memset::dst#4 memset::dst#1 ] 
-Uplifting [print_byte] best 1961 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_char] best 1952 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [main] best 1952 combination zp ZP_WORD:12 [ main::$0 ] 
-Uplifting [RADIX] best 1952 combination 
-Uplifting [print_ln] best 1952 combination 
-Uplifting [print_cls] best 1952 combination 
-Uplifting [fileentry] best 1952 combination 
+Uplifting [] best 1978 combination zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] 
+Uplifting [print_str] best 1978 combination zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
+Uplifting [memset] best 1978 combination zp ZP_WORD:10 [ memset::dst#4 memset::dst#1 ] 
+Uplifting [print_byte] best 1960 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_char] best 1951 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [main] best 1951 combination zp ZP_WORD:12 [ main::$0 ] 
+Uplifting [RADIX] best 1951 combination 
+Uplifting [print_ln] best 1951 combination 
+Uplifting [print_cls] best 1951 combination 
+Uplifting [fileentry] best 1951 combination 
 Coalescing zero page register [ zp ZP_WORD:10 [ memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:12 [ main::$0 ] ] with [ zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
@@ -1479,15 +1478,14 @@ main: {
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- _deref_pptc1_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
-    ldx files,y
-    stx !+ +1
-    ldx files+1,y
-    stx !+ +2
-  !:
-    sta $ffff
+    ldx files
+    stx.z $fe
+    ldx files+1
+    stx.z $ff
+    sta ($fe),y
     // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files#0) -- pbuz1=_deref_pptc1 
     lda files
     sta.z _0
@@ -1959,7 +1957,7 @@ reg byte x [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 1647
+Score: 1646
 
   // File Comments
 // Demonstrates problem with missing parenthesis in double-dereferencing
@@ -1987,15 +1985,14 @@ main: {
     lda #>$4000
     sta files+1
     // file->bufEdit[3] = 0xAA
-    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- _deref_pptc1_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry[$a]) files#0) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
-    ldx files,y
-    stx !+ +1
-    ldx files+1,y
-    stx !+ +2
-  !:
-    sta $ffff
+    ldx files
+    stx.z $fe
+    ldx files+1
+    stx.z $ff
+    sta ($fe),y
     // (char *)file->bufEdit
     // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files#0) -- pbuz1=_deref_pptc1 
     lda files

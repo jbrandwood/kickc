@@ -640,6 +640,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*c2.*)pb(.)c2_derefidx_vbuyy(.*)", rvalAa, "lda {c2},y", "$1=$2vb$3aa$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)c2_derefidx_vbuyy(.*c2.*)", rvalAa, "lda {c2},y", "$1=$2vb$3aa$4", null, null));
 
+      // Remove any parenthesis ending up around values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)\\(([vp][bwd][us][zcaxy][123456axy])\\)(.*)", null, null, "$1$2$3", null, null));
+
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(.*)", rvalYy+"|"+twoZ1, "ldy {z1}", "$1_derefidx_vbuyy_$2", null, mapZ1));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", rvalXx+"|"+twoZ1, "ldx {z1}", "$1_derefidx_vbuxx_$2_$3", null, mapZ1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy_(lt|gt|le|ge|eq|neq)_(.*)", rvalAa+"|"+twoC1, "lda {c1},y", "vb$1aa_$2_$3", null, mapC1));

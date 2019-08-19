@@ -309,10 +309,32 @@ public class AsmFragmentInstanceSpecFactory {
             ptrType = new SymbolTypePointer(castType);
          }
          if(value instanceof PointerDereferenceSimple) {
-            return "_deref_" + bind(deref.getPointer(), ptrType);
+            String bindPointer = bind(deref.getPointer(), ptrType);
+            if(bindPointer.contains("deref")) {
+               // Special handling of nested derefs - add parenthesis!
+               return "_deref_" + "(" + bindPointer + ")";
+            }  else {
+               return "_deref_" + bindPointer;
+            }
          } else if(value instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed derefIdx = (PointerDereferenceIndexed) value;
-            return bind(derefIdx.getPointer(), ptrType) + "_derefidx_" + bind(derefIdx.getIndex());
+            StringBuilder bindValue = new StringBuilder();
+            String bindPointer = bind(derefIdx.getPointer(), ptrType);
+            if(bindPointer.contains("deref")) {
+               // Special handling of nested derefs - add parenthesis!
+               bindValue.append("(").append(bindPointer).append(")");
+            }  else {
+               bindValue.append(bindPointer);
+            }
+            bindValue.append("_derefidx_");
+            String bindIndex = bind(derefIdx.getIndex());
+            if(bindIndex.contains("deref")) {
+               // Special handling of nested derefs - add parenthesis!
+               bindValue.append("(").append(bindIndex).append(")");
+            } else {
+               bindValue.append(bindIndex);
+            }
+            return bindValue.toString();
          }
       } else if(value instanceof VariableRef) {
          Variable variable = program.getSymbolInfos().getVariable((VariableRef) value);

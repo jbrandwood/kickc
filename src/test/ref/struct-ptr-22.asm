@@ -13,12 +13,11 @@ main: {
     sta files+1
     lda #$aa
     ldy #3
-    ldx files,y
-    stx !+ +1
-    ldx files+1,y
-    stx !+ +2
-  !:
-    sta $ffff
+    ldx files
+    stx.z $fe
+    ldx files+1
+    stx.z $ff
+    sta ($fe),y
     lda files
     sta.z _0
     lda files+1

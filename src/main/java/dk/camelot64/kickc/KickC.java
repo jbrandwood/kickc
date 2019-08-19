@@ -45,7 +45,7 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
    private Path fragmentDir = null;
 
-   @CommandLine.Option(names = {"-o"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
+   @CommandLine.Option(names = {"-o", "-output"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
 
    @CommandLine.Option(names = {"-odir"}, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")

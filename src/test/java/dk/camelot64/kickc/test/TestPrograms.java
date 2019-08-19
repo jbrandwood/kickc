@@ -507,6 +507,18 @@ public class TestPrograms {
    }
    */
 
+   /* TODO: Fix array of struct containing array https://gitlab.com/camelot/kickc/issues/274
+   @Test
+   public void testStructPtr23() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-23");
+   }
+   */
+
+   @Test
+   public void testStructPtr22() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-22");
+   }
+
    @Test
    public void testStructPtr21() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-21");

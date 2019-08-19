@@ -133,7 +133,7 @@ public class TestFragments {
             "vbuxx=pbuz1_derefidx_vbuc1_band_pbuz2_derefidx_vbuc2",
             "_deref_pbuz1=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
             "pbuz1_derefidx_vbuaa=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
-            "pbuc1_derefidx_pbuz1_derefidx_vbuc2=pbuz1_derefidx_vbuc3");
+            "pbuc1_derefidx_(pbuz1_derefidx_vbuc2)=pbuz1_derefidx_vbuc3");
       testFragments("fragments-complex", signaturesComplex);
    }
 
@@ -171,8 +171,8 @@ public class TestFragments {
 
       testFragmentExists("vbsaa=pbsc1_derefidx_vbsz1_minus_pbsc1_derefidx_vbsz2");
       testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc1_derefidx_vbsyy");
-      testFragmentExists("vbuz1=pbuz2_derefidx_vbuz3_plus_pbuz4_derefidx_pbuz5_derefidx_vbuz3");
-      testFragmentExists("vbuz1=pbuz2_derefidx_pbuz3_derefidx_vbuz4_plus_pbuz5_derefidx_pbuz6_derefidx_vbuz4");
+      testFragmentExists("vbuz1=pbuz2_derefidx_vbuz3_plus_pbuz4_derefidx_(pbuz5_derefidx_vbuz3)");
+      testFragmentExists("vbuz1=pbuz2_derefidx_(pbuz3_derefidx_vbuz4)_plus_pbuz5_derefidx_(pbuz6_derefidx_vbuz4)");
 
    }
 

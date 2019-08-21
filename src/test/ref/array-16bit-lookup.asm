@@ -29,8 +29,8 @@ main: {
 getValue: {
     .label index = 2
     .label return = 4
-    lda.z index
-    and #$7f
+    lda #$7f
+    and.z index
     asl
     tay
     lda #$ff

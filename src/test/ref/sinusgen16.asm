@@ -497,8 +497,8 @@ mul16u: {
     bne b2
     rts
   b2:
-    lda.z a
-    and #1
+    lda #1
+    and.z a
     cmp #0
     beq b3
     lda.z res

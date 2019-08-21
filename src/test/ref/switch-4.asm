@@ -1,5 +1,5 @@
 // Tests simple switch()-statement - switch without default
-// Expeced output "14"
+// Expected output " 1  4 "
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

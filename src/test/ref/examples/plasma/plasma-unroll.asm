@@ -309,8 +309,8 @@ makecharset: {
     lda.z i
     cmp #8
     bcc b4
-    lda.z c
-    and #7
+    lda #7
+    and.z c
     cmp #0
     bne b12
     jsr print_char

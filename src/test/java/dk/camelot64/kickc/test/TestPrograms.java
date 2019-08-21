@@ -81,10 +81,19 @@ public class TestPrograms {
       compileAndCompare("string-escapes-0");
    }
 
+   // TODO: Fix loop head problem!
    //@Test
    //public void testLoopheadProblem() throws IOException, URISyntaxException {
    //   compileAndCompare("loophead-problem");
    //}
+
+   // TODO: Fail with proper error when continue is encountered without a loop
+   /*
+   @Test
+   public void testSwitch3Err() throws IOException, URISyntaxException {
+      compileAndCompare("switch-3-err");
+   }
+   */
 
    @Test
    public void testSwitch2() throws IOException, URISyntaxException {
@@ -330,6 +339,14 @@ public class TestPrograms {
    public void testFontHexShow() throws IOException, URISyntaxException {
       compileAndCompare("font-hex-show");
    }
+
+   // TODO: Fix string not converted to void* properly https://gitlab.com/camelot/kickc/issues/281
+   /*
+   @Test
+   public void testMemcpy1() throws IOException, URISyntaxException {
+      compileAndCompare("memcpy-1", log());
+   }
+   */
 
    @Test
    public void testMemcpy0() throws IOException, URISyntaxException {
@@ -1293,6 +1310,14 @@ public class TestPrograms {
    public void testPlasma() throws IOException, URISyntaxException {
       compileAndCompare("examples/plasma/plasma");
    }
+
+   // TODO: Fix number type conversion https://gitlab.com/camelot/kickc/issues/199
+   /*
+   @Test
+   public void testTernary4() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-4");
+   }
+   */
 
    @Test
    public void testTernary3() throws IOException, URISyntaxException {

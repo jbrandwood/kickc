@@ -94,10 +94,12 @@ public class PassNTypeInference extends Pass2SsaOptimization {
             if(type == null) {
                type = valueType;
             } else if(!type.equals(valueType))
-               if(valueType instanceof SymbolTypeInteger && type instanceof SymbolTypeInteger) {
+               if(type.equals(SymbolType.VAR) && valueType!=null) {
+                  type = valueType;
+               } else if(valueType instanceof SymbolTypeInteger && type instanceof SymbolTypeInteger) {
                   type = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) valueType, (SymbolTypeInteger) type);
                } else {
-                  throw new CompileError("Phi value has type mismatch " + phiRValue.toString() + " not matching type " + type.getTypeName());
+                  throw new CompileError("Phi value has type mismatch " + rValue.toString() + " not matching type " + type.getTypeName());
                }
          }
          if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {

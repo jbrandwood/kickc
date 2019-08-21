@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFunctionAsArray() throws IOException, URISyntaxException {
+      compileAndCompare("function-as-array");
+   }
+
+   @Test
    public void testCodeAfterReturn1() throws IOException, URISyntaxException {
       compileAndCompare("code-after-return-1");
    }

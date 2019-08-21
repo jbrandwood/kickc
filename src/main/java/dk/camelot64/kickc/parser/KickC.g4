@@ -108,7 +108,7 @@ stmt
     ;
 
 switchCases:
-    switchCase+ ( 'default:' stmtSeq? )
+    switchCase+ ( 'default:' stmtSeq? )?
     ;
 
 switchCase:

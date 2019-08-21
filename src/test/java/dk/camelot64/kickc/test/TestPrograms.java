@@ -87,7 +87,7 @@ public class TestPrograms {
    //   compileAndCompare("loophead-problem");
    //}
 
-   // TODO: Fail with proper error when continue is encountered without a loop
+   // TODO: Fail with proper error when continue is encountered without a loop https://gitlab.com/camelot/kickc/issues/282
    /*
    @Test
    public void testSwitch3Err() throws IOException, URISyntaxException {
@@ -975,6 +975,19 @@ public class TestPrograms {
    public void testFragmentVariations() throws IOException, URISyntaxException {
       compileAndCompare("fragment-variations");
    }
+
+   // TODO: Fix call parameter type conversion (See SymbolTypeConversion) https://gitlab.com/camelot/kickc/issues/283
+   /*
+   @Test
+   public void testTypePromotionScharParam() throws IOException, URISyntaxException {
+      compileAndCompare("type-promotion-schar-param");
+   }
+
+   @Test
+   public void testTypePromotionBoolParam() throws IOException, URISyntaxException {
+      compileAndCompare("type-promotion-bool-param");
+   }
+   */
 
    @Test
    public void testTypeInference() throws IOException, URISyntaxException {

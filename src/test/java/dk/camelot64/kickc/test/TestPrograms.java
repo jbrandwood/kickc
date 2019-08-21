@@ -87,6 +87,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testSwitch2() throws IOException, URISyntaxException {
+      compileAndCompare("switch-2");
+   }
+
+   @Test
    public void testSwitch1() throws IOException, URISyntaxException {
       compileAndCompare("switch-1");
    }

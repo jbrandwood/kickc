@@ -974,12 +974,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtSwitch(KickCParser.StmtSwitchContext ctx) {
-      Loop containingLoop = loopStack.peek();
+      Loop containingLoop = null;
+      if(!loopStack.isEmpty()) {
+         containingLoop = loopStack.peek();
+      }
       // Create a block scope - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
       Loop switchLoop = new Loop(blockScope);
-      switchLoop.setContinueLabel(containingLoop.getOrCreateContinueLabel());
+      if(containingLoop != null) {
+         switchLoop.setContinueLabel(containingLoop.getOrCreateContinueLabel());
+      }
       loopStack.push(switchLoop);
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       // TODO: Add comments to next stmt
@@ -1768,7 +1773,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          charText = charText.substring(1, charText.length() - 1);
          char constChar = ConstantChar.charEscapeToAscii(charText);
          return new ConstantChar(constChar, currentEncoding);
-      } catch (CompileError e) {
+      } catch(CompileError e) {
          // Rethrow adding source location
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }

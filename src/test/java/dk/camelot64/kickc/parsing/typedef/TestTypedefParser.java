@@ -4,6 +4,9 @@ import dk.camelot64.kickc.model.CompileError;
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -11,15 +14,19 @@ public class TestTypedefParser {
 
    @Test
    public void testExprParser() {
+
+      List<String> typedefs = new ArrayList<>();
+
       // a & b are not types - resolving to values
-      assertEquals("and(val:a,val:b)", parseExprTypedef("a&b"));
+      assertEquals("and(val:a,val:b);", parseExprTypedef("a&b;"));
       // a & b are not types - resolving to values even with added parenthesis (looking like a cast)
-      assertEquals("and((val:a),val:b)", parseExprTypedef("(a)&b"));
+      assertEquals("and((val:a),val:b);", parseExprTypedef("(a)&b;"));
       // char is a simple type - resolving to cast of simple type
-      assertEquals("cast(simpletype:char,addressof(val:b))", parseExprTypedef("(char)&b"));
-      // TODO: Fix typedef identification during lexer phase!
+      assertEquals("cast(simpletype:char,addressof(val:b));", parseExprTypedef("(char)&b;"));
       // T is typedeffed - so this should resolve to a cast of typedef
-      assertEquals("cast(typedef:T,addressof(val:b))", parseExprTypedef("(T)&b"));
+      assertEquals("typedef(simpletype:char,T);cast(typedef:T,addressof(val:b));", parseExprTypedef("typedef char T; (T)&b;"));
+      // T is not typedeffed - so this should resolve to an AND
+      assertEquals("typedef(simpletype:char,V);and((val:T),val:b);", parseExprTypedef("typedef char V; (T)&b;"));
    }
 
    /**
@@ -60,7 +67,7 @@ public class TestTypedefParser {
       });
 
       TypedefPrinter printVisitor = new TypedefPrinter();
-      printVisitor.visit(parser.expr());
+      printVisitor.visit(parser.stmtSeq());
       return printVisitor.getOut().toString();
    }
 
@@ -70,6 +77,31 @@ public class TestTypedefParser {
 
       public StringBuilder getOut() {
          return out;
+      }
+
+      @Override
+      public Object visitStmtSeq(TypedefParser.StmtSeqContext ctx) {
+         for(TypedefParser.StmtContext stmtContext : ctx.stmt()) {
+            this.visit(stmtContext);
+            out.append(";");
+         }
+         return null;
+      }
+
+      @Override
+      public Object visitStmtTypeDef(TypedefParser.StmtTypeDefContext ctx) {
+         out.append("typedef(");
+         this.visit(ctx.typeName());
+         out.append(",");
+         out.append(ctx.IDENTIFIER().getText());
+         out.append(")");
+         return null;
+      }
+
+      @Override
+      public Object visitStmtExpr(TypedefParser.StmtExprContext ctx) {
+         this.visit(ctx.expr());
+         return null;
       }
 
       @Override

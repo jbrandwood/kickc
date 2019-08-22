@@ -1,5 +1,9 @@
 // Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parsing.typedef;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -7,6 +11,40 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  * {@link TypedefParser}.
  */
 public interface TypedefListener extends ParseTreeListener {
+	/**
+	 * Enter a parse tree produced by {@link TypedefParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtSeq(TypedefParser.StmtSeqContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TypedefParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtSeq(TypedefParser.StmtSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtTypeDef}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtTypeDef(TypedefParser.StmtTypeDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtTypeDef}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtTypeDef(TypedefParser.StmtTypeDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtExpr(TypedefParser.StmtExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtExpr(TypedefParser.StmtExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprValueName}
 	 * labeled alternative in {@link TypedefParser#expr}.

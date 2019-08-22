@@ -1,5 +1,9 @@
 // Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parsing.typedef;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -10,6 +14,26 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * operations with no return type.
  */
 public interface TypedefVisitor<T> extends ParseTreeVisitor<T> {
+	/**
+	 * Visit a parse tree produced by {@link TypedefParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtSeq(TypedefParser.StmtSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtTypeDef}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtTypeDef(TypedefParser.StmtTypeDefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link TypedefParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtExpr(TypedefParser.StmtExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exprValueName}
 	 * labeled alternative in {@link TypedefParser#expr}.

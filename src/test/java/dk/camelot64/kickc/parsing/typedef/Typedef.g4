@@ -11,6 +11,24 @@
 
 grammar Typedef;
 
+@parser::header {
+    import java.util.ArrayList;
+    import java.util.List;
+}
+
+@parser::members {
+    static List<String> typedefs = new ArrayList<>();
+}
+
+stmtSeq
+    : { typedefs = new ArrayList<>(); } stmt*
+    ;
+
+stmt
+    : 'typedef' typeName IDENTIFIER ';' { typedefs.add($IDENTIFIER.text);} #stmtTypeDef
+    | expr ';' #stmtExpr
+    ;
+
 expr
     :   '(' typeName ')' expr #exprCast
     |   IDENTIFIER #exprValueName
@@ -25,8 +43,8 @@ typeName
     ;
 
 SIMPLETYPE: 'char' | 'int';
-IDENTIFIER: [a-zA-Z_]+ {!getText().equals("T")}?;
-TYPEIDENTIFIER: [a-zA-Z_]+ {getText().equals("T")}?;
+IDENTIFIER: [a-zA-Z_]+ {!TypedefParser.typedefs.contains(getText())}?;
+TYPEIDENTIFIER: [a-zA-Z_]+ {TypedefParser.typedefs.contains(getText())}?;
 WHITESPACE
     :   [ \t\r\n]+
         -> skip

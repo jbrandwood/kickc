@@ -95,30 +95,6 @@ public class TypedefBaseListener implements TypedefListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeNameTypedef(TypedefParser.TypeNameTypedefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypedefName(TypedefParser.TypedefNameContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypedefName(TypedefParser.TypedefNameContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterValueName(TypedefParser.ValueNameContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValueName(TypedefParser.ValueNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

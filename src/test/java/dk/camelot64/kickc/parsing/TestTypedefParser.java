@@ -17,10 +17,9 @@ public class TestTypedefParser {
       assertEquals("and((val:a),val:b)", parseExprTypedef("(a)&b"));
       // char is a simple type - resolving to cast of simple type
       assertEquals("cast(simpletype:char,addressof(val:b))", parseExprTypedef("(char)&b"));
-
       // TODO: Fix typedef identification during lexer phase!
       // T is typedeffed - so this should resolve to a cast of typedef
-      //assertEquals("cast(typedef:T,addressof(val:b))", parseExprTypedef("(T)&b"));
+      assertEquals("cast(typedef:T,addressof(val:b))", parseExprTypedef("(T)&b"));
    }
 
    /**

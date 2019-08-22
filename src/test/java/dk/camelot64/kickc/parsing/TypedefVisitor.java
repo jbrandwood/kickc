@@ -59,16 +59,4 @@ public interface TypedefVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTypeNameTypedef(TypedefParser.TypeNameTypedefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TypedefParser#typedefName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypedefName(TypedefParser.TypedefNameContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TypedefParser#valueName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitValueName(TypedefParser.ValueNameContext ctx);
 }

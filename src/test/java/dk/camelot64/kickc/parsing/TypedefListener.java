@@ -91,24 +91,4 @@ public interface TypedefListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeNameTypedef(TypedefParser.TypeNameTypedefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TypedefParser#typedefName}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypedefName(TypedefParser.TypedefNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TypedefParser#typedefName}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypedefName(TypedefParser.TypedefNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TypedefParser#valueName}.
-	 * @param ctx the parse tree
-	 */
-	void enterValueName(TypedefParser.ValueNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TypedefParser#valueName}.
-	 * @param ctx the parse tree
-	 */
-	void exitValueName(TypedefParser.ValueNameContext ctx);
 }

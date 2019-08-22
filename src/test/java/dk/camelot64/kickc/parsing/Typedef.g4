@@ -1,57 +1,32 @@
-/*
- [The "BSD licence"]
- Copyright (c) 2013 Sam Harwell
- All rights reserved.
+/**
+ *
+ * Minimal grammar illustrating the C typedef ambiguity problem
+ * (x)&y can have two meanings:
+ * - cast address-of y to type x
+ * - binary and of x and y
+ *
+ * Resolving the ambiguity requires the compiler to know whether x is a type or a value.
+ * This is handled using predicates during the Lexer Phase to create different tokens (IDENTIFIER vs TYPEDEF)
+ */
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions
- are met:
- 1. Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
- 3. The name of the author may not be used to endorse or promote products
-    derived from this software without specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/** C 2011 grammar built from the C11 Spec */
 grammar Typedef;
 
 expr
-    :   valueName  #exprValueName
+    :   '(' typeName ')' expr #exprCast
+    |   IDENTIFIER #exprValueName
     |   '(' expr ')' #exprParenthesis
     |   '&' expr #exprAddressOf
     |   expr '&' expr #exprAnd
-    |   '(' typeName ')' expr #exprCast
     ;
 
 typeName
     :   SIMPLETYPE #typeNameSimple
-    |   typedefName #typeNameTypedef
+    |   TYPEIDENTIFIER #typeNameTypedef
     ;
 
-typedefName
-    :   IDENTIFIER
-    ;
-
-valueName
-    :   IDENTIFIER
-    ;
-
+IDENTIFIER: [a-zA-Z_]+ {!getText().equals("T")}?;
 SIMPLETYPE: 'char' | 'int';
-IDENTIFIER : [a-zA-Z_]+ ;
+TYPEIDENTIFIER: [a-zA-Z_]+ {getText().equals("T")}?;
 WHITESPACE
     :   [ \t\r\n]+
         -> skip

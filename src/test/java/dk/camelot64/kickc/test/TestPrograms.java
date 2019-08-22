@@ -37,6 +37,12 @@ public class TestPrograms {
    }
 
 
+   @Test
+   public void testForcedZeropage() throws IOException, URISyntaxException {
+      compileAndCompare("forced-zeropage");
+   }
+
+
    // TODO: Fix float error message https://gitlab.com/camelot/kickc/issues/286
    /*
    @Test

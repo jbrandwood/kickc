@@ -1,5 +1,5 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/Typedef.g4 by ANTLR 4.7
-package dk.camelot64.kickc.parsing;
+// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
+package dk.camelot64.kickc.parsing.typedef;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -17,7 +17,7 @@ public class TypedefParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, IDENTIFIER=4, SIMPLETYPE=5, TYPEIDENTIFIER=6, 
+		T__0=1, T__1=2, T__2=3, SIMPLETYPE=4, IDENTIFIER=5, TYPEIDENTIFIER=6, 
 		WHITESPACE=7;
 	public static final int
 		RULE_expr = 0, RULE_typeName = 1;
@@ -29,7 +29,7 @@ public class TypedefParser extends Parser {
 		null, "'('", "')'", "'&'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, "IDENTIFIER", "SIMPLETYPE", "TYPEIDENTIFIER", 
+		null, null, null, null, "SIMPLETYPE", "IDENTIFIER", "TYPEIDENTIFIER", 
 		"WHITESPACE"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -402,11 +402,11 @@ public class TypedefParser extends Parser {
 		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2\24\n\2\3\2"+
 		"\3\2\3\2\7\2\31\n\2\f\2\16\2\34\13\2\3\3\3\3\5\3 \n\3\3\3\2\3\2\4\2\4"+
 		"\2\2\2$\2\23\3\2\2\2\4\37\3\2\2\2\6\7\b\2\1\2\7\b\7\3\2\2\b\t\5\4\3\2"+
-		"\t\n\7\4\2\2\n\13\5\2\2\7\13\24\3\2\2\2\f\24\7\6\2\2\r\16\7\3\2\2\16\17"+
+		"\t\n\7\4\2\2\n\13\5\2\2\7\13\24\3\2\2\2\f\24\7\7\2\2\r\16\7\3\2\2\16\17"+
 		"\5\2\2\2\17\20\7\4\2\2\20\24\3\2\2\2\21\22\7\5\2\2\22\24\5\2\2\4\23\6"+
 		"\3\2\2\2\23\f\3\2\2\2\23\r\3\2\2\2\23\21\3\2\2\2\24\32\3\2\2\2\25\26\f"+
 		"\3\2\2\26\27\7\5\2\2\27\31\5\2\2\4\30\25\3\2\2\2\31\34\3\2\2\2\32\30\3"+
-		"\2\2\2\32\33\3\2\2\2\33\3\3\2\2\2\34\32\3\2\2\2\35 \7\7\2\2\36 \7\b\2"+
+		"\2\2\2\32\33\3\2\2\2\33\3\3\2\2\2\34\32\3\2\2\2\35 \7\6\2\2\36 \7\b\2"+
 		"\2\37\35\3\2\2\2\37\36\3\2\2\2 \5\3\2\2\2\5\23\32\37";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());

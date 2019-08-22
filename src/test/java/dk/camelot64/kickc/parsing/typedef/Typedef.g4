@@ -24,8 +24,8 @@ typeName
     |   TYPEIDENTIFIER #typeNameTypedef
     ;
 
-IDENTIFIER: [a-zA-Z_]+ {!getText().equals("T")}?;
 SIMPLETYPE: 'char' | 'int';
+IDENTIFIER: [a-zA-Z_]+ {!getText().equals("T")}?;
 TYPEIDENTIFIER: [a-zA-Z_]+ {getText().equals("T")}?;
 WHITESPACE
     :   [ \t\r\n]+

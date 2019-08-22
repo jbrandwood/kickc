@@ -1,5 +1,5 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/Typedef.g4 by ANTLR 4.7
-package dk.camelot64.kickc.parsing;
+// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
+package dk.camelot64.kickc.parsing.typedef;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

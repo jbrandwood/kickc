@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.parsing;
+package dk.camelot64.kickc.parsing.typedef;
 
 import dk.camelot64.kickc.model.CompileError;
 import org.antlr.v4.runtime.*;

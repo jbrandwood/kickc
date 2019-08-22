@@ -37,6 +37,19 @@ public class TestPrograms {
    }
 
 
+   // TODO: Fix cast of constant pointer https://gitlab.com/camelot/kickc/issues/288
+   /*
+   @Test
+   public void testLongPointer1() throws IOException, URISyntaxException {
+      compileAndCompare("long-pointer-1");
+   }
+   */
+
+   @Test
+   public void testLongPointer0() throws IOException, URISyntaxException {
+      compileAndCompare("long-pointer-0");
+   }
+
    @Test
    public void testForcedZeropage() throws IOException, URISyntaxException {
       compileAndCompare("forced-zeropage");

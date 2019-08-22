@@ -82,7 +82,7 @@ public class TypedefParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-	    static List<String> typedefs = new ArrayList<>();
+	    static List<String> typedefs = new ArrayList<>(); ;
 
 	public TypedefParser(TokenStream input) {
 		super(input);
@@ -121,7 +121,7 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			 typedefs = new ArrayList<>(); 
+			 typedefs.clear();  
 			setState(12);
 			_errHandler.sync(this);
 			_la = _input.LA(1);

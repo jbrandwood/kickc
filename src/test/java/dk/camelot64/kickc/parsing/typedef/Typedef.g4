@@ -17,11 +17,11 @@ grammar Typedef;
 }
 
 @parser::members {
-    static List<String> typedefs = new ArrayList<>();
+    static List<String> typedefs = new ArrayList<>(); ;
 }
 
 stmtSeq
-    : { typedefs = new ArrayList<>(); } stmt*
+    : { typedefs.clear();  } stmt*
     ;
 
 stmt

@@ -36,6 +36,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   // TODO: Fix float error message https://gitlab.com/camelot/kickc/issues/286
+   /*
+   @Test
+   public void testFloatErrorMessage() throws IOException, URISyntaxException {
+      compileAndCompare("float-error-message");
+   }
+   */
+
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
       compileAndCompare("function-as-array");

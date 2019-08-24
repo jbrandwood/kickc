@@ -1,11 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.kickc.AsmParser;
+import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.parser.KickCParser;
 
 import java.util.List;

@@ -4,38 +4,45 @@ grammar KickC;
 @header {
 }
 
-@parser::members {
-    ParserState state;
+@lexer::members {
+    CParser cParser;
 
-	public KickCParser(TokenStream input, KickCLexer lexer) {
+	public KickCLexer(CharStream input, CParser cParser) {
 		this(input);
-		this.state = lexer.state;
+		this.cParser = cParser;
+	}
+}
+
+@parser::members {
+    CParser cParser;
+
+	public KickCParser(TokenStream input, CParser cParser) {
+		this(input);
+		this.cParser = cParser;
 	}
 
 }
 
-@lexer::members {
-    ParserState state = new ParserState();
-}
 
 file
-    : importSeq declSeq EOF
+    : declSeq EOF
     ;
 
 asmFile
     : asmLines EOF
     ;
 
-importSeq
-    : importDecl*
+declSeq
+    : declOrImport*
+    ;
+
+declOrImport
+    : decl
+    | importDecl
     ;
 
 importDecl
-    : 'import' STRING
-    ;
-
-declSeq
-    : decl+
+    : IMPORT IMPORTFILE
     ;
 
 decl
@@ -49,7 +56,7 @@ decl
     ;
 
 typeDef
-    : 'typedef' typeDecl NAME {state.addTypedef($NAME.text);}
+    : 'typedef' typeDecl NAME {cParser.addTypedef($NAME.text);}
     ;
 
 declTypes
@@ -246,7 +253,7 @@ asmDirective
     ;
 
 asmLines
-    : {state.setAsm(true);} asmLine* {state.setAsm(false);}
+    : {cParser.setModeAsm(true);} asmLine* {cParser.setModeAsm(false);}
     ;
 
 asmLine
@@ -299,9 +306,11 @@ MNEMONIC:
     ;
 
 
-KICKASM: '{{' .*? '}}';
+IMPORT: 'import' { cParser.setModeImport(true); } ;
+IMPORTFILE: '"' ('\\"' | ~'"')* '"' { cParser.isModeImport() }? { cParser.setModeImport(false); cParser.loadCFile(getText()); } ;
+
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
-STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]?;
+STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { !cParser.isModeImport() }? ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;
@@ -316,11 +325,12 @@ HEXINTEGER : ( '$' | '0x' | '0X' ) HEXDIGIT+ ;
 fragment BINDIGIT : [0-1];
 fragment DECDIGIT : [0-9];
 fragment HEXDIGIT : [0-9a-fA-F];
-NAME : NAME_START NAME_CHAR* {!state.isTypedef(getText())}?;
-TYPEDEFNAME : NAME_START NAME_CHAR* {state.isTypedef(getText())}?;
+NAME : NAME_START NAME_CHAR* {!cParser.isTypedef(getText())}?;
+TYPEDEFNAME : NAME_START NAME_CHAR* {cParser.isTypedef(getText())}?;
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
-ASMREL: '!' NAME_CHAR* [+-]+ {state.isAsm()}? ;
+ASMREL: '!' NAME_CHAR* [+-]+ {cParser.isModeAsm()}? ;
+KICKASM: '{{' .*? '}}';
 
 // Add white space to the hidden channel 1
 WS : [ \t\r\n\u00a0]+ -> channel(1);

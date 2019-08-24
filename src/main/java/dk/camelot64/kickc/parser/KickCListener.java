@@ -30,15 +30,25 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#importSeq}.
+	 * Enter a parse tree produced by {@link KickCParser#declSeq}.
 	 * @param ctx the parse tree
 	 */
-	void enterImportSeq(KickCParser.ImportSeqContext ctx);
+	void enterDeclSeq(KickCParser.DeclSeqContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#importSeq}.
+	 * Exit a parse tree produced by {@link KickCParser#declSeq}.
 	 * @param ctx the parse tree
 	 */
-	void exitImportSeq(KickCParser.ImportSeqContext ctx);
+	void exitDeclSeq(KickCParser.DeclSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#declOrImport}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclOrImport(KickCParser.DeclOrImportContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declOrImport}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclOrImport(KickCParser.DeclOrImportContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#importDecl}.
 	 * @param ctx the parse tree
@@ -49,16 +59,6 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitImportDecl(KickCParser.ImportDeclContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#declSeq}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclSeq(KickCParser.DeclSeqContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#declSeq}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclSeq(KickCParser.DeclSeqContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree

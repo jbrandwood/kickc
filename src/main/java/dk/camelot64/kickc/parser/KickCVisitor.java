@@ -25,23 +25,23 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#importSeq}.
+	 * Visit a parse tree produced by {@link KickCParser#declSeq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImportSeq(KickCParser.ImportSeqContext ctx);
+	T visitDeclSeq(KickCParser.DeclSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#declOrImport}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclOrImport(KickCParser.DeclOrImportContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#importDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitImportDecl(KickCParser.ImportDeclContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#declSeq}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclSeq(KickCParser.DeclSeqContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree

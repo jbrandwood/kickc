@@ -6,16 +6,12 @@ import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.parser.KickCLexer;
+import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
-import dk.camelot64.kickc.parser.ParserState;
-import dk.camelot64.kickc.passes.PassNCastSimplification;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,91 +63,6 @@ public class Compiler {
       program.setLog(compileLog);
    }
 
-   public static void loadLinkScriptFile(String fileName, Program program, Path currentPath) {
-      try {
-         File file = loadFile(fileName, currentPath, program);
-         Path filePath = file.toPath();
-         String outputFileName = new File(program.getFileName()).getName();
-         String linkScript = new String(Files.readAllBytes(filePath));
-         linkScript = linkScript.replace("%O", outputFileName);
-         program.setLinkScript(filePath, linkScript);
-         program.setTargetPlatform(TargetPlatform.CUSTOM);
-      } catch(IOException e) {
-         throw new CompileError("Error loading link script file " + fileName, e);
-      }
-   }
-
-   public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
-      try {
-         if(!fileName.endsWith(".kc")) {
-            fileName += ".kc";
-         }
-         File file = loadFile(fileName, currentPath, program);
-         List<String> imported = program.getImported();
-         if(imported.contains(file.getAbsolutePath())) {
-            return;
-         }
-         final CharStream fileStream = CharStreams.fromPath(file.toPath());
-         imported.add(file.getAbsolutePath());
-         if(program.getLog().isVerboseParse()) {
-            program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
-            program.getLog().append(fileStream.toString());
-         }
-         ParserState parserState = new ParserState();
-         KickCLexer lexer = new KickCLexer(fileStream);
-         lexer.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(
-                  Recognizer<?, ?> recognizer,
-                  Object offendingSymbol,
-                  int line,
-                  int charPositionInLine,
-                  String msg,
-                  RecognitionException e) {
-               throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
-            }
-         });
-         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-         KickCParser parser = new KickCParser(tokenStream, lexer);
-         parser.setBuildParseTree(true);
-         parser.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(
-                  Recognizer<?, ?> recognizer,
-                  Object offendingSymbol,
-                  int line,
-                  int charPositionInLine,
-                  String msg,
-                  RecognitionException e) {
-               throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
-            }
-         });
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(file, tokenStream, parser.file(), program);
-         pass0GenerateStatementSequence.generate();
-      } catch(IOException e) {
-         throw new CompileError("Error loading file " + fileName, e);
-      }
-   }
-
-   public static File loadFile(String fileName, Path currentPath, Program program) {
-      List<String> searchPaths = new ArrayList<>();
-      searchPaths.add(currentPath.toString());
-      searchPaths.addAll(program.getImportPaths());
-      for(String importPath : searchPaths) {
-         if(!importPath.endsWith("/")) {
-            importPath += "/";
-         }
-         String filePath = importPath + fileName;
-         //System.out.println("Looking for file "+filePath);
-         File file = new File(filePath);
-         if(file.exists()) {
-            //System.out.println("Found file "+file.getAbsolutePath()+" in import path "+importPath);
-            return file;
-         }
-      }
-      throw new CompileError("File  not found " + fileName);
-   }
-
    public CompileLog getLog() {
       return program.getLog();
    }
@@ -168,10 +79,14 @@ public class Compiler {
       try {
          Path currentPath = new File(".").toPath();
          if(this.linkScriptFileName != null) {
-            loadLinkScriptFile(linkScriptFileName, program, currentPath);
+            SourceLoader.loadLinkScriptFile(linkScriptFileName, currentPath, program);
          }
          program.setStatementSequence(new StatementSequence());
-         loadAndParseFile(fileName, program, currentPath);
+         CParser cParser = new CParser(program);
+         KickCParser.FileContext cFileContext = cParser.loadAndParseCFile(fileName, currentPath);
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program);
+         pass0GenerateStatementSequence.generate();
+
          StatementSequence sequence = program.getStatementSequence();
          sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          program.setStatementSequence(sequence);

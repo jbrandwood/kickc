@@ -42,13 +42,25 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterImportSeq(KickCParser.ImportSeqContext ctx) { }
+	@Override public void enterDeclSeq(KickCParser.DeclSeqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitImportSeq(KickCParser.ImportSeqContext ctx) { }
+	@Override public void exitDeclSeq(KickCParser.DeclSeqContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclOrImport(KickCParser.DeclOrImportContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclOrImport(KickCParser.DeclOrImportContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -61,18 +73,6 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitImportDecl(KickCParser.ImportDeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDeclSeq(KickCParser.DeclSeqContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclSeq(KickCParser.DeclSeqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

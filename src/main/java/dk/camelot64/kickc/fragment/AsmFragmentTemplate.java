@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.AsmParser;
+import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.Program;

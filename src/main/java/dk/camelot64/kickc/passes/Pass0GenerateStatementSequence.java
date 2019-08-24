@@ -1,7 +1,8 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.NumberParser;
+import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
@@ -11,10 +12,7 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -30,12 +28,11 @@ import java.util.regex.Pattern;
  */
 public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   /** The source file currently being parsed. */
-   private File file;
+   /** The C parser keeping track of C-files and lexers */
+   private CParser cParser;
+
    /** The source ANTLR parse tree of the source file. */
    private KickCParser.FileContext fileCtx;
-   /** The source ANTLR Token Stream (used for finding comments in the lexer input.) */
-   private CommonTokenStream tokenStream;
 
    /** The program containing all compile structures. */
    private Program program;
@@ -44,9 +41,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** Used to build the scopes of the source file. */
    private Stack<Scope> scopeStack;
 
-   public Pass0GenerateStatementSequence(File file, CommonTokenStream tokenStream, KickCParser.FileContext fileCtx, Program program) {
-      this.file = file;
-      this.tokenStream = tokenStream;
+   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
+      this.cParser = cParser;
       this.fileCtx = fileCtx;
       this.program = program;
       this.sequence = program.getStatementSequence();
@@ -77,36 +73,20 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Only set program file level comments for the first file.
          program.setFileComments(ensureUnusedComments(getCommentsFile(ctx)));
       }
-      this.visit(ctx.importSeq());
       this.visit(ctx.declSeq());
       return null;
    }
 
    @Override
-   public Object visitImportSeq(KickCParser.ImportSeqContext ctx) {
-      for(KickCParser.ImportDeclContext importDeclContext : ctx.importDecl()) {
-         this.visit(importDeclContext);
-      }
-      return null;
-   }
-
-   @Override
    public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
-      String importName = ctx.STRING().getText();
+      String importName = ctx.IMPORTFILE().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
       }
-      Path currentPath = file.toPath().getParent();
-      Compiler.loadAndParseFile(importFileName, program, currentPath);
-      return null;
-   }
-
-   @Override
-   public Object visitDeclSeq(KickCParser.DeclSeqContext ctx) {
-      for(KickCParser.DeclContext declContext : ctx.decl()) {
-         this.visit(declContext);
-      }
+      // The Parser / Lexer will automatically add the import file content here in the token stream
+      //Path currentPath = file.toPath().getParent();
+      //SourceLoader.loadAndParseFile(importFileName, currentPath, program);
       return null;
    }
 
@@ -115,8 +95,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String linkName = ctx.STRING().getText();
       String linkFileName = linkName.substring(1, linkName.length() - 1);
       program.getLog().append("Loading link script " + linkName);
-      Path currentPath = file.toPath().getParent();
-      Compiler.loadLinkScriptFile(linkFileName, program, currentPath);
+      Path currentPath = cParser.getSourceFolderPath(ctx);
+      SourceLoader.loadLinkScriptFile(linkFileName, currentPath, program);
       return null;
    }
 
@@ -443,8 +423,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       TerminalNode resource = ctx.STRING();
       String resourceName = resource.getText();
       resourceName = resourceName.substring(1, resourceName.length() - 1);
-      Path currentPath = file.toPath().getParent();
-      File resourceFile = Compiler.loadFile(resourceName, currentPath, program);
+      Path currentPath = cParser.getSourceFolderPath(ctx);
+      File resourceFile = SourceLoader.loadFile(resourceName, currentPath, program);
       program.addAsmResourceFile(resourceFile.toPath());
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
@@ -1907,6 +1887,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private List<List<Comment>> getCommentBlocks(ParserRuleContext ctx) {
       List<List<Comment>> commentBlocks = new ArrayList<>();
       List<Comment> comments = new ArrayList<>();
+      BufferedTokenStream tokenStream = cParser.getTokenStream();
       List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
       if(hiddenTokens != null) {
          for(Token hiddenToken : hiddenTokens) {

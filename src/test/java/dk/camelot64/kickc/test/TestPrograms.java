@@ -47,6 +47,11 @@ public class TestPrograms {
 
    @Test
    public void testLongPointer0() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-anding.kc");
+   }
+
+   @Test
+   public void testPointerAnding() throws IOException, URISyntaxException {
       compileAndCompare("long-pointer-0");
    }
 

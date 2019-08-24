@@ -507,11 +507,10 @@ public class TestPrograms {
       compileAndCompare("enum-0");
    }
 
-   // TODO: Fix https://gitlab.com/camelot/kickc/issues/269
-   //@Test
-   //public void testTypedef2() throws IOException, URISyntaxException {
-   //   compileAndCompare("typedef-2");
-   //}
+   @Test
+   public void testTypedef2() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-2");
+   }
 
    @Test
    public void testTypedef1() throws IOException, URISyntaxException {

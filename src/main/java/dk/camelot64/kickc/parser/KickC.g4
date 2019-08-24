@@ -49,7 +49,7 @@ decl
     ;
 
 typeDef
-    : 'typedef' declVariables
+    : 'typedef' typeDecl NAME {state.addTypedef($NAME.text);}
     ;
 
 declTypes
@@ -153,7 +153,7 @@ typeDecl
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef
     | enumRef  #typeEnumRef
-    | NAME  #typeNamedRef
+    | TYPEDEFNAME  #typeNamedRef
     ;
 
 structRef
@@ -316,7 +316,8 @@ HEXINTEGER : ( '$' | '0x' | '0X' ) HEXDIGIT+ ;
 fragment BINDIGIT : [0-1];
 fragment DECDIGIT : [0-9];
 fragment HEXDIGIT : [0-9a-fA-F];
-NAME : NAME_START NAME_CHAR* ;
+NAME : NAME_START NAME_CHAR* {!state.isTypedef(getText())}?;
+TYPEDEFNAME : NAME_START NAME_CHAR* {state.isTypedef(getText())}?;
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
 ASMREL: '!' NAME_CHAR* [+-]+ {state.isAsm()}? ;

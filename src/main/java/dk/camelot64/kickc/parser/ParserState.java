@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +15,10 @@ public class ParserState {
    boolean isAsm;
 
    public ParserState() {
+      typedefs = new ArrayList<>();
    }
 
-   public void addTypeDef(String identifier) {
+   public void addTypedef(String identifier) {
       typedefs.add(identifier);
    }
 

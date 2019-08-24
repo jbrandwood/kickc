@@ -1,6 +1,23 @@
 // KickC grammar
 grammar KickC;
 
+@header {
+}
+
+@parser::members {
+    ParserState state;
+
+	public KickCParser(TokenStream input, KickCLexer lexer) {
+		this(input);
+		this.state = lexer.state;
+	}
+
+}
+
+@lexer::members {
+    ParserState state = new ParserState();
+}
+
 file
     : importSeq declSeq EOF
     ;
@@ -229,7 +246,7 @@ asmDirective
     ;
 
 asmLines
-    : asmLine*
+    : {state.setAsm(true);} asmLine* {state.setAsm(false);}
     ;
 
 asmLine
@@ -302,7 +319,7 @@ fragment HEXDIGIT : [0-9a-fA-F];
 NAME : NAME_START NAME_CHAR* ;
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
-ASMREL: '!' NAME_CHAR* [+-]+ ;
+ASMREL: '!' NAME_CHAR* [+-]+ {state.isAsm()}? ;
 
 // Add white space to the hidden channel 1
 WS : [ \t\r\n\u00a0]+ -> channel(1);

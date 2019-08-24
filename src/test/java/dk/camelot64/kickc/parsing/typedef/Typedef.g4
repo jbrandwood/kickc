@@ -11,17 +11,33 @@
 
 grammar Typedef;
 
-@parser::header {
+@header {
     import java.util.ArrayList;
     import java.util.List;
 }
 
 @parser::members {
-    static List<String> typedefs = new ArrayList<>(); ;
+    List<String> typedefs;
+
+	public TypedefParser(TokenStream input, List<String> typedefs) {
+		this(input);
+		this.typedefs = typedefs;
+	}
+
+}
+
+@lexer::members {
+    List<String> typedefs;
+
+	public TypedefLexer(CharStream input, List<String> typedefs) {
+		this(input);
+		this.typedefs = typedefs;
+	}
+
 }
 
 stmtSeq
-    : { typedefs.clear();  } stmt*
+    : stmt*
     ;
 
 stmt
@@ -43,8 +59,8 @@ typeName
     ;
 
 SIMPLETYPE: 'char' | 'int';
-IDENTIFIER: [a-zA-Z_]+ {!TypedefParser.typedefs.contains(getText())}?;
-TYPEIDENTIFIER: [a-zA-Z_]+ {TypedefParser.typedefs.contains(getText())}?;
+IDENTIFIER: [a-zA-Z_]+ {!typedefs.contains(getText())}?;
+TYPEIDENTIFIER: [a-zA-Z_]+ {typedefs.contains(getText())}?;
 WHITESPACE
     :   [ \t\r\n]+
         -> skip

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.parser.ParserState;
 import org.antlr.v4.runtime.*;
 
 public class AsmParser {
@@ -16,8 +17,9 @@ public class AsmParser {
     */
    public static KickCParser.AsmLinesContext parseAsm(String body, StatementSource source) {
       CodePointCharStream fragmentCharStream = CharStreams.fromString(body);
+      ParserState parserState = new ParserState();
       KickCLexer kickCLexer = new KickCLexer(fragmentCharStream);
-      KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer));
+      KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer), kickCLexer);
       kickCParser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {

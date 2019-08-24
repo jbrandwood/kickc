@@ -37,7 +37,9 @@ public class TestTypedefParser {
     */
    private String parseExprTypedef(String expr) {
       final CharStream fileStream = CharStreams.fromString(expr);
-      TypedefLexer lexer = new TypedefLexer(fileStream);
+      // typedefs shared between lexer and parser
+      List<String> typedefs = new ArrayList<>();
+      TypedefLexer lexer = new TypedefLexer(fileStream, typedefs);
       lexer.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(
@@ -51,7 +53,7 @@ public class TestTypedefParser {
          }
       });
       CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-      TypedefParser parser = new TypedefParser(tokenStream);
+      TypedefParser parser = new TypedefParser(tokenStream, typedefs);
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {
          @Override

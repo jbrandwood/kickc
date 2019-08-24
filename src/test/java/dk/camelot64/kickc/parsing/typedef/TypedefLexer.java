@@ -1,5 +1,9 @@
 // Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parsing.typedef;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -73,6 +77,15 @@ public class TypedefLexer extends Lexer {
 	}
 
 
+	    List<String> typedefs;
+
+		public TypedefLexer(CharStream input, List<String> typedefs) {
+			this(input);
+			this.typedefs = typedefs;
+		}
+
+
+
 	public TypedefLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
@@ -109,14 +122,14 @@ public class TypedefLexer extends Lexer {
 	private boolean IDENTIFIER_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return !TypedefParser.typedefs.contains(getText());
+			return !typedefs.contains(getText());
 		}
 		return true;
 	}
 	private boolean TYPEIDENTIFIER_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 1:
-			return TypedefParser.typedefs.contains(getText());
+			return typedefs.contains(getText());
 		}
 		return true;
 	}

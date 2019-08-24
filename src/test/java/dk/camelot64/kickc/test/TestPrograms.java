@@ -37,6 +37,12 @@ public class TestPrograms {
    }
 
 
+   @Test
+   public void testParseNegatedStructRef() throws IOException, URISyntaxException {
+      compileAndCompare("parse-negated-struct-ref");
+   }
+
+
    // TODO: Fix cast of constant pointer https://gitlab.com/camelot/kickc/issues/288
    /*
    @Test
@@ -47,7 +53,7 @@ public class TestPrograms {
 
    @Test
    public void testLongPointer0() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-anding.kc");
+      compileAndCompare("pointer-anding");
    }
 
    @Test

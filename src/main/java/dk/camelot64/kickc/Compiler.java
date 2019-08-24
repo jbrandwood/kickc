@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.parser.ParserState;
 import dk.camelot64.kickc.passes.PassNCastSimplification;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
@@ -96,6 +97,7 @@ public class Compiler {
             program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
             program.getLog().append(fileStream.toString());
          }
+         ParserState parserState = new ParserState();
          KickCLexer lexer = new KickCLexer(fileStream);
          lexer.addErrorListener(new BaseErrorListener() {
             @Override
@@ -110,7 +112,7 @@ public class Compiler {
             }
          });
          CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-         KickCParser parser = new KickCParser(tokenStream);
+         KickCParser parser = new KickCParser(tokenStream, lexer);
          parser.setBuildParseTree(true);
          parser.addErrorListener(new BaseErrorListener() {
             @Override

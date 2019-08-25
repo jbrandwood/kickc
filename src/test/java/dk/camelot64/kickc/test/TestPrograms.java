@@ -36,6 +36,11 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testBitmapCircle() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-circle");
+   }
+
    // TODO: Optimize comparisons with values outside the range of types https://gitlab.com/camelot/kickc/issues/291
    @Test
    public void testOptimizeUnsignedComparisons() throws IOException, URISyntaxException {
@@ -1831,6 +1836,11 @@ public class TestPrograms {
    //@Test
    //public void testTravisGame() throws IOException, URISyntaxException {
    //   compileAndCompare("complex/travis/game");
+   //}
+
+   //@Test
+   //public void testBcmod() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/bcmod/bcmod", log());
    //}
 
    @Test

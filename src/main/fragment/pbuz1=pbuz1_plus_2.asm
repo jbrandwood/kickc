@@ -3,5 +3,5 @@ clc
 adc #2
 sta {z1}
 bcc !+
-inc {z2}+1
+inc {z1}+1
 !:

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;

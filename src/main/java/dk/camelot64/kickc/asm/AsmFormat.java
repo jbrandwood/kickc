@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.fragment;
+package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;

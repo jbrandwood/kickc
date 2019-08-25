@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.fragment.AsmFormat;
+import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;

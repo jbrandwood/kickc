@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.fragment.AsmFormat;
 import dk.camelot64.kickc.model.Program;
 
 import java.util.LinkedHashMap;

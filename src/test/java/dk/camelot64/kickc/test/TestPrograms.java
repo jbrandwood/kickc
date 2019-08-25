@@ -377,13 +377,10 @@ public class TestPrograms {
       compileAndCompare("font-hex-show");
    }
 
-   // TODO: Fix string not converted to void* properly https://gitlab.com/camelot/kickc/issues/281
-   /*
    @Test
    public void testMemcpy1() throws IOException, URISyntaxException {
-      compileAndCompare("memcpy-1", log());
+      compileAndCompare("memcpy-1");
    }
-   */
 
    @Test
    public void testMemcpy0() throws IOException, URISyntaxException {

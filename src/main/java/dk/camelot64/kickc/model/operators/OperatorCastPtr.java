@@ -1,12 +1,14 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
+import dk.camelot64.kickc.model.values.ConstantString;
 
 /** Unary Cast to a pointer ( type* ) */
 public class OperatorCastPtr extends OperatorCast {
@@ -24,8 +26,10 @@ public class OperatorCastPtr extends OperatorCast {
          return new ConstantPointer(((ConstantInteger) value).getInteger(), pointerType.getElementType());
       } else if(value instanceof ConstantPointer) {
          return new ConstantPointer(((ConstantPointer) value).getLocation(), pointerType.getElementType());
+      }  else if(value instanceof ConstantString){
+         throw new ConstantNotLiteral("Constant string not literal");
       }
-      throw new CompileError("Calculation not implemented " + getOperator() + " " + value);
+      throw new InternalError("Calculation not implemented " + getOperator() + " " + value);
    }
 
    @Override

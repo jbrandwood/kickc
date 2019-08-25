@@ -151,9 +151,15 @@ public class KickCLexer extends Lexer {
 	}
 
 
+
+	    /** The C-Parser. Used for importing C-files and communicating with the Parser about typedefs. */
 	    CParser cParser;
 
+	    /** True of the next string is the name of a C-file to import*/
+	    boolean importEnter = false;
+	    /** True if the next CURLY starts ASM_MODE */
 	    boolean asmEnter = false;
+	    /** Counts the nested curlies inside ASM_MODE to determine when to exit ASM_MODE */
 	    int asmCurlyCount = 0;
 
 		public KickCLexer(CharStream input, CParser cParser) {
@@ -221,7 +227,7 @@ public class KickCLexer extends Lexer {
 	private void IMPORT_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 1:
-			 cParser.setModeImport(true); 
+			 importEnter=true; 
 			break;
 		}
 	}
@@ -235,7 +241,7 @@ public class KickCLexer extends Lexer {
 	private void STRING_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 3:
-			 if(cParser.isModeImport()) { cParser.setModeImport(false); cParser.loadCFile(getText()); } 
+			 if(importEnter) { importEnter=false; cParser.loadCFile(getText()); } 
 			break;
 		}
 	}

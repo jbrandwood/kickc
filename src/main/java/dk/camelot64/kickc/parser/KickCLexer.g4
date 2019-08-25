@@ -7,9 +7,15 @@ tokens { TYPEDEFNAME }
 }
 
 @lexer::members {
+
+    /** The C-Parser. Used for importing C-files and communicating with the Parser about typedefs. */
     CParser cParser;
 
+    /** True of the next string is the name of a C-file to import*/
+    boolean importEnter = false;
+    /** True if the next CURLY starts ASM_MODE */
     boolean asmEnter = false;
+    /** Counts the nested curlies inside ASM_MODE to determine when to exit ASM_MODE */
     int asmCurlyCount = 0;
 
 	public KickCLexer(CharStream input, CParser cParser) {
@@ -57,7 +63,7 @@ ASSIGN: '=' ;
 ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ;
 
 // Keywords
-IMPORT: 'import' { cParser.setModeImport(true); } ;
+IMPORT: 'import' { importEnter=true; } ;
 TYPEDEF: 'typedef' ;
 PRAGMA: '#pragma' ;
 RESERVE:'reserve' ;
@@ -105,7 +111,7 @@ KICKASM_BODY: '{{' .*? '}}';
 
 
 // Strings and chars - with special handling of imports
-STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(cParser.isModeImport()) { cParser.setModeImport(false); cParser.loadCFile(getText()); } } ;
+STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText()); } } ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 
 // Numbers

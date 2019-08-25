@@ -38,6 +38,11 @@ public class TestPrograms {
 
 
    @Test
+   public void testAsmMnemonicNames() throws IOException, URISyntaxException {
+      compileAndCompare("asm-mnemonic-names");
+   }
+
+   @Test
    public void testParseNegatedStructRef() throws IOException, URISyntaxException {
       compileAndCompare("parse-negated-struct-ref");
    }

@@ -41,9 +41,6 @@ public class CParser {
    /** Names of typedefs. Used by lexer to know the difference between normal value IDENTIFIERS and TYPEIDENTIFIERS */
    private List<String> typedefs;
 
-   /** True whenever the lexer is expecting an import filename as the next token. */
-   private boolean modeImport;
-
    /** A C-file that has been imported & parsed. */
    public static class CFile {
       /** The source file currently being parsed. */
@@ -85,14 +82,6 @@ public class CParser {
 
    public boolean isTypedef(String identifier) {
       return typedefs.contains(identifier);
-   }
-
-   public boolean isModeImport() {
-      return modeImport;
-   }
-
-   public void setModeImport(boolean modeImport) {
-      this.modeImport = modeImport;
    }
 
    /** Get the underlying token stream.

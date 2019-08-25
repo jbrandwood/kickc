@@ -1,0 +1,359 @@
+Identified constant variable (byte) main::jmp
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) lda#0 ← ((byte*)) (number) $400
+  to:@2
+main: scope:[main]  from @2
+  (byte) main::jmp#0 ← (number) 1
+  *((byte*) lda#0) ← (byte) main::jmp#0
+  (byte) bne::jsr#0 ← (byte) main::jmp#0
+  call bne 
+  to:main::@1
+main::@1: scope:[main]  from main
+  asm { ldaa jmpa bnea a:  }
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+bne: scope:[bne]  from main
+  (byte) bne::jsr#1 ← phi( main/(byte) bne::jsr#0 )
+  *((byte*) lda#0 + (number) 1) ← (byte) bne::jsr#1
+  to:bne::@return
+bne::@return: scope:[bne]  from bne
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) bne((byte) bne::jsr)
+(label) bne::@return
+(byte) bne::jsr
+(byte) bne::jsr#0
+(byte) bne::jsr#1
+(byte*) lda
+(byte*) lda#0
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte) main::jmp
+(byte) main::jmp#0
+
+Adding number conversion cast (unumber) 1 in (byte) main::jmp#0 ← (number) 1
+Adding number conversion cast (unumber) 1 in *((byte*) lda#0 + (number) 1) ← (byte) bne::jsr#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) lda#0 ← (byte*)(number) $400
+Inlining cast (byte) main::jmp#0 ← (unumber)(number) 1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Identical Phi Values (byte) bne::jsr#1 (byte) bne::jsr#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) lda#0 = (byte*) 1024
+Constant (const byte) main::jmp#0 = 1
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) bne::jsr#0 = main::jmp#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined bne::jsr#0 = (const byte) main::jmp#0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(lda#0+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to bne:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) lda#0) ← (const byte) main::jmp#0
+  [5] call bne 
+  to:main::@1
+main::@1: scope:[main]  from main
+  asm { ldaa jmpa bnea a:  }
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [7] return 
+  to:@return
+bne: scope:[bne]  from main
+  [8] *((const byte*) lda#0+(byte) 1) ← (const byte) main::jmp#0
+  to:bne::@return
+bne::@return: scope:[bne]  from bne
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) bne((byte) bne::jsr)
+(byte) bne::jsr
+(byte*) lda
+(void()) main()
+(byte) main::jmp
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Test using an ASM mnemonic as a C symbol names
+// Works if the C-lexer and the ASM-lexer are separated properly
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label lda = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label jmp = 1
+    // [4] *((const byte*) lda#0) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #jmp
+    sta lda
+    // [5] call bne 
+    jsr bne
+    jmp b1
+    // main::@1
+  b1:
+    // asm { ldaa jmpa bnea a:  }
+    // Inline asm using the mnemonics
+    lda a
+    jmp a
+    bne a
+  a:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // bne
+bne: {
+    // [8] *((const byte*) lda#0+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #main.jmp
+    sta lda+1
+    jmp breturn
+    // bne::@return
+  breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) lda#0) ← (const byte) main::jmp#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement asm { ldaa jmpa bnea a:  } always clobbers reg byte a 
+Statement [8] *((const byte*) lda#0+(byte) 1) ← (const byte) main::jmp#0 [ ] ( main:2::bne:5 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [bne] 
+Uplift Scope [] 
+
+Uplifting [main] best 60 combination 
+Uplifting [bne] best 60 combination 
+Uplifting [] best 60 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test using an ASM mnemonic as a C symbol names
+// Works if the C-lexer and the ASM-lexer are separated properly
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label lda = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label jmp = 1
+    // [4] *((const byte*) lda#0) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #jmp
+    sta lda
+    // [5] call bne 
+    jsr bne
+    jmp b1
+    // main::@1
+  b1:
+    // asm { ldaa jmpa bnea a:  }
+    // Inline asm using the mnemonics
+    lda a
+    jmp a
+    bne a
+  a:
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // bne
+bne: {
+    // [8] *((const byte*) lda#0+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #main.jmp
+    sta lda+1
+    jmp breturn
+    // bne::@return
+  breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction bne a
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Replacing jump to rts with rts in jmp a
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) bne((byte) bne::jsr)
+(label) bne::@return
+(byte) bne::jsr
+(byte*) lda
+(const byte*) lda#0 lda = (byte*) 1024
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte) main::jmp
+(const byte) main::jmp#0 jmp = (byte) 1
+
+
+
+FINAL ASSEMBLER
+Score: 40
+
+  // File Comments
+// Test using an ASM mnemonic as a C symbol names
+// Works if the C-lexer and the ASM-lexer are separated properly
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label lda = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label jmp = 1
+    // *lda = jmp
+    // [4] *((const byte*) lda#0) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #jmp
+    sta lda
+    // bne(jmp)
+    // [5] call bne 
+    jsr bne
+    // main::@1
+    // asm
+    // asm { ldaa jmpa bnea a:  }
+    // Inline asm using the mnemonics
+    lda a
+    rts
+  a:
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // bne
+bne: {
+    // lda[1] = jsr
+    // [8] *((const byte*) lda#0+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    lda #main.jmp
+    sta lda+1
+    // bne::@return
+    // }
+    // [9] return 
+    rts
+}
+  // File Data
+

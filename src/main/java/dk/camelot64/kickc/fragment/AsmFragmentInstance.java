@@ -325,7 +325,7 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx) {
-         String param = ctx.ASMREL().getSymbol().getText();
+         String param = ctx.ASM_REL().getSymbol().getText();
          return new AsmParameter(param, false);
       }
 

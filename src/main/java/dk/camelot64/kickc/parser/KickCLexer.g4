@@ -15,6 +15,7 @@ tokens { TYPEDEFNAME }
 	}
 }
 
+// Special characters
 CURLY_BEGIN: '{' ;
 CURLY_END: '}' ;
 BRACKET_BEGIN : '[' ;
@@ -51,8 +52,9 @@ LOGIC_AND : '&&' ;
 LOGIC_OR : '||' ;
 ASSIGN: '=' ;
 ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ;
-ASM_IMM : '#' ;
 
+// Keywords
+IMPORT: 'import' { cParser.setModeImport(true); } ;
 TYPEDEF: 'typedef' ;
 PRAGMA: '#pragma' ;
 RESERVE:'reserve' ;
@@ -93,19 +95,25 @@ CLOBBERS : 'clobbers' ;
 BYTES : 'bytes' ;
 CYCLES : 'cycles' ;
 LOGIC_NOT : '!' ;
-ASM_BYTE : '.byte' ;
 SIGNEDNESS : 'signed' | 'unsigned' ;
+SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
+BOOLEAN : 'true' | 'false';
+KICKASM_BODY: '{{' .*? '}}';
+ASM_IMM : '#' ;
+ASM_BYTE : '.byte' ;
 ASM_MNEMONIC:
     'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
     'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
     'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
     'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
-IMPORT: 'import' { cParser.setModeImport(true); } ;
-SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
+ASM_REL: '!' NAME_CHAR* [+-]+ {cParser.isModeAsm()}? ;
+
+// Strings and chars - with special handling of imports
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(cParser.isModeImport()) { cParser.setModeImport(false); cParser.loadCFile(getText()); } } ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
-BOOLEAN : 'true' | 'false';
+
+// Numbers
 NUMBER : NUMFLOAT | NUMINT ;
 NUMFLOAT : BINFLOAT | DECFLOAT | HEXFLOAT;
 BINFLOAT : ('%' | '0b' | '0B' ) (BINDIGIT)* '.' BINDIGIT+;
@@ -118,14 +126,14 @@ HEXINTEGER : ( '$' | '0x' | '0X' ) HEXDIGIT+ ;
 fragment BINDIGIT : [0-1];
 fragment DECDIGIT : [0-9];
 fragment HEXDIGIT : [0-9a-fA-F];
+
+//Names
 NAME : NAME_START NAME_CHAR* {if(cParser.isTypedef(getText())) setType(TYPEDEFNAME); };
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
-ASMREL: '!' NAME_CHAR* [+-]+ {cParser.isModeAsm()}? ;
-KICKASM_BODY: '{{' .*? '}}';
 
-// Add white space to the hidden channel 1
+// White space on hidden channel 1
 WS : [ \t\r\n\u00a0]+ -> channel(1);
-// Add comments to the hidden channel 2
+// Comments on hidden channel 2
 COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
 COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);

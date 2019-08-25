@@ -286,7 +286,7 @@ asmExpr
     | asmExpr ('*' | '/' ) asmExpr #asmExprBinary
     | asmExpr ( '+' | '-' )  asmExpr #asmExprBinary
     | NAME #asmExprLabel
-    | ASMREL #asmExprLabelRel
+    | ASM_REL #asmExprLabelRel
     | '{' NAME '}' #asmExprReplace
     | NUMBER #asmExprInt
     | CHAR #asmExprChar

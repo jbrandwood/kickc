@@ -5,12 +5,15 @@
 main: {
     // A constant pointer
     .label SCREEN = $400
+    lda #0
     ldx #2
-  b2:
-    lda SCREEN,x
-    inx
+  b1:
     cpx #$a
     bcc b2
     sta SCREEN+$3e7
     rts
+  b2:
+    lda SCREEN,x
+    inx
+    jmp b1
 }

@@ -96,6 +96,14 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
+  b1:
+    lda.z dst+1
+    cmp #>end
+    bne b2
+    lda.z dst
+    cmp #<end
+    bne b2
+    rts
   b2:
     lda #c
     ldy #0
@@ -104,13 +112,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    lda.z dst+1
-    cmp #>end
-    bne b2
-    lda.z dst
-    cmp #<end
-    bne b2
-    rts
+    jmp b1
 }
   txt: .text "camelot"
   .byte 0

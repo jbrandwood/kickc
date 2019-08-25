@@ -174,14 +174,7 @@ clear_screen: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-  b2:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
+  b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -191,6 +184,15 @@ clear_screen: {
     bcc b2
   !:
     rts
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    jmp b1
 }
 // Generate a sinus table using BASIC floats
 // - sintab is a pointer to the table to fill

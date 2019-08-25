@@ -9,13 +9,15 @@
 .segment Code
 main: {
     ldx #0
+  b1:
+    cpx #$a
+    bcc b2
+    rts
   b2:
     txa
     sta TABLE,x
     inx
-    cpx #$a
-    bcc b2
-    rts
+    jmp b1
 }
 .segment Data
   TABLE: .fill $a, 0

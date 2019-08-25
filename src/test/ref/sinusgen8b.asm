@@ -164,6 +164,14 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
+  b1:
+    lda.z dst+1
+    cmp #>end
+    bne b2
+    lda.z dst
+    cmp #<end
+    bne b2
+    rts
   b2:
     lda #c
     ldy #0
@@ -172,13 +180,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    lda.z dst+1
-    cmp #>end
-    bne b2
-    lda.z dst
-    cmp #<end
-    bne b2
-    rts
+    jmp b1
 }
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
@@ -202,6 +204,17 @@ sin16s_gen: {
     sta.z x+3
     sta.z i
     sta.z i+1
+  // u[4.28]
+  b1:
+    lda.z i+1
+    cmp #>main.wavelength
+    bcc b2
+    bne !+
+    lda.z i
+    cmp #<main.wavelength
+    bcc b2
+  !:
+    rts
   b2:
     lda.z x
     sta.z sin16s.x
@@ -242,16 +255,7 @@ sin16s_gen: {
     bne !+
     inc.z i+1
   !:
-  // u[4.28]
-    lda.z i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda.z i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    rts
+    jmp b1
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
@@ -620,6 +624,17 @@ sin8s_gen: {
     sta.z x+1
     sta.z i
     sta.z i+1
+  // u[4.12]
+  b1:
+    lda.z i+1
+    cmp #>main.wavelength
+    bcc b2
+    bne !+
+    lda.z i
+    cmp #<main.wavelength
+    bcc b2
+  !:
+    rts
   b2:
     lda.z x
     sta.z sin8s.x
@@ -643,16 +658,7 @@ sin8s_gen: {
     bne !+
     inc.z i+1
   !:
-  // u[4.12]
-    lda.z i+1
-    cmp #>main.wavelength
-    bcc b2
-    bne !+
-    lda.z i
-    cmp #<main.wavelength
-    bcc b2
-  !:
-    rts
+    jmp b1
 }
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12

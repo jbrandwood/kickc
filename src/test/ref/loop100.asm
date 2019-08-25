@@ -3,9 +3,11 @@
 .pc = $80d "Program"
 main: {
     ldx #0
-  b2:
-    inx
+  b1:
     cpx #$64
     bcc b2
     rts
+  b2:
+    inx
+    jmp b1
 }

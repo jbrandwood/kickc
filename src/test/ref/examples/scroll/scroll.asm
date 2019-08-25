@@ -28,11 +28,8 @@ main: {
     cpx #$ff
     bne b4
     ldx #0
-  b6:
-    lda line+1,x
-    sta line,x
-    inx
   // Hard scroll
+  b5:
     cpx #$27
     bne b6
     // Render next char
@@ -57,6 +54,11 @@ main: {
     stx SCROLL
     dec BGCOL
     jmp b1
+  b6:
+    lda line+1,x
+    sta line,x
+    inx
+    jmp b5
 }
 fillscreen: {
     .const fill = $20
@@ -65,14 +67,7 @@ fillscreen: {
     sta.z cursor
     lda #>SCREEN
     sta.z cursor+1
-  b2:
-    lda #fill
-    ldy #0
-    sta (cursor),y
-    inc.z cursor
-    bne !+
-    inc.z cursor+1
-  !:
+  b1:
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -82,6 +77,15 @@ fillscreen: {
     bcc b2
   !:
     rts
+  b2:
+    lda #fill
+    ldy #0
+    sta (cursor),y
+    inc.z cursor
+    bne !+
+    inc.z cursor+1
+  !:
+    jmp b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
   .byte 0

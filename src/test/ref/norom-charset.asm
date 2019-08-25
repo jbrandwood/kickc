@@ -14,6 +14,13 @@ main: {
     sta.z charset+1
     lda #0
     sta.z c
+  b1:
+    lda #4
+    cmp.z c
+    bne b2
+    lda #SCREEN/$40|CHARSET/$400
+    sta VIC_MEMORY
+    rts
   b2:
     lda.z c
     asl
@@ -31,12 +38,7 @@ main: {
     inc.z charset+1
   !:
     inc.z c
-    lda #4
-    cmp.z c
-    bne b2
-    lda #SCREEN/$40|CHARSET/$400
-    sta VIC_MEMORY
-    rts
+    jmp b1
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0

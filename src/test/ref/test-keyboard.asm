@@ -70,22 +70,19 @@ main: {
     sta.z sc
     lda #>$400
     sta.z sc+1
-  b2:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
   // Clear screen
+  b1:
     lda.z sc+1
     cmp #>$400+$3e8
-    bcc b2
+    bcs !b2+
+    jmp b2
+  !b2:
     bne !+
     lda.z sc
     cmp #<$400+$3e8
-    bcc b2
+    bcs !b2+
+    jmp b2
+  !b2:
   !:
     jsr keyboard_init
   b4:
@@ -158,7 +155,7 @@ main: {
     lda #$40
     cmp.z ch
     bne b12
-  b1:
+  b3:
   // Add some spaces
     txa
     tay
@@ -166,12 +163,21 @@ main: {
     sta (screen),y
     inx
     cpx #5
-    bcc b1
+    bcc b3
     jmp b4
   b7:
     lda #'1'
     sta (screen),y
     jmp b8
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    jmp b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)

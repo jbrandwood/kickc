@@ -6,12 +6,14 @@
   .label SCREEN = $400
 main: {
     lda #0
+  b1:
+    cmp #$28
+    bcc b2
+    rts
   b2:
     tax
     sta SCREEN,x
     clc
     adc #2
-    cmp #$28
-    bcc b2
-    rts
+    jmp b1
 }

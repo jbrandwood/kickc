@@ -6,7 +6,11 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b3:
+  b1:
+    cpx #1
+    beq b2
+    cpx #4
+    beq b2
     // No case for 0 & 5
     lda #'a'
     sta SCREEN,x
@@ -15,12 +19,6 @@ main: {
     cpx #6
     bne b1
     rts
-  b1:
-    cpx #1
-    beq b2
-    cpx #4
-    beq b2
-    jmp b3
   b2:
     lda #'1'
     sta SCREEN,x

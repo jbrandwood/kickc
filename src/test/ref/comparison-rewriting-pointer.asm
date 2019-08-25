@@ -11,14 +11,7 @@ main: {
     sta.z sc
     lda #>screen
     sta.z sc+1
-  b2:
-    lda #'a'
-    ldy #0
-    sta (sc),y
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
+  b1:
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
@@ -31,15 +24,7 @@ main: {
     sta.z cc
     lda #>cols+$3e7
     sta.z cc+1
-  b4:
-    lda #2
-    ldy #0
-    sta (cc),y
-    lda.z cc
-    bne !+
-    dec.z cc+1
-  !:
-    dec.z cc
+  b3:
     lda #>cols-1
     cmp.z cc+1
     bcc b4
@@ -49,4 +34,23 @@ main: {
     bcc b4
   !:
     rts
+  b4:
+    lda #2
+    ldy #0
+    sta (cc),y
+    lda.z cc
+    bne !+
+    dec.z cc+1
+  !:
+    dec.z cc
+    jmp b3
+  b2:
+    lda #'a'
+    ldy #0
+    sta (sc),y
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    jmp b1
 }

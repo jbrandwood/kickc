@@ -33,6 +33,14 @@ main: {
     sta.z entry
     lda #>ENTRIES
     sta.z entry+1
+  b1:
+    lda.z entry+1
+    cmp #>0
+    bne b2
+    lda.z entry
+    cmp #<0
+    bne b2
+    rts
   b2:
     lda #'0'
     clc
@@ -59,11 +67,5 @@ main: {
     sta.z entry+1
     pla
     sta.z entry
-    lda.z entry+1
-    cmp #>0
-    bne b2
-    lda.z entry
-    cmp #<0
-    bne b2
-    rts
+    jmp b1
 }

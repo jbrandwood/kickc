@@ -8,42 +8,8 @@ main: {
     .label x = 2
     lda #0
     sta.z x
-  b2:
+  b1:
     lda.z x
-    asl
-    clc
-    adc #1
-    sta.z textbox.x2
-    lax.z x
-    axs #-[$a]
-    stx.z textbox.y2
-    lda.z x
-    sta.z textbox.y1
-    lda #<text2
-    sta.z textbox.text
-    lda #>text2
-    sta.z textbox.text+1
-    jsr textbox
-    lda #<0
-    sta.z wait
-    sta.z wait+1
-  b5:
-    inc.z wait
-    bne !+
-    inc.z wait+1
-  !:
-    lda.z wait+1
-    cmp #>$88b8
-    bcc b5
-    bne !+
-    lda.z wait
-    cmp #<$88b8
-    bcc b5
-  !:
-    lda.z x
-    clc
-    adc #2
-    sta.z x
     cmp #$f
     bcc b2
     lda #<text
@@ -86,6 +52,45 @@ main: {
     jsr textbox
   b7:
     jmp b7
+  b2:
+    lda.z x
+    asl
+    clc
+    adc #1
+    sta.z textbox.x2
+    lax.z x
+    axs #-[$a]
+    stx.z textbox.y2
+    lda.z x
+    sta.z textbox.y1
+    lda #<text2
+    sta.z textbox.text
+    lda #>text2
+    sta.z textbox.text+1
+    jsr textbox
+    lda #<0
+    sta.z wait
+    sta.z wait+1
+  b4:
+    lda.z wait+1
+    cmp #>$88b8
+    bcc b5
+    bne !+
+    lda.z wait
+    cmp #<$88b8
+    bcc b5
+  !:
+    lda.z x
+    clc
+    adc #2
+    sta.z x
+    jmp b1
+  b5:
+    inc.z wait
+    bne !+
+    inc.z wait+1
+  !:
+    jmp b4
 }
 // textbox(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2, byte* zeropage(6) text)
 textbox: {

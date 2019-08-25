@@ -7,12 +7,8 @@
 main: {
     ldy #0
     ldx #2
-  b2:
-    txa
-    sta SCREEN,y
-    iny
-    dex
   // for()
+  b1:
     cpx #0
     bne b2
     lda #' '
@@ -40,4 +36,10 @@ main: {
     sta SCREEN,y
     iny
     jmp b4
+  b2:
+    txa
+    sta SCREEN,y
+    iny
+    dex
+    jmp b1
 }

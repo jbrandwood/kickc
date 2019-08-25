@@ -88,7 +88,7 @@ render: {
     sta.z x
   b2:
     jsr findcol
-    lda.z findcol.return
+    txa
     ldy.z x
     sta (colline),y
     inc.z x
@@ -111,78 +111,75 @@ render: {
 findcol: {
     .label x = 3
     .label y = 2
-    .label yp = 8
-    .label return = 5
-    .label mincol = 5
-    .label mindiff = 4
+    .label xp = 8
+    .label yp = 9
+    .label i = 4
+    .label mindiff = 5
     lda #$ff
     sta.z mindiff
-    lda #0
-    sta.z mincol
-    tay
+    ldx #0
+    txa
+    sta.z i
+  b1:
+    lda.z i
+    cmp #numpoints
+    bcc b2
+    rts
   b2:
-    ldx XPOS,y
+    ldy.z i
+    lda XPOS,y
+    sta.z xp
     lda YPOS,y
     sta.z yp
-    cpx.z x
+    lda.z x
+    cmp.z xp
     bne b3
     lda.z y
     cmp.z yp
     bne b3
-    lda #0
-    sta.z return
+    ldx #0
     rts
   b3:
-    txa
-    cmp.z x
-    beq !+
-    bcs b4
-  !:
-    txa
-    eor #$ff
+    lda.z x
+    cmp.z xp
+    bcc b4
     sec
-    adc.z x
-    tax
+    sbc.z xp
+    tay
   b5:
     lda.z y
     cmp.z yp
     bcc b6
     sec
     sbc.z yp
-    stx.z $ff
+    sty.z $ff
     clc
     adc.z $ff
-    tax
   b7:
-    cpx.z mindiff
-    bcs b14
-    lda COLS,y
-    sta.z mincol
+    cmp.z mindiff
+    bcs b13
+    ldy.z i
+    ldx COLS,y
   b8:
-    iny
-    cpy #numpoints
-    bcc b13
-    rts
+    inc.z i
+    sta.z mindiff
+    jmp b1
   b13:
-    stx.z mindiff
-    jmp b2
-  b14:
-    ldx.z mindiff
+    lda.z mindiff
     jmp b8
   b6:
     lda.z yp
     sec
     sbc.z y
-    stx.z $ff
+    sty.z $ff
     clc
     adc.z $ff
-    tax
     jmp b7
   b4:
-    txa
+    lda.z xp
     sec
     sbc.z x
-    tax
+    tay
     jmp b5
 }
 initscreen: {
@@ -191,14 +188,7 @@ initscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-  b2:
-    lda #FILL
-    ldy #0
-    sta (screen),y
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
+  b1:
     lda.z screen+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -208,6 +198,15 @@ initscreen: {
     bcc b2
   !:
     rts
+  b2:
+    lda #FILL
+    ldy #0
+    sta (screen),y
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    jmp b1
 }
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f

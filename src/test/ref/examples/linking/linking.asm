@@ -42,6 +42,16 @@ fillscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
+  b1:
+    lda.z screen+1
+    cmp #>SCREEN+$3e8
+    bcc b2
+    bne !+
+    lda.z screen
+    cmp #<SCREEN+$3e8
+    bcc b2
+  !:
+    rts
   b2:
     lda base,x
     clc
@@ -53,15 +63,7 @@ fillscreen: {
     bne !+
     inc.z screen+1
   !:
-    lda.z screen+1
-    cmp #>SCREEN+$3e8
-    bcc b2
-    bne !+
-    lda.z screen
-    cmp #<SCREEN+$3e8
-    bcc b2
-  !:
-    rts
+    jmp b1
 }
 .segment DataHigh
   base: .fill $100, 0

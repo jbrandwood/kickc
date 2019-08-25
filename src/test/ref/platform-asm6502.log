@@ -68,32 +68,21 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$a]) TABLE#0 = { fill( $a, 0) }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Successful SSA optimization Pass2LoopHeadConstantIdentification
-Alias (byte) main::i#1 = (byte) main::i#2 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::i#5 (const byte) main::i#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always true - replacing block destination [9] if((const byte) main::i#0<(byte) $a) goto main::@2
-Successful SSA optimization Pass2ConstantIfs
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@7(between main::@1 and main::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@1_1
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::i#6 ← main::i#1
+Coalesced [11] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
-Culled Empty Block (label) main::@1_1
-Culled Empty Block (label) main::@7
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -111,32 +100,32 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] phi()
-  to:main::@2
-main::@2: scope:[main]  from main main::@1
-  [5] (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main/(byte) 0 )
-  [6] *((const byte[$a]) TABLE#0 + (byte) main::i#4) ← (byte) main::i#4
-  [7] (byte) main::i#1 ← ++ (byte) main::i#4
   to:main::@1
-main::@1: scope:[main]  from main::@2
-  [8] if((byte) main::i#1<(byte) $a) goto main::@2
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [6] if((byte) main::i#2<(byte) $a) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [9] return 
+  [7] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [8] *((const byte[$a]) TABLE#0 + (byte) main::i#2) ← (byte) main::i#2
+  [9] (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (byte[$a]) TABLE
 (void()) main()
 (byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#4 22.0
+(byte) main::i#1 22.0
+(byte) main::i#2 18.333333333333332
 
 Initial phi equivalence classes
-[ main::i#4 main::i#1 ]
+[ main::i#2 main::i#1 ]
 Complete equivalence classes
-[ main::i#4 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#4 main::i#1 ]
+[ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is asm6502
@@ -164,49 +153,48 @@ bend:
   // main
 main: {
     .label i = 2
-    // [5] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b2
-    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    // [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@2#0] -- register_copy 
-    jmp b2
-    // main::@2
-  b2:
-    // [6] *((const byte[$a]) TABLE#0 + (byte) main::i#4) ← (byte) main::i#4 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy.z i
-    tya
-    sta TABLE,y
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
-    inc.z i
     jmp b1
     // main::@1
   b1:
-    // [8] if((byte) main::i#1<(byte) $a) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((byte) main::i#2<(byte) $a) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$a
-    bcc b2_from_b1
+    bcc b2
     jmp breturn
     // main::@return
   breturn:
-    // [9] return 
+    // [7] return 
     rts
+    // main::@2
+  b2:
+    // [8] *((const byte[$a]) TABLE#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta TABLE,y
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   TABLE: .fill $a, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#4 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#4 main::i#1 ] 
+Uplift Scope [main] 40.33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 293 combination reg byte x [ main::i#4 main::i#1 ] 
-Uplifting [] best 293 combination 
+Uplifting [main] best 263 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 263 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -232,33 +220,32 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [5] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b2
-    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    // [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@2#0] -- register_copy 
-    jmp b2
-    // main::@2
-  b2:
-    // [6] *((const byte[$a]) TABLE#0 + (byte) main::i#4) ← (byte) main::i#4 -- pbuc1_derefidx_vbuxx=vbuxx 
-    txa
-    sta TABLE,x
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
-    inx
     jmp b1
     // main::@1
   b1:
-    // [8] if((byte) main::i#1<(byte) $a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [6] if((byte) main::i#2<(byte) $a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
-    bcc b2_from_b1
+    bcc b2
     jmp breturn
     // main::@return
   breturn:
-    // [9] return 
+    // [7] return 
     rts
+    // main::@2
+  b2:
+    // [8] *((const byte[$a]) TABLE#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta TABLE,x
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   TABLE: .fill $a, 0
@@ -266,27 +253,22 @@ main: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
-Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bbegin:
 Removing instruction bend:
-Removing instruction b2_from_main:
-Removing instruction b1:
+Removing instruction b1_from_main:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b2
-Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -299,14 +281,14 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#4 reg byte x 22.0
+(byte) main::i#1 reg byte x 22.0
+(byte) main::i#2 reg byte x 18.333333333333332
 
-reg byte x [ main::i#4 main::i#1 ]
+reg byte x [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 161
+Score: 191
 
   // File Comments
 // Tests the target platform ASM6502
@@ -322,28 +304,31 @@ Score: 161
   // @end
   // main
 main: {
-    // [5] phi from main to main::@2 [phi:main->main::@2]
-    // [5] phi (byte) main::i#4 = (byte) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@2#0] -- register_copy 
-    // main::@2
-  b2:
-    // TABLE[i] = i
-    // [6] *((const byte[$a]) TABLE#0 + (byte) main::i#4) ← (byte) main::i#4 -- pbuc1_derefidx_vbuxx=vbuxx 
-    txa
-    sta TABLE,x
-    // for(char i=0;i<10;i++)
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
-    inx
     // main::@1
-    // [8] if((byte) main::i#1<(byte) $a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+  b1:
+    // for(char i=0;i<10;i++)
+    // [6] if((byte) main::i#2<(byte) $a) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
     // main::@return
     // }
-    // [9] return 
+    // [7] return 
     rts
+    // main::@2
+  b2:
+    // TABLE[i] = i
+    // [8] *((const byte[$a]) TABLE#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta TABLE,x
+    // for(char i=0;i<10;i++)
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
 }
   // File Data
   TABLE: .fill $a, 0

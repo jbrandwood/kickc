@@ -204,7 +204,6 @@ Removing PHI-reference to removed block (line::@3) in block plot
 Removing unused block line::@3
 Removing unused block line::@11
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Successful SSA optimization Pass2LoopHeadConstantIdentification
 Adding number conversion cast (unumber) $28 in if((byte) main::i#1!=(number) $28) goto main::@1
 Adding number conversion cast (unumber) line::x1#0+1 in if((byte) line::x#2<(const byte) line::x1#0+(number) 1) goto line::@6
 Adding number conversion cast (unumber) 1 in if((byte) line::x#2<(unumber)(const byte) line::x1#0+(number) 1) goto line::@6
@@ -216,21 +215,14 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) line::x#1 = (byte) line::x#2 
-Alias (byte) line::x#5 = (byte) line::x#6 
-Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) plot::x#2 (byte) plot::x#1
-Identical Phi Values (byte) line::x#7 (const byte) line::x0#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always true - replacing block destination [22] if((const byte) line::x0#0<(const byte) line::x1#0+(byte) 1) goto line::@6
-Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) plot::x#0
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@1 and main::@1)
-Added new block during phi lifting line::@13(between line::@5 and line::@6)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
@@ -240,22 +232,19 @@ Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of line
 Adding NOP phi() at start of line::@1
-Adding NOP phi() at start of line::@5_1
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to line:12 
-Calls in [line] to plot:20 
+Calls in [line] to plot:21 
 
 Created 2 initial phi equivalence classes
 Coalesced [14] main::i#3 ← main::i#1
-Coalesced [24] line::x#8 ← line::x#1
+Coalesced [23] line::x#5 ← line::x#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) line::@1
-Culled Empty Block (label) line::@5_1
-Culled Empty Block (label) line::@13
 Renumbering block @3 to @1
 Renumbering block main::@3 to main::@2
 Renumbering block line::@5 to line::@1
@@ -294,21 +283,21 @@ main::@2: scope:[main]  from main::@1 main::@2
   to:main::@2
 line: scope:[line]  from main::@2
   [12] phi()
-  to:line::@2
-line::@2: scope:[line]  from line line::@1
-  [13] (byte) line::x#5 ← phi( line::@1/(byte) line::x#1 line/(const byte) line::x0#0 )
-  [14] (byte) plot::x#1 ← (byte) line::x#5
-  [15] call plot 
-  to:line::@3
-line::@3: scope:[line]  from line::@2
-  [16] (byte) line::x#1 ← ++ (byte) line::x#5
   to:line::@1
-line::@1: scope:[line]  from line::@3
-  [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@2
+line::@1: scope:[line]  from line line::@3
+  [13] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@3/(byte) line::x#1 )
+  [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2
   to:line::@return
 line::@return: scope:[line]  from line::@1
-  [18] return 
+  [15] return 
   to:@return
+line::@2: scope:[line]  from line::@1
+  [16] (byte) plot::x#1 ← (byte) line::x#2
+  [17] call plot 
+  to:line::@3
+line::@3: scope:[line]  from line::@2
+  [18] (byte) line::x#1 ← ++ (byte) line::x#2
+  to:line::@1
 plot: scope:[plot]  from line::@2
   [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1)
   [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1
@@ -323,8 +312,8 @@ VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (void()) line((byte) line::x0 , (byte) line::x1)
 (byte) line::x
-(byte) line::x#1 151.5
-(byte) line::x#5 101.0
+(byte) line::x#1 202.0
+(byte) line::x#2 101.0
 (byte) line::x0
 (byte) line::x1
 (void()) main()
@@ -341,18 +330,18 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ line::x#5 line::x#1 ]
+[ line::x#2 line::x#1 ]
 Added variable plot::x#1 to zero page equivalence class [ plot::x#1 ]
 Added variable plot::idx#0 to zero page equivalence class [ plot::idx#0 ]
 Added variable plot::$0 to zero page equivalence class [ plot::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ line::x#5 line::x#1 ]
+[ line::x#2 line::x#1 ]
 [ plot::x#1 ]
 [ plot::idx#0 ]
 [ plot::$0 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ line::x#5 line::x#1 ]
+Allocated zp ZP_BYTE:3 [ line::x#2 line::x#1 ]
 Allocated zp ZP_BYTE:4 [ plot::x#1 ]
 Allocated zp ZP_BYTE:5 [ plot::idx#0 ]
 Allocated zp ZP_BYTE:6 [ plot::$0 ]
@@ -429,40 +418,39 @@ line: {
     .const x0 = 0
     .const x1 = $a
     .label x = 3
-    // [13] phi from line to line::@2 [phi:line->line::@2]
-  b2_from_line:
-    // [13] phi (byte) line::x#5 = (const byte) line::x0#0 [phi:line->line::@2#0] -- vbuz1=vbuc1 
+    // [13] phi from line to line::@1 [phi:line->line::@1]
+  b1_from_line:
+    // [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@1#0] -- vbuz1=vbuc1 
     lda #x0
     sta.z x
-    jmp b2
-    // [13] phi from line::@1 to line::@2 [phi:line::@1->line::@2]
-  b2_from_b1:
-    // [13] phi (byte) line::x#5 = (byte) line::x#1 [phi:line::@1->line::@2#0] -- register_copy 
-    jmp b2
+    jmp b1
+    // line::@1
+  b1:
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z x
+    cmp #x1+1
+    bcc b2
+    jmp breturn
+    // line::@return
+  breturn:
+    // [15] return 
+    rts
     // line::@2
   b2:
-    // [14] (byte) plot::x#1 ← (byte) line::x#5 -- vbuz1=vbuz2 
+    // [16] (byte) plot::x#1 ← (byte) line::x#2 -- vbuz1=vbuz2 
     lda.z x
     sta.z plot.x
-    // [15] call plot 
+    // [17] call plot 
     jsr plot
     jmp b3
     // line::@3
   b3:
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#5 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+  b1_from_b3:
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
     jmp b1
-    // line::@1
-  b1:
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z x
-    cmp #x1+1
-    bcc b2_from_b1
-    jmp breturn
-    // line::@return
-  breturn:
-    // [18] return 
-    rts
 }
   // plot
 // plot(byte zeropage(4) x)
@@ -497,23 +485,23 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ ma
 Statement [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ line::x#5 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ plot::x#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ plot::idx#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:6 [ plot::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [line] 252.5: zp ZP_BYTE:3 [ line::x#5 line::x#1 ] 
+Uplift Scope [line] 303: zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
 Uplift Scope [plot] 103: zp ZP_BYTE:4 [ plot::x#1 ] 4: zp ZP_BYTE:6 [ plot::$0 ] 3: zp ZP_BYTE:5 [ plot::idx#0 ] 
 Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [line] best 4984 combination zp ZP_BYTE:3 [ line::x#5 line::x#1 ] 
-Uplifting [plot] best 4668 combination reg byte y [ plot::x#1 ] reg byte a [ plot::$0 ] reg byte x [ plot::idx#0 ] 
-Uplifting [main] best 4518 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 4518 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ line::x#5 line::x#1 ]
-Uplifting [line] best 3318 combination reg byte y [ line::x#5 line::x#1 ] 
+Uplifting [line] best 4684 combination zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
+Uplifting [plot] best 4368 combination reg byte y [ plot::x#1 ] reg byte a [ plot::$0 ] reg byte x [ plot::idx#0 ] 
+Uplifting [main] best 4218 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 4218 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ line::x#2 line::x#1 ]
+Uplifting [line] best 3018 combination reg byte y [ line::x#2 line::x#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -580,36 +568,35 @@ main: {
 line: {
     .const x0 = 0
     .const x1 = $a
-    // [13] phi from line to line::@2 [phi:line->line::@2]
-  b2_from_line:
-    // [13] phi (byte) line::x#5 = (const byte) line::x0#0 [phi:line->line::@2#0] -- vbuyy=vbuc1 
+    // [13] phi from line to line::@1 [phi:line->line::@1]
+  b1_from_line:
+    // [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@1#0] -- vbuyy=vbuc1 
     ldy #x0
-    jmp b2
-    // [13] phi from line::@1 to line::@2 [phi:line::@1->line::@2]
-  b2_from_b1:
-    // [13] phi (byte) line::x#5 = (byte) line::x#1 [phi:line::@1->line::@2#0] -- register_copy 
-    jmp b2
+    jmp b1
+    // line::@1
+  b1:
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #x1+1
+    bcc b2
+    jmp breturn
+    // line::@return
+  breturn:
+    // [15] return 
+    rts
     // line::@2
   b2:
-    // [14] (byte) plot::x#1 ← (byte) line::x#5
-    // [15] call plot 
+    // [16] (byte) plot::x#1 ← (byte) line::x#2
+    // [17] call plot 
     jsr plot
     jmp b3
     // line::@3
   b3:
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#5 -- vbuyy=_inc_vbuyy 
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
     iny
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+  b1_from_b3:
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
     jmp b1
-    // line::@1
-  b1:
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
-    cpy #x1+1
-    bcc b2_from_b1
-    jmp breturn
-    // line::@return
-  breturn:
-    // [18] return 
-    rts
 }
   // plot
 // plot(byte register(Y) x)
@@ -635,15 +622,13 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b2
-Removing instruction jmp b3
 Removing instruction jmp b1
 Removing instruction jmp breturn
+Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
-Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -652,21 +637,19 @@ Removing instruction b1_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b2:
 Removing instruction line_from_b2:
-Removing instruction b2_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b2_from_line:
-Removing instruction b3:
-Removing instruction b1:
+Removing instruction b1_from_line:
 Removing instruction breturn:
+Removing instruction b3:
+Removing instruction b1_from_b3:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
-Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -683,8 +666,8 @@ FINAL SYMBOL TABLE
 (label) line::@3
 (label) line::@return
 (byte) line::x
-(byte) line::x#1 reg byte y 151.5
-(byte) line::x#5 reg byte y 101.0
+(byte) line::x#1 reg byte y 202.0
+(byte) line::x#2 reg byte y 101.0
 (byte) line::x0
 (const byte) line::x0#0 x0 = (byte) 0
 (byte) line::x1
@@ -706,14 +689,14 @@ FINAL SYMBOL TABLE
 (const byte*) plots#0 plots = (byte*) 4096
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte y [ line::x#5 line::x#1 ]
+reg byte y [ line::x#2 line::x#1 ]
 reg byte y [ plot::x#1 ]
 reg byte x [ plot::idx#0 ]
 reg byte a [ plot::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 1713
+Score: 2013
 
   // File Comments
   // Upstart
@@ -766,29 +749,32 @@ main: {
 line: {
     .const x0 = 0
     .const x1 = $a
-    // [13] phi from line to line::@2 [phi:line->line::@2]
-    // [13] phi (byte) line::x#5 = (const byte) line::x0#0 [phi:line->line::@2#0] -- vbuyy=vbuc1 
+    // [13] phi from line to line::@1 [phi:line->line::@1]
+    // [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@1#0] -- vbuyy=vbuc1 
     ldy #x0
-    // [13] phi from line::@1 to line::@2 [phi:line::@1->line::@2]
-    // [13] phi (byte) line::x#5 = (byte) line::x#1 [phi:line::@1->line::@2#0] -- register_copy 
-    // line::@2
-  b2:
-    // plot(x)
-    // [14] (byte) plot::x#1 ← (byte) line::x#5
-    // [15] call plot 
-    jsr plot
-    // line::@3
-    // for(byte x = x0; x<=x1; x++)
-    // [16] (byte) line::x#1 ← ++ (byte) line::x#5 -- vbuyy=_inc_vbuyy 
-    iny
     // line::@1
-    // [17] if((byte) line::x#1<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
+  b1:
+    // for(byte x = x0; x<=x1; x++)
+    // [14] if((byte) line::x#2<(const byte) line::x1#0+(byte) 1) goto line::@2 -- vbuyy_lt_vbuc1_then_la1 
     cpy #x1+1
     bcc b2
     // line::@return
     // }
-    // [18] return 
+    // [15] return 
     rts
+    // line::@2
+  b2:
+    // plot(x)
+    // [16] (byte) plot::x#1 ← (byte) line::x#2
+    // [17] call plot 
+    jsr plot
+    // line::@3
+    // for(byte x = x0; x<=x1; x++)
+    // [18] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [13] phi from line::@3 to line::@1 [phi:line::@3->line::@1]
+    // [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@3->line::@1#0] -- register_copy 
+    jmp b1
 }
   // plot
 // plot(byte register(Y) x)

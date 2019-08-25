@@ -109,19 +109,8 @@ main: {
     sta.z src
     lda #>SCREEN
     sta.z src+1
-  b2:
-    ldy #0
-    lda (src),y
-    sta (dst),y
-    inc.z src
-    bne !+
-    inc.z src+1
-  !:
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
   // Copy screen to screen copy
+  b1:
     lda.z src+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -164,7 +153,7 @@ main: {
     bne b3
     jsr initSprites
     jsr setupRasterIrq
-  b1:
+  b4:
   // Main loop
     jsr getCharToProcess
     ldy.z getCharToProcess.return_x
@@ -181,6 +170,19 @@ main: {
   b6:
     sty.z startProcessing.center_x
     jsr startProcessing
+    jmp b4
+  b2:
+    ldy #0
+    lda (src),y
+    sta (dst),y
+    inc.z src
+    bne !+
+    inc.z src+1
+  !:
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
     jmp b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
@@ -619,15 +621,8 @@ initSprites: {
     sta.z sp
     lda #>SPRITE_DATA
     sta.z sp+1
-  b2:
-    lda #0
-    tay
-    sta (sp),y
-    inc.z sp
-    bne !+
-    inc.z sp+1
-  !:
   // Clear sprite data
+  b1:
     lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2
@@ -649,6 +644,15 @@ initSprites: {
     sta SPRITES_EXPAND_X
     sta SPRITES_EXPAND_Y
     rts
+  b2:
+    lda #0
+    tay
+    sta (sp),y
+    inc.z sp
+    bne !+
+    inc.z sp+1
+  !:
+    jmp b1
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
@@ -686,6 +690,29 @@ init_angle_screen: {
     sta.z xb
     lda #0
     sta.z x
+  b2:
+    lda.z x
+    cmp #$13+1
+    bcc b3
+    lda.z screen_topline
+    sec
+    sbc #<$28
+    sta.z screen_topline
+    lda.z screen_topline+1
+    sbc #>$28
+    sta.z screen_topline+1
+    lda #$28
+    clc
+    adc.z screen_bottomline
+    sta.z screen_bottomline
+    bcc !+
+    inc.z screen_bottomline+1
+  !:
+    inc.z y
+    lda #$d
+    cmp.z y
+    bne b1
+    rts
   b3:
     lda.z x
     asl
@@ -726,28 +753,7 @@ init_angle_screen: {
     sta (screen_bottomline),y
     inc.z x
     dec.z xb
-    lda.z x
-    cmp #$13+1
-    bcc b3
-    lda.z screen_topline
-    sec
-    sbc #<$28
-    sta.z screen_topline
-    lda.z screen_topline+1
-    sbc #>$28
-    sta.z screen_topline+1
-    lda #$28
-    clc
-    adc.z screen_bottomline
-    sta.z screen_bottomline
-    bcc !+
-    inc.z screen_bottomline+1
-  !:
-    inc.z y
-    lda #$d
-    cmp.z y
-    bne b1
-    rts
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16

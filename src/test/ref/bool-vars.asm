@@ -59,14 +59,6 @@ bool_complex: {
 bool_not: {
     .label screen = $450
     ldx #0
-  b4:
-    lda #' '
-    sta screen,x
-  b3:
-    inx
-    cpx #$15
-    bne b1
-    rts
   b1:
     txa
     and #1
@@ -76,19 +68,19 @@ bool_not: {
     beq b4
     lda #'*'
     sta screen,x
-    jmp b3
-}
-bool_or: {
-    .label screen = $428
-    ldx #0
-  b2:
-    lda #'*'
-    sta screen,x
   b3:
     inx
     cpx #$15
     bne b1
     rts
+  b4:
+    lda #' '
+    sta screen,x
+    jmp b3
+}
+bool_or: {
+    .label screen = $428
+    ldx #0
   b1:
     txa
     and #1
@@ -98,19 +90,19 @@ bool_or: {
     beq b2
     lda #' '
     sta screen,x
-    jmp b3
-}
-bool_and: {
-    .label screen = $400
-    ldx #0
-  b2:
-    lda #'*'
-    sta screen,x
   b3:
     inx
     cpx #$15
     bne b1
     rts
+  b2:
+    lda #'*'
+    sta screen,x
+    jmp b3
+}
+bool_and: {
+    .label screen = $400
+    ldx #0
   b1:
     txa
     and #1
@@ -120,6 +112,14 @@ bool_and: {
     beq b2
   b4:
     lda #' '
+    sta screen,x
+  b3:
+    inx
+    cpx #$15
+    bne b1
+    rts
+  b2:
+    lda #'*'
     sta screen,x
     jmp b3
 }

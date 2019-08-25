@@ -30,6 +30,11 @@ lines: {
     .label l = 6
     lda #0
     sta.z l
+  b1:
+    lda.z l
+    cmp #lines_cnt
+    bcc b2
+    rts
   b2:
     ldy.z l
     lda lines_x,y
@@ -42,10 +47,7 @@ lines: {
     ldy lines_y+1,x
     jsr bitmap_line
     inc.z l
-    lda.z l
-    cmp #lines_cnt
-    bcc b2
-    rts
+    jmp b1
 }
 // Draw a line on the bitmap
 // bitmap_line(byte zeropage(3) x0, byte zeropage(5) x1, byte zeropage(2) y0, byte register(Y) y1)
@@ -317,6 +319,14 @@ init_screen: {
     sta.z c
     lda #>SCREEN
     sta.z c+1
+  b1:
+    lda.z c+1
+    cmp #>SCREEN+$400
+    bne b2
+    lda.z c
+    cmp #<SCREEN+$400
+    bne b2
+    rts
   b2:
     lda #$14
     ldy #0
@@ -325,13 +335,7 @@ init_screen: {
     bne !+
     inc.z c+1
   !:
-    lda.z c+1
-    cmp #>SCREEN+$400
-    bne b2
-    lda.z c
-    cmp #<SCREEN+$400
-    bne b2
-    rts
+    jmp b1
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {

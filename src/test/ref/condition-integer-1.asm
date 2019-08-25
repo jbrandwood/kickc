@@ -10,26 +10,36 @@ main: {
     sta SCREEN
     lda #' '
     sta SCREEN+1
-    ldx #2
-    ldy #0
-  b5:
+    ldy #2
+    ldx #0
+  // loop byte
+  b3:
+    cpx #0
+    bne b4
     lda #'0'
-    sta SCREEN,x
-    inx
-  b4:
+    sta SCREEN,y
     iny
-    cpy #3
+  b4:
+    inx
+    cpx #3
     bne b3
     lda #' '
-    sta SCREEN,x
-    inx
+    sta SCREEN,y
+    iny
     lda #<0
     sta.z i1
     sta.z i1+1
-  b9:
+  // loop word
+  b7:
+    lda.z i1+1
+    cmp #>0
+    bne b8
+    lda.z i1
+    cmp #<0
+    bne b8
     lda #'0'
-    sta SCREEN,x
-    inx
+    sta SCREEN,y
+    iny
   b8:
     inc.z i1
     bne !+
@@ -42,18 +52,4 @@ main: {
     cmp #<3
     bne b7
     rts
-  // loop word
-  b7:
-    lda.z i1+1
-    cmp #>0
-    bne b8
-    lda.z i1
-    cmp #<0
-    bne b8
-    jmp b9
-  // loop byte
-  b3:
-    cpy #0
-    bne b4
-    jmp b5
 }

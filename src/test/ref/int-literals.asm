@@ -18,14 +18,7 @@ main: {
     sta.z s
     lda #>SCREEN
     sta.z s+1
-  b2:
-    lda #' '
-    ldy #0
-    sta (s),y
-    inc.z s
-    bne !+
-    inc.z s+1
-  !:
+  b1:
     lda.z s+1
     cmp #>SCREEN+$3e8
     bcc b2
@@ -36,6 +29,15 @@ main: {
   !:
     jsr testSimpleTypes
     rts
+  b2:
+    lda #' '
+    ldy #0
+    sta (s),y
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    jmp b1
 }
 testSimpleTypes: {
     ldx #0

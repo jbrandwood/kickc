@@ -3314,13 +3314,6 @@ Constant (const byte*) print_sbyte_at::at#12 = debug_print::print_sbyte_pos10_$1
 Constant (const byte*) print_sbyte_at::at#13 = debug_print::print_sbyte_pos11_$1#0+debug_print::print_sbyte_pos11_col#0
 Constant (const byte*) print_sbyte_at::at#14 = debug_print::print_sbyte_pos12_$1#0+debug_print::print_sbyte_pos12_col#0
 Successful SSA optimization Pass2ConstantIdentification
-Successful SSA optimization Pass2LoopHeadConstantIdentification
-Alias (byte*) memset::dst#1 = (byte*) memset::dst#2 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) memset::dst#5 (const byte*) memset::dst#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always true - replacing block destination [250] if((const byte*) memset::dst#0!=(const byte*) memset::end#0) goto memset::@5
-Successful SSA optimization Pass2ConstantIfs
 Inlining Noop Cast [67] (byte~) anim::$9 ← (byte)*((const signed byte*) xp#0) keeping *(xp#0)
 Inlining Noop Cast [70] (byte~) anim::$11 ← (byte)*((const signed byte*) yp#0) keeping *(yp#0)
 Successful SSA optimization Pass2NopCastInlining
@@ -3490,7 +3483,6 @@ Consolidated array index constant in *(rotation_matrix#0+6)
 Consolidated array index constant in *(rotation_matrix#0+7)
 Consolidated array index constant in *(rotation_matrix#0+8)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Added new block during phi lifting memset::@10(between memset::@4 and memset::@5)
 Added new block during phi lifting anim::@31(between anim::@29 and anim::@22)
 Added new block during phi lifting debug_print_init::@21(between debug_print_init::@3 and debug_print_init::@1)
 Added new block during phi lifting debug_print_init::@22(between debug_print_init::@2 and debug_print_init::@2)
@@ -3545,7 +3537,6 @@ Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
-Adding NOP phi() at start of memset::@4_1
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [] to main:7 
@@ -3607,8 +3598,8 @@ Coalesced [315] print_str_at::str#16 ← print_str_at::str#15
 Coalesced [316] print_str_at::at#16 ← print_str_at::at#15
 Coalesced [323] print_str_at::str#17 ← print_str_at::str#0
 Coalesced [324] print_str_at::at#17 ← print_str_at::at#0
-Coalesced [338] memset::dst#6 ← memset::dst#1
-Coalesced [346] sprites_init::i#3 ← sprites_init::i#1
+Coalesced [337] memset::dst#4 ← memset::dst#1
+Coalesced [345] sprites_init::i#3 ← sprites_init::i#1
 Coalesced down to 16 phi equivalence classes
 Culled Empty Block (label) @16
 Culled Empty Block (label) @33
@@ -3643,9 +3634,7 @@ Culled Empty Block (label) debug_print_init::@21
 Culled Empty Block (label) debug_print_init::@22
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
-Culled Empty Block (label) memset::@4_1
 Culled Empty Block (label) memset::@1
-Culled Empty Block (label) memset::@10
 Culled Empty Block (label) sprites_init::@3
 Renumbering block @50 to @1
 Renumbering block memset::@4 to memset::@1
@@ -4160,18 +4149,18 @@ print_cls::@return: scope:[print_cls]  from print_cls
   to:@return
 memset: scope:[memset]  from print_cls
   [253] phi()
-  to:memset::@2
-memset::@2: scope:[memset]  from memset memset::@1
-  [254] (byte*) memset::dst#4 ← phi( memset::@1/(byte*) memset::dst#1 memset/(byte*)(const void*) memset::str#0 )
-  [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0
-  [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4
   to:memset::@1
-memset::@1: scope:[memset]  from memset::@2
-  [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2
+memset::@1: scope:[memset]  from memset memset::@2
+  [254] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [258] return 
+  [256] return 
   to:@return
+memset::@2: scope:[memset]  from memset::@1
+  [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  to:memset::@1
 sprites_init: scope:[sprites_init]  from main
   [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff
   to:sprites_init::@1
@@ -4388,8 +4377,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 16.5
-(byte*) memset::dst#4 16.5
+(byte*) memset::dst#1 22.0
+(byte*) memset::dst#2 14.666666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -4517,7 +4506,7 @@ Initial phi equivalence classes
 [ debug_print_init::j#2 debug_print_init::j#1 ]
 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ]
 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
-[ memset::dst#4 memset::dst#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ sprites_init::i#2 sprites_init::i#1 ]
 Added variable calculate_matrix::sx#0 to zero page equivalence class [ calculate_matrix::sx#0 ]
 Added variable calculate_matrix::sy#0 to zero page equivalence class [ calculate_matrix::sy#0 ]
@@ -4602,7 +4591,7 @@ Complete equivalence classes
 [ debug_print_init::j#2 debug_print_init::j#1 ]
 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ]
 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
-[ memset::dst#4 memset::dst#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ sprites_init::i#2 sprites_init::i#1 ]
 [ calculate_matrix::sx#0 ]
 [ calculate_matrix::sy#0 ]
@@ -4686,7 +4675,7 @@ Allocated zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ]
 Allocated zp ZP_BYTE:15 [ debug_print_init::j#2 debug_print_init::j#1 ]
 Allocated zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ]
 Allocated zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
-Allocated zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 ]
+Allocated zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ]
 Allocated zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ]
 Allocated zp ZP_BYTE:23 [ calculate_matrix::sx#0 ]
 Allocated zp ZP_BYTE:24 [ calculate_matrix::sy#0 ]
@@ -6628,44 +6617,43 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = $14
-    // [254] phi from memset to memset::@2 [phi:memset->memset::@2]
-  b2_from_memset:
-    // [254] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
+    // [254] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [254] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b2
-    // [254] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
-  b2_from_b1:
-    // [254] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
-    jmp b2
+    jmp b1
+    // memset::@1
+  b1:
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda.z dst+1
+    cmp #>end
+    bne b2
+    lda.z dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [256] return 
+    rts
     // memset::@2
   b2:
-    // [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
-    // memset::@1
-  b1:
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z dst+1
-    cmp #>end
-    bne b2_from_b1
-    lda.z dst
-    cmp #<end
-    bne b2_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [258] return 
-    rts
 }
   // sprites_init
 // Initialize sprites
@@ -6927,8 +6915,8 @@ Removing always clobbered register reg byte x as potential for zp ZP_BYTE:14 [ d
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ]
@@ -7036,8 +7024,8 @@ Statement [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + 
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Statement [262] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::i#2) ← (const byte) GREEN#0 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
@@ -7147,8 +7135,8 @@ Statement [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + 
 Statement [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 [ debug_print_init::c#1 debug_print_init::i#1 ] ( main:2::debug_print_init:8 [ debug_print_init::c#1 debug_print_init::i#1 ] ) always clobbers reg byte a 
 Statement [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
 Statement [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) [ print_str_at::str#13 print_str_at::at#13 ] ( main:2::debug_print_init:8::print_str_at:184 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:186 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:188 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:190 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:192 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:194 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:196 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:198 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:200 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:202 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:204 [ print_str_at::str#13 print_str_at::at#13 ] main:2::debug_print_init:8::print_str_at:206 [ print_str_at::str#13 print_str_at::at#13 ] ) always clobbers reg byte a reg byte y 
-Statement [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 [ memset::dst#4 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#4 ] ) always clobbers reg byte a reg byte y 
-Statement [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#1 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#1 ] ) always clobbers reg byte a 
+Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a 
+Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [259] *((const byte*) SPRITES_ENABLE#0) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
 Statement [262] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::i#2) ← (const byte) GREEN#0 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] ) always clobbers reg byte a 
@@ -7166,7 +7154,7 @@ Potential registers zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 
 Potential registers zp ZP_BYTE:15 [ debug_print_init::j#2 debug_print_init::j#1 ] : zp ZP_BYTE:15 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] : zp ZP_WORD:16 , 
 Potential registers zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] : zp ZP_WORD:18 , 
-Potential registers zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 ] : zp ZP_WORD:20 , 
+Potential registers zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:20 , 
 Potential registers zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ] : zp ZP_BYTE:22 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:23 [ calculate_matrix::sx#0 ] : zp ZP_BYTE:23 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] : zp ZP_BYTE:24 , reg byte x , reg byte y , 
@@ -7245,9 +7233,9 @@ Uplift Scope [debug_print] 191.9: zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i
 Uplift Scope [calculate_matrix] 4: zp ZP_BYTE:57 [ calculate_matrix::$10 ] 4: zp ZP_BYTE:58 [ calculate_matrix::$11 ] 4: zp ZP_BYTE:59 [ calculate_matrix::$12 ] 4: zp ZP_BYTE:60 [ calculate_matrix::$13 ] 4: zp ZP_BYTE:61 [ calculate_matrix::$14 ] 4: zp ZP_BYTE:62 [ calculate_matrix::$15 ] 4: zp ZP_BYTE:63 [ calculate_matrix::$16 ] 4: zp ZP_BYTE:64 [ calculate_matrix::$17 ] 4: zp ZP_BYTE:65 [ calculate_matrix::$18 ] 4: zp ZP_BYTE:66 [ calculate_matrix::$19 ] 4: zp ZP_BYTE:67 [ calculate_matrix::$20 ] 4: zp ZP_BYTE:68 [ calculate_matrix::$21 ] 4: zp ZP_BYTE:69 [ calculate_matrix::$22 ] 4: zp ZP_BYTE:70 [ calculate_matrix::$23 ] 4: zp ZP_BYTE:71 [ calculate_matrix::$24 ] 4: zp ZP_BYTE:72 [ calculate_matrix::$25 ] 4: zp ZP_BYTE:73 [ calculate_matrix::$26 ] 4: zp ZP_BYTE:74 [ calculate_matrix::$27 ] 4: zp ZP_BYTE:75 [ calculate_matrix::$28 ] 4: zp ZP_BYTE:76 [ calculate_matrix::$29 ] 4: zp ZP_BYTE:77 [ calculate_matrix::$30 ] 4: zp ZP_BYTE:78 [ calculate_matrix::$31 ] 4: zp ZP_BYTE:79 [ calculate_matrix::$32 ] 4: zp ZP_BYTE:80 [ calculate_matrix::$33 ] 4: zp ZP_BYTE:81 [ calculate_matrix::$34 ] 2.45: zp ZP_BYTE:23 [ calculate_matrix::sx#0 ] 1.53: zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] 0.91: zp ZP_BYTE:48 [ calculate_matrix::t2#0 ] 0.83: zp ZP_BYTE:47 [ calculate_matrix::t1#0 ] 0.31: zp ZP_BYTE:52 [ calculate_matrix::t6#0 ] 0.3: zp ZP_BYTE:50 [ calculate_matrix::t4#0 ] 0.3: zp ZP_BYTE:53 [ calculate_matrix::t7#0 ] 0.3: zp ZP_BYTE:54 [ calculate_matrix::t8#0 ] 0.29: zp ZP_BYTE:49 [ calculate_matrix::t3#0 ] 0.29: zp ZP_BYTE:51 [ calculate_matrix::t5#0 ] 0.18: zp ZP_BYTE:56 [ calculate_matrix::t10#0 ] 0.18: zp ZP_BYTE:55 [ calculate_matrix::t9#0 ] 
 Uplift Scope [rotate_matrix] 34.33: zp ZP_BYTE:25 [ rotate_matrix::x#0 ] 34.33: zp ZP_BYTE:26 [ rotate_matrix::y#0 ] 34.33: zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
 Uplift Scope [print_str_at] 35.5: zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] 24.67: zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] 
+Uplift Scope [memset] 36.67: zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [print_char_at] 24: zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] 12: zp ZP_BYTE:10 [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
 Uplift Scope [] 22.38: zp ZP_BYTE:3 [ sy#10 sy#3 ] 11.39: zp ZP_BYTE:2 [ sx#10 sx#3 ] 
-Uplift Scope [memset] 33: zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 ] 
 Uplift Scope [sprites_init] 31.17: zp ZP_BYTE:22 [ sprites_init::i#2 sprites_init::i#1 ] 
 Uplift Scope [print_byte_at] 4: zp ZP_BYTE:45 [ print_byte_at::$0 ] 2: zp ZP_BYTE:46 [ print_byte_at::$2 ] 1: zp ZP_BYTE:42 [ print_byte_at::b#0 ] 1: zp ZP_WORD:43 [ print_byte_at::at#0 ] 
 Uplift Scope [RADIX] 
@@ -7255,130 +7243,130 @@ Uplift Scope [print_cls]
 Uplift Scope [main] 
 Uplift Scope [store_matrix] 
 
-Uplifting [print_sbyte_at] best 79761 combination reg byte x [ print_sbyte_at::b#24 print_sbyte_at::b#0 print_sbyte_at::b#22 print_sbyte_at::b#16 print_sbyte_at::b#17 print_sbyte_at::b#18 print_sbyte_at::b#19 print_sbyte_at::b#20 print_sbyte_at::b#21 print_sbyte_at::b#4 print_sbyte_at::b#13 print_sbyte_at::b#14 print_sbyte_at::b#15 print_sbyte_at::b#5 print_sbyte_at::b#7 print_sbyte_at::b#8 print_sbyte_at::b#9 print_sbyte_at::b#10 print_sbyte_at::b#11 print_sbyte_at::b#12 print_sbyte_at::b#1 print_sbyte_at::b#2 print_sbyte_at::b#3 ] zp ZP_WORD:7 [ print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 ] 
-Uplifting [debug_print_init] best 74961 combination reg byte y [ debug_print_init::j#2 debug_print_init::j#1 ] zp ZP_WORD:83 [ debug_print_init::$41 ] zp ZP_WORD:85 [ debug_print_init::$44 ] zp ZP_WORD:87 [ debug_print_init::$47 ] zp ZP_WORD:89 [ debug_print_init::$50 ] zp ZP_WORD:91 [ debug_print_init::$53 ] zp ZP_WORD:93 [ debug_print_init::$56 ] zp ZP_WORD:95 [ debug_print_init::$59 ] zp ZP_WORD:97 [ debug_print_init::$62 ] zp ZP_WORD:99 [ debug_print_init::$65 ] reg byte x [ debug_print_init::col#0 ] zp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ] zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ] 
-Uplifting [anim] best 73061 combination zp ZP_BYTE:4 [ anim::i#2 anim::i#1 ] reg byte a [ anim::$10 ] reg byte a [ anim::$12 ] reg byte x [ anim::i2#0 ] 
-Uplifting [debug_print] best 73043 combination zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ] zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 ] reg byte x [ debug_print::print_sbyte_pos1_sb#0 ] reg byte x [ debug_print::print_sbyte_pos2_sb#0 ] reg byte x [ debug_print::print_sbyte_pos4_sb#0 ] zp ZP_BYTE:34 [ debug_print::print_sbyte_pos5_sb#0 ] zp ZP_BYTE:35 [ debug_print::print_sbyte_pos6_sb#0 ] zp ZP_BYTE:36 [ debug_print::print_sbyte_pos7_sb#0 ] zp ZP_BYTE:37 [ debug_print::print_sbyte_pos8_sb#0 ] zp ZP_BYTE:38 [ debug_print::print_sbyte_pos9_sb#0 ] zp ZP_BYTE:39 [ debug_print::print_sbyte_pos10_sb#0 ] zp ZP_BYTE:40 [ debug_print::print_sbyte_pos11_sb#0 ] zp ZP_BYTE:41 [ debug_print::print_sbyte_pos12_sb#0 ] 
+Uplifting [print_sbyte_at] best 79731 combination reg byte x [ print_sbyte_at::b#24 print_sbyte_at::b#0 print_sbyte_at::b#22 print_sbyte_at::b#16 print_sbyte_at::b#17 print_sbyte_at::b#18 print_sbyte_at::b#19 print_sbyte_at::b#20 print_sbyte_at::b#21 print_sbyte_at::b#4 print_sbyte_at::b#13 print_sbyte_at::b#14 print_sbyte_at::b#15 print_sbyte_at::b#5 print_sbyte_at::b#7 print_sbyte_at::b#8 print_sbyte_at::b#9 print_sbyte_at::b#10 print_sbyte_at::b#11 print_sbyte_at::b#12 print_sbyte_at::b#1 print_sbyte_at::b#2 print_sbyte_at::b#3 ] zp ZP_WORD:7 [ print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 ] 
+Uplifting [debug_print_init] best 74931 combination reg byte y [ debug_print_init::j#2 debug_print_init::j#1 ] zp ZP_WORD:83 [ debug_print_init::$41 ] zp ZP_WORD:85 [ debug_print_init::$44 ] zp ZP_WORD:87 [ debug_print_init::$47 ] zp ZP_WORD:89 [ debug_print_init::$50 ] zp ZP_WORD:91 [ debug_print_init::$53 ] zp ZP_WORD:93 [ debug_print_init::$56 ] zp ZP_WORD:95 [ debug_print_init::$59 ] zp ZP_WORD:97 [ debug_print_init::$62 ] zp ZP_WORD:99 [ debug_print_init::$65 ] reg byte x [ debug_print_init::col#0 ] zp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ] zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ] 
+Uplifting [anim] best 73031 combination zp ZP_BYTE:4 [ anim::i#2 anim::i#1 ] reg byte a [ anim::$10 ] reg byte a [ anim::$12 ] reg byte x [ anim::i2#0 ] 
+Uplifting [debug_print] best 73013 combination zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ] zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 ] reg byte x [ debug_print::print_sbyte_pos1_sb#0 ] reg byte x [ debug_print::print_sbyte_pos2_sb#0 ] reg byte x [ debug_print::print_sbyte_pos4_sb#0 ] zp ZP_BYTE:34 [ debug_print::print_sbyte_pos5_sb#0 ] zp ZP_BYTE:35 [ debug_print::print_sbyte_pos6_sb#0 ] zp ZP_BYTE:36 [ debug_print::print_sbyte_pos7_sb#0 ] zp ZP_BYTE:37 [ debug_print::print_sbyte_pos8_sb#0 ] zp ZP_BYTE:38 [ debug_print::print_sbyte_pos9_sb#0 ] zp ZP_BYTE:39 [ debug_print::print_sbyte_pos10_sb#0 ] zp ZP_BYTE:40 [ debug_print::print_sbyte_pos11_sb#0 ] zp ZP_BYTE:41 [ debug_print::print_sbyte_pos12_sb#0 ] 
 Limited combination testing to 100 combinations of 8388608 possible.
-Uplifting [rotate_matrix] best 72742 combination reg byte x [ rotate_matrix::x#0 ] zp ZP_BYTE:26 [ rotate_matrix::y#0 ] zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
-Uplifting [print_str_at] best 72742 combination zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] 
-Uplifting [print_char_at] best 72729 combination zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] reg byte y [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
-Uplifting [] best 72729 combination zp ZP_BYTE:3 [ sy#10 sy#3 ] zp ZP_BYTE:2 [ sx#10 sx#3 ] 
-Uplifting [memset] best 72729 combination zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 ] 
-Uplifting [sprites_init] best 72579 combination reg byte x [ sprites_init::i#2 sprites_init::i#1 ] 
-Uplifting [print_byte_at] best 72566 combination reg byte y [ print_byte_at::$0 ] reg byte x [ print_byte_at::$2 ] reg byte x [ print_byte_at::b#0 ] zp ZP_WORD:43 [ print_byte_at::at#0 ] 
-Uplifting [RADIX] best 72566 combination 
-Uplifting [print_cls] best 72566 combination 
-Uplifting [main] best 72566 combination 
-Uplifting [store_matrix] best 72566 combination 
+Uplifting [rotate_matrix] best 72712 combination reg byte x [ rotate_matrix::x#0 ] zp ZP_BYTE:26 [ rotate_matrix::y#0 ] zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
+Uplifting [print_str_at] best 72712 combination zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] 
+Uplifting [memset] best 72712 combination zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [print_char_at] best 72699 combination zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] reg byte y [ print_char_at::ch#4 print_char_at::ch#2 print_char_at::ch#3 ] 
+Uplifting [] best 72699 combination zp ZP_BYTE:3 [ sy#10 sy#3 ] zp ZP_BYTE:2 [ sx#10 sx#3 ] 
+Uplifting [sprites_init] best 72549 combination reg byte x [ sprites_init::i#2 sprites_init::i#1 ] 
+Uplifting [print_byte_at] best 72536 combination reg byte y [ print_byte_at::$0 ] reg byte x [ print_byte_at::$2 ] reg byte x [ print_byte_at::b#0 ] zp ZP_WORD:43 [ print_byte_at::at#0 ] 
+Uplifting [RADIX] best 72536 combination 
+Uplifting [print_cls] best 72536 combination 
+Uplifting [main] best 72536 combination 
+Uplifting [store_matrix] best 72536 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ anim::i#2 anim::i#1 ]
-Uplifting [anim] best 72566 combination zp ZP_BYTE:4 [ anim::i#2 anim::i#1 ] 
+Uplifting [anim] best 72536 combination zp ZP_BYTE:4 [ anim::i#2 anim::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ]
-Uplifting [debug_print] best 72566 combination zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ] 
+Uplifting [debug_print] best 72536 combination zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 ]
-Uplifting [debug_print] best 72566 combination zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 ] 
+Uplifting [debug_print] best 72536 combination zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ]
-Uplifting [debug_print_init] best 72566 combination zp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ] 
+Uplifting [debug_print_init] best 72536 combination zp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:26 [ rotate_matrix::y#0 ]
-Uplifting [rotate_matrix] best 72566 combination zp ZP_BYTE:26 [ rotate_matrix::y#0 ] 
+Uplifting [rotate_matrix] best 72536 combination zp ZP_BYTE:26 [ rotate_matrix::y#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ rotate_matrix::z#0 ]
-Uplifting [rotate_matrix] best 72566 combination zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
+Uplifting [rotate_matrix] best 72536 combination zp ZP_BYTE:27 [ rotate_matrix::z#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ sy#10 sy#3 ]
-Uplifting [] best 72566 combination zp ZP_BYTE:3 [ sy#10 sy#3 ] 
+Uplifting [] best 72536 combination zp ZP_BYTE:3 [ sy#10 sy#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ]
-Uplifting [debug_print_init] best 72566 combination zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ] 
+Uplifting [debug_print_init] best 72536 combination zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ sx#10 sx#3 ]
-Uplifting [] best 72566 combination zp ZP_BYTE:2 [ sx#10 sx#3 ] 
+Uplifting [] best 72536 combination zp ZP_BYTE:2 [ sx#10 sx#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ debug_print::print_sbyte_pos5_sb#0 ]
-Uplifting [debug_print] best 72560 combination reg byte x [ debug_print::print_sbyte_pos5_sb#0 ] 
+Uplifting [debug_print] best 72530 combination reg byte x [ debug_print::print_sbyte_pos5_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ debug_print::print_sbyte_pos6_sb#0 ]
-Uplifting [debug_print] best 72554 combination reg byte x [ debug_print::print_sbyte_pos6_sb#0 ] 
+Uplifting [debug_print] best 72524 combination reg byte x [ debug_print::print_sbyte_pos6_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:36 [ debug_print::print_sbyte_pos7_sb#0 ]
-Uplifting [debug_print] best 72548 combination reg byte x [ debug_print::print_sbyte_pos7_sb#0 ] 
+Uplifting [debug_print] best 72518 combination reg byte x [ debug_print::print_sbyte_pos7_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:37 [ debug_print::print_sbyte_pos8_sb#0 ]
-Uplifting [debug_print] best 72542 combination reg byte x [ debug_print::print_sbyte_pos8_sb#0 ] 
+Uplifting [debug_print] best 72512 combination reg byte x [ debug_print::print_sbyte_pos8_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:38 [ debug_print::print_sbyte_pos9_sb#0 ]
-Uplifting [debug_print] best 72536 combination reg byte x [ debug_print::print_sbyte_pos9_sb#0 ] 
+Uplifting [debug_print] best 72506 combination reg byte x [ debug_print::print_sbyte_pos9_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:39 [ debug_print::print_sbyte_pos10_sb#0 ]
-Uplifting [debug_print] best 72530 combination reg byte x [ debug_print::print_sbyte_pos10_sb#0 ] 
+Uplifting [debug_print] best 72500 combination reg byte x [ debug_print::print_sbyte_pos10_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:40 [ debug_print::print_sbyte_pos11_sb#0 ]
-Uplifting [debug_print] best 72524 combination reg byte x [ debug_print::print_sbyte_pos11_sb#0 ] 
+Uplifting [debug_print] best 72494 combination reg byte x [ debug_print::print_sbyte_pos11_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:41 [ debug_print::print_sbyte_pos12_sb#0 ]
-Uplifting [debug_print] best 72518 combination reg byte x [ debug_print::print_sbyte_pos12_sb#0 ] 
+Uplifting [debug_print] best 72488 combination reg byte x [ debug_print::print_sbyte_pos12_sb#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:57 [ calculate_matrix::$10 ]
-Uplifting [calculate_matrix] best 72512 combination reg byte a [ calculate_matrix::$10 ] 
+Uplifting [calculate_matrix] best 72482 combination reg byte a [ calculate_matrix::$10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:58 [ calculate_matrix::$11 ]
-Uplifting [calculate_matrix] best 72506 combination reg byte a [ calculate_matrix::$11 ] 
+Uplifting [calculate_matrix] best 72476 combination reg byte a [ calculate_matrix::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:59 [ calculate_matrix::$12 ]
-Uplifting [calculate_matrix] best 72500 combination reg byte a [ calculate_matrix::$12 ] 
+Uplifting [calculate_matrix] best 72470 combination reg byte a [ calculate_matrix::$12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:60 [ calculate_matrix::$13 ]
-Uplifting [calculate_matrix] best 72494 combination reg byte a [ calculate_matrix::$13 ] 
+Uplifting [calculate_matrix] best 72464 combination reg byte a [ calculate_matrix::$13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:61 [ calculate_matrix::$14 ]
-Uplifting [calculate_matrix] best 72488 combination reg byte a [ calculate_matrix::$14 ] 
+Uplifting [calculate_matrix] best 72458 combination reg byte a [ calculate_matrix::$14 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:62 [ calculate_matrix::$15 ]
-Uplifting [calculate_matrix] best 72482 combination reg byte a [ calculate_matrix::$15 ] 
+Uplifting [calculate_matrix] best 72452 combination reg byte a [ calculate_matrix::$15 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:63 [ calculate_matrix::$16 ]
-Uplifting [calculate_matrix] best 72476 combination reg byte a [ calculate_matrix::$16 ] 
+Uplifting [calculate_matrix] best 72446 combination reg byte a [ calculate_matrix::$16 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:64 [ calculate_matrix::$17 ]
-Uplifting [calculate_matrix] best 72470 combination reg byte a [ calculate_matrix::$17 ] 
+Uplifting [calculate_matrix] best 72440 combination reg byte a [ calculate_matrix::$17 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:65 [ calculate_matrix::$18 ]
-Uplifting [calculate_matrix] best 72464 combination reg byte a [ calculate_matrix::$18 ] 
+Uplifting [calculate_matrix] best 72434 combination reg byte a [ calculate_matrix::$18 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:66 [ calculate_matrix::$19 ]
-Uplifting [calculate_matrix] best 72458 combination reg byte a [ calculate_matrix::$19 ] 
+Uplifting [calculate_matrix] best 72428 combination reg byte a [ calculate_matrix::$19 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:67 [ calculate_matrix::$20 ]
-Uplifting [calculate_matrix] best 72452 combination reg byte a [ calculate_matrix::$20 ] 
+Uplifting [calculate_matrix] best 72422 combination reg byte a [ calculate_matrix::$20 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:68 [ calculate_matrix::$21 ]
-Uplifting [calculate_matrix] best 72446 combination reg byte a [ calculate_matrix::$21 ] 
+Uplifting [calculate_matrix] best 72416 combination reg byte a [ calculate_matrix::$21 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:69 [ calculate_matrix::$22 ]
-Uplifting [calculate_matrix] best 72440 combination reg byte a [ calculate_matrix::$22 ] 
+Uplifting [calculate_matrix] best 72410 combination reg byte a [ calculate_matrix::$22 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:70 [ calculate_matrix::$23 ]
-Uplifting [calculate_matrix] best 72434 combination reg byte a [ calculate_matrix::$23 ] 
+Uplifting [calculate_matrix] best 72404 combination reg byte a [ calculate_matrix::$23 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:71 [ calculate_matrix::$24 ]
-Uplifting [calculate_matrix] best 72428 combination reg byte a [ calculate_matrix::$24 ] 
+Uplifting [calculate_matrix] best 72398 combination reg byte a [ calculate_matrix::$24 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:72 [ calculate_matrix::$25 ]
-Uplifting [calculate_matrix] best 72422 combination reg byte a [ calculate_matrix::$25 ] 
+Uplifting [calculate_matrix] best 72392 combination reg byte a [ calculate_matrix::$25 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:73 [ calculate_matrix::$26 ]
-Uplifting [calculate_matrix] best 72416 combination reg byte a [ calculate_matrix::$26 ] 
+Uplifting [calculate_matrix] best 72386 combination reg byte a [ calculate_matrix::$26 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:74 [ calculate_matrix::$27 ]
-Uplifting [calculate_matrix] best 72410 combination reg byte a [ calculate_matrix::$27 ] 
+Uplifting [calculate_matrix] best 72380 combination reg byte a [ calculate_matrix::$27 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:75 [ calculate_matrix::$28 ]
-Uplifting [calculate_matrix] best 72404 combination reg byte a [ calculate_matrix::$28 ] 
+Uplifting [calculate_matrix] best 72374 combination reg byte a [ calculate_matrix::$28 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:76 [ calculate_matrix::$29 ]
-Uplifting [calculate_matrix] best 72398 combination reg byte a [ calculate_matrix::$29 ] 
+Uplifting [calculate_matrix] best 72368 combination reg byte a [ calculate_matrix::$29 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:77 [ calculate_matrix::$30 ]
-Uplifting [calculate_matrix] best 72392 combination reg byte a [ calculate_matrix::$30 ] 
+Uplifting [calculate_matrix] best 72362 combination reg byte a [ calculate_matrix::$30 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:78 [ calculate_matrix::$31 ]
-Uplifting [calculate_matrix] best 72386 combination reg byte a [ calculate_matrix::$31 ] 
+Uplifting [calculate_matrix] best 72356 combination reg byte a [ calculate_matrix::$31 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:79 [ calculate_matrix::$32 ]
-Uplifting [calculate_matrix] best 72380 combination reg byte a [ calculate_matrix::$32 ] 
+Uplifting [calculate_matrix] best 72350 combination reg byte a [ calculate_matrix::$32 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:80 [ calculate_matrix::$33 ]
-Uplifting [calculate_matrix] best 72374 combination reg byte a [ calculate_matrix::$33 ] 
+Uplifting [calculate_matrix] best 72344 combination reg byte a [ calculate_matrix::$33 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:81 [ calculate_matrix::$34 ]
-Uplifting [calculate_matrix] best 72368 combination reg byte a [ calculate_matrix::$34 ] 
+Uplifting [calculate_matrix] best 72338 combination reg byte a [ calculate_matrix::$34 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:23 [ calculate_matrix::sx#0 ]
-Uplifting [calculate_matrix] best 72330 combination reg byte x [ calculate_matrix::sx#0 ] 
+Uplifting [calculate_matrix] best 72300 combination reg byte x [ calculate_matrix::sx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:24 [ calculate_matrix::sy#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:48 [ calculate_matrix::t2#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:48 [ calculate_matrix::t2#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:48 [ calculate_matrix::t2#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:47 [ calculate_matrix::t1#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:47 [ calculate_matrix::t1#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:47 [ calculate_matrix::t1#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:52 [ calculate_matrix::t6#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:52 [ calculate_matrix::t6#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:52 [ calculate_matrix::t6#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:50 [ calculate_matrix::t4#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:50 [ calculate_matrix::t4#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:50 [ calculate_matrix::t4#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:53 [ calculate_matrix::t7#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:53 [ calculate_matrix::t7#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:53 [ calculate_matrix::t7#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:54 [ calculate_matrix::t8#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:54 [ calculate_matrix::t8#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:54 [ calculate_matrix::t8#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:49 [ calculate_matrix::t3#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:49 [ calculate_matrix::t3#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:49 [ calculate_matrix::t3#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:51 [ calculate_matrix::t5#0 ]
-Uplifting [calculate_matrix] best 72330 combination zp ZP_BYTE:51 [ calculate_matrix::t5#0 ] 
+Uplifting [calculate_matrix] best 72300 combination zp ZP_BYTE:51 [ calculate_matrix::t5#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:56 [ calculate_matrix::t10#0 ]
-Uplifting [calculate_matrix] best 72323 combination reg byte x [ calculate_matrix::t10#0 ] 
+Uplifting [calculate_matrix] best 72293 combination reg byte x [ calculate_matrix::t10#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:55 [ calculate_matrix::t9#0 ]
-Uplifting [calculate_matrix] best 72323 combination zp ZP_BYTE:55 [ calculate_matrix::t9#0 ] 
+Uplifting [calculate_matrix] best 72293 combination zp ZP_BYTE:55 [ calculate_matrix::t9#0 ] 
 Coalescing zero page register [ zp ZP_WORD:7 [ print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 ] ] with [ zp ZP_WORD:11 [ print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] ] - score: 2
 Coalescing zero page register [ zp ZP_BYTE:3 [ sy#10 sy#3 ] ] with [ zp ZP_BYTE:24 [ calculate_matrix::sy#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:7 [ print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 ] ] with [ zp ZP_WORD:43 [ print_byte_at::at#0 ] ] - score: 1
@@ -7386,13 +7374,13 @@ Coalescing zero page register [ zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1
 Coalescing zero page register [ zp ZP_BYTE:13 [ debug_print_init::c#2 debug_print_init::c#1 ] ] with [ zp ZP_BYTE:2 [ sx#10 sx#3 ] ]
 Coalescing zero page register [ zp ZP_BYTE:14 [ debug_print_init::i#2 debug_print_init::i#1 ] ] with [ zp ZP_BYTE:3 [ sy#10 sy#3 calculate_matrix::sy#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 ] ] with [ zp ZP_WORD:7 [ print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 print_byte_at::at#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:18 [ print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:26 [ rotate_matrix::y#0 ] ] with [ zp ZP_BYTE:6 [ debug_print::i#2 debug_print::i#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:47 [ calculate_matrix::t1#0 ] ] with [ zp ZP_BYTE:27 [ rotate_matrix::z#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:48 [ calculate_matrix::t2#0 ] ] with [ zp ZP_BYTE:5 [ debug_print::c#2 debug_print::c#1 anim::i#2 anim::i#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:49 [ calculate_matrix::t3#0 ] ] with [ zp ZP_BYTE:26 [ rotate_matrix::y#0 debug_print::i#2 debug_print::i#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:83 [ debug_print_init::$41 ] ] with [ zp ZP_WORD:16 [ print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 print_byte_at::at#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:85 [ debug_print_init::$44 ] ] with [ zp ZP_WORD:20 [ memset::dst#4 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:85 [ debug_print_init::$44 ] ] with [ zp ZP_WORD:20 [ memset::dst#2 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ] ]
 Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:2 [ debug_print_init::c#2 debug_print_init::c#1 sx#10 sx#3 ]
 Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:3 [ debug_print_init::i#2 debug_print_init::i#1 sy#10 sy#3 calculate_matrix::sy#0 ]
 Allocated (was zp ZP_BYTE:47) zp ZP_BYTE:4 [ calculate_matrix::t1#0 rotate_matrix::z#0 ]
@@ -7405,7 +7393,7 @@ Allocated (was zp ZP_BYTE:53) zp ZP_BYTE:10 [ calculate_matrix::t7#0 ]
 Allocated (was zp ZP_BYTE:54) zp ZP_BYTE:11 [ calculate_matrix::t8#0 ]
 Allocated (was zp ZP_BYTE:55) zp ZP_BYTE:12 [ calculate_matrix::t9#0 ]
 Allocated (was zp ZP_WORD:83) zp ZP_WORD:13 [ debug_print_init::$41 print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 print_byte_at::at#0 ]
-Allocated (was zp ZP_WORD:85) zp ZP_WORD:15 [ debug_print_init::$44 memset::dst#4 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
+Allocated (was zp ZP_WORD:85) zp ZP_WORD:15 [ debug_print_init::$44 memset::dst#2 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
 Allocated (was zp ZP_WORD:87) zp ZP_WORD:17 [ debug_print_init::$47 ]
 Allocated (was zp ZP_WORD:89) zp ZP_WORD:19 [ debug_print_init::$50 ]
 Allocated (was zp ZP_WORD:91) zp ZP_WORD:21 [ debug_print_init::$53 ]
@@ -9092,44 +9080,43 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = $f
-    // [254] phi from memset to memset::@2 [phi:memset->memset::@2]
-  b2_from_memset:
-    // [254] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
+    // [254] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+    // [254] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b2
-    // [254] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
-  b2_from_b1:
-    // [254] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
-    jmp b2
+    jmp b1
+    // memset::@1
+  b1:
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    lda.z dst+1
+    cmp #>end
+    bne b2
+    lda.z dst
+    cmp #<end
+    bne b2
+    jmp breturn
+    // memset::@return
+  breturn:
+    // [256] return 
+    rts
     // memset::@2
   b2:
-    // [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+  b1_from_b2:
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp b1
-    // memset::@1
-  b1:
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z dst+1
-    cmp #>end
-    bne b2_from_b1
-    lda.z dst
-    cmp #<end
-    bne b2_from_b1
-    jmp breturn
-    // memset::@return
-  breturn:
-    // [258] return 
-    rts
 }
   // sprites_init
 // Initialize sprites
@@ -9331,7 +9318,6 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
-Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
@@ -9356,8 +9342,6 @@ Replacing label b2_from_b4 with b2
 Replacing label b2_from_b2 with b2
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b2 with b1
-Replacing label b2_from_b1 with b2
-Replacing label b2_from_b1 with b2
 Replacing label b1_from_b1 with b1
 Removing instruction b1:
 Removing instruction bend_from_b1:
@@ -9412,7 +9396,6 @@ Removing instruction b1_from_b3:
 Removing instruction b2_from_b2:
 Removing instruction b1_from_print_str_at:
 Removing instruction b1_from_b2:
-Removing instruction b2_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -9500,9 +9483,9 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction memset_from_print_cls:
 Removing instruction breturn:
-Removing instruction b2_from_memset:
-Removing instruction b1:
+Removing instruction b1_from_memset:
 Removing instruction breturn:
+Removing instruction b1_from_b2:
 Removing instruction b1_from_sprites_init:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -9512,7 +9495,6 @@ Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b6
 Removing instruction jmp b1
 Removing instruction jmp b1
-Removing instruction jmp b2
 Removing instruction jmp b2
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
@@ -9875,8 +9857,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:15 16.5
-(byte*) memset::dst#4 dst zp ZP_WORD:15 16.5
+(byte*) memset::dst#1 dst zp ZP_WORD:15 22.0
+(byte*) memset::dst#2 dst zp ZP_WORD:15 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -10105,7 +10087,7 @@ reg byte a [ calculate_matrix::$33 ]
 reg byte a [ calculate_matrix::$34 ]
 reg byte x [ debug_print_init::col#0 ]
 zp ZP_WORD:13 [ debug_print_init::$41 print_str_at::str#13 print_str_at::str#15 print_str_at::str#0 print_sbyte_at::at#21 print_sbyte_at::at#15 print_sbyte_at::at#16 print_sbyte_at::at#17 print_sbyte_at::at#18 print_sbyte_at::at#19 print_sbyte_at::at#20 print_sbyte_at::at#0 print_sbyte_at::at#1 print_sbyte_at::at#2 print_char_at::at#4 print_char_at::at#2 print_char_at::at#3 print_char_at::at#0 print_char_at::at#1 print_byte_at::at#0 ]
-zp ZP_WORD:15 [ debug_print_init::$44 memset::dst#4 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
+zp ZP_WORD:15 [ debug_print_init::$44 memset::dst#2 memset::dst#1 print_str_at::at#13 print_str_at::at#15 print_str_at::at#0 ]
 zp ZP_WORD:17 [ debug_print_init::$47 ]
 zp ZP_WORD:19 [ debug_print_init::$50 ]
 zp ZP_WORD:21 [ debug_print_init::$53 ]
@@ -10116,7 +10098,7 @@ zp ZP_WORD:29 [ debug_print_init::$65 ]
 
 
 FINAL ASSEMBLER
-Score: 66016
+Score: 66046
 
   // File Comments
 // 3D Rotation using a Rotation Matrix
@@ -11747,29 +11729,16 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = $f
-    // [254] phi from memset to memset::@2 [phi:memset->memset::@2]
-    // [254] phi (byte*) memset::dst#4 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@2#0] -- pbuz1=pbuc1 
+    // [254] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [254] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    // [254] phi from memset::@1 to memset::@2 [phi:memset::@1->memset::@2]
-    // [254] phi (byte*) memset::dst#4 = (byte*) memset::dst#1 [phi:memset::@1->memset::@2#0] -- register_copy 
-    // memset::@2
-  b2:
-    // *dst = c
-    // [255] *((byte*) memset::dst#4) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    // [256] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#4 -- pbuz1=_inc_pbuz1 
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
     // memset::@1
-    // [257] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+  b1:
+    // for(char* dst = str; dst!=end; dst++)
+    // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne b2
@@ -11778,8 +11747,24 @@ memset: {
     bne b2
     // memset::@return
     // }
-    // [258] return 
+    // [256] return 
     rts
+    // memset::@2
+  b2:
+    // *dst = c
+    // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    // [258] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    jmp b1
 }
   // sprites_init
 // Initialize sprites

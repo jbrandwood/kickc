@@ -1572,7 +1572,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param rValue The RValue being consume
     */
    void consumeExpr(RValue rValue) {
-      exprNotConsumed.remove(rValue);
+      if(exprNotConsumed!=null)
+         exprNotConsumed.remove(rValue);
    }
 
    /**

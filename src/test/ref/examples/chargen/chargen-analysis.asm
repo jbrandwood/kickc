@@ -76,22 +76,19 @@ main: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-  b2:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
   // Clear screen
+  b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcs !b2+
+    jmp b2
+  !b2:
     bne !+
     lda.z sc
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcs !b2+
+    jmp b2
+  !b2:
   !:
     lda #<SCREEN+1
     sta.z print_str_at.at
@@ -189,11 +186,11 @@ main: {
     ldx.z ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b1
+    beq b3
     tax
     jsr keyboard_key_pressed
     jmp b13
-  b1:
+  b3:
     lda #0
   b13:
     cmp #0
@@ -208,6 +205,15 @@ main: {
     cmp.z ch
     bne b12
     jmp b5
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    jmp b1
     str: .text "f1"
     .byte 0
     str1: .text "f3"

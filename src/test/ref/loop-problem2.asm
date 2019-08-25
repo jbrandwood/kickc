@@ -27,6 +27,14 @@ print_cls: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
+  b1:
+    lda.z sc+1
+    cmp #>SCREEN+$3e8
+    bne b2
+    lda.z sc
+    cmp #<SCREEN+$3e8
+    bne b2
+    rts
   b2:
     lda #' '
     ldy #0
@@ -35,11 +43,5 @@ print_cls: {
     bne !+
     inc.z sc+1
   !:
-    lda.z sc+1
-    cmp #>SCREEN+$3e8
-    bne b2
-    lda.z sc
-    cmp #<SCREEN+$3e8
-    bne b2
-    rts
+    jmp b1
 }

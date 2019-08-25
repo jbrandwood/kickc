@@ -7,6 +7,11 @@
 main: {
     ldx #0
     ldy #-2
+  b1:
+    cpy #0
+    bne b2
+    lda #'0'
+    jmp b3
   b2:
     lda #'+'
   b3:
@@ -16,9 +21,4 @@ main: {
     cpy #3
     bne b1
     rts
-  b1:
-    cpy #0
-    bne b2
-    lda #'0'
-    jmp b3
 }

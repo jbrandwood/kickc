@@ -29,8 +29,9 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
-   /** Disable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it. */
-   private boolean disableLoopHeadConstant = false;
+   /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
+    * Currently the optimization is flaky and results in NPE's and wrong values in some programs. */
+   private boolean enableLoopHeadConstant = false;
 
    /** File name of link script to use (from command line parameter). */
    private String linkScriptFileName;
@@ -51,8 +52,8 @@ public class Compiler {
       this.enableZeroPageCoalasce = true;
    }
 
-   void disableLoopHeadConstant() {
-      this.disableLoopHeadConstant = true;
+   void enableLoopHeadConstant() {
+      this.enableLoopHeadConstant = true;
    }
 
    void setTargetPlatform(TargetPlatform targetPlatform) {
@@ -264,7 +265,7 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
-      if(!disableLoopHeadConstant) {
+      if(enableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
          optimizations.add(() -> { program.clearDominators(); return false; });
          optimizations.add(() -> { program.clearLoopSet(); return false; });

@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label cur_line = 2
+  .label cur_line_3 = 6
   .label cur_line_10 = 6
-  .label cur_line_22 = 6
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -21,14 +21,7 @@ main: {
     sta.z sc
     lda #>$400
     sta.z sc+1
-  b2:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
+  b1:
     lda.z sc+1
     cmp #>$400+$3e8
     bcc b2
@@ -46,6 +39,43 @@ main: {
     lda #>line1_xpos*$100
     sta.z line1_pos+1
     ldx #0
+  line1_b1:
+    cpx #line1_ysize
+    bcc line1_b2
+    lda #<$400
+    sta.z cur_line_10
+    lda #>$400
+    sta.z cur_line_10+1
+    lda #<line2_xpos*$100
+    sta.z line2_pos
+    lda #>line2_xpos*$100
+    sta.z line2_pos+1
+    ldx #0
+  line2_b1:
+    cpx #line2_ysize
+    bcc line2_b2
+    rts
+  line2_b2:
+    lda.z line2_pos+1
+    tay
+    lda #line2_ch
+    sta (cur_line_10),y
+    lda #line2_xadd
+    clc
+    adc.z line2_pos
+    sta.z line2_pos
+    bcc !+
+    inc.z line2_pos+1
+  !:
+    lda #$28
+    clc
+    adc.z cur_line_3
+    sta.z cur_line_3
+    bcc !+
+    inc.z cur_line_3+1
+  !:
+    inx
+    jmp line2_b1
   line1_b2:
     lda.z line1_pos+1
     tay
@@ -66,38 +96,14 @@ main: {
     inc.z cur_line+1
   !:
     inx
-    cpx #line1_ysize
-    bcc line1_b2
-    lda #<$400
-    sta.z cur_line_22
-    lda #>$400
-    sta.z cur_line_22+1
-    lda #<line2_xpos*$100
-    sta.z line2_pos
-    lda #>line2_xpos*$100
-    sta.z line2_pos+1
-    ldx #0
-  line2_b2:
-    lda.z line2_pos+1
-    tay
-    lda #line2_ch
-    sta (cur_line_22),y
-    lda #line2_xadd
-    clc
-    adc.z line2_pos
-    sta.z line2_pos
-    bcc !+
-    inc.z line2_pos+1
+    jmp line1_b1
+  b2:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc.z sc
+    bne !+
+    inc.z sc+1
   !:
-    lda #$28
-    clc
-    adc.z cur_line_10
-    sta.z cur_line_10
-    bcc !+
-    inc.z cur_line_10+1
-  !:
-    inx
-    cpx #line2_ysize
-    bcc line2_b2
-    rts
+    jmp b1
 }

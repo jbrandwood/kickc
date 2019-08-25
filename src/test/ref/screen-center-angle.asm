@@ -185,6 +185,29 @@ init_angle_screen: {
     sta.z xb
     lda #0
     sta.z x
+  b2:
+    lda.z x
+    cmp #$13+1
+    bcc b3
+    lda.z screen_topline
+    sec
+    sbc #<$28
+    sta.z screen_topline
+    lda.z screen_topline+1
+    sbc #>$28
+    sta.z screen_topline+1
+    lda #$28
+    clc
+    adc.z screen_bottomline
+    sta.z screen_bottomline
+    bcc !+
+    inc.z screen_bottomline+1
+  !:
+    inc.z y
+    lda #$d
+    cmp.z y
+    bne b1
+    rts
   b3:
     lda.z x
     asl
@@ -225,28 +248,7 @@ init_angle_screen: {
     sta (screen_bottomline),y
     inc.z x
     dec.z xb
-    lda.z x
-    cmp #$13+1
-    bcc b3
-    lda.z screen_topline
-    sec
-    sbc #<$28
-    sta.z screen_topline
-    lda.z screen_topline+1
-    sbc #>$28
-    sta.z screen_topline+1
-    lda #$28
-    clc
-    adc.z screen_bottomline
-    sta.z screen_bottomline
-    bcc !+
-    inc.z screen_bottomline+1
-  !:
-    inc.z y
-    lda #$d
-    cmp.z y
-    bne b1
-    rts
+    jmp b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16

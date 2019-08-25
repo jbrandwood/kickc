@@ -553,6 +553,17 @@ sin16s_gen2: {
     sta.z x+3
     sta.z i
     sta.z i+1
+  // u[4.28]
+  b1:
+    lda.z i+1
+    cmp #>wavelength
+    bcc b2
+    bne !+
+    lda.z i
+    cmp #<wavelength
+    bcc b2
+  !:
+    rts
   b2:
     lda.z x
     sta.z sin16s.x
@@ -602,16 +613,7 @@ sin16s_gen2: {
     bne !+
     inc.z i+1
   !:
-  // u[4.28]
-    lda.z i+1
-    cmp #>wavelength
-    bcc b2
-    bne !+
-    lda.z i
-    cmp #<wavelength
-    bcc b2
-  !:
-    rts
+    jmp b1
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28

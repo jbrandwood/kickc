@@ -5,14 +5,6 @@
 main: {
     .label screen = $400
     ldx #0
-  b3:
-    lda #'*'
-    sta screen,x
-  b2:
-    inx
-    cpx #$15
-    bne b1
-    rts
   b1:
     txa
     and #1
@@ -20,5 +12,11 @@ main: {
     bcs b2
     cmp #0
     bne b2
-    jmp b3
+    lda #'*'
+    sta screen,x
+  b2:
+    inx
+    cpx #$15
+    bne b1
+    rts
 }

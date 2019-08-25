@@ -141,14 +141,6 @@ ultoa: {
     .label buffer = $d
     .label digit = $c
     .label value = 2
-    lda RADIX_DECIMAL_VALUES_LONG
-    sta.z digit_value
-    lda RADIX_DECIMAL_VALUES_LONG+1
-    sta.z digit_value+1
-    lda RADIX_DECIMAL_VALUES_LONG+2
-    sta.z digit_value+2
-    lda RADIX_DECIMAL_VALUES_LONG+3
-    sta.z digit_value+3
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long
@@ -156,25 +148,7 @@ ultoa: {
     ldx #0
     txa
     sta.z digit
-  b7:
-    lda.z value+3
-    cmp.z digit_value+3
-    bcc !+
-    bne b5
-    lda.z value+2
-    cmp.z digit_value+2
-    bcc !+
-    bne b5
-    lda.z value+1
-    cmp.z digit_value+1
-    bcc !+
-    bne b5
-    lda.z value
-    cmp.z digit_value
-    bcs b5
-  !:
-  b4:
-    inc.z digit
+  b1:
     lda.z digit
     cmp #max_digits-1
     bcc b2
@@ -206,7 +180,25 @@ ultoa: {
     sta.z digit_value+3
     cpx #0
     bne b5
-    jmp b7
+    lda.z value+3
+    cmp.z digit_value+3
+    bcc !+
+    bne b5
+    lda.z value+2
+    cmp.z digit_value+2
+    bcc !+
+    bne b5
+    lda.z value+1
+    cmp.z digit_value+1
+    bcc !+
+    bne b5
+    lda.z value
+    cmp.z digit_value
+    bcs b5
+  !:
+  b4:
+    inc.z digit
+    jmp b1
   b5:
     jsr ultoa_append
     inc.z buffer

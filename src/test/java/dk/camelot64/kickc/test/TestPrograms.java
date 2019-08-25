@@ -36,6 +36,19 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/261
+   @Test
+   public void testLoopheadProblem() throws IOException, URISyntaxException {
+      compileAndCompare("loophead-problem");
+   }
+
+   // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/290
+   @Test
+   public void testLoopheadProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("loophead-problem-2");
+   }
+
+
    @Test
    public void testAsmMnemonicNames() throws IOException, URISyntaxException {
       compileAndCompare("asm-mnemonic-names");
@@ -115,12 +128,6 @@ public class TestPrograms {
    public void testStringEscapes0() throws IOException, URISyntaxException {
       compileAndCompare("string-escapes-0");
    }
-
-   // TODO: Fix loop head problem!
-   //@Test
-   //public void testLoopheadProblem() throws IOException, URISyntaxException {
-   //   compileAndCompare("loophead-problem");
-   //}
 
    @Test
    public void testSwitch3Err() throws IOException, URISyntaxException {

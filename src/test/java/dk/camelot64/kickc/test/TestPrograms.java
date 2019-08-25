@@ -61,6 +61,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerPlusSignedWord() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-plus-signed-word");
+   }
+
+   @Test
    public void testAsmMnemonicNames() throws IOException, URISyntaxException {
       compileAndCompare("asm-mnemonic-names");
    }

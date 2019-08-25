@@ -1,6 +1,6 @@
 lda {z2}
 clc
-adc #2
+adc #1
 sta {z1}
 bcc !+
 lda {z2}+1

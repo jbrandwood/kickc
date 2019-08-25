@@ -1,9 +1,9 @@
+sec
 lda {z2}
-clc
-adc #2
+sbc #1
 sta {z1}
-bcc !+
+bcs !+
 lda {z2}+1
-adc #0
+sbc #0
 sta {z1}+1
 !:

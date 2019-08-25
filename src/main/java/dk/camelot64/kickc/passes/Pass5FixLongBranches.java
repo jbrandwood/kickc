@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
+import dk.camelot64.kickc.fragment.AsmFormat;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
@@ -145,7 +146,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseType.getMnemnonic());
                String branchDest = asmInstruction.getParameter();
                asmInstruction.setType(inverseType);
-               String newLabel = ("!" + branchDest).replace("$","_");
+               String newLabel = AsmFormat.asmFix("!" + branchDest);
                asmInstruction.setParameter(newLabel+"+");
                AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);

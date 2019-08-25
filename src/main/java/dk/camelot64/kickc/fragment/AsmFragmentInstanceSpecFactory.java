@@ -203,9 +203,9 @@ public class AsmFragmentInstanceSpecFactory {
       String destinationLabel;
       if(destinationBlock.hasPhiBlock()) {
          destinationLabel =
-               (destinationBlock.getLabel().getLocalName() +
+               AsmFormat.asmFix(destinationBlock.getLabel().getLocalName() +
                      "_from_" +
-                     block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
+                     block.getLabel().getLocalName());
       } else {
          destinationLabel = destination.getLocalName();
       }

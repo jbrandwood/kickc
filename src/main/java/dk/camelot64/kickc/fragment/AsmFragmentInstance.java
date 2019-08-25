@@ -95,7 +95,7 @@ public class AsmFragmentInstance {
          boolean constantValueZp = SymbolType.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof Label) {
-         String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
+         String param = AsmFormat.asmFix(((Label) boundValue).getLocalName());
          return new AsmParameter(param, false);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);

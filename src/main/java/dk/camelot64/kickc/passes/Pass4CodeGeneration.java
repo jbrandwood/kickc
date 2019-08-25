@@ -147,7 +147,7 @@ public class Pass4CodeGeneration {
                generateSignatureComments(asm, procedure);
             }
             // Start the new scope
-            asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
+            asm.addScopeBegin(AsmFormat.asmFix(block.getLabel().getFullName()));
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
@@ -166,7 +166,7 @@ public class Pass4CodeGeneration {
          } else {
             // Generate label for block inside procedure
             asm.startChunk(currentScope, null, block.getLabel().getFullName());
-            asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+            asm.addLabel(AsmFormat.asmFix(block.getLabel().getLocalName()));
          }
          // Generate statements
          genStatements(asm, block);
@@ -177,14 +177,14 @@ public class Pass4CodeGeneration {
                PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
                if(!transitionIsGenerated(transition)) {
                   genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
-                  String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
+                  String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName());
                   asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
                } else {
-                  String label = (defaultSuccessor.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
+                  String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName());
                   asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
                }
             } else {
-               String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
+               String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName());
                asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
             }
          }
@@ -334,19 +334,19 @@ public class Pass4CodeGeneration {
                String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
-                  asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
                } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
                   // Use label for integers referenced in other scope - to allow cross-scope referencing
                   if(useLabelForConst(scopeRef, constantVar)) {
                      // Use label for integers referenced in other scope - to allow cross-scope referencing
-                     asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
                   } else {
                      // Use constant for constant integers not referenced outside scope
-                     asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
                   }
                } else {
                   // Use constant otherwise
-                  asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
                }
             }
          }
@@ -510,36 +510,36 @@ public class Pass4CodeGeneration {
                int size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
                if(SymbolType.BYTE.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                   added.add(asmName);
                } else if(SymbolType.SBYTE.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                   added.add(asmName);
                } else if(SymbolType.WORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(SymbolType.SWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(SymbolType.DWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(SymbolType.SDWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(constantArrayFilled.getElementType() instanceof SymbolTypeStruct) {
                   SymbolTypeStruct structElementType = (SymbolTypeStruct) constantArrayFilled.getElementType();
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) structElementType.getSizeBytes()), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else {
                   throw new InternalError("Unhandled constant array element type " + constantArrayFilled.toString(program));
@@ -559,7 +559,7 @@ public class Pass4CodeGeneration {
                      }
                   }
                }
-               asm.addDataKickAsm(asmName.replace("#", "_").replace("$", "_"), bytes, kickAsm.getKickAsmCode());
+               asm.addDataKickAsm(AsmFormat.asmFix(asmName), bytes, kickAsm.getKickAsmCode());
             } else {
                try {
                   ConstantLiteral literal = constantValue.calculateLiteral(getScope());
@@ -567,7 +567,7 @@ public class Pass4CodeGeneration {
                      // Ensure encoding is good
                      ensureEncoding(asm, constantValue);
                      String asmConstant = AsmFormat.getAsmConstant(program, constantValue, 99, scopeRef);
-                     asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                     asm.addDataString(AsmFormat.asmFix(asmName), asmConstant);
                      if(((ConstantString) literal).isZeroTerminated()) {
                         asm.addDataNumeric(null, AsmDataNumeric.Type.BYTE, Collections.singletonList(AsmFormat.getAsmNumber(0L)));
                      }
@@ -628,7 +628,7 @@ public class Pass4CodeGeneration {
                // Add any comments
                generateComments(asm, scopeVar.getComments());
                // Add the label declaration
-               asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), registerZp.getZp());
+               asm.addLabelDecl(AsmFormat.asmFix(asmName), registerZp.getZp());
                added.add(asmName);
             }
          }
@@ -949,7 +949,7 @@ public class Pass4CodeGeneration {
          PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
          if(!transitionIsGenerated(transition) && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
             genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, toBlock.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, AsmFormat.asmFix(toBlock.getLabel().getLocalName()), false);
          }
       }
    }
@@ -980,7 +980,7 @@ public class Pass4CodeGeneration {
          asm.startChunk(scope, toFirstStatement.getIndex(), chunkSrc);
          asm.getCurrentChunk().setPhiTransitionId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
-            asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
+            asm.addLabel(AsmFormat.asmFix(toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()));
          }
          List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
          for(PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {

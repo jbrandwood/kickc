@@ -271,21 +271,39 @@ public class AsmFormat {
     */
    static String getAsmParamName(ScopeRef varScopeRef, String asmName, ScopeRef codeScopeRef) {
       if(!varScopeRef.equals(codeScopeRef) && varScopeRef.getFullName().length() > 0) {
-         String param = varScopeRef.getFullName() + "." + asmName
-               .replace('@', 'b')
-               .replace(':', '_')
-               .replace("#", "_")
-               .replace("$", "_");
-         return param;
+         return asmFix(varScopeRef.getFullName() + "." + asmName);
       } else {
-         String param = asmName
-               .replace('@', 'b')
-               .replace(':', '_')
-               .replace("#", "_")
-               .replace("$", "_");
-         return param;
+         return asmFix(asmName);
       }
    }
+
+   /**
+    * Fix characters in an ASM parameter/label name. Handles '@:$#'
+    * @param source The source string
+    * @return The fixed string
+    */
+   public static String asmFix(String source) {
+      StringBuilder result = new StringBuilder();
+      char[] sourceChars = source.toCharArray();
+      for(char sourceChar : sourceChars) {
+         char resultChar;
+         switch(sourceChar) {
+            case '@':
+               resultChar = 'b';
+               break;
+            case ':':
+            case '#':
+            case '$':
+               resultChar = '_';
+               break;
+            default:
+               resultChar = sourceChar;
+         }
+         result.append(resultChar);
+      }
+      return result.toString();
+   }
+
 
    /**
     * Get the ASM parameter for a specific bound variable

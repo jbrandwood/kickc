@@ -855,8 +855,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /** The label that a continue will jump to. Null if no continue has been encountered. */
       Label continueLabel;
 
-      public Loop(Scope loopScope) {
+      /** true if the loop is a switch-statement. */
+      boolean isSwitch;
+
+      public Loop(Scope loopScope, boolean isSwitch) {
          this.loopScope = loopScope;
+         this.isSwitch = isSwitch;
       }
 
       Label getBreakLabel() {
@@ -895,7 +899,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Create the block scope early - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      loopStack.push(new Loop(blockScope));
+      loopStack.push(new Loop(blockScope, false));
       Label beginJumpLabel = getCurrentScope().addLabelIntermediate();
       Label doJumpLabel = getCurrentScope().addLabelIntermediate();
       Label endJumpLabel = getCurrentScope().addLabelIntermediate();
@@ -930,7 +934,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Create the block scope early - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      loopStack.push(new Loop(blockScope));
+      loopStack.push(new Loop(blockScope, false));
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       Label beginJumpLabel = getCurrentScope().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.doWhile(ctx), comments);
@@ -957,7 +961,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Create a block scope - to keep all statements of the loop inside it
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      Loop switchLoop = new Loop(blockScope);
+      Loop switchLoop = new Loop(blockScope, true);
       if(containingLoop != null) {
          switchLoop.setContinueLabel(containingLoop.getOrCreateContinueLabel());
       }
@@ -1030,7 +1034,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitForClassic(KickCParser.ForClassicContext ctx) {
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      loopStack.push(new Loop(blockScope));
+      loopStack.push(new Loop(blockScope, false));
       // Add initialization
       this.visit(ctx.forClassicInit());
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
@@ -1086,7 +1090,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitForRange(KickCParser.ForRangeContext ctx) {
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
-      loopStack.push(new Loop(blockScope));
+      loopStack.push(new Loop(blockScope, false));
 
       StatementSource statementSource = StatementSource.forRanged(ctx);
 
@@ -1194,7 +1198,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("Continue not inside a loop! ", new StatementSource(ctx));
       }
       Loop currentLoop = loopStack.peek();
-      Label continueLabel = currentLoop.getOrCreateContinueLabel();
+      Label continueLabel;
+      if(currentLoop.isSwitch) {
+         continueLabel = currentLoop.getContinueLabel();
+         if(continueLabel==null) {
+            throw new CompileError("Continue not inside a loop! ", new StatementSource(ctx));
+         }
+      }  else {
+         continueLabel = currentLoop.getOrCreateContinueLabel();
+      }
       Statement continueJmpStmt = new StatementJump(continueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(continueJmpStmt);
       return null;

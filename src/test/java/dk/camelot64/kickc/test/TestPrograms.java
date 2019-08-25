@@ -36,7 +36,6 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-
    @Test
    public void testAsmMnemonicNames() throws IOException, URISyntaxException {
       compileAndCompare("asm-mnemonic-names");
@@ -46,7 +45,6 @@ public class TestPrograms {
    public void testParseNegatedStructRef() throws IOException, URISyntaxException {
       compileAndCompare("parse-negated-struct-ref");
    }
-
 
    @Test
    public void testLongPointer1() throws IOException, URISyntaxException {
@@ -124,13 +122,10 @@ public class TestPrograms {
    //   compileAndCompare("loophead-problem");
    //}
 
-   // TODO: Fail with proper error when continue is encountered without a loop https://gitlab.com/camelot/kickc/issues/282
-   /*
    @Test
    public void testSwitch3Err() throws IOException, URISyntaxException {
-      compileAndCompare("switch-3-err");
+      assertError("switch-3-err", "Continue not inside a loop!");
    }
-   */
 
    @Test
    public void testSwitch4() throws IOException, URISyntaxException {

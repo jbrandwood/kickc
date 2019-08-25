@@ -802,7 +802,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Void visitStmtExpr(KickCParser.StmtExprContext ctx) {
       PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), new StatementSource(ctx));
-      this.visit(ctx.commaExpr());
+      beginNotConsumedTracking();
+      RValue exprVal = (RValue) this.visit(ctx.commaExpr());
+      if(notConsumed(exprVal)) {
+         // Make a tmpVar to create the statement
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
+         RValue rVal = exprVal;
+         if(exprVal instanceof LValue) {
+            rVal = copyLValue((LValue) exprVal);
+         }
+         sequence.addStatement(new StatementAssignment(tmpVar.getRef(), rVal, new StatementSource(ctx), comments));
+      }
+      endNotConsumedTracking();
       PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), new StatementSource(ctx));
       return null;
    }
@@ -1532,6 +1544,55 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
+
+   /** RValues that have not yet been output as part of a statement.
+    * The expression visitor methods updates this so that the surrounding
+    * statement can make sure to output any rValue that has not been output.
+    * Null if we are not currently monitoring this.
+    * */
+   public Set<RValue> exprNotConsumed = null;
+
+   /**
+    * Begins monitoring list of expressions not consumed.
+    */
+   void beginNotConsumedTracking() {
+      exprNotConsumed = new LinkedHashSet<>();
+   }
+
+   /**
+    * Ends monitoring list of expressions not consumed.
+    */
+   void endNotConsumedTracking() {
+      exprNotConsumed = null;
+   }
+
+   /**
+    * Consumes an RValue by outputting it as part of a statement.
+    * This helps ensure that all expression RValues are output in statements
+    * @param rValue The RValue being consume
+    */
+   void consumeExpr(RValue rValue) {
+      exprNotConsumed.remove(rValue);
+   }
+
+   /**
+    * Marks an expression that has been produced which has not been output as part of a statement.
+    * When the RValue is output in a statement it will be consumed using {@link #consumeExpr(RValue)}.
+    * @param rValue The RValue that has been produced but not consumed
+    */
+   void addExprToConsume(RValue rValue) {
+      if(exprNotConsumed!=null)
+         exprNotConsumed.add(rValue);
+   }
+
+   /** Examines whether an RValue is in the list of non-consumed RValues.
+    *
+    * @return true if the RValue is in the list
+    */
+   boolean notConsumed(RValue rValue) {
+      return exprNotConsumed.contains(rValue);
+   }
+
    @Override
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
@@ -1546,6 +1607,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue rValue = (RValue) this.visit(ctx.expr(1));
       Statement stmt = new StatementAssignment(lValue, rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
+      consumeExpr(lValue);
+      consumeExpr(rValue);
       return lValue;
    }
 
@@ -1569,6 +1632,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       LValue rValue1 = copyLValue(lValue);
       Statement stmt = new StatementAssignment(lValue, rValue1, operator, rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
+      consumeExpr(lValue);
+      consumeExpr(rValue);
       return lValue;
    }
 
@@ -1578,11 +1643,25 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else if(lValue instanceof LvalueIntermediate) {
          return new LvalueIntermediate((VariableRef) copyLValue(((LvalueIntermediate) lValue).getVariable()));
       } else if(lValue instanceof PointerDereferenceSimple) {
-         return new PointerDereferenceSimple(copyLValue((LValue) ((PointerDereferenceSimple) lValue).getPointer()));
+         RValue pointer = ((PointerDereferenceSimple) lValue).getPointer();
+         if(pointer instanceof LValue) {
+            pointer = copyLValue((LValue) pointer);
+         }
+         return new PointerDereferenceSimple(pointer);
       } else if(lValue instanceof PointerDereferenceIndexed) {
-         return new PointerDereferenceIndexed(((PointerDereferenceIndexed) lValue).getPointer(), ((PointerDereferenceIndexed) lValue).getIndex());
+         RValue pointer = ((PointerDereferenceIndexed) lValue).getPointer();
+         if(pointer instanceof LValue) {
+            pointer = copyLValue((LValue) pointer);
+         }
+         RValue index = ((PointerDereferenceIndexed) lValue).getIndex();
+         if(index instanceof LValue) {
+            index = copyLValue((LValue) index);
+         }
+         return new PointerDereferenceIndexed(pointer, index);
       } else if(lValue instanceof StructMemberRef) {
          return new StructMemberRef(copyLValue((LValue) ((StructMemberRef) lValue).getStruct()), ((StructMemberRef) lValue).getMemberName());
+      } else if(lValue instanceof ForwardVariableRef) {
+         return new ForwardVariableRef(((ForwardVariableRef) lValue).getName());
       } else {
          throw new CompileError("Unknown LValue type " + lValue);
       }
@@ -1592,14 +1671,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitExprDot(KickCParser.ExprDotContext ctx) {
       RValue structExpr = (RValue) visit(ctx.expr());
       String name = ctx.NAME().getText();
-      return new StructMemberRef(structExpr, name);
+      StructMemberRef structMemberRef = new StructMemberRef(structExpr, name);
+      addExprToConsume(structMemberRef);
+      return structMemberRef;
    }
 
    @Override
    public Object visitExprArrow(KickCParser.ExprArrowContext ctx) {
       RValue structPtrExpr = (RValue) visit(ctx.expr());
       String name = ctx.NAME().getText();
-      return new StructMemberRef(new PointerDereferenceSimple(structPtrExpr), name);
+      StructMemberRef structMemberRef = new StructMemberRef(new PointerDereferenceSimple(structPtrExpr), name);
+      addExprToConsume(structMemberRef);
+      return structMemberRef;
    }
 
    @Override
@@ -1611,6 +1694,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
+      consumeExpr(child);
       return tmpVarRef;
    }
 
@@ -1627,6 +1711,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, Operators.SIZEOF, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
+         consumeExpr(child);
          return tmpVarRef;
       }
    }
@@ -1644,6 +1729,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, Operators.TYPEID, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
+         consumeExpr(child);
          return tmpVarRef;
       }
    }
@@ -1667,6 +1753,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          RValue procedurePointer = (RValue) this.visit(ctx.expr());
          sequence.addStatement(new StatementCallPointer(tmpVarRef, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         consumeExpr(procedurePointer);
+      }
+      for(RValue parameter : parameters) {
+         consumeExpr(parameter);
       }
       return tmpVarRef;
    }
@@ -1685,7 +1775,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       RValue array = (RValue) visit(ctx.expr());
       RValue index = (RValue) visit(ctx.commaExpr());
-      return new PointerDereferenceIndexed(array, index);
+      PointerDereferenceIndexed pointerDereferenceIndexed = new PointerDereferenceIndexed(array, index);
+      addExprToConsume(pointerDereferenceIndexed);
+      return pointerDereferenceIndexed;
    }
 
    @Override
@@ -1784,6 +1876,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
+         consumeExpr(left);
+         consumeExpr(right);
          return tmpVarRef;
       }
    }
@@ -1791,7 +1885,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitExprPtr(KickCParser.ExprPtrContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
-      return new PointerDereferenceSimple(child);
+      PointerDereferenceSimple pointerDereferenceSimple = new PointerDereferenceSimple(child);
+      addExprToConsume(pointerDereferenceSimple);
+      return pointerDereferenceSimple;
    }
 
    @Override
@@ -1809,6 +1905,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
+         consumeExpr(child);
          return tmpVarRef;
       }
    }
@@ -1839,6 +1936,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       phiVariable.setrValue(trueExitLabel, trueVar);
       phiVariable.setrValue(falseExitLabel, falseVar);
       sequence.addStatement(phiBlock);
+      consumeExpr(condValue);
+      consumeExpr(falseValue);
+      consumeExpr(trueValue);
       return finalVar;
    }
 
@@ -2095,9 +2195,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             List<PrePostModifier> modifiers,
             StatementSource source) {
          for(PrePostModifier mod : modifiers) {
-
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, copyLValue((LValue) mod.child), source, Comment.NO_COMMENTS);
             parser.sequence.addStatement(stmt);
+            parser.consumeExpr(mod.child);
             if(parser.program.getLog().isVerboseParse()) {
                parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, false));
             }

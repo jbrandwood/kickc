@@ -38,13 +38,13 @@ main: {
     rts
 }
 anim: {
-    .label _5 = 3
-    .label _7 = 3
-    .label _10 = 3
+    .label _6 = 3
+    .label _8 = 3
     .label _11 = 3
     .label _12 = 3
     .label _13 = 3
-    .label _28 = $13
+    .label _14 = 3
+    .label _29 = $13
     .label x = $b
     .label y = $c
     .label xr = $d
@@ -77,18 +77,18 @@ anim: {
     jsr mulf8u_prepare
     ldy.z x
     jsr mulf8s_prepared
-    lda.z _5
+    lda.z _6
     asl
     sta.z xr
-    lda.z _5+1
+    lda.z _6+1
     rol
     sta.z xr+1
     ldy.z y
     jsr mulf8s_prepared
-    lda.z _7
+    lda.z _8
     asl
     sta.z yr
-    lda.z _7+1
+    lda.z _8+1
     rol
     sta.z yr+1
     ldy.z angle
@@ -96,26 +96,26 @@ anim: {
     jsr mulf8u_prepare
     ldy.z y
     jsr mulf8s_prepared
-    asl.z _11
-    rol.z _11+1
+    asl.z _12
+    rol.z _12+1
     lda.z xr
     sec
-    sbc.z _11
+    sbc.z _12
     sta.z xr
     lda.z xr+1
-    sbc.z _11+1
+    sbc.z _12+1
     sta.z xr+1
     ldy.z x
     jsr mulf8s_prepared
-    asl.z _13
-    rol.z _13+1
+    asl.z _14
+    rol.z _14+1
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _13
+    adc.z _14
     sta.z yr
     lda.z yr+1
-    adc.z _13+1
+    adc.z _14+1
     sta.z yr+1
     lda.z xr+1
     tax

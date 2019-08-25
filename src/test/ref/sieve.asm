@@ -46,7 +46,7 @@ main: {
     .label s = 2
     .label i = $b
     .label i_12 = $f
-    .label _38 = $17
+    .label _39 = $17
     .label i_17 = $f
     //Show lower case font
     lda #toD0181_return
@@ -192,12 +192,12 @@ main: {
     lda.z i
     clc
     adc #<sieve
-    sta.z _38
+    sta.z _39
     lda.z i+1
     adc #>sieve
-    sta.z _38+1
+    sta.z _39+1
     ldy #0
-    lda (_38),y
+    lda (_39),y
     cmp #0
     bne b30
     lda.z print_char_cursor_90

@@ -231,11 +231,11 @@ main: {
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 // init_buckets(byte* zeropage($1c) screen)
 init_buckets: {
-    .label _5 = 5
-    .label _9 = $24
-    .label _10 = $20
-    .label _12 = $22
-    .label _13 = $24
+    .label _6 = 5
+    .label _10 = $24
+    .label _11 = $20
+    .label _15 = $22
+    .label _16 = $24
     .label screen = $1c
     .label dist = 8
     .label i1 = $a
@@ -245,9 +245,9 @@ init_buckets: {
     .label dist_3 = 2
     .label i4 = $1a
     .label dist_5 = 2
-    .label _15 = 5
-    .label _16 = $22
-    .label _17 = $24
+    .label _18 = 5
+    .label _19 = $22
+    .label _20 = $24
     .label dist_8 = 2
     ldy #0
   // Init bucket sizes to 0
@@ -294,10 +294,10 @@ init_buckets: {
     lda.z BUCKET_SIZES
     clc
     adc.z i2
-    sta.z _15
+    sta.z _18
     lda.z BUCKET_SIZES+1
     adc.z i2+1
-    sta.z _15+1
+    sta.z _18+1
     ldy #0
     lda (malloc.size),y
     asl
@@ -308,23 +308,23 @@ init_buckets: {
     jsr malloc
     lda.z i2
     asl
-    sta.z _12
+    sta.z _15
     lda.z i2+1
     rol
-    sta.z _12+1
-    lda.z _16
+    sta.z _15+1
+    lda.z _19
     clc
     adc.z BUCKETS
-    sta.z _16
-    lda.z _16+1
+    sta.z _19
+    lda.z _19+1
     adc.z BUCKETS+1
-    sta.z _16+1
+    sta.z _19+1
     ldy #0
-    lda.z _5
-    sta (_16),y
+    lda.z _6
+    sta (_19),y
     iny
-    lda.z _5+1
-    sta (_16),y
+    lda.z _6+1
+    sta (_19),y
     inc.z i2
     bne !+
     inc.z i2+1
@@ -354,18 +354,18 @@ init_buckets: {
     ldy #0
     lda (dist_5),y
     sta.z distance
-    sta.z _9
+    sta.z _10
     tya
-    sta.z _9+1
-    asl.z _13
-    rol.z _13+1
-    lda.z _17
+    sta.z _10+1
+    asl.z _16
+    rol.z _16+1
+    lda.z _20
     clc
     adc.z BUCKETS
-    sta.z _17
-    lda.z _17+1
+    sta.z _20
+    lda.z _20+1
     adc.z BUCKETS+1
-    sta.z _17+1
+    sta.z _20+1
     lda (bucket),y
     pha
     iny
@@ -376,18 +376,18 @@ init_buckets: {
     lda.z dist_5
     sec
     sbc.z screen
-    sta.z _10
+    sta.z _11
     lda.z dist_5+1
     sbc.z screen+1
-    sta.z _10+1
+    sta.z _11+1
     ldy.z distance
     lda (BUCKET_IDX),y
     asl
     tay
-    lda.z _10
+    lda.z _11
     sta (bucket),y
     iny
-    lda.z _10+1
+    lda.z _11+1
     sta (bucket),y
     ldy.z distance
     lda (BUCKET_IDX),y

@@ -40,7 +40,7 @@ main: {
     jmp b1
 }
 anim: {
-    .label _6 = $a
+    .label _8 = $a
     .label xidx = 9
     .label yidx = 4
     .label x = $f
@@ -67,7 +67,7 @@ anim: {
     lda #>$1e
     adc #0
     sta.z x+1
-    asl.z _6
+    asl.z _8
     ora.z x_msb
     sta.z x_msb
     lda.z x

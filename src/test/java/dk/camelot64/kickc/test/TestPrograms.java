@@ -73,7 +73,7 @@ public class TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
-      compileAndCompare("function-as-array");
+      assertError("function-as-array", "Cannot infer pointer element type from type: void()");
    }
 
    @Test

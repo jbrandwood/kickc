@@ -65,8 +65,8 @@ main: {
     rts
 }
 loop: {
-    .label _1 = $16
-    .label _5 = $16
+    .label _2 = $16
+    .label _7 = $16
     .label xpos = $16
     lda #<0
     sta.z xsin_idx
@@ -80,17 +80,17 @@ loop: {
     inc BORDERCOL
     lda.z xsin_idx
     asl
-    sta.z _5
+    sta.z _7
     lda.z xsin_idx+1
     rol
-    sta.z _5+1
+    sta.z _7+1
     clc
-    lda.z _1
+    lda.z _2
     adc #<xsin
-    sta.z _1
-    lda.z _1+1
+    sta.z _2
+    lda.z _2+1
     adc #>xsin
-    sta.z _1+1
+    sta.z _2+1
     ldy #0
     lda (xpos),y
     tax

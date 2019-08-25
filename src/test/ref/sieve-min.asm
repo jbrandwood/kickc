@@ -14,7 +14,7 @@ main: {
     .label s = 4
     .label i = 6
     .label i_12 = 8
-    .label _18 = $c
+    .label _19 = $c
     .label i_17 = 8
     jsr memset
     lda #<sieve+2
@@ -81,12 +81,12 @@ main: {
     lda.z i
     clc
     adc #<sieve
-    sta.z _18
+    sta.z _19
     lda.z i+1
     adc #>sieve
-    sta.z _18+1
+    sta.z _19+1
     ldy #0
-    lda (_18),y
+    lda (_19),y
     cmp #0
     bne b9
     jsr print_word

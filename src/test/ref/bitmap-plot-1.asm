@@ -55,8 +55,8 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label _9 = $c
     .label _14 = $c
-    .label _24 = $24
     .label _25 = $24
+    .label _26 = $24
     .label cos_x = $24
     .label xpos = $c
     .label x = $20
@@ -65,8 +65,8 @@ main: {
     .label y = $17
     .label idx_x = 2
     .label idx_y = $12
-    .label _26 = $24
     .label _27 = $24
+    .label _28 = $24
     jsr sin16s_gen2
     jsr bitmap_init
     jsr bitmap_clear
@@ -85,17 +85,17 @@ main: {
   b2:
     lda.z idx_x
     asl
-    sta.z _24
+    sta.z _25
     lda.z idx_x+1
     rol
-    sta.z _24+1
+    sta.z _25+1
     clc
-    lda.z _26
+    lda.z _27
     adc #<SINUS
-    sta.z _26
-    lda.z _26+1
+    sta.z _27
+    lda.z _27+1
     adc #>SINUS
-    sta.z _26+1
+    sta.z _27+1
     ldy #0
     lda (cos_x),y
     tax
@@ -133,17 +133,17 @@ main: {
     sta.z x+1
     lda.z idx_y
     asl
-    sta.z _25
+    sta.z _26
     lda.z idx_y+1
     rol
-    sta.z _25+1
+    sta.z _26+1
     clc
-    lda.z _27
+    lda.z _28
     adc #<SINUS
-    sta.z _27
-    lda.z _27+1
+    sta.z _28
+    lda.z _28+1
     adc #>SINUS
-    sta.z _27+1
+    sta.z _28+1
     ldy #0
     lda (sin_y),y
     tax

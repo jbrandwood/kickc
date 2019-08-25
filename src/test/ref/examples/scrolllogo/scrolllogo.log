@@ -1,6 +1,6 @@
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
-Fixing pointer addition (signed word*~) loop::$1 ← (signed word[XSIN_SIZE]) xsin + (word) xsin_idx
+Fixing pointer addition (signed word*~) loop::$2 ← (signed word[XSIN_SIZE]) xsin + (word) xsin_idx
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
@@ -735,18 +735,18 @@ loop::@4: scope:[loop]  from loop::@1 loop::@4
 loop::@6: scope:[loop]  from loop::@4
   (word) xsin_idx#9 ← phi( loop::@4/(word) xsin_idx#14 )
   *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
-  (word~) loop::$5 ← (word) xsin_idx#9 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) loop::$1 ← (signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5
-  (signed word) loop::xpos#0 ← *((signed word*~) loop::$1)
+  (word~) loop::$7 ← (word) xsin_idx#9 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word*~) loop::$2 ← (signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7
+  (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
   (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0
   call render_logo 
   to:loop::@15
 loop::@15: scope:[loop]  from loop::@6
   (word) xsin_idx#10 ← phi( loop::@6/(word) xsin_idx#9 )
   (word) xsin_idx#3 ← ++ (word) xsin_idx#10
-  (bool~) loop::$3 ← (word) xsin_idx#3 == (word) XSIN_SIZE#0
-  (bool~) loop::$4 ← ! (bool~) loop::$3
-  if((bool~) loop::$4) goto loop::@11
+  (bool~) loop::$4 ← (word) xsin_idx#3 == (word) XSIN_SIZE#0
+  (bool~) loop::$5 ← ! (bool~) loop::$4
+  if((bool~) loop::$5) goto loop::@11
   to:loop::@10
 loop::@11: scope:[loop]  from loop::@10 loop::@15
   (word) xsin_idx#19 ← phi( loop::@10/(word) xsin_idx#4 loop::@15/(word) xsin_idx#3 )
@@ -1073,10 +1073,10 @@ SYMBOL TABLE SSA
 (word) divr16u::return#6
 (void()) loop()
 (bool~) loop::$0
-(signed word*~) loop::$1
-(bool~) loop::$3
+(signed word*~) loop::$2
 (bool~) loop::$4
-(word~) loop::$5
+(bool~) loop::$5
+(word~) loop::$7
 (label) loop::@1
 (label) loop::@10
 (label) loop::@11
@@ -2025,7 +2025,7 @@ Inversing boolean not [186] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword)
 Inversing boolean not [190] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28#0 from [189] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28#0
 Inversing boolean not [249] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [248] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
 Inversing boolean not [278] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [277] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [379] (bool~) loop::$4 ← (word) xsin_idx#3 != (word) XSIN_SIZE#0 from [378] (bool~) loop::$3 ← (word) xsin_idx#3 == (word) XSIN_SIZE#0
+Inversing boolean not [379] (bool~) loop::$5 ← (word) xsin_idx#3 != (word) XSIN_SIZE#0 from [378] (bool~) loop::$4 ← (word) xsin_idx#3 == (word) XSIN_SIZE#0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2233,7 +2233,7 @@ Simple Condition (bool~) memset::$1 [279] if((word) memset::num#2<=(byte) 0) got
 Simple Condition (bool~) memset::$4 [289] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) main::$6 [345] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
 Simple Condition (bool~) loop::$0 [368] if(*((byte*) RASTER#0)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$4 [380] if((word) xsin_idx#3!=(word) XSIN_SIZE#0) goto loop::@11
+Simple Condition (bool~) loop::$5 [380] if((word) xsin_idx#3!=(word) XSIN_SIZE#0) goto loop::@11
 Simple Condition (bool~) render_logo::$5 [399] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
 Simple Condition (bool~) render_logo::$7 [411] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@5
 Simple Condition (bool~) render_logo::$10 [422] unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@7
@@ -2943,7 +2943,7 @@ Successful SSA optimization Pass2NopCastInlining
 Inlining Noop Cast [64] (byte) render_logo::logo_idx#1 ← (byte)(signed byte~) render_logo::$17 keeping render_logo::logo_idx#1
 Inlining Noop Cast [101] (signed word~) sin16s_gen2::$9 ← (signed word)(word~) sin16s_gen2::$7 keeping sin16s_gen2::$9
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [21] (word~) loop::$5 ← (word) xsin_idx#11 * (const byte) SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [21] (word~) loop::$7 ← (word) xsin_idx#11 * (const byte) SIZEOF_SIGNED_WORD
 Rewriting division to use shift [34] (signed word~) render_logo::$3 ← (signed word) render_logo::xpos#0 / (signed byte) 8
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const word) divr16u::quotient#0
@@ -3408,9 +3408,9 @@ loop::@2: scope:[loop]  from loop::@1 loop::@2
   to:loop::@3
 loop::@3: scope:[loop]  from loop::@2
   [28] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0)
-  [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1
-  [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5
-  [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1)
+  [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1
+  [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7
+  [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
   [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0
   [33] call render_logo 
   to:loop::@5
@@ -3861,8 +3861,8 @@ VARIABLE REGISTER WEIGHTS
 (word) divr16u::return#2 4.0
 (word) divr16u::return#3 4.0
 (void()) loop()
-(signed word*~) loop::$1 22.0
-(word~) loop::$5 22.0
+(signed word*~) loop::$2 22.0
+(word~) loop::$7 22.0
 (signed word) loop::xpos
 (signed word) loop::xpos#0 22.0
 (void()) main()
@@ -4079,8 +4079,8 @@ Initial phi equivalence classes
 [ memset::str#3 ]
 [ memset::c#4 ]
 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
-Added variable loop::$5 to zero page equivalence class [ loop::$5 ]
-Added variable loop::$1 to zero page equivalence class [ loop::$1 ]
+Added variable loop::$7 to zero page equivalence class [ loop::$7 ]
+Added variable loop::$2 to zero page equivalence class [ loop::$2 ]
 Added variable loop::xpos#0 to zero page equivalence class [ loop::xpos#0 ]
 Added variable render_logo::xpos#0 to zero page equivalence class [ render_logo::xpos#0 ]
 Added variable render_logo::$0 to zero page equivalence class [ render_logo::$0 ]
@@ -4167,8 +4167,8 @@ Complete equivalence classes
 [ memset::str#3 ]
 [ memset::c#4 ]
 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
-[ loop::$5 ]
-[ loop::$1 ]
+[ loop::$7 ]
+[ loop::$2 ]
 [ loop::xpos#0 ]
 [ render_logo::xpos#0 ]
 [ render_logo::$0 ]
@@ -4254,8 +4254,8 @@ Allocated zp ZP_BYTE:51 [ divr16u::i#2 divr16u::i#1 ]
 Allocated zp ZP_WORD:52 [ memset::str#3 ]
 Allocated zp ZP_BYTE:54 [ memset::c#4 ]
 Allocated zp ZP_WORD:55 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
-Allocated zp ZP_WORD:57 [ loop::$5 ]
-Allocated zp ZP_WORD:59 [ loop::$1 ]
+Allocated zp ZP_WORD:57 [ loop::$7 ]
+Allocated zp ZP_WORD:59 [ loop::$2 ]
 Allocated zp ZP_WORD:61 [ loop::xpos#0 ]
 Allocated zp ZP_WORD:63 [ render_logo::xpos#0 ]
 Allocated zp ZP_BYTE:65 [ render_logo::$0 ]
@@ -4476,8 +4476,8 @@ main: {
 }
   // loop
 loop: {
-    .label _1 = $3b
-    .label _5 = $39
+    .label _2 = $3b
+    .label _7 = $39
     .label xpos = $3d
     // [26] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
@@ -4502,27 +4502,27 @@ loop: {
   b3:
     // [28] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    // [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
     asl
-    sta.z _5
+    sta.z _7
     lda.z xsin_idx+1
     rol
-    sta.z _5+1
-    // [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5 -- pwsz1=pwsc1_plus_vwuz2 
-    lda.z _5
+    sta.z _7+1
+    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz2 
+    lda.z _7
     clc
     adc #<xsin
-    sta.z _1
-    lda.z _5+1
+    sta.z _2
+    lda.z _7+1
     adc #>xsin
-    sta.z _1+1
-    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) -- vwsz1=_deref_pwsz2 
+    sta.z _2+1
+    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) -- vwsz1=_deref_pwsz2 
     ldy #0
-    lda (_1),y
+    lda (_2),y
     sta.z xpos
     iny
-    lda (_1),y
+    lda (_2),y
     sta.z xpos+1
     // [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 -- vwsz1=vwsz2 
     lda.z xpos
@@ -6032,9 +6032,9 @@ Statement [9] *((const byte*) BGCOL3#0) ← (const byte) BLACK#0 [ ] ( main:3 [ 
 Statement [11] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) D016#0) ← (const byte) VIC_MCM#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] ) always clobbers reg byte a 
-Statement [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$5 ] ( main:3::loop:23 [ xsin_idx#11 loop::$5 ] ) always clobbers reg byte a 
-Statement [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5 [ xsin_idx#11 loop::$1 ] ( main:3::loop:23 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
-Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
+Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] ) always clobbers reg byte a 
+Statement [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
+Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [35] if((word) xsin_idx#3!=(const word) XSIN_SIZE#0) goto loop::@6 [ xsin_idx#3 ] ( main:3::loop:23 [ xsin_idx#3 ] ) always clobbers reg byte a 
 Statement [39] (byte~) render_logo::$0 ← (byte)(signed word) render_logo::xpos#0 [ render_logo::xpos#0 render_logo::$0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::xpos#0 render_logo::$0 ] ) always clobbers reg byte a 
@@ -6145,9 +6145,9 @@ Statement [9] *((const byte*) BGCOL3#0) ← (const byte) BLACK#0 [ ] ( main:3 [ 
 Statement [11] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) D016#0) ← (const byte) VIC_MCM#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER#0)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] ) always clobbers reg byte a 
-Statement [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$5 ] ( main:3::loop:23 [ xsin_idx#11 loop::$5 ] ) always clobbers reg byte a 
-Statement [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5 [ xsin_idx#11 loop::$1 ] ( main:3::loop:23 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
-Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
+Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] ) always clobbers reg byte a 
+Statement [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
+Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [35] if((word) xsin_idx#3!=(const word) XSIN_SIZE#0) goto loop::@6 [ xsin_idx#3 ] ( main:3::loop:23 [ xsin_idx#3 ] ) always clobbers reg byte a 
 Statement [39] (byte~) render_logo::$0 ← (byte)(signed word) render_logo::xpos#0 [ render_logo::xpos#0 render_logo::$0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::xpos#0 render_logo::$0 ] ) always clobbers reg byte a 
@@ -6269,8 +6269,8 @@ Potential registers zp ZP_BYTE:51 [ divr16u::i#2 divr16u::i#1 ] : zp ZP_BYTE:51 
 Potential registers zp ZP_WORD:52 [ memset::str#3 ] : zp ZP_WORD:52 , 
 Potential registers zp ZP_BYTE:54 [ memset::c#4 ] : zp ZP_BYTE:54 , reg byte x , 
 Potential registers zp ZP_WORD:55 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp ZP_WORD:55 , 
-Potential registers zp ZP_WORD:57 [ loop::$5 ] : zp ZP_WORD:57 , 
-Potential registers zp ZP_WORD:59 [ loop::$1 ] : zp ZP_WORD:59 , 
+Potential registers zp ZP_WORD:57 [ loop::$7 ] : zp ZP_WORD:57 , 
+Potential registers zp ZP_WORD:59 [ loop::$2 ] : zp ZP_WORD:59 , 
 Potential registers zp ZP_WORD:61 [ loop::xpos#0 ] : zp ZP_WORD:61 , 
 Potential registers zp ZP_WORD:63 [ render_logo::xpos#0 ] : zp ZP_WORD:63 , 
 Potential registers zp ZP_BYTE:65 [ render_logo::$0 ] : zp ZP_BYTE:65 , reg byte a , reg byte x , reg byte y , 
@@ -6337,7 +6337,7 @@ Uplift Scope [divr16u] 106.92: zp ZP_WORD:45 [ divr16u::rem#5 divr16u::rem#10 di
 Uplift Scope [sin16s] 27.5: zp ZP_DWORD:34 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] 22: zp ZP_WORD:90 [ sin16s::return#0 ] 13: zp ZP_WORD:38 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] 4: zp ZP_DWORD:117 [ sin16s::$4 ] 4: zp ZP_WORD:125 [ sin16s::x2#0 ] 4: zp ZP_WORD:133 [ sin16s::x3_6#0 ] 4: zp ZP_WORD:139 [ sin16s::x4#0 ] 4: zp ZP_WORD:143 [ sin16s::x5#0 ] 4: zp ZP_WORD:145 [ sin16s::x5_128#0 ] 1: zp ZP_WORD:129 [ sin16s::x3#0 ] 1: zp ZP_WORD:147 [ sin16s::usinx#1 ] 0.64: zp ZP_WORD:121 [ sin16s::x1#0 ] 0.33: zp ZP_WORD:135 [ sin16s::usinx#0 ] 0.06: zp ZP_BYTE:33 [ sin16s::isUpper#2 ] 
 Uplift Scope [mulu16_sel] 24: zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] 21: zp ZP_WORD:42 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] 4: zp ZP_WORD:123 [ mulu16_sel::return#0 ] 4: zp ZP_WORD:127 [ mulu16_sel::return#1 ] 4: zp ZP_WORD:131 [ mulu16_sel::return#2 ] 4: zp ZP_WORD:137 [ mulu16_sel::return#10 ] 4: zp ZP_WORD:141 [ mulu16_sel::return#11 ] 4: zp ZP_DWORD:153 [ mulu16_sel::$0 ] 4: zp ZP_DWORD:157 [ mulu16_sel::$1 ] 1.71: zp ZP_WORD:161 [ mulu16_sel::return#12 ] 0.33: zp ZP_BYTE:44 [ mulu16_sel::select#5 ] 
 Uplift Scope [sin16s_gen2] 22: zp ZP_DWORD:98 [ sin16s_gen2::$6 ] 18.33: zp ZP_WORD:9 [ sin16s_gen2::i#6 sin16s_gen2::i#1 ] 11: zp ZP_WORD:102 [ sin16s_gen2::$9 ] 10.33: zp ZP_DWORD:11 [ sin16s_gen2::x#6 sin16s_gen2::x#1 ] 8.8: zp ZP_WORD:15 [ sin16s_gen2::sintab#10 sin16s_gen2::sintab#0 ] 0.87: zp ZP_DWORD:86 [ sin16s_gen2::step#0 ] 
-Uplift Scope [loop] 22: zp ZP_WORD:57 [ loop::$5 ] 22: zp ZP_WORD:59 [ loop::$1 ] 22: zp ZP_WORD:61 [ loop::xpos#0 ] 
+Uplift Scope [loop] 22: zp ZP_WORD:57 [ loop::$7 ] 22: zp ZP_WORD:59 [ loop::$2 ] 22: zp ZP_WORD:61 [ loop::xpos#0 ] 
 Uplift Scope [mul16s] 22: zp ZP_DWORD:94 [ mul16s::return#2 ] 10: zp ZP_DWORD:17 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] 4.33: zp ZP_DWORD:112 [ mul16s::return#0 ] 4: zp ZP_WORD:108 [ mul16s::$9 ] 4: zp ZP_WORD:110 [ mul16s::$16 ] 2.6: zp ZP_WORD:92 [ mul16s::a#0 ] 
 Uplift Scope [memset] 41.33: zp ZP_WORD:55 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 2.17: zp ZP_WORD:179 [ memset::end#0 ] 1.57: zp ZP_BYTE:54 [ memset::c#4 ] 0: zp ZP_WORD:52 [ memset::str#3 ] 
 Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::ch#2 main::ch#1 ] 
@@ -6349,7 +6349,7 @@ Uplifting [divr16u] best 74872 combination zp ZP_WORD:45 [ divr16u::rem#5 divr16
 Uplifting [sin16s] best 74872 combination zp ZP_DWORD:34 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] zp ZP_WORD:90 [ sin16s::return#0 ] zp ZP_WORD:38 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] zp ZP_DWORD:117 [ sin16s::$4 ] zp ZP_WORD:125 [ sin16s::x2#0 ] zp ZP_WORD:133 [ sin16s::x3_6#0 ] zp ZP_WORD:139 [ sin16s::x4#0 ] zp ZP_WORD:143 [ sin16s::x5#0 ] zp ZP_WORD:145 [ sin16s::x5_128#0 ] zp ZP_WORD:129 [ sin16s::x3#0 ] zp ZP_WORD:147 [ sin16s::usinx#1 ] zp ZP_WORD:121 [ sin16s::x1#0 ] zp ZP_WORD:135 [ sin16s::usinx#0 ] zp ZP_BYTE:33 [ sin16s::isUpper#2 ] 
 Uplifting [mulu16_sel] best 74856 combination zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] zp ZP_WORD:42 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] zp ZP_WORD:123 [ mulu16_sel::return#0 ] zp ZP_WORD:127 [ mulu16_sel::return#1 ] zp ZP_WORD:131 [ mulu16_sel::return#2 ] zp ZP_WORD:137 [ mulu16_sel::return#10 ] zp ZP_WORD:141 [ mulu16_sel::return#11 ] zp ZP_DWORD:153 [ mulu16_sel::$0 ] zp ZP_DWORD:157 [ mulu16_sel::$1 ] zp ZP_WORD:161 [ mulu16_sel::return#12 ] reg byte x [ mulu16_sel::select#5 ] 
 Uplifting [sin16s_gen2] best 74856 combination zp ZP_DWORD:98 [ sin16s_gen2::$6 ] zp ZP_WORD:9 [ sin16s_gen2::i#6 sin16s_gen2::i#1 ] zp ZP_WORD:102 [ sin16s_gen2::$9 ] zp ZP_DWORD:11 [ sin16s_gen2::x#6 sin16s_gen2::x#1 ] zp ZP_WORD:15 [ sin16s_gen2::sintab#10 sin16s_gen2::sintab#0 ] zp ZP_DWORD:86 [ sin16s_gen2::step#0 ] 
-Uplifting [loop] best 74856 combination zp ZP_WORD:57 [ loop::$5 ] zp ZP_WORD:59 [ loop::$1 ] zp ZP_WORD:61 [ loop::xpos#0 ] 
+Uplifting [loop] best 74856 combination zp ZP_WORD:57 [ loop::$7 ] zp ZP_WORD:59 [ loop::$2 ] zp ZP_WORD:61 [ loop::xpos#0 ] 
 Uplifting [mul16s] best 74856 combination zp ZP_DWORD:94 [ mul16s::return#2 ] zp ZP_DWORD:17 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] zp ZP_DWORD:112 [ mul16s::return#0 ] zp ZP_WORD:108 [ mul16s::$9 ] zp ZP_WORD:110 [ mul16s::$16 ] zp ZP_WORD:92 [ mul16s::a#0 ] 
 Uplifting [memset] best 74840 combination zp ZP_WORD:55 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp ZP_WORD:179 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp ZP_WORD:52 [ memset::str#3 ] 
 Uplifting [main] best 74720 combination reg byte x [ main::ch#2 main::ch#1 ] 
@@ -6409,7 +6409,7 @@ Coalescing zero page register [ zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#
 Coalescing zero page register [ zp ZP_WORD:49 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] ] with [ zp ZP_WORD:163 [ divr16u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:49 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 ] ] with [ zp ZP_WORD:167 [ divr16u::return#3 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:52 [ memset::str#3 ] ] with [ zp ZP_WORD:55 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:57 [ loop::$5 ] ] with [ zp ZP_WORD:59 [ loop::$1 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:57 [ loop::$7 ] ] with [ zp ZP_WORD:59 [ loop::$2 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:61 [ loop::xpos#0 ] ] with [ zp ZP_WORD:63 [ render_logo::xpos#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_DWORD:82 [ div32u16u::return#2 ] ] with [ zp ZP_DWORD:86 [ sin16s_gen2::step#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_DWORD:82 [ div32u16u::return#2 sin16s_gen2::step#0 ] ] with [ zp ZP_DWORD:171 [ div32u16u::return#0 ] ] - score: 1
@@ -6426,7 +6426,7 @@ Coalescing zero page register [ zp ZP_WORD:38 [ sin16s::return#1 sin16s::return#
 Coalescing zero page register [ zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 ] ] with [ zp ZP_WORD:127 [ mulu16_sel::return#1 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 ] ] with [ zp ZP_WORD:137 [ mulu16_sel::return#10 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:49 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 ] ] with [ zp ZP_WORD:169 [ div32u16u::quotient_lo#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:57 [ loop::$5 loop::$1 ] ] with [ zp ZP_WORD:61 [ loop::xpos#0 render_logo::xpos#0 ] ] - score: 1
+Coalescing zero page register [ zp ZP_WORD:57 [ loop::$7 loop::$2 ] ] with [ zp ZP_WORD:61 [ loop::xpos#0 render_logo::xpos#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:123 [ mulu16_sel::return#0 mulu16_sel::return#12 ] ] with [ zp ZP_WORD:131 [ mulu16_sel::return#2 sin16s::x3_6#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:123 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 ] ] with [ zp ZP_WORD:141 [ mulu16_sel::return#11 sin16s::x5#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_DWORD:17 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#2 sin16s_gen2::$6 ] ] with [ zp ZP_DWORD:153 [ mulu16_sel::$0 mulu16_sel::$1 ] ] - score: 1
@@ -6438,7 +6438,7 @@ Coalescing zero page register [ zp ZP_WORD:45 [ divr16u::rem#5 divr16u::rem#10 d
 Coalescing zero page register [ zp ZP_WORD:47 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] ] with [ zp ZP_WORD:21 [ mul16u::b#1 mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:49 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ] ] with [ zp ZP_WORD:23 [ mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:52 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp ZP_WORD:38 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::return#0 mul16s::a#0 sin16s::usinx#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:57 [ loop::$5 loop::$1 loop::xpos#0 render_logo::xpos#0 ] ] with [ zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ] ]
+Coalescing zero page register [ zp ZP_WORD:57 [ loop::$7 loop::$2 loop::xpos#0 render_logo::xpos#0 ] ] with [ zp ZP_WORD:40 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ] ]
 Coalescing zero page register [ zp ZP_WORD:102 [ sin16s_gen2::$9 ] ] with [ zp ZP_WORD:68 [ render_logo::$3 ] ]
 Coalescing zero page register [ zp ZP_WORD:121 [ sin16s::x1#0 ] ] with [ zp ZP_WORD:108 [ mul16s::$9 mul16s::$16 ] ]
 Coalescing zero page register [ zp ZP_WORD:165 [ div32u16u::quotient_hi#0 ] ] with [ zp ZP_WORD:123 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 ] ]
@@ -6452,7 +6452,7 @@ Allocated (was zp ZP_DWORD:34) zp ZP_DWORD:12 [ sin16s::x#6 sin16s::x#4 sin16s::
 Allocated (was zp ZP_WORD:45) zp ZP_WORD:16 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 sin16s_gen2::sintab#10 sin16s_gen2::sintab#0 ]
 Allocated (was zp ZP_WORD:49) zp ZP_WORD:18 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ]
 Allocated (was zp ZP_WORD:52) zp ZP_WORD:20 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::return#0 mul16s::a#0 sin16s::usinx#0 ]
-Allocated (was zp ZP_WORD:57) zp ZP_WORD:22 [ loop::$5 loop::$1 loop::xpos#0 render_logo::xpos#0 mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ]
+Allocated (was zp ZP_WORD:57) zp ZP_WORD:22 [ loop::$7 loop::$2 loop::xpos#0 render_logo::xpos#0 mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ]
 Allocated (was zp ZP_BYTE:70) zp ZP_BYTE:24 [ render_logo::x_char#0 ]
 Allocated (was zp ZP_DWORD:82) zp ZP_DWORD:25 [ div32u16u::return#2 sin16s_gen2::step#0 div32u16u::return#0 ]
 Allocated (was zp ZP_WORD:102) zp ZP_WORD:29 [ sin16s_gen2::$9 render_logo::$3 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 mul16u::b#1 mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ]
@@ -6614,8 +6614,8 @@ main: {
 }
   // loop
 loop: {
-    .label _1 = $16
-    .label _5 = $16
+    .label _2 = $16
+    .label _7 = $16
     .label xpos = $16
     // [26] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
@@ -6640,22 +6640,22 @@ loop: {
   b3:
     // [28] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    // [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
     asl
-    sta.z _5
+    sta.z _7
     lda.z xsin_idx+1
     rol
-    sta.z _5+1
-    // [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z _7+1
+    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z _1
+    lda.z _2
     adc #<xsin
-    sta.z _1
-    lda.z _1+1
+    sta.z _2
+    lda.z _2+1
     adc #>xsin
-    sta.z _1+1
-    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) -- vwsz1=_deref_pwsz1 
+    sta.z _2+1
+    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (xpos),y
     tax
@@ -8253,8 +8253,8 @@ FINAL SYMBOL TABLE
 (word) divr16u::return#2 return zp ZP_WORD:18 4.0
 (word) divr16u::return#3 return zp ZP_WORD:18 4.0
 (void()) loop()
-(signed word*~) loop::$1 $1 zp ZP_WORD:22 22.0
-(word~) loop::$5 $5 zp ZP_WORD:22 22.0
+(signed word*~) loop::$2 $2 zp ZP_WORD:22 22.0
+(word~) loop::$7 $7 zp ZP_WORD:22 22.0
 (label) loop::@1
 (label) loop::@2
 (label) loop::@3
@@ -8543,7 +8543,7 @@ zp ZP_WORD:18 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16
 reg byte x [ divr16u::i#2 divr16u::i#1 ]
 zp ZP_WORD:20 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::return#0 mul16s::a#0 sin16s::usinx#0 ]
 reg byte x [ memset::c#4 ]
-zp ZP_WORD:22 [ loop::$5 loop::$1 loop::xpos#0 render_logo::xpos#0 mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ]
+zp ZP_WORD:22 [ loop::$7 loop::$2 loop::xpos#0 render_logo::xpos#0 mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ]
 reg byte a [ render_logo::$0 ]
 reg byte a [ render_logo::$1 ]
 reg byte a [ render_logo::$2 ]
@@ -8705,8 +8705,8 @@ main: {
 }
   // loop
 loop: {
-    .label _1 = $16
-    .label _5 = $16
+    .label _2 = $16
+    .label _7 = $16
     .label xpos = $16
     // [26] phi from loop to loop::@1 [phi:loop->loop::@1]
     // [26] phi (word) xsin_idx#11 = (byte) 0 [phi:loop->loop::@1#0] -- vwuz1=vbuc1 
@@ -8728,23 +8728,23 @@ loop: {
     // [28] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // xsin+xsin_idx
-    // [29] (word~) loop::$5 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
     asl
-    sta.z _5
+    sta.z _7
     lda.z xsin_idx+1
     rol
-    sta.z _5+1
-    // [30] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$5 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z _7+1
+    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z _1
+    lda.z _2
     adc #<xsin
-    sta.z _1
-    lda.z _1+1
+    sta.z _2
+    lda.z _2+1
     adc #>xsin
-    sta.z _1+1
+    sta.z _2+1
     // xpos = *(xsin+xsin_idx)
-    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) -- vwsz1=_deref_pwsz1 
+    // [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (xpos),y
     tax

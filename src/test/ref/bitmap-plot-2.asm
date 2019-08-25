@@ -58,8 +58,8 @@ main: {
     .label _11 = $20
     .label _16 = $17
     .label _17 = $17
-    .label _32 = $24
-    .label _33 = $24
+    .label _34 = $24
+    .label _35 = $24
     .label cos_x = $24
     .label xpos = $e
     .label x = $20
@@ -70,8 +70,8 @@ main: {
     .label idx_y = $12
     .label r = 8
     .label r_add = $1b
-    .label _34 = $24
-    .label _35 = $24
+    .label _36 = $24
+    .label _37 = $24
     jsr sin16s_gen2
     jsr bitmap_init
     jsr bitmap_clear
@@ -94,17 +94,17 @@ main: {
   b2:
     lda.z idx_x
     asl
-    sta.z _32
+    sta.z _34
     lda.z idx_x+1
     rol
-    sta.z _32+1
-    clc
-    lda.z _34
-    adc #<SINUS
-    sta.z _34
-    lda.z _34+1
-    adc #>SINUS
     sta.z _34+1
+    clc
+    lda.z _36
+    adc #<SINUS
+    sta.z _36
+    lda.z _36+1
+    adc #>SINUS
+    sta.z _36+1
     ldy #0
     lda (cos_x),y
     tax
@@ -134,17 +134,17 @@ main: {
     sta.z x+1
     lda.z idx_y
     asl
-    sta.z _33
+    sta.z _35
     lda.z idx_y+1
     rol
-    sta.z _33+1
-    clc
-    lda.z _35
-    adc #<SINUS
-    sta.z _35
-    lda.z _35+1
-    adc #>SINUS
     sta.z _35+1
+    clc
+    lda.z _37
+    adc #<SINUS
+    sta.z _37
+    lda.z _37+1
+    adc #>SINUS
+    sta.z _37+1
     ldy #0
     lda (sin_y),y
     tax

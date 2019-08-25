@@ -133,6 +133,11 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, false).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
 
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("CONTROL FLOW GRAPH BEFORE SIZEOF FIX");
+         getLog().append(program.getGraph().toString(program));
+      }
+
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
       new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
 

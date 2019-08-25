@@ -33,7 +33,7 @@ main::@7: scope:[main]  from main::@2
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#1 )
   (void()*) getfn::return#4 ← phi( main::@2/(void()*) getfn::return#0 )
   (void()*~) main::$1 ← (void()*) getfn::return#4
-  call (void()*~) main::$1 
+  call *((void()*~) main::$1) 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -221,7 +221,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [10] (void()*~) main::$1 ← (void()*) getfn::return#0
-  [11] call (void()*~) main::$1 
+  [11] call *((void()*~) main::$1) 
   to:main::@1
 getfn: scope:[getfn]  from main::@2
   [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1
@@ -347,7 +347,7 @@ main: {
     sta.z _1
     lda.z getfn.return+1
     sta.z _1+1
-    // [11] call (void()*~) main::$1 
+    // [11] call *((void()*~) main::$1) 
     jsr bi__1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -425,12 +425,12 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
-Statement [11] call (void()*~) main::$1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
-Statement [11] call (void()*~) main::$1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_WORD:3 [ getfn::return#3 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ getfn::b#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
@@ -505,7 +505,7 @@ main: {
     // main::@3
   b3:
     // [10] (void()*~) main::$1 ← (void()*) getfn::return#0
-    // [11] call (void()*~) main::$1 
+    // [11] call *((void()*~) main::$1) 
     jsr bi__1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
@@ -675,7 +675,7 @@ main: {
     // main::@1
     // main::@2
   b2:
-    // *(getfn(++i))();
+    // (*getfn(++i))();
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // getfn(++i)
@@ -686,8 +686,8 @@ main: {
     // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
     // main::@3
     // [10] (void()*~) main::$1 ← (void()*) getfn::return#0
-    // (getfn(++i))()
-    // [11] call (void()*~) main::$1 
+    // (*getfn(++i))()
+    // [11] call *((void()*~) main::$1) 
     jsr bi__1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 

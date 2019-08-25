@@ -42,11 +42,10 @@ public class TestPrograms {
       compileAndCompare("optimize-unsigned-comparisons");
    }
 
-
-   // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/261
+   // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/290
    @Test
-   public void testLoopheadProblem() throws IOException, URISyntaxException {
-      compileAndCompare("loophead-problem");
+   public void testLoopheadProblem3() throws IOException, URISyntaxException {
+      compileAndCompare("loophead-problem-3");
    }
 
    // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/290
@@ -55,6 +54,11 @@ public class TestPrograms {
       compileAndCompare("loophead-problem-2");
    }
 
+   // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/261
+   @Test
+   public void testLoopheadProblem() throws IOException, URISyntaxException {
+      compileAndCompare("loophead-problem");
+   }
 
    @Test
    public void testAsmMnemonicNames() throws IOException, URISyntaxException {

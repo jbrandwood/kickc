@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 
@@ -10,7 +11,7 @@ public class NumberParser {
 
       boolean isInt = !literal.contains(".");
       if(!isInt) {
-         throw new NumberFormatException("Not Implemented: non-integer parsing. " + literal);
+         throw new NumberFormatException("Non-integer numbers are not supported. " + literal);
       }
 
       SymbolType type = SymbolType.NUMBER;

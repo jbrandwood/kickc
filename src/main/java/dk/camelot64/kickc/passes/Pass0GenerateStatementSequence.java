@@ -1678,7 +1678,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
-      return NumberParser.parseIntegerLiteral(ctx.getText());
+      try {
+         return NumberParser.parseIntegerLiteral(ctx.getText());
+      } catch(NumberFormatException e) {
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      }
    }
 
    /** The current string encoding used if no explicit encoding is specified. */

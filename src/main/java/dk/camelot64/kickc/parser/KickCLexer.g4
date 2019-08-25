@@ -94,9 +94,8 @@ BYTES : 'bytes' ;
 CYCLES : 'cycles' ;
 LOGIC_NOT : '!' ;
 ASM_BYTE : '.byte' ;
-SIGNED : 'signed' ;
-UNSIGNED : 'unsigned' ;
-MNEMONIC:
+SIGNEDNESS : 'signed' | 'unsigned' ;
+ASM_MNEMONIC:
     'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
     'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
     'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |

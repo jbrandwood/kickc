@@ -31,11 +31,11 @@ public class KickCParser extends Parser {
 		IF=56, ELSE=57, WHILE=58, DO=59, FOR=60, SWITCH=61, RETURN=62, BREAK=63, 
 		CONTINUE=64, ASM=65, DEFAULT=66, CASE=67, STRUCT=68, ENUM=69, SIZEOF=70, 
 		TYPEID=71, KICKASM=72, RESOURCE=73, USES=74, CLOBBERS=75, BYTES=76, CYCLES=77, 
-		LOGIC_NOT=78, ASM_BYTE=79, SIGNED=80, UNSIGNED=81, MNEMONIC=82, IMPORT=83, 
-		SIMPLETYPE=84, STRING=85, CHAR=86, BOOLEAN=87, NUMBER=88, NUMFLOAT=89, 
-		BINFLOAT=90, DECFLOAT=91, HEXFLOAT=92, NUMINT=93, BININTEGER=94, DECINTEGER=95, 
-		HEXINTEGER=96, NAME=97, ASMREL=98, KICKASM_BODY=99, WS=100, COMMENT_LINE=101, 
-		COMMENT_BLOCK=102;
+		LOGIC_NOT=78, ASM_BYTE=79, SIGNEDNESS=80, ASM_MNEMONIC=81, IMPORT=82, 
+		SIMPLETYPE=83, STRING=84, CHAR=85, BOOLEAN=86, NUMBER=87, NUMFLOAT=88, 
+		BINFLOAT=89, DECFLOAT=90, HEXFLOAT=91, NUMINT=92, BININTEGER=93, DECINTEGER=94, 
+		HEXINTEGER=95, NAME=96, ASMREL=97, KICKASM_BODY=98, WS=99, COMMENT_LINE=100, 
+		COMMENT_BLOCK=101;
 	public static final int
 		RULE_file = 0, RULE_asmFile = 1, RULE_declSeq = 2, RULE_declOrImport = 3, 
 		RULE_importDecl = 4, RULE_decl = 5, RULE_typeDef = 6, RULE_declTypes = 7, 
@@ -71,7 +71,7 @@ public class KickCParser extends Parser {
 		"'while'", "'do'", "'for'", "'switch'", "'return'", "'break'", "'continue'", 
 		"'asm'", "'default'", "'case'", "'struct'", "'enum'", "'sizeof'", "'typeid'", 
 		"'kickasm'", "'resource'", "'uses'", "'clobbers'", "'bytes'", "'cycles'", 
-		"'!'", "'.byte'", "'signed'", "'unsigned'", null, "'import'"
+		"'!'", "'.byte'", null, null, "'import'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "TYPEDEFNAME", "CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", 
@@ -85,7 +85,7 @@ public class KickCParser extends Parser {
 		"INLINE", "VOLATILE", "INTERRUPT", "IF", "ELSE", "WHILE", "DO", "FOR", 
 		"SWITCH", "RETURN", "BREAK", "CONTINUE", "ASM", "DEFAULT", "CASE", "STRUCT", 
 		"ENUM", "SIZEOF", "TYPEID", "KICKASM", "RESOURCE", "USES", "CLOBBERS", 
-		"BYTES", "CYCLES", "LOGIC_NOT", "ASM_BYTE", "SIGNED", "UNSIGNED", "MNEMONIC", 
+		"BYTES", "CYCLES", "LOGIC_NOT", "ASM_BYTE", "SIGNEDNESS", "ASM_MNEMONIC", 
 		"IMPORT", "SIMPLETYPE", "STRING", "CHAR", "BOOLEAN", "NUMBER", "NUMFLOAT", 
 		"BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", "DECINTEGER", 
 		"HEXINTEGER", "NAME", "ASMREL", "KICKASM_BODY", "WS", "COMMENT_LINE", 
@@ -279,7 +279,7 @@ public class KickCParser extends Parser {
 			setState(95);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << TYPEDEF) | (1L << PRAGMA) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (KICKASM - 68)) | (1L << (SIGNED - 68)) | (1L << (UNSIGNED - 68)) | (1L << (IMPORT - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << TYPEDEF) | (1L << PRAGMA) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (KICKASM - 68)) | (1L << (SIGNEDNESS - 68)) | (1L << (IMPORT - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
 				{
 				{
 				setState(92);
@@ -352,8 +352,7 @@ public class KickCParser extends Parser {
 			case STRUCT:
 			case ENUM:
 			case KICKASM:
-			case SIGNED:
-			case UNSIGNED:
+			case SIGNEDNESS:
 			case SIMPLETYPE:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -432,7 +431,6 @@ public class KickCParser extends Parser {
 		public DeclVariablesContext declVariables() {
 			return getRuleContext(DeclVariablesContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StructDefContext structDef() {
 			return getRuleContext(StructDefContext.class,0);
 		}
@@ -734,7 +732,6 @@ public class KickCParser extends Parser {
 		public DeclVariableListContext declVariableList() {
 			return getRuleContext(DeclVariableListContext.class,0);
 		}
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public DeclVariableListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -824,7 +821,6 @@ public class KickCParser extends Parser {
 	}
 	public static class DeclVariableInitKasmContext extends DeclVariableInitContext {
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode ASSIGN() { return getToken(KickCParser.ASSIGN, 0); }
 		public DeclKasmContext declKasm() {
 			return getRuleContext(DeclKasmContext.class,0);
 		}
@@ -845,7 +841,6 @@ public class KickCParser extends Parser {
 	}
 	public static class DeclVariableInitExprContext extends DeclVariableInitContext {
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode ASSIGN() { return getToken(KickCParser.ASSIGN, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -922,10 +917,6 @@ public class KickCParser extends Parser {
 			return getRuleContext(DeclTypesContext.class,0);
 		}
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public ParameterListDeclContext parameterListDecl() {
 			return getRuleContext(ParameterListDeclContext.class,0);
 		}
@@ -967,7 +958,7 @@ public class KickCParser extends Parser {
 			setState(168);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNED - 68)) | (1L << (UNSIGNED - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNEDNESS - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
 				{
 				setState(167);
 				parameterListDecl();
@@ -981,7 +972,7 @@ public class KickCParser extends Parser {
 			setState(173);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNED - 64)) | (1L << (UNSIGNED - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 				{
 				setState(172);
 				stmtSeq();
@@ -1009,10 +1000,6 @@ public class KickCParser extends Parser {
 		}
 		public ParameterDeclContext parameterDecl(int i) {
 			return getRuleContext(ParameterDeclContext.class,i);
-		}
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
 		}
 		public ParameterListDeclContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1170,18 +1157,12 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectiveReserveContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public List<TerminalNode> NUMBER() { return getTokens(KickCParser.NUMBER); }
 		public TerminalNode NUMBER(int i) {
 			return getToken(KickCParser.NUMBER, i);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode RESERVE() { return getToken(KickCParser.RESERVE, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
-		}
 		public GlobalDirectiveReserveContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1198,9 +1179,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectivePcContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NUMBER() { return getToken(KickCParser.NUMBER, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode PC() { return getToken(KickCParser.PC, 0); }
 		public GlobalDirectivePcContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1219,9 +1198,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectiveCodeSegContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode CODESEG() { return getToken(KickCParser.CODESEG, 0); }
 		public GlobalDirectiveCodeSegContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1240,9 +1217,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectiveLinkScriptContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode STRING() { return getToken(KickCParser.STRING, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode LINK() { return getToken(KickCParser.LINK, 0); }
 		public GlobalDirectiveLinkScriptContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1261,9 +1236,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectiveEncodingContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode ENCODING() { return getToken(KickCParser.ENCODING, 0); }
 		public GlobalDirectiveEncodingContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1282,9 +1255,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectivePlatformContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode TARGET() { return getToken(KickCParser.TARGET, 0); }
 		public GlobalDirectivePlatformContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1303,9 +1274,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class GlobalDirectiveDataSegContext extends GlobalDirectiveContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TerminalNode PRAGMA() { return getToken(KickCParser.PRAGMA, 0); }
 		public TerminalNode DATASEG() { return getToken(KickCParser.DATASEG, 0); }
 		public GlobalDirectiveDataSegContext(GlobalDirectiveContext ctx) { copyFrom(ctx); }
@@ -1517,9 +1486,7 @@ public class KickCParser extends Parser {
 	}
 	public static class DirectiveInterruptContext extends DirectiveContext {
 		public TerminalNode INTERRUPT() { return getToken(KickCParser.INTERRUPT, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public DirectiveInterruptContext(DirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1571,15 +1538,9 @@ public class KickCParser extends Parser {
 	}
 	public static class DirectiveReserveZpContext extends DirectiveContext {
 		public TerminalNode RESERVE() { return getToken(KickCParser.RESERVE, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public List<TerminalNode> NUMBER() { return getTokens(KickCParser.NUMBER); }
 		public TerminalNode NUMBER(int i) {
 			return getToken(KickCParser.NUMBER, i);
-		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
 		}
 		public DirectiveReserveZpContext(DirectiveContext ctx) { copyFrom(ctx); }
 		@Override
@@ -1615,9 +1576,7 @@ public class KickCParser extends Parser {
 	}
 	public static class DirectiveAlignContext extends DirectiveContext {
 		public TerminalNode ALIGN() { return getToken(KickCParser.ALIGN, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NUMBER() { return getToken(KickCParser.NUMBER, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public DirectiveAlignContext(DirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1652,9 +1611,7 @@ public class KickCParser extends Parser {
 	}
 	public static class DirectiveRegisterContext extends DirectiveContext {
 		public TerminalNode REGISTER() { return getToken(KickCParser.REGISTER, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public DirectiveRegisterContext(DirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1868,7 +1825,7 @@ public class KickCParser extends Parser {
 				setState(279); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNED - 64)) | (1L << (UNSIGNED - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -1897,7 +1854,6 @@ public class KickCParser extends Parser {
 		public DeclVariablesContext declVariables() {
 			return getRuleContext(DeclVariablesContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StmtDeclVarContext(StmtContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1915,7 +1871,6 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtBreakContext extends StmtContext {
 		public TerminalNode BREAK() { return getToken(KickCParser.BREAK, 0); }
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StmtBreakContext(StmtContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1954,7 +1909,6 @@ public class KickCParser extends Parser {
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StmtExprContext(StmtContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1976,12 +1930,9 @@ public class KickCParser extends Parser {
 			return getRuleContext(StmtContext.class,0);
 		}
 		public TerminalNode WHILE() { return getToken(KickCParser.WHILE, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public List<DirectiveContext> directive() {
 			return getRuleContexts(DirectiveContext.class);
 		}
@@ -2005,11 +1956,9 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtAsmContext extends StmtContext {
 		public TerminalNode ASM() { return getToken(KickCParser.ASM, 0); }
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
 		public AsmLinesContext asmLines() {
 			return getRuleContext(AsmLinesContext.class,0);
 		}
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public AsmDirectivesContext asmDirectives() {
 			return getRuleContext(AsmDirectivesContext.class,0);
 		}
@@ -2030,7 +1979,6 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtContinueContext extends StmtContext {
 		public TerminalNode CONTINUE() { return getToken(KickCParser.CONTINUE, 0); }
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StmtContinueContext(StmtContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2048,16 +1996,12 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtSwitchContext extends StmtContext {
 		public TerminalNode SWITCH() { return getToken(KickCParser.SWITCH, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
 		public SwitchCasesContext switchCases() {
 			return getRuleContext(SwitchCasesContext.class,0);
 		}
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public StmtSwitchContext(StmtContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2074,8 +2018,6 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class StmtBlockContext extends StmtContext {
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public StmtSeqContext stmtSeq() {
 			return getRuleContext(StmtSeqContext.class,0);
 		}
@@ -2096,11 +2038,9 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtWhileContext extends StmtContext {
 		public TerminalNode WHILE() { return getToken(KickCParser.WHILE, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public StmtContext stmt() {
 			return getRuleContext(StmtContext.class,0);
 		}
@@ -2127,11 +2067,9 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtForContext extends StmtContext {
 		public TerminalNode FOR() { return getToken(KickCParser.FOR, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public ForLoopContext forLoop() {
 			return getRuleContext(ForLoopContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public StmtContext stmt() {
 			return getRuleContext(StmtContext.class,0);
 		}
@@ -2158,11 +2096,9 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtIfElseContext extends StmtContext {
 		public TerminalNode IF() { return getToken(KickCParser.IF, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public List<StmtContext> stmt() {
 			return getRuleContexts(StmtContext.class);
 		}
@@ -2187,7 +2123,6 @@ public class KickCParser extends Parser {
 	}
 	public static class StmtReturnContext extends StmtContext {
 		public TerminalNode RETURN() { return getToken(KickCParser.RETURN, 0); }
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
@@ -2234,7 +2169,7 @@ public class KickCParser extends Parser {
 				setState(286);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNED - 64)) | (1L << (UNSIGNED - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 					{
 					setState(285);
 					stmtSeq();
@@ -2490,7 +2425,6 @@ public class KickCParser extends Parser {
 			return getRuleContext(SwitchCaseContext.class,i);
 		}
 		public TerminalNode DEFAULT() { return getToken(KickCParser.DEFAULT, 0); }
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public StmtSeqContext stmtSeq() {
 			return getRuleContext(StmtSeqContext.class,0);
 		}
@@ -2546,7 +2480,7 @@ public class KickCParser extends Parser {
 				setState(375);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNED - 64)) | (1L << (UNSIGNED - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 					{
 					setState(374);
 					stmtSeq();
@@ -2574,7 +2508,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public StmtSeqContext stmtSeq() {
 			return getRuleContext(StmtSeqContext.class,0);
 		}
@@ -2613,7 +2546,7 @@ public class KickCParser extends Parser {
 			setState(383);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNED - 64)) | (1L << (UNSIGNED - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << IF) | (1L << WHILE) | (1L << DO) | (1L << FOR) | (1L << SWITCH) | (1L << RETURN) | (1L << BREAK))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 				{
 				setState(382);
 				stmtSeq();
@@ -2646,14 +2579,12 @@ public class KickCParser extends Parser {
 	}
 	public static class ForRangeContext extends ForLoopContext {
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode RANGE() { return getToken(KickCParser.RANGE, 0); }
 		public DeclTypesContext declTypes() {
 			return getRuleContext(DeclTypesContext.class,0);
 		}
@@ -2675,10 +2606,6 @@ public class KickCParser extends Parser {
 	public static class ForClassicContext extends ForLoopContext {
 		public ForClassicInitContext forClassicInit() {
 			return getRuleContext(ForClassicInitContext.class,0);
-		}
-		public List<TerminalNode> SEMICOLON() { return getTokens(KickCParser.SEMICOLON); }
-		public TerminalNode SEMICOLON(int i) {
-			return getToken(KickCParser.SEMICOLON, i);
 		}
 		public List<CommaExprContext> commaExpr() {
 			return getRuleContexts(CommaExprContext.class);
@@ -2741,7 +2668,7 @@ public class KickCParser extends Parser {
 				setState(393);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNED - 68)) | (1L << (UNSIGNED - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNEDNESS - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
 					{
 					setState(392);
 					declTypes();
@@ -2838,7 +2765,7 @@ public class KickCParser extends Parser {
 				setState(404);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNED - 68)) | (1L << (UNSIGNED - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNEDNESS - 68)) | (1L << (SIMPLETYPE - 68)))) != 0)) {
 					{
 					setState(403);
 					declVariables();
@@ -2880,11 +2807,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class TypeParContext extends TypeDeclContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TypeDeclContext typeDecl() {
 			return getRuleContext(TypeDeclContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TypeParContext(TypeDeclContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2904,8 +2829,6 @@ public class KickCParser extends Parser {
 		public TypeDeclContext typeDecl() {
 			return getRuleContext(TypeDeclContext.class,0);
 		}
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public TypeProcedureContext(TypeDeclContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2945,8 +2868,6 @@ public class KickCParser extends Parser {
 		public TypeDeclContext typeDecl() {
 			return getRuleContext(TypeDeclContext.class,0);
 		}
-		public TerminalNode BRACKET_BEGIN() { return getToken(KickCParser.BRACKET_BEGIN, 0); }
-		public TerminalNode BRACKET_END() { return getToken(KickCParser.BRACKET_END, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3038,8 +2959,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class TypeSignedSimpleContext extends TypeDeclContext {
-		public TerminalNode SIGNED() { return getToken(KickCParser.SIGNED, 0); }
-		public TerminalNode UNSIGNED() { return getToken(KickCParser.UNSIGNED, 0); }
+		public TerminalNode SIGNEDNESS() { return getToken(KickCParser.SIGNEDNESS, 0); }
 		public TerminalNode SIMPLETYPE() { return getToken(KickCParser.SIMPLETYPE, 0); }
 		public TypeSignedSimpleContext(TypeDeclContext ctx) { copyFrom(ctx); }
 		@Override
@@ -3143,15 +3063,7 @@ public class KickCParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(415);
-				_la = _input.LA(1);
-				if ( !(_la==SIGNED || _la==UNSIGNED) ) {
-				_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
+				match(SIGNEDNESS);
 				setState(417);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,36,_ctx) ) {
@@ -3333,8 +3245,6 @@ public class KickCParser extends Parser {
 
 	public static class StructDefContext extends ParserRuleContext {
 		public TerminalNode STRUCT() { return getToken(KickCParser.STRUCT, 0); }
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public List<StructMembersContext> structMembers() {
 			return getRuleContexts(StructMembersContext.class);
@@ -3395,7 +3305,7 @@ public class KickCParser extends Parser {
 				setState(453); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNED - 68)) | (1L << (UNSIGNED - 68)) | (1L << (SIMPLETYPE - 68)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT))) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & ((1L << (STRUCT - 68)) | (1L << (ENUM - 68)) | (1L << (SIGNEDNESS - 68)) | (1L << (SIMPLETYPE - 68)))) != 0) );
 			setState(455);
 			match(CURLY_END);
 			}
@@ -3415,7 +3325,6 @@ public class KickCParser extends Parser {
 		public DeclVariablesContext declVariables() {
 			return getRuleContext(DeclVariablesContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(KickCParser.SEMICOLON, 0); }
 		public StructMembersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3505,11 +3414,9 @@ public class KickCParser extends Parser {
 
 	public static class EnumDefContext extends ParserRuleContext {
 		public TerminalNode ENUM() { return getToken(KickCParser.ENUM, 0); }
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
 		public EnumMemberListContext enumMemberList() {
 			return getRuleContext(EnumMemberListContext.class,0);
 		}
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public EnumDefContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3575,7 +3482,6 @@ public class KickCParser extends Parser {
 		public EnumMemberListContext enumMemberList() {
 			return getRuleContext(EnumMemberListContext.class,0);
 		}
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public EnumMemberListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3654,7 +3560,6 @@ public class KickCParser extends Parser {
 
 	public static class EnumMemberContext extends ParserRuleContext {
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode ASSIGN() { return getToken(KickCParser.ASSIGN, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3744,7 +3649,6 @@ public class KickCParser extends Parser {
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3837,7 +3741,6 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class ExprPtrContext extends ExprContext {
-		public TerminalNode ASTERISK() { return getToken(KickCParser.ASTERISK, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3860,8 +3763,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode DEC() { return getToken(KickCParser.DEC, 0); }
-		public TerminalNode INC() { return getToken(KickCParser.INC, 0); }
 		public ExprPreModContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -3884,24 +3785,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode SHIFT_RIGHT() { return getToken(KickCParser.SHIFT_RIGHT, 0); }
-		public TerminalNode SHIFT_LEFT() { return getToken(KickCParser.SHIFT_LEFT, 0); }
-		public TerminalNode ASTERISK() { return getToken(KickCParser.ASTERISK, 0); }
-		public TerminalNode DIVIDE() { return getToken(KickCParser.DIVIDE, 0); }
-		public TerminalNode MODULO() { return getToken(KickCParser.MODULO, 0); }
-		public TerminalNode PLUS() { return getToken(KickCParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(KickCParser.MINUS, 0); }
-		public TerminalNode EQUAL() { return getToken(KickCParser.EQUAL, 0); }
-		public TerminalNode NOT_EQUAL() { return getToken(KickCParser.NOT_EQUAL, 0); }
-		public TerminalNode LESS_THAN() { return getToken(KickCParser.LESS_THAN, 0); }
-		public TerminalNode LESS_THAN_EQUAL() { return getToken(KickCParser.LESS_THAN_EQUAL, 0); }
-		public TerminalNode GREATER_THAN_EQUAL() { return getToken(KickCParser.GREATER_THAN_EQUAL, 0); }
-		public TerminalNode GREATER_THAN() { return getToken(KickCParser.GREATER_THAN, 0); }
-		public TerminalNode AND() { return getToken(KickCParser.AND, 0); }
-		public TerminalNode BIT_XOR() { return getToken(KickCParser.BIT_XOR, 0); }
-		public TerminalNode BIT_OR() { return getToken(KickCParser.BIT_OR, 0); }
-		public TerminalNode LOGIC_AND() { return getToken(KickCParser.LOGIC_AND, 0); }
-		public TerminalNode LOGIC_OR() { return getToken(KickCParser.LOGIC_OR, 0); }
 		public ExprBinaryContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -3919,8 +3802,6 @@ public class KickCParser extends Parser {
 	}
 	public static class ExprTypeIdContext extends ExprContext {
 		public TerminalNode TYPEID() { return getToken(KickCParser.TYPEID, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3946,8 +3827,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode DEC() { return getToken(KickCParser.DEC, 0); }
-		public TerminalNode INC() { return getToken(KickCParser.INC, 0); }
 		public ExprPostModContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -3967,13 +3846,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode PLUS() { return getToken(KickCParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(KickCParser.MINUS, 0); }
-		public TerminalNode LOGIC_NOT() { return getToken(KickCParser.LOGIC_NOT, 0); }
-		public TerminalNode AND() { return getToken(KickCParser.AND, 0); }
-		public TerminalNode BIT_NOT() { return getToken(KickCParser.BIT_NOT, 0); }
-		public TerminalNode LESS_THAN() { return getToken(KickCParser.LESS_THAN, 0); }
-		public TerminalNode GREATER_THAN() { return getToken(KickCParser.GREATER_THAN, 0); }
 		public ExprUnaryContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4027,7 +3899,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode ARROW() { return getToken(KickCParser.ARROW, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public ExprArrowContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -4048,7 +3919,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode DOT() { return getToken(KickCParser.DOT, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public ExprDotContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -4066,17 +3936,11 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class InitListContext extends ExprContext {
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
 		}
 		public InitListContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -4094,11 +3958,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class ExprCastContext extends ExprContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public TypeDeclContext typeDecl() {
 			return getRuleContext(TypeDeclContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -4121,8 +3983,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public ParameterListContext parameterList() {
 			return getRuleContext(ParameterListContext.class,0);
 		}
@@ -4142,11 +4002,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class ExprParContext extends ExprContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public ExprParContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4164,8 +4022,6 @@ public class KickCParser extends Parser {
 	}
 	public static class ExprSizeOfContext extends ExprContext {
 		public TerminalNode SIZEOF() { return getToken(KickCParser.SIZEOF, 0); }
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -4271,8 +4127,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode QUESTION() { return getToken(KickCParser.QUESTION, 0); }
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public ExprTernaryContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4295,7 +4149,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode ASSIGN() { return getToken(KickCParser.ASSIGN, 0); }
 		public ExprAssignmentContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4315,11 +4168,9 @@ public class KickCParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode BRACKET_BEGIN() { return getToken(KickCParser.BRACKET_BEGIN, 0); }
 		public CommaExprContext commaExpr() {
 			return getRuleContext(CommaExprContext.class,0);
 		}
-		public TerminalNode BRACKET_END() { return getToken(KickCParser.BRACKET_END, 0); }
 		public ExprArrayContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4910,10 +4761,6 @@ public class KickCParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
-		}
 		public ParameterListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5031,17 +4878,11 @@ public class KickCParser extends Parser {
 	}
 
 	public static class AsmDirectivesContext extends ParserRuleContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public List<AsmDirectiveContext> asmDirective() {
 			return getRuleContexts(AsmDirectiveContext.class);
 		}
 		public AsmDirectiveContext asmDirective(int i) {
 			return getRuleContext(AsmDirectiveContext.class,i);
-		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
 		}
 		public AsmDirectivesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5384,7 +5225,7 @@ public class KickCParser extends Parser {
 			setState(663);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (LOGIC_NOT - 78)) | (1L << (ASM_BYTE - 78)) | (1L << (MNEMONIC - 78)) | (1L << (NAME - 78)))) != 0)) {
+			while (((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (LOGIC_NOT - 78)) | (1L << (ASM_BYTE - 78)) | (1L << (ASM_MNEMONIC - 78)) | (1L << (NAME - 78)))) != 0)) {
 				{
 				{
 				setState(660);
@@ -5453,7 +5294,7 @@ public class KickCParser extends Parser {
 				asmLabel();
 				}
 				break;
-			case MNEMONIC:
+			case ASM_MNEMONIC:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(669);
@@ -5495,7 +5336,6 @@ public class KickCParser extends Parser {
 	}
 	public static class AsmLabelNameContext extends AsmLabelContext {
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public AsmLabelNameContext(AsmLabelContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -5512,8 +5352,6 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmLabelMultiContext extends AsmLabelContext {
-		public TerminalNode LOGIC_NOT() { return getToken(KickCParser.LOGIC_NOT, 0); }
-		public TerminalNode COLON() { return getToken(KickCParser.COLON, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public AsmLabelMultiContext(AsmLabelContext ctx) { copyFrom(ctx); }
 		@Override
@@ -5585,7 +5423,7 @@ public class KickCParser extends Parser {
 	}
 
 	public static class AsmInstructionContext extends ParserRuleContext {
-		public TerminalNode MNEMONIC() { return getToken(KickCParser.MNEMONIC, 0); }
+		public TerminalNode ASM_MNEMONIC() { return getToken(KickCParser.ASM_MNEMONIC, 0); }
 		public AsmParamModeContext asmParamMode() {
 			return getRuleContext(AsmParamModeContext.class,0);
 		}
@@ -5615,7 +5453,7 @@ public class KickCParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(682);
-			match(MNEMONIC);
+			match(ASM_MNEMONIC);
 			setState(684);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,64,_ctx) ) {
@@ -5646,10 +5484,6 @@ public class KickCParser extends Parser {
 		}
 		public AsmExprContext asmExpr(int i) {
 			return getRuleContext(AsmExprContext.class,i);
-		}
-		public List<TerminalNode> COMMA() { return getTokens(KickCParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(KickCParser.COMMA, i);
 		}
 		public AsmBytesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5722,7 +5556,6 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmModeImmContext extends AsmParamModeContext {
-		public TerminalNode ASM_IMM() { return getToken(KickCParser.ASM_IMM, 0); }
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
@@ -5745,7 +5578,6 @@ public class KickCParser extends Parser {
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public AsmModeAbsXYContext(AsmParamModeContext ctx) { copyFrom(ctx); }
 		@Override
@@ -5763,13 +5595,10 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmModeIdxIndXYContext extends AsmParamModeContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public AsmModeIdxIndXYContext(AsmParamModeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -5786,11 +5615,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmModeIndContext extends AsmParamModeContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
 		public AsmModeIndContext(AsmParamModeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -5826,12 +5653,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmModeIndIdxXYContext extends AsmParamModeContext {
-		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode PAR_END() { return getToken(KickCParser.PAR_END, 0); }
-		public TerminalNode COMMA() { return getToken(KickCParser.COMMA, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
 		public AsmModeIndIdxXYContext(AsmParamModeContext ctx) { copyFrom(ctx); }
 		@Override
@@ -5955,9 +5779,7 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmExprReplaceContext extends AsmExprContext {
-		public TerminalNode CURLY_BEGIN() { return getToken(KickCParser.CURLY_BEGIN, 0); }
 		public TerminalNode NAME() { return getToken(KickCParser.NAME, 0); }
-		public TerminalNode CURLY_END() { return getToken(KickCParser.CURLY_END, 0); }
 		public AsmExprReplaceContext(AsmExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -5991,11 +5813,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class AsmExprParContext extends AsmExprContext {
-		public TerminalNode BRACKET_BEGIN() { return getToken(KickCParser.BRACKET_BEGIN, 0); }
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode BRACKET_END() { return getToken(KickCParser.BRACKET_END, 0); }
 		public AsmExprParContext(AsmExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -6018,13 +5838,6 @@ public class KickCParser extends Parser {
 		public AsmExprContext asmExpr(int i) {
 			return getRuleContext(AsmExprContext.class,i);
 		}
-		public TerminalNode DOT() { return getToken(KickCParser.DOT, 0); }
-		public TerminalNode SHIFT_LEFT() { return getToken(KickCParser.SHIFT_LEFT, 0); }
-		public TerminalNode SHIFT_RIGHT() { return getToken(KickCParser.SHIFT_RIGHT, 0); }
-		public TerminalNode ASTERISK() { return getToken(KickCParser.ASTERISK, 0); }
-		public TerminalNode DIVIDE() { return getToken(KickCParser.DIVIDE, 0); }
-		public TerminalNode PLUS() { return getToken(KickCParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(KickCParser.MINUS, 0); }
 		public AsmExprBinaryContext(AsmExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -6078,10 +5891,6 @@ public class KickCParser extends Parser {
 		public AsmExprContext asmExpr() {
 			return getRuleContext(AsmExprContext.class,0);
 		}
-		public TerminalNode PLUS() { return getToken(KickCParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(KickCParser.MINUS, 0); }
-		public TerminalNode LESS_THAN() { return getToken(KickCParser.LESS_THAN, 0); }
-		public TerminalNode GREATER_THAN() { return getToken(KickCParser.GREATER_THAN, 0); }
 		public AsmExprUnaryContext(AsmExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -6431,7 +6240,7 @@ public class KickCParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3h\u02f4\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3g\u02f4\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -6485,243 +6294,242 @@ public class KickCParser extends Parser {
 		"+\3+\3+\3+\3+\3+\3+\5+\u02d1\n+\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3"+
 		",\3,\5,\u02e1\n,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\3,\7,\u02ef\n,\f,\16"+
 		",\u02f2\13,\3,\2\b\24.:>@V-\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \""+
-		"$&(*,.\60\62\64\668:<>@BDFHJLNPRTV\2\f\3\2RS\3\2\26\27\5\2\21\22\30\31"+
-		"PP\4\2  ##\3\2\34\35\3\2\23\25\3\2\21\22\3\2\36#\5\2\21\22  ##\3\2\23"+
-		"\24\2\u035c\2X\3\2\2\2\4[\3\2\2\2\6a\3\2\2\2\bf\3\2\2\2\nh\3\2\2\2\fz"+
-		"\3\2\2\2\16|\3\2\2\2\20\u0084\3\2\2\2\22\u008e\3\2\2\2\24\u0091\3\2\2"+
-		"\2\26\u00a4\3\2\2\2\30\u00a6\3\2\2\2\32\u00b3\3\2\2\2\34\u00bf\3\2\2\2"+
-		"\36\u00f2\3\2\2\2 \u0114\3\2\2\2\"\u0117\3\2\2\2$\u016f\3\2\2\2&\u0172"+
-		"\3\2\2\2(\u017d\3\2\2\2*\u0193\3\2\2\2,\u0199\3\2\2\2.\u01aa\3\2\2\2\60"+
-		"\u01bc\3\2\2\2\62\u01bf\3\2\2\2\64\u01cb\3\2\2\2\66\u01ce\3\2\2\28\u01d1"+
-		"\3\2\2\2:\u01d9\3\2\2\2<\u01e4\3\2\2\2>\u01e9\3\2\2\2@\u022a\3\2\2\2B"+
-		"\u026b\3\2\2\2D\u0273\3\2\2\2F\u0279\3\2\2\2H\u0293\3\2\2\2J\u0295\3\2"+
-		"\2\2L\u02a1\3\2\2\2N\u02aa\3\2\2\2P\u02ac\3\2\2\2R\u02b0\3\2\2\2T\u02d0"+
-		"\3\2\2\2V\u02e0\3\2\2\2XY\5\6\4\2YZ\7\2\2\3Z\3\3\2\2\2[\\\5J&\2\\]\7\2"+
-		"\2\3]\5\3\2\2\2^`\5\b\5\2_^\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2b\7\3"+
-		"\2\2\2ca\3\2\2\2dg\5\f\7\2eg\5\n\6\2fd\3\2\2\2fe\3\2\2\2g\t\3\2\2\2hi"+
-		"\7U\2\2ij\7W\2\2j\13\3\2\2\2kl\5\22\n\2lm\7\n\2\2m{\3\2\2\2no\5\62\32"+
-		"\2op\7\n\2\2p{\3\2\2\2qr\58\35\2rs\7\n\2\2s{\3\2\2\2t{\5\30\r\2u{\5D#"+
-		"\2v{\5\36\20\2wx\5\16\b\2xy\7\n\2\2y{\3\2\2\2zk\3\2\2\2zn\3\2\2\2zq\3"+
-		"\2\2\2zt\3\2\2\2zu\3\2\2\2zv\3\2\2\2zw\3\2\2\2{\r\3\2\2\2|}\7)\2\2}~\5"+
-		".\30\2~\177\7c\2\2\177\u0080\b\b\1\2\u0080\17\3\2\2\2\u0081\u0083\5 \21"+
-		"\2\u0082\u0081\3\2\2\2\u0083\u0086\3\2\2\2\u0084\u0082\3\2\2\2\u0084\u0085"+
-		"\3\2\2\2\u0085\u0087\3\2\2\2\u0086\u0084\3\2\2\2\u0087\u008b\5.\30\2\u0088"+
-		"\u008a\5 \21\2\u0089\u0088\3\2\2\2\u008a\u008d\3\2\2\2\u008b\u0089\3\2"+
-		"\2\2\u008b\u008c\3\2\2\2\u008c\21\3\2\2\2\u008d\u008b\3\2\2\2\u008e\u008f"+
-		"\5\20\t\2\u008f\u0090\5\24\13\2\u0090\23\3\2\2\2\u0091\u0092\b\13\1\2"+
-		"\u0092\u0093\5\26\f\2\u0093\u0099\3\2\2\2\u0094\u0095\f\3\2\2\u0095\u0096"+
-		"\7\f\2\2\u0096\u0098\5\26\f\2\u0097\u0094\3\2\2\2\u0098\u009b\3\2\2\2"+
-		"\u0099\u0097\3\2\2\2\u0099\u009a\3\2\2\2\u009a\25\3\2\2\2\u009b\u0099"+
-		"\3\2\2\2\u009c\u009f\7c\2\2\u009d\u009e\7&\2\2\u009e\u00a0\5@!\2\u009f"+
-		"\u009d\3\2\2\2\u009f\u00a0\3\2\2\2\u00a0\u00a5\3\2\2\2\u00a1\u00a2\7c"+
-		"\2\2\u00a2\u00a3\7&\2\2\u00a3\u00a5\5D#\2\u00a4\u009c\3\2\2\2\u00a4\u00a1"+
-		"\3\2\2\2\u00a5\27\3\2\2\2\u00a6\u00a7\5\20\t\2\u00a7\u00a8\7c\2\2\u00a8"+
-		"\u00aa\7\b\2\2\u00a9\u00ab\5\32\16\2\u00aa\u00a9\3\2\2\2\u00aa\u00ab\3"+
-		"\2\2\2\u00ab\u00ac\3\2\2\2\u00ac\u00ad\7\t\2\2\u00ad\u00af\7\4\2\2\u00ae"+
-		"\u00b0\5\"\22\2\u00af\u00ae\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0\u00b1\3"+
-		"\2\2\2\u00b1\u00b2\7\5\2\2\u00b2\31\3\2\2\2\u00b3\u00b8\5\34\17\2\u00b4"+
-		"\u00b5\7\f\2\2\u00b5\u00b7\5\34\17\2\u00b6\u00b4\3\2\2\2\u00b7\u00ba\3"+
-		"\2\2\2\u00b8\u00b6\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\33\3\2\2\2\u00ba"+
-		"\u00b8\3\2\2\2\u00bb\u00bc\5\20\t\2\u00bc\u00bd\7c\2\2\u00bd\u00c0\3\2"+
-		"\2\2\u00be\u00c0\7V\2\2\u00bf\u00bb\3\2\2\2\u00bf\u00be\3\2\2\2\u00c0"+
-		"\35\3\2\2\2\u00c1\u00c2\7*\2\2\u00c2\u00c3\7+\2\2\u00c3\u00c4\3\2\2\2"+
-		"\u00c4\u00c5\7\b\2\2\u00c5\u00ca\7Z\2\2\u00c6\u00c7\7\f\2\2\u00c7\u00c9"+
-		"\7Z\2\2\u00c8\u00c6\3\2\2\2\u00c9\u00cc\3\2\2\2\u00ca\u00c8\3\2\2\2\u00ca"+
-		"\u00cb\3\2\2\2\u00cb\u00cd\3\2\2\2\u00cc\u00ca\3\2\2\2\u00cd\u00f3\7\t"+
-		"\2\2\u00ce\u00cf\7*\2\2\u00cf\u00d0\7,\2\2\u00d0\u00d1\3\2\2\2\u00d1\u00d2"+
-		"\7\b\2\2\u00d2\u00d3\7Z\2\2\u00d3\u00f3\7\t\2\2\u00d4\u00d5\7*\2\2\u00d5"+
-		"\u00d6\7-\2\2\u00d6\u00d7\3\2\2\2\u00d7\u00d8\7\b\2\2\u00d8\u00d9\7c\2"+
-		"\2\u00d9\u00f3\7\t\2\2\u00da\u00db\7*\2\2\u00db\u00dc\7.\2\2\u00dc\u00dd"+
-		"\3\2\2\2\u00dd\u00de\7\b\2\2\u00de\u00df\7W\2\2\u00df\u00f3\7\t\2\2\u00e0"+
-		"\u00e1\7*\2\2\u00e1\u00e2\7/\2\2\u00e2\u00e3\3\2\2\2\u00e3\u00e4\7\b\2"+
-		"\2\u00e4\u00e5\7c\2\2\u00e5\u00f3\7\t\2\2\u00e6\u00e7\7*\2\2\u00e7\u00e8"+
-		"\7\60\2\2\u00e8\u00e9\3\2\2\2\u00e9\u00ea\7\b\2\2\u00ea\u00eb\7c\2\2\u00eb"+
-		"\u00f3\7\t\2\2\u00ec\u00ed\7*\2\2\u00ed\u00ee\7\61\2\2\u00ee\u00ef\3\2"+
-		"\2\2\u00ef\u00f0\7\b\2\2\u00f0\u00f1\7c\2\2\u00f1\u00f3\7\t\2\2\u00f2"+
-		"\u00c1\3\2\2\2\u00f2\u00ce\3\2\2\2\u00f2\u00d4\3\2\2\2\u00f2\u00da\3\2"+
-		"\2\2\u00f2\u00e0\3\2\2\2\u00f2\u00e6\3\2\2\2\u00f2\u00ec\3\2\2\2\u00f3"+
-		"\37\3\2\2\2\u00f4\u0115\7\62\2\2\u00f5\u0115\7\63\2\2\u00f6\u0115\7\64"+
-		"\2\2\u00f7\u00f8\7\65\2\2\u00f8\u00f9\7\b\2\2\u00f9\u00fa\7Z\2\2\u00fa"+
-		"\u0115\7\t\2\2\u00fb\u00ff\7\66\2\2\u00fc\u00fd\7\b\2\2\u00fd\u00fe\7"+
-		"c\2\2\u00fe\u0100\7\t\2\2\u00ff\u00fc\3\2\2\2\u00ff\u0100\3\2\2\2\u0100"+
-		"\u0115\3\2\2\2\u0101\u0115\7\67\2\2\u0102\u0115\78\2\2\u0103\u0107\79"+
-		"\2\2\u0104\u0105\7\b\2\2\u0105\u0106\7c\2\2\u0106\u0108\7\t\2\2\u0107"+
-		"\u0104\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u0115\3\2\2\2\u0109\u010a\7+"+
-		"\2\2\u010a\u010b\7\b\2\2\u010b\u0110\7Z\2\2\u010c\u010d\7\f\2\2\u010d"+
-		"\u010f\7Z\2\2\u010e\u010c\3\2\2\2\u010f\u0112\3\2\2\2\u0110\u010e\3\2"+
-		"\2\2\u0110\u0111\3\2\2\2\u0111\u0113\3\2\2\2\u0112\u0110\3\2\2\2\u0113"+
-		"\u0115\7\t\2\2\u0114\u00f4\3\2\2\2\u0114\u00f5\3\2\2\2\u0114\u00f6\3\2"+
-		"\2\2\u0114\u00f7\3\2\2\2\u0114\u00fb\3\2\2\2\u0114\u0101\3\2\2\2\u0114"+
-		"\u0102\3\2\2\2\u0114\u0103\3\2\2\2\u0114\u0109\3\2\2\2\u0115!\3\2\2\2"+
-		"\u0116\u0118\5$\23\2\u0117\u0116\3\2\2\2\u0118\u0119\3\2\2\2\u0119\u0117"+
-		"\3\2\2\2\u0119\u011a\3\2\2\2\u011a#\3\2\2\2\u011b\u011c\5\22\n\2\u011c"+
-		"\u011d\7\n\2\2\u011d\u0170\3\2\2\2\u011e\u0120\7\4\2\2\u011f\u0121\5\""+
-		"\22\2\u0120\u011f\3\2\2\2\u0120\u0121\3\2\2\2\u0121\u0122\3\2\2\2\u0122"+
-		"\u0170\7\5\2\2\u0123\u0124\5> \2\u0124\u0125\7\n\2\2\u0125\u0170\3\2\2"+
-		"\2\u0126\u0127\7:\2\2\u0127\u0128\7\b\2\2\u0128\u0129\5> \2\u0129\u012a"+
-		"\7\t\2\2\u012a\u012d\5$\23\2\u012b\u012c\7;\2\2\u012c\u012e\5$\23\2\u012d"+
-		"\u012b\3\2\2\2\u012d\u012e\3\2\2\2\u012e\u0170\3\2\2\2\u012f\u0131\5 "+
-		"\21\2\u0130\u012f\3\2\2\2\u0131\u0134\3\2\2\2\u0132\u0130\3\2\2\2\u0132"+
-		"\u0133\3\2\2\2\u0133\u0135\3\2\2\2\u0134\u0132\3\2\2\2\u0135\u0136\7<"+
-		"\2\2\u0136\u0137\7\b\2\2\u0137\u0138\5> \2\u0138\u0139\7\t\2\2\u0139\u013a"+
-		"\5$\23\2\u013a\u0170\3\2\2\2\u013b\u013d\5 \21\2\u013c\u013b\3\2\2\2\u013d"+
-		"\u0140\3\2\2\2\u013e\u013c\3\2\2\2\u013e\u013f\3\2\2\2\u013f\u0141\3\2"+
-		"\2\2\u0140\u013e\3\2\2\2\u0141\u0142\7=\2\2\u0142\u0143\5$\23\2\u0143"+
-		"\u0144\7<\2\2\u0144\u0145\7\b\2\2\u0145\u0146\5> \2\u0146\u0147\7\t\2"+
-		"\2\u0147\u0148\7\n\2\2\u0148\u0170\3\2\2\2\u0149\u014b\5 \21\2\u014a\u0149"+
-		"\3\2\2\2\u014b\u014e\3\2\2\2\u014c\u014a\3\2\2\2\u014c\u014d\3\2\2\2\u014d"+
-		"\u014f\3\2\2\2\u014e\u014c\3\2\2\2\u014f\u0150\7>\2\2\u0150\u0151\7\b"+
-		"\2\2\u0151\u0152\5*\26\2\u0152\u0153\7\t\2\2\u0153\u0154\5$\23\2\u0154"+
-		"\u0170\3\2\2\2\u0155\u0156\7?\2\2\u0156\u0157\7\b\2\2\u0157\u0158\5> "+
-		"\2\u0158\u0159\7\t\2\2\u0159\u015a\7\4\2\2\u015a\u015b\5&\24\2\u015b\u015c"+
-		"\7\5\2\2\u015c\u0170\3\2\2\2\u015d\u015f\7@\2\2\u015e\u0160\5> \2\u015f"+
-		"\u015e\3\2\2\2\u015f\u0160\3\2\2\2\u0160\u0161\3\2\2\2\u0161\u0170\7\n"+
-		"\2\2\u0162\u0163\7A\2\2\u0163\u0170\7\n\2\2\u0164\u0165\7B\2\2\u0165\u0170"+
-		"\7\n\2\2\u0166\u0168\7C\2\2\u0167\u0169\5F$\2\u0168\u0167\3\2\2\2\u0168"+
-		"\u0169\3\2\2\2\u0169\u016a\3\2\2\2\u016a\u016b\7\4\2\2\u016b\u016c\5J"+
-		"&\2\u016c\u016d\7\5\2\2\u016d\u0170\3\2\2\2\u016e\u0170\5D#\2\u016f\u011b"+
-		"\3\2\2\2\u016f\u011e\3\2\2\2\u016f\u0123\3\2\2\2\u016f\u0126\3\2\2\2\u016f"+
-		"\u0132\3\2\2\2\u016f\u013e\3\2\2\2\u016f\u014c\3\2\2\2\u016f\u0155\3\2"+
-		"\2\2\u016f\u015d\3\2\2\2\u016f\u0162\3\2\2\2\u016f\u0164\3\2\2\2\u016f"+
-		"\u0166\3\2\2\2\u016f\u016e\3\2\2\2\u0170%\3\2\2\2\u0171\u0173\5(\25\2"+
-		"\u0172\u0171\3\2\2\2\u0173\u0174\3\2\2\2\u0174\u0172\3\2\2\2\u0174\u0175"+
-		"\3\2\2\2\u0175\u017b\3\2\2\2\u0176\u0177\7D\2\2\u0177\u0179\7\13\2\2\u0178"+
-		"\u017a\5\"\22\2\u0179\u0178\3\2\2\2\u0179\u017a\3\2\2\2\u017a\u017c\3"+
-		"\2\2\2\u017b\u0176\3\2\2\2\u017b\u017c\3\2\2\2\u017c\'\3\2\2\2\u017d\u017e"+
-		"\7E\2\2\u017e\u017f\5@!\2\u017f\u0181\7\13\2\2\u0180\u0182\5\"\22\2\u0181"+
-		"\u0180\3\2\2\2\u0181\u0182\3\2\2\2\u0182)\3\2\2\2\u0183\u0184\5,\27\2"+
-		"\u0184\u0185\7\n\2\2\u0185\u0186\5> \2\u0186\u0188\7\n\2\2\u0187\u0189"+
-		"\5> \2\u0188\u0187\3\2\2\2\u0188\u0189\3\2\2\2\u0189\u0194\3\2\2\2\u018a"+
-		"\u018c\5\20\t\2\u018b\u018a\3\2\2\2\u018b\u018c\3\2\2\2\u018c\u018d\3"+
-		"\2\2\2\u018d\u018e\7c\2\2\u018e\u018f\7\13\2\2\u018f\u0190\5@!\2\u0190"+
-		"\u0191\7\r\2\2\u0191\u0192\5@!\2\u0192\u0194\3\2\2\2\u0193\u0183\3\2\2"+
-		"\2\u0193\u018b\3\2\2\2\u0194+\3\2\2\2\u0195\u0197\5\22\n\2\u0196\u0195"+
-		"\3\2\2\2\u0196\u0197\3\2\2\2\u0197\u019a\3\2\2\2\u0198\u019a\5> \2\u0199"+
-		"\u0196\3\2\2\2\u0199\u0198\3\2\2\2\u019a-\3\2\2\2\u019b\u019c\b\30\1\2"+
-		"\u019c\u019d\7\b\2\2\u019d\u019e\5.\30\2\u019e\u019f\7\t\2\2\u019f\u01ab"+
-		"\3\2\2\2\u01a0\u01ab\7V\2\2\u01a1\u01a3\t\2\2\2\u01a2\u01a4\7V\2\2\u01a3"+
-		"\u01a2\3\2\2\2\u01a3\u01a4\3\2\2\2\u01a4\u01ab\3\2\2\2\u01a5\u01ab\5\62"+
-		"\32\2\u01a6\u01ab\5\60\31\2\u01a7\u01ab\58\35\2\u01a8\u01ab\5\66\34\2"+
-		"\u01a9\u01ab\7\3\2\2\u01aa\u019b\3\2\2\2\u01aa\u01a0\3\2\2\2\u01aa\u01a1"+
-		"\3\2\2\2\u01aa\u01a5\3\2\2\2\u01aa\u01a6\3\2\2\2\u01aa\u01a7\3\2\2\2\u01aa"+
-		"\u01a8\3\2\2\2\u01aa\u01a9\3\2\2\2\u01ab\u01b9\3\2\2\2\u01ac\u01ad\f\n"+
-		"\2\2\u01ad\u01b8\7\23\2\2\u01ae\u01af\f\t\2\2\u01af\u01b1\7\6\2\2\u01b0"+
-		"\u01b2\5@!\2\u01b1\u01b0\3\2\2\2\u01b1\u01b2\3\2\2\2\u01b2\u01b3\3\2\2"+
-		"\2\u01b3\u01b8\7\7\2\2\u01b4\u01b5\f\b\2\2\u01b5\u01b6\7\b\2\2\u01b6\u01b8"+
-		"\7\t\2\2\u01b7\u01ac\3\2\2\2\u01b7\u01ae\3\2\2\2\u01b7\u01b4\3\2\2\2\u01b8"+
-		"\u01bb\3\2\2\2\u01b9\u01b7\3\2\2\2\u01b9\u01ba\3\2\2\2\u01ba/\3\2\2\2"+
-		"\u01bb\u01b9\3\2\2\2\u01bc\u01bd\7F\2\2\u01bd\u01be\7c\2\2\u01be\61\3"+
-		"\2\2\2\u01bf\u01c1\7F\2\2\u01c0\u01c2\7c\2\2\u01c1\u01c0\3\2\2\2\u01c1"+
-		"\u01c2\3\2\2\2\u01c2\u01c3\3\2\2\2\u01c3\u01c5\7\4\2\2\u01c4\u01c6\5\64"+
-		"\33\2\u01c5\u01c4\3\2\2\2\u01c6\u01c7\3\2\2\2\u01c7\u01c5\3\2\2\2\u01c7"+
-		"\u01c8\3\2\2\2\u01c8\u01c9\3\2\2\2\u01c9\u01ca\7\5\2\2\u01ca\63\3\2\2"+
-		"\2\u01cb\u01cc\5\22\n\2\u01cc\u01cd\7\n\2\2\u01cd\65\3\2\2\2\u01ce\u01cf"+
-		"\7G\2\2\u01cf\u01d0\7c\2\2\u01d0\67\3\2\2\2\u01d1\u01d3\7G\2\2\u01d2\u01d4"+
-		"\7c\2\2\u01d3\u01d2\3\2\2\2\u01d3\u01d4\3\2\2\2\u01d4\u01d5\3\2\2\2\u01d5"+
-		"\u01d6\7\4\2\2\u01d6\u01d7\5:\36\2\u01d7\u01d8\7\5\2\2\u01d89\3\2\2\2"+
-		"\u01d9\u01da\b\36\1\2\u01da\u01db\5<\37\2\u01db\u01e1\3\2\2\2\u01dc\u01dd"+
-		"\f\3\2\2\u01dd\u01de\7\f\2\2\u01de\u01e0\5<\37\2\u01df\u01dc\3\2\2\2\u01e0"+
-		"\u01e3\3\2\2\2\u01e1\u01df\3\2\2\2\u01e1\u01e2\3\2\2\2\u01e2;\3\2\2\2"+
-		"\u01e3\u01e1\3\2\2\2\u01e4\u01e7\7c\2\2\u01e5\u01e6\7&\2\2\u01e6\u01e8"+
-		"\5@!\2\u01e7\u01e5\3\2\2\2\u01e7\u01e8\3\2\2\2\u01e8=\3\2\2\2\u01e9\u01ea"+
-		"\b \1\2\u01ea\u01eb\5@!\2\u01eb\u01f1\3\2\2\2\u01ec\u01ed\f\3\2\2\u01ed"+
-		"\u01ee\7\f\2\2\u01ee\u01f0\5@!\2\u01ef\u01ec\3\2\2\2\u01f0\u01f3\3\2\2"+
-		"\2\u01f1\u01ef\3\2\2\2\u01f1\u01f2\3\2\2\2\u01f2?\3\2\2\2\u01f3\u01f1"+
-		"\3\2\2\2\u01f4\u01f5\b!\1\2\u01f5\u01f6\7\b\2\2\u01f6\u01f7\5> \2\u01f7"+
-		"\u01f8\7\t\2\2\u01f8\u022b\3\2\2\2\u01f9\u01fa\7H\2\2\u01fa\u01fd\7\b"+
-		"\2\2\u01fb\u01fe\5@!\2\u01fc\u01fe\5.\30\2\u01fd\u01fb\3\2\2\2\u01fd\u01fc"+
-		"\3\2\2\2\u01fe\u01ff\3\2\2\2\u01ff\u0200\7\t\2\2\u0200\u022b\3\2\2\2\u0201"+
-		"\u0202\7I\2\2\u0202\u0205\7\b\2\2\u0203\u0206\5@!\2\u0204\u0206\5.\30"+
-		"\2\u0205\u0203\3\2\2\2\u0205\u0204\3\2\2\2\u0206\u0207\3\2\2\2\u0207\u0208"+
-		"\7\t\2\2\u0208\u022b\3\2\2\2\u0209\u020a\7\b\2\2\u020a\u020b\5.\30\2\u020b"+
-		"\u020c\7\t\2\2\u020c\u020d\5@!\32\u020d\u022b\3\2\2\2\u020e\u020f\t\3"+
-		"\2\2\u020f\u022b\5@!\31\u0210\u0211\7\23\2\2\u0211\u022b\5@!\27\u0212"+
-		"\u0213\t\4\2\2\u0213\u022b\5@!\26\u0214\u0215\t\5\2\2\u0215\u022b\5@!"+
-		"\22\u0216\u0217\7\4\2\2\u0217\u021c\5@!\2\u0218\u0219\7\f\2\2\u0219\u021b"+
-		"\5@!\2\u021a\u0218\3\2\2\2\u021b\u021e\3\2\2\2\u021c\u021a\3\2\2\2\u021c"+
-		"\u021d\3\2\2\2\u021d\u021f\3\2\2\2\u021e\u021c\3\2\2\2\u021f\u0220\7\5"+
-		"\2\2\u0220\u022b\3\2\2\2\u0221\u022b\7c\2\2\u0222\u022b\7Z\2\2\u0223\u0225"+
-		"\7W\2\2\u0224\u0223\3\2\2\2\u0225\u0226\3\2\2\2\u0226\u0224\3\2\2\2\u0226"+
-		"\u0227\3\2\2\2\u0227\u022b\3\2\2\2\u0228\u022b\7X\2\2\u0229\u022b\7Y\2"+
-		"\2\u022a\u01f4\3\2\2\2\u022a\u01f9\3\2\2\2\u022a\u0201\3\2\2\2\u022a\u0209"+
-		"\3\2\2\2\u022a\u020e\3\2\2\2\u022a\u0210\3\2\2\2\u022a\u0212\3\2\2\2\u022a"+
-		"\u0214\3\2\2\2\u022a\u0216\3\2\2\2\u022a\u0221\3\2\2\2\u022a\u0222\3\2"+
-		"\2\2\u022a\u0224\3\2\2\2\u022a\u0228\3\2\2\2\u022a\u0229\3\2\2\2\u022b"+
-		"\u0268\3\2\2\2\u022c\u022d\f\25\2\2\u022d\u022e\t\6\2\2\u022e\u0267\5"+
-		"@!\26\u022f\u0230\f\24\2\2\u0230\u0231\t\7\2\2\u0231\u0267\5@!\25\u0232"+
-		"\u0233\f\23\2\2\u0233\u0234\t\b\2\2\u0234\u0267\5@!\24\u0235\u0236\f\21"+
-		"\2\2\u0236\u0237\t\t\2\2\u0237\u0267\5@!\22\u0238\u0239\f\20\2\2\u0239"+
-		"\u023a\7\30\2\2\u023a\u0267\5@!\21\u023b\u023c\f\17\2\2\u023c\u023d\7"+
-		"\32\2\2\u023d\u0267\5@!\20\u023e\u023f\f\16\2\2\u023f\u0240\7\33\2\2\u0240"+
-		"\u0267\5@!\17\u0241\u0242\f\r\2\2\u0242\u0243\7$\2\2\u0243\u0267\5@!\16"+
-		"\u0244\u0245\f\f\2\2\u0245\u0246\7%\2\2\u0246\u0267\5@!\r\u0247\u0248"+
-		"\f\13\2\2\u0248\u0249\7\16\2\2\u0249\u024a\5@!\2\u024a\u024b\7\13\2\2"+
-		"\u024b\u024c\5@!\f\u024c\u0267\3\2\2\2\u024d\u024e\f\n\2\2\u024e\u024f"+
-		"\7&\2\2\u024f\u0267\5@!\n\u0250\u0251\f\t\2\2\u0251\u0252\7\'\2\2\u0252"+
-		"\u0267\5@!\t\u0253\u0254\f \2\2\u0254\u0255\7\17\2\2\u0255\u0267\7c\2"+
-		"\2\u0256\u0257\f\37\2\2\u0257\u0258\7\20\2\2\u0258\u0267\7c\2\2\u0259"+
-		"\u025a\f\36\2\2\u025a\u025c\7\b\2\2\u025b\u025d\5B\"\2\u025c\u025b\3\2"+
-		"\2\2\u025c\u025d\3\2\2\2\u025d\u025e\3\2\2\2\u025e\u0267\7\t\2\2\u025f"+
-		"\u0260\f\33\2\2\u0260\u0261\7\6\2\2\u0261\u0262\5> \2\u0262\u0263\7\7"+
-		"\2\2\u0263\u0267\3\2\2\2\u0264\u0265\f\30\2\2\u0265\u0267\t\3\2\2\u0266"+
-		"\u022c\3\2\2\2\u0266\u022f\3\2\2\2\u0266\u0232\3\2\2\2\u0266\u0235\3\2"+
-		"\2\2\u0266\u0238\3\2\2\2\u0266\u023b\3\2\2\2\u0266\u023e\3\2\2\2\u0266"+
-		"\u0241\3\2\2\2\u0266\u0244\3\2\2\2\u0266\u0247\3\2\2\2\u0266\u024d\3\2"+
-		"\2\2\u0266\u0250\3\2\2\2\u0266\u0253\3\2\2\2\u0266\u0256\3\2\2\2\u0266"+
-		"\u0259\3\2\2\2\u0266\u025f\3\2\2\2\u0266\u0264\3\2\2\2\u0267\u026a\3\2"+
-		"\2\2\u0268\u0266\3\2\2\2\u0268\u0269\3\2\2\2\u0269A\3\2\2\2\u026a\u0268"+
-		"\3\2\2\2\u026b\u0270\5@!\2\u026c\u026d\7\f\2\2\u026d\u026f\5@!\2\u026e"+
-		"\u026c\3\2\2\2\u026f\u0272\3\2\2\2\u0270\u026e\3\2\2\2\u0270\u0271\3\2"+
-		"\2\2\u0271C\3\2\2\2\u0272\u0270\3\2\2\2\u0273\u0275\7J\2\2\u0274\u0276"+
-		"\5F$\2\u0275\u0274\3\2\2\2\u0275\u0276\3\2\2\2\u0276\u0277\3\2\2\2\u0277"+
-		"\u0278\7e\2\2\u0278E\3\2\2\2\u0279\u027a\7\b\2\2\u027a\u027f\5H%\2\u027b"+
-		"\u027c\7\f\2\2\u027c\u027e\5H%\2\u027d\u027b\3\2\2\2\u027e\u0281\3\2\2"+
-		"\2\u027f\u027d\3\2\2\2\u027f\u0280\3\2\2\2\u0280\u0282\3\2\2\2\u0281\u027f"+
-		"\3\2\2\2\u0282\u0283\7\t\2\2\u0283G\3\2\2\2\u0284\u0285\7K\2\2\u0285\u0294"+
-		"\7W\2\2\u0286\u0287\7L\2\2\u0287\u0294\7c\2\2\u0288\u0289\7M\2\2\u0289"+
-		"\u0294\7W\2\2\u028a\u028b\7N\2\2\u028b\u0294\5@!\2\u028c\u028d\7O\2\2"+
-		"\u028d\u0294\5@!\2\u028e\u0291\7,\2\2\u028f\u0292\7\67\2\2\u0290\u0292"+
-		"\5@!\2\u0291\u028f\3\2\2\2\u0291\u0290\3\2\2\2\u0292\u0294\3\2\2\2\u0293"+
-		"\u0284\3\2\2\2\u0293\u0286\3\2\2\2\u0293\u0288\3\2\2\2\u0293\u028a\3\2"+
-		"\2\2\u0293\u028c\3\2\2\2\u0293\u028e\3\2\2\2\u0294I\3\2\2\2\u0295\u0299"+
-		"\b&\1\2\u0296\u0298\5L\'\2\u0297\u0296\3\2\2\2\u0298\u029b\3\2\2\2\u0299"+
-		"\u0297\3\2\2\2\u0299\u029a\3\2\2\2\u029a\u029c\3\2\2\2\u029b\u0299\3\2"+
-		"\2\2\u029c\u029d\b&\1\2\u029dK\3\2\2\2\u029e\u02a2\5N(\2\u029f\u02a2\5"+
-		"P)\2\u02a0\u02a2\5R*\2\u02a1\u029e\3\2\2\2\u02a1\u029f\3\2\2\2\u02a1\u02a0"+
-		"\3\2\2\2\u02a2M\3\2\2\2\u02a3\u02a4\7c\2\2\u02a4\u02ab\7\13\2\2\u02a5"+
-		"\u02a7\7P\2\2\u02a6\u02a8\7c\2\2\u02a7\u02a6\3\2\2\2\u02a7\u02a8\3\2\2"+
-		"\2\u02a8\u02a9\3\2\2\2\u02a9\u02ab\7\13\2\2\u02aa\u02a3\3\2\2\2\u02aa"+
-		"\u02a5\3\2\2\2\u02abO\3\2\2\2\u02ac\u02ae\7T\2\2\u02ad\u02af\5T+\2\u02ae"+
-		"\u02ad\3\2\2\2\u02ae\u02af\3\2\2\2\u02afQ\3\2\2\2\u02b0\u02b1\7Q\2\2\u02b1"+
-		"\u02b6\5V,\2\u02b2\u02b3\7\f\2\2\u02b3\u02b5\5V,\2\u02b4\u02b2\3\2\2\2"+
-		"\u02b5\u02b8\3\2\2\2\u02b6\u02b4\3\2\2\2\u02b6\u02b7\3\2\2\2\u02b7S\3"+
-		"\2\2\2\u02b8\u02b6\3\2\2\2\u02b9\u02d1\5V,\2\u02ba\u02bb\7(\2\2\u02bb"+
-		"\u02d1\5V,\2\u02bc\u02bd\5V,\2\u02bd\u02be\7\f\2\2\u02be\u02bf\7c\2\2"+
-		"\u02bf\u02d1\3\2\2\2\u02c0\u02c1\7\b\2\2\u02c1\u02c2\5V,\2\u02c2\u02c3"+
-		"\7\t\2\2\u02c3\u02c4\7\f\2\2\u02c4\u02c5\7c\2\2\u02c5\u02d1\3\2\2\2\u02c6"+
-		"\u02c7\7\b\2\2\u02c7\u02c8\5V,\2\u02c8\u02c9\7\f\2\2\u02c9\u02ca\7c\2"+
-		"\2\u02ca\u02cb\7\t\2\2\u02cb\u02d1\3\2\2\2\u02cc\u02cd\7\b\2\2\u02cd\u02ce"+
-		"\5V,\2\u02ce\u02cf\7\t\2\2\u02cf\u02d1\3\2\2\2\u02d0\u02b9\3\2\2\2\u02d0"+
-		"\u02ba\3\2\2\2\u02d0\u02bc\3\2\2\2\u02d0\u02c0\3\2\2\2\u02d0\u02c6\3\2"+
-		"\2\2\u02d0\u02cc\3\2\2\2\u02d1U\3\2\2\2\u02d2\u02d3\b,\1\2\u02d3\u02d4"+
-		"\7\6\2\2\u02d4\u02d5\5V,\2\u02d5\u02d6\7\7\2\2\u02d6\u02e1\3\2\2\2\u02d7"+
-		"\u02d8\t\n\2\2\u02d8\u02e1\5V,\n\u02d9\u02e1\7c\2\2\u02da\u02e1\7d\2\2"+
-		"\u02db\u02dc\7\4\2\2\u02dc\u02dd\7c\2\2\u02dd\u02e1\7\5\2\2\u02de\u02e1"+
-		"\7Z\2\2\u02df\u02e1\7X\2\2\u02e0\u02d2\3\2\2\2\u02e0\u02d7\3\2\2\2\u02e0"+
-		"\u02d9\3\2\2\2\u02e0\u02da\3\2\2\2\u02e0\u02db\3\2\2\2\u02e0\u02de\3\2"+
-		"\2\2\u02e0\u02df\3\2\2\2\u02e1\u02f0\3\2\2\2\u02e2\u02e3\f\f\2\2\u02e3"+
-		"\u02e4\7\17\2\2\u02e4\u02ef\5V,\r\u02e5\u02e6\f\13\2\2\u02e6\u02e7\t\6"+
-		"\2\2\u02e7\u02ef\5V,\f\u02e8\u02e9\f\t\2\2\u02e9\u02ea\t\13\2\2\u02ea"+
-		"\u02ef\5V,\n\u02eb\u02ec\f\b\2\2\u02ec\u02ed\t\b\2\2\u02ed\u02ef\5V,\t"+
-		"\u02ee\u02e2\3\2\2\2\u02ee\u02e5\3\2\2\2\u02ee\u02e8\3\2\2\2\u02ee\u02eb"+
-		"\3\2\2\2\u02ef\u02f2\3\2\2\2\u02f0\u02ee\3\2\2\2\u02f0\u02f1\3\2\2\2\u02f1"+
-		"W\3\2\2\2\u02f2\u02f0\3\2\2\2Hafz\u0084\u008b\u0099\u009f\u00a4\u00aa"+
-		"\u00af\u00b8\u00bf\u00ca\u00f2\u00ff\u0107\u0110\u0114\u0119\u0120\u012d"+
-		"\u0132\u013e\u014c\u015f\u0168\u016f\u0174\u0179\u017b\u0181\u0188\u018b"+
-		"\u0193\u0196\u0199\u01a3\u01aa\u01b1\u01b7\u01b9\u01c1\u01c7\u01d3\u01e1"+
-		"\u01e7\u01f1\u01fd\u0205\u021c\u0226\u022a\u025c\u0266\u0268\u0270\u0275"+
-		"\u027f\u0291\u0293\u0299\u02a1\u02a7\u02aa\u02ae\u02b6\u02d0\u02e0\u02ee"+
-		"\u02f0";
+		"$&(*,.\60\62\64\668:<>@BDFHJLNPRTV\2\13\3\2\26\27\5\2\21\22\30\31PP\4"+
+		"\2  ##\3\2\34\35\3\2\23\25\3\2\21\22\3\2\36#\5\2\21\22  ##\3\2\23\24\2"+
+		"\u035c\2X\3\2\2\2\4[\3\2\2\2\6a\3\2\2\2\bf\3\2\2\2\nh\3\2\2\2\fz\3\2\2"+
+		"\2\16|\3\2\2\2\20\u0084\3\2\2\2\22\u008e\3\2\2\2\24\u0091\3\2\2\2\26\u00a4"+
+		"\3\2\2\2\30\u00a6\3\2\2\2\32\u00b3\3\2\2\2\34\u00bf\3\2\2\2\36\u00f2\3"+
+		"\2\2\2 \u0114\3\2\2\2\"\u0117\3\2\2\2$\u016f\3\2\2\2&\u0172\3\2\2\2(\u017d"+
+		"\3\2\2\2*\u0193\3\2\2\2,\u0199\3\2\2\2.\u01aa\3\2\2\2\60\u01bc\3\2\2\2"+
+		"\62\u01bf\3\2\2\2\64\u01cb\3\2\2\2\66\u01ce\3\2\2\28\u01d1\3\2\2\2:\u01d9"+
+		"\3\2\2\2<\u01e4\3\2\2\2>\u01e9\3\2\2\2@\u022a\3\2\2\2B\u026b\3\2\2\2D"+
+		"\u0273\3\2\2\2F\u0279\3\2\2\2H\u0293\3\2\2\2J\u0295\3\2\2\2L\u02a1\3\2"+
+		"\2\2N\u02aa\3\2\2\2P\u02ac\3\2\2\2R\u02b0\3\2\2\2T\u02d0\3\2\2\2V\u02e0"+
+		"\3\2\2\2XY\5\6\4\2YZ\7\2\2\3Z\3\3\2\2\2[\\\5J&\2\\]\7\2\2\3]\5\3\2\2\2"+
+		"^`\5\b\5\2_^\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2b\7\3\2\2\2ca\3\2\2"+
+		"\2dg\5\f\7\2eg\5\n\6\2fd\3\2\2\2fe\3\2\2\2g\t\3\2\2\2hi\7T\2\2ij\7V\2"+
+		"\2j\13\3\2\2\2kl\5\22\n\2lm\7\n\2\2m{\3\2\2\2no\5\62\32\2op\7\n\2\2p{"+
+		"\3\2\2\2qr\58\35\2rs\7\n\2\2s{\3\2\2\2t{\5\30\r\2u{\5D#\2v{\5\36\20\2"+
+		"wx\5\16\b\2xy\7\n\2\2y{\3\2\2\2zk\3\2\2\2zn\3\2\2\2zq\3\2\2\2zt\3\2\2"+
+		"\2zu\3\2\2\2zv\3\2\2\2zw\3\2\2\2{\r\3\2\2\2|}\7)\2\2}~\5.\30\2~\177\7"+
+		"b\2\2\177\u0080\b\b\1\2\u0080\17\3\2\2\2\u0081\u0083\5 \21\2\u0082\u0081"+
+		"\3\2\2\2\u0083\u0086\3\2\2\2\u0084\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085"+
+		"\u0087\3\2\2\2\u0086\u0084\3\2\2\2\u0087\u008b\5.\30\2\u0088\u008a\5 "+
+		"\21\2\u0089\u0088\3\2\2\2\u008a\u008d\3\2\2\2\u008b\u0089\3\2\2\2\u008b"+
+		"\u008c\3\2\2\2\u008c\21\3\2\2\2\u008d\u008b\3\2\2\2\u008e\u008f\5\20\t"+
+		"\2\u008f\u0090\5\24\13\2\u0090\23\3\2\2\2\u0091\u0092\b\13\1\2\u0092\u0093"+
+		"\5\26\f\2\u0093\u0099\3\2\2\2\u0094\u0095\f\3\2\2\u0095\u0096\7\f\2\2"+
+		"\u0096\u0098\5\26\f\2\u0097\u0094\3\2\2\2\u0098\u009b\3\2\2\2\u0099\u0097"+
+		"\3\2\2\2\u0099\u009a\3\2\2\2\u009a\25\3\2\2\2\u009b\u0099\3\2\2\2\u009c"+
+		"\u009f\7b\2\2\u009d\u009e\7&\2\2\u009e\u00a0\5@!\2\u009f\u009d\3\2\2\2"+
+		"\u009f\u00a0\3\2\2\2\u00a0\u00a5\3\2\2\2\u00a1\u00a2\7b\2\2\u00a2\u00a3"+
+		"\7&\2\2\u00a3\u00a5\5D#\2\u00a4\u009c\3\2\2\2\u00a4\u00a1\3\2\2\2\u00a5"+
+		"\27\3\2\2\2\u00a6\u00a7\5\20\t\2\u00a7\u00a8\7b\2\2\u00a8\u00aa\7\b\2"+
+		"\2\u00a9\u00ab\5\32\16\2\u00aa\u00a9\3\2\2\2\u00aa\u00ab\3\2\2\2\u00ab"+
+		"\u00ac\3\2\2\2\u00ac\u00ad\7\t\2\2\u00ad\u00af\7\4\2\2\u00ae\u00b0\5\""+
+		"\22\2\u00af\u00ae\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1"+
+		"\u00b2\7\5\2\2\u00b2\31\3\2\2\2\u00b3\u00b8\5\34\17\2\u00b4\u00b5\7\f"+
+		"\2\2\u00b5\u00b7\5\34\17\2\u00b6\u00b4\3\2\2\2\u00b7\u00ba\3\2\2\2\u00b8"+
+		"\u00b6\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\33\3\2\2\2\u00ba\u00b8\3\2\2"+
+		"\2\u00bb\u00bc\5\20\t\2\u00bc\u00bd\7b\2\2\u00bd\u00c0\3\2\2\2\u00be\u00c0"+
+		"\7U\2\2\u00bf\u00bb\3\2\2\2\u00bf\u00be\3\2\2\2\u00c0\35\3\2\2\2\u00c1"+
+		"\u00c2\7*\2\2\u00c2\u00c3\7+\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00c5\7\b\2"+
+		"\2\u00c5\u00ca\7Y\2\2\u00c6\u00c7\7\f\2\2\u00c7\u00c9\7Y\2\2\u00c8\u00c6"+
+		"\3\2\2\2\u00c9\u00cc\3\2\2\2\u00ca\u00c8\3\2\2\2\u00ca\u00cb\3\2\2\2\u00cb"+
+		"\u00cd\3\2\2\2\u00cc\u00ca\3\2\2\2\u00cd\u00f3\7\t\2\2\u00ce\u00cf\7*"+
+		"\2\2\u00cf\u00d0\7,\2\2\u00d0\u00d1\3\2\2\2\u00d1\u00d2\7\b\2\2\u00d2"+
+		"\u00d3\7Y\2\2\u00d3\u00f3\7\t\2\2\u00d4\u00d5\7*\2\2\u00d5\u00d6\7-\2"+
+		"\2\u00d6\u00d7\3\2\2\2\u00d7\u00d8\7\b\2\2\u00d8\u00d9\7b\2\2\u00d9\u00f3"+
+		"\7\t\2\2\u00da\u00db\7*\2\2\u00db\u00dc\7.\2\2\u00dc\u00dd\3\2\2\2\u00dd"+
+		"\u00de\7\b\2\2\u00de\u00df\7V\2\2\u00df\u00f3\7\t\2\2\u00e0\u00e1\7*\2"+
+		"\2\u00e1\u00e2\7/\2\2\u00e2\u00e3\3\2\2\2\u00e3\u00e4\7\b\2\2\u00e4\u00e5"+
+		"\7b\2\2\u00e5\u00f3\7\t\2\2\u00e6\u00e7\7*\2\2\u00e7\u00e8\7\60\2\2\u00e8"+
+		"\u00e9\3\2\2\2\u00e9\u00ea\7\b\2\2\u00ea\u00eb\7b\2\2\u00eb\u00f3\7\t"+
+		"\2\2\u00ec\u00ed\7*\2\2\u00ed\u00ee\7\61\2\2\u00ee\u00ef\3\2\2\2\u00ef"+
+		"\u00f0\7\b\2\2\u00f0\u00f1\7b\2\2\u00f1\u00f3\7\t\2\2\u00f2\u00c1\3\2"+
+		"\2\2\u00f2\u00ce\3\2\2\2\u00f2\u00d4\3\2\2\2\u00f2\u00da\3\2\2\2\u00f2"+
+		"\u00e0\3\2\2\2\u00f2\u00e6\3\2\2\2\u00f2\u00ec\3\2\2\2\u00f3\37\3\2\2"+
+		"\2\u00f4\u0115\7\62\2\2\u00f5\u0115\7\63\2\2\u00f6\u0115\7\64\2\2\u00f7"+
+		"\u00f8\7\65\2\2\u00f8\u00f9\7\b\2\2\u00f9\u00fa\7Y\2\2\u00fa\u0115\7\t"+
+		"\2\2\u00fb\u00ff\7\66\2\2\u00fc\u00fd\7\b\2\2\u00fd\u00fe\7b\2\2\u00fe"+
+		"\u0100\7\t\2\2\u00ff\u00fc\3\2\2\2\u00ff\u0100\3\2\2\2\u0100\u0115\3\2"+
+		"\2\2\u0101\u0115\7\67\2\2\u0102\u0115\78\2\2\u0103\u0107\79\2\2\u0104"+
+		"\u0105\7\b\2\2\u0105\u0106\7b\2\2\u0106\u0108\7\t\2\2\u0107\u0104\3\2"+
+		"\2\2\u0107\u0108\3\2\2\2\u0108\u0115\3\2\2\2\u0109\u010a\7+\2\2\u010a"+
+		"\u010b\7\b\2\2\u010b\u0110\7Y\2\2\u010c\u010d\7\f\2\2\u010d\u010f\7Y\2"+
+		"\2\u010e\u010c\3\2\2\2\u010f\u0112\3\2\2\2\u0110\u010e\3\2\2\2\u0110\u0111"+
+		"\3\2\2\2\u0111\u0113\3\2\2\2\u0112\u0110\3\2\2\2\u0113\u0115\7\t\2\2\u0114"+
+		"\u00f4\3\2\2\2\u0114\u00f5\3\2\2\2\u0114\u00f6\3\2\2\2\u0114\u00f7\3\2"+
+		"\2\2\u0114\u00fb\3\2\2\2\u0114\u0101\3\2\2\2\u0114\u0102\3\2\2\2\u0114"+
+		"\u0103\3\2\2\2\u0114\u0109\3\2\2\2\u0115!\3\2\2\2\u0116\u0118\5$\23\2"+
+		"\u0117\u0116\3\2\2\2\u0118\u0119\3\2\2\2\u0119\u0117\3\2\2\2\u0119\u011a"+
+		"\3\2\2\2\u011a#\3\2\2\2\u011b\u011c\5\22\n\2\u011c\u011d\7\n\2\2\u011d"+
+		"\u0170\3\2\2\2\u011e\u0120\7\4\2\2\u011f\u0121\5\"\22\2\u0120\u011f\3"+
+		"\2\2\2\u0120\u0121\3\2\2\2\u0121\u0122\3\2\2\2\u0122\u0170\7\5\2\2\u0123"+
+		"\u0124\5> \2\u0124\u0125\7\n\2\2\u0125\u0170\3\2\2\2\u0126\u0127\7:\2"+
+		"\2\u0127\u0128\7\b\2\2\u0128\u0129\5> \2\u0129\u012a\7\t\2\2\u012a\u012d"+
+		"\5$\23\2\u012b\u012c\7;\2\2\u012c\u012e\5$\23\2\u012d\u012b\3\2\2\2\u012d"+
+		"\u012e\3\2\2\2\u012e\u0170\3\2\2\2\u012f\u0131\5 \21\2\u0130\u012f\3\2"+
+		"\2\2\u0131\u0134\3\2\2\2\u0132\u0130\3\2\2\2\u0132\u0133\3\2\2\2\u0133"+
+		"\u0135\3\2\2\2\u0134\u0132\3\2\2\2\u0135\u0136\7<\2\2\u0136\u0137\7\b"+
+		"\2\2\u0137\u0138\5> \2\u0138\u0139\7\t\2\2\u0139\u013a\5$\23\2\u013a\u0170"+
+		"\3\2\2\2\u013b\u013d\5 \21\2\u013c\u013b\3\2\2\2\u013d\u0140\3\2\2\2\u013e"+
+		"\u013c\3\2\2\2\u013e\u013f\3\2\2\2\u013f\u0141\3\2\2\2\u0140\u013e\3\2"+
+		"\2\2\u0141\u0142\7=\2\2\u0142\u0143\5$\23\2\u0143\u0144\7<\2\2\u0144\u0145"+
+		"\7\b\2\2\u0145\u0146\5> \2\u0146\u0147\7\t\2\2\u0147\u0148\7\n\2\2\u0148"+
+		"\u0170\3\2\2\2\u0149\u014b\5 \21\2\u014a\u0149\3\2\2\2\u014b\u014e\3\2"+
+		"\2\2\u014c\u014a\3\2\2\2\u014c\u014d\3\2\2\2\u014d\u014f\3\2\2\2\u014e"+
+		"\u014c\3\2\2\2\u014f\u0150\7>\2\2\u0150\u0151\7\b\2\2\u0151\u0152\5*\26"+
+		"\2\u0152\u0153\7\t\2\2\u0153\u0154\5$\23\2\u0154\u0170\3\2\2\2\u0155\u0156"+
+		"\7?\2\2\u0156\u0157\7\b\2\2\u0157\u0158\5> \2\u0158\u0159\7\t\2\2\u0159"+
+		"\u015a\7\4\2\2\u015a\u015b\5&\24\2\u015b\u015c\7\5\2\2\u015c\u0170\3\2"+
+		"\2\2\u015d\u015f\7@\2\2\u015e\u0160\5> \2\u015f\u015e\3\2\2\2\u015f\u0160"+
+		"\3\2\2\2\u0160\u0161\3\2\2\2\u0161\u0170\7\n\2\2\u0162\u0163\7A\2\2\u0163"+
+		"\u0170\7\n\2\2\u0164\u0165\7B\2\2\u0165\u0170\7\n\2\2\u0166\u0168\7C\2"+
+		"\2\u0167\u0169\5F$\2\u0168\u0167\3\2\2\2\u0168\u0169\3\2\2\2\u0169\u016a"+
+		"\3\2\2\2\u016a\u016b\7\4\2\2\u016b\u016c\5J&\2\u016c\u016d\7\5\2\2\u016d"+
+		"\u0170\3\2\2\2\u016e\u0170\5D#\2\u016f\u011b\3\2\2\2\u016f\u011e\3\2\2"+
+		"\2\u016f\u0123\3\2\2\2\u016f\u0126\3\2\2\2\u016f\u0132\3\2\2\2\u016f\u013e"+
+		"\3\2\2\2\u016f\u014c\3\2\2\2\u016f\u0155\3\2\2\2\u016f\u015d\3\2\2\2\u016f"+
+		"\u0162\3\2\2\2\u016f\u0164\3\2\2\2\u016f\u0166\3\2\2\2\u016f\u016e\3\2"+
+		"\2\2\u0170%\3\2\2\2\u0171\u0173\5(\25\2\u0172\u0171\3\2\2\2\u0173\u0174"+
+		"\3\2\2\2\u0174\u0172\3\2\2\2\u0174\u0175\3\2\2\2\u0175\u017b\3\2\2\2\u0176"+
+		"\u0177\7D\2\2\u0177\u0179\7\13\2\2\u0178\u017a\5\"\22\2\u0179\u0178\3"+
+		"\2\2\2\u0179\u017a\3\2\2\2\u017a\u017c\3\2\2\2\u017b\u0176\3\2\2\2\u017b"+
+		"\u017c\3\2\2\2\u017c\'\3\2\2\2\u017d\u017e\7E\2\2\u017e\u017f\5@!\2\u017f"+
+		"\u0181\7\13\2\2\u0180\u0182\5\"\22\2\u0181\u0180\3\2\2\2\u0181\u0182\3"+
+		"\2\2\2\u0182)\3\2\2\2\u0183\u0184\5,\27\2\u0184\u0185\7\n\2\2\u0185\u0186"+
+		"\5> \2\u0186\u0188\7\n\2\2\u0187\u0189\5> \2\u0188\u0187\3\2\2\2\u0188"+
+		"\u0189\3\2\2\2\u0189\u0194\3\2\2\2\u018a\u018c\5\20\t\2\u018b\u018a\3"+
+		"\2\2\2\u018b\u018c\3\2\2\2\u018c\u018d\3\2\2\2\u018d\u018e\7b\2\2\u018e"+
+		"\u018f\7\13\2\2\u018f\u0190\5@!\2\u0190\u0191\7\r\2\2\u0191\u0192\5@!"+
+		"\2\u0192\u0194\3\2\2\2\u0193\u0183\3\2\2\2\u0193\u018b\3\2\2\2\u0194+"+
+		"\3\2\2\2\u0195\u0197\5\22\n\2\u0196\u0195\3\2\2\2\u0196\u0197\3\2\2\2"+
+		"\u0197\u019a\3\2\2\2\u0198\u019a\5> \2\u0199\u0196\3\2\2\2\u0199\u0198"+
+		"\3\2\2\2\u019a-\3\2\2\2\u019b\u019c\b\30\1\2\u019c\u019d\7\b\2\2\u019d"+
+		"\u019e\5.\30\2\u019e\u019f\7\t\2\2\u019f\u01ab\3\2\2\2\u01a0\u01ab\7U"+
+		"\2\2\u01a1\u01a3\7R\2\2\u01a2\u01a4\7U\2\2\u01a3\u01a2\3\2\2\2\u01a3\u01a4"+
+		"\3\2\2\2\u01a4\u01ab\3\2\2\2\u01a5\u01ab\5\62\32\2\u01a6\u01ab\5\60\31"+
+		"\2\u01a7\u01ab\58\35\2\u01a8\u01ab\5\66\34\2\u01a9\u01ab\7\3\2\2\u01aa"+
+		"\u019b\3\2\2\2\u01aa\u01a0\3\2\2\2\u01aa\u01a1\3\2\2\2\u01aa\u01a5\3\2"+
+		"\2\2\u01aa\u01a6\3\2\2\2\u01aa\u01a7\3\2\2\2\u01aa\u01a8\3\2\2\2\u01aa"+
+		"\u01a9\3\2\2\2\u01ab\u01b9\3\2\2\2\u01ac\u01ad\f\n\2\2\u01ad\u01b8\7\23"+
+		"\2\2\u01ae\u01af\f\t\2\2\u01af\u01b1\7\6\2\2\u01b0\u01b2\5@!\2\u01b1\u01b0"+
+		"\3\2\2\2\u01b1\u01b2\3\2\2\2\u01b2\u01b3\3\2\2\2\u01b3\u01b8\7\7\2\2\u01b4"+
+		"\u01b5\f\b\2\2\u01b5\u01b6\7\b\2\2\u01b6\u01b8\7\t\2\2\u01b7\u01ac\3\2"+
+		"\2\2\u01b7\u01ae\3\2\2\2\u01b7\u01b4\3\2\2\2\u01b8\u01bb\3\2\2\2\u01b9"+
+		"\u01b7\3\2\2\2\u01b9\u01ba\3\2\2\2\u01ba/\3\2\2\2\u01bb\u01b9\3\2\2\2"+
+		"\u01bc\u01bd\7F\2\2\u01bd\u01be\7b\2\2\u01be\61\3\2\2\2\u01bf\u01c1\7"+
+		"F\2\2\u01c0\u01c2\7b\2\2\u01c1\u01c0\3\2\2\2\u01c1\u01c2\3\2\2\2\u01c2"+
+		"\u01c3\3\2\2\2\u01c3\u01c5\7\4\2\2\u01c4\u01c6\5\64\33\2\u01c5\u01c4\3"+
+		"\2\2\2\u01c6\u01c7\3\2\2\2\u01c7\u01c5\3\2\2\2\u01c7\u01c8\3\2\2\2\u01c8"+
+		"\u01c9\3\2\2\2\u01c9\u01ca\7\5\2\2\u01ca\63\3\2\2\2\u01cb\u01cc\5\22\n"+
+		"\2\u01cc\u01cd\7\n\2\2\u01cd\65\3\2\2\2\u01ce\u01cf\7G\2\2\u01cf\u01d0"+
+		"\7b\2\2\u01d0\67\3\2\2\2\u01d1\u01d3\7G\2\2\u01d2\u01d4\7b\2\2\u01d3\u01d2"+
+		"\3\2\2\2\u01d3\u01d4\3\2\2\2\u01d4\u01d5\3\2\2\2\u01d5\u01d6\7\4\2\2\u01d6"+
+		"\u01d7\5:\36\2\u01d7\u01d8\7\5\2\2\u01d89\3\2\2\2\u01d9\u01da\b\36\1\2"+
+		"\u01da\u01db\5<\37\2\u01db\u01e1\3\2\2\2\u01dc\u01dd\f\3\2\2\u01dd\u01de"+
+		"\7\f\2\2\u01de\u01e0\5<\37\2\u01df\u01dc\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1"+
+		"\u01df\3\2\2\2\u01e1\u01e2\3\2\2\2\u01e2;\3\2\2\2\u01e3\u01e1\3\2\2\2"+
+		"\u01e4\u01e7\7b\2\2\u01e5\u01e6\7&\2\2\u01e6\u01e8\5@!\2\u01e7\u01e5\3"+
+		"\2\2\2\u01e7\u01e8\3\2\2\2\u01e8=\3\2\2\2\u01e9\u01ea\b \1\2\u01ea\u01eb"+
+		"\5@!\2\u01eb\u01f1\3\2\2\2\u01ec\u01ed\f\3\2\2\u01ed\u01ee\7\f\2\2\u01ee"+
+		"\u01f0\5@!\2\u01ef\u01ec\3\2\2\2\u01f0\u01f3\3\2\2\2\u01f1\u01ef\3\2\2"+
+		"\2\u01f1\u01f2\3\2\2\2\u01f2?\3\2\2\2\u01f3\u01f1\3\2\2\2\u01f4\u01f5"+
+		"\b!\1\2\u01f5\u01f6\7\b\2\2\u01f6\u01f7\5> \2\u01f7\u01f8\7\t\2\2\u01f8"+
+		"\u022b\3\2\2\2\u01f9\u01fa\7H\2\2\u01fa\u01fd\7\b\2\2\u01fb\u01fe\5@!"+
+		"\2\u01fc\u01fe\5.\30\2\u01fd\u01fb\3\2\2\2\u01fd\u01fc\3\2\2\2\u01fe\u01ff"+
+		"\3\2\2\2\u01ff\u0200\7\t\2\2\u0200\u022b\3\2\2\2\u0201\u0202\7I\2\2\u0202"+
+		"\u0205\7\b\2\2\u0203\u0206\5@!\2\u0204\u0206\5.\30\2\u0205\u0203\3\2\2"+
+		"\2\u0205\u0204\3\2\2\2\u0206\u0207\3\2\2\2\u0207\u0208\7\t\2\2\u0208\u022b"+
+		"\3\2\2\2\u0209\u020a\7\b\2\2\u020a\u020b\5.\30\2\u020b\u020c\7\t\2\2\u020c"+
+		"\u020d\5@!\32\u020d\u022b\3\2\2\2\u020e\u020f\t\2\2\2\u020f\u022b\5@!"+
+		"\31\u0210\u0211\7\23\2\2\u0211\u022b\5@!\27\u0212\u0213\t\3\2\2\u0213"+
+		"\u022b\5@!\26\u0214\u0215\t\4\2\2\u0215\u022b\5@!\22\u0216\u0217\7\4\2"+
+		"\2\u0217\u021c\5@!\2\u0218\u0219\7\f\2\2\u0219\u021b\5@!\2\u021a\u0218"+
+		"\3\2\2\2\u021b\u021e\3\2\2\2\u021c\u021a\3\2\2\2\u021c\u021d\3\2\2\2\u021d"+
+		"\u021f\3\2\2\2\u021e\u021c\3\2\2\2\u021f\u0220\7\5\2\2\u0220\u022b\3\2"+
+		"\2\2\u0221\u022b\7b\2\2\u0222\u022b\7Y\2\2\u0223\u0225\7V\2\2\u0224\u0223"+
+		"\3\2\2\2\u0225\u0226\3\2\2\2\u0226\u0224\3\2\2\2\u0226\u0227\3\2\2\2\u0227"+
+		"\u022b\3\2\2\2\u0228\u022b\7W\2\2\u0229\u022b\7X\2\2\u022a\u01f4\3\2\2"+
+		"\2\u022a\u01f9\3\2\2\2\u022a\u0201\3\2\2\2\u022a\u0209\3\2\2\2\u022a\u020e"+
+		"\3\2\2\2\u022a\u0210\3\2\2\2\u022a\u0212\3\2\2\2\u022a\u0214\3\2\2\2\u022a"+
+		"\u0216\3\2\2\2\u022a\u0221\3\2\2\2\u022a\u0222\3\2\2\2\u022a\u0224\3\2"+
+		"\2\2\u022a\u0228\3\2\2\2\u022a\u0229\3\2\2\2\u022b\u0268\3\2\2\2\u022c"+
+		"\u022d\f\25\2\2\u022d\u022e\t\5\2\2\u022e\u0267\5@!\26\u022f\u0230\f\24"+
+		"\2\2\u0230\u0231\t\6\2\2\u0231\u0267\5@!\25\u0232\u0233\f\23\2\2\u0233"+
+		"\u0234\t\7\2\2\u0234\u0267\5@!\24\u0235\u0236\f\21\2\2\u0236\u0237\t\b"+
+		"\2\2\u0237\u0267\5@!\22\u0238\u0239\f\20\2\2\u0239\u023a\7\30\2\2\u023a"+
+		"\u0267\5@!\21\u023b\u023c\f\17\2\2\u023c\u023d\7\32\2\2\u023d\u0267\5"+
+		"@!\20\u023e\u023f\f\16\2\2\u023f\u0240\7\33\2\2\u0240\u0267\5@!\17\u0241"+
+		"\u0242\f\r\2\2\u0242\u0243\7$\2\2\u0243\u0267\5@!\16\u0244\u0245\f\f\2"+
+		"\2\u0245\u0246\7%\2\2\u0246\u0267\5@!\r\u0247\u0248\f\13\2\2\u0248\u0249"+
+		"\7\16\2\2\u0249\u024a\5@!\2\u024a\u024b\7\13\2\2\u024b\u024c\5@!\f\u024c"+
+		"\u0267\3\2\2\2\u024d\u024e\f\n\2\2\u024e\u024f\7&\2\2\u024f\u0267\5@!"+
+		"\n\u0250\u0251\f\t\2\2\u0251\u0252\7\'\2\2\u0252\u0267\5@!\t\u0253\u0254"+
+		"\f \2\2\u0254\u0255\7\17\2\2\u0255\u0267\7b\2\2\u0256\u0257\f\37\2\2\u0257"+
+		"\u0258\7\20\2\2\u0258\u0267\7b\2\2\u0259\u025a\f\36\2\2\u025a\u025c\7"+
+		"\b\2\2\u025b\u025d\5B\"\2\u025c\u025b\3\2\2\2\u025c\u025d\3\2\2\2\u025d"+
+		"\u025e\3\2\2\2\u025e\u0267\7\t\2\2\u025f\u0260\f\33\2\2\u0260\u0261\7"+
+		"\6\2\2\u0261\u0262\5> \2\u0262\u0263\7\7\2\2\u0263\u0267\3\2\2\2\u0264"+
+		"\u0265\f\30\2\2\u0265\u0267\t\2\2\2\u0266\u022c\3\2\2\2\u0266\u022f\3"+
+		"\2\2\2\u0266\u0232\3\2\2\2\u0266\u0235\3\2\2\2\u0266\u0238\3\2\2\2\u0266"+
+		"\u023b\3\2\2\2\u0266\u023e\3\2\2\2\u0266\u0241\3\2\2\2\u0266\u0244\3\2"+
+		"\2\2\u0266\u0247\3\2\2\2\u0266\u024d\3\2\2\2\u0266\u0250\3\2\2\2\u0266"+
+		"\u0253\3\2\2\2\u0266\u0256\3\2\2\2\u0266\u0259\3\2\2\2\u0266\u025f\3\2"+
+		"\2\2\u0266\u0264\3\2\2\2\u0267\u026a\3\2\2\2\u0268\u0266\3\2\2\2\u0268"+
+		"\u0269\3\2\2\2\u0269A\3\2\2\2\u026a\u0268\3\2\2\2\u026b\u0270\5@!\2\u026c"+
+		"\u026d\7\f\2\2\u026d\u026f\5@!\2\u026e\u026c\3\2\2\2\u026f\u0272\3\2\2"+
+		"\2\u0270\u026e\3\2\2\2\u0270\u0271\3\2\2\2\u0271C\3\2\2\2\u0272\u0270"+
+		"\3\2\2\2\u0273\u0275\7J\2\2\u0274\u0276\5F$\2\u0275\u0274\3\2\2\2\u0275"+
+		"\u0276\3\2\2\2\u0276\u0277\3\2\2\2\u0277\u0278\7d\2\2\u0278E\3\2\2\2\u0279"+
+		"\u027a\7\b\2\2\u027a\u027f\5H%\2\u027b\u027c\7\f\2\2\u027c\u027e\5H%\2"+
+		"\u027d\u027b\3\2\2\2\u027e\u0281\3\2\2\2\u027f\u027d\3\2\2\2\u027f\u0280"+
+		"\3\2\2\2\u0280\u0282\3\2\2\2\u0281\u027f\3\2\2\2\u0282\u0283\7\t\2\2\u0283"+
+		"G\3\2\2\2\u0284\u0285\7K\2\2\u0285\u0294\7V\2\2\u0286\u0287\7L\2\2\u0287"+
+		"\u0294\7b\2\2\u0288\u0289\7M\2\2\u0289\u0294\7V\2\2\u028a\u028b\7N\2\2"+
+		"\u028b\u0294\5@!\2\u028c\u028d\7O\2\2\u028d\u0294\5@!\2\u028e\u0291\7"+
+		",\2\2\u028f\u0292\7\67\2\2\u0290\u0292\5@!\2\u0291\u028f\3\2\2\2\u0291"+
+		"\u0290\3\2\2\2\u0292\u0294\3\2\2\2\u0293\u0284\3\2\2\2\u0293\u0286\3\2"+
+		"\2\2\u0293\u0288\3\2\2\2\u0293\u028a\3\2\2\2\u0293\u028c\3\2\2\2\u0293"+
+		"\u028e\3\2\2\2\u0294I\3\2\2\2\u0295\u0299\b&\1\2\u0296\u0298\5L\'\2\u0297"+
+		"\u0296\3\2\2\2\u0298\u029b\3\2\2\2\u0299\u0297\3\2\2\2\u0299\u029a\3\2"+
+		"\2\2\u029a\u029c\3\2\2\2\u029b\u0299\3\2\2\2\u029c\u029d\b&\1\2\u029d"+
+		"K\3\2\2\2\u029e\u02a2\5N(\2\u029f\u02a2\5P)\2\u02a0\u02a2\5R*\2\u02a1"+
+		"\u029e\3\2\2\2\u02a1\u029f\3\2\2\2\u02a1\u02a0\3\2\2\2\u02a2M\3\2\2\2"+
+		"\u02a3\u02a4\7b\2\2\u02a4\u02ab\7\13\2\2\u02a5\u02a7\7P\2\2\u02a6\u02a8"+
+		"\7b\2\2\u02a7\u02a6\3\2\2\2\u02a7\u02a8\3\2\2\2\u02a8\u02a9\3\2\2\2\u02a9"+
+		"\u02ab\7\13\2\2\u02aa\u02a3\3\2\2\2\u02aa\u02a5\3\2\2\2\u02abO\3\2\2\2"+
+		"\u02ac\u02ae\7S\2\2\u02ad\u02af\5T+\2\u02ae\u02ad\3\2\2\2\u02ae\u02af"+
+		"\3\2\2\2\u02afQ\3\2\2\2\u02b0\u02b1\7Q\2\2\u02b1\u02b6\5V,\2\u02b2\u02b3"+
+		"\7\f\2\2\u02b3\u02b5\5V,\2\u02b4\u02b2\3\2\2\2\u02b5\u02b8\3\2\2\2\u02b6"+
+		"\u02b4\3\2\2\2\u02b6\u02b7\3\2\2\2\u02b7S\3\2\2\2\u02b8\u02b6\3\2\2\2"+
+		"\u02b9\u02d1\5V,\2\u02ba\u02bb\7(\2\2\u02bb\u02d1\5V,\2\u02bc\u02bd\5"+
+		"V,\2\u02bd\u02be\7\f\2\2\u02be\u02bf\7b\2\2\u02bf\u02d1\3\2\2\2\u02c0"+
+		"\u02c1\7\b\2\2\u02c1\u02c2\5V,\2\u02c2\u02c3\7\t\2\2\u02c3\u02c4\7\f\2"+
+		"\2\u02c4\u02c5\7b\2\2\u02c5\u02d1\3\2\2\2\u02c6\u02c7\7\b\2\2\u02c7\u02c8"+
+		"\5V,\2\u02c8\u02c9\7\f\2\2\u02c9\u02ca\7b\2\2\u02ca\u02cb\7\t\2\2\u02cb"+
+		"\u02d1\3\2\2\2\u02cc\u02cd\7\b\2\2\u02cd\u02ce\5V,\2\u02ce\u02cf\7\t\2"+
+		"\2\u02cf\u02d1\3\2\2\2\u02d0\u02b9\3\2\2\2\u02d0\u02ba\3\2\2\2\u02d0\u02bc"+
+		"\3\2\2\2\u02d0\u02c0\3\2\2\2\u02d0\u02c6\3\2\2\2\u02d0\u02cc\3\2\2\2\u02d1"+
+		"U\3\2\2\2\u02d2\u02d3\b,\1\2\u02d3\u02d4\7\6\2\2\u02d4\u02d5\5V,\2\u02d5"+
+		"\u02d6\7\7\2\2\u02d6\u02e1\3\2\2\2\u02d7\u02d8\t\t\2\2\u02d8\u02e1\5V"+
+		",\n\u02d9\u02e1\7b\2\2\u02da\u02e1\7c\2\2\u02db\u02dc\7\4\2\2\u02dc\u02dd"+
+		"\7b\2\2\u02dd\u02e1\7\5\2\2\u02de\u02e1\7Y\2\2\u02df\u02e1\7W\2\2\u02e0"+
+		"\u02d2\3\2\2\2\u02e0\u02d7\3\2\2\2\u02e0\u02d9\3\2\2\2\u02e0\u02da\3\2"+
+		"\2\2\u02e0\u02db\3\2\2\2\u02e0\u02de\3\2\2\2\u02e0\u02df\3\2\2\2\u02e1"+
+		"\u02f0\3\2\2\2\u02e2\u02e3\f\f\2\2\u02e3\u02e4\7\17\2\2\u02e4\u02ef\5"+
+		"V,\r\u02e5\u02e6\f\13\2\2\u02e6\u02e7\t\5\2\2\u02e7\u02ef\5V,\f\u02e8"+
+		"\u02e9\f\t\2\2\u02e9\u02ea\t\n\2\2\u02ea\u02ef\5V,\n\u02eb\u02ec\f\b\2"+
+		"\2\u02ec\u02ed\t\7\2\2\u02ed\u02ef\5V,\t\u02ee\u02e2\3\2\2\2\u02ee\u02e5"+
+		"\3\2\2\2\u02ee\u02e8\3\2\2\2\u02ee\u02eb\3\2\2\2\u02ef\u02f2\3\2\2\2\u02f0"+
+		"\u02ee\3\2\2\2\u02f0\u02f1\3\2\2\2\u02f1W\3\2\2\2\u02f2\u02f0\3\2\2\2"+
+		"Hafz\u0084\u008b\u0099\u009f\u00a4\u00aa\u00af\u00b8\u00bf\u00ca\u00f2"+
+		"\u00ff\u0107\u0110\u0114\u0119\u0120\u012d\u0132\u013e\u014c\u015f\u0168"+
+		"\u016f\u0174\u0179\u017b\u0181\u0188\u018b\u0193\u0196\u0199\u01a3\u01aa"+
+		"\u01b1\u01b7\u01b9\u01c1\u01c7\u01d3\u01e1\u01e7\u01f1\u01fd\u0205\u021c"+
+		"\u0226\u022a\u025c\u0266\u0268\u0270\u0275\u027f\u0291\u0293\u0299\u02a1"+
+		"\u02a7\u02aa\u02ae\u02b6\u02d0\u02e0\u02ee\u02f0";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

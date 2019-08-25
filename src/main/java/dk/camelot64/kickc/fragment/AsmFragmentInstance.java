@@ -190,7 +190,7 @@ public class AsmFragmentInstance {
          AsmInstruction instruction;
          if(paramModeCtx == null) {
             AsmInstructionType type = AsmInstructionSet.getInstructionType(
-                  ctx.MNEMONIC().getText(),
+                  ctx.ASM_MNEMONIC().getText(),
                   AsmAddressingMode.NON,
                   false);
             instruction = new AsmInstruction(type, null);
@@ -257,7 +257,7 @@ public class AsmFragmentInstance {
             KickCParser.AsmExprContext exprCtx,
             AsmAddressingMode addressingMode) {
          KickCParser.AsmInstructionContext instructionCtx = (KickCParser.AsmInstructionContext) ctx.getParent();
-         String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
+         String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
          AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
          AsmInstructionType type = AsmInstructionSet.getInstructionType(
                mnemonic,

@@ -21,7 +21,6 @@ file
     : declSeq EOF
     ;
 
-
 asmFile
     : asmLines EOF
     ;
@@ -63,7 +62,7 @@ declVariables
 
 declVariableList
     : declVariableInit
-    | declVariableList ',' declVariableInit
+    | declVariableList COMMA declVariableInit
     ;
 
 declVariableInit
@@ -72,11 +71,11 @@ declVariableInit
     ;
 
 declFunction
-    : declTypes NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
+    : declTypes NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl
-    : parameterDecl (',' parameterDecl)* ;
+    : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
     : declTypes NAME #parameterDeclType
@@ -84,25 +83,25 @@ parameterDecl
     ;
 
 globalDirective
-    : (PRAGMA RESERVE) '(' NUMBER ( ',' NUMBER )* ')' #globalDirectiveReserve
-    | (PRAGMA PC) '(' NUMBER ')' #globalDirectivePc
-    | (PRAGMA TARGET) '(' NAME ')' #globalDirectivePlatform
-    | (PRAGMA LINK) '(' STRING ')' #globalDirectiveLinkScript
-    | (PRAGMA CODESEG) '(' NAME ')' #globalDirectiveCodeSeg
-    | (PRAGMA DATASEG) '(' NAME ')' #globalDirectiveDataSeg
-    | (PRAGMA ENCODING) '(' NAME ')' #globalDirectiveEncoding
+    : (PRAGMA RESERVE) PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END #globalDirectiveReserve
+    | (PRAGMA PC) PAR_BEGIN NUMBER PAR_END #globalDirectivePc
+    | (PRAGMA TARGET) PAR_BEGIN NAME PAR_END #globalDirectivePlatform
+    | (PRAGMA LINK) PAR_BEGIN STRING PAR_END #globalDirectiveLinkScript
+    | (PRAGMA CODESEG) PAR_BEGIN NAME PAR_END #globalDirectiveCodeSeg
+    | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
+    | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
     ;
 
 directive
     : CONST #directiveConst
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
-    | ALIGN '(' NUMBER ')' #directiveAlign
-    | REGISTER ( '(' NAME ')')? #directiveRegister
+    | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
+    | REGISTER ( PAR_BEGIN NAME PAR_END)? #directiveRegister
     | INLINE #directiveInline
     | VOLATILE #directiveVolatile
-    | INTERRUPT ( '(' NAME ')' )? #directiveInterrupt
-    | RESERVE '(' NUMBER ( ',' NUMBER )* ')'  #directiveReserveZp
+    | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
+    | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
     ;
 
 stmtSeq
@@ -111,31 +110,31 @@ stmtSeq
 
 stmt
     : declVariables ';' #stmtDeclVar
-    | '{' stmtSeq? '}' #stmtBlock
+    | CURLY_BEGIN stmtSeq? CURLY_END #stmtBlock
     | commaExpr  ';' #stmtExpr
-    | IF '(' commaExpr ')' stmt ( ELSE stmt )? #stmtIfElse
-    | directive* WHILE '(' commaExpr ')' stmt  #stmtWhile
-    | directive* DO stmt WHILE '(' commaExpr ')' ';' #stmtDoWhile
-    | directive* FOR '(' forLoop ')' stmt  #stmtFor
-    | SWITCH '(' commaExpr ')' '{' switchCases '}' #stmtSwitch
+    | IF PAR_BEGIN commaExpr PAR_END stmt ( ELSE stmt )? #stmtIfElse
+    | directive* WHILE PAR_BEGIN commaExpr PAR_END stmt  #stmtWhile
+    | directive* DO stmt WHILE PAR_BEGIN commaExpr PAR_END ';' #stmtDoWhile
+    | directive* FOR PAR_BEGIN forLoop PAR_END stmt  #stmtFor
+    | SWITCH PAR_BEGIN commaExpr PAR_END CURLY_BEGIN switchCases CURLY_END #stmtSwitch
     | RETURN commaExpr? ';' #stmtReturn
     | BREAK ';' #stmtBreak
     | CONTINUE ';' #stmtContinue
-    | ASM asmDirectives? '{' asmLines '}' #stmtAsm
+    | ASM asmDirectives? CURLY_BEGIN asmLines ASM_CURLY_END #stmtAsm
     | declKasm #stmtDeclKasm
     ;
 
 switchCases:
-    switchCase+ ( DEFAULT ':' stmtSeq? )?
+    switchCase+ ( DEFAULT COLON stmtSeq? )?
     ;
 
 switchCase:
-    CASE expr ':' stmtSeq?
+    CASE expr COLON stmtSeq?
     ;
 
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
-    | declTypes? NAME ':' expr '..' expr  #forRange
+    | declTypes? NAME COLON expr '..' expr  #forRange
     ;
 
 forClassicInit
@@ -144,12 +143,12 @@ forClassicInit
     ;
 
 typeDecl
-    : '(' typeDecl ')' #typePar
+    : PAR_BEGIN typeDecl PAR_END #typePar
     | SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
     | typeDecl ASTERISK #typePtr
-    | typeDecl '[' (expr)? ']' #typeArray
-    | typeDecl '(' ')' #typeProcedure
+    | typeDecl BRACKET_BEGIN (expr)? BRACKET_END #typeArray
+    | typeDecl PAR_BEGIN PAR_END #typeProcedure
     | structDef  #typeStructDef
     | structRef  #typeStructRef
     | enumDef  #typeEnumDef
@@ -162,7 +161,7 @@ structRef
     ;
 
 structDef
-    : STRUCT NAME? '{' structMembers+ '}'
+    : STRUCT NAME? CURLY_BEGIN structMembers+ CURLY_END
     ;
 
 structMembers
@@ -174,12 +173,12 @@ enumRef
     ;
 
 enumDef
-    : ENUM NAME? '{' enumMemberList '}'
+    : ENUM NAME? CURLY_BEGIN enumMemberList CURLY_END
     ;
 
 enumMemberList
     :  enumMember
-    |  enumMemberList ',' enumMember
+    |  enumMemberList COMMA enumMember
     ;
 
 enumMember
@@ -188,36 +187,36 @@ enumMember
 
 commaExpr
     : expr #commaNone
-    | commaExpr ',' expr #commaSimple
+    | commaExpr COMMA expr #commaSimple
     ;
 
 expr
-    : '(' commaExpr ')' #exprPar
-    | expr '.' NAME #exprDot
+    : PAR_BEGIN commaExpr PAR_END #exprPar
+    | expr DOT NAME #exprDot
     | expr '->' NAME  #exprArrow
-    | expr '(' parameterList? ')' #exprCall
-    | SIZEOF '(' ( expr | typeDecl ) ')' #exprSizeOf
-    | TYPEID '(' ( expr | typeDecl ) ')' #exprTypeId
-    | expr '[' commaExpr ']' #exprArray
-    | '(' typeDecl ')' expr #exprCast
+    | expr PAR_BEGIN parameterList? PAR_END #exprCall
+    | SIZEOF PAR_BEGIN ( expr | typeDecl ) PAR_END #exprSizeOf
+    | TYPEID PAR_BEGIN ( expr | typeDecl ) PAR_END #exprTypeId
+    | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
+    | PAR_BEGIN typeDecl PAR_END expr #exprCast
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' ) #exprPostMod
-    | '*' expr #exprPtr
-    | ('+' | '-' | '!' | '&'| '~' ) expr #exprUnary
-    | expr ('<<' | '>>' ) expr #exprBinary
-    | expr ('*' | '/' | '%' ) expr #exprBinary
-    | expr ( '+' | '-' )  expr #exprBinary
-    | ('<' | '>') expr #exprUnary
-    | expr ( '==' | '!=' | '<' | '<=' | '>=' | '>' ) expr #exprBinary
+    | ASTERISK expr #exprPtr
+    | (PLUS | MINUS | LOGIC_NOT | '&'| '~' ) expr #exprUnary
+    | expr (SHIFT_LEFT | SHIFT_RIGHT ) expr #exprBinary
+    | expr (ASTERISK | DIVIDE | '%' ) expr #exprBinary
+    | expr ( PLUS | MINUS )  expr #exprBinary
+    | (LESS_THAN | GREATER_THAN) expr #exprUnary
+    | expr ( '==' | '!=' | LESS_THAN | '<=' | '>=' | GREATER_THAN ) expr #exprBinary
     | expr ( '&' ) expr #exprBinary
     | expr ( '^' ) expr #exprBinary
     | expr ( '|' ) expr #exprBinary
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
-    | expr '?'   expr ':' expr #exprTernary
+    | expr '?'   expr COLON expr #exprTernary
     | <assoc=right> expr '=' expr  #exprAssignment
     | <assoc=right> expr ASSIGN_COMPOUND expr  #exprAssignmentCompound
-    | '{' expr (',' expr )* '}' #initList
+    | CURLY_BEGIN expr (COMMA expr )* CURLY_END #initList
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING+ #exprString
@@ -226,7 +225,7 @@ expr
     ;
 
 parameterList
-    : expr (',' expr)*
+    : expr (COMMA expr)*
     ;
 
 declKasm
@@ -234,7 +233,7 @@ declKasm
     ;
 
 asmDirectives
-    : '(' asmDirective ( ',' asmDirective )* ')'
+    : PAR_BEGIN asmDirective ( COMMA asmDirective )* PAR_END
     ;
 
 asmDirective
@@ -247,7 +246,7 @@ asmDirective
     ;
 
 asmLines
-    : {cParser.setModeAsm(true);} asmLine* {cParser.setModeAsm(false);}
+    : asmLine*
     ;
 
 asmLine
@@ -257,8 +256,8 @@ asmLine
     ;
 
 asmLabel
-    : NAME ':'  #asmLabelName
-    | '!' NAME? ':' #asmLabelMulti
+    : ASM_NAME ASM_COLON  #asmLabelName
+    | ASM_EXCL ASM_NAME? ASM_COLON #asmLabelMulti
     ;
 
 asmInstruction
@@ -266,28 +265,28 @@ asmInstruction
     ;
 
 asmBytes
-    : ASM_BYTE asmExpr ( ',' asmExpr)*
+    : ASM_BYTE asmExpr ( ASM_COMMA asmExpr)*
     ;
 
 asmParamMode
     : asmExpr #asmModeAbs
-    | '#' asmExpr #asmModeImm
-    | asmExpr ',' NAME #asmModeAbsXY
-    | '(' asmExpr ')' ',' NAME #asmModeIndIdxXY
-    | '(' asmExpr ',' NAME ')' #asmModeIdxIndXY
-    | '(' asmExpr ')'  #asmModeInd
+    | ASM_IMM asmExpr #asmModeImm
+    | asmExpr ASM_COMMA ASM_NAME #asmModeAbsXY
+    | ASM_PAR_BEGIN asmExpr ASM_PAR_END ASM_COMMA ASM_NAME #asmModeIndIdxXY
+    | ASM_PAR_BEGIN asmExpr ASM_COMMA ASM_NAME ASM_PAR_END #asmModeIdxIndXY
+    | ASM_PAR_BEGIN asmExpr ASM_PAR_END  #asmModeInd
     ;
 
 asmExpr
-    : '[' asmExpr ']' #asmExprPar
-    | asmExpr ( '.' ) asmExpr #asmExprBinary
-    | asmExpr ( '<<'| '>>' ) asmExpr #asmExprBinary
-    | ('+' | '-'| '<' | '>' ) asmExpr #asmExprUnary
-    | asmExpr ('*' | '/' ) asmExpr #asmExprBinary
-    | asmExpr ( '+' | '-' )  asmExpr #asmExprBinary
-    | NAME #asmExprLabel
+    : ASM_BRACKET_BEGIN asmExpr ASM_BRACKET_END #asmExprPar
+    | asmExpr ( ASM_DOT ) asmExpr #asmExprBinary
+    | asmExpr ( ASM_SHIFT_LEFT| ASM_SHIFT_RIGHT ) asmExpr #asmExprBinary
+    | (ASM_PLUS | ASM_MINUS| ASM_LESS_THAN | ASM_GREATER_THAN ) asmExpr #asmExprUnary
+    | asmExpr (ASM_MULTIPLY | ASM_DIVIDE ) asmExpr #asmExprBinary
+    | asmExpr ( ASM_PLUS | ASM_MINUS )  asmExpr #asmExprBinary
+    | ASM_NAME #asmExprLabel
     | ASM_REL #asmExprLabelRel
-    | '{' NAME '}' #asmExprReplace
-    | NUMBER #asmExprInt
-    | CHAR #asmExprChar
+    | ASM_CURLY_BEGIN ASM_NAME ASM_CURLY_END #asmExprReplace
+    | ASM_NUMBER #asmExprInt
+    | ASM_CHAR #asmExprChar
     ;

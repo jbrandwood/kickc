@@ -1265,15 +1265,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
          @Override
          public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
-            String label = ctxLabel.NAME().toString();
+            String label = ctxLabel.ASM_NAME().toString();
             if(!definedLabels.contains(label)) {
                // Look for the symbol
-               Symbol symbol = getCurrentScope().getSymbol(ctxLabel.NAME().getText());
+               Symbol symbol = getCurrentScope().getSymbol(ctxLabel.ASM_NAME().getText());
                if(symbol != null) {
                   referenced.put(label, symbol.getRef());
                } else {
                   // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
-                  referenced.put(label, new ForwardVariableRef(ctxLabel.NAME().getText()));
+                  referenced.put(label, new ForwardVariableRef(ctxLabel.ASM_NAME().getText()));
                }
             }
             return super.visitAsmExprLabel(ctxLabel);
@@ -1294,7 +1294,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       KickCParserBaseVisitor<Void> findDefinedLabels = new KickCParserBaseVisitor<Void>() {
          @Override
          public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-            String label = ctx.NAME().getText();
+            String label = ctx.ASM_NAME().getText();
             definedLabels.add(label);
             return super.visitAsmLabelName(ctx);
          }

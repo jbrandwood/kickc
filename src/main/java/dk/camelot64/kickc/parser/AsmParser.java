@@ -16,6 +16,7 @@ public class AsmParser {
       CodePointCharStream fragmentCharStream = CharStreams.fromString(body);
       CParser cParser = new CParser(null);
       KickCLexer kickCLexer = new KickCLexer(fragmentCharStream, cParser);
+      kickCLexer.pushMode(KickCLexer.ASM_MODE);
       KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer), cParser);
       kickCParser.addErrorListener(new BaseErrorListener() {
          @Override

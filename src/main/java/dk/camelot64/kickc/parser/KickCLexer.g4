@@ -9,6 +9,9 @@ tokens { TYPEDEFNAME }
 @lexer::members {
     CParser cParser;
 
+    boolean asmEnter = false;
+    int asmCurlyCount = 0;
+
 	public KickCLexer(CharStream input, CParser cParser) {
 		this(input);
 		this.cParser = cParser;
@@ -16,7 +19,7 @@ tokens { TYPEDEFNAME }
 }
 
 // Special characters
-CURLY_BEGIN: '{' ;
+CURLY_BEGIN: '{' { if(asmEnter) { pushMode(ASM_MODE); asmEnter=false; } }  ;
 CURLY_END: '}' ;
 BRACKET_BEGIN : '[' ;
 BRACKET_END : ']' ;
@@ -81,7 +84,7 @@ SWITCH: 'switch' ;
 RETURN: 'return' ;
 BREAK: 'break' ;
 CONTINUE: 'continue' ;
-ASM: 'asm' ;
+ASM: 'asm' { asmEnter=true; };
 DEFAULT : 'default' ;
 CASE : 'case' ;
 STRUCT : 'struct' ;
@@ -99,15 +102,7 @@ SIGNEDNESS : 'signed' | 'unsigned' ;
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
 BOOLEAN : 'true' | 'false';
 KICKASM_BODY: '{{' .*? '}}';
-ASM_IMM : '#' ;
-ASM_BYTE : '.byte' ;
-ASM_MNEMONIC:
-    'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
-    'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
-    'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
-    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
-    ;
-ASM_REL: '!' NAME_CHAR* [+-]+ {cParser.isModeAsm()}? ;
+
 
 // Strings and chars - with special handling of imports
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(cParser.isModeImport()) { cParser.setModeImport(false); cParser.loadCFile(getText()); } } ;
@@ -137,3 +132,62 @@ WS : [ \t\r\n\u00a0]+ -> channel(1);
 // Comments on hidden channel 2
 COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
 COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);
+
+
+// MODE FOR INLINE ASSEMBLER
+
+mode ASM_MODE;
+ASM_BYTE : '.byte' ;
+ASM_MNEMONIC:
+    'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
+    'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
+    'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
+    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
+    ;
+ASM_REL: '!' ASM_NAME_CHAR* [+-]+ ;
+ASM_IMM : '#' ;
+ASM_COLON : ':';
+ASM_EXCL : '!';
+ASM_COMMA : ',' ;
+ASM_PAR_BEGIN : '(' ;
+ASM_PAR_END : ')' ;
+ASM_BRACKET_BEGIN: '[' ;
+ASM_BRACKET_END: ']' ;
+ASM_DOT : '.' ;
+ASM_SHIFT_LEFT : '<<' ;
+ASM_SHIFT_RIGHT : '>>' ;
+ASM_PLUS : '+' ;
+ASM_MINUS : '-' ;
+ASM_LESS_THAN : '<' ;
+ASM_GREATER_THAN : '>' ;
+ASM_MULTIPLY : '*' ;
+ASM_DIVIDE : '/' ;
+ASM_CURLY_BEGIN : '{' { asmCurlyCount++; };
+ASM_CURLY_END : '}' { asmCurlyCount--; if(asmCurlyCount<0) { popMode(); } };
+
+// Numbers
+ASM_NUMBER : ASM_NUMFLOAT | ASM_NUMINT ;
+ASM_NUMFLOAT : ASM_BINFLOAT | ASM_DECFLOAT | ASM_HEXFLOAT;
+ASM_BINFLOAT : '%' (ASM_BINDIGIT)* '.' ASM_BINDIGIT+;
+ASM_DECFLOAT : (ASM_DECDIGIT)* '.' ASM_DECDIGIT+;
+ASM_HEXFLOAT : '$' (ASM_HEXDIGIT)* '.' ASM_HEXDIGIT+;
+ASM_NUMINT : (ASM_DECINTEGER | ASM_HEXINTEGER | ASM_BININTEGER ) ;
+ASM_BININTEGER : '%' ASM_BINDIGIT+ ;
+ASM_DECINTEGER : ASM_DECDIGIT+ ;
+ASM_HEXINTEGER : '$' ASM_HEXDIGIT+ ;
+fragment ASM_BINDIGIT : [0-1];
+fragment ASM_DECDIGIT : [0-9];
+fragment ASM_HEXDIGIT : [0-9a-fA-F];
+
+ASM_CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
+
+//Names
+ASM_NAME : ASM_NAME_START ASM_NAME_CHAR* ;
+fragment ASM_NAME_START : [a-zA-Z_];
+fragment ASM_NAME_CHAR : [a-zA-Z0-9_];
+
+// White space on hidden channel 1
+ASM_WS : [ \t\r\n\u00a0]+ -> channel(1);
+// Comments on hidden channel 2
+ASM_COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
+ASM_COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);

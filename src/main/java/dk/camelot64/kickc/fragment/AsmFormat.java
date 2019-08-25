@@ -276,11 +276,13 @@ public class AsmFormat {
                .replace(':', '_')
                .replace("#", "_")
                .replace("$", "_");
-         //param = ""+((Registers.RegisterZp) register).getZp();
          return param;
       } else {
-         String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$", "_");
-         //param = ""+((Registers.RegisterZp) register).getZp();
+         String param = asmName
+               .replace('@', 'b')
+               .replace(':', '_')
+               .replace("#", "_")
+               .replace("$", "_");
          return param;
       }
    }

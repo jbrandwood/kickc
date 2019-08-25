@@ -41,9 +41,6 @@ public class CParser {
    /** Names of typedefs. Used by lexer to know the difference between normal value IDENTIFIERS and TYPEIDENTIFIERS */
    private List<String> typedefs;
 
-   /** True whenever the lexer/parser is parsing ASM. Enables/disables a lexer rules that might interfere.*/
-   private boolean modeAsm;
-
    /** True whenever the lexer is expecting an import filename as the next token. */
    private boolean modeImport;
 
@@ -88,14 +85,6 @@ public class CParser {
 
    public boolean isTypedef(String identifier) {
       return typedefs.contains(identifier);
-   }
-
-   public boolean isModeAsm() {
-      return modeAsm;
-   }
-
-   public void setModeAsm(boolean asm) {
-      modeAsm = asm;
    }
 
    public boolean isModeImport() {

@@ -160,15 +160,15 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-         program.addLine(new AsmLabel(ctx.NAME().getText()));
+         program.addLine(new AsmLabel(ctx.ASM_NAME().getText()));
          return null;
       }
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
          String label = "!";
-         if(ctx.NAME()!=null) {
-            label = label + ctx.NAME().getText();
+         if(ctx.ASM_NAME()!=null) {
+            label = label + ctx.ASM_NAME().getText();
          }
          program.addLine(new AsmLabel(label));
          return null;
@@ -306,7 +306,7 @@ public class AsmFragmentInstance {
 
       @Override
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
-         Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
+         Number number = NumberParser.parseLiteral(ctx.ASM_NUMBER().getText());
          boolean isZp = SymbolType.BYTE.contains(number.longValue()) || SymbolType.SBYTE.contains(number.longValue());
          String param = AsmFormat.getAsmNumber(number);
          return new AsmParameter(param, isZp);
@@ -319,7 +319,7 @@ public class AsmFragmentInstance {
 
       @Override
       public AsmParameter visitAsmExprLabel(KickCParser.AsmExprLabelContext ctx) {
-         String param = ctx.NAME().getSymbol().getText();
+         String param = ctx.ASM_NAME().getSymbol().getText();
          return new AsmParameter(param, false);
       }
 
@@ -331,7 +331,7 @@ public class AsmFragmentInstance {
 
       @Override
       public AsmParameter visitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx) {
-         String replaceName = ctx.NAME().getSymbol().getText();
+         String replaceName = ctx.ASM_NAME().getSymbol().getText();
          return bindings.getBoundValue(replaceName);
       }
    }

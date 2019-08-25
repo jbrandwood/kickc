@@ -257,7 +257,7 @@ asmLine
 
 asmLabel
     : ASM_NAME ASM_COLON  #asmLabelName
-    | ASM_EXCL ASM_NAME? ASM_COLON #asmLabelMulti
+    | ASM_MULTI_NAME ASM_COLON #asmLabelMulti
     ;
 
 asmInstruction
@@ -285,7 +285,7 @@ asmExpr
     | asmExpr (ASM_MULTIPLY | ASM_DIVIDE ) asmExpr #asmExprBinary
     | asmExpr ( ASM_PLUS | ASM_MINUS )  asmExpr #asmExprBinary
     | ASM_NAME #asmExprLabel
-    | ASM_REL #asmExprLabelRel
+    | ASM_MULTI_REL #asmExprLabelRel
     | ASM_CURLY_BEGIN ASM_NAME ASM_CURLY_END #asmExprReplace
     | ASM_NUMBER #asmExprInt
     | ASM_CHAR #asmExprChar

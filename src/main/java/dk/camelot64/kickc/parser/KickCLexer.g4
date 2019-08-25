@@ -150,10 +150,9 @@ ASM_MNEMONIC:
     'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
     'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
-ASM_REL: '!' ASM_NAME_CHAR* [+-]+ ;
+
 ASM_IMM : '#' ;
 ASM_COLON : ':';
-ASM_EXCL : '!';
 ASM_COMMA : ',' ;
 ASM_PAR_BEGIN : '(' ;
 ASM_PAR_END : ')' ;
@@ -186,6 +185,9 @@ fragment ASM_DECDIGIT : [0-9];
 fragment ASM_HEXDIGIT : [0-9a-fA-F];
 
 ASM_CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
+
+ASM_MULTI_REL: ASM_MULTI_NAME [+-]+ ;
+ASM_MULTI_NAME : '!' ASM_NAME_CHAR* ;
 
 //Names
 ASM_NAME : ASM_NAME_START ASM_NAME_CHAR* ;

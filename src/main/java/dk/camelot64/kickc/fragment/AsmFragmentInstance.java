@@ -74,7 +74,7 @@ public class AsmFragmentInstance {
       }
 
       if(boundValue == null) {
-         throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name );
+         throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name);
       }
       if(boundValue instanceof Variable) {
          Variable boundVar = (Variable) boundValue;
@@ -166,10 +166,7 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
-         String label = "!";
-         if(ctx.ASM_NAME()!=null) {
-            label = label + ctx.ASM_NAME().getText();
-         }
+         String label = ctx.ASM_MULTI_NAME().getText();
          program.addLine(new AsmLabel(label));
          return null;
       }
@@ -325,7 +322,7 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx) {
-         String param = ctx.ASM_REL().getSymbol().getText();
+         String param = ctx.ASM_MULTI_REL().getSymbol().getText();
          return new AsmParameter(param, false);
       }
 

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 
@@ -8,11 +8,11 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * This class provides an empty implementation of {@link KickCListener},
+ * This class provides an empty implementation of {@link KickCParserListener},
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-public class KickCBaseListener implements KickCListener {
+public class KickCParserBaseListener implements KickCParserListener {
 	/**
 	 * {@inheritDoc}
 	 *

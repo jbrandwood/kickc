@@ -11,8 +11,8 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.Value;
-import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -138,7 +138,7 @@ public class AsmFragmentInstance {
       }
    }
 
-   private static class AsmSequenceGenerator extends KickCBaseVisitor {
+   private static class AsmSequenceGenerator extends KickCParserBaseVisitor {
 
       private String name;
       private AsmProgram program;

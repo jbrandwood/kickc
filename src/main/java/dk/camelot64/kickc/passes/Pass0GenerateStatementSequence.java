@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.parser.CParser;
+import dk.camelot64.kickc.parser.*;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
@@ -10,8 +10,6 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.parser.KickCBaseVisitor;
-import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Generates program SSA form by visiting the ANTLR4 parse tree
  */
-public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
+public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Object> {
 
    /** The C parser keeping track of C-files and lexers */
    private CParser cParser;
@@ -79,7 +77,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
-      String importName = ctx.IMPORTFILE().getText();
+      String importName = ctx.STRING().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
@@ -244,7 +242,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDeclKasm(KickCParser.DeclKasmContext ctx) {
-      String kasm = ctx.KICKASM().getText();
+      String kasm = ctx.KICKASM_BODY().getText();
       Pattern p = Pattern.compile("\\{\\{[\\s]*(.*)[\\s]*\\}\\}", Pattern.DOTALL);
       Matcher m = p.matcher(kasm);
       if(m.find()) {
@@ -1251,7 +1249,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     */
    private Map<String, SymbolRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext ctx, List<String> definedLabels) {
       Map<String, SymbolRef> referenced = new LinkedHashMap<>();
-      KickCBaseVisitor<Void> findReferenced = new KickCBaseVisitor<Void>() {
+      KickCParserBaseVisitor<Void> findReferenced = new KickCParserBaseVisitor<Void>() {
 
          @Override
          public Void visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
@@ -1293,7 +1291,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     */
    private List<String> getAsmDefinedLabels(KickCParser.StmtAsmContext ctx) {
       List<String> definedLabels = new ArrayList<>();
-      KickCBaseVisitor<Void> findDefinedLabels = new KickCBaseVisitor<Void>() {
+      KickCParserBaseVisitor<Void> findDefinedLabels = new KickCParserBaseVisitor<Void>() {
          @Override
          public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
             String label = ctx.NAME().getText();
@@ -2050,7 +2048,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
 
-   private static class PrePostModifierHandler extends KickCBaseVisitor<Void> {
+   private static class PrePostModifierHandler extends KickCParserBaseVisitor<Void> {
 
       private List<PrePostModifier> postMods;
       private List<PrePostModifier> preMods;

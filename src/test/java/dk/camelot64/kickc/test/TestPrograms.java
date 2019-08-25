@@ -36,6 +36,13 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   // TODO: Optimize comparisons with values outside the range of types https://gitlab.com/camelot/kickc/issues/291
+   @Test
+   public void testOptimizeUnsignedComparisons() throws IOException, URISyntaxException {
+      compileAndCompare("optimize-unsigned-comparisons");
+   }
+
+
    // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/261
    @Test
    public void testLoopheadProblem() throws IOException, URISyntaxException {

@@ -6,11 +6,10 @@ tokens { TYPEDEFNAME }
 @header {
 }
 
-@lexer::members {
+@members {
 
     /** The C-Parser. Used for importing C-files and communicating with the Parser about typedefs. */
     CParser cParser;
-
     /** True of the next string is the name of a C-file to import*/
     boolean importEnter = false;
     /** True if the next CURLY starts ASM_MODE */
@@ -35,7 +34,7 @@ SEMICOLON: ';' ;
 COLON: ':';
 COMMA: ',' ;
 RANGE : '..' ;
-QUESTION : '?' ;
+CONDITION : '?' ;
 DOT : '.' ;
 ARROW : '->' ;
 PLUS: '+';
@@ -128,7 +127,7 @@ fragment BINDIGIT : [0-1];
 fragment DECDIGIT : [0-9];
 fragment HEXDIGIT : [0-9a-fA-F];
 
-//Names
+// Names
 NAME : NAME_START NAME_CHAR* {if(cParser.isTypedef(getText())) setType(TYPEDEFNAME); };
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];

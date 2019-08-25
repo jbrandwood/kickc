@@ -7,7 +7,7 @@ options { tokenVocab=KickCLexer; }
 }
 
 
-@parser::members {
+@members {
     CParser cParser;
 
 	public KickCParser(TokenStream input, CParser cParser) {

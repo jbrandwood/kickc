@@ -288,7 +288,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value value) {
-         statementKickAsm.getUses().set(idx, (SymbolVariableRef) value);
+         statementKickAsm.getUses().set(idx, (SymbolRef) value);
       }
 
    }

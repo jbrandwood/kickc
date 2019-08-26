@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -77,7 +80,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                variableType,
                constVal,
                variable.getDataSegment()
-               );
+         );
 
          constantVar.setInferredType(variable.isInferredType());
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
@@ -286,11 +289,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       // Examine all program values in expressions
       ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
-         if(value instanceof ConstantSymbolPointer) {
-            ConstantSymbolPointer constantSymbolPointer = (ConstantSymbolPointer) value;
-            if(constantSymbolPointer.getToSymbol().equals(procedureRef)) {
-               found[0] = true;
-            }
+         if(value instanceof ProcedureRef && value.equals(procedureRef)) {
+            found[0] = true;
          }
       });
       if(found[0]) {

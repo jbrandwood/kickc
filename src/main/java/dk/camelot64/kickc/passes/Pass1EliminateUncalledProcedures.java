@@ -35,6 +35,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
+         // TODO Also look at kickasm/asm uses! (Maybe also look at some directive like "export" )
          if(!calledProcedures.contains(procedure.getRef())  && !Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
             // The procedure is not used - mark for removal!
             unusedProcedures.add(procedure.getRef());

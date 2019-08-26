@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKickasmUsesPreventDeletion() throws IOException, URISyntaxException {
+      compileAndCompare("kickasm-uses-prevent-deletion");
+   }
+
+   @Test
    public void testBitmapCircle() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-circle");
    }

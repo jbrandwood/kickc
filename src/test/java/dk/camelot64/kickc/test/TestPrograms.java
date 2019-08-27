@@ -1390,11 +1390,29 @@ public class TestPrograms {
       compileAndCompare("examples/plasma/plasma");
    }
 
+   // TODO: Fix bool auto-conversion type conversion https://gitlab.com/camelot/kickc/issues/199
+   /*
+   @Test
+   public void testBoolNotOperator3() throws IOException, URISyntaxException {
+      compileAndCompare("bool-not-operator-3");
+   }
+   */
+
    // TODO: Fix number type conversion https://gitlab.com/camelot/kickc/issues/199
    /*
    @Test
    public void testTernary4() throws IOException, URISyntaxException {
       compileAndCompare("ternary-4");
+   }
+
+   @Test
+   public void testBoolNotOperator1() throws IOException, URISyntaxException {
+      compileAndCompare("bool-not-operator-1");
+   }
+
+   @Test
+   public void testBoolNotOperator2() throws IOException, URISyntaxException {
+      compileAndCompare("bool-not-operator-2");
    }
    */
 

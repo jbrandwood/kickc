@@ -36,6 +36,14 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   // Fix parameter type problem - https://gitlab.com/camelot/kickc/issues/299
+   /*
+   @Test
+   public void testParameterAutocastWrong() throws IOException, URISyntaxException {
+      compileAndCompare("parameter-autocast-wrong");
+   }
+   */
+
    @Test
    public void testKickasmUsesPreventDeletion() throws IOException, URISyntaxException {
       compileAndCompare("kickasm-uses-prevent-deletion");

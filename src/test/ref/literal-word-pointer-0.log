@@ -1,0 +1,309 @@
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) print::str#0 ← (const string) main::str
+  call print 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+print: scope:[print]  from main
+  (byte*) print::str#1 ← phi( main/(byte*) print::str#0 )
+  (byte**~) print::$0 ← ((byte**)) (number) $80
+  (byte*~) print::$1 ← ((byte*)) (byte*) print::str#1
+  *((byte**~) print::$0) ← (byte*~) print::$1
+  to:print::@return
+print::@return: scope:[print]  from print
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(const string) main::str = (string) "qwe"
+(void()) print((byte*) print::str)
+(byte**~) print::$0
+(byte*~) print::$1
+(label) print::@return
+(byte*) print::str
+(byte*) print::str#0
+(byte*) print::str#1
+
+Inlining cast (byte**~) print::$0 ← (byte**)(number) $80
+Inlining cast (byte*~) print::$1 ← (byte*)(byte*) print::str#1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte**) 128
+Simplifying constant integer cast (byte*) print::str#1
+Successful SSA optimization PassNCastSimplification
+Alias (byte*) print::str#1 = (byte*~) print::$1 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) print::str#1 (byte*) print::str#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) print::str#0 = main::str
+Constant (const byte**) print::$0 = (byte**) 128
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined print::str#0 = (const string) main::str
+Constant inlined print::$0 = (byte**) 128
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to print:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call print 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+print: scope:[print]  from main
+  [7] *((byte**) 128) ← (const string) main::str
+  to:print::@return
+print::@return: scope:[print]  from print
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(void()) print((byte*) print::str)
+(byte*) print::str
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Tests assigning a literal word pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [5] call print 
+    jsr print
+    jmp breturn
+    // main::@return
+  breturn:
+    // [6] return 
+    rts
+    str: .text "qwe"
+    .byte 0
+}
+  // print
+print: {
+    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    lda #<main.str
+    sta $80
+    lda #>main.str
+    sta $80+1
+    jmp breturn
+    // print::@return
+  breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [7] *((byte**) 128) ← (const string) main::str [ ] ( main:2::print:5 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [print] 
+Uplift Scope [] 
+
+Uplifting [main] best 48 combination 
+Uplifting [print] best 48 combination 
+Uplifting [] best 48 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests assigning a literal word pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [5] call print 
+    jsr print
+    jmp breturn
+    // main::@return
+  breturn:
+    // [6] return 
+    rts
+    str: .text "qwe"
+    .byte 0
+}
+  // print
+print: {
+    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    lda #<main.str
+    sta $80
+    lda #>main.str
+    sta $80+1
+    jmp breturn
+    // print::@return
+  breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(const string) main::str str = (string) "qwe"
+(void()) print((byte*) print::str)
+(label) print::@return
+(byte*) print::str
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+  // File Comments
+// Tests assigning a literal word pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // print("qwe")
+    // [5] call print 
+    jsr print
+    // main::@return
+    // }
+    // [6] return 
+    rts
+    str: .text "qwe"
+    .byte 0
+}
+  // print
+print: {
+    // *(char**)0x80 = (char*)str
+    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    lda #<main.str
+    sta $80
+    lda #>main.str
+    sta $80+1
+    // print::@return
+    // }
+    // [8] return 
+    rts
+}
+  // File Data
+

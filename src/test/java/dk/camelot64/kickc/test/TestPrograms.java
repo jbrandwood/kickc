@@ -1379,6 +1379,19 @@ public class TestPrograms {
     */
 
    @Test
+   public void testLiteralWordPointer0() throws IOException, URISyntaxException {
+      compileAndCompare("literal-word-pointer-0");
+   }
+
+   // TODO: Fix casting literal char* to word https://gitlab.com/camelot/kickc/issues/298
+   /*
+   @Test
+   public void testLiteralWordPointer1() throws IOException, URISyntaxException {
+      compileAndCompare("literal-word-pointer-1");
+   }
+    */
+
+   @Test
    public void testLiteralStrings() throws IOException, URISyntaxException {
       compileAndCompare("literal-strings");
    }

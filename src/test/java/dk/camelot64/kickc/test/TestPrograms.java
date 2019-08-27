@@ -575,11 +575,12 @@ public class TestPrograms {
       compileAndCompare("unused-irq");
    }
 
-   /** TODO: Fix error with number resolving
-   @Test
-   public void testNumberTernaryFail() throws IOException, URISyntaxException {
-      compileAndCompare("number-ternary-fail");
-   }
+   /**
+    * TODO: Fix error with number resolving
+    *
+    * @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
+    * compileAndCompare("number-ternary-fail");
+    * }
     */
 
    @Test
@@ -770,7 +771,7 @@ public class TestPrograms {
    public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
    }
-   
+
    @Test
    public void testStruct11() throws IOException, URISyntaxException {
       compileAndCompare("struct-11");
@@ -1457,7 +1458,7 @@ public class TestPrograms {
 
    @Test
    public void testPointerPointer1() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-pointer-1" );
+      compileAndCompare("pointer-pointer-1");
    }
 
    @Test
@@ -1704,7 +1705,6 @@ public class TestPrograms {
    */
 
 
-
    @Test
    public void testInlineKasmRefout() throws IOException, URISyntaxException {
       compileAndCompare("inline-kasm-refout");
@@ -1822,7 +1822,7 @@ public class TestPrograms {
 
    @Test
    public void testCommentsSingle() throws IOException, URISyntaxException {
-      compileAndCompare("test-comments-single");                                                        
+      compileAndCompare("test-comments-single");
    }
 
    @Test
@@ -1975,6 +1975,14 @@ public class TestPrograms {
       compileAndCompare("min-fmul-16");
    }
 
+   // Fix literal number type conversion (also over the bitwise NOT operator). https://gitlab.com/camelot/kickc/issues/199
+   /*
+   @Test
+   public void testBitwiseNot1() throws IOException, URISyntaxException {
+      compileAndCompare("bitwise-not-1");
+   }
+ */
+
    @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not");
@@ -2082,7 +2090,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("examples/multiplexer/simple-multiplexer",10);
+      compileAndCompare("examples/multiplexer/simple-multiplexer", 10);
    }
 
    @Test
@@ -3092,7 +3100,7 @@ public class TestPrograms {
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
-      if(compileLog!=null) {
+      if(compileLog != null) {
          compiler.setLog(compileLog);
       }
       compiler.addImportPath(stdlibPath);
@@ -3106,7 +3114,7 @@ public class TestPrograms {
 
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
-      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false, false, false),program ));
+      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false, false, false), program));
       success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, null));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
@@ -3118,7 +3126,7 @@ public class TestPrograms {
    }
 
    private void compileAsm(String fileName, Program program) throws IOException {
-      writeBinFile(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false), program ));
+      writeBinFile(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false), program));
       for(Path asmResourceFile : program.getAsmResourceFiles()) {
          File asmFile = getBinFile(fileName, ".asm");
          String asmFolder = asmFile.getParent();

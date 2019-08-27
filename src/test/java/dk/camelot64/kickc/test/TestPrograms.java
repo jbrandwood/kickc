@@ -41,6 +41,11 @@ public class TestPrograms {
       compileAndCompare("kickasm-uses-prevent-deletion");
    }
 
+   @Test
+   public void testAsmUses0() throws IOException, URISyntaxException {
+      compileAndCompare("asm-uses-0");
+   }
+
    // TODO: Fix inline kickasm uses handling of used variables. https://gitlab.com/camelot/kickc/issues/296
    /*
    @Test
@@ -1364,6 +1369,14 @@ public class TestPrograms {
    public void testPointerCast() throws IOException, URISyntaxException {
       compileAndCompare("pointer-cast");
    }
+
+   // TODO: Fix literal string array initialization. https://gitlab.com/camelot/kickc/issues/297
+   /*
+   @Test
+   public void testLiteralStringArray() throws IOException, URISyntaxException {
+      compileAndCompare("literal-string-array");
+   }
+    */
 
    @Test
    public void testLiteralStrings() throws IOException, URISyntaxException {

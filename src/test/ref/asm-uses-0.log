@@ -1,0 +1,283 @@
+Resolved forward reference init to (void()) init()
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @2
+  asm { jsrinit  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) BGCOL#0 ← ((byte*)) (number) $d020
+  to:@2
+init: scope:[init]  from
+  *((byte*) BGCOL#0) ← (number) 0
+  to:init::@return
+init::@return: scope:[init]  from init
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(void()) init()
+(label) init::@return
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((byte*) BGCOL#0) ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d020
+Inlining cast *((byte*) BGCOL#0) ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte*) BGCOL#0 = (byte*) 53280
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { jsrinit  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+init: scope:[init]  from
+  [6] *((const byte*) BGCOL#0) ← (byte) 0
+  to:init::@return
+init::@return: scope:[init]  from init
+  [7] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(void()) init()
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic
+  // File Comments
+// Tests that inline asm uses clause makes the compiler not cull a procedure referenced
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d020
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { jsrinit  }
+    jsr init
+    jmp breturn
+    // main::@return
+  breturn:
+    // [5] return 
+    rts
+}
+  // init
+// Function only used inside the inline asm
+init: {
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    jmp breturn
+    // init::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement asm { jsrinit  } always clobbers reg byte a reg byte x reg byte y 
+Statement [6] *((const byte*) BGCOL#0) ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [init] 
+Uplift Scope [] 
+
+Uplifting [main] best 42 combination 
+Uplifting [init] best 42 combination 
+Uplifting [] best 42 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests that inline asm uses clause makes the compiler not cull a procedure referenced
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d020
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { jsrinit  }
+    jsr init
+    jmp breturn
+    // main::@return
+  breturn:
+    // [5] return 
+    rts
+}
+  // init
+// Function only used inside the inline asm
+init: {
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    jmp breturn
+    // init::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = (byte*) 53280
+(void()) init()
+(label) init::@return
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Tests that inline asm uses clause makes the compiler not cull a procedure referenced
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d020
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // asm
+    // asm { jsrinit  }
+    jsr init
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // init
+// Function only used inside the inline asm
+init: {
+    // *BGCOL = 0
+    // [6] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BGCOL
+    // init::@return
+    // }
+    // [7] return 
+    rts
+}
+  // File Data
+

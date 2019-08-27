@@ -41,6 +41,20 @@ public class TestPrograms {
       compileAndCompare("kickasm-uses-prevent-deletion");
    }
 
+   // TODO: Fix inline kickasm uses handling of used variables. https://gitlab.com/camelot/kickc/issues/296
+   /*
+   @Test
+   public void testKickasmUses1() throws IOException, URISyntaxException {
+      compileAndCompare("kickasm-uses-1");
+   }
+
+   @Test
+   public void testKickasmUses0() throws IOException, URISyntaxException {
+      compileAndCompare("kickasm-uses-0");
+   }
+   */
+
+
    @Test
    public void testBitmapCircle() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-circle");

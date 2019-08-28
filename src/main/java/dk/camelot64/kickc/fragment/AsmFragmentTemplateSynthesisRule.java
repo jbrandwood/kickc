@@ -285,6 +285,11 @@ class AsmFragmentTemplateSynthesisRule {
       mapZ2Swap.put("z2", "zn");
       mapZ2Swap.put("z1", "z2");
       mapZ2Swap.put("zn", "z1");
+      // Swap c1 and c2
+      Map<String, String> mapC2Swap = new LinkedHashMap<>();
+      mapC2Swap.put("c2", "cn");
+      mapC2Swap.put("c1", "c2");
+      mapC2Swap.put("cn", "c1");
       // Swap z2 and z3
       Map<String, String> mapZ3Swap = new LinkedHashMap<>();
       mapZ3Swap.put("z3", "zn");
@@ -449,6 +454,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZ1+"|"+twoZ2, null, "$1z1$2z2$3", null, mapZ2Swap, false));
       // Correct wrong ordered Z3/Z2
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z3(.*)z2(.*)", twoZ2+"|"+twoZ3, null, "$1z2$2z3$3", null, mapZ3Swap, false));
+      // Correct wrong ordered C2/C1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)c2(.*)c1(.*)", twoC1+"|"+twoC2, null, "$1c1$2c2$3", null, mapC2Swap, false));
 
       // Rewrite comparisons < to >
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));

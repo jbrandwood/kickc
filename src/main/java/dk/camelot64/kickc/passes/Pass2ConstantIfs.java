@@ -37,27 +37,8 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementConditionalJump) {
-               ConstantLiteral literal = null;
                StatementConditionalJump conditional = (StatementConditionalJump) statement;
-               ConstantValue constValue1 = Pass2ConstantIdentification.getConstant(conditional.getrValue1());
-               Operator operator = conditional.getOperator();
-               ConstantValue constValue2 = Pass2ConstantIdentification.getConstant(conditional.getrValue2());
-               try {
-                  if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
-                     // Constant condition
-                     literal = constValue2.calculateLiteral(getScope());
-                  } else if(conditional.getrValue1() == null && operator != null && constValue2 != null) {
-                     // Constant unary condition
-                     ConstantValue constVal = Pass2ConstantIdentification.createUnary((OperatorUnary) operator, constValue2);
-                     literal = constVal.calculateLiteral(getScope());
-                  } else if(constValue1 != null && operator != null && constValue2 != null) {
-                     // Constant binary condition
-                     ConstantValue constVal = Pass2ConstantIdentification.createBinary(constValue1, (OperatorBinary) operator, constValue2, getScope());
-                     literal = constVal.calculateLiteral(getScope());
-                  }
-               } catch (ConstantNotLiteral e) {
-                  // not literal - keep as null
-               }
+               ConstantLiteral literal = getConditionLiteralValue(conditional);
                if(literal!=null && literal instanceof ConstantBool) {
                   // Condition is a constant boolean
                   if(((ConstantBool) literal).getBool()) {
@@ -81,6 +62,45 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
          }
       }
       return modified;
+   }
+
+   /**
+    * If the condition always evaluates to constant true or false this finds tha value.
+    * @param conditional The conditional
+    * @return The literal value of the condition
+    */
+   private ConstantLiteral getConditionLiteralValue(StatementConditionalJump conditional) {
+      ConstantValue constValue1 = Pass2ConstantIdentification.getConstant(conditional.getrValue1());
+      Operator operator = conditional.getOperator();
+      ConstantValue constValue2 = Pass2ConstantIdentification.getConstant(conditional.getrValue2());
+      try {
+
+         // If all values are constant find the literal condition value
+
+         if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
+            // Constant condition
+            return constValue2.calculateLiteral(getScope());
+         } else if(conditional.getrValue1() == null && operator != null && constValue2 != null) {
+            // Constant unary condition
+            ConstantValue constVal = Pass2ConstantIdentification.createUnary((OperatorUnary) operator, constValue2);
+            return constVal.calculateLiteral(getScope());
+         } else if(constValue1 != null && operator != null && constValue2 != null) {
+            // Constant binary condition
+            ConstantValue constVal = Pass2ConstantIdentification.createBinary(constValue1, (OperatorBinary) operator, constValue2, getScope());
+            return constVal.calculateLiteral(getScope());
+         }
+
+         // Examine the intervals of the comparison parameters
+
+         // TODO: Compare intervals based on the operator
+
+
+
+
+      } catch (ConstantNotLiteral e) {
+         // not literal - keep as null
+      }
+      return null;
    }
 
 }

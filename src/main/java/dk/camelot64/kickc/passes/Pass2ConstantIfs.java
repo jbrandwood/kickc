@@ -2,15 +2,18 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.values.ConstantBool;
-import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
@@ -38,8 +41,11 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump conditional = (StatementConditionalJump) statement;
-               ConstantLiteral literal = getConditionLiteralValue(conditional);
-               if(literal!=null && literal instanceof ConstantBool) {
+               ConstantLiteral literal = findConditionLiteral(conditional);
+               if(literal == null) {
+                  literal = findConditionLiteralInterval(conditional);
+               }
+               if(literal != null && literal instanceof ConstantBool) {
                   // Condition is a constant boolean
                   if(((ConstantBool) literal).getBool()) {
                      // Always true - replace default successor and drop conditional jump
@@ -49,7 +55,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
                      stmtIt.remove();
                      block.setConditionalSuccessor(null);
                      modified = true;
-                  }  else {
+                  } else {
                      // Always false - drop the conditional jump
                      Pass2EliminateUnusedBlocks.removePhiRValues(block.getLabel(), getGraph().getConditionalSuccessor(block), getLog());
                      getLog().append("if() condition always false - eliminating " + conditional.toString(getProgram(), false));
@@ -66,17 +72,17 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
 
    /**
     * If the condition always evaluates to constant true or false this finds tha value.
+    *
     * @param conditional The conditional
     * @return The literal value of the condition
     */
-   private ConstantLiteral getConditionLiteralValue(StatementConditionalJump conditional) {
+   private ConstantLiteral findConditionLiteral(StatementConditionalJump conditional) {
       ConstantValue constValue1 = Pass2ConstantIdentification.getConstant(conditional.getrValue1());
       Operator operator = conditional.getOperator();
       ConstantValue constValue2 = Pass2ConstantIdentification.getConstant(conditional.getrValue2());
       try {
 
          // If all values are constant find the literal condition value
-
          if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
             // Constant condition
             return constValue2.calculateLiteral(getScope());
@@ -90,16 +96,112 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
             return constVal.calculateLiteral(getScope());
          }
 
-         // Examine the intervals of the comparison parameters
-
-         // TODO: Compare intervals based on the operator
-
-
-
-
-      } catch (ConstantNotLiteral e) {
+      } catch(ConstantNotLiteral e) {
          // not literal - keep as null
       }
+      return null;
+   }
+
+   /**
+    * Examine the intervals of the conditions to see if they
+    *
+    * @param conditional The conditional
+    * @return The literal value of the condition
+    */
+   private ConstantLiteral findConditionLiteralInterval(StatementConditionalJump conditional) {
+      if(conditional.getrValue1() != null && conditional.getrValue2() != null) {
+         IntValueInterval interval1 = getInterval(conditional.getrValue1());
+         IntValueInterval interval2 = getInterval(conditional.getrValue2());
+         if(interval1 != null && interval2 != null) {
+            if(Operators.LT.equals(conditional.getOperator())) {
+               if(interval1.maxValue < interval2.minValue) {
+                  return new ConstantBool(true);
+               } else if(interval1.minValue >= interval2.maxValue) {
+                  return new ConstantBool(false);
+               } else {
+                  return null;
+               }
+            } else if(Operators.LE.equals(conditional.getOperator())) {
+               if(interval1.maxValue <= interval2.minValue) {
+                  return new ConstantBool(true);
+               } else if(interval1.minValue > interval2.maxValue) {
+                  return new ConstantBool(false);
+               } else {
+                  return null;
+               }
+            } else if(Operators.GT.equals(conditional.getOperator())) {
+               if(interval1.minValue > interval2.maxValue) {
+                  return new ConstantBool(true);
+               } else if(interval1.maxValue <= interval2.minValue) {
+                  return new ConstantBool(false);
+               } else {
+                  return null;
+               }
+            } else if(Operators.GE.equals(conditional.getOperator())) {
+               if(interval1.minValue >= interval2.maxValue) {
+                  return new ConstantBool(true);
+               } else if(interval1.maxValue < interval2.minValue) {
+                  return new ConstantBool(false);
+               } else {
+                  return null;
+               }
+         } else if(Operators.EQ.equals(conditional.getOperator())) {
+            if(interval1.minValue > interval2.maxValue) {
+               return new ConstantBool(false);
+            } else if(interval1.maxValue < interval2.minValue) {
+               return new ConstantBool(false);
+            } else {
+               return null;
+            }
+         } else if(Operators.NEQ.equals(conditional.getOperator())) {
+            if(interval1.minValue > interval2.maxValue) {
+               return new ConstantBool(true);
+            } else if(interval1.maxValue < interval2.minValue) {
+               return new ConstantBool(true);
+            } else {
+               return null;
+            }
+            }
+         }
+      }
+      return null;
+   }
+
+   /** Interval of integer types. */
+   static class IntValueInterval {
+      long minValue;
+      long maxValue;
+
+      public IntValueInterval(long minValue, long maxValue) {
+         this.minValue = minValue;
+         this.maxValue = maxValue;
+      }
+
+   }
+
+   private IntValueInterval getInterval(RValue rValue) {
+      ConstantValue constValue = Pass2ConstantIdentification.getConstant(rValue);
+      if(constValue != null) {
+         try {
+            ConstantLiteral constantLiteral = constValue.calculateLiteral(getScope());
+            if(constantLiteral instanceof ConstantInteger) {
+               Long value = ((ConstantInteger) constantLiteral).getInteger();
+               return new IntValueInterval(value, value);
+            }
+         } catch(ConstantNotLiteral e) {
+            // not literal - keep as null
+         }
+      }
+      // Not constant - find the interval of the type
+      SymbolType symbolType = SymbolTypeInference.inferType(getScope(), rValue);
+      if(symbolType instanceof SymbolTypeIntegerFixed) {
+         SymbolTypeIntegerFixed typeIntegerFixed = (SymbolTypeIntegerFixed) symbolType;
+         return new IntValueInterval(typeIntegerFixed.getMinValue(), typeIntegerFixed.getMaxValue());
+      } else if(symbolType.equals(SymbolType.UNUMBER)) {
+         // Positive number
+         return new IntValueInterval(0L, Long.MAX_VALUE);
+      }
+      // Not a constant integer
       return null;
    }
 

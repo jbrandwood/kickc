@@ -4,14 +4,10 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label screen = $400
     ldx #0
-  b1:
-    lda ball_active,x
-    lda ball_active,x
+  b2:
     inx
     cpx #8
-    bne b1
+    bne b2
     rts
 }
-  ball_active: .byte 0, 1, 0, 1, 0, 1, 1, 1

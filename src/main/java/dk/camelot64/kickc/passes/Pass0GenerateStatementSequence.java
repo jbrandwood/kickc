@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.parser.*;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
@@ -10,7 +9,13 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
-import org.antlr.v4.runtime.*;
+import dk.camelot64.kickc.parser.CParser;
+import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -100,10 +105,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
-      List<Number> reservedZps = new ArrayList<>();
+      List<Integer> reservedZps = new ArrayList<>();
       for(TerminalNode reservedNum : ctx.NUMBER()) {
          Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
-         reservedZps.add(reservedZp);
+         reservedZps.add(reservedZp.intValue());
       }
       program.addReservedZps(reservedZps);
       return null;
@@ -663,6 +668,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   throw new CompileError("Error! Unknown register " + directiveRegister.getName(), source);
                }
                lValue.setDeclaredRegister(register);
+            } else if(directiveRegister.getAddress() != null) {
+               // Allocate to specific address
+               Long address = ((DirectiveRegister) directive).address;
+               if(address>255) {
+                  throw new CompileError("Error! Register not on zeropage " + directiveRegister.getAddress(), source);
+               }
+               Registers.Register register = new Registers.RegisterZpDeclared(address.intValue());
+               lValue.setDeclaredRegister(register);
             }
          } else {
             throw new CompileError("Unsupported variable directive " + directive, source);
@@ -753,11 +766,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
-      String name = null;
       if(ctx.NAME() != null) {
-         name = ctx.NAME().getText();
+         return new DirectiveRegister(ctx.NAME().getText());
+      } else if(ctx.NUMBER() != null) {
+         try {
+            ConstantInteger registerAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
+            return new DirectiveRegister(registerAddress.getInteger());
+         } catch(NumberFormatException e) {
+            throw new CompileError(e.getMessage(), new StatementSource(ctx));
+         }
+      } else {
+         return new DirectiveRegister(null);
       }
-      return new DirectiveRegister(name);
    }
 
    @Override
@@ -772,9 +792,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) {
-      List<Number> reservedZps = new ArrayList<>();
+      List<Integer> reservedZps = new ArrayList<>();
       for(TerminalNode reservedNum : ctx.NUMBER()) {
-         Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
+         int reservedZp = NumberParser.parseLiteral(reservedNum.getText()).intValue();
          reservedZps.add(reservedZp);
       }
       return new DirectiveReserveZp(reservedZps);
@@ -1213,10 +1233,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Label continueLabel;
       if(currentLoop.isSwitch) {
          continueLabel = currentLoop.getContinueLabel();
-         if(continueLabel==null) {
+         if(continueLabel == null) {
             throw new CompileError("Continue not inside a loop! ", new StatementSource(ctx));
          }
-      }  else {
+      } else {
          continueLabel = currentLoop.getOrCreateContinueLabel();
       }
       Statement continueJmpStmt = new StatementJump(continueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
@@ -1545,11 +1565,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
 
-   /** RValues that have not yet been output as part of a statement.
+   /**
+    * RValues that have not yet been output as part of a statement.
     * The expression visitor methods updates this so that the surrounding
     * statement can make sure to output any rValue that has not been output.
     * Null if we are not currently monitoring this.
-    * */
+    */
    public Set<RValue> exprNotConsumed = null;
 
    /**
@@ -1569,24 +1590,27 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /**
     * Consumes an RValue by outputting it as part of a statement.
     * This helps ensure that all expression RValues are output in statements
+    *
     * @param rValue The RValue being consume
     */
    void consumeExpr(RValue rValue) {
-      if(exprNotConsumed!=null)
+      if(exprNotConsumed != null)
          exprNotConsumed.remove(rValue);
    }
 
    /**
     * Marks an expression that has been produced which has not been output as part of a statement.
     * When the RValue is output in a statement it will be consumed using {@link #consumeExpr(RValue)}.
+    *
     * @param rValue The RValue that has been produced but not consumed
     */
    void addExprToConsume(RValue rValue) {
-      if(exprNotConsumed!=null)
+      if(exprNotConsumed != null)
          exprNotConsumed.add(rValue);
    }
 
-   /** Examines whether an RValue is in the list of non-consumed RValues.
+   /**
+    * Examines whether an RValue is in the list of non-consumed RValues.
     *
     * @return true if the RValue is in the list
     */
@@ -2133,32 +2157,39 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
    }
 
-   /** Variable memory alignment. */
+   /** Variable register allocation. */
    private static class DirectiveRegister implements Directive {
+      /** Name of register to use for the variable */
       private String name;
+      /** Address to use as register for the variable */
+      private Long address;
 
       public DirectiveRegister(String name) {
          this.name = name;
+      }
+
+      public DirectiveRegister(long address) {
+         this.address = address;
       }
 
       public String getName() {
          return name;
       }
 
-      public void setName(String name) {
-         this.name = name;
+      public Long getAddress() {
+         return address;
       }
    }
 
    /** Reservation of zero-page addresses */
    private static class DirectiveReserveZp implements Directive {
-      List<Number> reservedZp;
+      List<Integer> reservedZp;
 
-      public DirectiveReserveZp(List<Number> reservedZp) {
+      public DirectiveReserveZp(List<Integer> reservedZp) {
          this.reservedZp = reservedZp;
       }
 
-      public List<Number> getReservedZp() {
+      public List<Integer> getReservedZp() {
          return reservedZp;
       }
 

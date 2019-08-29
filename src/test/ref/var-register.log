@@ -127,12 +127,8 @@ Alias (byte) main::a#2 = (byte) main::a#3
 Alias (byte) main::x#2 = (byte) main::x#5 (byte) main::x#6 (byte) main::x#3 
 Alias (byte) main::y#2 = (byte) main::y#5 (byte) main::y#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::x#2 (byte) main::x#4
 Identical Phi Values (byte) main::y#2 (byte) main::y#4
 Identical Phi Values (byte) print::val#1 (byte) print::val#0
-Identical Phi Values (byte) print::idx#1 (byte) print::idx#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values (byte) main::x#4 (byte) main::x#7
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$2 [14] if((byte) main::a#1!=rangelast(0,$64)) goto main::@3
 Simple Condition (bool~) main::$3 [18] if((byte) main::y#1!=rangelast(0,$64)) goto main::@2
@@ -147,7 +143,7 @@ Resolved ranged next value [12] main::a#1 ← ++ main::a#2 to ++
 Resolved ranged comparison value [14] if(main::a#1!=rangelast(0,$64)) goto main::@3 to (number) $65
 Resolved ranged next value [16] main::y#1 ← ++ main::y#4 to ++
 Resolved ranged comparison value [18] if(main::y#1!=rangelast(0,$64)) goto main::@2 to (number) $65
-Resolved ranged next value [20] main::x#1 ← ++ main::x#7 to ++
+Resolved ranged next value [20] main::x#1 ← ++ main::x#2 to ++
 Resolved ranged comparison value [22] if(main::x#1!=rangelast(0,$64)) goto main::@1 to (number) $65
 Adding number conversion cast (unumber) $65 in if((byte) main::a#1!=(number) $65) goto main::@3
 Adding number conversion cast (unumber) $65 in if((byte) main::y#1!=(number) $65) goto main::@2
@@ -178,13 +174,18 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to print:12 
+Calls in [main] to print:15 
 
-Created 3 initial phi equivalence classes
-Coalesced [20] main::x#8 ← main::x#1
-Coalesced [21] main::y#6 ← main::y#1
-Coalesced [22] main::a#4 ← main::a#1
-Coalesced down to 3 phi equivalence classes
+Created 6 initial phi equivalence classes
+Coalesced [7] main::x#9 ← main::x#7
+Coalesced [9] main::x#11 ← main::x#4
+Coalesced [14] print::idx#2 ← print::idx#0
+Coalesced [23] main::x#8 ← main::x#1
+Coalesced (already) [24] main::x#10 ← main::x#2
+Coalesced [25] main::y#6 ← main::y#1
+Coalesced [26] main::a#4 ← main::a#1
+Coalesced (already) [27] main::x#12 ← main::x#2
+Coalesced down to 4 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@9
@@ -214,10 +215,12 @@ main::@1: scope:[main]  from main main::@5
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@4
   [6] (byte) main::y#4 ← phi( main::@1/(byte) 0 main::@4/(byte) main::y#1 )
+  [6] (byte) main::x#4 ← phi( main::@1/(byte) main::x#7 main::@4/(byte) main::x#2 )
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@6
+  [7] (byte) main::x#2 ← phi( main::@2/(byte) main::x#4 main::@6/(byte) main::x#2 )
   [7] (byte) main::a#2 ← phi( main::@2/(byte) 0 main::@6/(byte) main::a#1 )
-  [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7
+  [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2
   [9] (byte) print::idx#0 ← (byte) main::y#4
   [10] (byte) print::val#0 ← (byte) main::val1#0
   [11] call print 
@@ -231,17 +234,18 @@ main::@4: scope:[main]  from main::@6
   [15] if((byte) main::y#1!=(byte) $65) goto main::@2
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  [16] (byte) main::x#1 ← ++ (byte) main::x#7
+  [16] (byte) main::x#1 ← ++ (byte) main::x#2
   [17] if((byte) main::x#1!=(byte) $65) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
   [18] return 
   to:@return
 print: scope:[print]  from main::@3
-  [19] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0
+  [19] (byte) print::idx#1 ← phi( main::@3/(byte) print::idx#0 )
+  [20] *((const byte*) print::SCREEN#0 + (byte) print::idx#1) ← (byte) print::val#0
   to:print::@return
 print::@return: scope:[print]  from print
-  [20] return 
+  [21] return 
   to:@return
 
 
@@ -254,30 +258,33 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::val1#0 !reg byte a 1001.0
 (byte) main::x !reg byte y
 (byte) main::x#1 !reg byte y 16.5
-(byte) main::x#7 !reg byte y 93.0
+(byte) main::x#2 !reg byte y 357.33333333333337
+(byte) main::x#4 !reg byte y 213.0
+(byte) main::x#7 !reg byte y 22.0
 (byte) main::y
 (byte) main::y#1 151.5
 (byte) main::y#4 150.375
 (void()) print((byte) print::idx , (byte) print::val)
 (byte*) print::SCREEN
 (byte) print::idx !reg byte x
-(byte) print::idx#0 !reg byte x 501.5
+(byte) print::idx#0 !reg byte x 1001.0
+(byte) print::idx#1 !reg byte x 1003.0
 (byte) print::val
-(byte) print::val#0 1003.0
+(byte) print::val#0 501.5
 
 Initial phi equivalence classes
-[ main::x#7 main::x#1 ]
+[ main::x#4 main::x#7 main::x#1 main::x#2 ]
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
+[ print::idx#1 print::idx#0 ]
 Added variable main::val1#0 to zero page equivalence class [ main::val1#0 ]
-Added variable print::idx#0 to zero page equivalence class [ print::idx#0 ]
 Added variable print::val#0 to zero page equivalence class [ print::val#0 ]
 Complete equivalence classes
-[ main::x#7 main::x#1 ]
+[ main::x#4 main::x#7 main::x#1 main::x#2 ]
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
+[ print::idx#1 print::idx#0 ]
 [ main::val1#0 ]
-[ print::idx#0 ]
 [ print::val#0 ]
 Allocated zp ZP_BYTE:2 [ main::y#4 main::y#1 ]
 Allocated zp ZP_BYTE:3 [ main::a#2 main::a#1 ]
@@ -327,26 +334,30 @@ main: {
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
+    // [6] phi (byte) main::x#4 = (byte) main::x#7 [phi:main::@1->main::@2#1] -- register_copy 
     jmp b2
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
     // [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    // [6] phi (byte) main::x#4 = (byte) main::x#2 [phi:main::@4->main::@2#1] -- register_copy 
     jmp b2
     // main::@2
   b2:
     // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    // [7] phi (byte) main::x#2 = (byte) main::x#4 [phi:main::@2->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z a
     jmp b3
     // [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   b3_from_b6:
-    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::x#2 = (byte) main::x#2 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp b3
     // main::@3
   b3:
-    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 -- vbuaa=vbuz1_plus_vbuyy 
+    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2 -- vbuaa=vbuz1_plus_vbuyy 
     tya
     clc
     adc.z a
@@ -355,6 +366,9 @@ main: {
     // [10] (byte) print::val#0 ← (byte) main::val1#0 -- vbuz1=vbuaa 
     sta.z print.val
     // [11] call print 
+    // [19] phi from main::@3 to print [phi:main::@3->print]
+  print_from_b3:
+    // [19] phi (byte) print::idx#1 = (byte) print::idx#0 [phi:main::@3->print#0] -- register_copy 
     jsr print
     jmp b6
     // main::@6
@@ -377,7 +391,7 @@ main: {
     jmp b5
     // main::@5
   b5:
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#7 -- vbuyy=_inc_vbuyy 
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [17] if((byte) main::x#1!=(byte) $65) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$65
@@ -393,41 +407,41 @@ main: {
 print: {
     .label SCREEN = $400
     .label val = 4
-    // [19] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [20] *((const byte*) print::SCREEN#0 + (byte) print::idx#1) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z val
     sta SCREEN,x
     jmp breturn
     // print::@return
   breturn:
-    // [20] return 
+    // [21] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 main::val1#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 main::val1#0 ] ) always clobbers reg byte a 
+Statement [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2 [ main::y#4 main::x#2 main::a#2 main::val1#0 ] ( main:2 [ main::y#4 main::x#2 main::a#2 main::val1#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::a#2 main::a#1 ]
-Statement [16] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] ) always clobbers reg byte y 
-Statement [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 main::val1#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 main::val1#0 ] ) always clobbers reg byte a 
-Statement [16] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] ) always clobbers reg byte y 
-Potential registers reg byte y [ main::x#7 main::x#1 ] : reg byte y , 
+Statement [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::x#1 ] ( main:2 [ main::x#1 ] ) always clobbers reg byte y 
+Statement [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2 [ main::y#4 main::x#2 main::a#2 main::val1#0 ] ( main:2 [ main::y#4 main::x#2 main::a#2 main::val1#0 ] ) always clobbers reg byte a 
+Statement [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::x#1 ] ( main:2 [ main::x#1 ] ) always clobbers reg byte y 
+Potential registers reg byte y [ main::x#4 main::x#7 main::x#1 main::x#2 ] : reg byte y , 
 Potential registers zp ZP_BYTE:2 [ main::y#4 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::a#2 main::a#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers reg byte x [ print::idx#1 print::idx#0 ] : reg byte x , 
 Potential registers reg byte a [ main::val1#0 ] : reg byte a , 
-Potential registers reg byte x [ print::idx#0 ] : reg byte x , 
 Potential registers zp ZP_BYTE:4 [ print::val#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2,102.1: zp ZP_BYTE:3 [ main::a#2 main::a#1 ] 1,001: reg byte a [ main::val1#0 ] 301.88: zp ZP_BYTE:2 [ main::y#4 main::y#1 ] 109.5: reg byte y [ main::x#7 main::x#1 ] 
-Uplift Scope [print] 1,003: zp ZP_BYTE:4 [ print::val#0 ] 501.5: reg byte x [ print::idx#0 ] 
+Uplift Scope [main] 2,102.1: zp ZP_BYTE:3 [ main::a#2 main::a#1 ] 1,001: reg byte a [ main::val1#0 ] 608.83: reg byte y [ main::x#4 main::x#7 main::x#1 main::x#2 ] 301.88: zp ZP_BYTE:2 [ main::y#4 main::y#1 ] 
+Uplift Scope [print] 2,004: reg byte x [ print::idx#1 print::idx#0 ] 501.5: zp ZP_BYTE:4 [ print::val#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 47460 combination zp ZP_BYTE:3 [ main::a#2 main::a#1 ] reg byte a [ main::val1#0 ] reg byte x [ main::y#4 main::y#1 ] reg byte y [ main::x#7 main::x#1 ] 
-Uplifting [print] best 44457 combination reg byte a [ print::val#0 ] reg byte x [ print::idx#0 ] 
-Uplifting [] best 44457 combination 
+Uplifting [main] best 38469 combination zp ZP_BYTE:3 [ main::a#2 main::a#1 ] reg byte a [ main::val1#0 ] reg byte y [ main::x#4 main::x#7 main::x#1 main::x#2 ] reg byte x [ main::y#4 main::y#1 ] 
+Uplifting [print] best 35466 combination reg byte x [ print::idx#1 print::idx#0 ] reg byte a [ print::val#0 ] 
+Uplifting [] best 35466 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::a#2 main::a#1 ]
-Uplifting [main] best 44457 combination zp ZP_BYTE:3 [ main::a#2 main::a#1 ] 
+Uplifting [main] best 35466 combination zp ZP_BYTE:3 [ main::a#2 main::a#1 ] 
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ main::a#2 main::a#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -471,32 +485,39 @@ main: {
   b2_from_b1:
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
+    // [6] phi (byte) main::x#4 = (byte) main::x#7 [phi:main::@1->main::@2#1] -- register_copy 
     jmp b2
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   b2_from_b4:
     // [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    // [6] phi (byte) main::x#4 = (byte) main::x#2 [phi:main::@4->main::@2#1] -- register_copy 
     jmp b2
     // main::@2
   b2:
     // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    // [7] phi (byte) main::x#2 = (byte) main::x#4 [phi:main::@2->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z a
     jmp b3
     // [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   b3_from_b6:
-    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::x#2 = (byte) main::x#2 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp b3
     // main::@3
   b3:
-    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 -- vbuaa=vbuz1_plus_vbuyy 
+    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2 -- vbuaa=vbuz1_plus_vbuyy 
     tya
     clc
     adc.z a
     // [9] (byte) print::idx#0 ← (byte) main::y#4
     // [10] (byte) print::val#0 ← (byte) main::val1#0
     // [11] call print 
+    // [19] phi from main::@3 to print [phi:main::@3->print]
+  print_from_b3:
+    // [19] phi (byte) print::idx#1 = (byte) print::idx#0 [phi:main::@3->print#0] -- register_copy 
     jsr print
     jmp b6
     // main::@6
@@ -518,7 +539,7 @@ main: {
     jmp b5
     // main::@5
   b5:
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#7 -- vbuyy=_inc_vbuyy 
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [17] if((byte) main::x#1!=(byte) $65) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$65
@@ -533,12 +554,12 @@ main: {
 // print(byte register(X) idx, byte register(A) val)
 print: {
     .label SCREEN = $400
-    // [19] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [20] *((const byte*) print::SCREEN#0 + (byte) print::idx#1) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     jmp breturn
     // print::@return
   breturn:
-    // [20] return 
+    // [21] return 
     rts
 }
   // File Data
@@ -570,6 +591,7 @@ Removing instruction b3_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
+Removing instruction print_from_b3:
 Removing instruction b6:
 Removing instruction b4:
 Removing instruction b5:
@@ -605,7 +627,9 @@ FINAL SYMBOL TABLE
 (byte) main::val1#0 !reg byte a 1001.0
 (byte) main::x !reg byte y
 (byte) main::x#1 !reg byte y 16.5
-(byte) main::x#7 !reg byte y 93.0
+(byte) main::x#2 !reg byte y 357.33333333333337
+(byte) main::x#4 !reg byte y 213.0
+(byte) main::x#7 !reg byte y 22.0
 (byte) main::y
 (byte) main::y#1 reg byte x 151.5
 (byte) main::y#4 reg byte x 150.375
@@ -614,20 +638,21 @@ FINAL SYMBOL TABLE
 (byte*) print::SCREEN
 (const byte*) print::SCREEN#0 SCREEN = (byte*) 1024
 (byte) print::idx !reg byte x
-(byte) print::idx#0 !reg byte x 501.5
+(byte) print::idx#0 !reg byte x 1001.0
+(byte) print::idx#1 !reg byte x 1003.0
 (byte) print::val
-(byte) print::val#0 reg byte a 1003.0
+(byte) print::val#0 reg byte a 501.5
 
-reg byte y [ main::x#7 main::x#1 ]
+reg byte y [ main::x#4 main::x#7 main::x#1 main::x#2 ]
 reg byte x [ main::y#4 main::y#1 ]
 zp ZP_BYTE:2 [ main::a#2 main::a#1 ]
+reg byte x [ print::idx#1 print::idx#0 ]
 reg byte a [ main::val1#0 ]
-reg byte x [ print::idx#0 ]
 reg byte a [ print::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 31452
+Score: 25458
 
   // File Comments
   // Upstart
@@ -655,20 +680,24 @@ main: {
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [6] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
+    // [6] phi (byte) main::x#4 = (byte) main::x#7 [phi:main::@1->main::@2#1] -- register_copy 
     // [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
     // [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    // [6] phi (byte) main::x#4 = (byte) main::x#2 [phi:main::@4->main::@2#1] -- register_copy 
     // main::@2
   b2:
     // [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    // [7] phi (byte) main::x#2 = (byte) main::x#4 [phi:main::@2->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z a
     // [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::x#2 = (byte) main::x#2 [phi:main::@6->main::@3#0] -- register_copy 
+    // [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#1] -- register_copy 
     // main::@3
   b3:
     // val1 = a+x
-    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 -- vbuaa=vbuz1_plus_vbuyy 
+    // [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#2 -- vbuaa=vbuz1_plus_vbuyy 
     tya
     clc
     adc.z a
@@ -676,6 +705,8 @@ main: {
     // [9] (byte) print::idx#0 ← (byte) main::y#4
     // [10] (byte) print::val#0 ← (byte) main::val1#0
     // [11] call print 
+    // [19] phi from main::@3 to print [phi:main::@3->print]
+    // [19] phi (byte) print::idx#1 = (byte) print::idx#0 [phi:main::@3->print#0] -- register_copy 
     jsr print
     // main::@6
     // for( byte a: 0..100 )
@@ -694,7 +725,7 @@ main: {
     bne b2
     // main::@5
     // for( register(Y) byte x: 0..100 )
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#7 -- vbuyy=_inc_vbuyy 
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [17] if((byte) main::x#1!=(byte) $65) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$65
@@ -709,11 +740,11 @@ main: {
 print: {
     .label SCREEN = $400
     // SCREEN[idx] = val
-    // [19] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [20] *((const byte*) print::SCREEN#0 + (byte) print::idx#1) ← (byte) print::val#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // print::@return
     // }
-    // [20] return 
+    // [21] return 
     rts
 }
   // File Data

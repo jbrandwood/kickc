@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.Value;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /** The different registers available for a program */
 public class Registers {
@@ -49,6 +50,7 @@ public class Registers {
       ZP_DWORD,
       ZP_STRUCT,
       ZP_BOOL,
+      ZP_VAR,
       CONSTANT
    }
 
@@ -97,15 +99,48 @@ public class Registers {
          if(o == null || getClass() != o.getClass()) {
             return false;
          }
-
          RegisterZp that = (RegisterZp) o;
-
          return zp == that.zp;
       }
 
       @Override
       public int hashCode() {
-         return zp;
+         return zp+31*getClass().hashCode();
+      }
+
+   }
+
+   /** A zero page address used as a register for a declared register allocation. Size is initially unknown and will be resolved when performing allocation by setting the type. */
+   public static class RegisterZpDeclared extends RegisterZp {
+
+      private RegisterType type;
+
+      public RegisterZpDeclared(int zp) {
+         super(zp);
+         this.type = RegisterType.ZP_VAR;
+      }
+
+      @Override
+      public RegisterType getType() {
+         return type;
+      }
+
+      public void setType(RegisterType type) {
+         this.type = type;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         if(!super.equals(o)) return false;
+         RegisterZpDeclared that = (RegisterZpDeclared) o;
+         return type == that.type;
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(super.hashCode(), type);
       }
 
    }
@@ -185,7 +220,6 @@ public class Registers {
       }
 
    }
-
 
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool extends RegisterZp {

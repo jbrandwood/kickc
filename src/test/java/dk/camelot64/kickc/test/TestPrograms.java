@@ -2488,6 +2488,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarRegisterZp() throws IOException, URISyntaxException {
+      compileAndCompare("var-register-zp");
+   }
+
+   @Test
+   public void testVarRegisterZp2() throws IOException, URISyntaxException {
+      assertError("var-register-zp-2", "Error! Register not on zeropage");
+   }
+
+   @Test
+   public void testVarRegisterZp3() throws IOException, URISyntaxException {
+      compileAndCompare("var-register-zp-3");
+   }
+
+   @Test
    public void testDword() throws IOException, URISyntaxException {
       compileAndCompare("dword");
    }

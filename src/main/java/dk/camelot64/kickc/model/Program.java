@@ -37,7 +37,7 @@ public class Program {
    /** Absolute start address of the code. Null to start ad 0x080d. PASS 0-5 (STATIC) */
    private Number programPc;
    /** Reserved ZP addresses that the compiler cannot use. PASS 0-5 (STATIC) */
-   private List<Number> reservedZps;
+   private List<Integer> reservedZps;
    /** Resource files that should be copied to the output folder to be compiled with the generated ASM. PASS 0-5 (STATIC) */
    private List<Path> asmResourceFiles;
    /** Comments for the (main) file. PASS 0-4 (STATIC) */
@@ -398,15 +398,15 @@ public class Program {
     *
     * @param reservedZp addresses to reserve
     */
-   public void addReservedZps(List<Number> reservedZp) {
-      for(Number zp : reservedZp) {
+   public void addReservedZps(List<Integer> reservedZp) {
+      for(Integer zp : reservedZp) {
          if(!this.reservedZps.contains(zp)) {
             this.reservedZps.add(zp);
          }
       }
    }
 
-   public List<Number> getReservedZps() {
+   public List<Integer> getReservedZps() {
       return reservedZps;
    }
 

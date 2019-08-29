@@ -24,7 +24,7 @@ public class Procedure extends Scope {
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
-   private List<Number> reservedZps;
+   private List<Integer> reservedZps;
    /** The code segment to put the procedure into. */
    private String codeSegment;
 
@@ -120,16 +120,16 @@ public class Procedure extends Scope {
     *
     * @return reserved addresses
     */
-   public List<Number> getReservedZps() {
+   public List<Integer> getReservedZps() {
       return reservedZps;
    }
 
    /**
     * Gets any reserved zero-page addresses that the compiler is not allowed to use.
     *
-    * @param reservedZp reserved addresses
+    * @param reservedZps reserved addresses
     */
-   public void setReservedZps(List<Number> reservedZps) {
+   public void setReservedZps(List<Integer> reservedZps) {
       this.reservedZps = reservedZps;
    }
 

@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.*;
 
@@ -24,16 +24,29 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private int currentZp = 2;
 
    /** All reserved zeropage addresses not available for the compiler. */
-   private List<Number> reservedZp;
+   private List<Integer> reservedZp;
 
    public Pass4RegistersFinalize(Program program) {
       super(program);
       this.reservedZp = new ArrayList<>();
+      // Add all ZP's declared as reserved
       this.reservedZp.addAll(program.getReservedZps());
+      // Add all ZP's declared as reserved in a procedure
       for(Procedure procedure : getSymbols().getAllProcedures(true)) {
-         List<Number> procedureReservedZps = procedure.getReservedZps();
+         List<Integer> procedureReservedZps = procedure.getReservedZps();
          if(procedureReservedZps!=null) {
             this.reservedZp.addAll(procedureReservedZps);
+         }
+      }
+      // Add all ZP's declared hardcoded register for a live variable
+      for(Variable variable : getSymbols().getAllVariables(true)) {
+         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpDeclared) {
+            int zp = ((Registers.RegisterZpDeclared) variable.getDeclaredRegister()).getZp();
+            int sizeBytes = variable.getType().getSizeBytes();
+            for(int i=0;i<sizeBytes; i++) {
+               if(!reservedZp.contains(zp+i))
+                  this.reservedZp.add(zp+i);
+            }
          }
       }
    }
@@ -43,15 +56,25 @@ public class Pass4RegistersFinalize extends Pass2Base {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(variableRef);
-            if(variable.getDeclaredRegister()!=null) {
-               if(equivalenceClass.getRegister()!=null && !variable.getDeclaredRegister().equals(equivalenceClass.getRegister())) {
+            Registers.Register declaredRegister = variable.getDeclaredRegister();
+            if(declaredRegister !=null) {
+
+               if(declaredRegister instanceof Registers.RegisterZpDeclared) {
+                  if(declaredRegister.getType().equals(Registers.RegisterType.ZP_VAR)) {
+                     Registers.RegisterType registerType = getRegisterType(variable);
+                     ((Registers.RegisterZpDeclared) declaredRegister).setType(registerType);
+                     getLog().append("Setting declared register type "+variable.toString(getProgram())+" to "+registerType);
+                  }
+               }
+
+               if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
                         " - one register: " + equivalenceClass.getRegister().toString() + "\n" +
-                        " - other register: " + variable.getDeclaredRegister().toString()
+                        " - other register: " + declaredRegister.toString()
                   );
                }
-               equivalenceClass.setRegister(variable.getDeclaredRegister());
+               equivalenceClass.setRegister(declaredRegister);
             }
          }
       }
@@ -148,7 +171,17 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private void reallocateZpRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
-         if(register == null || register.isZp()) {
+         boolean reallocate = true;
+         if(register!=null) {
+            if(!register.isZp()) {
+               // Do not allocate non-ZP registers
+               reallocate = false;
+            } else if(register instanceof Registers.RegisterZpDeclared) {
+               // Do not allocate declared ZP registers
+               reallocate = false;
+            }
+         }
+         if(reallocate) {
             String before = register == null ? null : register.toString();
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
@@ -174,7 +207,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
          reserved = false;
          int candidateZp = currentZp;
          for(int i=0;i<size;i++) {
-            if(reservedZp.contains(new Long(candidateZp+i))) {
+            if(reservedZp.contains(new Integer(candidateZp+i))) {
                reserved = true;
                currentZp++;
                break;
@@ -233,6 +266,42 @@ public class Pass4RegistersFinalize extends Pass2Base {
          throw new RuntimeException("Unhandled variable type " + varType);
       }
    }
+
+   /**
+    * Get the register type for a specific variable type.
+    *
+    * @param variable The variable to create a register for.
+    * The register type based on the variable type
+    * @return The zeropage register type
+    */
+   private Registers.RegisterType getRegisterType(Variable variable) {
+      SymbolType varType = variable.getType();
+      if(SymbolType.BYTE.equals(varType)) {
+         return Registers.RegisterType.ZP_BYTE;
+      } else if(SymbolType.SBYTE.equals(varType)) {
+         return Registers.RegisterType.ZP_BYTE;
+      } else if(SymbolType.WORD.equals(varType)) {
+         return Registers.RegisterType.ZP_WORD;
+      } else if(SymbolType.SWORD.equals(varType)) {
+         return Registers.RegisterType.ZP_WORD;
+      } else if(SymbolType.DWORD.equals(varType)) {
+         return Registers.RegisterType.ZP_DWORD;
+      } else if(SymbolType.SDWORD.equals(varType)) {
+         return Registers.RegisterType.ZP_DWORD;
+      } else if(varType.equals(SymbolType.BOOLEAN)) {
+         return Registers.RegisterType.ZP_BOOL;
+      } else if(varType.equals(SymbolType.VOID)) {
+         // No need to register for VOID value
+         return null;
+      } else if(varType instanceof SymbolTypePointer) {
+         return Registers.RegisterType.ZP_WORD;
+      } else if(varType instanceof SymbolTypeStruct) {
+         return Registers.RegisterType.ZP_STRUCT;
+      } else {
+         throw new RuntimeException("Unhandled variable type " + varType);
+      }
+   }
+
 
 
 }

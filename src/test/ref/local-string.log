@@ -212,7 +212,7 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 40.33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 333 combination reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [main] best 333 combination reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [] best 333 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -244,14 +244,14 @@ main: {
     .label screen = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp msg,y
+    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    lda msg,x
+    cmp #0
     bne b2
     jmp breturn
     // main::@return
@@ -260,11 +260,11 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda msg,y
-    sta screen,y
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
-    iny
+    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda msg,x
+    sta screen,x
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
@@ -305,14 +305,14 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte y 22.0
-(byte) main::i#2 reg byte y 18.333333333333332
+(byte) main::i#1 reg byte x 22.0
+(byte) main::i#2 reg byte x 18.333333333333332
 (byte[]) main::msg
 (const byte[]) main::msg#0 msg = (string) "message 2 "
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
 
-reg byte y [ main::i#2 main::i#1 ]
+reg byte x [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
@@ -336,14 +336,14 @@ Score: 261
 main: {
     .label screen = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     // main::@1
   b1:
     // while(msg[i])
-    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp msg,y
+    // [6] if((byte) 0!=*((const byte[]) main::msg#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    lda msg,x
+    cmp #0
     bne b2
     // main::@return
     // }
@@ -352,12 +352,12 @@ main: {
     // main::@2
   b2:
     // screen[i++] = msg[i]
-    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda msg,y
-    sta screen,y
+    // [8] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((const byte[]) main::msg#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda msg,x
+    sta screen,x
     // screen[i++] = msg[i];
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
-    iny
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1

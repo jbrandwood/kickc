@@ -380,12 +380,9 @@ Uplift Scope [print2] 33: zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ] 22: zp ZP_BYT
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print2] best 607 combination reg byte x [ print2::i#2 print2::i#1 ] zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] zp ZP_WORD:2 [ print2::at#4 ] 
-Uplifting [main] best 607 combination 
-Uplifting [] best 607 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ print2::j#2 print2::j#1 ]
-Uplifting [print2] best 607 combination zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ print2::j#2 print2::j#1 ]
+Uplifting [print2] best 447 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp ZP_WORD:2 [ print2::at#4 ] 
+Uplifting [main] best 447 combination 
+Uplifting [] best 447 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -447,23 +444,19 @@ main: {
   // print2
 // print2(byte* zeropage(2) at)
 print2: {
-    .label j = 4
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
   b1_from_print2:
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z j
+    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
     // print2::@1
   b1:
     // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    txa
-    tay
-    lda #0
-    cmp main.hello,y
+    lda main.hello,x
+    cmp #0
     bne b2
     jmp breturn
     // print2::@return
@@ -472,15 +465,12 @@ print2: {
     rts
     // print2::@2
   b2:
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
+    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
-    ldy.z j
     sta (at),y
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    lda.z j
-    clc
-    adc #2
-    sta.z j
+    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
+    iny
+    iny
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
@@ -499,8 +489,6 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx #0 with TAX
-Replacing instruction lda.z j with TYA
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -541,19 +529,19 @@ FINAL SYMBOL TABLE
 (byte) print2::i#1 reg byte x 22.0
 (byte) print2::i#2 reg byte x 11.0
 (byte) print2::j
-(byte) print2::j#1 j zp ZP_BYTE:4 11.0
-(byte) print2::j#2 j zp ZP_BYTE:4 11.0
+(byte) print2::j#1 reg byte y 11.0
+(byte) print2::j#2 reg byte y 11.0
 (byte*) print2::msg
 (byte*) screen
 (const byte*) screen#0 screen = (byte*) 1024
 
 zp ZP_WORD:2 [ print2::at#4 ]
 reg byte x [ print2::i#2 print2::i#1 ]
-zp ZP_BYTE:4 [ print2::j#2 print2::j#1 ]
+reg byte y [ print2::j#2 print2::j#1 ]
 
 
 FINAL ASSEMBLER
-Score: 519
+Score: 369
 
   // File Comments
   // Upstart
@@ -601,22 +589,18 @@ main: {
   // print2
 // print2(byte* zeropage(2) at)
 print2: {
-    .label j = 4
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z j
+    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
-    tax
+    ldx #0
     // print2::@1
   b1:
     // for(byte i=0; msg[i]; i++)
     // [11] if((byte) 0!=*((const byte*) main::hello#0 + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    txa
-    tay
-    lda #0
-    cmp main.hello,y
+    lda main.hello,x
+    cmp #0
     bne b2
     // print2::@return
     // }
@@ -625,16 +609,13 @@ print2: {
     // print2::@2
   b2:
     // at[j] = msg[i]
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuxx 
+    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
-    ldy.z j
     sta (at),y
     // j += 2
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
-    tya
-    clc
-    adc #2
-    sta.z j
+    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
+    iny
+    iny
     // for(byte i=0; msg[i]; i++)
     // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx

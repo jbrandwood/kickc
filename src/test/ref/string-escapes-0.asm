@@ -4,16 +4,16 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldy #0
+    ldx #0
   b1:
-    lda #0
-    cmp MESSAGE,y
+    lda MESSAGE,x
+    cmp #0
     bne b2
     rts
   b2:
-    lda MESSAGE,y
-    sta SCREEN,y
-    iny
+    lda MESSAGE,x
+    sta SCREEN,x
+    inx
     jmp b1
 }
   MESSAGE: .text @"\r\f\n\"'\\"

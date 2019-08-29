@@ -1364,10 +1364,9 @@ form_control: {
     ldx.z form_field_idx
     inc form_fields_val,x
     ldy.z form_field_idx
-    lda form_fields_val,y
-    cmp form_fields_max,y
-    bcc b16
-    beq b16
+    lda form_fields_max,y
+    cmp form_fields_val,y
+    bcs b16
     lda #0
     sta form_fields_val,y
     jmp b16

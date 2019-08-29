@@ -404,10 +404,10 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ do
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
-Statement [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a reg byte y 
+Statement [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a 
 Statement [1] (byte) idx#0 ← (byte) 0 [ idx#0 ] (  [ idx#0 ] ) always clobbers reg byte a 
 Statement [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) [ idx#0 hello::i#2 idx#3 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#2 idx#3 ] ) always clobbers reg byte a reg byte y 
-Statement [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a reg byte y 
+Statement [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ] : zp ZP_BYTE:4 , 
@@ -418,14 +418,14 @@ Uplift Scope [] 224.1: zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ]
 Uplift Scope [do10] 27.5: zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
 Uplift Scope [main] 
 
-Uplifting [hello] best 4749 combination reg byte x [ hello::i#2 hello::i#1 ] 
-Uplifting [] best 4749 combination zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ] 
-Uplifting [do10] best 4749 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
-Uplifting [main] best 4749 combination 
+Uplifting [hello] best 4349 combination reg byte x [ hello::i#2 hello::i#1 ] 
+Uplifting [] best 4349 combination zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ] 
+Uplifting [do10] best 4349 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [main] best 4349 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ]
-Uplifting [] best 4749 combination zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ] 
+Uplifting [] best 4349 combination zp ZP_BYTE:4 [ idx#0 idx#3 idx#7 idx#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 4749 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [do10] best 4349 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
 Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ idx#0 idx#3 idx#7 idx#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -526,10 +526,8 @@ hello: {
     // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    txa
-    tay
-    lda #0
-    cmp msg,y
+    lda msg,x
+    cmp #0
     bne b1_from_b1
     jmp breturn
     // hello::@return
@@ -612,7 +610,7 @@ zp ZP_BYTE:3 [ idx#0 idx#3 idx#7 idx#1 ]
 
 
 FINAL ASSEMBLER
-Score: 3726
+Score: 3326
 
   // File Comments
 // Tests calling into a function pointer with local variables
@@ -699,10 +697,8 @@ hello: {
     inx
     // while(msg[i])
     // [19] if((byte) 0!=*((const byte[]) msg#0 + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    txa
-    tay
-    lda #0
-    cmp msg,y
+    lda msg,x
+    cmp #0
     bne b1
     // hello::@return
     // }

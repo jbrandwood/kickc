@@ -70,7 +70,7 @@ public class AsmFragmentTemplate {
    }
 
    /**
-    * Initialize the fields that require parsing the ASM (bodyAsm, clobber, clobber).
+    * Initialize the fields that require parsing the ASM (bodyAsm, clobber, cycles).
     *
     * @return The parsed fragment ready for generating
     */
@@ -104,12 +104,12 @@ public class AsmFragmentTemplate {
       if(signature.contains("z4")) bindings.put("z4", v4);
       if(signature.contains("z5")) bindings.put("z5", v5);
       if(signature.contains("z6")) bindings.put("z6", v6);
-      if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(10L));
-      if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(20L));
-      if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(30L));
-      if(signature.contains("c4")) bindings.put("c4", new ConstantInteger(40L));
-      if(signature.contains("c5")) bindings.put("c5", new ConstantInteger(50L));
-      if(signature.contains("c6")) bindings.put("c6", new ConstantInteger(60L));
+      if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(310L));
+      if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(320L));
+      if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(330L));
+      if(signature.contains("c4")) bindings.put("c4", new ConstantInteger(340L));
+      if(signature.contains("c5")) bindings.put("c5", new ConstantInteger(350L));
+      if(signature.contains("c6")) bindings.put("c6", new ConstantInteger(360L));
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);

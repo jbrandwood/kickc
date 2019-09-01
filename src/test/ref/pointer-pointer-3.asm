@@ -35,8 +35,8 @@ main: {
 setscreen: {
     .label val = 2
     lda.z val
-    sta screen
+    sta.z screen
     lda.z val+1
-    sta screen+1
+    sta.z screen+1
     rts
 }

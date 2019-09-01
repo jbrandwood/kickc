@@ -11,17 +11,17 @@ main: {
     sta.z w
     lda #>$d03
     sta.z w+1
-    lda wp
+    lda.z wp
     sta screen
-    lda wp+1
+    lda.z wp+1
     sta screen+1
     lda #<$210c
-    sta wp
+    sta.z wp
     lda #>$210c
-    sta wp+1
-    lda wp
+    sta.z wp+1
+    lda.z wp
     sta screen+2
-    lda wp+1
+    lda.z wp+1
     sta screen+3
     rts
 }

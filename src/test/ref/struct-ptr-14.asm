@@ -13,7 +13,7 @@ main: {
     lda #3
     sta.z p_y
     jsr set
-    lda q
+    lda.z q
     sta SCREEN
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
@@ -21,7 +21,7 @@ main: {
 }
 set: {
     lda #4
-    sta main.q
+    sta.z main.q
     lda #5
     sta main.q+OFFSET_STRUCT_POINT_Y
     rts

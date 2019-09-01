@@ -10,9 +10,9 @@ main: {
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    lda q
+    lda.z q
     sta SCREEN
-    lda q+1
+    lda.z q+1
     sta SCREEN+1
     rts
 }

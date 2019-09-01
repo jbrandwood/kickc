@@ -9,7 +9,7 @@ main: {
     lda #0
     sta.z b
   b1:
-    lda bp
+    lda.z bp
     clc
     adc #1
     ldy.z b

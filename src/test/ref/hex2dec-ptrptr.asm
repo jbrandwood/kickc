@@ -93,9 +93,9 @@ utoa16n: {
     lda DIGITS,y
     ldy #0
     sta (utoa16w.dst),y
-    inc utoa16w.dst
+    inc.z utoa16w.dst
     bne !+
-    inc utoa16w.dst+1
+    inc.z utoa16w.dst+1
   !:
   breturn:
     rts

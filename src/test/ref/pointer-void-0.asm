@@ -12,7 +12,7 @@ main: {
     sta.z w
     lda #>$4d2
     sta.z w+1
-    lda bp
+    lda.z bp
     sta SCREEN
     rts
 }

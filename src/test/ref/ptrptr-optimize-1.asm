@@ -19,9 +19,9 @@ main: {
 sub: {
     ldy #0
     sta (main.pscreen),y
-    inc main.pscreen
+    inc.z main.pscreen
     bne !+
-    inc main.pscreen+1
+    inc.z main.pscreen+1
   !:
     rts
 }

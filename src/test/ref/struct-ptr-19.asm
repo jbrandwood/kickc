@@ -18,7 +18,7 @@ main: {
     lda #0
     sta.z idx
     jsr print
-    ldy ptr
+    ldy.z ptr
     ldx ptr+OFFSET_STRUCT_POINT_Y
     jsr print
     rts

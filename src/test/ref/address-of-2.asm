@@ -26,31 +26,31 @@ main: {
     lda #2
     sta.z val
     sta SCREEN1+2
-    lda ptr
+    lda.z ptr
     sta SCREEN2+2
     // Set value through pointer
     lda #3
-    sta ptr
+    sta.z ptr
     lda.z val
     sta SCREEN1+3
-    lda ptr
+    lda.z ptr
     sta SCREEN2+3
     jsr setv
     lda.z val
     sta SCREEN1+4
-    lda ptr
+    lda.z ptr
     sta SCREEN2+4
     jsr setp
     lda.z val
     sta SCREEN1+5
-    lda ptr
+    lda.z ptr
     sta SCREEN2+5
     rts
 }
 setp: {
     .const v = 5
     lda #v
-    sta main.ptr
+    sta.z main.ptr
     rts
 }
 setv: {

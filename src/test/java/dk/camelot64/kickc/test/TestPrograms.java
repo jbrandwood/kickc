@@ -45,6 +45,11 @@ public class TestPrograms {
    */
 
    @Test
+   public void testZeropageDetectAdvanced() throws IOException, URISyntaxException {
+      compileAndCompare("zeropage-detect-advanced", log());
+   }
+
+   @Test
    public void testKickasmUsesPreventDeletion() throws IOException, URISyntaxException {
       compileAndCompare("kickasm-uses-prevent-deletion");
    }

@@ -26,7 +26,44 @@ public class CTokenSourceStack implements TokenSource {
    }
 
    public TokenSource getCurrentSource() {
-      return sourceStack.peek();
+      if(sourceStack.size()>0)
+         return sourceStack.peek();
+      else
+         return new TokenSource() {
+            @Override
+            public Token nextToken() {
+               return null;
+            }
+
+            @Override
+            public int getLine() {
+               return 0;
+            }
+
+            @Override
+            public int getCharPositionInLine() {
+               return 0;
+            }
+
+            @Override
+            public CharStream getInputStream() {
+               return null;
+            }
+
+            @Override
+            public String getSourceName() {
+               return "";
+            }
+
+            @Override
+            public void setTokenFactory(TokenFactory<?> factory) {
+            }
+
+            @Override
+            public TokenFactory<?> getTokenFactory() {
+               return null;
+            }
+         };
    }
 
    @Override

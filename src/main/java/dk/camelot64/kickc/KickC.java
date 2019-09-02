@@ -273,7 +273,7 @@ public class KickC implements Callable<Void> {
             ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
             String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
             if(verbose) {
-               System.out.print("Assembling command: java -jar kickassembler-5.7.jar ");
+               System.out.print("Assembling command: java -jar kickassembler-5.9.jar ");
                for(String cmd : assembleCommand) {
                   System.out.print(cmd + " ");
                }

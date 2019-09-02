@@ -36,6 +36,8 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
                if(instruction.getType().isJump() && !instruction.getType().getMnemnonic().equals("jsr")) {
                   candidate = instruction;
                }
+            } else if(line instanceof AsmDataString || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmInlineKickAsm ) {
+               candidate = null;
             }
          }
 

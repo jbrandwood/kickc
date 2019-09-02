@@ -45,8 +45,13 @@ public class TestPrograms {
    */
 
    @Test
+   public void testAsmCullingJmp() throws IOException, URISyntaxException {
+      compileAndCompare("asm-culling-jmp");
+   }
+
+   @Test
    public void testZeropageDetectAdvanced() throws IOException, URISyntaxException {
-      compileAndCompare("zeropage-detect-advanced", log());
+      compileAndCompare("zeropage-detect-advanced");
    }
 
    @Test

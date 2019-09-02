@@ -12,13 +12,13 @@ main: {
     lda #$ff
     sta.z ub
     lda #1
-    sta sb_ptr
+    sta.z sb_ptr
     lda.z ub
     sta ub_screen
     lda #$7f
     sta.z sb
     lda #1
-    sta ub_ptr
+    sta.z ub_ptr
     lda.z sb
     sta sb_screen
     rts

@@ -12,7 +12,7 @@ main: {
     sta.z p_x
     lda #3
     sta.z p_y
-    lda q
+    lda.z q
     sta SCREEN
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1

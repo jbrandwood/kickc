@@ -50,15 +50,15 @@ nexttext: {
     cmp #0
     beq b1
     lda #<text2
-    sta textp
+    sta.z textp
     lda #>text2
-    sta textp+1
+    sta.z textp+1
     rts
   b1:
     lda #<text1
-    sta textp
+    sta.z textp
     lda #>text1
-    sta textp+1
+    sta.z textp+1
     rts
 }
   text1: .text "camelot "

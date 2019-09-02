@@ -12,9 +12,9 @@ main: {
     lda #'a'
     ldy #0
     sta (pscreen),y
-    inc pscreen
+    inc.z pscreen
     bne !+
-    inc pscreen+1
+    inc.z pscreen+1
   !:
     lda #'b'
     ldy #0

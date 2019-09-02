@@ -13,7 +13,7 @@ main: {
     .label SCREEN = $400
     .label a = aa_b
     lda #0
-    cmp a
+    cmp.z a
     bne !a+
     lda #'a'
     sta SCREEN

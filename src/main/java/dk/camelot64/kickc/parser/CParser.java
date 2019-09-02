@@ -84,7 +84,8 @@ public class CParser {
       return typedefs.contains(identifier);
    }
 
-   /** Get the underlying token stream.
+   /**
+    * Get the underlying token stream.
     *
     * @return The token stream
     */

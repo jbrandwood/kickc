@@ -2,15 +2,14 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 
@@ -88,11 +87,14 @@ public class AsmFragmentInstance {
          ConstantVar constantVar = (ConstantVar) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
+         if(!constantValueZp) {
+            constantValueZp = isConstantValueZp(constantVar.getValue());
+         }
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof ConstantValue) {
          ConstantValue boundConst = (ConstantValue) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, boundConst, 99, codeScopeRef);
-         boolean constantValueZp = SymbolType.BYTE.equals(boundConst.getType(program.getScope()));
+         boolean constantValueZp = isConstantValueZp(boundConst);
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof Label) {
          String param = AsmFormat.asmFix(((Label) boundValue).getLocalName());
@@ -100,6 +102,39 @@ public class AsmFragmentInstance {
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
+   }
+
+
+   /**
+    * Determine whether a constant value representing an address in memory is located on zeropage.
+    * @param boundConst The constant value
+    * @return true if the address represented by the constant is 0<=val<=255
+    */
+   private boolean isConstantValueZp(ConstantValue boundConst) {
+      SymbolType boundConstType = boundConst.getType(program.getScope());
+      if(SymbolType.BYTE.equals(boundConstType))
+         return true;
+      try {
+         ConstantLiteral literal = boundConst.calculateLiteral(program.getScope());
+         if(literal instanceof ConstantInteger) {
+            Long integer = ((ConstantInteger) literal).getInteger();
+            return integer <= 255 && integer >= 0;
+         }
+      } catch(ConstantNotLiteral e) {
+         // ignore
+      }
+      if(boundConst instanceof ConstantRef) {
+         ConstantVar reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
+         return isConstantValueZp(reffedConstant.getValue());
+      }
+      if(boundConst instanceof ConstantCastValue) {
+         SymbolType toType = ((ConstantCastValue) boundConst).getToType();
+         if(SymbolType.BYTE.equals(toType) || SymbolType.SBYTE.equals(toType))
+            return true;
+         else
+            return isConstantValueZp(((ConstantCastValue) boundConst).getValue());
+      }
+      return false;
    }
 
    public String getFragmentName() {

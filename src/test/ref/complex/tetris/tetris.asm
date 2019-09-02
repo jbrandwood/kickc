@@ -319,7 +319,7 @@ render_score: {
     lda #>score_offset+2
     sta.z render_bcd.offset+1
     jsr render_bcd
-    ldx score_bytes
+    ldx.z score_bytes
     ldy #0
     lda #<score_offset+4
     sta.z render_bcd.offset

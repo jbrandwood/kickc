@@ -17,7 +17,7 @@ main: {
     sta SCREEN
     lda #B
     sta SCREEN+1
-    lda addrA
+    lda.z addrA
     sta SCREEN+2
     jsr sub
     rts

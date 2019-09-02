@@ -137,6 +137,52 @@ public class VariableReferenceInfos {
       this.stmtDefinedVars = stmtDefinedVars;
       this.stmtReferencedVars = stmtReferencedVars;
       this.symbolVarReferences = symbolVarReferences;
+
+   }
+
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      if(blockReferencedVars!=null) {
+         sizeInfo.append("blockReferencedVars " + blockReferencedVars.size() + " labels ");
+         int sub = 0;
+         for(Collection<VariableRef> variableRefs : blockReferencedVars.values()) {
+            sub += variableRefs.size();
+         }
+         sizeInfo.append(" " + sub + " varrefs" + "\n");
+      }
+      if(blockUsedVars!=null) {
+         sizeInfo.append("blockUsedVars " + blockUsedVars.size() + " labels ");
+         int sub = 0;
+         for(Collection<VariableRef> variableRefs : blockUsedVars.values()) {
+            sub += variableRefs.size();
+         }
+         sizeInfo.append(" " + sub + " varrefs" + "\n");
+      }
+      {
+         sizeInfo.append("stmtDefinedVars " + stmtDefinedVars.size() + " ints ");
+         int sub = 0;
+         for(Collection<VariableRef> variableRefs : stmtDefinedVars.values()) {
+            sub += variableRefs.size();
+         }
+         sizeInfo.append(" " + sub + " varrefs" + "\n");
+      }
+      {
+         sizeInfo.append("stmtReferencedVars " + stmtReferencedVars.size() + " ints ");
+         int sub = 0;
+         for(Collection<VariableRef> variableRefs : stmtReferencedVars.values()) {
+            sub += variableRefs.size();
+         }
+         sizeInfo.append(" " + sub + " varrefs" + "\n");
+      }
+      {
+         sizeInfo.append("symbolVarReferences " + symbolVarReferences.size() + " SymbolVariableRefs ");
+         int sub = 0;
+         for(Collection<ReferenceToSymbolVar> value : symbolVarReferences.values()) {
+            sub += value.size();
+         }
+         sizeInfo.append(" " + sub + " ReferenceToSymbolVars" + "\n");
+      }
+      return sizeInfo.toString();
    }
 
    /**

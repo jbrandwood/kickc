@@ -101,7 +101,11 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                   }
                });
       }
-      return new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences);
+      VariableReferenceInfos variableReferenceInfos = new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences);
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append(variableReferenceInfos.getSizeInfo());
+      }
+      return variableReferenceInfos;
    }
 
    /**

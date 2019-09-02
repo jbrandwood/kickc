@@ -69,6 +69,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Oloophead"}, description = "Optimization Option. Enabled experimental loop-head constant pass which identifies loops where the condition is constant on the first iteration.")
    private boolean optimizeLoopHeadConstant = false;
 
+   @CommandLine.Option(names = {"-Onoloophead"}, description = "Optimization Option. Disabled experimental loop-head constant pass which identifies loops where the condition is constant on the first iteration.")
+   private boolean optimizeNoLoopHeadConstant = false;
+
    @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
    private boolean optimizeFragmentCache = false;
 
@@ -220,6 +223,8 @@ public class KickC implements Callable<Void> {
 
          if(optimizeLoopHeadConstant) {
             compiler.enableLoopHeadConstant();
+         } else if(optimizeNoLoopHeadConstant) {
+            compiler.disableLoopHeadConstant();
          }
 
          if(linkScript!=null) {

@@ -56,6 +56,10 @@ public class Compiler {
       this.enableLoopHeadConstant = true;
    }
 
+   void disableLoopHeadConstant() {
+      this.enableLoopHeadConstant = false;
+   }
+
    void setTargetPlatform(TargetPlatform targetPlatform) {
       program.setTargetPlatform(targetPlatform);
    }

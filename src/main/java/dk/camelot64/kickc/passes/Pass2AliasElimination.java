@@ -45,42 +45,40 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
    // Remove all candidates that are used after assignment in phi blocks
    private static void cleanupCandidates(Aliases candidates, Program program) {
-      for(final AliasSet aliasSet : candidates.aliases) {
-         for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-            if(block.hasPhiBlock()) {
-               StatementPhiBlock phi = block.getPhiBlock();
-               boolean lMatch = false;
-               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-                  if(lMatch) {
-                     if(aliasSet.contains(phiVariable.getVariable())) {
-                        // Assigning inside tha alias set again - no need to check the variables
-                        continue;
-                     }
-                     for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                        RValue rValue = phiRValue.getrValue();
-                        if(aliasSet.contains(rValue)) {
-                           program.getLog().append("Alias candidate removed (phi-usage) " + rValue.toString(program));
-                           aliasSet.remove(rValue);
-                           break;
+         ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
+         while(aliasSetListIterator.hasNext()) {
+            AliasSet aliasSet = aliasSetListIterator.next();
+            boolean removeSet = false;
+            for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+               if(block.hasPhiBlock()) {
+                  StatementPhiBlock phi = block.getPhiBlock();
+                  boolean lMatch = false;
+                  for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                     if(lMatch) {
+                        if(aliasSet.contains(phiVariable.getVariable())) {
+                           // Assigning inside tha alias set again - no need to check the variables
+                           continue;
                         }
-                     }
-                  } else {
-                     if(aliasSet.contains(phiVariable.getVariable())) {
-                        lMatch = true;
+                        for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                           RValue rValue = phiRValue.getrValue();
+                           if(aliasSet.contains(rValue)) {
+                              removeSet = true;
+                              break;
+                           }
+                        }
+                     } else {
+                        if(aliasSet.contains(phiVariable.getVariable())) {
+                           lMatch = true;
+                        }
                      }
                   }
                }
             }
+            if(removeSet) {
+               program.getLog().append("Alias candidate removed (phi-usage) " + aliasSet.toString(program));
+               aliasSetListIterator.remove();
+            }
          }
-      }
-      ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
-      while(aliasSetListIterator.hasNext()) {
-         AliasSet aliasSet = aliasSetListIterator.next();
-         if(aliasSet.getVars().size() <= 1) {
-            program.getLog().append("Alias candidate removed (solo) " + aliasSet.toString(program));
-            aliasSetListIterator.remove();
-         }
-      }
    }
 
    // Remove all candidates that are volatile and not assigned to the same variable
@@ -101,7 +99,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             if(unversionedFullName == null) {
                unversionedFullName = variableRef.getFullNameUnversioned();
             } else if(!unversionedFullName.equals(variableRef.getFullNameUnversioned())) {
-                 sameBaseVar = false;
+               sameBaseVar = false;
             }
          }
          if(anyVolatile & !sameBaseVar) {
@@ -204,7 +202,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          List<StatementLValue> assignments = new ArrayList<>();
          for(VariableRef aliasVar : aliasSet.getVars()) {
             StatementLValue assignment = getGraph().getAssignment(aliasVar);
-            if(assignment!=null) {
+            if(assignment != null) {
                assignments.add(assignment);
                StatementSource source = assignment.getSource();
                if(bestSource == null) {
@@ -221,7 +219,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                }
             }
          }
-         if(bestSource!=null) {
+         if(bestSource != null) {
             // Found a best source - update all statements
             for(StatementLValue assignment : assignments) {
                assignment.setSource(bestSource);
@@ -254,7 +252,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                while(variableIterator.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
                   AliasSet aliasSet = aliases.findAliasSet(phiVariable.getVariable());
-                  if(aliasSet != null && phiVariable.getValues().size()>0) {
+                  if(aliasSet != null && phiVariable.getValues().size() > 0) {
                      boolean remove = true;
                      for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         if(!aliasSet.contains(phiRValue.getrValue())) {

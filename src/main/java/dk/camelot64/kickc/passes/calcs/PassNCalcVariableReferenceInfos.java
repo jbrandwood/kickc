@@ -22,12 +22,10 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
       super(program);
    }
 
-   private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectVarRefsMap = null;
    private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectUsedVarsMap = null;
 
    @Override
    public VariableReferenceInfos calculate() {
-      LinkedHashMap<LabelRef, Collection<VariableRef>> blockReferencedVars = new LinkedHashMap<>();
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsedVars = new LinkedHashMap<>();
       LinkedHashMap<LabelRef, Collection<LabelRef>> blockSuccessors = new LinkedHashMap<>();
 
@@ -35,10 +33,8 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
       Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences = new LinkedHashMap<>();
       Map<Integer, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> statementVarReferences = new LinkedHashMap<>();
 
-      blockDirectVarRefsMap = new LinkedHashMap<>();
       blockDirectUsedVarsMap = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         LinkedHashSet<VariableRef> blockDirectVarRefs = new LinkedHashSet<>();
          LinkedHashSet<VariableRef> blockDirectUsedVars = new LinkedHashSet<>();
          blockVarReferences.putIfAbsent(block.getLabel(), new ArrayList<>());
          Collection<VariableReferenceInfos.ReferenceToSymbolVar> blockSymbols = blockVarReferences.get(block.getLabel());
@@ -56,7 +52,6 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
             Collection<VariableRef> stmtDefinedVars = getDefinedVars(statement);
             LinkedHashSet<VariableRef> stmtUsedVars = new LinkedHashSet<>(stmtVarRefs);
             stmtUsedVars.removeAll(stmtDefinedVars);
-            blockDirectVarRefs.addAll(stmtVarRefs);
             blockDirectUsedVars.addAll(stmtUsedVars);
             // Add variable definitions to the statement
             statementVarReferences.putIfAbsent(statement.getIndex(), new ArrayList<>());
@@ -83,15 +78,12 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
             }
          }
          LabelRef blockLabel = block.getLabel();
-         blockDirectVarRefsMap.put(blockLabel, blockDirectVarRefs);
          blockDirectUsedVarsMap.put(blockLabel, blockDirectUsedVars);
       }
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
-         LinkedHashSet<VariableRef> blockRecursiveVarRefs = new LinkedHashSet<>();
          LinkedHashSet<VariableRef> blockRecursiveUsedVars = new LinkedHashSet<>();
-         findReferencedVars(block.getLabel(), block, blockRecursiveVarRefs, blockRecursiveUsedVars, new ArrayList<>());
-         blockReferencedVars.put(blockLabel, blockRecursiveVarRefs);
+         findReferencedVars(block.getLabel(), block, blockRecursiveUsedVars, new ArrayList<>());
          blockUsedVars.put(blockLabel, blockRecursiveUsedVars);
          LinkedHashSet<LabelRef> successorClosure = new LinkedHashSet<>();
          findSuccessorClosure(block.getLabel(), successorClosure, new ArrayList<>());
@@ -111,7 +103,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                   }
                });
       }
-      VariableReferenceInfos variableReferenceInfos = new VariableReferenceInfos(blockReferencedVars, blockUsedVars, blockSuccessors, symbolVarReferences, blockVarReferences, statementVarReferences);
+      VariableReferenceInfos variableReferenceInfos = new VariableReferenceInfos(blockUsedVars, blockSuccessors, symbolVarReferences, blockVarReferences, statementVarReferences);
       if(getLog().isVerboseSSAOptimize()) {
          getLog().append(variableReferenceInfos.getSizeInfo());
       }
@@ -171,11 +163,10 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
     *
     * @param labelRef The block to examine
     * @param block The block to examine (optional, saves lookup)
-    * @param referencedVars the set of referenced variables
     * @param usedVars the set of referenced variables
     * @param visited The blocks already visited during the search. Used to stop infinite recursion
     */
-   private void findReferencedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> referencedVars, LinkedHashSet<VariableRef> usedVars, Collection<LabelRef> visited) {
+   private void findReferencedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> usedVars, Collection<LabelRef> visited) {
       if(labelRef == null || visited.contains(labelRef))
          return;
       visited.add(labelRef);
@@ -184,11 +175,10 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          if(block == null)
             return;
       }
-      referencedVars.addAll(blockDirectVarRefsMap.get(labelRef));
       usedVars.addAll(blockDirectUsedVarsMap.get(labelRef));
-      findReferencedVars(block.getDefaultSuccessor(), null, referencedVars, usedVars, visited);
-      findReferencedVars(block.getConditionalSuccessor(), null, referencedVars, usedVars, visited);
-      findReferencedVars(block.getCallSuccessor(), null, referencedVars, usedVars, visited);
+      findReferencedVars(block.getDefaultSuccessor(), null, usedVars, visited);
+      findReferencedVars(block.getConditionalSuccessor(), null, usedVars, visited);
+      findReferencedVars(block.getCallSuccessor(), null, usedVars, visited);
    }
 
    /**

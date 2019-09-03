@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
  */
 public class VariableReferenceInfos {
 
-   /** Variables referenced in each block. */
-   private Map<LabelRef, Collection<VariableRef>> blockReferencedVars;
-
    /** Variables used in each block. */
    private Map<LabelRef, Collection<VariableRef>> blockUsedVars;
 
@@ -78,7 +75,7 @@ public class VariableReferenceInfos {
          this.referencedSymbol = referencedSymbol;
       }
 
-      public Integer getStatementIdx() {
+      Integer getStatementIdx() {
          return statementIdx;
       }
 
@@ -111,7 +108,7 @@ public class VariableReferenceInfos {
          this.referencedSymbol = referencedSymbol;
       }
 
-      public SymbolVariableRef getReferencingSymbol() {
+      SymbolVariableRef getReferencingSymbol() {
          return referencingSymbol;
       }
 
@@ -127,14 +124,12 @@ public class VariableReferenceInfos {
    }
 
    public VariableReferenceInfos(
-         Map<LabelRef, Collection<VariableRef>> blockReferencedVars,
          Map<LabelRef, Collection<VariableRef>> blockUsedVars,
          Map<LabelRef, Collection<LabelRef>> blockSuccessorClosure,
          Map<SymbolVariableRef, Collection<ReferenceToSymbolVar>> symbolVarReferences,
          Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences,
          Map<Integer, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> statementVarReferences
    ) {
-      this.blockReferencedVars = blockReferencedVars;
       this.blockUsedVars = blockUsedVars;
       this.blockSuccessorClosure = blockSuccessorClosure;
       this.symbolVarReferences = symbolVarReferences;
@@ -145,52 +140,44 @@ public class VariableReferenceInfos {
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
       if(blockSuccessorClosure != null) {
-         sizeInfo.append("blockSuccessorClosure " + blockSuccessorClosure.size() + " labels ");
+         sizeInfo.append("blockSuccessorClosure ").append(blockSuccessorClosure.size()).append(" labels ");
          int sub = 0;
          for(Collection<LabelRef> labelRefs : blockSuccessorClosure.values()) {
             sub += labelRefs.size();
          }
-         sizeInfo.append(" " + sub + " labels" + "\n");
-      }
-      if(blockReferencedVars != null) {
-         sizeInfo.append("blockReferencedVars " + blockReferencedVars.size() + " labels ");
-         int sub = 0;
-         for(Collection<VariableRef> variableRefs : blockReferencedVars.values()) {
-            sub += variableRefs.size();
-         }
-         sizeInfo.append(" " + sub + " varrefs" + "\n");
+         sizeInfo.append(" ").append(sub).append(" labels").append("\n");
       }
       if(blockUsedVars != null) {
-         sizeInfo.append("blockUsedVars " + blockUsedVars.size() + " labels ");
+         sizeInfo.append("blockUsedVars ").append(blockUsedVars.size()).append(" labels ");
          int sub = 0;
          for(Collection<VariableRef> variableRefs : blockUsedVars.values()) {
             sub += variableRefs.size();
          }
-         sizeInfo.append(" " + sub + " varrefs" + "\n");
+         sizeInfo.append(" ").append(sub).append(" varrefs").append("\n");
       }
       {
-         sizeInfo.append("symbolVarReferences " + symbolVarReferences.size() + " SymbolVariableRefs ");
+         sizeInfo.append("symbolVarReferences ").append(symbolVarReferences.size()).append(" SymbolVariableRefs ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : symbolVarReferences.values()) {
             sub += value.size();
          }
-         sizeInfo.append(" " + sub + " ReferenceToSymbolVars" + "\n");
+         sizeInfo.append(" ").append(sub).append(" ReferenceToSymbolVars").append("\n");
       }
       {
-         sizeInfo.append("statementVarReferences " + statementVarReferences.size() + " statements ");
+         sizeInfo.append("statementVarReferences ").append(statementVarReferences.size()).append(" statements ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : statementVarReferences.values()) {
             sub += value.size();
          }
-         sizeInfo.append(" " + sub + " ReferenceToSymbolVars" + "\n");
+         sizeInfo.append(" ").append(sub).append(" ReferenceToSymbolVars").append("\n");
       }
       {
-         sizeInfo.append("blockVarReferences " + blockVarReferences.size() + " blocks ");
+         sizeInfo.append("blockVarReferences ").append(blockVarReferences.size()).append(" blocks ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : blockVarReferences.values()) {
             sub += value.size();
          }
-         sizeInfo.append(" " + sub + " ReferenceToSymbolVars" + "\n");
+         sizeInfo.append(" ").append(sub).append(" ReferenceToSymbolVars").append("\n");
       }
       return sizeInfo.toString();
    }
@@ -212,7 +199,19 @@ public class VariableReferenceInfos {
     * @return All used variables
     */
    public Collection<VariableRef> getReferencedVars(LabelRef labelRef) {
-      return blockReferencedVars.get(labelRef);
+      ArrayList<VariableRef> variableRefs = new ArrayList<>();
+      blockSuccessorClosure.get(labelRef)
+            .forEach(labelRef1 -> blockVarReferences
+                  .get(labelRef1)
+                  .stream()
+                  .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
+                  .forEach(referenceToSymbolVar -> {
+                           if(!variableRefs.contains(referenceToSymbolVar.getReferenced()))
+                              variableRefs.add((VariableRef) referenceToSymbolVar.getReferenced());
+                        }
+                  )
+            );
+      return variableRefs;
    }
 
    /**
@@ -233,14 +232,13 @@ public class VariableReferenceInfos {
     */
    public Collection<VariableRef> getDefinedVars(Statement stmt) {
       Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
-      List<VariableRef> variableRefs = referenceToSymbolVars
+      return referenceToSymbolVars
             .stream()
             .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
             .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.DEFINE.equals(referenceToSymbolVar.getReferenceType()))
             .map(ReferenceToSymbolVar::getReferenced)
             .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
             .collect(Collectors.toList());
-      return variableRefs;
    }
 
    /**
@@ -257,7 +255,7 @@ public class VariableReferenceInfos {
                   .stream()
                   .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
                   .map(ReferenceToSymbolVar::getReferenced)
-                  .map(symbolVariableRef -> (VariableRef)symbolVariableRef)
+                  .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
                   .collect(Collectors.toList());
       return variableRefs;
    }

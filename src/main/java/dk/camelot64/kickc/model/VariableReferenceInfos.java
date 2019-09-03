@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -16,9 +19,6 @@ import java.util.stream.Collectors;
  * </ul>
  */
 public class VariableReferenceInfos {
-
-   /** Variables used in each block. */
-   private Map<LabelRef, Collection<VariableRef>> blockUsedVars;
 
    /** For each block this is the closure of all successor blocks. */
    private Map<LabelRef, Collection<LabelRef>> blockSuccessorClosure;
@@ -124,13 +124,11 @@ public class VariableReferenceInfos {
    }
 
    public VariableReferenceInfos(
-         Map<LabelRef, Collection<VariableRef>> blockUsedVars,
          Map<LabelRef, Collection<LabelRef>> blockSuccessorClosure,
          Map<SymbolVariableRef, Collection<ReferenceToSymbolVar>> symbolVarReferences,
          Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences,
          Map<Integer, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> statementVarReferences
    ) {
-      this.blockUsedVars = blockUsedVars;
       this.blockSuccessorClosure = blockSuccessorClosure;
       this.symbolVarReferences = symbolVarReferences;
       this.blockVarReferences = blockVarReferences;
@@ -146,14 +144,6 @@ public class VariableReferenceInfos {
             sub += labelRefs.size();
          }
          sizeInfo.append(" ").append(sub).append(" labels").append("\n");
-      }
-      if(blockUsedVars != null) {
-         sizeInfo.append("blockUsedVars ").append(blockUsedVars.size()).append(" labels ");
-         int sub = 0;
-         for(Collection<VariableRef> variableRefs : blockUsedVars.values()) {
-            sub += variableRefs.size();
-         }
-         sizeInfo.append(" ").append(sub).append(" varrefs").append("\n");
       }
       {
          sizeInfo.append("symbolVarReferences ").append(symbolVarReferences.size()).append(" SymbolVariableRefs ");
@@ -215,16 +205,6 @@ public class VariableReferenceInfos {
    }
 
    /**
-    * Get all variables used inside a block and its successors (including any called method)
-    *
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   public Collection<VariableRef> getUsedVars(LabelRef labelRef) {
-      return blockUsedVars.get(labelRef);
-   }
-
-   /**
     * Get the variables defined by a statement
     *
     * @param stmt The statement
@@ -248,16 +228,12 @@ public class VariableReferenceInfos {
     * @return The referenced variables
     */
    public Collection<VariableRef> getReferencedVars(Statement stmt) {
-      // Test if new structure is compatible
-      Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
-      List<VariableRef> variableRefs =
-            referenceToSymbolVars
-                  .stream()
-                  .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
-                  .map(ReferenceToSymbolVar::getReferenced)
-                  .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
-                  .collect(Collectors.toList());
-      return variableRefs;
+      return statementVarReferences.get(stmt.getIndex())
+            .stream()
+            .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
+            .map(ReferenceToSymbolVar::getReferenced)
+            .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
+            .collect(Collectors.toList());
    }
 
    /**
@@ -267,15 +243,13 @@ public class VariableReferenceInfos {
     * @return The used variables (not including defined variables)
     */
    public Collection<VariableRef> getUsedVars(Statement stmt) {
-      Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
-      List<VariableRef> variableRefs = referenceToSymbolVars
+      return statementVarReferences.get(stmt.getIndex())
             .stream()
             .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
             .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
             .map(ReferenceToSymbolVar::getReferenced)
             .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
             .collect(Collectors.toList());
-      return variableRefs;
    }
 
    /**
@@ -286,8 +260,7 @@ public class VariableReferenceInfos {
    public boolean isUnused(SymbolVariableRef variableRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(variableRef);
       if(refs == null) return true;
-      return !refs.stream()
-            .anyMatch(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()));
+      return refs.stream().noneMatch(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()));
    }
 
    /**

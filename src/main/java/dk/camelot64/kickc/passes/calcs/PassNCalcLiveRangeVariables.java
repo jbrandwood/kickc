@@ -5,13 +5,13 @@ package dk.camelot64.kickc.passes.calcs;
  */
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ProcedureRef;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,7 +123,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   // Add all alive variables to previous that are used inside the method
                   ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(stmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
-                  Collection<VariableRef> procUsed = referenceInfo.getUsedVars(procedure.getRef().getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are used inside the method

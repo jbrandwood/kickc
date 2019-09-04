@@ -10,10 +10,10 @@ main: {
     lda #>4
     sta file+1
     ldy #$1e
-    ldx file
-    stx.z $fe
-    tax
-    stx.z $ff
+    lda file
+    sta.z $fe
+    lda file+1
+    sta.z $ff
     lda ($fe),y
     sta.z uSize
     iny

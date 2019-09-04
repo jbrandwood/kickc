@@ -505,10 +505,10 @@ main: {
     sta file+1
     // [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) -- vwuz1=(_deref_pptc1)_derefidx_vbuc2 
     ldy #$1e
-    ldx file
-    stx.z $fe
-    ldx file+1
-    stx.z $ff
+    lda file
+    sta.z $fe
+    lda file+1
+    sta.z $ff
     lda ($fe),y
     sta.z uSize
     iny
@@ -635,7 +635,7 @@ print_char: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((byte**)(const struct fileentry*) main::file#1) ← (byte*) 4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) [ main::uSize#1 ] ( main:2 [ main::uSize#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) [ main::uSize#1 ] ( main:2 [ main::uSize#1 ] ) always clobbers reg byte a reg byte y 
 Statement [6] (word) print_word::w#0 ← (word) main::uSize#1 [ print_word::w#0 ] ( main:2 [ print_word::w#0 ] ) always clobbers reg byte a 
 Statement [9] (byte) print_byte::b#0 ← > (word) print_word::w#0 [ print_word::w#0 print_byte::b#0 ] ( main:2::print_word:7 [ print_word::w#0 print_byte::b#0 ] ) always clobbers reg byte a 
 Statement [11] (byte) print_byte::b#1 ← < (word) print_word::w#0 [ print_byte::b#1 print_char_cursor#19 ] ( main:2::print_word:7 [ print_byte::b#1 print_char_cursor#19 ] ) always clobbers reg byte a 
@@ -645,7 +645,7 @@ Statement [18] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [23] *((byte*) print_char_cursor#18) ← (byte) print_char::ch#2 [ print_char_cursor#18 ] ( main:2::print_word:7::print_byte:10::print_char:17 [ print_word::w#0 print_byte::b#2 print_char_cursor#18 ] main:2::print_word:7::print_byte:12::print_char:17 [ print_byte::b#2 print_char_cursor#18 ] main:2::print_word:7::print_byte:10::print_char:20 [ print_word::w#0 print_char_cursor#18 ] main:2::print_word:7::print_byte:12::print_char:20 [ print_char_cursor#18 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [4] *((byte**)(const struct fileentry*) main::file#1) ← (byte*) 4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) [ main::uSize#1 ] ( main:2 [ main::uSize#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) [ main::uSize#1 ] ( main:2 [ main::uSize#1 ] ) always clobbers reg byte a reg byte y 
 Statement [6] (word) print_word::w#0 ← (word) main::uSize#1 [ print_word::w#0 ] ( main:2 [ print_word::w#0 ] ) always clobbers reg byte a 
 Statement [9] (byte) print_byte::b#0 ← > (word) print_word::w#0 [ print_word::w#0 print_byte::b#0 ] ( main:2::print_word:7 [ print_word::w#0 print_byte::b#0 ] ) always clobbers reg byte a 
 Statement [11] (byte) print_byte::b#1 ← < (word) print_word::w#0 [ print_byte::b#1 print_char_cursor#19 ] ( main:2::print_word:7 [ print_byte::b#1 print_char_cursor#19 ] ) always clobbers reg byte a 
@@ -713,10 +713,10 @@ main: {
     sta file+1
     // [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) -- vwuz1=(_deref_pptc1)_derefidx_vbuc2 
     ldy #$1e
-    ldx file
-    stx.z $fe
-    ldx file+1
-    stx.z $ff
+    lda file
+    sta.z $fe
+    lda file+1
+    sta.z $ff
     lda ($fe),y
     sta.z uSize
     iny
@@ -837,7 +837,6 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx file+1 with TAX
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
@@ -916,7 +915,7 @@ reg byte x [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 163
+Score: 165
 
   // File Comments
   // Upstart
@@ -944,10 +943,10 @@ main: {
     // uSize = *ptrw
     // [5] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1) + (byte) $1e) -- vwuz1=(_deref_pptc1)_derefidx_vbuc2 
     ldy #$1e
-    ldx file
-    stx.z $fe
-    tax
-    stx.z $ff
+    lda file
+    sta.z $fe
+    lda file+1
+    sta.z $ff
     lda ($fe),y
     sta.z uSize
     iny

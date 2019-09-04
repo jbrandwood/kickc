@@ -1,7 +1,7 @@
-ldx {c1}
-stx $fe
-ldx {c1}+1
-stx $ff
+lda {c1}
+sta $fe
+lda {c1}+1
+sta $ff
 lda ($fe),y
 sta {z1}
 iny

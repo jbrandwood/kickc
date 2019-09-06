@@ -110,7 +110,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       // Generate ASM
       try {
          program.clearPhiTransitions();
-         new Pass4CodeGeneration(program, false).generate();
+         new Pass4CodeGeneration(program, false, false).generate();
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          unknownFragments.add(e.getFragmentSignature());
          if(program.getLog().isVerboseUplift()) {

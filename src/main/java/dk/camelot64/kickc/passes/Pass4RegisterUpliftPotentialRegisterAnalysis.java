@@ -163,7 +163,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(getProgram(), false));
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
-            (new Pass4CodeGeneration(getProgram(), false)).generateStatementAsm(asm, block, statement, aluState, false);
+            (new Pass4CodeGeneration(getProgram(), false, false)).generateStatementAsm(asm, block, statement, aluState, false);
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             unknownFragments.add(e.getFragmentSignature());
             StringBuilder msg = new StringBuilder();

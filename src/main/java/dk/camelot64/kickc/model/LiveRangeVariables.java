@@ -78,5 +78,10 @@ public class LiveRangeVariables {
       return liveRanges.get(variable);
    }
 
+   public int size() {
+      return liveRanges.size();
+
+   }
+
 
 }

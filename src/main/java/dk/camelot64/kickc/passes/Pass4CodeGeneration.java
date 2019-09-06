@@ -25,6 +25,9 @@ public class Pass4CodeGeneration {
    /** Should the generated ASM contain verbose alive info for the statements (costs a bit more to generate). */
    boolean verboseAliveInfo;
 
+   /** Missing fragments produce a warning instead of an error. */
+   boolean warnFragmentMissing;
+
    /** The program being generated. */
    private Program program;
 
@@ -57,9 +60,10 @@ public class Pass4CodeGeneration {
       transitionsGenerated.put(transition, Boolean.TRUE);
    }
 
-   public Pass4CodeGeneration(Program program, boolean verboseAliveInfo) {
+   public Pass4CodeGeneration(Program program, boolean verboseAliveInfo, boolean warnFragmentMissing) {
       this.program = program;
       this.verboseAliveInfo = verboseAliveInfo;
+      this.warnFragmentMissing = warnFragmentMissing;
    }
 
    ControlFlowGraph getGraph() {
@@ -644,7 +648,12 @@ public class Pass4CodeGeneration {
             try {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());
+               if(warnFragmentMissing) {
+                  program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature()+"\n"+statement.getSource().toString());
+                  asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment "+ e.getFragmentSignature()+"\", 0, 1", 0L, 0L));
+               }  else {
+                  throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());
+               }
             }
          }
       }

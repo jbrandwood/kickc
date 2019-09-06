@@ -33,11 +33,22 @@ public class Compiler {
     * Currently the optimization is flaky and results in NPE's and wrong values in some programs. */
    private boolean enableLoopHeadConstant = false;
 
+   /** Missing fragments produce a warning instead of an error */
+   private boolean warnFragmentMissing = false;
+
    /** File name of link script to use (from command line parameter). */
    private String linkScriptFileName;
 
    public Compiler() {
       this.program = new Program();
+   }
+
+   public boolean isWarnFragmentMissing() {
+      return warnFragmentMissing;
+   }
+
+   public void setWarnFragmentMissing(boolean warnFragmentMissing) {
+      this.warnFragmentMissing = warnFragmentMissing;
    }
 
    public void setLinkScriptFileName(String linkScript) {
@@ -475,7 +486,7 @@ public class Compiler {
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
-      new Pass4CodeGeneration(program, false).generate();
+      new Pass4CodeGeneration(program, false, warnFragmentMissing).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
       getLog().append("Target platform is " + program.getTargetPlatform().getName());
@@ -521,7 +532,7 @@ public class Compiler {
 
       // Final ASM code generation before optimization
       program.clearPhiTransitions();
-      new Pass4CodeGeneration(program, false).generate();
+      new Pass4CodeGeneration(program, false, warnFragmentMissing).generate();
       new Pass4AssertNoCpuClobber(program).check();
 
       // Remove unnecessary register savings from interrupts {@link InterruptType#HARDWARE_NOCLOBBER}

@@ -40,14 +40,11 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
 
    /** Variables referenced inside each procedure and all it's sub-calls. */
    private Map<ProcedureRef, Collection<VariableRef>> procedureReferencedVars;
-   
-   static int callCount = 0;
 
    /**
     * Calculate the variables referenced inside each procedure and all it's sub-calls.
     */
    private void calculateProcedureReferencedVars() {
-      //getLog().append("calculateLiveRanges starting "+callCount);
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
       Map<ProcedureRef, Collection<VariableRef>> procReferencedVars = new LinkedHashMap<>();
@@ -55,8 +52,6 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
          Collection<VariableRef> referencedVars = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
          procReferencedVars.put(procedure.getRef(), referencedVars);
       }
-      //getLog().append("calculateLiveRanges done "+callCount);
-      callCount++;
       this.procedureReferencedVars = procReferencedVars;
    }
 
@@ -83,9 +78,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * @return true if any live ranges was modified. false if no modification was performed (and the propagation is complete)
     */
    private boolean calculateLiveRanges(LiveRangeVariables liveRanges) {
-
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
-
       boolean modified = false;
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement stmt : block.getStatements()) {

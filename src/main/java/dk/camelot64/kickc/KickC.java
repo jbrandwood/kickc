@@ -111,6 +111,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-vasmoptimize"}, description = "Verbosity Option. Assembler optimization.")
    private boolean verboseAsmOptimize = false;
 
+   @CommandLine.Option(names = {"-Wfragment"}, description = "Warning Option. Missing fragments produces a warning instead of an error.")
+   private boolean warnFragmentMissing = false;
+
    @CommandLine.Option(names = {"-fragment"}, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
    private String fragment = null;
 
@@ -225,6 +228,10 @@ public class KickC implements Callable<Void> {
             compiler.enableLoopHeadConstant();
          } else if(optimizeNoLoopHeadConstant) {
             compiler.disableLoopHeadConstant();
+         }
+
+         if(warnFragmentMissing) {
+            compiler.setWarnFragmentMissing(true);
          }
 
          if(linkScript!=null) {

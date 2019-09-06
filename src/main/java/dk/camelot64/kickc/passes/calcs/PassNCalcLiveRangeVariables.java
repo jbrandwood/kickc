@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.passes.calcs;
 
-/**
- * Identify the alive intervals for all variables. Add the intervals to the ProgramScope.
- */
-
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -13,11 +9,11 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Identify the alive intervals for all variables. Add the intervals to the ProgramScope.
+ */
 public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariables> {
 
    public PassNCalcLiveRangeVariables(Program program) {
@@ -26,6 +22,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
 
    @Override
    public LiveRangeVariables calculate() {
+      calculateProcedureReferencedVars();
       LiveRangeVariables liveRanges = new LiveRangeVariables(getProgram());
       boolean propagating;
       do {
@@ -38,6 +35,29 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
          }
       } while(propagating);
       return liveRanges;
+   }
+
+
+   /** Variables referenced inside each procedure and all it's sub-calls. */
+   private Map<ProcedureRef, Collection<VariableRef>> procedureReferencedVars;
+   
+   static int callCount = 0;
+
+   /**
+    * Calculate the variables referenced inside each procedure and all it's sub-calls.
+    */
+   private void calculateProcedureReferencedVars() {
+      //getLog().append("calculateLiveRanges starting "+callCount);
+      VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
+      Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
+      Map<ProcedureRef, Collection<VariableRef>> procReferencedVars = new LinkedHashMap<>();
+      for(Procedure procedure : allProcedures) {
+         Collection<VariableRef> referencedVars = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
+         procReferencedVars.put(procedure.getRef(), referencedVars);
+      }
+      //getLog().append("calculateLiveRanges done "+callCount);
+      callCount++;
+      this.procedureReferencedVars = procReferencedVars;
    }
 
    /**
@@ -63,7 +83,9 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * @return true if any live ranges was modified. false if no modification was performed (and the propagation is complete)
     */
    private boolean calculateLiveRanges(LiveRangeVariables liveRanges) {
+
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
+
       boolean modified = false;
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement stmt : block.getStatements()) {
@@ -89,7 +111,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   // Add all vars that are referenced in the method
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure);
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -105,7 +127,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   // Add all vars that the method does not use
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure);
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -123,7 +145,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   // Add all alive variables to previous that are used inside the method
                   ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(stmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
-                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
+                  Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure.getRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are used inside the method

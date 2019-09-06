@@ -19,12 +19,15 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
    @Override
    public void check() throws AssertionFailed {
 
+      HashSet<String> codeSymbolFullNames = new HashSet<>();
       HashSet<Symbol> codeSymbols = new HashSet<>();
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof SymbolRef) {
             Symbol symbol = getScope().getSymbol((SymbolRef) programValue.get());
-            if(symbol != null)
+            if(symbol != null) {
                codeSymbols.add(symbol);
+               codeSymbolFullNames.add(symbol.getFullName());
+            }
          }
       });
 
@@ -38,6 +41,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       }
       // Check that all symbols in the symbol table is also in the code
       Collection<Symbol> tableSymbols = getScope().getAllSymbols(true);
+
       for(Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
@@ -45,20 +49,10 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          if(tableSymbol instanceof EnumDefinition) continue;
          if(tableSymbol instanceof TypeDefsScope) continue;
          if(tableSymbol.getType() instanceof SymbolTypeStruct) continue;
-         Symbol codeSymbol = null;
          String codeSymbolFullName = tableSymbol.getFullName();
-         for(Symbol symbol : codeSymbols) {
-            if(codeSymbolFullName.equals(symbol.getFullName())) {
-               codeSymbol = symbol;
-               break;
-            }
-         }
-         if(codeSymbol == null) {
-            if(tableSymbol.getType() instanceof SymbolTypeStruct) {
-               getLog().append("Struct no longer used in code "+codeSymbolFullName);
-            }  else {
-               throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
-            }
+         if(!codeSymbolFullNames.contains(codeSymbolFullName)) {
+            throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
+
          }
       }
    }

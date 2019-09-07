@@ -654,6 +654,10 @@ public class Pass4CodeGeneration {
                }  else {
                   throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());
                }
+            } catch(CompileError e) {
+               if(e.getSource()==null) {
+                  throw new CompileError(e.getMessage(), statement);
+               }
             }
          }
       }
@@ -668,8 +672,7 @@ public class Pass4CodeGeneration {
     * @param aluState State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
     * For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
     */
-   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState
-         aluState, boolean genCallPhiEntry) {
+   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
       asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
       generateComments(asm, statement.getComments());
@@ -722,7 +725,7 @@ public class Pass4CodeGeneration {
                if(callSuccessor != null && callSuccessor.hasPhiBlock()) {
                   PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
                   if(transitionIsGenerated(transition)) {
-                     throw new RuntimeException("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
+                     throw new InternalError("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
                   }
                   genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                }
@@ -812,10 +815,10 @@ public class Pass4CodeGeneration {
                asm.getCurrentChunk().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
             }
             if(!supported) {
-               throw new RuntimeException("Call Pointer not supported " + statement);
+               throw new InternalError("Call Pointer not supported " + statement);
             }
          } else {
-            throw new RuntimeException("Statement not supported " + statement);
+            throw new InternalError("Statement not supported " + statement);
          }
       }
    }

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -100,7 +101,7 @@ public class AsmFragmentInstance {
          String param = AsmFormat.asmFix(((Label) boundValue).getLocalName());
          return new AsmParameter(param, false);
       } else {
-         throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+         throw new InternalError("Bound Value Type not implemented " + boundValue);
       }
    }
 
@@ -296,7 +297,7 @@ public class AsmFragmentInstance {
                addressingMode,
                parameter.isZp());
          if(type == null) {
-            throw new RuntimeException("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
+            throw new InternalError("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }
          return new AsmInstruction(type, parameter.getParam());
       }

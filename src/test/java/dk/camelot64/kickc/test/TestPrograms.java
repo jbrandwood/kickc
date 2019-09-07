@@ -44,6 +44,13 @@ public class TestPrograms {
    }
    */
 
+   /** Fix number type resolving https://gitlab.com/camelot/kickc/issues/199
+   @Test
+   public void testConstBool0() throws IOException, URISyntaxException {
+      compileAndCompare("const-bool-0");
+   }
+   */
+
    @Test
    public void testAsmCullingJmp() throws IOException, URISyntaxException {
       compileAndCompare("asm-culling-jmp");

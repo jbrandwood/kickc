@@ -5,7 +5,7 @@
 .encoding "petscii_mixed"
   .const cpm = 'A'
 .encoding "petscii_upper"
-  .const cpu = 'A'
+  .const ccpu = 'A'
 .encoding "screencode_mixed"
   .const csm = 'A'
 .encoding "screencode_upper"
@@ -14,7 +14,7 @@
 main: {
     lda #cpm
     sta screen
-    lda #cpu
+    lda #ccpu
     sta screen+1
     lda #csm
     sta screen+2

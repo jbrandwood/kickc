@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cpm#0 ← (byte) 'A'pm
   (byte[]) spm#0 ← (const string) $0
-  (byte) cpu#0 ← (byte) 'A'pu
+  (byte) ccpu#0 ← (byte) 'A'pu
   (byte[]) spu#0 ← (const string) $1
   (byte) csm#0 ← (byte) 'A'
   (byte[]) ssm#0 ← (const string) $2
@@ -15,7 +15,7 @@ main: scope:[main]  from @1
   (byte) main::idx#0 ← (number) 0
   *((byte*) screen#0 + (byte) main::idx#0) ← (byte) cpm#0
   (byte) main::idx#1 ← ++ (byte) main::idx#0
-  *((byte*) screen#0 + (byte) main::idx#1) ← (byte) cpu#0
+  *((byte*) screen#0 + (byte) main::idx#1) ← (byte) ccpu#0
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   *((byte*) screen#0 + (byte) main::idx#2) ← (byte) csm#0
   (byte) main::idx#3 ← ++ (byte) main::idx#2
@@ -50,10 +50,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
+(byte) ccpu
+(byte) ccpu#0
 (byte) cpm
 (byte) cpm#0
-(byte) cpu
-(byte) cpu#0
 (byte) csm
 (byte) csm#0
 (byte) csu
@@ -110,7 +110,7 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const byte) cpm#0 = 'A'pm
 Constant (const byte[]) spm#0 = $0
-Constant (const byte) cpu#0 = 'A'pu
+Constant (const byte) ccpu#0 = 'A'pu
 Constant (const byte[]) spu#0 = $1
 Constant (const byte) csm#0 = 'A'
 Constant (const byte[]) ssm#0 = $2
@@ -214,7 +214,7 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] *((const byte*) screen#0) ← (const byte) cpm#0
-  [5] *((const byte*) screen#0+(byte) 1) ← (const byte) cpu#0
+  [5] *((const byte*) screen#0+(byte) 1) ← (const byte) ccpu#0
   [6] *((const byte*) screen#0+(byte) 2) ← (const byte) csm#0
   [7] *((const byte*) screen#0+(byte) 3) ← (const byte) csu#0
   [8] *((const byte*) screen#0+(byte) $28) ← *((const byte[]) spm#0)
@@ -228,8 +228,8 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
+(byte) ccpu
 (byte) cpm
-(byte) cpu
 (byte) csm
 (byte) csu
 (void()) main()
@@ -244,7 +244,7 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-Target platform is c64basic
+Target platform is c64basic / 6502X
   // File Comments
 // Tests encoding of literal chars
   // Upstart
@@ -255,7 +255,7 @@ Target platform is c64basic
 .encoding "petscii_mixed"
   .const cpm = 'A'
 .encoding "petscii_upper"
-  .const cpu = 'A'
+  .const ccpu = 'A'
 .encoding "screencode_mixed"
   .const csm = 'A'
 .encoding "screencode_upper"
@@ -280,8 +280,8 @@ main: {
     // [4] *((const byte*) screen#0) ← (const byte) cpm#0 -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
-    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) cpu#0 -- _deref_pbuc1=vbuc2 
-    lda #cpu
+    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) ccpu#0 -- _deref_pbuc1=vbuc2 
+    lda #ccpu
     sta screen+1
     // [6] *((const byte*) screen#0+(byte) 2) ← (const byte) csm#0 -- _deref_pbuc1=vbuc2 
     lda #csm
@@ -323,7 +323,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) screen#0) ← (const byte) cpm#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) screen#0+(byte) 1) ← (const byte) cpu#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) screen#0+(byte) 1) ← (const byte) ccpu#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) screen#0+(byte) 2) ← (const byte) csm#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) screen#0+(byte) 3) ← (const byte) csu#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) screen#0+(byte) $28) ← *((const byte[]) spm#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -349,7 +349,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .encoding "petscii_mixed"
   .const cpm = 'A'
 .encoding "petscii_upper"
-  .const cpu = 'A'
+  .const ccpu = 'A'
 .encoding "screencode_mixed"
   .const csm = 'A'
 .encoding "screencode_upper"
@@ -374,8 +374,8 @@ main: {
     // [4] *((const byte*) screen#0) ← (const byte) cpm#0 -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
-    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) cpu#0 -- _deref_pbuc1=vbuc2 
-    lda #cpu
+    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) ccpu#0 -- _deref_pbuc1=vbuc2 
+    lda #ccpu
     sta screen+1
     // [6] *((const byte*) screen#0+(byte) 2) ← (const byte) csm#0 -- _deref_pbuc1=vbuc2 
     lda #csm
@@ -437,10 +437,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
+(byte) ccpu
+(const byte) ccpu#0 ccpu = (byte) 'A'pu
 (byte) cpm
 (const byte) cpm#0 cpm = (byte) 'A'pm
-(byte) cpu
-(const byte) cpu#0 cpu = (byte) 'A'pu
 (byte) csm
 (const byte) csm#0 csm = (byte) 'A'
 (byte) csu
@@ -474,7 +474,7 @@ Score: 62
 .encoding "petscii_mixed"
   .const cpm = 'A'
 .encoding "petscii_upper"
-  .const cpu = 'A'
+  .const ccpu = 'A'
 .encoding "screencode_mixed"
   .const csm = 'A'
 .encoding "screencode_upper"
@@ -492,9 +492,9 @@ main: {
     // [4] *((const byte*) screen#0) ← (const byte) cpm#0 -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
-    // screen[idx++] = cpu
-    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) cpu#0 -- _deref_pbuc1=vbuc2 
-    lda #cpu
+    // screen[idx++] = ccpu
+    // [5] *((const byte*) screen#0+(byte) 1) ← (const byte) ccpu#0 -- _deref_pbuc1=vbuc2 
+    lda #ccpu
     sta screen+1
     // screen[idx++] = csm
     // [6] *((const byte*) screen#0+(byte) 2) ← (const byte) csm#0 -- _deref_pbuc1=vbuc2 

@@ -25,16 +25,23 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      VariableRef obsoleteConditionVar = findAndRewriteBooleanCondition();
-      if(obsoleteConditionVar!=null) {
-         Collection<VariableRef> obsoleteVars = new ArrayList<>();
-         obsoleteVars.add(obsoleteConditionVar);
-         removeAssignments(getGraph(), obsoleteVars);
-         deleteSymbols(getScope(), obsoleteVars);
-         return true;
-      }  else {
-         return false;
+      Map<LValue, StatementAssignment> assignments = getAllAssignments();
+      Map<RValue, List<Statement>> usages = getAllUsages();
+      boolean done = false;
+      boolean modified = false;
+      while(!done) {
+         VariableRef obsoleteConditionVar = findAndRewriteBooleanCondition(assignments, usages);
+         if(obsoleteConditionVar != null) {
+            Collection<VariableRef> obsoleteVars = new ArrayList<>();
+            obsoleteVars.add(obsoleteConditionVar);
+            removeAssignments(getGraph(), obsoleteVars);
+            deleteSymbols(getScope(), obsoleteVars);
+            modified = true;
+         } else {
+            done = true;
+         }
       }
+      return modified;
    }
 
    /**
@@ -42,10 +49,8 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
     * When found rewrite it (adding blocks)
     * @return Null if no condition was found to rewrite. The now obsolete variable containing the && / || / ! to be removed.
     */
-   private VariableRef  findAndRewriteBooleanCondition() {
+   private VariableRef  findAndRewriteBooleanCondition(Map<LValue, StatementAssignment> assignments, Map<RValue, List<Statement>> usages) {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         final Map<LValue, StatementAssignment> assignments = getAllAssignments();
-         final Map<RValue, List<Statement>> usages = getAllUsages();
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump conditional = (StatementConditionalJump) statement;

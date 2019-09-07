@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -279,6 +276,28 @@ public class VariableReferenceInfos {
       }
       return stmts;
    }
+
+   /**
+    * Get the index of the statement defining a variable
+    * @param variableRef The variable to look for
+    * @return Index of the defining statement
+    */
+   public Integer getVarDefineStatement(VariableRef variableRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(variableRef);
+      LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
+      if(refs != null) {
+         Optional<ReferenceToSymbolVar> refDefine = refs.stream()
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.DEFINE.equals(referenceToSymbolVar.getReferenceType()))
+               .findFirst();
+         if(refDefine.isPresent()) {
+            return ((ReferenceInStatement)refDefine.get()).getStatementIdx();
+         }
+      }
+      return null;
+   }
+
+
 
    /**
     * Get all statements referencing a variable

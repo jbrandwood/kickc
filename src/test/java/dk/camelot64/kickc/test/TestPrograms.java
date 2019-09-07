@@ -41,8 +41,6 @@ public class TestPrograms {
       compileAndCompare("examples/zpcode/zpcode");
    }
 
-
-
    // Fix parameter type problem - https://gitlab.com/camelot/kickc/issues/299
    /*
    @Test

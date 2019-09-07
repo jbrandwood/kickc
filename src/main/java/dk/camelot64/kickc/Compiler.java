@@ -75,6 +75,15 @@ public class Compiler {
       program.setTargetPlatform(targetPlatform);
    }
 
+   void setTargetCpu(TargetCpu targetCpu) {
+      program.setTargetCpu(targetCpu);
+   }
+
+   TargetCpu getTargetCpu() {
+      return program.getTargetCpu();
+   }
+
+
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
    }
@@ -489,7 +498,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false, warnFragmentMissing).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is " + program.getTargetPlatform().getName());
+      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName());
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments

@@ -141,7 +141,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(platform != null) {
          program.setTargetPlatform(platform);
       } else {
-         throw new CompileError("Unknown target platform in #platform directive", new StatementSource(ctx));
+         throw new CompileError("Unknown target platform in #pragma platform directive", new StatementSource(ctx));
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) {
+      TargetCpu cpu = TargetCpu.getTargetCpu(ctx.NAME().getText());
+      if(cpu != null) {
+         program.setTargetCpu(cpu);
+      } else {
+         throw new CompileError("Unknown target CPU in #pragma cpu directive", new StatementSource(ctx));
       }
       return null;
    }

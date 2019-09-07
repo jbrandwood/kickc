@@ -27,13 +27,16 @@ public class Program {
    private List<String> importPaths;
    /** Imported files. PASS 0 (STATIC) */
    private List<String> imported;
+
+   /** The target platform that the program is being build for. PASS 0-5 (STATIC) */
+   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
+   /** The target CPU that the program is being build for. PASS 0-5 (STATIC) */
+   private TargetCpu targetCpu = TargetCpu.DEFAULT;
    /** Path to any custom link script file used for linking (STATIC) */
    private Path linkScriptFilePath;
    /** Body to any custom link script file used for linking (STATIC) */
    private String linkScriptBody;
 
-   /** The target platform that the program is being build for. PASS 0-5 (STATIC) */
-   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
    /** Absolute start address of the code. Null to start ad 0x080d. PASS 0-5 (STATIC) */
    private Number programPc;
    /** Reserved ZP addresses that the compiler cannot use. PASS 0-5 (STATIC) */
@@ -154,6 +157,14 @@ public class Program {
       this.registerPotentials = null;
       this.registerUpliftProgram = null;
       this.asm = null;
+   }
+
+   public TargetCpu getTargetCpu() {
+      return targetCpu;
+   }
+
+   public void setTargetCpu(TargetCpu targetCpu) {
+      this.targetCpu = targetCpu;
    }
 
    public TargetPlatform getTargetPlatform() {

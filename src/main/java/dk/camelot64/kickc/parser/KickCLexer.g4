@@ -69,6 +69,7 @@ RESERVE:'reserve' ;
 PC:'pc';
 TARGET:'target';
 LINK:'link';
+CPU:'cpu';
 CODESEG:'code_seg';
 DATASEG:'data_seg';
 ENCODING:'encoding';

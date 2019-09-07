@@ -134,6 +134,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code globalDirectiveCpu}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code globalDirectiveLinkScript}
 	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree

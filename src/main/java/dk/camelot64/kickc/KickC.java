@@ -6,6 +6,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.TargetPlatform;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
@@ -129,6 +130,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. ")
    private String target = TargetPlatform.C64BASIC.getName();
 
+   @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. ")
+   private String cpu = TargetCpu.MOS6502X.getName();
+
    @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format.")
    private String linkScript = null;
 
@@ -162,6 +166,21 @@ public class KickC implements Callable<Void> {
          compiler.setTargetPlatform(targetPlatform);
       }
 
+      if(cpu!=null) {
+         TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu);
+         if(targetCpu==null) {
+            System.err.println("Unknown target CPU "+cpu);
+            StringBuffer supported = new StringBuffer();
+            supported.append("The supported target CPUs are: ");
+            for(TargetCpu value : TargetCpu.values()) {
+               supported.append(value.getName()).append(" ");
+            }
+            System.err.println(supported);
+            System.exit(COMPILE_ERROR);
+         }
+         compiler.setTargetCpu(targetCpu);
+      }
+
       if(libDir != null) {
          for(Path libPath : libDir) {
             compiler.addImportPath(libPath.toString());
@@ -171,6 +190,8 @@ public class KickC implements Callable<Void> {
       if(fragmentDir == null) {
          fragmentDir = new File("fragment/").toPath();
       }
+
+      Path fragmentCpuDir = fragmentDir.resolve(compiler.getTargetCpu().getName());
 
       Path fragmentCacheDir = null;
       if(optimizeFragmentCache) {
@@ -183,7 +204,7 @@ public class KickC implements Callable<Void> {
 
       configVerbosity(compiler);
 
-      AsmFragmentTemplateSynthesizer.initialize(fragmentDir, fragmentCacheDir, compiler.getLog());
+      AsmFragmentTemplateSynthesizer.initialize(fragmentDir, fragmentCpuDir, fragmentCacheDir, compiler.getLog());
 
       if(fragment != null) {
          if(verbose) {

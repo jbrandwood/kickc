@@ -28,8 +28,8 @@ public class AsmFragmentTemplateSynthesizer {
    static AsmFragmentTemplateSynthesizer SYNTHESIZER = null;
 
    /** Initialize the fragment template synthesizer. */
-   public static void initialize(Path fragmentFolder, Path cacheFolder, CompileLog log) {
-      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(fragmentFolder, cacheFolder, log);
+   public static void initialize(Path fragmentFolder, Path fragmentCpuFolder, Path cacheFolder, CompileLog log) {
+      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(fragmentFolder, fragmentCpuFolder, cacheFolder, log);
    }
 
    /** Finalize the fragment template synthesizer. */
@@ -38,8 +38,9 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    /** Create synthesizer. */
-   private AsmFragmentTemplateSynthesizer(Path fragmentFolder, Path cacheFolder, CompileLog log) {
-      this.fragmentFolder = fragmentFolder;
+   private AsmFragmentTemplateSynthesizer(Path defaultFragmentFolder, Path cpuFragmentFolder, Path cacheFolder, CompileLog log) {
+      this.defaultFragmentFolder = defaultFragmentFolder;
+      this.cpuFragmentFolder = cpuFragmentFolder;
       this.cacheFolder = cacheFolder;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
@@ -49,8 +50,11 @@ public class AsmFragmentTemplateSynthesizer {
 
    }
 
-   /** The folder containing fragment files. */
-   private Path fragmentFolder;
+   /** The folder containing generic fragment files. */
+   private Path defaultFragmentFolder;
+
+   /** The folder containing CPU-specific fragment files. */
+   private Path cpuFragmentFolder;
 
    /** The folder containing cached fragment files. */
    private Path cacheFolder;
@@ -184,9 +188,9 @@ public class AsmFragmentTemplateSynthesizer {
             log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath());
          return bestFragmentCache;
       } catch(IOException e) {
-         throw new RuntimeException("Error loading fragment cache file " + fragmentFolder, e);
+         throw new RuntimeException("Error loading fragment cache file " + defaultFragmentFolder, e);
       } catch(StringIndexOutOfBoundsException e) {
-         throw new RuntimeException("Problem reading fragment file " + fragmentFolder, e);
+         throw new RuntimeException("Problem reading fragment file " + defaultFragmentFolder, e);
       }
    }
 
@@ -205,7 +209,7 @@ public class AsmFragmentTemplateSynthesizer {
          for(String signature : this.bestFragmentCache.keySet()) {
             AsmFragmentTemplate fragmentTemplate = this.bestFragmentCache.get(signature);
             fragmentFilePrint.println("//FRAGMENT " + signature);
-            if(fragmentTemplate.getBody()!=null)
+            if(fragmentTemplate.getBody() != null)
                fragmentFilePrint.println(fragmentTemplate.getBody());
          }
          fragmentFilePrint.close();
@@ -255,8 +259,8 @@ public class AsmFragmentTemplateSynthesizer {
       /** Options for synthesizing the other templates from this template using a specific synthesis rule. Backward edges in the synthesis graph. */
       private Set<AsmFragmentSynthesisOption> parentOptions;
 
-      /** The template loaded from a file, if it exists. null if no file exists for the signature. */
-      private AsmFragmentTemplate fileTemplate;
+      /** The templates loaded from a file. Empty if no file exists for the signature. */
+      private List<AsmFragmentTemplate> fileTemplates;
 
       /**
        * Create a new synthesis
@@ -268,6 +272,7 @@ public class AsmFragmentTemplateSynthesizer {
          this.bestTemplates = new LinkedHashMap<>();
          this.synthesisOptions = new LinkedHashSet<>();
          this.parentOptions = new LinkedHashSet<>();
+         this.fileTemplates = new ArrayList<>();
       }
 
       /**
@@ -298,12 +303,12 @@ public class AsmFragmentTemplateSynthesizer {
          this.parentOptions.add(synthesisOption);
       }
 
-      public void setFileTemplate(AsmFragmentTemplate fileTemplate) {
-         this.fileTemplate = fileTemplate;
+      public void addFileTemplate(AsmFragmentTemplate fileTemplate) {
+         this.fileTemplates.add(fileTemplate);
       }
 
-      public AsmFragmentTemplate getFileTemplate() {
-         return fileTemplate;
+      public List<AsmFragmentTemplate> getFileTemplates() {
+         return fileTemplates;
       }
 
       /**
@@ -489,11 +494,13 @@ public class AsmFragmentTemplateSynthesizer {
       synthesisGraph.put(signature, synthesis);
       queueUpdateBestTemplate(synthesis);
       // Load the template from file - if it exists
-      AsmFragmentTemplate fileTemplate = loadFragmentTemplate(signature, log);
-      if(fileTemplate != null) {
-         synthesis.setFileTemplate(fileTemplate);
-         if(log.isVerboseFragmentLog()) {
-            log.append("New fragment synthesis " + signature + " - Successfully loaded " + signature + ".asm");
+      List<AsmFragmentTemplate> fileTemplates = loadFragmentTemplates(signature, log);
+      if(fileTemplates != null) {
+         for(AsmFragmentTemplate fileTemplate : fileTemplates) {
+            synthesis.addFileTemplate(fileTemplate);
+            if(log.isVerboseFragmentLog()) {
+               log.append("New fragment synthesis " + signature + " - Successfully loaded " + signature + ".asm");
+            }
          }
       }
       // Populate with synthesis options
@@ -538,8 +545,8 @@ public class AsmFragmentTemplateSynthesizer {
          AsmFragmentSynthesis synthesis = bestTemplateUpdate.pop();
          boolean modified = false;
          // Check if the file template is best in class
-         AsmFragmentTemplate fileTemplate = synthesis.getFileTemplate();
-         if(fileTemplate != null) {
+         List<AsmFragmentTemplate> fileTemplates = synthesis.getFileTemplates();
+         for(AsmFragmentTemplate fileTemplate : fileTemplates) {
             modified |= synthesis.bestTemplateCandidate(fileTemplate);
          }
          Collection<AsmFragmentSynthesisOption> synthesisOptions = synthesis.getSynthesisOptions();
@@ -586,18 +593,38 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    /**
-    * Attempt to load a fragment template from disk.
+    * Attempt to load a fragment template from disk. Also searches relevant fragment sub-folders specified by CPU and other options.
     *
     * @param signature The signature
     * @param log The compile log
     * @return The fragment template from a file. null if the template is not found as a file.
     */
-   private AsmFragmentTemplate loadFragmentTemplate(String signature, CompileLog log) {
-      if(fragmentFolder == null) {
-         return null;
+   private List<AsmFragmentTemplate> loadFragmentTemplates(String signature, CompileLog log) {
+      ArrayList<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
+      if(defaultFragmentFolder != null) {
+         AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, defaultFragmentFolder);
+         if(fileFragment != null)
+            fileTemplates.add(fileFragment);
       }
+      if(cpuFragmentFolder != null) {
+         AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, cpuFragmentFolder);
+         if(fileFragment != null)
+            fileTemplates.add(fileFragment);
+      }
+      return fileTemplates;
+   }
+
+
+   /**
+    * Attempt to load a fragment template from a folder on disk
+    *
+    * @param signature The signature to search for
+    * @param fragmentFolder The folder to look in
+    * @return any fragment with the gicen signature found in the folder. null if not found.
+    */
+   private AsmFragmentTemplate loadFragmentTemplate(String signature, Path fragmentFolder) {
       try {
-         File fragmentFile = this.fragmentFolder.resolve(signature + ".asm").toFile();
+         File fragmentFile = fragmentFolder.resolve(signature + ".asm").toFile();
          if(!fragmentFile.exists()) {
             return null;
          }
@@ -635,7 +662,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    File[] allFragmentFiles() {
-      return fragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
+      return defaultFragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
 
    }
 

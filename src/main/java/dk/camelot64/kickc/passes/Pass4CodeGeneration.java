@@ -85,35 +85,12 @@ public class Pass4CodeGeneration {
       String outputPrgPath = new File(program.getFileName()).getName()+".prg";
       asm.startChunk(currentScope, null, "Upstart");
       Number programPc = program.getProgramPc();
-      if(TargetPlatform.C64BASIC_SEGMENTS.equals(program.getTargetPlatform())) {
-         useSegments = true;
-         currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
-         currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
-         if(programPc==null) programPc = 0x080d;
-         asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
-         asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Basic,Code,Data\""));
-         asm.addLine(new AsmSegmentDef("Basic").param("start", "$0801"));
-         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_CODE_DEFAULT).param("start", AsmFormat.getAsmNumber(programPc)));
-         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_DATA_DEFAULT).param("startAfter", "\"Code\""));
-         asm.addLine(new AsmSegment("Basic"));
-         asm.addLine(new AsmBasicUpstart("bbegin"));
-         setCurrentSegment(currentCodeSegmentName, asm);
-      } else if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
+      if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
          useSegments = false;
          if(programPc==null) programPc = 0x080d;
          asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
          asm.addLine(new AsmBasicUpstart("bbegin"));
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
-      } else if(TargetPlatform.ASM6502_SEGMENTS.equals(program.getTargetPlatform())) {
-         useSegments = true;
-         currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
-         currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
-         if(programPc==null) programPc = 0x2000;
-         asm.addLine(new AsmFile(outputPrgPath).param("type", "\"prg\"").param("segments", "\"Program\""));
-         asm.addLine(new AsmSegmentDef("Program").param("segments", "\"Code,Data\""));
-         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_CODE_DEFAULT).param("start", AsmFormat.getAsmNumber(programPc)));
-         asm.addLine(new AsmSegmentDef(Scope.SEGMENT_DATA_DEFAULT).param("startAfter", "\"Code\""));
-         setCurrentSegment(currentCodeSegmentName, asm);
       } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
          useSegments = false;
          if(programPc==null) programPc = 0x2000;

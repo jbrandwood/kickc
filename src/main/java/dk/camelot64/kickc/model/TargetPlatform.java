@@ -6,12 +6,8 @@ package dk.camelot64.kickc.model;
 public enum TargetPlatform {
    /** Commodore 64 with BASIC upstart SYS-command. */
    C64BASIC("c64basic"),
-   /** Commodore 64 with BASIC upstart SYS-command - using Code and Data segments. */
-   C64BASIC_SEGMENTS("c64basic_segments"),
    /** 6502 assembler (with no upstart code.)*/
    ASM6502("asm6502"),
-   /** 6502 assembler (with no upstart code.)*/
-   ASM6502_SEGMENTS("asm6502_segments"),
    /** Custom target platform specified in a separate linker file passed using -T option or using #pragma link() */
    CUSTOM("custom");
 

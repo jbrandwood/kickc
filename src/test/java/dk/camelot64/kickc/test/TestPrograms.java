@@ -36,6 +36,13 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testZpCode() throws IOException, URISyntaxException {
+      compileAndCompare("examples/zpcode/zpcode");
+   }
+
+
+
    // Fix parameter type problem - https://gitlab.com/camelot/kickc/issues/299
    /*
    @Test

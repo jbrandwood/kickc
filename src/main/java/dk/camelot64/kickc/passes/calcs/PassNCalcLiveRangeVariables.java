@@ -80,9 +80,10 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
    private boolean calculateLiveRanges(LiveRangeVariables liveRanges) {
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       boolean modified = false;
+      LiveRangeVariables.LiveRangeVariablesByStatement liveRangeVariablesByStatement = liveRanges.getLiveRangeVariablesByStatement();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement stmt : block.getStatements()) {
-            List<VariableRef> aliveNextStmt = liveRanges.getAlive(stmt.getIndex());
+            List<VariableRef> aliveNextStmt = liveRangeVariablesByStatement.getAlive(stmt.getIndex());
             Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(stmt);
             initLiveRange(liveRanges, definedNextStmt);
             Collection<PreviousStatement> previousStmts = getPreviousStatements(stmt);

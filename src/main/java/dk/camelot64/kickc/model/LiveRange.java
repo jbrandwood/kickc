@@ -34,6 +34,14 @@ public class LiveRange {
    }
 
    /**
+    * Get the underlying statement intervals
+    * @return The intervals
+    */
+   public List<LiveInterval> getIntervals() {
+      return intervals;
+   }
+
+   /**
     * Add an index to the live range
     *
     * @param index The index to add

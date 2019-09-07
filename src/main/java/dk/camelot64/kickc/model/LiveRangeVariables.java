@@ -78,8 +78,55 @@ public class LiveRangeVariables {
       return liveRanges.get(variable);
    }
 
+   /**
+    * Get the number of variable live ranges
+    * @return The number of variable live ranges
+    */
    public int size() {
       return liveRanges.size();
+   }
+
+   /**
+    *  Get variable live ranges by statement index. Usable for quick access if you plan to iterate many statements.
+    * @return variable live ranges by statement index
+    */
+   public LiveRangeVariablesByStatement getLiveRangeVariablesByStatement() {
+      LiveRangeVariablesByStatement liveRangeVariablesByStatement = new LiveRangeVariablesByStatement();
+      for(Map.Entry<VariableRef, LiveRange> variableRefLiveRangeEntry : liveRanges.entrySet()) {
+         VariableRef variableRef = variableRefLiveRangeEntry.getKey();
+         LiveRange liveRange = variableRefLiveRangeEntry.getValue();
+         for(LiveRange.LiveInterval liveInterval : liveRange.getIntervals()) {
+            for(int stmtIdx = liveInterval.getFirstStatementIdx(); stmtIdx<= liveInterval.getLastStatementIdx(); stmtIdx++) {
+               liveRangeVariablesByStatement.addAlive(stmtIdx, variableRef);
+            }
+         }
+      }
+      return liveRangeVariablesByStatement;
+   }
+
+   /** Variable live ranges by statement index. Usable for quick access if you plan to iterate many statements. */
+   public static class LiveRangeVariablesByStatement {
+
+      private ArrayList<List<VariableRef>> aliveByStatementIdx;
+
+      public LiveRangeVariablesByStatement() {
+         this.aliveByStatementIdx = new ArrayList<>();
+      }
+
+      public void addAlive(int statementIdx, VariableRef variableRef) {
+         while(statementIdx>=aliveByStatementIdx.size()) {
+            aliveByStatementIdx.add(new ArrayList<>());
+         }
+         List<VariableRef> variableRefs = aliveByStatementIdx.get(statementIdx);
+         variableRefs.add(variableRef);
+      }
+
+
+      public List<VariableRef> getAlive(int statementIdx) {
+         if(statementIdx>=aliveByStatementIdx.size())
+            return new ArrayList<>();
+         return aliveByStatementIdx.get(statementIdx);
+      }
 
    }
 

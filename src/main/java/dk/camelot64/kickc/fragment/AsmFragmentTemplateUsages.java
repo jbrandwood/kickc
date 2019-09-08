@@ -33,13 +33,13 @@ public class AsmFragmentTemplateUsages {
     *
     * @param log The compile log to add the output to
     */
-   public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logUnusedRules, boolean logFileDetails, boolean logAllDetails, boolean logDetailsBody) {
+   public static void logUsages(AsmFragmentTemplateSynthesizer synthesizer, CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logUnusedRules, boolean logFileDetails, boolean logAllDetails, boolean logDetailsBody) {
 
       Map<String, AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis> synthesisGraph =
-            AsmFragmentTemplateSynthesizer.SYNTHESIZER.getSynthesisGraph();
+            synthesizer.getSynthesisGraph();
       ArrayList<String> signatures = new ArrayList<>(synthesisGraph.keySet());
       Collections.sort(signatures);
-      File[] files = AsmFragmentTemplateSynthesizer.SYNTHESIZER.allFragmentFiles();
+      File[] files = synthesizer.allFragmentFiles();
 
       if(logRedundantFiles) {
          log.append("\nREDUNDANT ASM FRAGMENT FILES ANALYSIS (if found consider removing them from disk)");
@@ -48,7 +48,7 @@ public class AsmFragmentTemplateUsages {
             String fileName = file.getName();
             String signature = fileName.substring(0, fileName.length() - 4);
             // Synthesize the fragment - and check if the synthesis is as good as the file body
-            Collection<AsmFragmentTemplate> templates = AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log);
+            Collection<AsmFragmentTemplate> templates = synthesizer.getBestTemplates(signature, log);
             boolean isFile = false;
             for(AsmFragmentTemplate template : templates) {
                isFile |= template.isFile();
@@ -118,7 +118,7 @@ public class AsmFragmentTemplateUsages {
                new LinkedHashSet<>(AsmFragmentTemplateSynthesisRule.getSynthesisRules());
          for(String signature : signatures) {
             Collection<AsmFragmentTemplate> templates =
-                  AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log);
+                  synthesizer.getBestTemplates(signature, log);
             for(AsmFragmentTemplate template : templates) {
                while(template.getSynthesis()!=null) {
                   rules.remove(template.getSynthesis());
@@ -143,7 +143,7 @@ public class AsmFragmentTemplateUsages {
                }
             }
          }
-         logTemplatesByUsage(log, fileTemplates, logDetailsBody);
+         logTemplatesByUsage(synthesizer, log, fileTemplates, logDetailsBody);
 
       }
 
@@ -154,13 +154,13 @@ public class AsmFragmentTemplateUsages {
             Collection<AsmFragmentTemplate> templates = synthesisGraph.get(signature).getBestTemplates();
             allTemplates.addAll(templates);
          }
-         logTemplatesByUsage(log, allTemplates, logDetailsBody);
+         logTemplatesByUsage(synthesizer, log, allTemplates, logDetailsBody);
       }
 
 
    }
 
-   private static void logTemplatesByUsage(CompileLog log, List<AsmFragmentTemplate> templates, boolean logBody) {
+   private static void logTemplatesByUsage(AsmFragmentTemplateSynthesizer synthesizer, CompileLog log, List<AsmFragmentTemplate> templates, boolean logBody) {
       // Sort by usage
       Collections.sort(templates, (o1, o2) -> {
                Integer u1 = fragmentTemplateUsage.get(o1);
@@ -174,7 +174,7 @@ public class AsmFragmentTemplateUsages {
       for(AsmFragmentTemplate template : templates) {
          Integer usage = fragmentTemplateUsage.get(template);
          if(usage == null) usage = 0;
-         AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis synthesis = AsmFragmentTemplateSynthesizer.SYNTHESIZER.getOrCreateSynthesis(template.getSignature(), log);
+         AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis synthesis = synthesizer.getOrCreateSynthesis(template.getSignature(), log);
          Collection<AsmFragmentTemplate> bestTemplates = synthesis.getBestTemplates();
          log.append(String.format("%8d", usage) + " " + template.getSignature()+" - templates: " + bestTemplates.size());
          if(logBody) {
@@ -187,7 +187,7 @@ public class AsmFragmentTemplateUsages {
    }
 
    public static void logTemplate(CompileLog log, AsmFragmentTemplate template, String indent) {
-      String prefix = "";
+      String prefix;
       if(template.isCache()) {
          prefix = "cached ";
       } else if(template.isFile()) {

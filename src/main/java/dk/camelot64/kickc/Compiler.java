@@ -1,6 +1,7 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
@@ -75,14 +76,25 @@ public class Compiler {
       program.setTargetPlatform(targetPlatform);
    }
 
-   void setTargetCpu(TargetCpu targetCpu) {
+   public void setTargetCpu(TargetCpu targetCpu) {
       program.setTargetCpu(targetCpu);
    }
 
-   TargetCpu getTargetCpu() {
-      return program.getTargetCpu();
+   public void setAsmFragmentBaseFolder(Path asmFragmentBaseFolder) {
+      program.setAsmFragmentBaseFolder(asmFragmentBaseFolder);
    }
 
+   public void setAsmFragmentCacheFolder(Path asmFragmentcacheDir) {
+      program.setAsmFragmentBaseFolder(asmFragmentcacheDir);
+   }
+
+   public void initAsmFragmentSynthesizer() {
+      program.initAsmFragmentSynthesizer();
+   }
+
+   public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
+      return program.getAsmFragmentSynthesizer();
+   }
 
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
@@ -101,6 +113,7 @@ public class Compiler {
          fileName = fileName.substring(0, fileName.length() - 3);
       }
       program.setFileName(fileName);
+      initAsmFragmentSynthesizer();
       try {
          Path currentPath = new File(".").toPath();
          if(this.linkScriptFileName != null) {

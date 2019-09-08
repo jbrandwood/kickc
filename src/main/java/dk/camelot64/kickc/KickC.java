@@ -2,7 +2,6 @@ package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -191,8 +190,6 @@ public class KickC implements Callable<Void> {
          fragmentDir = new File("fragment/").toPath();
       }
 
-      Path fragmentCpuDir = fragmentDir.resolve(compiler.getTargetCpu().getName());
-
       Path fragmentCacheDir = null;
       if(optimizeFragmentCache) {
          if(outputDir != null) {
@@ -204,14 +201,16 @@ public class KickC implements Callable<Void> {
 
       configVerbosity(compiler);
 
-      AsmFragmentTemplateSynthesizer.initialize(fragmentDir, fragmentCpuDir, fragmentCacheDir, compiler.getLog());
+      compiler.setAsmFragmentBaseFolder(fragmentDir);
+      compiler.setAsmFragmentCacheFolder(fragmentCacheDir);
+      compiler.initAsmFragmentSynthesizer();
 
       if(fragment != null) {
          if(verbose) {
             compiler.getLog().setVerboseFragmentLog(true);
          }
          compiler.getLog().setSysOut(true);
-         Collection<AsmFragmentTemplate> fragmentTemplates = AsmFragmentTemplateSynthesizer.getFragmentTemplates(fragment, compiler.getLog());
+         Collection<AsmFragmentTemplate> fragmentTemplates = compiler.getAsmFragmentSynthesizer().getBestTemplates(fragment, compiler.getLog());
          for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
             AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
          }
@@ -278,7 +277,7 @@ public class KickC implements Callable<Void> {
          asmWriter.close();
          asmOutputStream.close();
 
-         AsmFragmentTemplateSynthesizer.finalize(compiler.getLog());
+         compiler.getAsmFragmentSynthesizer().finalize(compiler.getLog());
 
          // Copy Resource Files (if out-dir is different from in-dir)
          if(!kcFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {

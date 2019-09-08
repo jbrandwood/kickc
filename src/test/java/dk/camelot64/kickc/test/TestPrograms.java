@@ -3091,8 +3091,6 @@ public class TestPrograms {
 
    @AfterClass
    public static void tearDown() {
-      CompileLog log = log();
-      AsmFragmentTemplateSynthesizer.finalize(log);
       //AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
       //printGCStats();
    }
@@ -3179,8 +3177,9 @@ public class TestPrograms {
 
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(), getFragmentCacheDir().toPath(), new CompileLog());
       Compiler compiler = new Compiler();
+      compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
+      compiler.setAsmFragmentCacheFolder(getFragmentCacheDir().toPath());
       if(compileLog != null) {
          compiler.setLog(compileLog);
       }
@@ -3204,6 +3203,8 @@ public class TestPrograms {
          //System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
+
+      compiler.getAsmFragmentSynthesizer().finalize(compileLog);
    }
 
    private void compileAsm(String fileName, Program program) throws IOException {

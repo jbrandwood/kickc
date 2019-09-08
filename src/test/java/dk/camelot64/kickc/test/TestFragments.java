@@ -4,6 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
+import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.operators.Operators;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,9 +20,11 @@ import static junit.framework.TestCase.fail;
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
 public class TestFragments {
 
+   private static AsmFragmentTemplateSynthesizer asmFragmentTemplateSynthesizer;
+
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(), null, new CompileLog());
+      asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(new File("src/main/fragment/").toPath(), TargetCpu.MOS6502X, null, new CompileLog());
    }
 
    @AfterClass

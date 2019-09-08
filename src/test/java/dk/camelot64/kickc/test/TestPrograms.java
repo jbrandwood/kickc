@@ -1943,7 +1943,7 @@ public class TestPrograms {
 
    //@Test
    //public void testBcmod() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/bcmod/bcmod", log());
+   //   compileAndCompare("complex/bcmod/bcmod5h", log());
    //}
 
    @Test

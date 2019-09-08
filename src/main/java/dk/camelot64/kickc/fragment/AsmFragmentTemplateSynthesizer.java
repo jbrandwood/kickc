@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.model.TargetCpu;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -24,29 +25,10 @@ public class AsmFragmentTemplateSynthesizer {
    /** Name of the file holding the fragment cache. */
    public static final String FRAGMENT_CACHE_FILE = "fragment-cache.asm";
 
-   /** The static instance. */
-   static AsmFragmentTemplateSynthesizer SYNTHESIZER = null;
-
-   /** Initialize the fragment template synthesizer. */
-   public static void initialize(Path fragmentFolder, Path fragmentCpuFolder, Path cacheFolder, CompileLog log) {
-      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(fragmentFolder, fragmentCpuFolder, cacheFolder, log);
-   }
-
-   /** Re-initialize the fragment template synthesizer with a CPU-specific fragment folder. */
-   public static void reinitialize(String cpuName, CompileLog log) {
-      Path fragmentCpuFolder = SYNTHESIZER.defaultFragmentFolder.resolve(cpuName);
-      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(SYNTHESIZER.defaultFragmentFolder, fragmentCpuFolder, SYNTHESIZER.cacheFolder, log);
-   }
-
-   /** Finalize the fragment template synthesizer. */
-   public static void finalize(CompileLog log) {
-      SYNTHESIZER.saveBestFragmentCache(log);
-   }
-
    /** Create synthesizer. */
-   private AsmFragmentTemplateSynthesizer(Path defaultFragmentFolder, Path cpuFragmentFolder, Path cacheFolder, CompileLog log) {
-      this.defaultFragmentFolder = defaultFragmentFolder;
-      this.cpuFragmentFolder = cpuFragmentFolder;
+   public AsmFragmentTemplateSynthesizer(Path baseFragmentFolder, TargetCpu cpu, Path cacheFolder, CompileLog log) {
+      this.baseFragmentFolder = baseFragmentFolder;
+      this.cpu = cpu;
       this.cacheFolder = cacheFolder;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
@@ -56,11 +38,11 @@ public class AsmFragmentTemplateSynthesizer {
 
    }
 
-   /** The folder containing generic fragment files. */
-   private Path defaultFragmentFolder;
+   /** The folder containing fragment files. */
+   private Path baseFragmentFolder;
 
-   /** The folder containing CPU-specific fragment files. */
-   private Path cpuFragmentFolder;
+   /** The Target CPU - used for obtaining CPU-specific fragment files. */
+   private TargetCpu cpu;
 
    /** The folder containing cached fragment files. */
    private Path cacheFolder;
@@ -80,18 +62,23 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private Map<String, AsmFragmentSynthesis> synthesisGraph;
 
+   /** Finalize the fragment template synthesizer. */
+   public void finalize(CompileLog log) {
+      saveBestFragmentCache(log);
+   }
+
    /**
     * Get information about the size of the synthesizer data structures
     *
     * @return the size
     */
-   public static int getSize() {
-      return SYNTHESIZER.synthesisGraph.size();
+   public int getSize() {
+      return synthesisGraph.size();
    }
 
-   public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
+   public AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
       String signature = instanceSpec.getSignature();
-      AsmFragmentTemplate fragmentTemplate = SYNTHESIZER.getFragmentTemplate(signature, log);
+      AsmFragmentTemplate fragmentTemplate = getFragmentTemplate(signature, log);
       // Return the resulting fragment instance
       return new AsmFragmentInstance(
             instanceSpec.getProgram(),
@@ -108,10 +95,6 @@ public class AsmFragmentTemplateSynthesizer {
     * @param log The log
     * @return The best templates (with different clobber profiles) for the signature
     */
-   public static Collection<AsmFragmentTemplate> getFragmentTemplates(String signature, CompileLog log) {
-      return SYNTHESIZER.getBestTemplates(signature, log);
-   }
-
    private AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
       // Attempt to find in memory/disk cache
       AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature);
@@ -194,9 +177,9 @@ public class AsmFragmentTemplateSynthesizer {
             log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath());
          return bestFragmentCache;
       } catch(IOException e) {
-         throw new RuntimeException("Error loading fragment cache file " + defaultFragmentFolder, e);
+         throw new RuntimeException("Error loading fragment cache file " + baseFragmentFolder, e);
       } catch(StringIndexOutOfBoundsException e) {
-         throw new RuntimeException("Problem reading fragment file " + defaultFragmentFolder, e);
+         throw new RuntimeException("Problem reading fragment file " + baseFragmentFolder, e);
       }
    }
 
@@ -236,7 +219,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @param log The compile log
     * @return The best templates for the passed signature
     */
-   private Collection<AsmFragmentTemplate> getBestTemplates(String signature, CompileLog log) {
+   public Collection<AsmFragmentTemplate> getBestTemplates(String signature, CompileLog log) {
       getOrCreateSynthesis(signature, log);
       updateBestTemplates(log);
       AsmFragmentSynthesis synthesis = getSynthesis(signature);
@@ -607,19 +590,14 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private List<AsmFragmentTemplate> loadFragmentTemplates(String signature, CompileLog log) {
       ArrayList<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
-      if(defaultFragmentFolder != null) {
-         AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, defaultFragmentFolder);
-         if(fileFragment != null)
-            fileTemplates.add(fileFragment);
-      }
-      if(cpuFragmentFolder != null) {
-         AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, cpuFragmentFolder);
+      List<TargetCpu.Feature> cpuFeatures = cpu.getFeatures();
+      for(TargetCpu.Feature cpuFeature : cpuFeatures) {
+         AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, baseFragmentFolder.resolve(cpuFeature.getName()));
          if(fileFragment != null)
             fileTemplates.add(fileFragment);
       }
       return fileTemplates;
    }
-
 
    /**
     * Attempt to load a fragment template from a folder on disk
@@ -668,7 +646,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    File[] allFragmentFiles() {
-      return defaultFragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
+      return baseFragmentFolder.toFile().listFiles((dir, name) -> name.endsWith(".asm"));
 
    }
 

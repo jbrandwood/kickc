@@ -152,7 +152,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       TargetCpu cpu = TargetCpu.getTargetCpu(ctx.NAME().getText());
       if(cpu != null) {
          program.setTargetCpu(cpu);
-         AsmFragmentTemplateSynthesizer.reinitialize(cpu.getName(), program.getLog());
+         program.initAsmFragmentSynthesizer();
       } else {
          throw new CompileError("Unknown target CPU in #pragma cpu directive", new StatementSource(ctx));
       }

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
+import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.operators.Operators;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,16 +20,18 @@ import static junit.framework.TestCase.fail;
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
 public class TestFragments {
 
+   private static AsmFragmentTemplateSynthesizer asmFragmentTemplateSynthesizer;
+
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(), null, new CompileLog());
+      asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(new File("src/main/fragment/").toPath(), TargetCpu.MOS6502X, null, new CompileLog());
    }
 
    @AfterClass
    public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(asmFragmentTemplateSynthesizer, log, false, false, false, false, false, false);
    }
 
    @Test
@@ -183,11 +186,11 @@ public class TestFragments {
     */
    private void testFragmentExists(String signature) {
       CompileLog log = new CompileLog();
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(),  null, log);
+      asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(new File("src/main/fragment/").toPath(), TargetCpu.MOS6502X, null, new CompileLog());
       log.setSysOut(true);
       //log.setVerboseFragmentLog(true);
       List<AsmFragmentTemplate> templates =
-            new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
+            new ArrayList<>(asmFragmentTemplateSynthesizer.getBestTemplates(signature, log));
       if(templates.size() > 0) {
          log.append("");
          for(AsmFragmentTemplate template : templates) {
@@ -201,7 +204,7 @@ public class TestFragments {
 
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
       CompileLog log = new CompileLog();
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(),  null, log);
+      asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(new File("src/main/fragment/").toPath(), TargetCpu.MOS6502X, null, new CompileLog());
       List<String> sigs = new ArrayList<>(signatures);
 
       // Always test max 1000 signatures
@@ -218,7 +221,7 @@ public class TestFragments {
          String signature = sigs.get(testIdx);
 
          List<AsmFragmentTemplate> templates =
-               new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
+               new ArrayList<>(asmFragmentTemplateSynthesizer.getBestTemplates(signature, log));
          Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
          if(templates.size() == 0) {
             log.append("CANNOT SYNTHESIZE " + signature);
@@ -242,7 +245,7 @@ public class TestFragments {
       System.gc();
       Runtime rt = Runtime.getRuntime();
       long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-      System.out.println("Synthesizer Graph Size: " + AsmFragmentTemplateSynthesizer.getSize() + " mem: " + usedMB);
+      System.out.println("Synthesizer Graph Size: " + asmFragmentTemplateSynthesizer.getSize() + " mem: " + usedMB);
 
       ReferenceHelper helper = new ReferenceHelperFolder("src/test/ref/");
       boolean success = helper.testOutput(fileName, ".log", log.toString());

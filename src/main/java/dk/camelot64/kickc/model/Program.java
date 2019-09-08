@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -32,6 +33,14 @@ public class Program {
    private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
    /** The target CPU that the program is being build for. PASS 0-5 (STATIC) */
    private TargetCpu targetCpu = TargetCpu.DEFAULT;
+
+   /** Base folder for finding ASM fragment files. (STATIC) */
+   private Path asmFragmentBaseFolder;
+   /** Cache folder for finding ASM fragment files. (STATIC) */
+   private Path asmFragmentCacheFolder;
+   /** The ASM fragment synthesizer responsible for loading/synthesizing ASM fragments. Depends on the target CPU. (STATIC) */
+   private AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
+
    /** Path to any custom link script file used for linking (STATIC) */
    private Path linkScriptFilePath;
    /** Body to any custom link script file used for linking (STATIC) */
@@ -157,6 +166,30 @@ public class Program {
       this.registerPotentials = null;
       this.registerUpliftProgram = null;
       this.asm = null;
+   }
+
+   public Path getAsmFragmentCacheFolder() {
+      return asmFragmentCacheFolder;
+   }
+
+   public void setAsmFragmentCacheFolder(Path asmFragmentCacheFolder) {
+      this.asmFragmentCacheFolder = asmFragmentCacheFolder;
+   }
+
+   public Path getAsmFragmentBaseFolder() {
+      return asmFragmentBaseFolder;
+   }
+
+   public void setAsmFragmentBaseFolder(Path asmFragmentBaseFolder) {
+      this.asmFragmentBaseFolder = asmFragmentBaseFolder;
+   }
+
+   public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
+      return asmFragmentSynthesizer;
+   }
+
+   public void initAsmFragmentSynthesizer() {
+      this.asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, targetCpu, asmFragmentCacheFolder, getLog());
    }
 
    public TargetCpu getTargetCpu() {

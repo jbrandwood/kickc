@@ -1,6 +1,7 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Perform KickC compilation and optimizations
@@ -75,14 +77,25 @@ public class Compiler {
       program.setTargetPlatform(targetPlatform);
    }
 
-   void setTargetCpu(TargetCpu targetCpu) {
+   public void setTargetCpu(TargetCpu targetCpu) {
       program.setTargetCpu(targetCpu);
    }
 
-   TargetCpu getTargetCpu() {
-      return program.getTargetCpu();
+   public void setAsmFragmentBaseFolder(Path asmFragmentBaseFolder) {
+      program.setAsmFragmentBaseFolder(asmFragmentBaseFolder);
    }
 
+   public void setAsmFragmentCacheFolder(Path asmFragmentcacheDir) {
+      program.setAsmFragmentCacheFolder(asmFragmentcacheDir);
+   }
+
+   public void initAsmFragmentSynthesizer() {
+      program.initAsmFragmentSynthesizer();
+   }
+
+   public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
+      return program.getAsmFragmentSynthesizer();
+   }
 
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
@@ -101,6 +114,7 @@ public class Compiler {
          fileName = fileName.substring(0, fileName.length() - 3);
       }
       program.setFileName(fileName);
+      initAsmFragmentSynthesizer();
       try {
          Path currentPath = new File(".").toPath();
          if(this.linkScriptFileName != null) {
@@ -498,7 +512,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false, warnFragmentMissing).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName());
+      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments

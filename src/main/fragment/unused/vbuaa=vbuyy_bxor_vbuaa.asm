@@ -1,2 +1,0 @@
-sty $ff
-eor $ff

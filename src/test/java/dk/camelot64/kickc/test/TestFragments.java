@@ -21,7 +21,7 @@ public class TestFragments {
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/6502X/").toPath(), null, new CompileLog());
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(), null, new CompileLog());
    }
 
    @AfterClass
@@ -183,7 +183,7 @@ public class TestFragments {
     */
    private void testFragmentExists(String signature) {
       CompileLog log = new CompileLog();
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/6502X/").toPath(),  null, log);
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(),  null, log);
       log.setSysOut(true);
       //log.setVerboseFragmentLog(true);
       List<AsmFragmentTemplate> templates =
@@ -201,7 +201,7 @@ public class TestFragments {
 
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
       CompileLog log = new CompileLog();
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/6502X/").toPath(),  null, log);
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(),  null, log);
       List<String> sigs = new ArrayList<>(signatures);
 
       // Always test max 1000 signatures

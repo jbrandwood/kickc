@@ -37,6 +37,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCpu6502() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-6502");
+   }
+
+   @Test
    public void testZpCode() throws IOException, URISyntaxException {
       compileAndCompare("examples/zpcode/zpcode");
    }
@@ -3082,7 +3087,6 @@ public class TestPrograms {
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/6502X/").toPath(), getFragmentCacheDir().toPath(), new CompileLog());
    }
 
    @AfterClass
@@ -3175,6 +3179,7 @@ public class TestPrograms {
 
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
+      AsmFragmentTemplateSynthesizer.initialize(new File("src/main/fragment/").toPath(), new File("src/main/fragment/MOS6502X/").toPath(), getFragmentCacheDir().toPath(), new CompileLog());
       Compiler compiler = new Compiler();
       if(compileLog != null) {
          compiler.setLog(compileLog);

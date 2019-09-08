@@ -32,6 +32,12 @@ public class AsmFragmentTemplateSynthesizer {
       SYNTHESIZER = new AsmFragmentTemplateSynthesizer(fragmentFolder, fragmentCpuFolder, cacheFolder, log);
    }
 
+   /** Re-initialize the fragment template synthesizer with a CPU-specific fragment folder. */
+   public static void reinitialize(String cpuName, CompileLog log) {
+      Path fragmentCpuFolder = SYNTHESIZER.defaultFragmentFolder.resolve(cpuName);
+      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(SYNTHESIZER.defaultFragmentFolder, fragmentCpuFolder, SYNTHESIZER.cacheFolder, log);
+   }
+
    /** Finalize the fragment template synthesizer. */
    public static void finalize(CompileLog log) {
       SYNTHESIZER.saveBestFragmentCache(log);

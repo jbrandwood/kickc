@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -151,6 +152,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       TargetCpu cpu = TargetCpu.getTargetCpu(ctx.NAME().getText());
       if(cpu != null) {
          program.setTargetCpu(cpu);
+         AsmFragmentTemplateSynthesizer.reinitialize(cpu.getName(), program.getLog());
       } else {
          throw new CompileError("Unknown target CPU in #pragma cpu directive", new StatementSource(ctx));
       }

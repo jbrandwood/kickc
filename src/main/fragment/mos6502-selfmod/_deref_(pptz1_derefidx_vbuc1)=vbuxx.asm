@@ -4,5 +4,4 @@ sta !+ +1
 iny
 lda ({z1}),y
 sta !+ +2
-txa
-!: sta $ffff
+!: stx $ffff

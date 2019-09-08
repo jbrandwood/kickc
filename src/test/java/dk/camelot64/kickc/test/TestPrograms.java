@@ -3,7 +3,6 @@ package dk.camelot64.kickc.test;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;

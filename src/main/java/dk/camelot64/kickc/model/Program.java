@@ -41,6 +41,9 @@ public class Program {
    /** The ASM fragment synthesizer responsible for loading/synthesizing ASM fragments. Depends on the target CPU. (STATIC) */
    private AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
 
+   /** Missing fragments produce a warning instead of an error (STATIC) */
+   private boolean warnFragmentMissing = false;
+
    /** Path to any custom link script file used for linking (STATIC) */
    private Path linkScriptFilePath;
    /** Body to any custom link script file used for linking (STATIC) */
@@ -166,6 +169,14 @@ public class Program {
       this.registerPotentials = null;
       this.registerUpliftProgram = null;
       this.asm = null;
+   }
+
+   public boolean isWarnFragmentMissing() {
+      return warnFragmentMissing;
+   }
+
+   public void setWarnFragmentMissing(boolean warnFragmentMissing) {
+      this.warnFragmentMissing = warnFragmentMissing;
    }
 
    public Path getAsmFragmentCacheFolder() {

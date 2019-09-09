@@ -217,8 +217,12 @@ utoa16n: {
     beq breturn
     tay
     lda DIGITS,y
+    ldy.z utoa16w.dst
+    sty.z $fe
+    ldy.z utoa16w.dst+1
+    sty.z $ff
     ldy #0
-    sta (utoa16w.dst),y
+    sta ($fe),y
     inc.z utoa16w.dst
     bne !+
     inc.z utoa16w.dst+1

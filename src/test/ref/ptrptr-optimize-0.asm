@@ -10,14 +10,22 @@ main: {
     lda #>$400
     sta.z screen+1
     lda #'a'
+    ldy.z pscreen
+    sty.z $fe
+    ldy.z pscreen+1
+    sty.z $ff
     ldy #0
-    sta (pscreen),y
+    sta ($fe),y
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
     lda #'b'
+    ldy.z pscreen
+    sty.z $fe
+    ldy.z pscreen+1
+    sty.z $ff
     ldy #0
-    sta (pscreen),y
+    sta ($fe),y
     rts
 }

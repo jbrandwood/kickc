@@ -17,8 +17,12 @@ main: {
 }
 // sub(byte register(A) ch)
 sub: {
+    ldy.z main.screen
+    sty.z $fe
+    ldy.z main.screen+1
+    sty.z $ff
     ldy #0
-    sta (main.screen),y
+    sta ($fe),y
     inc.z main.screen
     bne !+
     inc.z main.screen+1

@@ -13,8 +13,12 @@ main: {
     sta.z pb
     lda #>b
     sta.z pb+1
+    ldy.z ppb
+    sty.z $fe
+    ldy.z ppb+1
+    sty.z $ff
     ldy #0
-    lda (ppb),y
+    lda ($fe),y
     sta SCREEN
     rts
 }

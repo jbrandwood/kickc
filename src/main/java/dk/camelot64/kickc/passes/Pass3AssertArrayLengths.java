@@ -50,7 +50,7 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
                   }
                } else if(constantValue instanceof ConstantArrayList) {
                   Integer assignedSizeVal = ((ConstantArrayList) constantValue).getElements().size();
-                  if(!assignedSizeVal.equals(declaredSizeInt)) {
+                  if(assignedSizeVal > declaredSizeInt) {
                      throw new CompileError("Error! Array length mismatch " + constantVar.toString(getProgram()));
                   }
                } else if(constantValue instanceof ConstantArrayKickAsm) {
@@ -59,7 +59,7 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
                   ConstantLiteral constantLiteral = constantValue.calculateLiteral(getScope());
                   if(constantLiteral instanceof ConstantString) {
                      Integer assignedSizeVal = ((ConstantString) constantLiteral).getString().length();
-                     if(!assignedSizeVal.equals(declaredSizeInt)) {
+                     if(assignedSizeVal > declaredSizeInt) {
                         throw new CompileError("Error! Array length mismatch " + constantVar.toString(getProgram()));
                      }
                   } else if(constantLiteral instanceof ConstantPointer) {

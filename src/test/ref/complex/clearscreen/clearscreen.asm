@@ -1042,9 +1042,8 @@ processChars: {
     iny
     lda (processing),y
     sta !+ +2
-    txa
   !:
-    sta $ffff
+    stx $ffff
     // Enable the sprite
     lda SPRITES_ENABLE
     ora.z bitmask

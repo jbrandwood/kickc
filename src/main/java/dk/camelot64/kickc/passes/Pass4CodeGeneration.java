@@ -467,6 +467,18 @@ public class Pass4CodeGeneration {
                      addChunkData(asmDataChunk, element, scopeRef);
                      asm.addDataNumeric(null, asmDataChunk);
                   }
+                  // Pad output to match declared size (if larger than the data list)
+                  int dataSize = constantArrayList.getElements().size();
+                  Integer declaredSize = getArrayDeclaredSize(constantVar);
+                  if(declaredSize!=null && declaredSize>dataSize) {
+                     int padding = declaredSize - dataSize;
+                     ConstantStructValue zeroStructValue = (ConstantStructValue) ZeroConstantValues.zeroValue(elementType, program.getScope());
+                     for(int i=0; i<padding; i++) {
+                        AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                        addChunkData(asmDataChunk, zeroStructValue, scopeRef);
+                        asm.addDataNumeric(null, asmDataChunk);
+                     }
+                  }
                } else if(elementType instanceof SymbolTypeArray) {
                   // Constant array of sub-arrays
                   throw new InternalError("Array of array not supported");
@@ -478,6 +490,31 @@ public class Pass4CodeGeneration {
                      addChunkData(asmDataChunk, element, scopeRef);
                   }
                   asm.addDataNumeric(asmName, asmDataChunk);
+                  // Pad output to match declared size (if larger than the data list)
+                  int dataSize = constantArrayList.getElements().size();
+                  Integer declaredSize = getArrayDeclaredSize(constantVar);
+                  if(declaredSize!=null && declaredSize>dataSize) {
+                     int padding = declaredSize-dataSize;
+                     AsmDataNumeric.Type dataType;
+                     if(SymbolType.BYTE.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.BYTE;
+                     } else if(SymbolType.SBYTE.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.BYTE;
+                     } else if(SymbolType.WORD.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.WORD;
+                     } else if(SymbolType.SWORD.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.WORD;
+                     } else if(SymbolType.DWORD.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.DWORD;
+                     } else if(SymbolType.SDWORD.equals(elementType)) {
+                        dataType = AsmDataNumeric.Type.DWORD;
+                     } else if(elementType instanceof SymbolTypePointer) {
+                        dataType = AsmDataNumeric.Type.WORD;
+                     } else {
+                        throw new InternalError("Unhandled constant array element type " + constantArrayList.toString(program));
+                     }
+                     asm.addDataFilled(null, dataType, Integer.toString(padding), padding, "0");
+                  }
                }
             } else if(constantValue instanceof ConstantArrayFilled) {
                ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantValue;
@@ -549,8 +586,16 @@ public class Pass4CodeGeneration {
                      ensureEncoding(asm, constantValue);
                      String asmConstant = AsmFormat.getAsmConstant(program, constantValue, 99, scopeRef);
                      asm.addDataString(AsmFormat.asmFix(asmName), asmConstant);
+                     int dataSize = ((ConstantString) literal).getString().length();
                      if(((ConstantString) literal).isZeroTerminated()) {
                         asm.addDataNumeric(null, AsmDataNumeric.Type.BYTE, Collections.singletonList(AsmFormat.getAsmNumber(0L)));
+                        dataSize++;
+                     }
+                     // Pad output to match declared size (if larger than the data list)
+                     Integer declaredSize = getArrayDeclaredSize(constantVar);
+                     if(declaredSize!=null && declaredSize>dataSize) {
+                        int padding = declaredSize-dataSize;
+                        asm.addDataFilled(null, AsmDataNumeric.Type.BYTE, Integer.toString(padding), padding, "0");
                      }
                      added.add(asmName);
                   }
@@ -560,6 +605,29 @@ public class Pass4CodeGeneration {
             }
          }
       }
+   }
+
+   /**
+    * Get the declared size of an array variable.
+    * @param constantVar The array variable
+    * @return The declared size. Null if the type is not array or no size is declared.
+    */
+   private Integer getArrayDeclaredSize(ConstantVar constantVar) {
+      SymbolType constantType = constantVar.getType();
+      if(constantType instanceof SymbolTypeArray) {
+         RValue declaredSize = ((SymbolTypeArray) constantType).getSize();
+         if(declaredSize != null) {
+            if(!(declaredSize instanceof ConstantValue)) {
+               throw new CompileError("Error! Array declared size is not constant " + constantType.toString());
+            }
+            ConstantLiteral declaredSizeVal = ((ConstantValue) declaredSize).calculateLiteral(getScope());
+            if(!(declaredSizeVal instanceof ConstantInteger)) {
+               throw new CompileError("Error! Array declared size is not integer " + constantType.toString());
+            }
+            return ((ConstantInteger) declaredSizeVal).getInteger().intValue();
+         }
+      }
+         return null;
    }
 
 

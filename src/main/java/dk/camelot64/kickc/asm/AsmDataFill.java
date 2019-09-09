@@ -36,7 +36,9 @@ public class AsmDataFill implements AsmLine {
    @Override
    public String getAsm() {
       StringBuilder asm = new StringBuilder();
-      asm.append(label + ": ");
+      if(label!=null) {
+         asm.append(label + ": ");
+      }
       asm.append(".fill ");
       asm.append(sizeAsm);
       asm.append(", ");

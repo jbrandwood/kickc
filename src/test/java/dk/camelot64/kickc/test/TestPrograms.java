@@ -35,10 +35,10 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   @Test
-   public void testOs51() throws IOException, URISyntaxException {
-      compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
-   }
+   //@Test
+   //public void testOs51() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
+   //}
 
    @Test
    public void testCpu6502() throws IOException, URISyntaxException {
@@ -649,6 +649,26 @@ public class TestPrograms {
    }
    */
 
+   //@Test
+   //public void testStructPtr31() throws IOException, URISyntaxException {
+   //   compileAndCompare("struct-ptr-31");
+   //}
+
+   @Test
+   public void testStructPtr30() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-30");
+   }
+
+   @Test
+   public void testStructPtr29() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-29");
+   }
+
+   @Test
+   public void testStructPtr28() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-28");
+   }
+
    @Test
    public void testStructPtr26() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-26");
@@ -819,6 +839,11 @@ public class TestPrograms {
    @Test
    public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
+   }
+
+   @Test
+   public void testStruct12() throws IOException, URISyntaxException {
+      compileAndCompare("struct-12");
    }
 
    @Test
@@ -2579,6 +2604,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArraysInitShort() throws IOException, URISyntaxException {
+      compileAndCompare("arrays-init-short");
+   }
+
+   @Test
    public void testArraysInit() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init");
    }
@@ -3187,6 +3217,7 @@ public class TestPrograms {
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
+      //compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
       compiler.setAsmFragmentCacheFolder(null);
       if(compileLog != null) {

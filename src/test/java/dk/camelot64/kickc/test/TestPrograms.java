@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testOs51() throws IOException, URISyntaxException {
+      compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
+   }
+
+   @Test
    public void testCpu6502() throws IOException, URISyntaxException {
       compileAndCompare("cpu-6502");
    }
@@ -2311,6 +2316,11 @@ public class TestPrograms {
    @Test
    public void testInlineString3() throws IOException, URISyntaxException {
       compileAndCompare("inline-string-3");
+   }
+
+   @Test
+   public void testInlineString4() throws IOException, URISyntaxException {
+      compileAndCompare("inline-string-4");
    }
 
    @Test

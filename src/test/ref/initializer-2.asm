@@ -26,7 +26,4 @@ main: {
     bne b1
     rts
 }
-points:
-  .byte 1, 2
-  .byte 3, 4
-  .byte 5, 6
+  points: .byte 1, 2, 3, 4, 5, 6

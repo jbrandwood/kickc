@@ -42,7 +42,4 @@ main: {
   !:
     jmp b1
 }
-settings:
-  .byte 0, 'a'
-  .byte 1, 'b'
-  .byte 0, 'c'
+  settings: .byte 0, 'a', 1, 'b', 0, 'c'

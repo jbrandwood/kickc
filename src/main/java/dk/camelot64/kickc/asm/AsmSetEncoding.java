@@ -36,4 +36,8 @@ public class AsmSetEncoding implements AsmLine {
    public void setIndex(int index) {
       this.index = index;
    }
+
+   public ConstantString.Encoding getEncoding() {
+      return encoding;
+   }
 }

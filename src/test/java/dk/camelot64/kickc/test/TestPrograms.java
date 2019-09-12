@@ -58,12 +58,13 @@ public class TestPrograms {
    }
    */
 
-   /** Fix number type resolving https://gitlab.com/camelot/kickc/issues/199
-   @Test
-   public void testConstBool0() throws IOException, URISyntaxException {
-      compileAndCompare("const-bool-0");
-   }
-   */
+   /**
+    * Fix number type resolving https://gitlab.com/camelot/kickc/issues/199
+    *
+    * @Test public void testConstBool0() throws IOException, URISyntaxException {
+    * compileAndCompare("const-bool-0");
+    * }
+    */
 
    @Test
    public void testAsmCullingJmp() throws IOException, URISyntaxException {
@@ -654,22 +655,20 @@ public class TestPrograms {
    }
    */
 
-
-   // TODO: FIX problem with initializers of array-elements inside structs
-   //@Test
-   //public void testStructPtr33() throws IOException, URISyntaxException {
-   //   compileAndCompare("struct-ptr-33", log());
-   //}
+   @Test
+   public void testStructPtr33() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-33", log());
+   }
 
    @Test
    public void testStructPtr32() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-32");
    }
 
-   //@Test
-   //public void testStructPtr31() throws IOException, URISyntaxException {
-   //   compileAndCompare("struct-ptr-31");
-   //}
+   @Test
+   public void testStructPtr31() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-31");
+   }
 
    @Test
    public void testStructPtr30() throws IOException, URISyntaxException {
@@ -702,12 +701,10 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-24");
    }
 
-   /* TODO: Fix array of struct containing array https://gitlab.com/camelot/kickc/issues/274
    @Test
    public void testStructPtr23() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-23");
+      compileAndCompare("struct-ptr-23", log());
    }
-   */
 
    @Test
    public void testStructPtr22() throws IOException, URISyntaxException {

@@ -137,15 +137,12 @@ syscall1: {
   MESSAGE: .text "hello world!"
   .byte 0
 .segment Syscall
-SYSCALLS:
-  .byte JMP
+  SYSCALLS: .byte JMP
   .word syscall1
-  .byte NOP
-  .byte JMP
+  .byte NOP, JMP
   .word syscall2
   .byte NOP
   .align $100
-SYSCALL_RESET:
-  .byte JMP
+  SYSCALL_RESET: .byte JMP
   .word main
   .byte NOP

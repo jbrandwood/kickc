@@ -48,8 +48,7 @@ print: {
     sty.z idx
     rts
 }
-points:
-  .byte 1
+  points: .byte 1
   .word $83f
   .byte 3
   .word $107e

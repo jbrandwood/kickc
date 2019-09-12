@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ public class AsmProgram {
     */
    private int nextLineIndex;
 
+   /** The current encoding used for printing strings. */
+   private ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+
    public AsmProgram() {
       this.chunks = new ArrayList<>();
       this.nextLineIndex = 0;
@@ -50,7 +55,30 @@ public class AsmProgram {
    public void addLine(AsmLine line) {
       line.setIndex(nextLineIndex++);
       getCurrentChunk().addLine(line);
+      if(line instanceof AsmSetEncoding)
+         currentEncoding = ((AsmSetEncoding) line).getEncoding();
    }
+
+   /**
+    * Get the current encoding used for strings/chars
+    * @return The encoding
+    */
+   public ConstantString.Encoding getCurrentEncoding() {
+      return currentEncoding;
+   }
+
+   public void ensureEncoding(Collection<ConstantString.Encoding> encodings) {
+      if(encodings == null || encodings.size() == 0) return;
+      if(encodings.size() > 1) {
+         throw new CompileError("Different character encodings in one ASM statement not supported!");
+      }
+      // Size is 1 - grab it!
+      ConstantString.Encoding encoding = encodings.iterator().next();
+      if(!getCurrentEncoding().equals(encoding)) {
+         addLine(new AsmSetEncoding(encoding));
+      }
+   }
+
 
    public void addComment(String comment, boolean isBlock) {
       addLine(new AsmComment(comment, isBlock));

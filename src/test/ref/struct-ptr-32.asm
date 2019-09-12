@@ -1,5 +1,4 @@
 // Example of a struct containing an array
-// https://gitlab.com/camelot/kickc/issues/312
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

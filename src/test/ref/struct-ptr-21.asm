@@ -27,6 +27,5 @@ main: {
     jmp b1
 }
   seq: .word 1, 2, 3
-settings:
-  .byte 3
+  settings: .byte 3
   .word seq

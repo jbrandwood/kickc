@@ -1360,8 +1360,7 @@ mulf_init: {
   .align $100
   mulf_sqr2_hi: .fill $200, 0
   // True type letter c
-letter_c:
-  .byte MOVE_TO
+  letter_c: .byte MOVE_TO
   .word $6c, $92, 0, 0
   .byte SPLINE_TO
   .word $59, $b6, $67, $a9

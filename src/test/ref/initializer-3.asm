@@ -38,8 +38,7 @@ main: {
     bne b1
     rts
 }
-points:
-  .byte 1
+  points: .byte 1
   .word 2
   .byte 3
   .word 4

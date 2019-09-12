@@ -30,4 +30,4 @@ main: {
   .byte 0
   .fill 8, 0
   msg2: .byte 'c', 'm', 'l'
-  .fill 13, 0
+  .fill $d, 0

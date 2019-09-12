@@ -1,8 +1,8 @@
-// Example of a struct containing a pointer
+// Example of a struct containing an array
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_STRUCT_PERSON = 3
+  .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .label SCREEN = $400
 main: {
@@ -21,7 +21,8 @@ main: {
 }
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label i = 4
+    .label _1 = 4
+    .label _2 = 6
     .label person = 2
     ldy #0
     lda (person),y
@@ -32,17 +33,16 @@ print_person: {
     lda #' '
     sta SCREEN,x
     inx
-    lda #0
-    sta.z i
+    ldy #0
   b1:
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
+    lda #OFFSET_STRUCT_PERSON_NAME
+    clc
+    adc.z person
+    sta.z _1
+    lda #0
+    adc.z person+1
+    sta.z _1+1
+    lda (_1),y
     cmp #0
     bne b2
     lda #' '
@@ -50,26 +50,30 @@ print_person: {
     inx
     rts
   b2:
-    ldy #OFFSET_STRUCT_PERSON_NAME
-    lda (person),y
-    sta.z $fe
-    iny
-    lda (person),y
-    sta.z $ff
-    ldy.z i
-    lda ($fe),y
+    lda #OFFSET_STRUCT_PERSON_NAME
+    clc
+    adc.z person
+    sta.z _2
+    lda #0
+    adc.z person+1
+    sta.z _2+1
+    lda (_2),y
     sta SCREEN,x
     inx
-    inc.z i
+    iny
     jmp b1
 }
-  name1: .text "jesper"
+  _0: .text "jesper"
   .byte 0
-  name2: .text "repsej"
-  .byte 0
-  DIGIT: .text "0123456789"
+  _1: .text "henriette"
   .byte 0
   persons: .byte 4
-  .word name1
+  .text "jesper"
+  .byte 0
+  .fill 9, 0
   .byte 7
-  .word name2
+  .text "henriette"
+  .byte 0
+  .fill 6, 0
+  DIGIT: .text "0123456789"
+  .byte 0

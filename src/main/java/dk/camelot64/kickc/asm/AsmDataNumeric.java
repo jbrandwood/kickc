@@ -63,7 +63,7 @@ public class AsmDataNumeric implements AsmLine {
       this.index = index;
    }
 
-   public static enum Type {
+   public enum Type {
       BYTE("byte", 1),
       WORD("word", 2),
       DWORD("dword", 4);

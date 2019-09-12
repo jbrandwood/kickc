@@ -58,7 +58,7 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
                } else {
                   ConstantLiteral constantLiteral = constantValue.calculateLiteral(getScope());
                   if(constantLiteral instanceof ConstantString) {
-                     Integer assignedSizeVal = ((ConstantString) constantLiteral).getString().length();
+                     Integer assignedSizeVal = ((ConstantString) constantLiteral).getStringLength();
                      if(assignedSizeVal > declaredSizeInt) {
                         throw new CompileError("Error! Array length mismatch " + constantVar.toString(getProgram()));
                      }

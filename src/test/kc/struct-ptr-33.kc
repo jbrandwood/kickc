@@ -1,4 +1,5 @@
 // Example of a struct containing an array
+// Fails (by displaying "BB" ) because the memory layout is wrong - and the name is treated like a pointer (to 0x0000) instead of a value.
 // https://gitlab.com/camelot/kickc/issues/312
 
 struct Person {
@@ -7,15 +8,12 @@ struct Person {
     unsigned int age;
 };
 
-struct Person[2] persons;
+struct Person[2] persons = {
+    { 7, "jesper", 321 },
+    { 9, "henry", 123}
+};
 
 void main() {
-    persons[0].id = 7;
-    persons[1].id = 9;
-    persons[0].name[8] = 'a';
-    persons[1].name[8] = 'b';
-    persons[0].age = 321;
-    persons[1].age = 123;
     const char* SCREEN = 0x0400;
     struct Person* person = persons;
     SCREEN[0] = person->name[8];

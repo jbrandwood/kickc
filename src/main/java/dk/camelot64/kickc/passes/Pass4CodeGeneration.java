@@ -462,10 +462,10 @@ public class Pass4CodeGeneration {
                   // Constant array of structs - output each struct as a separate chunk
                   asm.addLabel(asmName).setDontOptimize(true);
                   for(ConstantValue element : constantArrayList.getElements()) {
-                     AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                     AsmDataChunk asmDataChunk = new AsmDataChunk();
                      ensureEncoding(asm, element);
                      addChunkData(asmDataChunk, element, scopeRef);
-                     asm.addDataNumeric(null, asmDataChunk);
+                     asmDataChunk.addToAsm(null, asm);
                   }
                   // Pad output to match declared size (if larger than the data list)
                   int dataSize = constantArrayList.getElements().size();
@@ -474,9 +474,9 @@ public class Pass4CodeGeneration {
                      int padding = declaredSize - dataSize;
                      ConstantStructValue zeroStructValue = (ConstantStructValue) ZeroConstantValues.zeroValue(elementType, program.getScope());
                      for(int i=0; i<padding; i++) {
-                        AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                        AsmDataChunk asmDataChunk = new AsmDataChunk();
                         addChunkData(asmDataChunk, zeroStructValue, scopeRef);
-                        asm.addDataNumeric(null, asmDataChunk);
+                        asmDataChunk.addToAsm(null, asm);
                      }
                   }
                } else if(elementType instanceof SymbolTypeArray) {
@@ -484,12 +484,12 @@ public class Pass4CodeGeneration {
                   throw new InternalError("Array of array not supported");
                } else {
                   // Constant array of a "simple" type - add to a single chunk
-                  AsmProgram.AsmDataNumericChunk asmDataChunk = new AsmProgram.AsmDataNumericChunk();
+                  AsmDataChunk asmDataChunk = new AsmDataChunk();
                   for(ConstantValue element : constantArrayList.getElements()) {
                      ensureEncoding(asm, element);
                      addChunkData(asmDataChunk, element, scopeRef);
                   }
-                  asm.addDataNumeric(asmName, asmDataChunk);
+                  asmDataChunk.addToAsm(asmName, asm);
                   // Pad output to match declared size (if larger than the data list)
                   int dataSize = constantArrayList.getElements().size();
                   Integer declaredSize = getArrayDeclaredSize(constantVar);
@@ -586,13 +586,12 @@ public class Pass4CodeGeneration {
                      ensureEncoding(asm, constantValue);
                      String asmConstant = AsmFormat.getAsmConstant(program, constantValue, 99, scopeRef);
                      asm.addDataString(AsmFormat.asmFix(asmName), asmConstant);
-                     int dataSize = ((ConstantString) literal).getString().length();
                      if(((ConstantString) literal).isZeroTerminated()) {
                         asm.addDataNumeric(null, AsmDataNumeric.Type.BYTE, Collections.singletonList(AsmFormat.getAsmNumber(0L)));
-                        dataSize++;
                      }
                      // Pad output to match declared size (if larger than the data list)
                      Integer declaredSize = getArrayDeclaredSize(constantVar);
+                     int dataSize = ((ConstantString) literal).getStringLength();
                      if(declaredSize!=null && declaredSize>dataSize) {
                         int padding = declaredSize-dataSize;
                         asm.addDataFilled(null, AsmDataNumeric.Type.BYTE, Integer.toString(padding), padding, "0");
@@ -637,7 +636,7 @@ public class Pass4CodeGeneration {
     * @param dataChunk The data chunk
     * @param value The constant value
     */
-   private void addChunkData(AsmProgram.AsmDataNumericChunk dataChunk, ConstantValue value, ScopeRef scopeRef) {
+   private void addChunkData(AsmDataChunk dataChunk, ConstantValue value, ScopeRef scopeRef) {
       SymbolType elementType = value.getType(program.getScope());
       if(elementType instanceof SymbolTypeStruct) {
          // Add each struct member recursively
@@ -647,13 +646,13 @@ public class Pass4CodeGeneration {
             addChunkData(dataChunk, memberValue, scopeRef);
          }
       } else if(SymbolType.BYTE.equals(elementType) || SymbolType.SBYTE.equals(elementType)) {
-         dataChunk.addData(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
       } else if(SymbolType.WORD.equals(elementType) || SymbolType.SWORD.equals(elementType)) {
-         dataChunk.addData(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
       } else if(SymbolType.DWORD.equals(elementType) || SymbolType.SDWORD.equals(elementType)) {
-         dataChunk.addData(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
       } else if(elementType instanceof SymbolTypePointer) {
-         dataChunk.addData(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef));
       } else {
          throw new InternalError("Unhandled array element type " + elementType.toString() + " value " + value.toString(program));
       }

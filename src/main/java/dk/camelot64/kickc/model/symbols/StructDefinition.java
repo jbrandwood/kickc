@@ -37,13 +37,13 @@ public class StructDefinition extends Scope {
     * @param member The member to find offset for
     * @return The byte offset of the start of the member data
     */
-   public long getMemberByteOffset(Variable member) {
+   public long getMemberByteOffset(Variable member, ProgramScope programScope) {
       long byteOffset=0;
       for(Variable structMember : getAllVariables(false)) {
          if(structMember.equals(member)) {
             break;
          } else {
-            byteOffset += structMember.getType().getSizeBytes();
+            byteOffset += SymbolTypeStruct.getMemberSizeBytes(structMember.getType(), programScope);
          }
       }
       return byteOffset;

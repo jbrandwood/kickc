@@ -24,9 +24,9 @@ main: {
     jesper_name: .text "jesper"
     .byte 0
     .fill 57, 0
-    henriette_name: .text "repsej"
+    henriette_name: .text "henriette"
     .byte 0
-    .fill 57, 0
+    .fill 54, 0
 }
 // print_person(byte register(X) person_id, byte[$40] zeropage(2) person_name)
 print_person: {

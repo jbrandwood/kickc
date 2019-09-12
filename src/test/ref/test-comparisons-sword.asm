@@ -128,45 +128,35 @@ compare: {
     cpx #EQ
     beq b5
     cpx #NE
-    bne b10
+    bne b8
     lda.z w1
     cmp.z w2
     bne !+
     lda.z w1+1
     cmp.z w2+1
-    beq b9
+    beq b7
   !:
     lda #TT
     sta.z r
-    jmp b23
-  b9:
+    jmp b19
+  b7:
     lda #FF
     sta.z r
-  b23:
+  b19:
     lda #<ops_1
     sta.z ops
     lda #>ops_1
     sta.z ops+1
     jmp b6
-  b10:
+  b8:
     lda #FF
     sta.z r
     lda #<0
     sta.z ops
     sta.z ops+1
   b6:
-    lda.z w1+1
-    bmi b7
-    lda #' '
-    jsr print_char
-  b7:
     jsr print_sword
     jsr print_str
-    lda.z w2+1
-    bmi b8
-    lda #' '
-    jsr print_char
-  b8:
     lda.z w2
     sta.z print_sword.w
     lda.z w2+1
@@ -178,40 +168,39 @@ compare: {
   b5:
     lda.z w1+1
     cmp.z w2+1
-    bne b11
+    bne b9
     lda.z w1
     cmp.z w2
-    bne b11
+    bne b9
     lda #TT
     sta.z r
-    jmp b24
-  b11:
+    jmp b20
+  b9:
     lda #FF
     sta.z r
-  b24:
+  b20:
     lda #<ops_2
     sta.z ops
     lda #>ops_2
     sta.z ops+1
     jmp b6
   b4:
-    lda.z w2
-    cmp.z w1
-    lda.z w2+1
-    sbc.z w1+1
+    lda.z w1
+    cmp.z w2
+    lda.z w1+1
+    sbc.z w2+1
     bvc !+
     eor #$80
   !:
-    beq !e+
-    bpl b12
+    bmi b10
   !e:
     lda #TT
     sta.z r
-    jmp b25
-  b12:
+    jmp b21
+  b10:
     lda #FF
     sta.z r
-  b25:
+  b21:
     lda #<ops_3
     sta.z ops
     lda #>ops_3
@@ -225,37 +214,36 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bpl b13
+    bpl b11
     lda #TT
     sta.z r
-    jmp b26
-  b13:
+    jmp b22
+  b11:
     lda #FF
     sta.z r
-  b26:
+  b22:
     lda #<ops_4
     sta.z ops
     lda #>ops_4
     sta.z ops+1
     jmp b6
   b2:
-    lda.z w1
-    cmp.z w2
-    lda.z w1+1
-    sbc.z w2+1
+    lda.z w2
+    cmp.z w1
+    lda.z w2+1
+    sbc.z w1+1
     bvc !+
     eor #$80
   !:
-    beq !e+
-    bpl b14
+    bmi b12
   !e:
     lda #TT
     sta.z r
-    jmp b27
-  b14:
+    jmp b23
+  b12:
     lda #FF
     sta.z r
-  b27:
+  b23:
     lda #<ops_5
     sta.z ops
     lda #>ops_5
@@ -269,14 +257,14 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bpl b15
+    bpl b13
     lda #TT
     sta.z r
-    jmp b28
-  b15:
+    jmp b24
+  b13:
     lda #FF
     sta.z r
-  b28:
+  b24:
     lda #<ops_6
     sta.z ops
     lda #>ops_6

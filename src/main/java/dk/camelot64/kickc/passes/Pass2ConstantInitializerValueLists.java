@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
@@ -28,7 +29,7 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
     *
     * @return true optimization was performed. false if no optimization was possible.
     */
-   @Override
+   @Override                                                            
    public boolean step() {
       final boolean[] modified = {false};
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
@@ -100,7 +101,7 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
             SymbolType declaredElementType = memberDef.getType();
             ConstantValue memberValue = constantValues.get(i);
             SymbolType elmType = memberValue.getType(getScope());
-            if(!elmType.equals(declaredElementType)) {
+            if(!SymbolTypeConversion.assignmentTypeMatch(declaredElementType, elmType)) {
                throw new CompileError("Initializer element "+ memberValue.toString(getProgram())+" does not match struct member type "+memberDef.toString(getProgram()), currentStmt);
             }
             memberValues.put(memberDef.getRef(), memberValue);

@@ -15,7 +15,7 @@ main: {
     sta SCREEN+2
     lda #'0'+4*SIZEOF_WORD/SIZEOF_WORD
     sta SCREEN+3
-    lda #'0'+7*SIZEOF_BYTE/SIZEOF_BYTE
+    lda #'0'+8*SIZEOF_BYTE/SIZEOF_BYTE
     sta SCREEN+4
     lda #'0'+4*SIZEOF_BYTE/SIZEOF_BYTE
     sta SCREEN+5

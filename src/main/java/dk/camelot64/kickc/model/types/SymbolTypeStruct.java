@@ -3,6 +3,10 @@ package dk.camelot64.kickc.model.types;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.Objects;
 
@@ -17,7 +21,7 @@ public class SymbolTypeStruct implements SymbolType {
 
    public SymbolTypeStruct(StructDefinition structDefinition) {
       this.name = structDefinition.getLocalName();
-      this.sizeBytes = calculateSizeBytes(structDefinition);
+      this.sizeBytes = calculateSizeBytes(structDefinition, null);
    }
 
    @Override
@@ -47,12 +51,33 @@ public class SymbolTypeStruct implements SymbolType {
     * @param structDefinition The struct definition (get using getStructDefinition)
     * @return The number of bytes a struct value require
     */
-   public int calculateSizeBytes(StructDefinition structDefinition) {
+   public int calculateSizeBytes(StructDefinition structDefinition, ProgramScope programScope) {
       int sizeBytes = 0;
       for(Variable member : structDefinition.getAllVariables(false)) {
-         sizeBytes += member.getType().getSizeBytes();
+         SymbolType memberType = member.getType();
+         int memberSize = getMemberSizeBytes(memberType, programScope);
+         sizeBytes += memberSize;
       }
       return sizeBytes;
+   }
+
+   public static int getMemberSizeBytes(SymbolType memberType, ProgramScope programScope) {
+      if(memberType instanceof SymbolTypeArray && ((SymbolTypeArray) memberType).getSize()!=null) {
+         if(programScope!=null) {
+            RValue memberArraySize = ((SymbolTypeArray) memberType).getSize();
+            if(memberArraySize instanceof ConstantValue) {
+               ConstantLiteral sizeLiteral = ((ConstantValue) memberArraySize).calculateLiteral(programScope);
+               if(sizeLiteral instanceof ConstantInteger) {
+                  return ((ConstantInteger) sizeLiteral).getInteger().intValue();
+               }
+            }
+         } else {
+            return 5; // Add a token size
+         }
+      }  else {
+         return memberType.getSizeBytes();
+      }
+      throw new InternalError("Memeber type not handled "+memberType);
    }
 
    @Override

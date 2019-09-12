@@ -12,7 +12,6 @@ import java.util.Objects;
  */
 public class ConstantString implements ConstantLiteral<String> {
 
-
    /** String encoding. */
    public static enum Encoding {
       PETSCII_MIXED("petscii_mixed", "pm"),
@@ -65,6 +64,14 @@ public class ConstantString implements ConstantLiteral<String> {
 
    public boolean isZeroTerminated() {
       return zeroTerminated;
+   }
+
+   /**
+    * Get the length of the string - including zero-termination if present.
+    * @return The length
+    */
+   public int getStringLength() {
+      return value.length() + (zeroTerminated?1:0);
    }
 
    @Override

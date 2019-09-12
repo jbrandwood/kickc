@@ -96,7 +96,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                }
                if(stringLiteral instanceof ConstantString) {
                   ConstantString constString = (ConstantString) stringLiteral;
-                  int length = constString.getString().length();
+                  int length = constString.getStringLength();
                   getLog().append("Resolving string sizeof() " + unary.toString(getProgram()));
                   ConstantRef sizeOfChar = OperatorSizeOf.getSizeOfConstantVar(getScope(), SymbolType.BYTE);
                   programValue.set(new ConstantBinary(new ConstantInteger((long) length), Operators.MULTIPLY, sizeOfChar));

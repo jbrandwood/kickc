@@ -47,7 +47,7 @@ main: {
     jsr print_person
     rts
 }
-// print_person(dword zeropage(2) person_id, byte[2] zeropage(6) person_initials)
+// print_person(dword zeropage(2) person_id, byte[3] zeropage(6) person_initials)
 print_person: {
     .label person_id = 2
     .label person_initials = 6

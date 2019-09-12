@@ -36,7 +36,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
       if(type instanceof SymbolTypeStruct) {
          SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
          StructDefinition structDefinition = typeStruct.getStructDefinition(getScope());
-         int sizeBytes = typeStruct.calculateSizeBytes(structDefinition);
+         int sizeBytes = typeStruct.calculateSizeBytes(structDefinition, getScope());
          if(sizeBytes!=typeStruct.getSizeBytes()) {
             getLog().append("Fixing struct type size "+type.getTypeName() + " to "+sizeBytes);
             typeStruct.setSizeBytes(sizeBytes);

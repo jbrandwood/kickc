@@ -451,57 +451,16 @@ public class Pass4CodeGeneration {
                asm.addDataAlignment(alignment);
             }
             ConstantValue constantValue = constantVar.getValue();
-            if(constantValue instanceof ConstantArrayList) {
+            if(constantValue instanceof ConstantArrayList || constantValue instanceof ConstantArrayFilled || constantValue instanceof ConstantArrayKickAsm || constantValue instanceof ConstantString) {
                AsmDataChunk asmDataChunk = new AsmDataChunk();
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
-               asmDataChunk.addToAsm(asmName, asm);
-            } else if(constantValue instanceof ConstantArrayFilled) {
-               AsmDataChunk asmDataChunk = new AsmDataChunk();
-               addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
-               asmDataChunk.addToAsm(asmName, asm);
-            } else if(constantValue instanceof ConstantArrayKickAsm) {
-               AsmDataChunk asmDataChunk = new AsmDataChunk();
-               addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
-               asmDataChunk.addToAsm(asmName, asm);
+               asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
             } else {
-               try {
-                  ConstantLiteral literal = constantValue.calculateLiteral(getScope());
-                  if(literal instanceof ConstantString) {
-                     // Ensure encoding is good
-                     ensureEncoding(asm, constantValue);
-                     String asmConstant = AsmFormat.getAsmConstant(program, constantValue, 99, scopeRef);
-                     asm.addDataString(AsmFormat.asmFix(asmName), asmConstant);
-                     if(((ConstantString) literal).isZeroTerminated()) {
-                        asm.addDataNumeric(null, AsmDataNumeric.Type.BYTE, Collections.singletonList(AsmFormat.getAsmNumber(0L)));
-                     }
-                     int dataSize = ((ConstantString) literal).getStringLength();
-                     // Pad output to match declared size (if larger than the data list)
-                     Integer declaredSize = getArrayDeclaredSize(constantVar);
-                     if(declaredSize != null && declaredSize > dataSize) {
-                        int padding = declaredSize - dataSize;
-                        asm.addDataFilled(null, AsmDataNumeric.Type.BYTE, Integer.toString(padding), padding, "0");
-                     }
-                     added.add(asmName);
-                  }
-               } catch(ConstantNotLiteral e) {
-                  // can't calculate literal value, so it is not data - just return
-               }
+               throw new InternalError("Constant Variable not handled " + constantVar.toString(program));
             }
+            added.add(asmName);
          }
       }
-   }
-
-   /**
-    * Get the declared size of an array variable.
-    *
-    * @param constantVar The array variable
-    * @return The declared size. Null if the type is not array or no size is declared.
-    */
-   private Integer getArrayDeclaredSize(ConstantVar constantVar) {
-      SymbolType constantType = constantVar.getType();
-      Integer declaredSizeVal = getArrayDeclaredSize(constantType);
-      if(declaredSizeVal != null) return declaredSizeVal;
-      return null;
    }
 
    /**
@@ -559,17 +518,17 @@ public class Pass4CodeGeneration {
             dataNumElements = ((ConstantInteger) arraySizeConst).getInteger().intValue();
             int elementSizeBytes = elementType.getSizeBytes();
             String totalSizeBytesAsm;
-            if(elementSizeBytes>1) {
-               totalSizeBytesAsm = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)elementSizeBytes, SymbolType.NUMBER), Operators.MULTIPLY, arraySize), 99, scopeRef);
-            }  else {
+            if(elementSizeBytes > 1) {
+               totalSizeBytesAsm = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) elementSizeBytes, SymbolType.NUMBER), Operators.MULTIPLY, arraySize), 99, scopeRef);
+            } else {
                totalSizeBytesAsm = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
             }
             if(elementType instanceof SymbolTypeIntegerFixed || elementType instanceof SymbolTypePointer) {
                // Use an ASM type in the fill that matches the element type
                dataChunk.addDataFilled(getNumericType(elementType), totalSizeBytesAsm, dataNumElements, "0", null);
-            }  else {
+            } else {
                // Complex fill type - calculate byte size and use that
-               int totalSizeBytes = elementSizeBytes*dataNumElements;
+               int totalSizeBytes = elementSizeBytes * dataNumElements;
                dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
             }
          } else if(value instanceof ConstantArrayKickAsm) {
@@ -622,6 +581,20 @@ public class Pass4CodeGeneration {
                }
             }
          }
+      } else if(value instanceof ConstantString) {
+         try {
+            ConstantLiteral literal = value.calculateLiteral(getScope());
+            if(literal instanceof ConstantString) {
+               // Ensure encoding is good
+               String asmConstant = AsmFormat.getAsmConstant(program, literal, 99, scopeRef);
+               dataChunk.addDataString(asmConstant, getEncoding(literal));
+               if(((ConstantString) literal).isZeroTerminated()) {
+                  dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
+               }
+            }
+         } catch(ConstantNotLiteral e) {
+            // can't calculate literal value, so it is not data - just return
+         }
       } else if(SymbolType.BYTE.equals(valueType) || SymbolType.SBYTE.equals(valueType)) {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else if(SymbolType.WORD.equals(valueType) || SymbolType.SWORD.equals(valueType)) {
@@ -637,6 +610,7 @@ public class Pass4CodeGeneration {
 
    /**
     * Get the numeric data type to use when outputting a value type to ASM
+    *
     * @param valueType The value type
     * @return The numeric data type
     */

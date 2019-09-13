@@ -65,10 +65,6 @@ print_person: {
     inx
     rts
 }
-  _0: .text "jgr"
-  .byte 0
-  _1: .text "hbg"
-  .byte 0
   persons: .byte 1
   .text "jgr"
   .byte 0, 8

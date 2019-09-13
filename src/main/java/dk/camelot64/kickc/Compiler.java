@@ -364,6 +364,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
+      constantOptimizations.add(new Pass2ArrayInStructInlining(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.addAll(getPass2Optimizations());

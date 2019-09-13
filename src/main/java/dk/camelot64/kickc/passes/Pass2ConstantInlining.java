@@ -36,8 +36,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       Map<ConstantRef, ConstantValue> inline = new HashMap<>();
-      Map<ConstantRef, ConstantValue> aliasConstants = findAliasConstants();
-      inline.putAll(aliasConstants);
+      inline.putAll(findAliasConstants());
       inline.putAll(findUnnamedConstants());
       inline.putAll(findConstVarVersions());
 

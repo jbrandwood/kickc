@@ -231,17 +231,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    static ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2, ProgramScope programScope) {
 
-      // Special handling of string append using +
-      if(Operators.PLUS.equals(operator) && SymbolType.STRING.equals(c1.getType(programScope))) {
-         if(c1 instanceof ConstantRef) {
-            c1 = programScope.getConstant((ConstantRef) c1).getValue();
-         }
-         if(c2 instanceof ConstantRef) {
-            c2 = programScope.getConstant((ConstantRef) c2).getValue();
-         }
-         return new ConstantBinary(c1, operator, c2);
-      }
-
       if(Operators.PLUS.equals(operator)) {
          return new ConstantBinary(c1, operator, c2);
       }

@@ -13,10 +13,6 @@ main: {
     sta SCREEN+1
     rts
 }
-  _0: .text "jesper"
-  .byte 0
-  _1: .text "henry"
-  .byte 0
   persons: .byte 7
   .text "jesper"
   .byte 0

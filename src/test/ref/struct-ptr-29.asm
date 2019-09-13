@@ -63,13 +63,13 @@ print_person: {
     inc.z i
     jmp b1
 }
-  name1: .text "jesper"
+  _0: .text "jesper"
   .byte 0
-  name2: .text "repsej"
-  .byte 0
-  DIGIT: .text "0123456789"
+  _1: .text "repsej"
   .byte 0
   persons: .byte 4
-  .word name1
+  .word _0
   .byte 7
-  .word name2
+  .word _1
+  DIGIT: .text "0123456789"
+  .byte 0

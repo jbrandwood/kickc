@@ -477,6 +477,10 @@ public interface ProgramValue {
       public void set(Value value) {
          structValue.setValue(memberRef, (ConstantValue) value);
       }
+
+      public VariableRef getMemberRef() {
+         return memberRef;
+      }
    }
 
    /** Value inside a constant array filled expression. */

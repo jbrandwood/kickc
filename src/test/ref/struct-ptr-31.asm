@@ -63,10 +63,6 @@ print_person: {
     iny
     jmp b1
 }
-  _0: .text "jesper"
-  .byte 0
-  _1: .text "henriette"
-  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0

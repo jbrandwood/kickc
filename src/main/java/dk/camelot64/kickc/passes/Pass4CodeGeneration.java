@@ -460,21 +460,9 @@ public class Pass4CodeGeneration {
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
                asmDataChunk.addToAsm(asmName, asm);
             } else if(constantValue instanceof ConstantArrayKickAsm) {
-               ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) constantValue;
-               SymbolType type = constantVar.getType();
-               // default - larger then 256
-               int bytes = 1023;
-               if(type instanceof SymbolTypeArray) {
-                  SymbolType elementType = ((SymbolTypeArray) type).getElementType();
-                  RValue size = ((SymbolTypeArray) type).getSize();
-                  if(size instanceof ConstantValue) {
-                     ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
-                     if(sizeLiteral instanceof ConstantInteger) {
-                        bytes = (int) (((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
-                     }
-                  }
-               }
-               asm.addDataKickAsm(AsmFormat.asmFix(asmName), bytes, kickAsm.getKickAsmCode());
+               AsmDataChunk asmDataChunk = new AsmDataChunk();
+               addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
+               asmDataChunk.addToAsm(asmName, asm);
             } else {
                try {
                   ConstantLiteral literal = constantValue.calculateLiteral(getScope());
@@ -584,6 +572,19 @@ public class Pass4CodeGeneration {
                int totalSizeBytes = elementSizeBytes*dataNumElements;
                dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
             }
+         } else if(value instanceof ConstantArrayKickAsm) {
+            ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) value;
+            // default - larger then 256
+            int bytes = 1023;
+            RValue size = constTypeArray.getSize();
+            if(size instanceof ConstantValue) {
+               ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
+               if(sizeLiteral instanceof ConstantInteger) {
+                  bytes = (int) (((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
+               }
+            }
+            dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), getEncoding(value));
+            dataNumElements = bytes;
          } else if(dataType.equals(SymbolType.STRING)) {
             try {
                ConstantLiteral literal = value.calculateLiteral(getScope());

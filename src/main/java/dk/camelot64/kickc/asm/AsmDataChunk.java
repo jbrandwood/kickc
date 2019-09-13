@@ -84,7 +84,7 @@ public class AsmDataChunk {
       }
    }
 
-   /** A string data elements. */
+   /** A string data element. */
    public static class AsmDataStringElement implements AsmDataElement {
       /** The string value. */
       String value;
@@ -98,6 +98,35 @@ public class AsmDataChunk {
 
       public String getValue() {
          return value;
+      }
+
+      public Set<ConstantString.Encoding> getEncoding() {
+         return encoding;
+      }
+   }
+
+   /** A kickasm data element. */
+   public static class AsmDataKickAsmElement implements AsmDataElement {
+
+      /** The size in bytes. */
+      int byteSize;
+      /** The kickasm code initializing the value. */
+      String kickAsmCode;
+      /** The string encoding used in the string value */
+      Set<ConstantString.Encoding> encoding;
+
+      public AsmDataKickAsmElement(int byteSize, String kickAsmCode, Set<ConstantString.Encoding> encoding) {
+         this.byteSize = byteSize;
+         this.kickAsmCode = kickAsmCode;
+         this.encoding = encoding;
+      }
+
+      public int getByteSize() {
+         return byteSize;
+      }
+
+      public String getKickAsmCode() {
+         return kickAsmCode;
       }
 
       public Set<ConstantString.Encoding> getEncoding() {
@@ -124,6 +153,11 @@ public class AsmDataChunk {
       elements.add(new AsmDataStringElement(string, encoding));
    }
 
+   public void addDataKickAsm(int byteSize, String kickAsmCode, Set<ConstantString.Encoding> encoding) {
+      elements.add(new AsmDataKickAsmElement(byteSize, kickAsmCode, encoding));
+   }
+
+
    public List<AsmDataElement> getElements() {
       return elements;
    }
@@ -139,24 +173,25 @@ public class AsmDataChunk {
       AsmDataNumeric.Type currentNumericType = null;
       List<String> currentNumericElements = null;
       for(AsmDataChunk.AsmDataElement element : this.getElements()) {
-         if(element instanceof AsmDataFilledElement) {
-            if(currentNumericElements!=null && currentNumericElements.size() > 0) {
+         if(element instanceof AsmDataFilledElement || element instanceof AsmDataStringElement || element instanceof AsmDataKickAsmElement) {
+            if(currentNumericElements != null && currentNumericElements.size() > 0) {
                asm.addDataNumeric(label, currentNumericType, currentNumericElements);
                label = null; // Only output label once
                currentNumericElements = null;
                currentNumericType = null;
             }
+         }
+         if(element instanceof AsmDataFilledElement) {
             AsmDataFilledElement filledElement = (AsmDataFilledElement) element;
             asm.ensureEncoding(filledElement.getEncoding());
             asm.addDataFilled(label, filledElement.getType(), filledElement.getTotalSizeBytesAsm(), filledElement.getNumElements(), filledElement.getFillValue());
             label = null; // Only output label once
+         } else if(element instanceof AsmDataKickAsmElement) {
+            AsmDataKickAsmElement kickAsmElement = (AsmDataKickAsmElement) element;
+            asm.ensureEncoding(kickAsmElement.getEncoding());
+            asm.addDataKickAsm(label, kickAsmElement.getByteSize(), kickAsmElement.getKickAsmCode());
+            label = null; // Only output label once
          } else if(element instanceof AsmDataStringElement) {
-            if(currentNumericElements!=null && currentNumericElements.size() > 0) {
-               asm.addDataNumeric(label, currentNumericType, currentNumericElements);
-               label = null; // Only output label once
-               currentNumericElements = null;
-               currentNumericType = null;
-            }
             AsmDataStringElement stringElement = (AsmDataStringElement) element;
             asm.ensureEncoding(stringElement.getEncoding());
             asm.addDataString(label, stringElement.getValue());

@@ -44,21 +44,21 @@ public class AsmDataChunk {
 
    /** A number of identical numerical data elements. */
    public static class AsmDataFilledElement implements AsmDataElement {
+      /** The ASM specifying how the total size in bytes - in ASM-format. */
+      String totalSizeBytesAsm;
       /** The type of the element */
       AsmDataNumeric.Type type;
-      /** The ASM specifying how many elements to fill. */
-      String sizeAsm;
       /** The literal integer number of elements. */
-      int size;
+      int numElements;
       /** The fill value. */
       String fillValue;
       /** The string encoding used in any char/string value */
       Set<ConstantString.Encoding> encoding;
 
-      AsmDataFilledElement(AsmDataNumeric.Type type, String sizeAsm, int size, String fillValue, Set<ConstantString.Encoding> encoding) {
+      AsmDataFilledElement(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<ConstantString.Encoding> encoding) {
          this.type = type;
-         this.sizeAsm = sizeAsm;
-         this.size = size;
+         this.totalSizeBytesAsm = totalSizeBytesAsm;
+         this.numElements = numElements;
          this.fillValue = fillValue;
          this.encoding = encoding;
       }
@@ -67,12 +67,12 @@ public class AsmDataChunk {
          return type;
       }
 
-      String getSizeAsm() {
-         return sizeAsm;
+      String getTotalSizeBytesAsm() {
+         return totalSizeBytesAsm;
       }
 
-      public int getSize() {
-         return size;
+      public int getNumElements() {
+         return numElements;
       }
 
       String getFillValue() {
@@ -116,8 +116,8 @@ public class AsmDataChunk {
       elements.add(new AsmDataNumericElement(type, value, encoding));
    }
 
-   public void addDataFilled(AsmDataNumeric.Type type, String sizeAsm, int size, String fillValue, Set<ConstantString.Encoding> encoding) {
-      elements.add(new AsmDataFilledElement(type, sizeAsm, size, fillValue, encoding));
+   public void addDataFilled(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<ConstantString.Encoding> encoding) {
+      elements.add(new AsmDataFilledElement(type, totalSizeBytesAsm, numElements, fillValue, encoding));
    }
 
    public void addDataString(String string, Set<ConstantString.Encoding> encoding) {
@@ -148,7 +148,7 @@ public class AsmDataChunk {
             }
             AsmDataFilledElement filledElement = (AsmDataFilledElement) element;
             asm.ensureEncoding(filledElement.getEncoding());
-            asm.addDataFilled(label, filledElement.getType(), filledElement.getSizeAsm(), filledElement.getSize(), filledElement.getFillValue());
+            asm.addDataFilled(label, filledElement.getType(), filledElement.getTotalSizeBytesAsm(), filledElement.getNumElements(), filledElement.getFillValue());
             label = null; // Only output label once
          } else if(element instanceof AsmDataStringElement) {
             if(currentNumericElements!=null && currentNumericElements.size() > 0) {

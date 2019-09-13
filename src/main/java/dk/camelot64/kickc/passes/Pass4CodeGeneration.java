@@ -456,51 +456,9 @@ public class Pass4CodeGeneration {
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
                asmDataChunk.addToAsm(asmName, asm);
             } else if(constantValue instanceof ConstantArrayFilled) {
-               ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantValue;
-               ConstantValue arraySize = constantArrayFilled.getSize();
-               // ensure encoding is good
-               ensureEncoding(asm, arraySize);
-               ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
-               if(!(arraySizeConst instanceof ConstantInteger)) {
-                  throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
-               }
-               int size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
-               if(SymbolType.BYTE.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(SymbolType.SBYTE.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(SymbolType.WORD.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(SymbolType.SWORD.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(SymbolType.DWORD.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(SymbolType.SDWORD.equals(constantArrayFilled.getElementType())) {
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else if(constantArrayFilled.getElementType() instanceof SymbolTypeStruct) {
-                  SymbolTypeStruct structElementType = (SymbolTypeStruct) constantArrayFilled.getElementType();
-                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) structElementType.getSizeBytes()), Operators.MULTIPLY, arraySize), 99, scopeRef);
-                  asm.addDataFilled(AsmFormat.asmFix(asmName), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-                  added.add(asmName);
-               } else {
-                  throw new InternalError("Unhandled constant array element type " + constantArrayFilled.toString(program));
-               }
+               AsmDataChunk asmDataChunk = new AsmDataChunk();
+               addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
+               asmDataChunk.addToAsm(asmName, asm);
             } else if(constantValue instanceof ConstantArrayKickAsm) {
                ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) constantValue;
                SymbolType type = constantVar.getType();
@@ -602,8 +560,31 @@ public class Pass4CodeGeneration {
          SymbolType elementType = constTypeArray.getElementType();
 
          SymbolType dataType = value.getType(program.getScope());
-         int dataSize = 0;
-         if(dataType.equals(SymbolType.STRING)) {
+         int dataNumElements = 0;
+         if(value instanceof ConstantArrayFilled) {
+            ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) value;
+            ConstantValue arraySize = constantArrayFilled.getSize();
+            ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
+            if(!(arraySizeConst instanceof ConstantInteger)) {
+               throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + arraySize.toString(program));
+            }
+            dataNumElements = ((ConstantInteger) arraySizeConst).getInteger().intValue();
+            int elementSizeBytes = elementType.getSizeBytes();
+            String totalSizeBytesAsm;
+            if(elementSizeBytes>1) {
+               totalSizeBytesAsm = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)elementSizeBytes, SymbolType.NUMBER), Operators.MULTIPLY, arraySize), 99, scopeRef);
+            }  else {
+               totalSizeBytesAsm = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
+            }
+            if(elementType instanceof SymbolTypeIntegerFixed || elementType instanceof SymbolTypePointer) {
+               // Use an ASM type in the fill that matches the element type
+               dataChunk.addDataFilled(getNumericType(elementType), totalSizeBytesAsm, dataNumElements, "0", null);
+            }  else {
+               // Complex fill type - calculate byte size and use that
+               int totalSizeBytes = elementSizeBytes*dataNumElements;
+               dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
+            }
+         } else if(dataType.equals(SymbolType.STRING)) {
             try {
                ConstantLiteral literal = value.calculateLiteral(getScope());
                if(literal instanceof ConstantString) {
@@ -613,23 +594,24 @@ public class Pass4CodeGeneration {
                   if(((ConstantString) literal).isZeroTerminated()) {
                      dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
                   }
-                  dataSize = ((ConstantString) literal).getStringLength();
+                  dataNumElements = ((ConstantString) literal).getStringLength();
                }
             } catch(ConstantNotLiteral e) {
                // can't calculate literal value, so it is not data - just return
             }
-         }  else {
+         } else {
+            // Assume we have a ConstantArrayList
             ConstantArrayList constantArrayList = (ConstantArrayList) value;
             // Output each element to the chunk
             for(ConstantValue element : constantArrayList.getElements()) {
                addChunkData(dataChunk, element, elementType, scopeRef);
             }
-            dataSize = constantArrayList.getElements().size();
+            dataNumElements = constantArrayList.getElements().size();
          }
          // Pad output to match declared size (if larger than the data list)
          Integer declaredSize = getArrayDeclaredSize(valueType);
-         if(declaredSize != null && declaredSize > dataSize) {
-            int padding = declaredSize - dataSize;
+         if(declaredSize != null && declaredSize > dataNumElements) {
+            int padding = declaredSize - dataNumElements;
             ConstantValue zeroValue = ZeroConstantValues.zeroValue(elementType, program.getScope());
             if(zeroValue instanceof ConstantInteger) {
                dataChunk.addDataFilled(getNumericType(elementType), AsmFormat.getAsmNumber(padding), padding, AsmFormat.getAsmConstant(program, zeroValue, 99, scopeRef), getEncoding(zeroValue));

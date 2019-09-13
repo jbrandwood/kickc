@@ -4,18 +4,23 @@ package dk.camelot64.kickc.asm;
 public class AsmDataFill implements AsmLine {
 
    private String label;
+   /** The calculation of the total number of bytes in ASM-format */
+   private String totalByteSizeAsm;
+   /** The type of value being filled with. */
    private AsmDataNumeric.Type type;
-   private String sizeAsm;
-   private int size;
+   /** The number of elements*/
+   private int numElements;
+   /** The value to fill with in ASM-format */
    private String fillValue;
+
    private int index;
 
 
-   public AsmDataFill(String label, AsmDataNumeric.Type type, String sizeAsm, int size, String fillValue) {
+   public AsmDataFill(String label, AsmDataNumeric.Type type, String totalByteSizeAsm, int numElements, String fillValue) {
       this.label = label;
       this.type = type;
-      this.sizeAsm = sizeAsm;
-      this.size = size;
+      this.totalByteSizeAsm = totalByteSizeAsm;
+      this.numElements = numElements;
       this.fillValue = fillValue;
    }
 
@@ -25,7 +30,7 @@ public class AsmDataFill implements AsmLine {
 
    @Override
    public int getLineBytes() {
-      return size * getElementBytes();
+      return numElements * getElementBytes();
    }
 
    @Override
@@ -40,7 +45,7 @@ public class AsmDataFill implements AsmLine {
          asm.append(label + ": ");
       }
       asm.append(".fill ");
-      asm.append(sizeAsm);
+      asm.append(totalByteSizeAsm);
       asm.append(", ");
       asm.append(fillValue);
       return asm.toString();

@@ -139,10 +139,10 @@ public class AsmProgram {
     *
     * @param label The label of the data
     * @param type The type of the data
-    * @param size The size of data to fill
+    * @param numElements The size of data to fill
     */
-   public void addDataFilled(String label, AsmDataNumeric.Type type, String sizeAsm, int size, String fillValue) {
-      addLine(new AsmDataFill(label, type, sizeAsm, size, fillValue));
+   public void addDataFilled(String label, AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue) {
+      addLine(new AsmDataFill(label, type, totalSizeBytesAsm, numElements, fillValue));
    }
 
    /**

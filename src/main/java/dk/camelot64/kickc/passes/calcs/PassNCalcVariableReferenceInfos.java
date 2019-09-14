@@ -88,9 +88,9 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                });
       }
       VariableReferenceInfos variableReferenceInfos = new VariableReferenceInfos(blockSuccessors, symbolVarReferences, blockVarReferences, statementVarReferences);
-      if(getLog().isVerboseSSAOptimize()) {
-         getLog().append(variableReferenceInfos.getSizeInfo());
-      }
+      //if(getLog().isVerboseSSAOptimize()) {
+      //   getLog().append(variableReferenceInfos.getSizeInfo());
+      //}
       return variableReferenceInfos;
    }
 

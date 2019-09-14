@@ -35,6 +35,16 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testStringPointerProblem() throws IOException, URISyntaxException {
+      compileAndCompare("string-pointer-problem");
+   }
+
+   //@Test
+   //public void testOs52() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/unit5/os5.2");
+   //}
+
    //@Test
    //public void testOs51() throws IOException, URISyntaxException {
    //   compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
@@ -685,7 +695,8 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-29");
    }
 
-   // TODO: Fix problem with object-allocated structs that contain arrays!
+   // TODO: Fix problem with stack-allocated structs that contain arrays!
+   // https://gitlab.com/camelot/kickc/issues/314
    //@Test
    //public void testStructPtr28() throws IOException, URISyntaxException {
    //   compileAndCompare("struct-ptr-28");
@@ -708,7 +719,7 @@ public class TestPrograms {
 
    @Test
    public void testStructPtr23() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-23", log());
+      compileAndCompare("struct-ptr-23");
    }
 
    @Test

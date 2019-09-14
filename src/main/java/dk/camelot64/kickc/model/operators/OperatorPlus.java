@@ -39,6 +39,8 @@ public class OperatorPlus extends OperatorBinary {
          return new SymbolTypePointer(((SymbolTypePointer) type2).getElementType());
       } else if(type1 instanceof SymbolTypePointer && SymbolType.isInteger(type2)) {
          return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
+      } else if(SymbolType.STRING.equals(type1) && SymbolType.isInteger(type2)) {
+         return new SymbolTypePointer(SymbolType.BYTE);
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {

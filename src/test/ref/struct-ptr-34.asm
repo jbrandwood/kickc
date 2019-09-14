@@ -1,6 +1,4 @@
 // Example of a struct containing an array
-// It works on the surface - but illustrates the problem with structs containing arrays treating them like pointers.
-// https://gitlab.com/camelot/kickc/issues/312
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

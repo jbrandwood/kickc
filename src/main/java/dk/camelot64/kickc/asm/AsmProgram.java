@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.values.ScopeRef;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A 6502 assembler program
@@ -263,6 +264,19 @@ public class AsmProgram {
          }
       }
       return null;
+   }
+
+   /**
+    * Get information about the size of the program
+    * @return Size information
+    */
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      sizeInfo.append("SIZE ASM chunks "+ getChunks().size()).append("\n");
+      AtomicInteger numLines = new AtomicInteger();
+      getChunks().stream().forEach(asmChunk -> numLines.addAndGet(asmChunk.getLines().size()));
+      sizeInfo.append("SIZE ASM lines "+ numLines).append("\n");
+      return sizeInfo.toString();
    }
 
    public static class AsmPrintState {

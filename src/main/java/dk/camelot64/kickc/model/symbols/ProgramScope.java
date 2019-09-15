@@ -46,4 +46,16 @@ public class ProgramScope extends Scope {
       return typeDefsScope;
    }
 
+   /**
+    * Get information about the size of the program
+    * @return Size information
+    */
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      sizeInfo.append("SIZE procedures "+ getAllProcedures(true).size()).append("\n");
+      sizeInfo.append("SIZE scopes "+ getAllScopes(true).size()).append("\n");
+      sizeInfo.append("SIZE variables "+ getAllVariables(true).size()).append("\n");
+      sizeInfo.append("SIZE constants  "+ getAllConstants(true).size()).append("\n");
+      return sizeInfo.toString();
+   }
 }

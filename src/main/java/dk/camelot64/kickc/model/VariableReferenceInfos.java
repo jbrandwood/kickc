@@ -135,7 +135,7 @@ public class VariableReferenceInfos {
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
       if(blockSuccessorClosure != null) {
-         sizeInfo.append("blockSuccessorClosure ").append(blockSuccessorClosure.size()).append(" labels ");
+         sizeInfo.append("SIZE blockSuccessorClosure ").append(blockSuccessorClosure.size()).append(" labels ");
          int sub = 0;
          for(Collection<LabelRef> labelRefs : blockSuccessorClosure.values()) {
             sub += labelRefs.size();
@@ -143,7 +143,7 @@ public class VariableReferenceInfos {
          sizeInfo.append(" ").append(sub).append(" labels").append("\n");
       }
       {
-         sizeInfo.append("symbolVarReferences ").append(symbolVarReferences.size()).append(" SymbolVariableRefs ");
+         sizeInfo.append("SIZE symbolVarReferences ").append(symbolVarReferences.size()).append(" SymbolVariableRefs ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : symbolVarReferences.values()) {
             sub += value.size();
@@ -151,7 +151,7 @@ public class VariableReferenceInfos {
          sizeInfo.append(" ").append(sub).append(" ReferenceToSymbolVars").append("\n");
       }
       {
-         sizeInfo.append("statementVarReferences ").append(statementVarReferences.size()).append(" statements ");
+         sizeInfo.append("SIZE statementVarReferences ").append(statementVarReferences.size()).append(" statements ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : statementVarReferences.values()) {
             sub += value.size();
@@ -159,7 +159,7 @@ public class VariableReferenceInfos {
          sizeInfo.append(" ").append(sub).append(" ReferenceToSymbolVars").append("\n");
       }
       {
-         sizeInfo.append("blockVarReferences ").append(blockVarReferences.size()).append(" blocks ");
+         sizeInfo.append("SIZE blockVarReferences ").append(blockVarReferences.size()).append(" blocks ");
          int sub = 0;
          for(Collection<ReferenceToSymbolVar> value : blockVarReferences.values()) {
             sub += value.size();

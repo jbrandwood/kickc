@@ -31,6 +31,9 @@ public class Compiler {
    /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
    private boolean enableZeroPageCoalasce = false;
 
+   /** Disable the entire register uplift. This will create significantly less optimized ASM since registers are not utilized. */
+   private boolean disableUplift = false;
+
    /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
     * Currently the optimization is flaky and results in NPE's and wrong values in some programs. */
    private boolean enableLoopHeadConstant = false;
@@ -40,6 +43,10 @@ public class Compiler {
 
    public Compiler() {
       this.program = new Program();
+   }
+
+   public void setDisableUplift(boolean disableUplift) {
+      this.disableUplift = disableUplift;
    }
 
    public void setWarnFragmentMissing(boolean warnFragmentMissing) {
@@ -125,9 +132,15 @@ public class Compiler {
 
          pass1GenerateSSA();
          pass2Optimize();
-
          pass2UnrollLoops();
          pass2InlineConstants();
+
+         //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
+         //getLog().append(program.getGraph().toString(program));
+
+         //getLog().append("SYMBOL TABLE PASS 2");
+         //getLog().append(program.getScope().toString(program, null));
+
          pass3Analysis();
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
@@ -307,6 +320,11 @@ public class Compiler {
    }
 
    private void pass2Optimize() {
+
+      if(getLog().isVerboseMemoryUsage()) {
+         getLog().append(program.getSizeInfo());
+      }
+
       List<PassStep> optimizations = getPass2Optimizations();
       pass2Execute(optimizations);
    }
@@ -354,6 +372,11 @@ public class Compiler {
    }
 
    private void pass2InlineConstants() {
+
+      if(getLog().isVerboseMemoryUsage()) {
+         getLog().append(program.getSizeInfo());
+      }
+
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<PassStep> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
@@ -421,6 +444,11 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+
+      if(getLog().isVerboseMemoryUsage()) {
+         getLog().append(program.getSizeInfo());
+      }
+
       new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
       new Pass3AssertNoNumbers(program).check();
@@ -471,6 +499,10 @@ public class Compiler {
 
    private void pass4RegisterAllocation() {
 
+      if(getLog().isVerboseMemoryUsage()) {
+         getLog().append(program.getSizeInfo());
+      }
+
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("DOMINATORS");
       }
@@ -509,30 +541,38 @@ public class Compiler {
       getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
-      // Find potential registers for each live range equivalence class - based on clobbering of fragments
-      getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
-      new Pass4RegisterUpliftPotentialInitialize(program).initPotentialRegisters();
-      new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
-      boolean change;
-      do {
-         change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
-      } while(change);
-      getLog().append(program.getRegisterPotentials().toString());
+      if(disableUplift) {
+         getLog().append("REGISTER UPLIFT DISABLED!");
+      } else {
+         // Find potential registers for each live range equivalence class - based on clobbering of fragments
+         getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
+         new Pass4RegisterUpliftPotentialInitialize(program).initPotentialRegisters();
+         new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
+         boolean change;
+         do {
+            change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
+         } while(change);
+         getLog().append(program.getRegisterPotentials().toString());
 
-      // Find register uplift scopes
-      getLog().append("REGISTER UPLIFT SCOPES");
-      getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
+         if(getLog().isVerboseMemoryUsage()) {
+            getLog().append(program.getSizeInfo());
+         }
 
-      // Attempt uplifting registers through a lot of combinations
-      //getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftCombinations(program).performUplift(upliftCombinations);
+         // Find register uplift scopes
+         getLog().append("REGISTER UPLIFT SCOPES");
+         getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
-      //getLog().setVerboseUplift(true);
-      //new Pass4RegisterUpliftStatic(program).performUplift();
-      //getLog().setVerboseUplift(false);
+         // Attempt uplifting registers through a lot of combinations
+         //getLog().setVerboseUplift(true);
+         new Pass4RegisterUpliftCombinations(program).performUplift(upliftCombinations);
 
-      // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
+         //getLog().setVerboseUplift(true);
+         //new Pass4RegisterUpliftStatic(program).performUplift();
+         //getLog().setVerboseUplift(false);
+
+         // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
+         new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
+      }
 
       // Register coalesce on assignment (saving bytes & cycles)
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();

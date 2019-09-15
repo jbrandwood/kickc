@@ -113,4 +113,13 @@ public class LiveRangeEquivalenceClassSet {
       }
    }
 
+   /**
+    * Get information about the size of the program
+    * @return Size information
+    */
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      sizeInfo.append("SIZE live range equivalence classes "+ getEquivalenceClasses().size()).append("\n");
+      return sizeInfo.toString();
+   }
 }

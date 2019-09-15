@@ -63,6 +63,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
+   @CommandLine.Option(names = {"-Onouplift"}, description = "Optimization Option. Disable the register uplift allocation phase. This will be much faster but produce significantly slower ASM.")
+   private boolean optimizeNoUplift = false;
+
    @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
 
@@ -86,6 +89,9 @@ public class KickC implements Callable<Void> {
 
    @CommandLine.Option(names = {"-voptimize"}, description = "Verbosity Option. Control Flow Graph Optimization.")
    private boolean verboseSSAOptimize = false;
+
+   @CommandLine.Option(names = {"-vmemory"}, description = "Verbosity Option. Compiler Data Structure Sizes.")
+   private boolean verboseMemory = false;
 
    @CommandLine.Option(names = {"-vnonoptimize"}, description = "Verbosity Option. Choices not to optimize.")
    private boolean verboseNonOptimization = false;
@@ -236,6 +242,10 @@ public class KickC implements Callable<Void> {
             asmFileName = fileBaseName + ".asm";
          }
 
+         if(optimizeNoUplift) {
+            compiler.setDisableUplift(true);
+         }
+         
          if(optimizeUpliftCombinations != null) {
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
          }
@@ -368,6 +378,10 @@ public class KickC implements Callable<Void> {
       }
       if(verboseSSAOptimize) {
          compiler.getLog().setVerboseSSAOptimize(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseMemory) {
+         compiler.getLog().setVerboseMemoryUsage(true);
          compiler.getLog().setSysOut(true);
       }
       if(verboseNonOptimization) {

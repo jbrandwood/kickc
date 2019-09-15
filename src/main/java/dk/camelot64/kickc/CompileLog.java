@@ -33,6 +33,11 @@ public class CompileLog {
    private boolean verboseSSAOptimize = false;
 
    /**
+    * Should Memory usage be verbose
+    */
+   private boolean verboseMemoryUsage = false;
+
+   /**
     * Should loop unrolling be verbose.
     */
    private boolean verboseLoopUnroll = false;
@@ -94,6 +99,19 @@ public class CompileLog {
 
    public StringBuilder getLog() {
       return log;
+   }
+
+   public CompileLog verboseMemoryUsage() {
+      setVerboseMemoryUsage(true);
+      return this;
+   }
+
+   public boolean isVerboseMemoryUsage() {
+      return verboseMemoryUsage;
+   }
+
+   public void setVerboseMemoryUsage(boolean verboseMemoryUsage) {
+      this.verboseMemoryUsage = verboseMemoryUsage;
    }
 
    public CompileLog verboseSsaSourceCode() {

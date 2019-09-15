@@ -498,4 +498,24 @@ public class Program {
    public String getLinkScriptBody() {
       return linkScriptBody;
    }
+
+   /**
+    * Get information about the size of the program
+    * @return Size information
+    */
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      sizeInfo.append(getScope().getSizeInfo());
+      sizeInfo.append(getGraph().getSizeInfo());
+      if(variableReferenceInfos!=null)
+         sizeInfo.append(variableReferenceInfos.getSizeInfo());
+      if(getLiveRangeEquivalenceClassSet()!=null)
+         sizeInfo.append(getLiveRangeEquivalenceClassSet().getSizeInfo());
+      if(liveRangeVariablesEffective!=null)
+         sizeInfo.append(liveRangeVariablesEffective.getSizeInfo());
+      if(getAsm()!=null)
+         sizeInfo.append(getAsm().getSizeInfo());
+      return sizeInfo.toString();
+   }
+
 }

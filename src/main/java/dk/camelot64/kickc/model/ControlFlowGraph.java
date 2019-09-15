@@ -271,4 +271,19 @@ public class ControlFlowGraph implements Serializable {
       }
       return scopeBlocks;
    }
+
+   /**
+    * Get information about the size of the program
+    * @return Size information
+    */
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      sizeInfo.append("SIZE blocks "+ getAllBlocks().size()).append("\n");
+      int numStmt = getAllBlocks().stream().mapToInt(block -> block.getStatements().size()).sum();
+      sizeInfo.append("SIZE statements "+ numStmt).append("\n");
+      int numPhiVars =  getAllBlocks().stream().mapToInt(value -> value.getStatements().stream().mapToInt(value1 -> (value1 instanceof StatementPhiBlock)?((StatementPhiBlock) value1).getPhiVariables().size():0).sum()).sum();
+      sizeInfo.append("SIZE phi variables "+ numPhiVars).append("\n");
+      return sizeInfo.toString();
+   }
+
 }

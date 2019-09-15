@@ -1,16 +1,17 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
 import dk.camelot64.kickc.passes.calcs.PassNCalcLiveRangesEffective;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Effective variable live ranges for all statements.
@@ -62,7 +63,7 @@ public class LiveRangeVariablesEffective {
     */
    public Collection<VariableRef> getAliveEffective(Statement statement) {
       Collection<VariableRef> effectiveAliveTotal = statementAliveEffective.get(statement.getIndex());
-      if(effectiveAliveTotal==null) {
+      if(effectiveAliveTotal == null) {
          effectiveAliveTotal = new LinkedHashSet<>();
          AliveCombinations aliveCombinations = getAliveCombinations(statement);
          for(CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
@@ -77,7 +78,7 @@ public class LiveRangeVariablesEffective {
    /** Cached alive combinations. */
    Map<Integer, AliveCombinations> statementAliveCombinations = new LinkedHashMap<>();
 
-   /** Special procedure reference used to represent the ROOT scope during live range analysis.*/
+   /** Special procedure reference used to represent the ROOT scope during live range analysis. */
    static final ProcedureRef ROOT_PROCEDURE = new ProcedureRef("");
 
    /**
@@ -93,7 +94,7 @@ public class LiveRangeVariablesEffective {
     */
    public AliveCombinations getAliveCombinations(Statement statement) {
       AliveCombinations stmtCombinations = this.statementAliveCombinations.get(statement.getIndex());
-      if(stmtCombinations==null) {
+      if(stmtCombinations == null) {
          Collection<VariableRef> aliveAtStmt = statementLiveVariables.get(statement.getIndex());
          CallPaths callPaths;
          Collection<VariableRef> referencedInProcedure;
@@ -145,6 +146,50 @@ public class LiveRangeVariablesEffective {
       }
       return stmtCombinations;
    }
+
+
+   public String getSizeInfo() {
+      StringBuilder sizeInfo = new StringBuilder();
+      if(this.procedureCallPaths != null) {
+         AtomicInteger numCallPaths = new AtomicInteger();
+         this.procedureCallPaths.values().forEach(callPaths -> numCallPaths.addAndGet(callPaths.getCallPaths().size()));
+         sizeInfo.append("SIZE procedureCallPaths ").append(numCallPaths.get()).append("\n");
+      }
+      if(this.statementAliveEffective != null) {
+         sizeInfo.append("SIZE statementAliveEffective ").append(statementAliveEffective.size()).append(" statements ");
+         int sub = 0;
+         for(Collection<VariableRef> variableRefs : statementAliveEffective.values()) {
+            sub += variableRefs.size();
+         }
+         sizeInfo.append(" ").append(sub).append(" varrefs").append("\n");
+      }
+      if(this.statementAliveCombinations != null) {
+         sizeInfo.append("SIZE statementAliveCombinations ").append(statementAliveCombinations.size()).append(" statements ");
+         int subVarRef = 0;
+         int subAlias = 0;
+         int subCallPath = 0;
+         int subEffectiveVarRef = 0;
+         for(AliveCombinations aliveCombinations : statementAliveCombinations.values()) {
+            subVarRef += aliveCombinations.aliveAtStmt.size();
+            subVarRef += aliveCombinations.referencedInProcedure.size();
+            if(aliveCombinations.callAliases!=null)
+               subAlias += aliveCombinations.callAliases.size();
+            if(aliveCombinations.callPaths.callPaths!=null)
+               subCallPath += aliveCombinations.callPaths.callPaths.size();
+            if(aliveCombinations.effectiveAliveAtStmt!=null)
+               for(Collection<VariableRef> varRefs : aliveCombinations.effectiveAliveAtStmt.values()) {
+                  subEffectiveVarRef += varRefs.size();
+               }
+         }
+         sizeInfo.append(" ").append(subVarRef).append(" varrefs ");
+         sizeInfo.append(" ").append(subAlias).append(" aliases ");
+         sizeInfo.append(" ").append(subCallPath).append(" callpaths ");
+         sizeInfo.append(" ").append(subEffectiveVarRef).append(" eff-varrefs ");
+         sizeInfo.append("\n");
+      }
+      return sizeInfo.toString();
+   }
+
 
    /**
     * All call-paths leading into a specific procedure.

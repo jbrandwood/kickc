@@ -35,6 +35,18 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /*
+   @Test
+   public void testProcedureCallingConventionStack1() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-1", log());
+   }
+
+   @Test
+   public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-0", log());
+   }
+   */
+
    @Test
    public void testStringPointerProblem() throws IOException, URISyntaxException {
       compileAndCompare("string-pointer-problem");

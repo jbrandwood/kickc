@@ -12,7 +12,6 @@ import java.util.List;
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
 
-
    /** The return type. {@link SymbolType#VOID} if the procedure does not return a value. */
    private final SymbolType returnType;
    /** The names of the parameters of the procedure. */
@@ -28,13 +27,53 @@ public class Procedure extends Scope {
    /** The code segment to put the procedure into. */
    private String codeSegment;
 
-   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment) {
+   /** The method for passing parameters and return value to the procedure. */
+   public enum CallingConvension {
+      /** Parameters and return value handled through call PHI-transitions. */
+      PHI_CALL("__phicall"),
+      /** Parameters and return value over the stack. */
+      STACK_CALL("__stackcall");
+
+      private String name;
+
+      CallingConvension(String name) {
+         this.name = name;
+      }
+
+      public String getName() {
+         return name;
+      }
+
+      /** Get a calling convention by name. */
+      public static CallingConvension getCallingConvension(String name) {
+         for(CallingConvension value : CallingConvension.values()) {
+            if(value.getName().equalsIgnoreCase(name)) {
+               return value;
+            }
+         }
+         return null;
+      }
+   }
+
+   /** The calling convention used for this procedure. */
+   private CallingConvension callingConvension;
+
+   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment, CallingConvension callingConvension) {
       super(name, parentScope, dataSegment);
       this.returnType = returnType;
       this.declaredInline = false;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
+      this.callingConvension = callingConvension;
+   }
+
+   public CallingConvension getCallingConvension() {
+      return callingConvension;
+   }
+
+   public void setCallingConvension(CallingConvension callingConvension) {
+      this.callingConvension = callingConvension;
    }
 
    public String getCodeSegment() {
@@ -164,6 +203,9 @@ public class Procedure extends Scope {
       StringBuilder res = new StringBuilder();
       if(declaredInline) {
          res.append("inline ");
+      }
+      if(!callingConvension.equals(CallingConvension.PHI_CALL)) {
+         res.append(getCallingConvension().getName()).append(" ");
       }
       if(interruptType != null) {
          res.append("interrupt(" + interruptType + ")");

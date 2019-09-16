@@ -306,6 +306,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDirectiveConst(KickCParser.DirectiveConstContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -409,6 +421,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

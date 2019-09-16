@@ -3,7 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -159,6 +158,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
+   /** The current calling convention for procedures. */
+   Procedure.CallingConvension currentCallingConvention = Procedure.CallingConvension.PHI_CALL;
+
+   @Override
+   public Object visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) {
+      Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.CALLINGCONVENTION().getText());
+      if(callingConvension!=null) {
+         currentCallingConvention = callingConvension;
+      }
+      return null;
+   }
+
    /** The current code segment - if null the default segment is used. */
    String currentCodeSegment = Scope.SEGMENT_CODE_DEFAULT;
 
@@ -183,7 +194,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
       String name = ctx.NAME().getText();
-      Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment);
+      Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureBegin(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       scopeStack.push(procedure);
@@ -668,24 +679,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             lValue.setDeclaredExport(true);
          } else if(directive instanceof DirectiveAlign) {
             if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-               lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
+               lValue.setDeclaredAlignment(((DirectiveAlign) directive).alignment);
             } else {
                throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program), source);
             }
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
-            if(directiveRegister.getName() != null) {
+            if(directiveRegister.name != null) {
                // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
-               Registers.Register register = Registers.getRegister(directiveRegister.getName());
+               Registers.Register register = Registers.getRegister(directiveRegister.name);
                if(register == null) {
-                  throw new CompileError("Error! Unknown register " + directiveRegister.getName(), source);
+                  throw new CompileError("Error! Unknown register " + directiveRegister.name, source);
                }
                lValue.setDeclaredRegister(register);
-            } else if(directiveRegister.getAddress() != null) {
+            } else if(directiveRegister.address != null) {
                // Allocate to specific address
                Long address = ((DirectiveRegister) directive).address;
                if(address>255) {
-                  throw new CompileError("Error! Register not on zeropage " + directiveRegister.getAddress(), source);
+                  throw new CompileError("Error! Register not on zeropage " + directiveRegister.address, source);
                }
                Registers.Register register = new Registers.RegisterZpDeclared(address.intValue());
                lValue.setDeclaredRegister(register);
@@ -720,10 +731,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       for(Directive directive : directives) {
          if(directive instanceof DirectiveInline) {
             procedure.setDeclaredInline(true);
+         } else if(directive instanceof DirectiveCallingConvention) {
+            procedure.setCallingConvension(((DirectiveCallingConvention) directive).callingConvension);
          } else if(directive instanceof DirectiveInterrupt) {
             procedure.setInterruptType(((DirectiveInterrupt) directive).interruptType);
          } else if(directive instanceof DirectiveReserveZp) {
-            procedure.setReservedZps(((DirectiveReserveZp) directive).getReservedZp());
+            procedure.setReservedZps(((DirectiveReserveZp) directive).reservedZp);
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -769,6 +782,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       Procedure.InterruptType type = Procedure.InterruptType.valueOf(interruptType);
       return new DirectiveInterrupt(type);
+   }
+
+   @Override
+   public Directive visitDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx) {
+      Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.getText());
+      return new DirectiveCallingConvention(callingConvension);
    }
 
    @Override
@@ -2136,6 +2155,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private static class DirectiveConst implements Directive {
    }
 
+   /** Function with specific declared calling convention. */
+   private static class DirectiveCallingConvention implements Directive {
+      Procedure.CallingConvension callingConvension;
+
+      public DirectiveCallingConvention(Procedure.CallingConvension callingConvension) {
+         this.callingConvension = callingConvension;
+      }
+
+   }
+
    /** Function declared inline. */
    private static class DirectiveInline implements Directive {
    }
@@ -2165,9 +2194,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.alignment = alignment;
       }
 
-      public int getAlignment() {
-         return alignment;
-      }
    }
 
    /** Variable register allocation. */
@@ -2185,13 +2211,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.address = address;
       }
 
-      public String getName() {
-         return name;
-      }
-
-      public Long getAddress() {
-         return address;
-      }
    }
 
    /** Reservation of zero-page addresses */
@@ -2200,10 +2219,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       public DirectiveReserveZp(List<Integer> reservedZp) {
          this.reservedZp = reservedZp;
-      }
-
-      public List<Integer> getReservedZp() {
-         return reservedZp;
       }
 
    }

@@ -91,6 +91,7 @@ globalDirective
     | (PRAGMA CODESEG) PAR_BEGIN NAME PAR_END #globalDirectiveCodeSeg
     | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
     | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
+    | (PRAGMA CALLING) PAR_BEGIN CALLINGCONVENTION PAR_END #globalDirectiveCalling
     ;
 
 directive
@@ -103,6 +104,7 @@ directive
     | VOLATILE #directiveVolatile
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
+    | CALLINGCONVENTION #directiveCallingConvention
     ;
 
 stmtSeq

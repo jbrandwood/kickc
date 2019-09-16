@@ -81,6 +81,8 @@ REGISTER: 'register' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
 INTERRUPT: 'interrupt' ;
+CALLING: 'calling';
+CALLINGCONVENTION: '__stackcall' | '__phicall' ;
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

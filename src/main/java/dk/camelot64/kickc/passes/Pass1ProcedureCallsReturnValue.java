@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Pass that modifies a control flow graph to call procedures by passing return value through registers
+ * Pass that modifies a control flow graph to call procedures by passing return value through registers for {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#PHI_CALL}
  */
 public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {
 
@@ -33,6 +33,13 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       // Generate return value assignment
       ProcedureRef procedureRef = origCall.getProcedure();
       Procedure procedure = program.getScope().getProcedure(procedureRef);
+      // If not PHI-call - skip
+      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+         StatementCall copyCall = super.visitCall(origCall);
+         copyCall.setProcedure(procedureRef);
+         return copyCall;
+      }
+
       String procedureName = origCall.getProcedureName();
       StatementCall copyCall = new StatementCall(null, procedureName, null, origCall.getSource(), origCall.getComments());
       copyCall.setProcedure(procedureRef);
@@ -106,6 +113,13 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
 
    @Override
    public StatementReturn visitReturn(StatementReturn orig) {
+      ControlFlowBlock currentBlock = getCurrentBlock();
+      String currentProcName = currentBlock.getLabel().getScopeNames();
+      Procedure procedure = program.getScope().getProcedure(currentProcName);
+      // If not PHI-call - skip
+      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()))
+         return super.visitReturn(orig);
+
       addStatementToCurrentBlock(new StatementReturn(null, orig.getSource(), orig.getComments()));
       return null;
    }

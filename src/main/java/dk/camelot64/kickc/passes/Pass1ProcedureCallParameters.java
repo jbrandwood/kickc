@@ -12,7 +12,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
-/** Pass that modifies a control flow graph to call procedures by passing parameters through registers */
+/** Pass that modifies a control flow graph to call {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#PHI_CALL} procedures by passing parameters through registers */
 public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
 
    private Program program;
@@ -49,10 +49,16 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
 
    @Override
    public StatementCall visitCall(StatementCall origCall) {
-      // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate parameter passing assignments
       ProcedureRef procedureRef = origCall.getProcedure();
       Procedure procedure = getScope().getProcedure(procedureRef);
+      // If not PHI-call - skip
+      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+         StatementCall copyCall = super.visitCall(origCall);
+         copyCall.setProcedure(procedureRef);
+         return copyCall;
+      }
+
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       if(parameterDecls.size()!=parameterValues.size()) {
@@ -120,6 +126,10 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       ControlFlowBlock currentBlock = getCurrentBlock();
       String currentProcName = currentBlock.getLabel().getScopeNames();
       Procedure procedure = program.getScope().getProcedure(currentProcName);
+      // If not PHI-call - skip
+      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()))
+         return super.visitReturn(orig);
+
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {

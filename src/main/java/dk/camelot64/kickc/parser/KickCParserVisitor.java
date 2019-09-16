@@ -169,6 +169,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code globalDirectiveCalling}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -231,6 +238,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveCallingConvention}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

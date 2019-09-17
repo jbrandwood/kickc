@@ -1,3 +1,7 @@
-cmp #{c1}
-bmi {la1}
+sec
+sbc #{c1}
 beq {la1}
+bvc !+
+eor #$80
+!:
+bmi {la1}

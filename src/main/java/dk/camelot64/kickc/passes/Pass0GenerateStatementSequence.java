@@ -213,7 +213,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(ctx.stmtSeq());
       }
       sequence.addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      if(returnVar != null) {
+      if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()) && returnVar != null) {
          sequence.addStatement(new StatementAssignment(returnVar.getRef(), returnVar.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       }
       VariableRef returnVarRef = null;

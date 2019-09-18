@@ -88,6 +88,8 @@ CONTROL FLOW GRAPH SSA
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@12
+
+(void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main::@3
   *((byte*) CIA1_PORT_A_DDR#0) ← (number) $ff
   *((byte*) CIA1_PORT_B_DDR#0) ← (number) 0
@@ -95,6 +97,8 @@ keyboard_init: scope:[keyboard_init]  from main::@3
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
   to:@return
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@12
   (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@12/(byte) keyboard_matrix_read::rowid#1 )
   *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2)
@@ -107,6 +111,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   (byte) keyboard_matrix_read::return#1 ← (byte) keyboard_matrix_read::return#4
   return 
   to:@return
+
+(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@23
   (byte) keyboard_key_pressed::key#1 ← phi( main::@23/(byte) keyboard_key_pressed::key#0 )
   (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
@@ -129,6 +135,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   (byte) keyboard_key_pressed::return#1 ← (byte) keyboard_key_pressed::return#3
   return 
   to:@return
+
+(byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@20
   (byte) keyboard_get_keycode::ch#1 ← phi( main::@20/(byte) keyboard_get_keycode::ch#0 )
   (byte) keyboard_get_keycode::return#0 ← *((byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#1)
@@ -138,6 +146,8 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
   (byte) keyboard_get_keycode::return#1 ← (byte) keyboard_get_keycode::return#3
   return 
   to:@return
+
+(void()) main()
 main: scope:[main]  from @12
   (byte*) main::sc#0 ← ((byte*)) (number) $400
   to:main::@1
@@ -1141,6 +1151,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @1
   [3] phi()
+
+(void()) main()
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
@@ -1229,6 +1241,8 @@ main::@2: scope:[main]  from main::@1
   [47] *((byte*) main::sc#2) ← (byte) ' '
   [48] (byte*) main::sc#1 ← ++ (byte*) main::sc#2
   to:main::@1
+
+(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@14
   [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7
   [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3
@@ -1243,6 +1257,8 @@ keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_presse
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [56] return 
   to:@return
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@5
   [57] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@5/(byte) keyboard_matrix_read::rowid#1 )
   [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2)
@@ -1251,12 +1267,16 @@ keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed ma
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [60] return 
   to:@return
+
+(byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@12
   [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   [62] return 
   to:@return
+
+(void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main::@3
   [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff
   [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0

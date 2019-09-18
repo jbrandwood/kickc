@@ -49,6 +49,8 @@ CONTROL FLOW GRAPH SSA
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@12
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
   *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#1)
@@ -61,6 +63,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   (byte) keyboard_matrix_read::return#1 ← (byte) keyboard_matrix_read::return#3
   return 
   to:@return
+
+(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from menu::@2 menu::@4 menu::@5 pressed::@2
   (byte) keyboard_key_pressed::key#4 ← phi( menu::@2/(byte) keyboard_key_pressed::key#0 menu::@4/(byte) keyboard_key_pressed::key#1 menu::@5/(byte) keyboard_key_pressed::key#2 pressed::@2/(byte) keyboard_key_pressed::key#3 )
   (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (number) 7
@@ -83,6 +87,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   (byte) keyboard_key_pressed::return#1 ← (byte) keyboard_key_pressed::return#6
   return 
   to:@return
+
+(void()) main()
 main: scope:[main]  from @14
   *((byte*) BORDERCOL#0) ← (byte) GREEN#0
   to:main::@1
@@ -100,6 +106,8 @@ main::@return: scope:[main]  from main::@1
 @12: scope:[]  from @4
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@14
+
+(void()) menu()
 menu: scope:[menu]  from main::@2
   to:menu::@1
 menu::@1: scope:[menu]  from menu menu::@6
@@ -160,6 +168,8 @@ menu::@13: scope:[menu]  from menu::@19
   *((byte*) BORDERCOL#0) ← (byte) GREEN#0
   asm { cli  }
   to:menu::@return
+
+(void()) pressed()
 pressed: scope:[pressed]  from menu::@9
   *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
   to:pressed::@1
@@ -511,6 +521,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @1
   [3] phi()
+
+(void()) main()
 main: scope:[main]  from @1
   [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0
   to:main::@1
@@ -518,6 +530,8 @@ main::@1: scope:[main]  from main main::@1
   [5] phi()
   [6] call menu 
   to:main::@1
+
+(void()) menu()
 menu: scope:[menu]  from main::@1
   [7] phi()
   to:menu::@1
@@ -566,6 +580,8 @@ menu::@7: scope:[menu]  from menu::@10
 menu::@4: scope:[menu]  from menu::@10
   [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0)
   to:menu::@1
+
+(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from menu::@1 menu::@2 menu::@3 pressed::@1
   [31] (byte) keyboard_key_pressed::key#4 ← phi( menu::@1/(const byte) KEY_C#0 menu::@2/(const byte) KEY_I#0 menu::@3/(const byte) KEY_E#0 pressed::@1/(const byte) KEY_SPACE#0 )
   [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7
@@ -581,6 +597,8 @@ keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_presse
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [39] return 
   to:@return
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0)
   [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0)
@@ -588,6 +606,8 @@ keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [42] return 
   to:@return
+
+(void()) pressed()
 pressed: scope:[pressed]  from menu::@5
   [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
   to:pressed::@1

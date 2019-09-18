@@ -58,6 +58,8 @@ CONTROL FLOW GRAPH SSA
   (byte) BLACK#0 ← (number) 0
   (byte) WHITE#0 ← (number) 1
   to:@8
+
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   (byte) memset::c#5 ← phi( bitmap_clear/(byte) memset::c#0 bitmap_clear::@1/(byte) memset::c#1 )
   (void*) memset::str#4 ← phi( bitmap_clear/(void*) memset::str#0 bitmap_clear::@1/(void*) memset::str#1 )
@@ -107,6 +109,8 @@ memset::@return: scope:[memset]  from memset::@1
   (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
   to:@14
+
+(void()) bitmap_init((byte*) bitmap_init::gfx , (byte*) bitmap_init::screen)
 bitmap_init: scope:[bitmap_init]  from main
   (byte*) bitmap_init::screen#1 ← phi( main/(byte*) bitmap_init::screen#0 )
   (byte*) bitmap_init::gfx#1 ← phi( main/(byte*) bitmap_init::gfx#0 )
@@ -191,6 +195,8 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@6
   (byte*) bitmap_screen#2 ← (byte*) bitmap_screen#6
   return 
   to:@return
+
+(void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 bitmap_clear: scope:[bitmap_clear]  from main::@12
   (byte*) bitmap_gfx#12 ← phi( main::@12/(byte*) bitmap_gfx#3 )
   (byte*) bitmap_screen#7 ← phi( main::@12/(byte*) bitmap_screen#3 )
@@ -218,6 +224,8 @@ bitmap_clear::@2: scope:[bitmap_clear]  from bitmap_clear::@1
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@2
   return 
   to:@return
+
+(void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 bitmap_plot: scope:[bitmap_plot]  from main::@2
   (word) bitmap_plot::x#1 ← phi( main::@2/(word) bitmap_plot::x#0 )
   (byte) bitmap_plot::y#1 ← phi( main::@2/(byte) bitmap_plot::y#0 )
@@ -238,6 +246,8 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte[$100]) plots_per_frame#0 ← { fill( $100, 0) }
   to:@15
+
+(void()) main()
 main: scope:[main]  from @17
   (byte) frame_cnt#21 ← phi( @17/(byte) frame_cnt#9 )
   (byte*) bitmap_screen#12 ← phi( @17/(byte*) bitmap_screen#14 )
@@ -405,6 +415,8 @@ main::@return: scope:[main]  from main::@1
   (byte*) bitmap_gfx#20 ← phi( @14/(byte*) bitmap_gfx#25 )
   (byte) frame_cnt#0 ← (number) 1
   to:@17
+
+(void()) init_irq()
 init_irq: scope:[init_irq]  from main::@11
   asm { sei  }
   *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
@@ -420,6 +432,8 @@ init_irq: scope:[init_irq]  from main::@11
 init_irq::@return: scope:[init_irq]  from init_irq
   return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   (byte) frame_cnt#4 ← phi( @17/(byte) frame_cnt#9 )
   *((byte*) BGCOL#0) ← (byte) WHITE#0
@@ -1464,6 +1478,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @2
   [4] phi()
+
+(void()) main()
 main: scope:[main]  from @2
   [5] phi()
   [6] call bitmap_init 
@@ -1518,6 +1534,8 @@ main::@4: scope:[main]  from main::@12 main::@6
   [26] (byte) main::vy#8 ← phi( main::@12/(byte) main::vy#2 main::@6/(byte) main::vy#1 )
   [27] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0)
   to:main::@1
+
+(void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 bitmap_plot: scope:[bitmap_plot]  from main::@2
   [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0)
   [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8
@@ -1528,6 +1546,8 @@ bitmap_plot: scope:[bitmap_plot]  from main::@2
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [33] return 
   to:@return
+
+(void()) init_irq()
 init_irq: scope:[init_irq]  from main::@7
   asm { sei  }
   [35] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0
@@ -1542,6 +1562,8 @@ init_irq: scope:[init_irq]  from main::@7
 init_irq::@return: scope:[init_irq]  from init_irq
   [43] return 
   to:@return
+
+(void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 bitmap_clear: scope:[bitmap_clear]  from main::@8
   [44] phi()
   [45] call memset 
@@ -1553,6 +1575,8 @@ bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@1
   [48] return 
   to:@return
+
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   [49] (byte) memset::c#4 ← phi( bitmap_clear/(const byte) bitmap_clear::col#0 bitmap_clear::@1/(byte) 0 )
   [49] (void*) memset::str#3 ← phi( bitmap_clear/(void*)(const byte*) SCREEN#0 bitmap_clear::@1/(void*)(const byte*) BITMAP#0 )
@@ -1574,6 +1598,8 @@ memset::@3: scope:[memset]  from memset::@2
   [56] *((byte*) memset::dst#2) ← (byte) memset::c#4
   [57] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@2
+
+(void()) bitmap_init((byte*) bitmap_init::gfx , (byte*) bitmap_init::screen)
 bitmap_init: scope:[bitmap_init]  from main
   [58] phi()
   to:bitmap_init::@1
@@ -1614,6 +1640,8 @@ bitmap_init::@4: scope:[bitmap_init]  from bitmap_init::@3 bitmap_init::@5
 bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@4
   [79] return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   [80] *((const byte*) BGCOL#0) ← (const byte) WHITE#0
   [81] if((byte) 0==(byte) frame_cnt#0) goto irq::@1

@@ -92,6 +92,8 @@ CONTROL FLOW GRAPH SSA
 	}
  }}
   to:@5
+
+(void()) sprites_init()
 sprites_init: scope:[sprites_init]  from main::@4
   *((byte*) SPRITES_ENABLE#0) ← (number) $f
   *((byte*) SPRITES_MC#0) ← (number) 0
@@ -153,6 +155,8 @@ toSpritePtr1_@return: scope:[]  from toSpritePtr1
   (byte) irq_sprite_ptr#0 ← (number~) $6
   (byte) irq_cnt#0 ← (number) 0
   to:@7
+
+(void()) sprites_irq_init()
 sprites_irq_init: scope:[sprites_irq_init]  from main::@2
   asm { sei  }
   *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
@@ -170,6 +174,8 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@2
 sprites_irq_init::@return: scope:[sprites_irq_init]  from sprites_irq_init
   return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 sprites_irq: scope:[sprites_irq]  from
   (byte) irq_cnt#15 ← phi( @9/(byte) irq_cnt#17 )
   (byte) render_screen_showing#3 ← phi( @9/(byte) render_screen_showing#4 )
@@ -332,6 +338,8 @@ sprites_irq::@return: scope:[sprites_irq]  from sprites_irq::@6
  }}
   (byte) sin_idx#0 ← (number) 0
   to:@9
+
+(void()) main()
 main: scope:[main]  from @9
   (byte) sin_idx#32 ← phi( @9/(byte) sin_idx#16 )
   (byte*) main::vicSelectGfxBank1_gfx#0 ← (byte*) PLAYFIELD_SCREEN_1#0
@@ -464,6 +472,8 @@ main::@return: scope:[main]  from main::@8
   (byte) sin_idx#2 ← (byte) sin_idx#7
   return 
   to:@return
+
+(void()) loop()
 loop: scope:[loop]  from main::@7
   (byte) sin_idx#18 ← phi( main::@7/(byte) sin_idx#12 )
   to:loop::@1
@@ -1726,6 +1736,8 @@ toSpritePtr1: scope:[]  from @2
   to:@end
 @end: scope:[]  from @4
   [11] phi()
+
+(void()) main()
 main: scope:[main]  from @4
   [12] phi()
   to:main::vicSelectGfxBank1
@@ -1779,6 +1791,8 @@ main::@6: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@6
   [36] return 
   to:@return
+
+(void()) loop()
 loop: scope:[loop]  from main::@6
   [37] phi()
   to:loop::@1
@@ -1803,6 +1817,8 @@ loop::@4: scope:[loop]  from loop::@3 loop::@4
 loop::@5: scope:[loop]  from loop::@4
   [47] (byte) sin_idx#3 ← ++ (byte) sin_idx#10
   to:loop::@1
+
+(void()) sprites_irq_init()
 sprites_irq_init: scope:[sprites_irq_init]  from main::@2
   asm { sei  }
   [49] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
@@ -1819,6 +1835,8 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@2
 sprites_irq_init::@return: scope:[sprites_irq_init]  from sprites_irq_init
   [59] return 
   to:@return
+
+(void()) sprites_init()
 sprites_init: scope:[sprites_init]  from main::@3
   [60] *((const byte*) SPRITES_ENABLE#0) ← (byte) $f
   [61] *((const byte*) SPRITES_MC#0) ← (byte) 0
@@ -1838,6 +1856,8 @@ sprites_init::@1: scope:[sprites_init]  from sprites_init sprites_init::@1
 sprites_init::@return: scope:[sprites_init]  from sprites_init::@1
   [71] return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 sprites_irq: scope:[sprites_irq]  from
   asm { cld  }
   [73] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0

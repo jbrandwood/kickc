@@ -217,6 +217,8 @@ CONTROL FLOW GRAPH SSA
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@8
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_event_scan::@8
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_event_scan::@8/(byte) keyboard_matrix_read::rowid#0 )
   *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#1)
@@ -239,6 +241,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   (byte) KEY_MODIFIER_COMMODORE#0 ← (number) 8
   (byte[8]) keyboard_scan_values#0 ← { fill( 8, 0) }
   to:@11
+
+(void()) keyboard_event_scan()
 keyboard_event_scan: scope:[keyboard_event_scan]  from main::@35
   (byte) keyboard_events_size#53 ← phi( main::@35/(byte) keyboard_events_size#26 )
   (byte) keyboard_event_scan::keycode#0 ← (number) 0
@@ -449,6 +453,8 @@ keyboard_event_scan::@return: scope:[keyboard_event_scan]  from keyboard_event_s
   (byte) keyboard_modifiers#6 ← (byte) keyboard_modifiers#14
   return 
   to:@return
+
+(byte()) keyboard_event_pressed((byte) keyboard_event_pressed::keycode)
 keyboard_event_pressed: scope:[keyboard_event_pressed]  from keyboard_event_scan::@1 keyboard_event_scan::@2 keyboard_event_scan::@23 keyboard_event_scan::@3 play_move_down::@1
   (byte) keyboard_event_pressed::keycode#5 ← phi( keyboard_event_scan::@1/(byte) keyboard_event_pressed::keycode#1 keyboard_event_scan::@2/(byte) keyboard_event_pressed::keycode#2 keyboard_event_scan::@23/(byte) keyboard_event_pressed::keycode#0 keyboard_event_scan::@3/(byte) keyboard_event_pressed::keycode#3 play_move_down::@1/(byte) keyboard_event_pressed::keycode#4 )
   (byte~) keyboard_event_pressed::$0 ← (byte) keyboard_event_pressed::keycode#5 >> (number) 3
@@ -462,6 +468,8 @@ keyboard_event_pressed::@return: scope:[keyboard_event_pressed]  from keyboard_e
   (byte) keyboard_event_pressed::return#5 ← (byte) keyboard_event_pressed::return#11
   return 
   to:@return
+
+(byte()) keyboard_event_get()
 keyboard_event_get: scope:[keyboard_event_get]  from main::@36
   (byte) keyboard_events_size#14 ← phi( main::@36/(byte) keyboard_events_size#6 )
   (bool~) keyboard_event_get::$0 ← (byte) keyboard_events_size#14 == (number) 0
@@ -491,6 +499,8 @@ keyboard_event_get::@return: scope:[keyboard_event_get]  from keyboard_event_get
   (byte) SID_CONTROL_NOISE#0 ← (number) $80
   (byte*) SID_VOICE3_OSC#0 ← ((byte*)) (number) $d41b
   to:@13
+
+(void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from main
   *((word*) SID_VOICE3_FREQ#0) ← (number) $ffff
   *((byte*) SID_VOICE3_CONTROL#0) ← (byte) SID_CONTROL_NOISE#0
@@ -546,6 +556,8 @@ sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   (byte*[PLAYFIELD_LINES#0]) screen_lines_1#0 ← { fill( PLAYFIELD_LINES#0, 0) }
   (byte*[PLAYFIELD_LINES#0]) screen_lines_2#0 ← { fill( PLAYFIELD_LINES#0, 0) }
   to:@22
+
+(void()) render_init()
 render_init: scope:[render_init]  from main::@25
   (byte*) render_init::vicSelectGfxBank1_gfx#0 ← (byte*) PLAYFIELD_CHARSET#0
   to:render_init::vicSelectGfxBank1
@@ -623,6 +635,8 @@ render_init::@return: scope:[render_init]  from render_init::@2
   (byte) render_screen_render#2 ← (byte) render_screen_render#9
   return 
   to:@return
+
+(void()) render_show()
 render_show: scope:[render_show]  from main::@6
   (byte) level#84 ← phi( main::@6/(byte) level#90 )
   (byte) render_screen_show#10 ← phi( main::@6/(byte) render_screen_show#18 )
@@ -714,6 +728,8 @@ render_show::@return: scope:[render_show]  from render_show::@2
   (byte) render_screen_showing#2 ← (byte) render_screen_showing#6
   return 
   to:@return
+
+(void()) render_screen_swap()
 render_screen_swap: scope:[render_screen_swap]  from main::@42
   (byte) render_screen_show#12 ← phi( main::@42/(byte) render_screen_show#21 )
   (byte) render_screen_render#10 ← phi( main::@42/(byte) render_screen_render#20 )
@@ -727,6 +743,8 @@ render_screen_swap::@return: scope:[render_screen_swap]  from render_screen_swap
   (byte) render_screen_show#4 ← (byte) render_screen_show#13
   return 
   to:@return
+
+(void()) render_score()
 render_score: scope:[render_score]  from main::@41
   (byte) level_bcd#91 ← phi( main::@41/(byte) level_bcd#76 )
   (word) lines_bcd#67 ← phi( main::@41/(word) lines_bcd#66 )
@@ -826,6 +844,8 @@ render_score::@10: scope:[render_score]  from render_score::@9
 render_score::@return: scope:[render_score]  from render_score::@10
   return 
   to:@return
+
+(void()) render_bcd((byte*) render_bcd::screen , (word) render_bcd::offset , (byte) render_bcd::bcd , (byte) render_bcd::only_low)
 render_bcd: scope:[render_bcd]  from render_score::@2 render_score::@5 render_score::@6 render_score::@7 render_score::@8 render_score::@9
   (byte) render_bcd::bcd#8 ← phi( render_score::@2/(byte) render_bcd::bcd#0 render_score::@5/(byte) render_bcd::bcd#1 render_score::@6/(byte) render_bcd::bcd#2 render_score::@7/(byte) render_bcd::bcd#3 render_score::@8/(byte) render_bcd::bcd#4 render_score::@9/(byte) render_bcd::bcd#5 )
   (byte) render_bcd::only_low#6 ← phi( render_score::@2/(byte) render_bcd::only_low#0 render_score::@5/(byte) render_bcd::only_low#1 render_score::@6/(byte) render_bcd::only_low#2 render_score::@7/(byte) render_bcd::only_low#3 render_score::@8/(byte) render_bcd::only_low#4 render_score::@9/(byte) render_bcd::only_low#5 )
@@ -857,6 +877,8 @@ render_bcd::@2: scope:[render_bcd]  from render_bcd
 render_bcd::@return: scope:[render_bcd]  from render_bcd::@1
   return 
   to:@return
+
+(void()) render_screen_original((byte*) render_screen_original::screen)
 render_screen_original: scope:[render_screen_original]  from render_init::@3 render_init::@4
   (byte*) render_screen_original::screen#9 ← phi( render_init::@3/(byte*) render_screen_original::screen#0 render_init::@4/(byte*) render_screen_original::screen#1 )
   (byte) render_screen_original::SPACE#0 ← (number) 0
@@ -935,6 +957,8 @@ render_screen_original::@7: scope:[render_screen_original]  from render_screen_o
 render_screen_original::@return: scope:[render_screen_original]  from render_screen_original::@7
   return 
   to:@return
+
+(void()) render_playfield()
 render_playfield: scope:[render_playfield]  from main::@23 main::@31
   (byte) render_screen_render#22 ← phi( main::@23/(byte) render_screen_render#30 main::@31/(byte) render_screen_render#31 )
   (number~) render_playfield::$0 ← (byte) PLAYFIELD_COLS#0 * (number) 2
@@ -976,6 +1000,8 @@ render_playfield::@3: scope:[render_playfield]  from render_playfield::@2
 render_playfield::@return: scope:[render_playfield]  from render_playfield::@3
   return 
   to:@return
+
+(void()) render_moving()
 render_moving: scope:[render_moving]  from main::@32 main::@39
   (byte) current_piece_char#68 ← phi( main::@32/(byte) current_piece_char#80 main::@39/(byte) current_piece_char#84 )
   (byte*) current_piece_gfx#64 ← phi( main::@32/(byte*) current_piece_gfx#81 main::@39/(byte*) current_piece_gfx#82 )
@@ -1083,6 +1109,8 @@ render_moving::@6: scope:[render_moving]  from render_moving::@4
 render_moving::@return: scope:[render_moving]  from render_moving::@3
   return 
   to:@return
+
+(void()) render_next()
 render_next: scope:[render_next]  from main::@33 main::@40
   (byte) next_piece_idx#36 ← phi( main::@33/(byte) next_piece_idx#47 main::@40/(byte) next_piece_idx#48 )
   (byte) render_screen_render#15 ← phi( main::@33/(byte) render_screen_render#25 main::@40/(byte) render_screen_render#26 )
@@ -1198,6 +1226,8 @@ render_next::@return: scope:[render_next]  from render_next::@11
 	}
  }}
   to:@23
+
+(void()) sprites_init()
 sprites_init: scope:[sprites_init]  from main::@26
   *((byte*) SPRITES_ENABLE#0) ← (number) $f
   *((byte*) SPRITES_MC#0) ← (number) 0
@@ -1311,6 +1341,8 @@ toSpritePtr1_@return: scope:[]  from toSpritePtr1
   (byte) irq_sprite_ptr#0 ← (number~) $7
   (byte) irq_cnt#0 ← (number) 0
   to:@25
+
+(void()) sprites_irq_init()
 sprites_irq_init: scope:[sprites_irq_init]  from main::@27
   asm { sei  }
   *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
@@ -1328,6 +1360,8 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@27
 sprites_irq_init::@return: scope:[sprites_irq_init]  from sprites_irq_init
   return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 sprites_irq: scope:[sprites_irq]  from
   (byte) irq_cnt#15 ← phi( @37/(byte) irq_cnt#17 )
   (byte) render_screen_showing#15 ← phi( @37/(byte) render_screen_showing#14 )
@@ -1525,6 +1559,8 @@ sprites_irq::@return: scope:[sprites_irq]  from sprites_irq::@6
   (dword[]) SCORE_BASE_BCD#0 ← { (number) 0, (number) $40, (number) $100, (number) $300, (number) $1200 }
   (dword[5]) score_add_bcd#0 ← { fill( 5, 0) }
   to:@30
+
+(void()) play_init()
 play_init: scope:[play_init]  from main::@28
   (byte) level#44 ← phi( main::@28/(byte) level#58 )
   (byte) play_init::idx#0 ← (number) 0
@@ -1567,6 +1603,8 @@ play_init::@return: scope:[play_init]  from play_init::@3
   (byte) current_movedown_slow#2 ← (byte) current_movedown_slow#16
   return 
   to:@return
+
+(byte()) play_movement((byte) play_movement::key_event)
 play_movement: scope:[play_movement]  from main::@11
   (byte) next_piece_idx#26 ← phi( main::@11/(byte) next_piece_idx#33 )
   (byte) game_over#23 ← phi( main::@11/(byte) game_over#32 )
@@ -1746,6 +1784,8 @@ play_movement::@return: scope:[play_movement]  from play_movement::@2 play_movem
   (byte) next_piece_idx#2 ← (byte) next_piece_idx#14
   return 
   to:@return
+
+(byte()) play_move_down((byte) play_move_down::key_event)
 play_move_down: scope:[play_move_down]  from play_movement
   (byte) next_piece_idx#73 ← phi( play_movement/(byte) next_piece_idx#26 )
   (byte) game_over#79 ← phi( play_movement/(byte) game_over#23 )
@@ -2144,6 +2184,8 @@ play_move_down::@return: scope:[play_move_down]  from play_move_down::@15 play_m
   (byte) next_piece_idx#4 ← (byte) next_piece_idx#16
   return 
   to:@return
+
+(byte()) play_move_leftright((byte) play_move_leftright::key_event)
 play_move_leftright: scope:[play_move_leftright]  from play_movement::@1
   (byte*) current_piece#44 ← phi( play_movement::@1/(byte*) current_piece#55 )
   (byte) current_orientation#39 ← phi( play_movement::@1/(byte) current_orientation#50 )
@@ -2224,6 +2266,8 @@ play_move_leftright::@9: scope:[play_move_leftright]  from play_move_leftright::
   (byte) current_xpos#8 ← -- (byte) current_xpos#27
   (byte) play_move_leftright::return#4 ← (number) 1
   to:play_move_leftright::@return
+
+(byte()) play_move_rotate((byte) play_move_rotate::key_event)
 play_move_rotate: scope:[play_move_rotate]  from play_movement::@6
   (byte*) current_piece_gfx#70 ← phi( play_movement::@6/(byte*) current_piece_gfx#32 )
   (byte*) current_piece#60 ← phi( play_movement::@6/(byte*) current_piece#40 )
@@ -2346,6 +2390,8 @@ play_move_rotate::@11: scope:[play_move_rotate]  from play_move_rotate::@14
   (byte) COLLISION_LEFT#0 ← (number) 4
   (byte) COLLISION_RIGHT#0 ← (number) 8
   to:@37
+
+(byte()) play_collision((byte) play_collision::xpos , (byte) play_collision::ypos , (byte) play_collision::orientation)
 play_collision: scope:[play_collision]  from play_move_down::@9 play_move_leftright::@1 play_move_leftright::@5 play_move_rotate::@4 play_spawn_current
   (byte) play_collision::xpos#6 ← phi( play_move_down::@9/(byte) play_collision::xpos#0 play_move_leftright::@1/(byte) play_collision::xpos#1 play_move_leftright::@5/(byte) play_collision::xpos#2 play_move_rotate::@4/(byte) play_collision::xpos#3 play_spawn_current/(byte) play_collision::xpos#4 )
   (byte) play_collision::ypos#5 ← phi( play_move_down::@9/(byte) play_collision::ypos#0 play_move_leftright::@1/(byte) play_collision::ypos#1 play_move_leftright::@5/(byte) play_collision::ypos#2 play_move_rotate::@4/(byte) play_collision::ypos#3 play_spawn_current/(byte) play_collision::ypos#4 )
@@ -2480,6 +2526,8 @@ play_collision::@17: scope:[play_collision]  from play_collision::@3
 play_collision::@18: scope:[play_collision]  from play_collision::@17
   (byte) play_collision::return#9 ← (byte) COLLISION_NONE#0
   to:play_collision::@return
+
+(void()) play_lock_current()
 play_lock_current: scope:[play_lock_current]  from play_move_down::@10
   (byte) current_piece_char#59 ← phi( play_move_down::@10/(byte) current_piece_char#75 )
   (byte*) current_piece_gfx#54 ← phi( play_move_down::@10/(byte*) current_piece_gfx#73 )
@@ -2558,6 +2606,8 @@ play_lock_current::@5: scope:[play_lock_current]  from play_lock_current::@3
 play_lock_current::@return: scope:[play_lock_current]  from play_lock_current::@5
   return 
   to:@return
+
+(void()) play_spawn_current()
 play_spawn_current: scope:[play_spawn_current]  from main::@29 main::@30 play_move_down::@21
   (byte) game_over#74 ← phi( main::@29/(byte) game_over#30 main::@30/(byte) game_over#7 play_move_down::@21/(byte) game_over#26 )
   (byte) next_piece_idx#17 ← phi( main::@29/(byte) next_piece_idx#32 main::@30/(byte) next_piece_idx#7 play_move_down::@21/(byte) next_piece_idx#29 )
@@ -2685,6 +2735,8 @@ play_spawn_current::@return: scope:[play_spawn_current]  from play_spawn_current
   (byte) next_piece_idx#6 ← (byte) next_piece_idx#18
   return 
   to:@return
+
+(byte()) play_remove_lines()
 play_remove_lines: scope:[play_remove_lines]  from play_move_down::@19
   (byte~) play_remove_lines::$0 ← (byte) PLAYFIELD_LINES#0 * (byte) PLAYFIELD_COLS#0
   (number~) play_remove_lines::$1 ← (byte~) play_remove_lines::$0 - (number) 1
@@ -2790,6 +2842,8 @@ play_remove_lines::@return: scope:[play_remove_lines]  from play_remove_lines::@
   (byte) play_remove_lines::return#2 ← (byte) play_remove_lines::return#4
   return 
   to:@return
+
+(void()) play_update_score((byte) play_update_score::removed)
 play_update_score: scope:[play_update_score]  from play_move_down::@20
   (byte) level_bcd#34 ← phi( play_move_down::@20/(byte) level_bcd#30 )
   (byte) current_movedown_slow#40 ← phi( play_move_down::@20/(byte) current_movedown_slow#36 )
@@ -2855,6 +2909,8 @@ play_update_score::@return: scope:[play_update_score]  from play_update_score pl
   (byte) level_bcd#6 ← (byte) level_bcd#19
   return 
   to:@return
+
+(void()) play_increase_level()
 play_increase_level: scope:[play_increase_level]  from play_update_score::@3
   (byte) level_bcd#48 ← phi( play_update_score::@3/(byte) level_bcd#33 )
   (byte) level#20 ← phi( play_update_score::@3/(byte) level#35 )
@@ -2921,6 +2977,8 @@ play_increase_level::@return: scope:[play_increase_level]  from play_increase_le
   (byte) level_bcd#9 ← (byte) level_bcd#22
   return 
   to:@return
+
+(void()) main()
 main: scope:[main]  from @37
   (byte) level_bcd#100 ← phi( @37/(byte) level_bcd#41 )
   (dword) score_bcd#83 ← phi( @37/(dword) score_bcd#32 )
@@ -11329,6 +11387,8 @@ toSpritePtr1: scope:[]  from @3
   to:@end
 @end: scope:[]  from @4
   [14] phi()
+
+(void()) main()
 main: scope:[main]  from @4
   [15] phi()
   [16] call sid_rnd_init 
@@ -11455,6 +11515,8 @@ main::@25: scope:[main]  from main::@24
   [70] phi()
   [71] call render_screen_swap 
   to:main::@1
+
+(void()) render_screen_swap()
 render_screen_swap: scope:[render_screen_swap]  from main::@25
   [72] (byte) render_screen_render#11 ← (byte) render_screen_render#18 ^ (byte) $20
   [73] (byte) render_screen_show#13 ← (byte) render_screen_show#16 ^ (byte) $20
@@ -11462,6 +11524,8 @@ render_screen_swap: scope:[render_screen_swap]  from main::@25
 render_screen_swap::@return: scope:[render_screen_swap]  from render_screen_swap
   [74] return 
   to:@return
+
+(void()) render_score()
 render_score: scope:[render_score]  from main::@24
   [75] if((byte) render_screen_render#18==(byte) 0) goto render_score::@1
   to:render_score::@2
@@ -11502,6 +11566,8 @@ render_score::@7: scope:[render_score]  from render_score::@6
 render_score::@return: scope:[render_score]  from render_score::@7
   [96] return 
   to:@return
+
+(void()) render_bcd((byte*) render_bcd::screen , (word) render_bcd::offset , (byte) render_bcd::bcd , (byte) render_bcd::only_low)
 render_bcd: scope:[render_bcd]  from render_score::@2 render_score::@3 render_score::@4 render_score::@5 render_score::@6 render_score::@7
   [97] (byte) render_bcd::bcd#6 ← phi( render_score::@2/(byte) render_bcd::bcd#0 render_score::@3/(byte) render_bcd::bcd#1 render_score::@4/(byte) render_bcd::bcd#2 render_score::@5/(byte) render_bcd::bcd#3 render_score::@6/(byte) render_bcd::bcd#4 render_score::@7/(byte) render_bcd::bcd#5 )
   [97] (byte) render_bcd::only_low#6 ← phi( render_score::@2/(byte) 0 render_score::@3/(byte) 0 render_score::@4/(byte) 0 render_score::@5/(byte) 1 render_score::@6/(byte) 0 render_score::@7/(byte) 0 )
@@ -11525,6 +11591,8 @@ render_bcd::@1: scope:[render_bcd]  from render_bcd render_bcd::@2
 render_bcd::@return: scope:[render_bcd]  from render_bcd::@1
   [108] return 
   to:@return
+
+(void()) render_next()
 render_next: scope:[render_next]  from main::@16 main::@23
   [109] (byte) next_piece_idx#12 ← phi( main::@16/(byte~) next_piece_idx#77 main::@23/(byte~) next_piece_idx#78 )
   [109] (byte) render_screen_render#15 ← phi( main::@16/(byte) $20 main::@23/(byte~) render_screen_render#66 )
@@ -11571,6 +11639,8 @@ render_next::@return: scope:[render_next]  from render_next::@8
 render_next::@5: scope:[render_next]  from render_next::@4
   [129] *((byte*) render_next::screen_next_area#5) ← (byte) render_next::next_piece_char#0
   to:render_next::@6
+
+(void()) render_moving()
 render_moving: scope:[render_moving]  from main::@15 main::@22
   [130] (byte) current_piece_char#68 ← phi( main::@15/(byte~) current_piece_char#100 main::@22/(byte~) current_piece_char#101 )
   [130] (byte*) current_piece_gfx#64 ← phi( main::@15/(byte*~) current_piece_gfx#112 main::@22/(byte*~) current_piece_gfx#113 )
@@ -11619,6 +11689,8 @@ render_moving::@5: scope:[render_moving]  from render_moving::@4 render_moving::
   [150] (byte) render_moving::c#1 ← ++ (byte) render_moving::c#2
   [151] if((byte) render_moving::c#1!=(byte) 4) goto render_moving::@4
   to:render_moving::@3
+
+(void()) render_playfield()
 render_playfield: scope:[render_playfield]  from main::@14 main::@7
   [152] (byte) render_screen_render#22 ← phi( main::@7/(byte~) render_screen_render#64 main::@14/(byte) $20 )
   to:render_playfield::@1
@@ -11646,6 +11718,8 @@ render_playfield::@3: scope:[render_playfield]  from render_playfield::@2
 render_playfield::@return: scope:[render_playfield]  from render_playfield::@3
   [165] return 
   to:@return
+
+(byte()) play_movement((byte) play_movement::key_event)
 play_movement: scope:[play_movement]  from main::@4
   [166] (byte) play_move_down::key_event#0 ← (byte) play_movement::key_event#0
   [167] call play_move_down 
@@ -11678,6 +11752,8 @@ play_movement::@4: scope:[play_movement]  from play_movement::@3
   [181] (byte~) play_movement::$4 ← (byte) play_move_rotate::return#0
   [182] (byte) play_movement::return#0 ← (byte) play_movement::render#2 + (byte~) play_movement::$4
   to:play_movement::@return
+
+(byte()) play_move_rotate((byte) play_move_rotate::key_event)
 play_move_rotate: scope:[play_move_rotate]  from play_movement::@3
   [183] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z#0) goto play_move_rotate::@1
   to:play_move_rotate::@4
@@ -11715,6 +11791,8 @@ play_move_rotate::@1: scope:[play_move_rotate]  from play_move_rotate
   [200] (byte~) play_move_rotate::$7 ← (byte) current_orientation#20 - (byte) $10
   [201] (byte) play_move_rotate::orientation#1 ← (byte~) play_move_rotate::$7 & (byte) $3f
   to:play_move_rotate::@3
+
+(byte()) play_collision((byte) play_collision::xpos , (byte) play_collision::ypos , (byte) play_collision::orientation)
 play_collision: scope:[play_collision]  from play_move_down::@8 play_move_leftright::@1 play_move_leftright::@3 play_move_rotate::@3 play_spawn_current
   [202] (byte) play_collision::xpos#6 ← phi( play_move_down::@8/(byte) play_collision::xpos#0 play_move_leftright::@1/(byte) play_collision::xpos#1 play_move_leftright::@3/(byte) play_collision::xpos#2 play_move_rotate::@3/(byte) play_collision::xpos#3 play_spawn_current/(byte) play_collision::xpos#4 )
   [202] (byte) play_collision::yp#0 ← phi( play_move_down::@8/(byte) play_collision::ypos#0 play_move_leftright::@1/(byte) play_collision::ypos#1 play_move_leftright::@3/(byte) play_collision::ypos#2 play_move_rotate::@3/(byte) play_collision::ypos#3 play_spawn_current/(byte) play_collision::ypos#4 )
@@ -11770,6 +11848,8 @@ play_collision::@9: scope:[play_collision]  from play_collision::@8
 play_collision::@10: scope:[play_collision]  from play_collision::@3
   [225] (byte~) play_collision::i#12 ← (byte) play_collision::i#1
   to:play_collision::@2
+
+(byte()) play_move_leftright((byte) play_move_leftright::key_event)
 play_move_leftright: scope:[play_move_leftright]  from play_movement::@1
   [226] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1
   to:play_move_leftright::@2
@@ -11811,6 +11891,8 @@ play_move_leftright::@6: scope:[play_move_leftright]  from play_move_leftright::
 play_move_leftright::@5: scope:[play_move_leftright]  from play_move_leftright::@6
   [247] (byte) current_xpos#8 ← -- (byte) current_xpos#22
   to:play_move_leftright::@return
+
+(byte()) play_move_down((byte) play_move_down::key_event)
 play_move_down: scope:[play_move_down]  from play_movement
   [248] (byte) current_movedown_counter#12 ← ++ (byte) current_movedown_counter#16
   [249] if((byte) play_move_down::key_event#0!=(const byte) KEY_SPACE#0) goto play_move_down::@1
@@ -11914,6 +11996,8 @@ play_move_down::@return: scope:[play_move_down]  from play_move_down::@11 play_m
 play_move_down::@10: scope:[play_move_down]  from play_move_down::@13
   [286] (byte) current_ypos#3 ← ++ (byte) current_ypos#11
   to:play_move_down::@11
+
+(void()) play_spawn_current()
 play_spawn_current: scope:[play_spawn_current]  from main::@12 main::@13 play_move_down::@16
   [287] (byte) game_over#65 ← phi( main::@12/(byte) 0 main::@13/(byte) game_over#52 play_move_down::@16/(byte) game_over#10 )
   [287] (byte) next_piece_idx#17 ← phi( main::@12/(byte) 0 main::@13/(byte) play_spawn_current::piece_idx#2 play_move_down::@16/(byte) next_piece_idx#10 )
@@ -11951,6 +12035,8 @@ play_spawn_current::sid_rnd1: scope:[play_spawn_current]  from play_spawn_curren
 play_spawn_current::@3: scope:[play_spawn_current]  from play_spawn_current::sid_rnd1
   [306] (byte) play_spawn_current::piece_idx#1 ← (byte) play_spawn_current::sid_rnd1_return#0 & (byte) 7
   to:play_spawn_current::@2
+
+(void()) play_update_score((byte) play_update_score::removed)
 play_update_score: scope:[play_update_score]  from play_move_down::@15
   [307] if((byte) play_update_score::removed#0==(byte) 0) goto play_update_score::@return
   to:play_update_score::@1
@@ -11979,6 +12065,8 @@ play_update_score::@return: scope:[play_update_score]  from play_update_score pl
   [321] (word) lines_bcd#17 ← phi( play_update_score/(word) lines_bcd#19 play_update_score::@1/(word) lines_bcd#29 play_update_score::@2/(word) lines_bcd#29 )
   [322] return 
   to:@return
+
+(void()) play_increase_level()
 play_increase_level: scope:[play_increase_level]  from play_update_score::@2
   [323] (byte) level#21 ← ++ (byte) level#10
   [324] if((byte) level#21>=(byte) $1d+(byte) 1) goto play_increase_level::@1
@@ -12012,6 +12100,8 @@ play_increase_level::@6: scope:[play_increase_level]  from play_increase_level::
 play_increase_level::@return: scope:[play_increase_level]  from play_increase_level::@6
   [339] return 
   to:@return
+
+(byte()) play_remove_lines()
 play_remove_lines: scope:[play_remove_lines]  from play_move_down::@14
   [340] phi()
   to:play_remove_lines::@1
@@ -12064,6 +12154,8 @@ play_remove_lines::@8: scope:[play_remove_lines]  from play_remove_lines::@7
   [361] *((const byte[PLAYFIELD_LINES#0*PLAYFIELD_COLS#0]) playfield#0 + (byte) play_remove_lines::w#6) ← (byte) 0
   [362] (byte) play_remove_lines::w#3 ← -- (byte) play_remove_lines::w#6
   to:play_remove_lines::@7
+
+(void()) play_lock_current()
 play_lock_current: scope:[play_lock_current]  from play_move_down::@9
   [363] (byte) play_lock_current::yp#0 ← (byte) current_ypos#11
   to:play_lock_current::@1
@@ -12104,6 +12196,8 @@ play_lock_current::@6: scope:[play_lock_current]  from play_lock_current::@5
 play_lock_current::@7: scope:[play_lock_current]  from play_lock_current::@3
   [380] (byte~) play_lock_current::i#9 ← (byte) play_lock_current::i#1
   to:play_lock_current::@2
+
+(byte()) keyboard_event_pressed((byte) keyboard_event_pressed::keycode)
 keyboard_event_pressed: scope:[keyboard_event_pressed]  from keyboard_event_scan::@1 keyboard_event_scan::@17 keyboard_event_scan::@2 keyboard_event_scan::@3 play_move_down::@1
   [381] (byte) keyboard_event_pressed::keycode#5 ← phi( keyboard_event_scan::@1/(const byte) KEY_RSHIFT#0 keyboard_event_scan::@2/(const byte) KEY_CTRL#0 keyboard_event_scan::@17/(const byte) KEY_LSHIFT#0 keyboard_event_scan::@3/(const byte) KEY_COMMODORE#0 play_move_down::@1/(const byte) KEY_SPACE#0 )
   [382] (byte~) keyboard_event_pressed::$0 ← (byte) keyboard_event_pressed::keycode#5 >> (byte) 3
@@ -12114,6 +12208,8 @@ keyboard_event_pressed: scope:[keyboard_event_pressed]  from keyboard_event_scan
 keyboard_event_pressed::@return: scope:[keyboard_event_pressed]  from keyboard_event_pressed
   [386] return 
   to:@return
+
+(byte()) keyboard_event_get()
 keyboard_event_get: scope:[keyboard_event_get]  from main::@19
   [387] if((byte) keyboard_events_size#13==(byte) 0) goto keyboard_event_get::@return
   to:keyboard_event_get::@1
@@ -12126,6 +12222,8 @@ keyboard_event_get::@return: scope:[keyboard_event_get]  from keyboard_event_get
   [390] (byte) keyboard_event_get::return#2 ← phi( keyboard_event_get/(byte) $ff keyboard_event_get::@1/(byte) keyboard_event_get::return#1 )
   [391] return 
   to:@return
+
+(void()) keyboard_event_scan()
 keyboard_event_scan: scope:[keyboard_event_scan]  from main::@18
   [392] phi()
   to:keyboard_event_scan::@7
@@ -12234,6 +12332,8 @@ keyboard_event_scan::@11: scope:[keyboard_event_scan]  from keyboard_event_scan:
   [443] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte~) keyboard_event_scan::$23
   [444] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#10
   to:keyboard_event_scan::@10
+
+(byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_event_scan::@7
   [445] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0)
   [446] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0)
@@ -12241,6 +12341,8 @@ keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_event_scan::@7
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [447] return 
   to:@return
+
+(void()) render_show()
 render_show: scope:[render_show]  from main::@3
   [448] if((byte) render_screen_show#16==(byte) 0) goto render_show::toD0181
   to:render_show::toD0182
@@ -12260,6 +12362,8 @@ render_show::@return: scope:[render_show]  from render_show::@1
 render_show::toD0181: scope:[render_show]  from render_show
   [456] phi()
   to:render_show::@1
+
+(void()) play_init()
 play_init: scope:[play_init]  from main::@11
   [457] phi()
   to:play_init::@1
@@ -12289,6 +12393,8 @@ play_init::@3: scope:[play_init]  from play_init::@2 play_init::@3
 play_init::@return: scope:[play_init]  from play_init::@3
   [473] return 
   to:@return
+
+(void()) sprites_irq_init()
 sprites_irq_init: scope:[sprites_irq_init]  from main::@10
   asm { sei  }
   [475] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
@@ -12305,6 +12411,8 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@10
 sprites_irq_init::@return: scope:[sprites_irq_init]  from sprites_irq_init
   [485] return 
   to:@return
+
+(void()) sprites_init()
 sprites_init: scope:[sprites_init]  from main::@9
   [486] *((const byte*) SPRITES_ENABLE#0) ← (byte) $f
   [487] *((const byte*) SPRITES_MC#0) ← (byte) 0
@@ -12324,6 +12432,8 @@ sprites_init::@1: scope:[sprites_init]  from sprites_init sprites_init::@1
 sprites_init::@return: scope:[sprites_init]  from sprites_init::@1
   [497] return 
   to:@return
+
+(void()) render_init()
 render_init: scope:[render_init]  from main::@8
   [498] phi()
   to:render_init::vicSelectGfxBank1
@@ -12364,6 +12474,8 @@ render_init::@1: scope:[render_init]  from render_init::@1 render_init::@3
 render_init::@return: scope:[render_init]  from render_init::@1
   [519] return 
   to:@return
+
+(void()) render_screen_original((byte*) render_screen_original::screen)
 render_screen_original: scope:[render_screen_original]  from render_init::@2 render_init::@3
   [520] (byte*) render_screen_original::screen#9 ← phi( render_init::@2/(const byte*) PLAYFIELD_SCREEN_1#0 render_init::@3/(const byte*) PLAYFIELD_SCREEN_2#0 )
   to:render_screen_original::@1
@@ -12418,6 +12530,8 @@ render_screen_original::@5: scope:[render_screen_original]  from render_screen_o
 render_screen_original::@return: scope:[render_screen_original]  from render_screen_original::@5
   [547] return 
   to:@return
+
+(void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from main
   [548] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff
   [549] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0
@@ -12425,6 +12539,8 @@ sid_rnd_init: scope:[sid_rnd_init]  from main
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   [550] return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 sprites_irq: scope:[sprites_irq]  from
   asm { cld  }
   [552] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0

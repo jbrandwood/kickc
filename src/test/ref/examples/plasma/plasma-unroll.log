@@ -96,6 +96,8 @@ CONTROL FLOW GRAPH SSA
   (byte) BLACK#0 ← (number) 0
   (byte) BLUE#0 ← (number) 6
   to:@16
+
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
   (byte) memset::c#4 ← phi( print_cls/(byte) memset::c#0 )
   (void*) memset::str#3 ← phi( print_cls/(void*) memset::str#0 )
@@ -143,6 +145,8 @@ memset::@return: scope:[memset]  from memset::@1
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
   to:@40
+
+(void()) print_char((byte) print_char::ch)
 print_char: scope:[print_char]  from makecharset::@18
   (byte*) print_char_cursor#11 ← phi( makecharset::@18/(byte*) print_char_cursor#20 )
   (byte) print_char::ch#1 ← phi( makecharset::@18/(byte) print_char::ch#0 )
@@ -154,6 +158,8 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#2 ← (byte*) print_char_cursor#12
   return 
   to:@return
+
+(void()) print_cls()
 print_cls: scope:[print_cls]  from makecharset::@23
   (byte*) print_screen#1 ← phi( makecharset::@23/(byte*) print_screen#3 )
   (void*) memset::str#0 ← (void*)(byte*) print_screen#1
@@ -183,6 +189,8 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte) SID_CONTROL_NOISE#0 ← (number) $80
   (byte*) SID_VOICE3_OSC#0 ← ((byte*)) (number) $d41b
   to:@42
+
+(void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from makecharset
   *((word*) SID_VOICE3_FREQ#0) ← (number) $ffff
   *((byte*) SID_VOICE3_CONTROL#0) ← (byte) SID_CONTROL_NOISE#0
@@ -190,6 +198,8 @@ sid_rnd_init: scope:[sid_rnd_init]  from makecharset
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   return 
   to:@return
+
+(byte()) sid_rnd()
 sid_rnd: scope:[sid_rnd]  from makecharset::@8
   (byte) sid_rnd::return#0 ← *((byte*) SID_VOICE3_OSC#0)
   to:sid_rnd::@return
@@ -208,6 +218,8 @@ sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
  }}
   to:@43
+
+(void()) main()
 main: scope:[main]  from @45
   (byte) c2B#31 ← phi( @45/(byte) c2B#17 )
   (byte) c2A#31 ← phi( @45/(byte) c2A#17 )
@@ -355,6 +367,8 @@ main::@return: scope:[main]  from main::@3
   (byte) c2A#2 ← (number) 0
   (byte) c2B#2 ← (number) 0
   to:@45
+
+(void()) doplasma((byte*) doplasma::screen)
 doplasma: scope:[doplasma]  from main::@4
   (byte*) doplasma::screen#11 ← phi( main::@4/(byte*) doplasma::screen#0 )
   (byte) c2B#19 ← phi( main::@4/(byte) c2B#12 )
@@ -516,6 +530,8 @@ doplasma::@return: scope:[doplasma]  from doplasma::@13
   (byte) c2B#4 ← (byte) c2B#10
   return 
   to:@return
+
+(void()) makecharset((byte*) makecharset::charset)
 makecharset: scope:[makecharset]  from main::@2
   (byte*) makecharset::charset#16 ← phi( main::@2/(byte*) makecharset::charset#0 )
   (byte*) print_char_cursor#29 ← phi( main::@2/(byte*) print_char_cursor#21 )
@@ -2743,6 +2759,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @1
   [3] phi()
+
+(void()) main()
 main: scope:[main]  from @1
   asm { sei  }
   [5] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0
@@ -2774,6 +2792,8 @@ main::@4: scope:[main]  from main::@3
   [16] phi()
   [17] call doplasma 
   to:main::@3
+
+(void()) doplasma((byte*) doplasma::screen)
 doplasma: scope:[doplasma]  from main::@4
   [18] (byte) doplasma::c1a#0 ← (byte) c1A#1
   [19] (byte) doplasma::c1b#0 ← (byte) c1B#1
@@ -2930,6 +2950,8 @@ doplasma::@2: scope:[doplasma]  from doplasma::@1
   [95] (byte) doplasma::i#1 ← ++ (byte) doplasma::i#2
   [96] (byte~) doplasma::yprev#4 ← (byte) doplasma::yval#0
   to:doplasma::@1
+
+(void()) makecharset((byte*) makecharset::charset)
 makecharset: scope:[makecharset]  from main::@2
   [97] phi()
   [98] call sid_rnd_init 
@@ -2995,12 +3017,16 @@ makecharset::@8: scope:[makecharset]  from makecharset::@13 makecharset::@9
   [128] (byte) makecharset::b#6 ← phi( makecharset::@9/(byte) makecharset::b#1 makecharset::@13/(byte) makecharset::b#2 )
   [129] (byte) makecharset::ii#1 ← ++ (byte) makecharset::ii#2
   to:makecharset::@5
+
+(byte()) sid_rnd()
 sid_rnd: scope:[sid_rnd]  from makecharset::@6
   [130] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0)
   to:sid_rnd::@return
 sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   [131] return 
   to:@return
+
+(void()) print_char((byte) print_char::ch)
 print_char: scope:[print_char]  from makecharset::@10
   [132] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0
   [133] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#18
@@ -3008,6 +3034,8 @@ print_char: scope:[print_char]  from makecharset::@10
 print_char::@return: scope:[print_char]  from print_char
   [134] return 
   to:@return
+
+(void()) print_cls()
 print_cls: scope:[print_cls]  from makecharset::@12
   [135] phi()
   [136] call memset 
@@ -3015,6 +3043,8 @@ print_cls: scope:[print_cls]  from makecharset::@12
 print_cls::@return: scope:[print_cls]  from print_cls
   [137] return 
   to:@return
+
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
   [138] phi()
   to:memset::@1
@@ -3029,6 +3059,8 @@ memset::@2: scope:[memset]  from memset::@1
   [142] *((byte*) memset::dst#2) ← (const byte) memset::c#0
   [143] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@1
+
+(void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from makecharset
   [144] *((const word*) SID_VOICE3_FREQ#0) ← (word) $ffff
   [145] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0

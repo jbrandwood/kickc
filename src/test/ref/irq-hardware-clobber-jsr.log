@@ -30,6 +30,8 @@ CONTROL FLOW GRAPH SSA
   (byte) BLACK#0 ← (number) 0
   (byte) WHITE#0 ← (number) 1
   to:@7
+
+(void()) main()
 main: scope:[main]  from @7
   asm { sei  }
   *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
@@ -51,6 +53,8 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+
+interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   call do_irq 
   to:irq::@1
@@ -59,6 +63,8 @@ irq::@1: scope:[irq]  from irq
 irq::@return: scope:[irq]  from irq::@1
   return 
   to:@return
+
+(void()) do_irq()
 do_irq: scope:[do_irq]  from irq
   *((byte*) BGCOL#0) ← (byte) WHITE#0
   *((byte*) BGCOL#0) ← (byte) BLACK#0
@@ -236,6 +242,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @1
   [3] phi()
+
+(void()) main()
 main: scope:[main]  from @1
   asm { sei  }
   [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0
@@ -250,6 +258,8 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0)
   to:main::@1
+
+interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   [14] phi()
   [15] call do_irq 
@@ -257,6 +267,8 @@ irq: scope:[irq]  from
 irq::@return: scope:[irq]  from irq
   [16] return 
   to:@return
+
+(void()) do_irq()
 do_irq: scope:[do_irq]  from irq
   [17] *((const byte*) BGCOL#0) ← (const byte) WHITE#0
   [18] *((const byte*) BGCOL#0) ← (const byte) BLACK#0

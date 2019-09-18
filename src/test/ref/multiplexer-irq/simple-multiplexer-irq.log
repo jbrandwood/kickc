@@ -73,6 +73,8 @@ CONTROL FLOW GRAPH SSA
   (byte) plex_sprite_idx#0 ← (number) 0
   (byte) plex_sprite_msb#0 ← (number) 1
   to:@9
+
+(void()) plexInit((byte*) plexInit::screen)
 plexInit: scope:[plexInit]  from init
   (byte*) plexInit::screen#1 ← phi( init/(byte*) plexInit::screen#0 )
   (byte*) plexInit::plexSetScreen1_screen#0 ← (byte*) plexInit::screen#1
@@ -100,6 +102,8 @@ plexInit::@return: scope:[plexInit]  from plexInit::@1
   (byte*) PLEX_SCREEN_PTR#2 ← (byte*) PLEX_SCREEN_PTR#8
   return 
   to:@return
+
+(void()) plexSort()
 plexSort: scope:[plexSort]  from loop::@11
   (number~) plexSort::$1 ← (byte) PLEX_COUNT#0 - (number) 2
   (byte) plexSort::m#0 ← (byte) 0
@@ -183,6 +187,8 @@ plexSort::@return: scope:[plexSort]  from plexSort::plexFreePrepare1_@2
   (byte) plex_free_next#1 ← (byte) plex_free_next#12
   return 
   to:@return
+
+(void()) plexShowSprite()
 plexShowSprite: scope:[plexShowSprite]  from plex_irq::@3
   (byte) plex_sprite_msb#44 ← phi( plex_irq::@3/(byte) plex_sprite_msb#28 )
   (byte*) PLEX_SCREEN_PTR#23 ← phi( plex_irq::@3/(byte*) PLEX_SCREEN_PTR#26 )
@@ -300,6 +306,8 @@ plexShowSprite::@return: scope:[plexShowSprite]  from plexShowSprite::@2 plexSho
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
  }}
   to:@14
+
+(void()) main()
 main: scope:[main]  from @16
   (bool) framedone#18 ← phi( @16/(bool) framedone#17 )
   (byte) plex_free_next#34 ← phi( @16/(byte) plex_free_next#31 )
@@ -348,6 +356,8 @@ main::@return: scope:[main]  from main::@2
   (bool) framedone#1 ← (bool) framedone#9
   return 
   to:@return
+
+(void()) init()
 init: scope:[init]  from main
   (byte*) PLEX_SCREEN_PTR#19 ← phi( main/(byte*) PLEX_SCREEN_PTR#17 )
   (byte~) init::$0 ← (byte) VIC_DEN#0 | (byte) VIC_RSEL#0
@@ -413,6 +423,8 @@ init::@return: scope:[init]  from init::@4
   (byte*) PLEX_SCREEN_PTR#25 ← phi( @12/(byte*) PLEX_SCREEN_PTR#28 )
   (bool) framedone#2 ← true
   to:@16
+
+interrupt(KERNEL_MIN)(void()) plex_irq()
 plex_irq: scope:[plex_irq]  from
   (bool) framedone#27 ← phi( @16/(bool) framedone#17 )
   (byte*) PLEX_SCREEN_PTR#31 ← phi( @16/(byte*) PLEX_SCREEN_PTR#21 )
@@ -527,6 +539,8 @@ plex_irq::@return: scope:[plex_irq]  from plex_irq::@2
   (bool) framedone#4 ← (bool) framedone#10
   return 
   to:@return
+
+(void()) loop()
 loop: scope:[loop]  from main::@1
   (byte) plex_free_next#39 ← phi( main::@1/(byte) plex_free_next#26 )
   (byte) plex_sprite_msb#40 ← phi( main::@1/(byte) plex_sprite_msb#27 )
@@ -1941,6 +1955,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @5
   [9] phi()
+
+(void()) main()
 main: scope:[main]  from @5
   asm { sei  }
   [11] call init 
@@ -1952,6 +1968,8 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   [14] return 
   to:@return
+
+(void()) loop()
 loop: scope:[loop]  from main::@1
   [15] phi()
   to:loop::@1
@@ -1989,6 +2007,8 @@ loop::@6: scope:[loop]  from loop::@5
   [30] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f
   [31] *((const byte*) RASTER#0) ← (byte) 0
   to:loop::@1
+
+(void()) plexSort()
 plexSort: scope:[plexSort]  from loop::@5
   [32] phi()
   to:plexSort::@1
@@ -2038,6 +2058,8 @@ plexSort::plexFreePrepare1_@2: scope:[plexSort]  from plexSort::plexFreePrepare1
 plexSort::@return: scope:[plexSort]  from plexSort::plexFreePrepare1_@2
   [56] return 
   to:@return
+
+(void()) init()
 init: scope:[init]  from main
   [57] *((const byte*) D011#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3
   [58] call plexInit 
@@ -2072,6 +2094,8 @@ init::@4: scope:[init]  from init::@3
 init::@return: scope:[init]  from init::@4
   [77] return 
   to:@return
+
+(void()) plexInit((byte*) plexInit::screen)
 plexInit: scope:[plexInit]  from init
   [78] phi()
   to:plexInit::plexSetScreen1
@@ -2087,6 +2111,8 @@ plexInit::@1: scope:[plexInit]  from plexInit::@1 plexInit::plexSetScreen1
 plexInit::@return: scope:[plexInit]  from plexInit::@1
   [84] return 
   to:@return
+
+interrupt(KERNEL_MIN)(void()) plex_irq()
 plex_irq: scope:[plex_irq]  from
   [85] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0
   to:plex_irq::@3
@@ -2124,6 +2150,8 @@ plex_irq::@return: scope:[plex_irq]  from plex_irq::@2
 plex_irq::@1: scope:[plex_irq]  from plex_irq::@4
   [98] *((const byte*) RASTER#0) ← (byte) plex_irq::plexFreeNextYpos1_return#0
   to:plex_irq::@2
+
+(void()) plexShowSprite()
 plexShowSprite: scope:[plexShowSprite]  from plex_irq::@3
   [99] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#25 << (byte) 1
   [100] (byte) plexShowSprite::plexFreeAdd1_ypos#0 ← *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#27))

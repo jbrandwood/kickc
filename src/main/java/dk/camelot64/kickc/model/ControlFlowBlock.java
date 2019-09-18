@@ -163,14 +163,11 @@ public class ControlFlowBlock implements Serializable {
       ControlFlowGraph graph = program.getGraph();
       StringBuffer out = new StringBuffer();
 
-      // TODO: Print signature for procedures (requires updating all tests data)
-      /*
       if(isProcedureEntry(program)) {
          Procedure procedure = (Procedure) program.getScope().getScope(scope);
          out.append("\n");
          out.append(procedure.toString(program)+"\n");
       }
-      */
 
       out.append(label.getFullName() + ":");
       out.append(" scope:[" + this.scope.getFullName() + "] ");

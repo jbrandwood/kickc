@@ -1,0 +1,515 @@
+Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) debug::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @2
+  (signed byte) main::dy#0 ← (signed byte) -$80
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (signed byte) main::dy#2 ← phi( main/(signed byte) main::dy#0 main::@3/(signed byte) main::dy#1 )
+  (signed byte) debug::dy#0 ← (signed byte) main::dy#2
+  call debug 
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (signed byte) main::dy#3 ← phi( main::@1/(signed byte) main::dy#2 )
+  (signed byte) main::dy#1 ← (signed byte) main::dy#3 + rangenext(-$80,$7f)
+  (bool~) main::$1 ← (signed byte) main::dy#1 != rangelast(-$80,$7f)
+  if((bool~) main::$1) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@2
+debug: scope:[debug]  from main::@1
+  (signed byte) debug::dy#1 ← phi( main::@1/(signed byte) debug::dy#0 )
+  (byte~) debug::$0 ← ((byte)) (signed byte) debug::dy#1
+  (byte) debug::i#0 ← (byte~) debug::$0
+  (bool~) debug::$1 ← (signed byte) debug::dy#1 > (number) -$78
+  (bool~) debug::$2 ← ! (bool~) debug::$1
+  if((bool~) debug::$2) goto debug::@return
+  to:debug::@2
+debug::@2: scope:[debug]  from debug
+  (byte) debug::i#1 ← phi( debug/(byte) debug::i#0 )
+  *((byte*) SCREEN#0 + (byte) debug::i#1) ← (number) $a
+  to:debug::@return
+debug::@return: scope:[debug]  from debug debug::@2
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) debug((signed byte) debug::dy)
+(byte~) debug::$0
+(bool~) debug::$1
+(bool~) debug::$2
+(label) debug::@2
+(label) debug::@return
+(signed byte) debug::dy
+(signed byte) debug::dy#0
+(signed byte) debug::dy#1
+(byte) debug::i
+(byte) debug::i#0
+(byte) debug::i#1
+(void()) main()
+(bool~) main::$1
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(signed byte) main::dy
+(signed byte) main::dy#0
+(signed byte) main::dy#1
+(signed byte) main::dy#2
+(signed byte) main::dy#3
+
+Adding number conversion cast (snumber) -$78 in (bool~) debug::$1 ← (signed byte) debug::dy#1 > (number) -$78
+Adding number conversion cast (unumber) $a in *((byte*) SCREEN#0 + (byte) debug::i#1) ← (number) $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte~) debug::$0 ← (byte)(signed byte) debug::dy#1
+Inlining cast *((byte*) SCREEN#0 + (byte) debug::i#1) ← (unumber)(number) $a
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast -$78
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized signed number type (signed byte) -$78
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [14] (bool~) debug::$2 ← (signed byte) debug::dy#1 <= (signed byte) -$78 from [13] (bool~) debug::$1 ← (signed byte) debug::dy#1 > (signed byte) -$78
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias (signed byte) main::dy#2 = (signed byte) main::dy#3 
+Alias (byte) debug::i#0 = (byte~) debug::$0 (byte) debug::i#1 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (signed byte) debug::dy#1 (signed byte) debug::dy#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$1 [7] if((signed byte) main::dy#1!=rangelast(-$80,$7f)) goto main::@1
+Simple Condition (bool~) debug::$2 [15] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const signed byte) main::dy#0 = -$80
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [5] main::dy#1 ← ++ main::dy#2 to ++
+Resolved ranged comparison value [7] if(main::dy#1!=rangelast(-$80,$7f)) goto main::@1 to (number) -$80
+Adding number conversion cast (snumber) -$80 in if((signed byte) main::dy#1!=(number) -$80) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast -$80
+Successful SSA optimization PassNCastSimplification
+Finalized signed number type (signed byte) -$80
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining Noop Cast [6] (byte) debug::i#0 ← (byte)(signed byte) debug::dy#0 keeping debug::dy#0
+Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings (const signed byte) main::dy#0
+Constant inlined main::dy#0 = (signed byte) -$80
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to debug:9 
+
+Created 1 initial phi equivalence classes
+Coalesced [13] main::dy#4 ← main::dy#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@4
+Renumbering block @2 to @1
+Renumbering block main::@3 to main::@2
+Renumbering block debug::@2 to debug::@1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (signed byte) main::dy#2 ← phi( main/(signed byte) -$80 main::@2/(signed byte) main::dy#1 )
+  [6] (signed byte) debug::dy#0 ← (signed byte) main::dy#2
+  [7] call debug 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [8] (signed byte) main::dy#1 ← ++ (signed byte) main::dy#2
+  [9] if((signed byte) main::dy#1!=(signed byte) -$80) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [10] return 
+  to:@return
+debug: scope:[debug]  from main::@1
+  [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
+  to:debug::@1
+debug::@1: scope:[debug]  from debug
+  [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a
+  to:debug::@return
+debug::@return: scope:[debug]  from debug debug::@1
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) debug((signed byte) debug::dy)
+(signed byte) debug::dy
+(signed byte) debug::dy#0 6.5
+(byte) debug::i
+(void()) main()
+(signed byte) main::dy
+(signed byte) main::dy#1 16.5
+(signed byte) main::dy#2 11.0
+
+Initial phi equivalence classes
+[ main::dy#2 main::dy#1 ]
+Added variable debug::dy#0 to zero page equivalence class [ debug::dy#0 ]
+Complete equivalence classes
+[ main::dy#2 main::dy#1 ]
+[ debug::dy#0 ]
+Allocated zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ]
+Allocated zp ZP_BYTE:3 [ debug::dy#0 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Illustrates problem with > comparison of signed chars.
+// Reported by Danny Spijksma
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label dy = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (signed byte) main::dy#2 = (signed byte) -$80 [phi:main->main::@1#0] -- vbsz1=vbsc1 
+    lda #-$80
+    sta.z dy
+    jmp b1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (signed byte) main::dy#2 = (signed byte) main::dy#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (signed byte) debug::dy#0 ← (signed byte) main::dy#2 -- vbsz1=vbsz2 
+    lda.z dy
+    sta.z debug.dy
+    // [7] call debug 
+    jsr debug
+    jmp b2
+    // main::@2
+  b2:
+    // [8] (signed byte) main::dy#1 ← ++ (signed byte) main::dy#2 -- vbsz1=_inc_vbsz1 
+    inc.z dy
+    // [9] if((signed byte) main::dy#1!=(signed byte) -$80) goto main::@1 -- vbsz1_neq_vbsc1_then_la1 
+    lda #-$80
+    cmp.z dy
+    bne b1_from_b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [10] return 
+    rts
+}
+  // debug
+// debug(signed byte zeropage(3) dy)
+debug: {
+    .label dy = 3
+    // [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return -- vbsz1_le_vbsc1_then_la1 
+    lda #-$78
+    sec
+    sbc.z dy
+    bvc !+
+    eor #$80
+  !:
+    bpl breturn
+    jmp b1
+    // debug::@1
+  b1:
+    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #$a
+    ldy.z dy
+    sta SCREEN,y
+    jmp breturn
+    // debug::@return
+  breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return [ debug::dy#0 ] ( main:2::debug:7 [ main::dy#2 debug::dy#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ debug::dy#0 ]
+Statement [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
+Statement [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return [ debug::dy#0 ] ( main:2::debug:7 [ main::dy#2 debug::dy#0 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ debug::dy#0 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ] 
+Uplift Scope [debug] 6.5: zp ZP_BYTE:3 [ debug::dy#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 349 combination reg byte x [ main::dy#2 main::dy#1 ] 
+Uplifting [debug] best 317 combination reg byte x [ debug::dy#0 ] 
+Uplifting [] best 317 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Illustrates problem with > comparison of signed chars.
+// Reported by Danny Spijksma
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    // [5] phi (signed byte) main::dy#2 = (signed byte) -$80 [phi:main->main::@1#0] -- vbsxx=vbsc1 
+    ldx #-$80
+    jmp b1
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    // [5] phi (signed byte) main::dy#2 = (signed byte) main::dy#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+    // main::@1
+  b1:
+    // [6] (signed byte) debug::dy#0 ← (signed byte) main::dy#2
+    // [7] call debug 
+    jsr debug
+    jmp b2
+    // main::@2
+  b2:
+    // [8] (signed byte) main::dy#1 ← ++ (signed byte) main::dy#2 -- vbsxx=_inc_vbsxx 
+    inx
+    // [9] if((signed byte) main::dy#1!=(signed byte) -$80) goto main::@1 -- vbsxx_neq_vbsc1_then_la1 
+    cpx #-$80
+    bne b1_from_b2
+    jmp breturn
+    // main::@return
+  breturn:
+    // [10] return 
+    rts
+}
+  // debug
+// debug(signed byte register(X) dy)
+debug: {
+    // [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return -- vbsxx_le_vbsc1_then_la1 
+    txa
+    sec
+    sbc #-$78
+    beq breturn
+    bvc !+
+    eor #$80
+  !:
+    bmi breturn
+    jmp b1
+    // debug::@1
+  b1:
+    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #$a
+    sta SCREEN,x
+    jmp breturn
+    // debug::@return
+  breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b2 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(void()) debug((signed byte) debug::dy)
+(label) debug::@1
+(label) debug::@return
+(signed byte) debug::dy
+(signed byte) debug::dy#0 reg byte x 6.5
+(byte) debug::i
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(signed byte) main::dy
+(signed byte) main::dy#1 reg byte x 16.5
+(signed byte) main::dy#2 reg byte x 11.0
+
+reg byte x [ main::dy#2 main::dy#1 ]
+reg byte x [ debug::dy#0 ]
+
+
+FINAL ASSEMBLER
+Score: 179
+
+  // File Comments
+// Illustrates problem with > comparison of signed chars.
+// Reported by Danny Spijksma
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (signed byte) main::dy#2 = (signed byte) -$80 [phi:main->main::@1#0] -- vbsxx=vbsc1 
+    ldx #-$80
+    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [5] phi (signed byte) main::dy#2 = (signed byte) main::dy#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // main::@1
+  b1:
+    // debug(dy)
+    // [6] (signed byte) debug::dy#0 ← (signed byte) main::dy#2
+    // [7] call debug 
+    jsr debug
+    // main::@2
+    // for(signed char dy:-128..127)
+    // [8] (signed byte) main::dy#1 ← ++ (signed byte) main::dy#2 -- vbsxx=_inc_vbsxx 
+    inx
+    // [9] if((signed byte) main::dy#1!=(signed byte) -$80) goto main::@1 -- vbsxx_neq_vbsc1_then_la1 
+    cpx #-$80
+    bne b1
+    // main::@return
+    // }
+    // [10] return 
+    rts
+}
+  // debug
+// debug(signed byte register(X) dy)
+debug: {
+    // if (dy > -120)
+    // [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return -- vbsxx_le_vbsc1_then_la1 
+    txa
+    sec
+    sbc #-$78
+    beq breturn
+    bvc !+
+    eor #$80
+  !:
+    bmi breturn
+    // debug::@1
+    // SCREEN[i] = 10
+    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #$a
+    sta SCREEN,x
+    // debug::@return
+  breturn:
+    // }
+    // [13] return 
+    rts
+}
+  // File Data
+

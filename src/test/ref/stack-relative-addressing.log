@@ -1,0 +1,371 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) STACK#0 ← ((byte*)) (number) $103
+  to:@1
+main: scope:[main]  from @2
+  asm { lda#'1' pha lda#'2' pha lda#'3' pha  }
+  call peek_stack 
+  to:main::@1
+main::@1: scope:[main]  from main
+  asm { pla pla pla  }
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@2
+peek_stack: scope:[peek_stack]  from main
+  asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  }
+  to:peek_stack::@return
+peek_stack::@return: scope:[peek_stack]  from peek_stack
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) STACK
+(byte*) STACK#0
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) peek_stack()
+(label) peek_stack::@return
+
+Inlining cast (byte*) STACK#0 ← (byte*)(number) $103
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 259
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Constant (const byte*) STACK#0 = (byte*) 259
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to peek_stack:7 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { lda#'1' pha lda#'2' pha lda#'3' pha  }
+  [5] call peek_stack 
+  to:main::@1
+main::@1: scope:[main]  from main
+  asm { pla pla pla  }
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [7] return 
+  to:@return
+peek_stack: scope:[peek_stack]  from main
+  asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  }
+  to:peek_stack::@return
+peek_stack::@return: scope:[peek_stack]  from peek_stack
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte*) STACK
+(void()) main()
+(void()) peek_stack()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test stack-relative addressing (for passing parameters through the stack)
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  /** The hardware stack. The offset 3 is to skip the return address and the fact that the pointer is to the next free position. */
+  .label STACK = $103
+  /** The screen. */
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { lda#'1' pha lda#'2' pha lda#'3' pha  }
+    // Push a few values to the stack
+    lda #'1'
+    pha
+    lda #'2'
+    pha
+    lda #'3'
+    pha
+    // [5] call peek_stack 
+    jsr peek_stack
+    jmp b1
+    // main::@1
+  b1:
+    // asm { pla pla pla  }
+    // Clean up the stack
+    pla
+    pla
+    pla
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // peek_stack
+// Peek values from the stack using stack-relative addressing
+peek_stack: {
+    // asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  }
+    tsx
+    lda STACK,x
+    sta SCREEN
+    lda STACK+1,x
+    sta SCREEN+1
+    lda STACK+2,x
+    sta SCREEN+2
+    jmp breturn
+    // peek_stack::@return
+  breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement asm { lda#'1' pha lda#'2' pha lda#'3' pha  } always clobbers reg byte a 
+Statement asm { pla pla pla  } always clobbers reg byte a 
+Statement asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  } always clobbers reg byte a reg byte x 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [peek_stack] 
+Uplift Scope [] 
+
+Uplifting [main] best 93 combination 
+Uplifting [peek_stack] best 93 combination 
+Uplifting [] best 93 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test stack-relative addressing (for passing parameters through the stack)
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  /** The hardware stack. The offset 3 is to skip the return address and the fact that the pointer is to the next free position. */
+  .label STACK = $103
+  /** The screen. */
+  .label SCREEN = $400
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // asm { lda#'1' pha lda#'2' pha lda#'3' pha  }
+    // Push a few values to the stack
+    lda #'1'
+    pha
+    lda #'2'
+    pha
+    lda #'3'
+    pha
+    // [5] call peek_stack 
+    jsr peek_stack
+    jmp b1
+    // main::@1
+  b1:
+    // asm { pla pla pla  }
+    // Clean up the stack
+    pla
+    pla
+    pla
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // peek_stack
+// Peek values from the stack using stack-relative addressing
+peek_stack: {
+    // asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  }
+    tsx
+    lda STACK,x
+    sta SCREEN
+    lda STACK+1,x
+    sta SCREEN+1
+    lda STACK+2,x
+    sta SCREEN+2
+    jmp breturn
+    // peek_stack::@return
+  breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(byte*) STACK
+(const byte*) STACK#0 STACK = (byte*) 259
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) peek_stack()
+(label) peek_stack::@return
+
+
+
+FINAL ASSEMBLER
+Score: 72
+
+  // File Comments
+// Test stack-relative addressing (for passing parameters through the stack)
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  /** The hardware stack. The offset 3 is to skip the return address and the fact that the pointer is to the next free position. */
+  .label STACK = $103
+  /** The screen. */
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // asm
+    // asm { lda#'1' pha lda#'2' pha lda#'3' pha  }
+    // Push a few values to the stack
+    lda #'1'
+    pha
+    lda #'2'
+    pha
+    lda #'3'
+    pha
+    // peek_stack()
+    // [5] call peek_stack 
+    jsr peek_stack
+    // main::@1
+    // asm
+    // asm { pla pla pla  }
+    // Clean up the stack
+    pla
+    pla
+    pla
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // peek_stack
+// Peek values from the stack using stack-relative addressing
+peek_stack: {
+    // asm
+    // asm { tsx ldaSTACK,x staSCREEN ldaSTACK+1,x staSCREEN+1 ldaSTACK+2,x staSCREEN+2  }
+    tsx
+    lda STACK,x
+    sta SCREEN
+    lda STACK+1,x
+    sta SCREEN+1
+    lda STACK+2,x
+    sta SCREEN+2
+    // peek_stack::@return
+    // }
+    // [9] return 
+    rts
+}
+  // File Data
+

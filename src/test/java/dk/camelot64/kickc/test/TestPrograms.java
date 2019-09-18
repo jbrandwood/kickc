@@ -35,6 +35,26 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testSignedCharComparison() throws IOException, URISyntaxException {
+      compileAndCompare("signed-char-comparison");
+   }
+
+   @Test
+   public void testBitmapLineAnim2() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-line-anim-2");
+   }
+
+   @Test
+   public void testBitmapLineAnim1() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-line-anim-1");
+   }
+
+   @Test
+   public void testStackRelativeAddressing() throws IOException, URISyntaxException {
+      compileAndCompare("stack-relative-addressing");
+   }
+
    /*
    @Test
    public void testProcedureCallingConventionStack1() throws IOException, URISyntaxException {

@@ -35,6 +35,18 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /*
+   @Test
+   public void testProcedureCallingConventionStack1() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-1", log());
+   }
+
+   @Test
+   public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-0", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+   */
+
    @Test
    public void testSignedCharComparison() throws IOException, URISyntaxException {
       compileAndCompare("signed-char-comparison");
@@ -54,18 +66,6 @@ public class TestPrograms {
    public void testStackRelativeAddressing() throws IOException, URISyntaxException {
       compileAndCompare("stack-relative-addressing");
    }
-
-   /*
-   @Test
-   public void testProcedureCallingConventionStack1() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-1", log());
-   }
-
-   @Test
-   public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-0", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
-   }
-   */
 
    @Test
    public void testStringPointerProblem() throws IOException, URISyntaxException {

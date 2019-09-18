@@ -209,6 +209,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
+      // Add parameter assignments
+      if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+         for(Variable param : parameterList) {
+            sequence.addStatement(new StatementAssignment(param.getRef(), new ParamValue(param.getRef()), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         }
+      }
       if(ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }

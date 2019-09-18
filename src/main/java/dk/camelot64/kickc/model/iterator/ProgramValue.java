@@ -755,8 +755,28 @@ public interface ProgramValue {
 
    }
 
+   /** Value inside a parameter value . */
+   class ProgramValueParamValue implements ProgramValue {
+      private final ParamValue paramValue;
+
+      ProgramValueParamValue(ParamValue paramValue) {
+         this.paramValue = paramValue;
+      }
+
+      @Override
+      public Value get() {
+         return paramValue.getParameter();
+      }
+
+      @Override
+      public void set(Value val) {
+         paramValue.setParameter((VariableRef) val);
+      }
+
+   }
+
    /**
-    * Pointer inside a pointer dererence value.
+    * Pointer inside a pointer derefence value.
     */
    class ProgramValuePointer implements ProgramValue {
       private final PointerDereference pointer;

@@ -114,6 +114,8 @@ public class SymbolTypeInference {
          }
       } else if(rValue instanceof StructZero) {
          return ((StructZero)rValue).getTypeStruct();
+      } else if(rValue instanceof ParamValue) {
+         return inferType(symbols, ((ParamValue) rValue).getParameter());
       } else if(rValue instanceof StructUnwoundPlaceholder) {
          return ((StructUnwoundPlaceholder) rValue).getTypeStruct();
       }

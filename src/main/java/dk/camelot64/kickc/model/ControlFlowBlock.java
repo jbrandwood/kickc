@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -161,8 +162,18 @@ public class ControlFlowBlock implements Serializable {
    public String toString(Program program) {
       ControlFlowGraph graph = program.getGraph();
       StringBuffer out = new StringBuffer();
+
+      // TODO: Print signature for procedures (requires updating all tests data)
+      /*
+      if(isProcedureEntry(program)) {
+         Procedure procedure = (Procedure) program.getScope().getScope(scope);
+         out.append("\n");
+         out.append(procedure.toString(program)+"\n");
+      }
+      */
+
       out.append(label.getFullName() + ":");
-      out.append(" scope:[" + scope.getFullName() + "] ");
+      out.append(" scope:[" + this.scope.getFullName() + "] ");
       out.append(" from");
       if(graph != null) {
          List<ControlFlowBlock> predecessors = graph.getPredecessors(this);

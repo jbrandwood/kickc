@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
 import dk.camelot64.kickc.model.values.Value;
@@ -20,6 +21,10 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
          Value rValue = programValue.get();
          if(rValue instanceof ForwardVariableRef) {
             throw new CompileError("No forward references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
+         }
+         if(programValue instanceof ProgramValue.ProgramValueParamValue) {
+            // ParamValues are allowed to be unversioned
+            return;
          }
          if(rValue instanceof VariableRef) {
             VariableRef variableRef = (VariableRef) rValue;

@@ -137,7 +137,6 @@ public class ControlFlowGraph implements Serializable {
       }
    }
 
-
    public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
       ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
       for(ControlFlowBlock other : getAllBlocks()) {
@@ -182,14 +181,15 @@ public class ControlFlowGraph implements Serializable {
    }
 
    /**
-    * Get all blocks that are program entry points. This is the main-block and any blocks referenced by the address-off operator (&)
+    * Get all blocks that are program entry points.
+    * This is the main-block and any blocks referenced by the address-off operator (&)
     * @param program The program
     * @return All entry-point blocks
     */
    public List<ControlFlowBlock> getEntryPointBlocks(Program program) {
       List<ControlFlowBlock> entryPointBlocks = new ArrayList<>();
       for(Procedure procedure : program.getScope().getAllProcedures(true)) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program) || procedure.getCallingConvension().equals(Procedure.CallingConvension.STACK_CALL)) {
             // Address-of is used on the procedure
             Label procedureLabel = procedure.getLabel();
             ControlFlowBlock procedureBlock = getBlock(procedureLabel.getRef());

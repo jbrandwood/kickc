@@ -90,8 +90,8 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-voptimize"}, description = "Verbosity Option. Control Flow Graph Optimization.")
    private boolean verboseSSAOptimize = false;
 
-   @CommandLine.Option(names = {"-vmemory"}, description = "Verbosity Option. Compiler Data Structure Sizes.")
-   private boolean verboseMemory = false;
+   @CommandLine.Option(names = {"-vsizeinfo"}, description = "Verbosity Option. Compiler Data Structure Size Information.")
+   private boolean verboseSizeInfo = false;
 
    @CommandLine.Option(names = {"-vnonoptimize"}, description = "Verbosity Option. Choices not to optimize.")
    private boolean verboseNonOptimization = false;
@@ -380,8 +380,8 @@ public class KickC implements Callable<Void> {
          compiler.getLog().setVerboseSSAOptimize(true);
          compiler.getLog().setSysOut(true);
       }
-      if(verboseMemory) {
-         compiler.getLog().setVerboseMemoryUsage(true);
+      if(verboseSizeInfo) {
+         compiler.getLog().setVerboseSizeInfo(true);
          compiler.getLog().setSysOut(true);
       }
       if(verboseNonOptimization) {

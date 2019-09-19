@@ -775,6 +775,26 @@ public interface ProgramValue {
 
    }
 
+   /** Value inside a parameter stack value . */
+   class ProgramValueParamStackValue implements ProgramValue {
+      private final ParamStackValue paramValue;
+
+      ProgramValueParamStackValue(ParamStackValue paramValue) {
+         this.paramValue = paramValue;
+      }
+
+      @Override
+      public Value get() {
+         return paramValue.getStackOffset();
+      }
+
+      @Override
+      public void set(Value val) {
+         paramValue.setStackOffset((ConstantRef) val);
+      }
+
+   }
+
    /**
     * Pointer inside a pointer derefence value.
     */

@@ -321,7 +321,7 @@ public class Compiler {
 
    private void pass2Optimize() {
 
-      if(getLog().isVerboseMemoryUsage()) {
+      if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
 
@@ -373,7 +373,7 @@ public class Compiler {
 
    private void pass2InlineConstants() {
 
-      if(getLog().isVerboseMemoryUsage()) {
+      if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
 
@@ -445,7 +445,7 @@ public class Compiler {
 
    private void pass3Analysis() {
 
-      if(getLog().isVerboseMemoryUsage()) {
+      if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
 
@@ -485,6 +485,10 @@ public class Compiler {
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
+
+      // Handle calling convention stack
+      new PassNCallingConventionStack(program).execute();
+
       program.clearCallGraph();
       program.clearStatementInfos();
       program.clearVariableReferenceInfos();
@@ -499,7 +503,7 @@ public class Compiler {
 
    private void pass4RegisterAllocation() {
 
-      if(getLog().isVerboseMemoryUsage()) {
+      if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
 
@@ -554,7 +558,7 @@ public class Compiler {
          } while(change);
          getLog().append(program.getRegisterPotentials().toString());
 
-         if(getLog().isVerboseMemoryUsage()) {
+         if(getLog().isVerboseSizeInfo()) {
             getLog().append(program.getSizeInfo());
          }
 

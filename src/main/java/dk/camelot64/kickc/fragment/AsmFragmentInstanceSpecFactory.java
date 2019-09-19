@@ -233,7 +233,6 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
    public String bind(Value value, SymbolType castType) {
-
       if(value instanceof CastValue) {
          CastValue cast = (CastValue) value;
          SymbolType toType = cast.getToType();
@@ -357,8 +356,11 @@ public class AsmFragmentInstanceSpecFactory {
          String name = "la" + nextLabelIdx++;
          bind(name, value);
          return name;
+      } else if(value instanceof ParamStackValue) {
+         // TODO: Handle different parameter types!
+         return "_stackbyte_"+bind(((ParamStackValue) value).getStackOffset());
       }
-      throw new RuntimeException("Binding of value type not supported " + value);
+      throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }
 
    /**

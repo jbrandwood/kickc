@@ -35,7 +35,7 @@ public class CompileLog {
    /**
     * Should Memory usage be verbose
     */
-   private boolean verboseMemoryUsage = false;
+   private boolean verboseSizeInfo = false;
 
    /**
     * Should loop unrolling be verbose.
@@ -101,17 +101,17 @@ public class CompileLog {
       return log;
    }
 
-   public CompileLog verboseMemoryUsage() {
-      setVerboseMemoryUsage(true);
+   public CompileLog verboseSizeInfo() {
+      setVerboseSizeInfo(true);
       return this;
    }
 
-   public boolean isVerboseMemoryUsage() {
-      return verboseMemoryUsage;
+   public boolean isVerboseSizeInfo() {
+      return verboseSizeInfo;
    }
 
-   public void setVerboseMemoryUsage(boolean verboseMemoryUsage) {
-      this.verboseMemoryUsage = verboseMemoryUsage;
+   public void setVerboseSizeInfo(boolean verboseSizeInfo) {
+      this.verboseSizeInfo = verboseSizeInfo;
    }
 
    public CompileLog verboseSsaSourceCode() {

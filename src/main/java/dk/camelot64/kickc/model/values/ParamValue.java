@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.Program;
 public class ParamValue implements RValue {
 
    /** The (unversioned) parameter variable. */
-   VariableRef parameter;
+   private VariableRef parameter;
 
    public ParamValue(VariableRef parameter) {
       this.parameter = parameter;

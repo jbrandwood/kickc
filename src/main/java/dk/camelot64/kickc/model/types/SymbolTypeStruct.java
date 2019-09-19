@@ -77,7 +77,7 @@ public class SymbolTypeStruct implements SymbolType {
       }  else {
          return memberType.getSizeBytes();
       }
-      throw new InternalError("Memeber type not handled "+memberType);
+      throw new InternalError("Member type not handled "+memberType);
    }
 
    @Override

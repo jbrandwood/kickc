@@ -1,0 +1,431 @@
+Culled Empty Block (label) @1
+Culled Empty Block (label) plus::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@2
+
+(void()) main()
+main: scope:[main]  from @2
+  (byte~) main::$0 ← call plus (byte) '0' (number) 7 
+  *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
+plus: scope:[plus]  from
+  (byte) plus::a#0 ← param((byte) plus::a)
+  (byte) plus::b#0 ← param((byte) plus::b)
+  (byte~) plus::$0 ← (byte) plus::a#0 + (byte) plus::b#0
+  (byte) plus::return#0 ← (byte~) plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  (byte) plus::return#1 ← phi( plus/(byte) plus::return#0 )
+  return (byte) plus::return#1
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(byte~) main::$0
+(label) main::@return
+__stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
+(byte~) plus::$0
+(label) plus::@return
+(byte) plus::a
+(byte) plus::a#0
+(byte) plus::b
+(byte) plus::b#0
+(byte) plus::return
+(byte) plus::return#0
+(byte) plus::return#1
+
+Adding number conversion cast (unumber) 7 in (byte~) main::$0 ← call plus (byte) '0' (number) 7 
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 7
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte) plus::return#0 = (byte~) plus::$0 (byte) plus::return#1 
+Successful SSA optimization Pass2AliasElimination
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← (byte~) main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to plus:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Calling convention STACK_CALL replacing param((byte) plus::a) with paramstack(plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param((byte) plus::b) with paramstack(plus::OFFSET_STACK_B)
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7 
+  [6] *((const byte*) SCREEN#0) ← (byte~) main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [7] return 
+  to:@return
+
+__stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
+plus: scope:[plus]  from
+  [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A)
+  [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B)
+  [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [11] return (byte) plus::return#0
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) main()
+(byte~) main::$0 0.5
+__stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
+(byte) plus::a
+(byte) plus::a#0 2.0
+(byte) plus::b
+(byte) plus::b#0 4.0
+(byte) plus::return
+(byte) plus::return#0 2.0
+
+Initial phi equivalence classes
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable plus::a#0 to zero page equivalence class [ plus::a#0 ]
+Added variable plus::b#0 to zero page equivalence class [ plus::b#0 ]
+Added variable plus::return#0 to zero page equivalence class [ plus::return#0 ]
+Complete equivalence classes
+[ main::$0 ]
+[ plus::a#0 ]
+[ plus::b#0 ]
+[ plus::return#0 ]
+Allocated zp ZP_BYTE:2 [ main::$0 ]
+Allocated zp ZP_BYTE:3 [ plus::a#0 ]
+Allocated zp ZP_BYTE:4 [ plus::b#0 ]
+Allocated zp ZP_BYTE:5 [ plus::return#0 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test a procedure with calling convention stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _0 = 2
+    // [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7  -- _pushbyte_=vbuc1 
+    lda #'0'
+    pha
+    lda #7
+    pha
+    jsr plus
+    // [6] *((const byte*) SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    lda.z _0
+    sta SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // plus
+// plus(byte zeropage(3) a, byte zeropage(4) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 1
+    .label a = 3
+    .label b = 4
+    .label return = 5
+    // [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A) -- vbuz1=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    // [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B) -- vbuz1=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    sta.z b
+    // [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuz1=vbuz2_plus_vbuz3 
+    lda.z a
+    clc
+    adc.z b
+    sta.z return
+    jmp breturn
+    // plus::@return
+  breturn:
+    // [11] return (byte) plus::return#0
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::$0 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::$0 ]
+Statement [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ plus::a#0 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:3 [ plus::a#0 ]
+Statement [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:5 [ main::$0 plus::return#0 ] ) always clobbers reg byte a 
+Statement [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:5 [ main::$0 plus::return#0 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::$0 ] : zp ZP_BYTE:2 , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ plus::a#0 ] : zp ZP_BYTE:3 , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ plus::b#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 [ plus::return#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 4: zp ZP_BYTE:4 [ plus::b#0 ] 2: zp ZP_BYTE:3 [ plus::a#0 ] 2: zp ZP_BYTE:5 [ plus::return#0 ] 
+Uplift Scope [main] 0.5: zp ZP_BYTE:2 [ main::$0 ] 
+Uplift Scope [] 
+
+Uplifting [plus] best 73 combination reg byte a [ plus::b#0 ] zp ZP_BYTE:3 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
+Uplifting [main] best 70 combination reg byte y [ main::$0 ] 
+Uplifting [] best 70 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ plus::a#0 ]
+Uplifting [plus] best 70 combination zp ZP_BYTE:3 [ plus::a#0 ] 
+Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ plus::a#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test a procedure with calling convention stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    // [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7  -- _pushbyte_=vbuc1 
+    lda #'0'
+    pha
+    lda #7
+    pha
+    jsr plus
+    // [6] *((const byte*) SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuyy 
+    sty SCREEN
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // plus
+// plus(byte zeropage(2) a, byte register(A) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 1
+    .label a = 2
+    // [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A) -- vbuz1=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    // [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B) -- vbuaa=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    // [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z a
+    jmp breturn
+    // plus::@return
+  breturn:
+    // [11] return (byte) plus::return#0
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const word) STACK_BASE STACK_BASE = (word) $103
+(void()) main()
+(byte~) main::$0 reg byte y 0.5
+(label) main::@return
+__stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
+(label) plus::@return
+(const byte) plus::OFFSET_STACK_A OFFSET_STACK_A = (byte) 0
+(const byte) plus::OFFSET_STACK_B OFFSET_STACK_B = (byte) 1
+(byte) plus::a
+(byte) plus::a#0 a zp ZP_BYTE:2 2.0
+(byte) plus::b
+(byte) plus::b#0 reg byte a 4.0
+(byte) plus::return
+(byte) plus::return#0 reg byte a 2.0
+
+reg byte y [ main::$0 ]
+zp ZP_BYTE:2 [ plus::a#0 ]
+reg byte a [ plus::b#0 ]
+reg byte a [ plus::return#0 ]
+
+
+FINAL ASSEMBLER
+Score: 52
+
+  // File Comments
+// Test a procedure with calling convention stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // plus('0', 7)
+    // [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7  -- _pushbyte_=vbuc1 
+    lda #'0'
+    pha
+    lda #7
+    pha
+    jsr plus
+    // SCREEN[0] = plus('0', 7)
+    // [6] *((const byte*) SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuyy 
+    sty SCREEN
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // plus
+// plus(byte zeropage(2) a, byte register(A) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 1
+    .label a = 2
+    // [8] (byte) plus::a#0 ← paramstack(plus::OFFSET_STACK_A) -- vbuz1=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    // [9] (byte) plus::b#0 ← paramstack(plus::OFFSET_STACK_B) -- vbuaa=_stackbyte_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    // return a+b;
+    // [10] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z a
+    // plus::@return
+    // }
+    // [11] return (byte) plus::return#0
+    rts
+}
+  // File Data
+

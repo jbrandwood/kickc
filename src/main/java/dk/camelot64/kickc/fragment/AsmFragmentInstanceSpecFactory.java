@@ -359,6 +359,8 @@ public class AsmFragmentInstanceSpecFactory {
       } else if(value instanceof ParamStackValue) {
          // TODO: Handle different parameter types!
          return "_stackbyte_"+bind(((ParamStackValue) value).getStackOffset());
+      } else if(value instanceof ParamStackPush) {
+         return "_push"+((ParamStackPush) value).getType().getTypeName()+"_";
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }

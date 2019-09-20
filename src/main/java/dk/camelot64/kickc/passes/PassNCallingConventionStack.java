@@ -31,9 +31,11 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
          }
       }
 
-      //TODO: Add global STACK_BASE constant
-
       if(offsetConstants.size() > 0) {
+         // Add global STACK_BASE constant
+         long STACK_BASE = 0x103L;
+         getScope().add(new ConstantVar("STACK_BASE", getScope(), SymbolType.WORD, new ConstantInteger(STACK_BASE, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT));
+
          // Convert ParamValue to ParamStackValue
          ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
             if(programValue.get() instanceof ParamValue) {

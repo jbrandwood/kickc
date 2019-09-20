@@ -734,16 +734,30 @@ public class Pass4CodeGeneration {
             generateAsm(asm, asmFragmentInstanceSpecFactory);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
-            if(genCallPhiEntry) {
-               ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
-               if(callSuccessor != null && callSuccessor.hasPhiBlock()) {
-                  PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
-                  if(transitionIsGenerated(transition)) {
-                     throw new InternalError("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
+
+            Procedure procedure = getScope().getProcedure(call.getProcedure());
+            if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+               // Generate PHI transition
+               if(genCallPhiEntry) {
+                  ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
+                  if(callSuccessor != null && callSuccessor.hasPhiBlock()) {
+                     PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
+                     if(transitionIsGenerated(transition)) {
+                        throw new InternalError("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
+                     }
+                     genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                   }
-                  genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
+               }
+            } else if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               // Push parameters to the stack
+               for(RValue parameter : call.getParameters()) {
+                  SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new ParamStackPush(parameterType), parameter, program, block.getScope());
+                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory);
                }
             }
+
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;

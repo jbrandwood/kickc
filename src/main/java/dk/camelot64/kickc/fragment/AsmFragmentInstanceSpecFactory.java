@@ -357,8 +357,8 @@ public class AsmFragmentInstanceSpecFactory {
          bind(name, value);
          return name;
       } else if(value instanceof ParamStackValue) {
-         // TODO: Handle different parameter types!
-         return "_stackbyte_"+bind(((ParamStackValue) value).getStackOffset());
+         ParamStackValue paramStackValue = (ParamStackValue) value;
+         return "_stack"+paramStackValue.getValueType().getTypeName()+"_"+bind(paramStackValue.getStackOffset());
       } else if(value instanceof ParamStackPush) {
          return "_push"+((ParamStackPush) value).getType().getTypeName()+"_";
       }

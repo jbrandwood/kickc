@@ -757,8 +757,19 @@ public class Pass4CodeGeneration {
                   generateAsm(asm, asmFragmentInstanceSpecFactory);
                }
             }
-
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            // Clean up the stack
+            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               int parameterBytes = 0;
+               for(RValue parameter : call.getParameters()) {
+                  SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
+                  parameterBytes += parameterType.getSizeBytes();
+               }
+               // TODO: Replace with fragment - to allow hand-coded handling of the stack pointer modifications - eg. using TSX, TXA, AXS #{}, TXS
+               for(int i = 0; i < parameterBytes; i++) {
+                  asm.addInstruction("pla", AsmAddressingMode.NON, null, false);
+               }
+            }
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;
             ScopeRef scope = block.getScope();

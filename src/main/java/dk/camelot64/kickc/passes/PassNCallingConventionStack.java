@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.HashMap;
@@ -42,8 +43,9 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                // Convert ParamValues to calling-convention specific param-value
                ParamValue paramValue = (ParamValue) programValue.get();
                VariableRef parameterRef = paramValue.getParameter();
+               SymbolType parameterType = SymbolTypeInference.inferType(getScope(), paramValue.getParameter());
                if(offsetConstants.containsKey(parameterRef)) {
-                  ParamStackValue paramStackValue = new ParamStackValue(offsetConstants.get(parameterRef));
+                  ParamStackValue paramStackValue = new ParamStackValue(offsetConstants.get(parameterRef), parameterType);
                   programValue.set(paramStackValue);
                   getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " replacing " + paramValue.toString(getProgram()) + " with " + paramStackValue.toString(getProgram()));
                }

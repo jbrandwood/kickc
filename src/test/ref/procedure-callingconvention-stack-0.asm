@@ -10,6 +10,8 @@ main: {
     lda #7
     pha
     jsr plus
+    pla
+    pla
     sty SCREEN
     rts
 }

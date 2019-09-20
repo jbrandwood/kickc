@@ -1,0 +1,515 @@
+Fixing pointer array-indexing *((word*) SCREEN + (number) 0)
+Culled Empty Block (label) @1
+Culled Empty Block (label) plus::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (word*) SCREEN#0 ← ((word*)) (number) $400
+  to:@2
+
+(void()) main()
+main: scope:[main]  from @2
+  (word~) main::$0 ← call plus (number) $1234 (number) $2345 
+  (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
+  *((word*) SCREEN#0 + (number~) main::$1) ← (word~) main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__stackcall (word()) plus((word) plus::a , (word) plus::b)
+plus: scope:[plus]  from
+  (word) plus::a#0 ← param((word) plus::a)
+  (word) plus::b#0 ← param((word) plus::b)
+  (word~) plus::$0 ← (word) plus::a#0 + (word) plus::b#0
+  (word) plus::return#0 ← (word~) plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  (word) plus::return#1 ← phi( plus/(word) plus::return#0 )
+  return (word) plus::return#1
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(word*) SCREEN
+(word*) SCREEN#0
+(const byte) SIZEOF_WORD = (byte) 2
+(void()) main()
+(word~) main::$0
+(number~) main::$1
+(label) main::@return
+__stackcall (word()) plus((word) plus::a , (word) plus::b)
+(word~) plus::$0
+(label) plus::@return
+(word) plus::a
+(word) plus::a#0
+(word) plus::b
+(word) plus::b#0
+(word) plus::return
+(word) plus::return#0
+(word) plus::return#1
+
+Adding number conversion cast (unumber) $1234 in (word~) main::$0 ← call plus (number) $1234 (number) $2345 
+Adding number conversion cast (unumber) $2345 in (word~) main::$0 ← call plus (unumber)(number) $1234 (number) $2345 
+Adding number conversion cast (unumber) 0 in (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (word*) SCREEN#0 ← (word*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 1024
+Simplifying constant integer cast $1234
+Simplifying constant integer cast $2345
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $1234
+Finalized unsigned number type (word) $2345
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
+Alias (word) plus::return#0 = (word~) plus::$0 (word) plus::return#1 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [2] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word*) SCREEN#0 = (word*) 1024
+Constant (const byte) main::$1 = 0*SIZEOF_WORD
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero SCREEN#0 in [3] *((const word*) SCREEN#0 + (const byte) main::$1) ← (word~) main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) main::$1
+Eliminating unused constant (const byte) SIZEOF_WORD
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to plus:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Calling convention STACK_CALL replacing param((word) plus::a) with paramstack(word,plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param((word) plus::b) with paramstack(word,plus::OFFSET_STACK_B)
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345 
+  [6] *((const word*) SCREEN#0) ← (word~) main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [7] return 
+  to:@return
+
+__stackcall (word()) plus((word) plus::a , (word) plus::b)
+plus: scope:[plus]  from
+  [8] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A)
+  [9] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B)
+  [10] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [11] return (word) plus::return#0
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(word*) SCREEN
+(void()) main()
+(word~) main::$0 0.5
+__stackcall (word()) plus((word) plus::a , (word) plus::b)
+(word) plus::a
+(word) plus::a#0 2.0
+(word) plus::b
+(word) plus::b#0 4.0
+(word) plus::return
+(word) plus::return#0 2.0
+
+Initial phi equivalence classes
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable plus::a#0 to zero page equivalence class [ plus::a#0 ]
+Added variable plus::b#0 to zero page equivalence class [ plus::b#0 ]
+Added variable plus::return#0 to zero page equivalence class [ plus::return#0 ]
+Complete equivalence classes
+[ main::$0 ]
+[ plus::a#0 ]
+[ plus::b#0 ]
+[ plus::return#0 ]
+Allocated zp ZP_WORD:2 [ main::$0 ]
+Allocated zp ZP_WORD:4 [ plus::a#0 ]
+Allocated zp ZP_WORD:6 [ plus::b#0 ]
+Allocated zp ZP_WORD:8 [ plus::return#0 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _0 = 2
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345 
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$1234
+    pha
+    lda #<$1234
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$2345
+    pha
+    lda #<$2345
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- jsr 
+    jsr plus
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpullbyte_4 
+    tsx
+    txa
+    axs #-4
+    txs
+    // [6] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    lda.z _0
+    sta SCREEN
+    lda.z _0+1
+    sta SCREEN+1
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // plus
+// plus(word zeropage(4) a, word zeropage(6) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 2
+    .label a = 4
+    .label b = 6
+    .label return = 8
+    // [8] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    lda STACK_BASE+OFFSET_STACK_A+1,x
+    sta.z a+1
+    // [9] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    sta.z b
+    lda STACK_BASE+OFFSET_STACK_B+1,x
+    sta.z b+1
+    // [10] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz2_plus_vwuz3 
+    lda.z a
+    clc
+    adc.z b
+    sta.z return
+    lda.z a+1
+    adc.z b+1
+    sta.z return+1
+    jmp breturn
+    // plus::@return
+  breturn:
+    // [11] return (word) plus::return#0
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a reg byte x 
+Statement [6] *((const word*) SCREEN#0) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [9] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:5 [ main::$0 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [10] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:5 [ main::$0 plus::return#0 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::$0 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:4 [ plus::a#0 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_WORD:6 [ plus::b#0 ] : zp ZP_WORD:6 , 
+Potential registers zp ZP_WORD:8 [ plus::return#0 ] : zp ZP_WORD:8 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 4: zp ZP_WORD:6 [ plus::b#0 ] 2: zp ZP_WORD:4 [ plus::a#0 ] 2: zp ZP_WORD:8 [ plus::return#0 ] 
+Uplift Scope [main] 0.5: zp ZP_WORD:2 [ main::$0 ] 
+Uplift Scope [] 
+
+Uplifting [plus] best 132 combination zp ZP_WORD:6 [ plus::b#0 ] zp ZP_WORD:4 [ plus::a#0 ] zp ZP_WORD:8 [ plus::return#0 ] 
+Uplifting [main] best 132 combination zp ZP_WORD:2 [ main::$0 ] 
+Uplifting [] best 132 combination 
+Coalescing zero page register [ zp ZP_WORD:4 [ plus::a#0 ] ] with [ zp ZP_WORD:8 [ plus::return#0 ] ] - score: 1
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+  // @1
+b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+  // @end
+bend:
+  // main
+main: {
+    .label _0 = 2
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345 
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$1234
+    pha
+    lda #<$1234
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$2345
+    pha
+    lda #<$2345
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- jsr 
+    jsr plus
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpullbyte_4 
+    tsx
+    txa
+    axs #-4
+    txs
+    // [6] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    lda.z _0
+    sta SCREEN
+    lda.z _0+1
+    sta SCREEN+1
+    jmp breturn
+    // main::@return
+  breturn:
+    // [7] return 
+    rts
+}
+  // plus
+// plus(word zeropage(4) a, word zeropage(6) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 2
+    .label a = 4
+    .label b = 6
+    .label return = 4
+    // [8] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    lda STACK_BASE+OFFSET_STACK_A+1,x
+    sta.z a+1
+    // [9] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    sta.z b
+    lda STACK_BASE+OFFSET_STACK_B+1,x
+    sta.z b+1
+    // [10] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z return
+    clc
+    adc.z b
+    sta.z return
+    lda.z return+1
+    adc.z b+1
+    sta.z return+1
+    jmp breturn
+    // plus::@return
+  breturn:
+    // [11] return (word) plus::return#0
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(word*) SCREEN
+(const word*) SCREEN#0 SCREEN = (word*) 1024
+(const word) STACK_BASE STACK_BASE = (word) $103
+(void()) main()
+(word~) main::$0 $0 zp ZP_WORD:2 0.5
+(label) main::@return
+__stackcall (word()) plus((word) plus::a , (word) plus::b)
+(label) plus::@return
+(const byte) plus::OFFSET_STACK_A OFFSET_STACK_A = (byte) 0
+(const byte) plus::OFFSET_STACK_B OFFSET_STACK_B = (byte) 2
+(word) plus::a
+(word) plus::a#0 a zp ZP_WORD:4 2.0
+(word) plus::b
+(word) plus::b#0 b zp ZP_WORD:6 4.0
+(word) plus::return
+(word) plus::return#0 return zp ZP_WORD:4 2.0
+
+zp ZP_WORD:2 [ main::$0 ]
+zp ZP_WORD:4 [ plus::a#0 plus::return#0 ]
+zp ZP_WORD:6 [ plus::b#0 ]
+
+
+FINAL ASSEMBLER
+Score: 114
+
+  // File Comments
+// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const STACK_BASE = $103
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label _0 = 2
+    // plus(0x1234, 0x2345)
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345 
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$1234
+    pha
+    lda #<$1234
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
+    lda #>$2345
+    pha
+    lda #<$2345
+    pha
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- jsr 
+    jsr plus
+    // [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345  -- _stackpullbyte_4 
+    tsx
+    txa
+    axs #-4
+    txs
+    // SCREEN[0] = plus(0x1234, 0x2345)
+    // [6] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    lda.z _0
+    sta SCREEN
+    lda.z _0+1
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // plus
+// plus(word zeropage(4) a, word zeropage(6) b)
+plus: {
+    .const OFFSET_STACK_A = 0
+    .const OFFSET_STACK_B = 2
+    .label a = 4
+    .label b = 6
+    .label return = 4
+    // [8] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    lda STACK_BASE+OFFSET_STACK_A+1,x
+    sta.z a+1
+    // [9] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    sta.z b
+    lda STACK_BASE+OFFSET_STACK_B+1,x
+    sta.z b+1
+    // return a+b;
+    // [10] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z return
+    clc
+    adc.z b
+    sta.z return
+    lda.z return+1
+    adc.z b+1
+    sta.z return+1
+    // plus::@return
+    // }
+    // [11] return (word) plus::return#0
+    rts
+}
+  // File Data
+

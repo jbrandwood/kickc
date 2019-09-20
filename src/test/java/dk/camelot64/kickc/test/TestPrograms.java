@@ -35,12 +35,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   /*
+   @Test
+   public void testProcedureCallingConventionStack2() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-2"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+
    @Test
    public void testProcedureCallingConventionStack1() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-1", log());
+      compileAndCompare("procedure-callingconvention-stack-1");
    }
-   */
 
    @Test
    public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {

@@ -699,7 +699,7 @@ public class Pass4CodeGeneration {
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, assignmentAlu, program);
          ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-         generateAsm(asm, asmFragmentInstanceSpecFactory);
+         generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
          aluState.clear();
          return;
       }
@@ -725,13 +725,13 @@ public class Pass4CodeGeneration {
                } else {
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, program);
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
             AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementConditionalJump) statement, block, program, getGraph());
             ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-            generateAsm(asm, asmFragmentInstanceSpecFactory);
+            generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
 
@@ -753,9 +753,12 @@ public class Pass4CodeGeneration {
                for(RValue parameter : call.getParameters()) {
                   SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new ParamStackPush(parameterType), parameter, program, block.getScope());
+                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
+               asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+               asm.getCurrentChunk().setFragment("jsr");
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
             // Clean up the stack
@@ -765,10 +768,10 @@ public class Pass4CodeGeneration {
                   SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
                   parameterBytes += parameterType.getSizeBytes();
                }
-               // TODO: Replace with fragment - to allow hand-coded handling of the stack pointer modifications - eg. using TSX, TXA, AXS #{}, TXS
-               for(int i = 0; i < parameterBytes; i++) {
-                  asm.addInstruction("pla", AsmAddressingMode.NON, null, false);
-               }
+               String pullSignature = "_stackpullbyte_" + Integer.toString(parameterBytes);
+               AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
+               asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+               generateAsm(asm, pullFragmentInstanceSpec);
             }
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;
@@ -866,24 +869,23 @@ public class Pass4CodeGeneration {
     * Generate ASM code for an ASM fragment instance
     *
     * @param asm The ASM program to generate into
-    * @param asmFragmentInstanceSpecFactory The ASM fragment instance specification factory
+    * @param fragmentInstanceSpec The ASM fragment instance specification
     */
-   private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory) {
-      String initialSignature = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec().getSignature();
-      AsmFragmentInstanceSpec asmFragmentInstanceSpec = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec();
-      AsmFragmentInstance asmFragmentInstance = null;
-      StringBuffer fragmentVariationsTried = new StringBuffer();
-      while(asmFragmentInstance == null) {
+   private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpec fragmentInstanceSpec) {
+      String initialSignature = fragmentInstanceSpec.getSignature();
+      AsmFragmentInstance fragmentInstance = null;
+      StringBuilder fragmentVariationsTried = new StringBuilder();
+      while(fragmentInstance == null) {
          try {
-            asmFragmentInstance = program.getAsmFragmentSynthesizer().getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
+            fragmentInstance = program.getAsmFragmentSynthesizer().getFragmentInstance(fragmentInstanceSpec, program.getLog());
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
-            String signature = asmFragmentInstanceSpec.getSignature();
+            String signature = fragmentInstanceSpec.getSignature();
             fragmentVariationsTried.append(signature).append(" ");
-            if(asmFragmentInstanceSpec.hasNextVariation()) {
-               asmFragmentInstanceSpec.nextVariation();
+            if(fragmentInstanceSpec.hasNextVariation()) {
+               fragmentInstanceSpec.nextVariation();
                if(program.getLog().isVerboseFragmentLog()) {
-                  program.getLog().append("Fragment not found " + signature + ". Attempting another variation " + asmFragmentInstanceSpec.getSignature());
+                  program.getLog().append("Fragment not found " + signature + ". Attempting another variation " + fragmentInstanceSpec.getSignature());
                }
             } else {
                // No more variations available - fail with an error
@@ -891,8 +893,8 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      asm.getCurrentChunk().setFragment(asmFragmentInstance.getFragmentName());
-      asmFragmentInstance.generate(asm);
+      asm.getCurrentChunk().setFragment(fragmentInstance.getFragmentName());
+      fragmentInstance.generate(asm);
    }
 
    /**
@@ -1047,7 +1049,7 @@ public class Pass4CodeGeneration {
             } else {
                AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, rValue, program, scope);
                ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-               generateAsm(asm, asmFragmentInstanceSpecFactory);
+               generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
             }
          }
          transitionSetGenerated(transition);

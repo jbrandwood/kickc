@@ -104,8 +104,8 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Calling convention STACK_CALL adding prepare/execute/finalize for [5] (word~) main::$0 ← call plus (byte) '0' (byte) 7 
-Calling convention STACK_CALL replacing param((word) plus::a) with paramstack(word,plus::OFFSET_STACK_A)
-Calling convention STACK_CALL replacing param((word) plus::b) with paramstack(word,plus::OFFSET_STACK_B)
+Calling convention STACK_CALL replacing param((word) plus::a) with paramstack(word,(const byte) plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param((word) plus::b) with paramstack(word,(const byte) plus::OFFSET_STACK_B)
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -132,8 +132,8 @@ main::@return: scope:[main]  from main
 
 __stackcall (word()) plus((word) plus::a , (word) plus::b)
 plus: scope:[plus]  from
-  [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A)
-  [11] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B)
+  [10] (word) plus::a#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_A)
+  [11] (word) plus::b#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_B)
   [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
@@ -239,13 +239,13 @@ plus: {
     .label a = 4
     .label b = 6
     .label return = 8
-    // [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    // [10] (word) plus::a#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [11] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    // [11] (word) plus::b#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
@@ -263,6 +263,12 @@ plus: {
     // plus::@return
   breturn:
     // [13] return (word) plus::return#0
+    // [13] return (word) plus::return#0 -- _stackgetword_vbuc1=vwuz1 
+    tsx
+    lda.z return
+    sta STACK_BASE+2,x
+    lda.z return+1
+    sta STACK_BASE+2+1,x
     rts
 }
   // File Data
@@ -271,9 +277,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] callprepare plus (byte) '0' (byte) 7  [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (word~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [8] *((const word*) SCREEN#0) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [11] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [10] (word) plus::a#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [11] (word) plus::b#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
 Statement [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:6 [ plus::return#0 ] ) always clobbers reg byte a 
+Statement [13] return (word) plus::return#0 [ ] ( main:2::plus:6 [ ] ) always clobbers reg byte a reg byte x 
 Potential registers zp ZP_WORD:2 [ main::$0 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ plus::a#0 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_WORD:6 [ plus::b#0 ] : zp ZP_WORD:6 , 
@@ -284,9 +291,9 @@ Uplift Scope [plus] 4: zp ZP_WORD:6 [ plus::b#0 ] 2: zp ZP_WORD:4 [ plus::a#0 ] 
 Uplift Scope [main] 2: zp ZP_WORD:2 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 136 combination zp ZP_WORD:6 [ plus::b#0 ] zp ZP_WORD:4 [ plus::a#0 ] zp ZP_WORD:8 [ plus::return#0 ] 
-Uplifting [main] best 136 combination zp ZP_WORD:2 [ main::$0 ] 
-Uplifting [] best 136 combination 
+Uplifting [plus] best 154 combination zp ZP_WORD:6 [ plus::b#0 ] zp ZP_WORD:4 [ plus::a#0 ] zp ZP_WORD:8 [ plus::return#0 ] 
+Uplifting [main] best 154 combination zp ZP_WORD:2 [ main::$0 ] 
+Uplifting [] best 154 combination 
 Coalescing zero page register [ zp ZP_WORD:4 [ plus::a#0 ] ] with [ zp ZP_WORD:8 [ plus::return#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:4 [ plus::a#0 plus::return#0 ] ] with [ zp ZP_WORD:2 [ main::$0 ] ]
 Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ plus::a#0 plus::return#0 main::$0 ]
@@ -362,13 +369,13 @@ plus: {
     .label a = 2
     .label b = 4
     .label return = 2
-    // [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    // [10] (word) plus::a#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [11] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    // [11] (word) plus::b#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
@@ -386,6 +393,12 @@ plus: {
     // plus::@return
   breturn:
     // [13] return (word) plus::return#0
+    // [13] return (word) plus::return#0 -- _stackgetword_vbuc1=vwuz1 
+    tsx
+    lda.z return
+    sta STACK_BASE+2,x
+    lda.z return+1
+    sta STACK_BASE+2+1,x
     rts
 }
   // File Data
@@ -437,7 +450,7 @@ zp ZP_WORD:4 [ plus::b#0 ]
 
 
 FINAL ASSEMBLER
-Score: 118
+Score: 136
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -500,13 +513,13 @@ plus: {
     .label a = 2
     .label b = 4
     .label return = 2
-    // [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
+    // [10] (word) plus::a#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [11] (word) plus::b#0 ← paramstack(word,plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
+    // [11] (word) plus::b#0 ← paramstack(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackgetword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
@@ -524,6 +537,12 @@ plus: {
     // plus::@return
     // }
     // [13] return (word) plus::return#0
+    // [13] return (word) plus::return#0 -- _stackgetword_vbuc1=vwuz1 
+    tsx
+    lda.z return
+    sta STACK_BASE+2,x
+    lda.z return+1
+    sta STACK_BASE+2+1,x
     rts
 }
   // File Data

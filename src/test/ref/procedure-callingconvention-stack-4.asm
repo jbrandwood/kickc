@@ -39,5 +39,7 @@ plus: {
     lda STACK_BASE+OFFSET_STACK_B,x
     clc
     adc.z a
+    tsx
+    sta STACK_BASE+1,x
     rts
 }

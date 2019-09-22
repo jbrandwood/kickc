@@ -801,18 +801,37 @@ public class Pass4CodeGeneration {
 
             }
          } else if(statement instanceof StatementReturn) {
-            Procedure.InterruptType interruptType = null;
+            Procedure procedure = null;
             ScopeRef scope = block.getScope();
             if(!scope.equals(ScopeRef.ROOT)) {
-               Procedure procedure = getScope().getProcedure(scope.getFullName());
-               if(procedure != null) {
-                  interruptType = procedure.getInterruptType();
+               procedure = getScope().getProcedure(scope.getFullName());
+            }
+
+            if(procedure!=null && Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               StatementReturn returnStatement = (StatementReturn) statement;
+               if(returnStatement.getValue()!=null) {
+                  // Store return value on stack
+                  SymbolType returnType = procedure.getReturnType();
+
+                  // Find parameter/return stack size
+                  int parameterBytes = 0;
+                  for(Variable parameter : procedure.getParameters()) {
+                     parameterBytes += parameter.getType().getSizeBytes();
+                  }
+                  int returnOffset = parameterBytes - returnType.getSizeBytes();
+                  // TODO: Put the return stack offset into a named constant (look at PassNCallingConventionStack)
+                  ConstantValue returnValueStackOffset = new ConstantInteger((long)returnOffset, SymbolType.BYTE);
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new ParamStackValue(returnValueStackOffset, returnType), returnStatement.getValue(), program, block.getScope());
+                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
             }
-            if(interruptType == null) {
+
+            if(procedure==null || procedure.getInterruptType() == null) {
                asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
             } else {
-               generateInterruptExit(asm, statement, interruptType);
+               generateInterruptExit(asm, statement, procedure.getInterruptType());
             }
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;

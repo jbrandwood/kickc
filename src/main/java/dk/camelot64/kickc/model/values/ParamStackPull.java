@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 
-/** A value puslled from the stack. */
+/** A value pulled from the stack. */
 public class ParamStackPull implements RValue {
 
    /** The type of value being pushed. */

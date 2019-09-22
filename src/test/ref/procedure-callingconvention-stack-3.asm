@@ -50,5 +50,10 @@ plus: {
     lda.z return+1
     adc.z b+1
     sta.z return+1
+    tsx
+    lda.z return
+    sta STACK_BASE+2,x
+    lda.z return+1
+    sta STACK_BASE+2+1,x
     rts
 }

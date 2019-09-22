@@ -90,8 +90,8 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Calling convention STACK_CALL adding prepare/execute/finalize for [5] (byte~) main::$0 ← call plus (byte) '0' (byte) 7 
-Calling convention STACK_CALL replacing param((byte) plus::a) with paramstack(byte,plus::OFFSET_STACK_A)
-Calling convention STACK_CALL replacing param((byte) plus::b) with paramstack(byte,plus::OFFSET_STACK_B)
+Calling convention STACK_CALL replacing param((byte) plus::a) with paramstack(byte,(const byte) plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param((byte) plus::b) with paramstack(byte,(const byte) plus::OFFSET_STACK_B)
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -118,8 +118,8 @@ main::@return: scope:[main]  from main
 
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 plus: scope:[plus]  from
-  [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A)
-  [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B)
+  [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A)
+  [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B)
   [12] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
@@ -217,11 +217,11 @@ plus: {
     .label a = 3
     .label b = 4
     .label return = 5
-    // [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
+    // [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B) -- vbuz1=_stackgetbyte_vbuc1 
+    // [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B) -- vbuz1=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
@@ -234,6 +234,10 @@ plus: {
     // plus::@return
   breturn:
     // [13] return (byte) plus::return#0
+    // [13] return (byte) plus::return#0 -- _stackgetbyte_vbuc1=vbuz1 
+    lda.z return
+    tsx
+    sta STACK_BASE+1,x
     rts
 }
   // File Data
@@ -241,16 +245,18 @@ plus: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] callprepare plus (byte) '0' (byte) 7  [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
-Statement [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ plus::a#0 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:3 [ plus::a#0 ]
 Statement [12] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:6 [ plus::return#0 ] ) always clobbers reg byte a 
+Statement [13] return (byte) plus::return#0 [ ] ( main:2::plus:6 [ ] ) always clobbers reg byte x 
 Statement [5] callprepare plus (byte) '0' (byte) 7  [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
-Statement [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
 Statement [12] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:6 [ plus::return#0 ] ) always clobbers reg byte a 
+Statement [13] return (byte) plus::return#0 [ ] ( main:2::plus:6 [ ] ) always clobbers reg byte x 
 Potential registers zp ZP_BYTE:2 [ main::$0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ plus::a#0 ] : zp ZP_BYTE:3 , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ plus::b#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -261,11 +267,11 @@ Uplift Scope [plus] 4: zp ZP_BYTE:4 [ plus::b#0 ] 2: zp ZP_BYTE:3 [ plus::a#0 ] 
 Uplift Scope [main] 2: zp ZP_BYTE:2 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 84 combination reg byte a [ plus::b#0 ] zp ZP_BYTE:3 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
-Uplifting [main] best 78 combination reg byte a [ main::$0 ] 
-Uplifting [] best 78 combination 
+Uplifting [plus] best 91 combination reg byte a [ plus::b#0 ] zp ZP_BYTE:3 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
+Uplifting [main] best 85 combination reg byte a [ main::$0 ] 
+Uplifting [] best 85 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ plus::a#0 ]
-Uplifting [plus] best 78 combination zp ZP_BYTE:3 [ plus::a#0 ] 
+Uplifting [plus] best 85 combination zp ZP_BYTE:3 [ plus::a#0 ] 
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ plus::a#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -325,11 +331,11 @@ plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 1
     .label a = 2
-    // [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
+    // [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B) -- vbuaa=_stackgetbyte_vbuc1 
+    // [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     // [12] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
@@ -339,6 +345,9 @@ plus: {
     // plus::@return
   breturn:
     // [13] return (byte) plus::return#0
+    // [13] return (byte) plus::return#0 -- _stackgetbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+1,x
     rts
 }
   // File Data
@@ -392,7 +401,7 @@ reg byte a [ plus::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 60
+Score: 67
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -442,11 +451,11 @@ plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 1
     .label a = 2
-    // [10] (byte) plus::a#0 ← paramstack(byte,plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
+    // [10] (byte) plus::a#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [11] (byte) plus::b#0 ← paramstack(byte,plus::OFFSET_STACK_B) -- vbuaa=_stackgetbyte_vbuc1 
+    // [11] (byte) plus::b#0 ← paramstack(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackgetbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     // return a+b;
@@ -456,6 +465,9 @@ plus: {
     // plus::@return
     // }
     // [13] return (byte) plus::return#0
+    // [13] return (byte) plus::return#0 -- _stackgetbyte_vbuc1=vbuaa 
+    tsx
+    sta STACK_BASE+1,x
     rts
 }
   // File Data

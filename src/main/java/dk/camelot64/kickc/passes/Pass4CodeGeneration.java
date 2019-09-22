@@ -734,7 +734,6 @@ public class Pass4CodeGeneration {
             generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
-
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
                // Generate PHI transition
@@ -748,7 +747,12 @@ public class Pass4CodeGeneration {
                      genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                   }
                }
-            } else if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            }
+            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+         } else if(statement instanceof StatementCallPrepare) {
+            StatementCallPrepare call = (StatementCallPrepare) statement;
+            Procedure procedure = getScope().getProcedure(call.getProcedure());
+            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
                // Push parameters to the stack
                for(RValue parameter : call.getParameters()) {
                   SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
@@ -758,20 +762,43 @@ public class Pass4CodeGeneration {
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
                asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-               asm.getCurrentChunk().setFragment("jsr");
             }
-            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
-            // Clean up the stack
+         } else if(statement instanceof StatementCallExecute) {
+            StatementCallExecute call = (StatementCallExecute) statement;
+            Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               asm.getCurrentChunk().setFragment("jsr");
+               asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            }
+         } else if(statement instanceof StatementCallFinalize) {
+            StatementCallFinalize call = (StatementCallFinalize) statement;
+            Procedure procedure = getScope().getProcedure(call.getProcedure());
+            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               // Find parameter/return stack size
                int parameterBytes = 0;
-               for(RValue parameter : call.getParameters()) {
-                  SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
-                  parameterBytes += parameterType.getSizeBytes();
+               for(Variable parameter : procedure.getParameters()) {
+                  parameterBytes += parameter.getType().getSizeBytes();
                }
-               String pullSignature = "_stackpullbyte_" + Integer.toString(parameterBytes);
+               int stackSizeBytes = parameterBytes;
+               if(call.getlValue() != null) {
+                  SymbolType returnType = procedure.getReturnType();
+                  stackSizeBytes -= returnType.getSizeBytes();
+               }
+               // Clean up the stack
+               String pullSignature = "_stackpullbyte_" + Integer.toString(stackSizeBytes);
                AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
                asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                generateAsm(asm, pullFragmentInstanceSpec);
+
+               // Pull result from the stack
+               if(call.getlValue() != null) {
+                  SymbolType returnType = procedure.getReturnType();
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new ParamStackPull(returnType), program, block.getScope());
+                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+               }
+
             }
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;

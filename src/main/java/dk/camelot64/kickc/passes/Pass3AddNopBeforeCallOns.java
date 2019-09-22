@@ -5,9 +5,11 @@ package dk.camelot64.kickc.passes;
  * This ensures that the live range propagation can propagate from method out to caller properly.
  */
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class Pass3AddNopBeforeCallOns extends Pass2Base {
             getLog().append("Adding NOP phi() at start of " + block.getLabel());
          } else {
             Statement firstStmt = statements.get(0);
-            if(firstStmt instanceof StatementCall) {
+            if(firstStmt instanceof StatementCalling) {
                statements.add(0, new StatementPhiBlock(Comment.NO_COMMENTS));
                getLog().append("Adding NOP phi() at start of " + block.getLabel());
             }

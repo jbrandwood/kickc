@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -83,7 +80,16 @@ public class Pass1AssertUsedVars extends Pass1Base {
                defined.add(procedure.getVariable(paramName).getRef());
             }
             ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
-
+            assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
+         } else if(statement instanceof StatementCallPrepare) {
+            StatementCallPrepare call = (StatementCallPrepare) statement;
+            Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
+            for(String paramName : procedure.getParameterNames()) {
+               defined.add(procedure.getVariable(paramName).getRef());
+            }
+         } else if(statement instanceof StatementCallExecute) {
+            StatementCallExecute call = (StatementCallExecute) statement;
+            ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
             assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
          } else if(statement instanceof StatementConditionalJump) {
             StatementConditionalJump cond = (StatementConditionalJump) statement;

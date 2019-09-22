@@ -5,6 +5,7 @@
   .label SCREEN = $400
   .const STACK_BASE = $103
 main: {
+    .label _0 = 2
     lda #'0'
     pha
     lda #7
@@ -12,7 +13,8 @@ main: {
     jsr plus
     pla
     pla
-    sty SCREEN
+    sta.z _0
+    sta SCREEN
     rts
 }
 // plus(byte zeropage(2) a, byte register(A) b)

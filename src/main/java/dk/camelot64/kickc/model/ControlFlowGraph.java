@@ -95,9 +95,9 @@ public class ControlFlowGraph implements Serializable {
    public ControlFlowBlock getAssignmentBlock(VariableRef variable) {
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getlValue().equals(variable)) {
+            if(statement instanceof StatementLValue) {
+               StatementLValue assignment = (StatementLValue) statement;
+               if(variable.equals(assignment.getlValue())) {
                   return block;
                }
             } else if(statement instanceof StatementPhiBlock) {

@@ -4,19 +4,14 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.RValue;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 /**

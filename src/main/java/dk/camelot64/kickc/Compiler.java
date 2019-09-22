@@ -490,10 +490,12 @@ public class Compiler {
       new PassNCallingConventionStack(program).execute();
 
       program.clearCallGraph();
+      program.clearStatementIndices();
       program.clearStatementInfos();
       program.clearVariableReferenceInfos();
       program.clearLiveRangeVariables();
       program.clearLiveRangeVariablesEffective();
+      new PassNStatementIndices(program).execute();
       pass2AssertSSA();
 
       getLog().append("\nFINAL CONTROL FLOW GRAPH");

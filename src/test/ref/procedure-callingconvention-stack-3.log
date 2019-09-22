@@ -9,7 +9,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (word~) main::$0 ← call plus (number) $1234 (number) $2345 
+  (word~) main::$0 ← call plus (byte) '0' (number) 7 
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
   *((word*) SCREEN#0 + (number~) main::$1) ← (word~) main::$0
   to:main::@return
@@ -58,20 +58,17 @@ __stackcall (word()) plus((word) plus::a , (word) plus::b)
 (word) plus::return#0
 (word) plus::return#1
 
-Adding number conversion cast (unumber) $1234 in (word~) main::$0 ← call plus (number) $1234 (number) $2345 
-Adding number conversion cast (unumber) $2345 in (word~) main::$0 ← call plus (unumber)(number) $1234 (number) $2345 
+Adding number conversion cast (unumber) 7 in (word~) main::$0 ← call plus (byte) '0' (number) 7 
 Adding number conversion cast (unumber) 0 in (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word*) SCREEN#0 ← (word*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
-Simplifying constant integer cast $1234
-Simplifying constant integer cast $2345
+Simplifying constant integer cast 7
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $1234
-Finalized unsigned number type (word) $2345
+Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
@@ -106,7 +103,7 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Calling convention STACK_CALL adding prepare/execute/finalize for [5] (word~) main::$0 ← call plus (word) $1234 (word) $2345 
+Calling convention STACK_CALL adding prepare/execute/finalize for [5] (word~) main::$0 ← call plus (byte) '0' (byte) 7 
 Calling convention STACK_CALL replacing param((word) plus::a) with paramstack(word,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param((word) plus::b) with paramstack(word,plus::OFFSET_STACK_B)
 
@@ -124,7 +121,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] phi()
-  [5] callprepare plus (word) $1234 (word) $2345 
+  [5] callprepare plus (byte) '0' (byte) 7 
   [6] callexecute plus 
   [7] (word~) main::$0 ← callfinalize plus 
   [8] *((const word*) SCREEN#0) ← (word~) main::$0
@@ -174,7 +171,10 @@ Allocated zp ZP_WORD:8 [ plus::return#0 ]
 INITIAL ASM
 Target platform is c64basic / MOS6502X
   // File Comments
-// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+// Test a procedure with calling convention stack
+// Test casting of parameter types
+// Currently fails because the pushed are done based on the actual value instead of the decalred parameter type
+// https://gitlab.com/camelot/kickc/issues/319
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -201,18 +201,14 @@ bend:
   // main
 main: {
     .label _0 = 2
-    // [5] callprepare plus (word) $1234 (word) $2345 
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$1234
+    // [5] callprepare plus (byte) '0' (byte) 7 
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #'0'
     pha
-    lda #<$1234
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #7
     pha
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$2345
-    pha
-    lda #<$2345
-    pha
-    // [5] callprepare plus (word) $1234 (word) $2345 
+    // [5] callprepare plus (byte) '0' (byte) 7 
     // [6] callexecute plus  -- jsr 
     jsr plus
     // [7] (word~) main::$0 ← callfinalize plus 
@@ -272,7 +268,7 @@ plus: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] callprepare plus (word) $1234 (word) $2345  [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] callprepare plus (byte) '0' (byte) 7  [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (word~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [8] *((const word*) SCREEN#0) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] (word) plus::a#0 ← paramstack(word,plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
@@ -288,9 +284,9 @@ Uplift Scope [plus] 4: zp ZP_WORD:6 [ plus::b#0 ] 2: zp ZP_WORD:4 [ plus::a#0 ] 
 Uplift Scope [main] 2: zp ZP_WORD:2 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 146 combination zp ZP_WORD:6 [ plus::b#0 ] zp ZP_WORD:4 [ plus::a#0 ] zp ZP_WORD:8 [ plus::return#0 ] 
-Uplifting [main] best 146 combination zp ZP_WORD:2 [ main::$0 ] 
-Uplifting [] best 146 combination 
+Uplifting [plus] best 136 combination zp ZP_WORD:6 [ plus::b#0 ] zp ZP_WORD:4 [ plus::a#0 ] zp ZP_WORD:8 [ plus::return#0 ] 
+Uplifting [main] best 136 combination zp ZP_WORD:2 [ main::$0 ] 
+Uplifting [] best 136 combination 
 Coalescing zero page register [ zp ZP_WORD:4 [ plus::a#0 ] ] with [ zp ZP_WORD:8 [ plus::return#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:4 [ plus::a#0 plus::return#0 ] ] with [ zp ZP_WORD:2 [ main::$0 ] ]
 Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ plus::a#0 plus::return#0 main::$0 ]
@@ -298,7 +294,10 @@ Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ plus::b#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+// Test a procedure with calling convention stack
+// Test casting of parameter types
+// Currently fails because the pushed are done based on the actual value instead of the decalred parameter type
+// https://gitlab.com/camelot/kickc/issues/319
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -325,18 +324,14 @@ bend:
   // main
 main: {
     .label _0 = 2
-    // [5] callprepare plus (word) $1234 (word) $2345 
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$1234
+    // [5] callprepare plus (byte) '0' (byte) 7 
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #'0'
     pha
-    lda #<$1234
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #7
     pha
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$2345
-    pha
-    lda #<$2345
-    pha
-    // [5] callprepare plus (word) $1234 (word) $2345 
+    // [5] callprepare plus (byte) '0' (byte) 7 
     // [6] callexecute plus  -- jsr 
     jsr plus
     // [7] (word~) main::$0 ← callfinalize plus 
@@ -442,10 +437,13 @@ zp ZP_WORD:4 [ plus::b#0 ]
 
 
 FINAL ASSEMBLER
-Score: 128
+Score: 118
 
   // File Comments
-// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+// Test a procedure with calling convention stack
+// Test casting of parameter types
+// Currently fails because the pushed are done based on the actual value instead of the decalred parameter type
+// https://gitlab.com/camelot/kickc/issues/319
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -463,19 +461,15 @@ Score: 128
   // main
 main: {
     .label _0 = 2
-    // plus(0x1234, 0x2345)
-    // [5] callprepare plus (word) $1234 (word) $2345 
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$1234
+    // plus('0', 7)
+    // [5] callprepare plus (byte) '0' (byte) 7 
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #'0'
     pha
-    lda #<$1234
+    // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
+    lda #7
     pha
-    // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
-    lda #>$2345
-    pha
-    lda #<$2345
-    pha
-    // [5] callprepare plus (word) $1234 (word) $2345 
+    // [5] callprepare plus (byte) '0' (byte) 7 
     // [6] callexecute plus  -- jsr 
     jsr plus
     // [7] (word~) main::$0 ← callfinalize plus 
@@ -487,7 +481,7 @@ main: {
     sta.z _0
     pla
     sta.z _0+1
-    // SCREEN[0] = plus(0x1234, 0x2345)
+    // SCREEN[0] = plus('0', 7)
     // [8] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z _0
     sta SCREEN

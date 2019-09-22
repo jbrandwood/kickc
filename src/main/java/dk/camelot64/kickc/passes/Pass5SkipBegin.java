@@ -6,10 +6,7 @@ import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementKickAsm;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -71,8 +68,8 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
             if(((StatementPhiBlock) statement).getPhiVariables().size() > 0) {
                return false;
             }
-         } else if(statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
+         } else if(statement instanceof StatementCalling) {
+            ProcedureRef procedure = ((StatementCalling) statement).getProcedure();
             if(!SymbolRef.MAIN_PROC_NAME.equals(procedure.getFullName())) {
                return false;
             }

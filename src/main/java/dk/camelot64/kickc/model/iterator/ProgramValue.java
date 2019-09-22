@@ -55,6 +55,26 @@ public interface ProgramValue {
       }
    }
 
+   class CallPrepareParameter implements ProgramValue {
+      private final StatementCallPrepare call;
+      private final int i;
+
+      CallPrepareParameter(StatementCallPrepare call, int i) {
+         this.call = call;
+         this.i = i;
+      }
+
+      @Override
+      public Value get() {
+         return call.getParameters().get(i);
+      }
+
+      @Override
+      public void set(Value value) {
+         call.getParameters().set(i, (RValue) value);
+      }
+   }
+
    class CallParameter implements ProgramValue {
       private final StatementCall call;
       private final int i;

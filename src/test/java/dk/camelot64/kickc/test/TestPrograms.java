@@ -36,6 +36,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProcedureCallingConventionStack4() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-4"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+
+   @Test
+   public void testProcedureCallingConventionStack3() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-3"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+
+   @Test
    public void testProcedureCallingConventionStack2() throws IOException, URISyntaxException {
       compileAndCompare("procedure-callingconvention-stack-2"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
    }
@@ -47,7 +57,7 @@ public class TestPrograms {
 
    @Test
    public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-0"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("procedure-callingconvention-stack-0"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence().verboseUplift().verboseLiveRanges().verboseSSAOptimize());
    }
 
    @Test

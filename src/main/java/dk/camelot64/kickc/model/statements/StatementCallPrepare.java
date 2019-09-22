@@ -1,47 +1,31 @@
 package dk.camelot64.kickc.model.statements;
 
 import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Call procedure in SSA form.
+ * Call procedure prepararion in SSA form.
  * <br>
- * <i> X<sub>i</sub> := call label param1 param2 param3 ... </i>
+ * lval = call func(params) are converted to callprepare func(params) / callexecute func() / lval=callfinalize func().
+ * <br>
+ * callprepare procedure param1 param2 param3 ... </i>
  */
-public class StatementCall extends StatementBase implements StatementLValue, StatementCalling {
+public class StatementCallPrepare extends StatementBase {
 
-   /** The variable being assigned a value by the call. Can be null. */
-   private LValue lValue;
-   /** The name of the procedure called */
-   private String procedureName;
    /** The procedure called. */
    private ProcedureRef procedure;
    /** The parameter values passed to the procedure. */
    private List<RValue> parameters;
 
-   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {
+   public StatementCallPrepare(ProcedureRef procedure, List<RValue> parameters, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
-      this.lValue = lValue;
-      this.procedureName = procedureName;
+      this.procedure = procedure;
       this.parameters = parameters;
-   }
-
-   public LValue getlValue() {
-      return lValue;
-   }
-
-   public void setlValue(LValue lValue) {
-      this.lValue = lValue;
-   }
-
-   public String getProcedureName() {
-      return procedureName;
    }
 
    public ProcedureRef getProcedure() {
@@ -76,15 +60,9 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());
-      if(lValue != null) {
-         res.append(lValue.toString(program));
-         res.append(" ← ");
-      }
-      res.append("call ");
+      res.append("callprepare ");
       if(procedure != null) {
          res.append(procedure.getFullName() + " ");
-      } else {
-         res.append(procedureName + " ");
       }
       if(parameters != null) {
          for(RValue parameter : parameters) {
@@ -102,15 +80,13 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
-      StatementCall that = (StatementCall) o;
-      return Objects.equals(lValue, that.lValue) &&
-            Objects.equals(procedureName, that.procedureName) &&
-            Objects.equals(procedure, that.procedure) &&
+      StatementCallPrepare that = (StatementCallPrepare) o;
+      return Objects.equals(procedure, that.procedure) &&
             Objects.equals(parameters, that.parameters);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), lValue, procedureName, procedure, parameters);
+      return Objects.hash(super.hashCode(), procedure, parameters);
    }
 }

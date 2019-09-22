@@ -86,6 +86,22 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                      modified = true;
                   }
                }
+            } else if(statement instanceof StatementCallFinalize) {
+               StatementCallFinalize call = (StatementCallFinalize) statement;
+               LValue lValue = call.getlValue();
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  if(!variable.isVolatile()) {
+                     if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                        getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
+                     }
+                     if(variable != null) {
+                        variable.getScope().remove(variable);
+                     }
+                     call.setlValue(null);
+                     modified = true;
+                  }
+               }
             } else if(statement instanceof StatementCallPointer) {
                StatementCallPointer call = (StatementCallPointer) statement;
                LValue lValue = call.getlValue();

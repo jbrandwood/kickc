@@ -47,6 +47,8 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          updateInferedTypeAssignmentLValue(program, (StatementAssignment) statementLValue);
       } else if(statementLValue instanceof StatementCall) {
          updateInferedTypeCallLValue(program, (StatementCall) statementLValue);
+      } else if(statementLValue instanceof StatementCallFinalize) {
+         updateInferedTypeCallFinalizeLValue(program, (StatementCallFinalize) statementLValue);
       } else if(statementLValue instanceof StatementCallPointer) {
          updateInferedTypeCallPointerLValue(program, (StatementCallPointer) statementLValue);
       } else {
@@ -56,6 +58,19 @@ public class PassNTypeInference extends Pass2SsaOptimization {
 
 
    private static void updateInferedTypeCallLValue(Program program, StatementCall call) {
+      ProgramScope programScope = program.getScope();
+      LValue lValue = call.getlValue();
+      if(lValue instanceof VariableRef) {
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
+            Procedure procedure = programScope.getProcedure(call.getProcedure());
+            SymbolType type = procedure.getReturnType();
+            setInferedType(program, call, symbol, type);
+         }
+      }
+   }
+
+   private static void updateInferedTypeCallFinalizeLValue(Program program, StatementCallFinalize call) {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {

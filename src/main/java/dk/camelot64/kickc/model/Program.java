@@ -348,6 +348,10 @@ public class Program {
       this.liveRangeVariables = liveRangeVariables;
    }
 
+   public boolean hasLiveRangeVariables() {
+      return this.liveRangeVariables != null;
+   }
+
    public void clearLiveRangeVariables() {
       this.liveRangeVariables = null;
    }

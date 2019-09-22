@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.statements.StatementJump;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -84,6 +81,14 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
          LabelRef procLabelRef = procedure.getLabelRef();
          assertBlock(procLabelRef);
          return super.visitCall(call);
+      }
+
+      @Override
+      public Void visitCallExecute(StatementCallExecute callExecute) {
+         ProcedureRef procedure = callExecute.getProcedure();
+         LabelRef procLabelRef = procedure.getLabelRef();
+         assertBlock(procLabelRef);
+         return super.visitCallExecute(callExecute);
       }
 
       @Override

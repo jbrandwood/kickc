@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.statements.StatementCallPrepare;
 import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -28,6 +29,18 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
          String nameHint = null;
          if(currentStmt instanceof StatementCall) {
             StatementCall call = (StatementCall) currentStmt;
+            List<RValue> parameters = call.getParameters();
+            for(int i = 0; i < parameters.size(); i++) {
+               RValue parameter = parameters.get(i);
+               if(parameter.equals(programValue.get())) {
+                  // The programValue value is the parameter - use the parameter name as name hint
+                  Procedure procedure = Pass1ExtractInlineStrings.this.getProgram().getScope().getProcedure(call.getProcedure());
+                  nameHint = procedure.getParameterNames().get(i);
+                  break;
+               }
+            }
+         } else if(currentStmt instanceof StatementCallPrepare) {
+            StatementCallPrepare call = (StatementCallPrepare) currentStmt;
             List<RValue> parameters = call.getParameters();
             for(int i = 0; i < parameters.size(); i++) {
                RValue parameter = parameters.get(i);

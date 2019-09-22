@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -87,7 +86,7 @@ public class ControlFlowBlock implements Serializable {
       ListIterator<Statement> listIterator = statements.listIterator();
       while(listIterator.hasNext()) {
          Statement statement = listIterator.next();
-         if(statement instanceof StatementCall) {
+         if(statement instanceof StatementCalling) {
             listIterator.previous();
             listIterator.add(newStatement);
             return;

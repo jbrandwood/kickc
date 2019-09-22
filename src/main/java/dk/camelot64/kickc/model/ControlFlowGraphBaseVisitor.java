@@ -35,6 +35,12 @@ public class ControlFlowGraphBaseVisitor<T> {
          return visitCall((StatementCall) statement);
       } else if(statement instanceof StatementCallPointer) {
          return visitCallPointer((StatementCallPointer) statement);
+      } else if(statement instanceof StatementCallPrepare) {
+         return visitCallPrepare((StatementCallPrepare) statement);
+      } else if(statement instanceof StatementCallExecute) {
+         return visitCallExecute((StatementCallExecute) statement);
+      } else if(statement instanceof StatementCallFinalize) {
+         return visitCallFinalize((StatementCallFinalize) statement);
       } else if(statement instanceof StatementPhiBlock) {
          return visitPhiBlock((StatementPhiBlock) statement);
       } else if(statement instanceof StatementReturn) {
@@ -89,6 +95,18 @@ public class ControlFlowGraphBaseVisitor<T> {
    }
 
    public T visitCallPointer(StatementCallPointer call) {
+      return null;
+   }
+
+   public T visitCallFinalize(StatementCallFinalize callFinalize) {
+      return null;
+   }
+
+   public T visitCallExecute(StatementCallExecute callExecute) {
+      return null;
+   }
+
+   public T visitCallPrepare(StatementCallPrepare callPrepare) {
       return null;
    }
 

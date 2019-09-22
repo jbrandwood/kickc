@@ -75,6 +75,16 @@ public class ProgramExpressionIterator {
                      handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
                   }
                }
+            } else if(stmt instanceof StatementCallPrepare) {
+               StatementCallPrepare call = (StatementCallPrepare) stmt;
+               List<RValue> paramValues = call.getParameters();
+               Procedure procedure = program.getScope().getProcedure(call.getProcedure());
+               List<Variable> paramDefs = procedure.getParameters();
+               if(paramValues != null && paramDefs.size() == paramValues.size()) {
+                  for(int i = 0; i < paramDefs.size(); i++) {
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallPrepareParameter(call, i)), stmt, stmtIt, block);
+                  }
+               }
             }
             // Iterate all statement values
             ProgramValueIterator.execute(stmt, programValueHandler, stmtIt, block);

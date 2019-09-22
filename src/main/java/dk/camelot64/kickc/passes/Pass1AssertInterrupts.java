@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ProcedureRef;
@@ -20,8 +20,8 @@ public class Pass1AssertInterrupts extends Pass1Base {
    public boolean step() {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCall) {
-               ProcedureRef procedureRef = ((StatementCall) statement).getProcedure();
+            if(statement instanceof StatementCalling) {
+               ProcedureRef procedureRef = ((StatementCalling) statement).getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
                if(procedure.getInterruptType()!=null) {
                   throw new CompileError("Error! Interrupts cannot be called.", statement.getSource());

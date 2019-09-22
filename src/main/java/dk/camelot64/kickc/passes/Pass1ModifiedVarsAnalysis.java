@@ -1,14 +1,16 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ProcedureModifiedVars;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCalling;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementLValue;
-import dk.camelot64.kickc.model.symbols.Procedure;
 
 import java.util.*;
 
@@ -51,8 +53,8 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
                      modified.add(var);
                   }
                }
-               if(statement instanceof StatementCall) {
-                  ProcedureRef called = ((StatementCall) statement).getProcedure();
+               if(statement instanceof StatementCalling) {
+                  ProcedureRef called = ((StatementCalling) statement).getProcedure();
                   Procedure calledProc = getScope().getProcedure(called);
                   modified.addAll(getModifiedVars(calledProc));
                }

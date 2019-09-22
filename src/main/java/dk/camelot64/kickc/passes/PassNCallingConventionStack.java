@@ -1,13 +1,16 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 /** Handle calling convention {@link Procedure.CallingConvension#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
@@ -28,6 +31,26 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
             for(Variable parameter : procedure.getParameters()) {
                ConstantRef parameterOffsetConstant = getParameterOffsetConstant(procedure, parameter, getScope());
                offsetConstants.put(parameter.getRef(), parameterOffsetConstant);
+            }
+         }
+      }
+
+      // Transform STACK_CALL calls to call-prepare, call-execute, call-finalize
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementCall) {
+               StatementCall call = (StatementCall) statement;
+               ProcedureRef procedureRef = call.getProcedure();
+               Procedure procedure = getScope().getProcedure(procedureRef);
+               if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+                  stmtIt.remove();
+                  stmtIt.add(new StatementCallPrepare(procedureRef, call.getParameters(), call.getSource(), call.getComments()));
+                  stmtIt.add(new StatementCallExecute(procedureRef, call.getSource(), call.getComments()));
+                  stmtIt.add(new StatementCallFinalize(call.getlValue(), procedureRef, call.getSource(), call.getComments()));
+                  getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " adding prepare/execute/finalize for "+call.toString(getProgram(), false) );
+               }
             }
          }
       }
@@ -82,7 +105,6 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
     * @return The name of the constant
     */
    private static String getParameterOffsetConstantName(String parameterName) {
-      // TODO: Maybe use asmName?
       return "OFFSET_STACK_" + parameterName.toUpperCase();
    }
 

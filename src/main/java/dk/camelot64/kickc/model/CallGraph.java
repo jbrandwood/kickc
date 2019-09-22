@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.passes.calcs.PassNCalcCallGraph;
@@ -219,8 +219,8 @@ public class CallGraph {
          return scopeLabel;
       }
 
-      public void addCall(ProcedureRef procedureLabel, StatementCall statementCall) {
-         this.calls.add(new Call(procedureLabel, statementCall));
+      public void addCall(ProcedureRef procedureLabel, StatementCalling call) {
+         this.calls.add(new Call(procedureLabel, call));
       }
 
       /**
@@ -286,8 +286,8 @@ public class CallGraph {
           */
          private ProcedureRef procedure;
 
-         Call(ProcedureRef procedure, StatementCall statementCall) {
-            this.callStatementIdx = statementCall.getIndex();
+         Call(ProcedureRef procedure, StatementCalling call) {
+            this.callStatementIdx = call.getIndex();
             this.procedure = procedure;
          }
 

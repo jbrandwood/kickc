@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes.calcs;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -72,7 +72,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * <p>
     * Special consideration is giving when handling statements at the end/start of blocks, as multiple blocks may jump to the same block resulting in multiple stmt/nextstmt pairs.
     * Calls to methods are also given special consideration.
-    * Variables used inside the method must be propagated bak to all callers while variables not used inside the method must skip the method entirely back to the statement before the call.
+    * Variables used inside the method must be propagated back to all callers while variables not used inside the method must skip the method entirely back to the statement before the call.
     *
     * @param liveRanges The live ranges to propagate.
     * @return true if any live ranges was modified. false if no modification was performed (and the propagation is complete)
@@ -82,15 +82,15 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
       boolean modified = false;
       LiveRangeVariables.LiveRangeVariablesByStatement liveRangeVariablesByStatement = liveRanges.getLiveRangeVariablesByStatement();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for(Statement stmt : block.getStatements()) {
-            List<VariableRef> aliveNextStmt = liveRangeVariablesByStatement.getAlive(stmt.getIndex());
-            Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(stmt);
+         for(Statement nextStmt : block.getStatements()) {
+            List<VariableRef> aliveNextStmt = liveRangeVariablesByStatement.getAlive(nextStmt.getIndex());
+            Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(nextStmt);
             initLiveRange(liveRanges, definedNextStmt);
-            Collection<PreviousStatement> previousStmts = getPreviousStatements(stmt);
+            Collection<PreviousStatement> previousStmts = getPreviousStatements(nextStmt);
             for(PreviousStatement previousStmt : previousStmts) {
                if(PreviousStatement.Type.NORMAL.equals(previousStmt.getType())) {
                   // Add all used variables to the previous statement (taking into account phi from blocks)
-                  modified |= initUsedVars(liveRanges, stmt, previousStmt);
+                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                   // Add all vars alive in the next statement
                   for(VariableRef aliveVar : aliveNextStmt) {
                      if(!definedNextStmt.contains(aliveVar)) {
@@ -103,7 +103,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   }
                } else if(PreviousStatement.Type.LAST_IN_METHOD.equals(previousStmt.getType())) {
                   // Add all vars that are referenced in the method
-                  StatementCall call = (StatementCall) stmt;
+                  StatementCalling call = (StatementCalling) nextStmt;
                   ProcedureRef procedure = call.getProcedure();
                   Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure);
                   // The call statement has no used or defined by itself so only work with the alive vars
@@ -119,13 +119,13 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   }
                } else if(PreviousStatement.Type.SKIP_METHOD.equals(previousStmt.getType())) {
                   // Add all vars that the method does not use
-                  StatementCall call = (StatementCall) stmt;
+                  StatementCalling call = (StatementCalling) nextStmt;
                   ProcedureRef procedure = call.getProcedure();
                   Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure);
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
-                     if(!procUsed.contains(aliveVar)) {
+                     if(!procUsed.contains(aliveVar) && !definedNextStmt.contains(aliveVar)) {
                         boolean addSkipVar = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
                         modified |= addSkipVar;
                         if(addSkipVar && getLog().isVerboseLiveRanges()) {
@@ -135,9 +135,9 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                   }
                } else if(PreviousStatement.Type.BEFORE_METHOD.equals(previousStmt.getType())) {
                   // Add all used variables to the previous statement (taking into account phi from blocks)
-                  modified |= initUsedVars(liveRanges, stmt, previousStmt);
+                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                   // Add all alive variables to previous that are used inside the method
-                  ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(stmt);
+                  ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(nextStmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
                   Collection<VariableRef> procUsed = procedureReferencedVars.get(procedure.getRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
@@ -153,7 +153,7 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                         }
                      } else {
                         // Do nothing
-                        // getLog().append("Not propagating "+aliveVar.toString(getProgram()) +" in BEFORE_METHOD case from "+stmt.toString(getProgram(), false)+ " to "+previousStmt.getStatement().toString(getProgram(), false));
+                        // getLog().append("Not propagating "+aliveVar.toString(getProgram()) +" in BEFORE_METHOD case from "+nextStmt.toString(getProgram(), false)+ " to "+previousStmt.getStatement().toString(getProgram(), false));
                      }
                   }
                }
@@ -212,7 +212,33 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
 
    /**
     * Find the statement(s) executed just before the passed statement.
-    * There may be multiple previous statements if the current statement is the first in a block.
+    * There may be multiple previous statements if the current statement is the first in a block or a call.
+    * Special consideration is giving when handling statements at the end/start of blocks,
+    * as multiple blocks may jump to the same block resulting in multiple stmt/nextstmt pairs.
+    * Calls to methods are also given special consideration.
+    * The following illustrates how the different types of previous statements work.
+    <pre>
+    b1: {
+      [1] stmt;         prev: b3[1]/NORMAL, b2[2]/NORMAL
+      [2] call b4;      prev: b1[1]/SKIP_METHOD, b4[3]/LAST_IN_METHOD
+      [3] stmt;         prev: b1[2]/NORMAL
+      goto b2;
+    }
+    b2: {
+      [1] stmt;         prev: b1[3]/NORMAL
+      [2] if(x) b1;     prev: b2[1]/NORMAL
+      goto b3;
+    }
+    b3: {
+      [1] stmt;         prev: b2[2]/NORMAL
+      goto b1
+    }
+    b4: {
+      [1] stmt;         prev: b1[1]/BEFORE_METHOD
+      [2] stmt;         prev: b4[1]/NORMAL
+      [3] return;       prev: b4[3]/NORMAL
+    }
+    </pre>    *
     *
     * @param statement The statement to find previous for
     * @return statement(s) executed just before the passed statement
@@ -221,13 +247,13 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
       ArrayList<PreviousStatement> previousStatements = new ArrayList<>();
       // Find the statement(s) just before the current statement (disregarding if the current statement is a call - this will be handled later)
       Collection<Statement> precedingStatements = getPrecedingStatement(statement);
-      if(statement instanceof StatementCall) {
+      if(statement instanceof StatementCalling) {
          // Add the statement(s) just before the call
          for(Statement precedingStatement : precedingStatements) {
             previousStatements.add(new PreviousStatement(precedingStatement, PreviousStatement.Type.SKIP_METHOD));
          }
          // Add the last statement of the called method
-         StatementCall call = (StatementCall) statement;
+         StatementCalling call = (StatementCalling) statement;
          ProcedureRef procedure = call.getProcedure();
          LabelRef procedureReturnBlock = procedure.getReturnBlock();
          ControlFlowBlock returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);

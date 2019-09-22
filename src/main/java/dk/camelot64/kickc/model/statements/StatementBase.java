@@ -75,7 +75,7 @@ public abstract class StatementBase implements Statement {
    }
 
    public String aliveString(Program program) {
-      if(program == null || program.getLiveRangeVariables() == null) {
+      if(program == null || !program.hasLiveRangeVariables()) {
          return "";
       }
       LiveRangeVariables liveRanges = program.getLiveRangeVariables();

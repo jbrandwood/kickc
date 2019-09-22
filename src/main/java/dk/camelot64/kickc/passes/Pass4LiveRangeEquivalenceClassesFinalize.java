@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCallFinalize;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -88,6 +89,16 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
       public Void visitCall(StatementCall call) {
          if(call.getlValue() instanceof VariableRef) {
             VariableRef lValVar = (VariableRef) call.getlValue();
+            List<VariableRef> preferences = new ArrayList<>();
+            addToEquivalenceClassSet(lValVar, preferences);
+         }
+         return null;
+      }
+
+      @Override
+      public Void visitCallFinalize(StatementCallFinalize callFinalize) {
+         if(callFinalize.getlValue() instanceof VariableRef) {
+            VariableRef lValVar = (VariableRef) callFinalize.getlValue();
             List<VariableRef> preferences = new ArrayList<>();
             addToEquivalenceClassSet(lValVar, preferences);
          }

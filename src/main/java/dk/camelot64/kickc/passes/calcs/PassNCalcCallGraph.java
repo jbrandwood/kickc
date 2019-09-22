@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -23,10 +23,10 @@ public class PassNCalcCallGraph extends PassNCalcBase<CallGraph> {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ScopeRef scopeRef = getScopeRef(block, getProgram());
          for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCall) {
-               ProcedureRef procedure = ((StatementCall) statement).getProcedure();
+            if(statement instanceof StatementCalling) {
+               ProcedureRef procedure = ((StatementCalling) statement).getProcedure();
                CallGraph.CallBlock callBlock = callGraph.getOrCreateCallBlock(scopeRef);
-               callBlock.addCall(procedure, (StatementCall) statement);
+               callBlock.addCall(procedure, (StatementCalling) statement);
             }
          }
       }

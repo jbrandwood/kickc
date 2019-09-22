@@ -182,6 +182,21 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
+   public Object visitCallPrepare(StatementCallPrepare orig) {
+      return new StatementCallPrepare(orig.getProcedure(), orig.getParameters(), orig.getSource(), orig.getComments());
+   }
+
+   @Override
+   public Object visitCallExecute(StatementCallExecute orig) {
+      return new StatementCallExecute(orig.getProcedure(), orig.getSource(), orig.getComments());
+   }
+
+   @Override
+   public Object visitCallFinalize(StatementCallFinalize orig) {
+      return new StatementCallFinalize(orig.getlValue(), orig.getProcedure(), orig.getSource(), orig.getComments());
+   }
+
+   @Override
    public StatementProcedureBegin visitProcedureBegin(StatementProcedureBegin orig) {
       return new StatementProcedureBegin(orig.getProcedure(), orig.getSource(), orig.getComments());
    }

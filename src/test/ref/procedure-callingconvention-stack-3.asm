@@ -1,4 +1,7 @@
-// Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
+// Test a procedure with calling convention stack
+// Test casting of parameter types
+// Currently fails because the pushed are done based on the actual value instead of the decalred parameter type
+// https://gitlab.com/camelot/kickc/issues/319
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -6,13 +9,9 @@
   .const STACK_BASE = $103
 main: {
     .label _0 = 2
-    lda #>$1234
+    lda #'0'
     pha
-    lda #<$1234
-    pha
-    lda #>$2345
-    pha
-    lda #<$2345
+    lda #7
     pha
     jsr plus
     pla

@@ -57,7 +57,7 @@ public class TestPrograms {
 
    @Test
    public void testProcedureCallingConventionStack0() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-0"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence().verboseUplift().verboseLiveRanges().verboseSSAOptimize());
+      compileAndCompare("procedure-callingconvention-stack-0");
    }
 
    @Test

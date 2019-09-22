@@ -403,16 +403,13 @@ Uplift Scope [main] 22.79: zp ZP_BYTE:2 [ main::a#2 main::a#1 ] 22: zp ZP_BYTE:5
 Uplift Scope [plus] 4: zp ZP_BYTE:7 [ plus::b#0 ] 2: zp ZP_BYTE:6 [ plus::a#0 ] 2: zp ZP_BYTE:8 [ plus::return#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 671 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$2 ] reg byte x [ main::v#0 ] zp ZP_BYTE:4 [ main::w#0 ] 
+Uplifting [main] best 651 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$2 ] reg byte x [ main::v#0 ] reg byte a [ main::w#0 ] 
 Limited combination testing to 100 combinations of 128 possible.
-Uplifting [plus] best 662 combination reg byte a [ plus::b#0 ] zp ZP_BYTE:6 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
-Uplifting [] best 662 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::w#0 ]
-Uplifting [main] best 662 combination zp ZP_BYTE:4 [ main::w#0 ] 
+Uplifting [plus] best 642 combination reg byte a [ plus::b#0 ] zp ZP_BYTE:6 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
+Uplifting [] best 642 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ plus::a#0 ]
-Uplifting [plus] best 662 combination zp ZP_BYTE:6 [ plus::a#0 ] 
-Coalescing zero page register [ zp ZP_BYTE:6 [ plus::a#0 ] ] with [ zp ZP_BYTE:4 [ main::w#0 ] ]
-Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:2 [ plus::a#0 main::w#0 ]
+Uplifting [plus] best 642 combination zp ZP_BYTE:6 [ plus::a#0 ] 
+Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:2 [ plus::a#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -443,7 +440,6 @@ bend_from_b1:
 bend:
   // main
 main: {
-    .label w = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
@@ -472,13 +468,12 @@ main: {
     // [9] (byte) main::w#0 ← callfinalize plus 
     // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
     pla
-    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuz1=_stackpullbyte_ 
+    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuaa=_stackpullbyte_ 
     pla
-    sta.z w
-    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuz1_plus_vbuyy 
-    tya
+    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
+    sty.z $ff
     clc
-    adc.z w
+    adc.z $ff
     // [11] *((const byte*) SCREEN#0) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
@@ -561,7 +556,7 @@ FINAL SYMBOL TABLE
 (byte) main::v
 (byte) main::v#0 reg byte x 11.0
 (byte) main::w
-(byte) main::w#0 w zp ZP_BYTE:2 11.0
+(byte) main::w#0 reg byte a 11.0
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (label) plus::@return
 (const byte) plus::OFFSET_STACK_A OFFSET_STACK_A = (byte) 0
@@ -575,14 +570,15 @@ __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 
 reg byte y [ main::a#2 main::a#1 ]
 reg byte x [ main::v#0 ]
+reg byte a [ main::w#0 ]
 reg byte a [ main::$2 ]
-zp ZP_BYTE:2 [ plus::a#0 main::w#0 ]
+zp ZP_BYTE:2 [ plus::a#0 ]
 reg byte a [ plus::b#0 ]
 reg byte a [ plus::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 557
+Score: 537
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -603,7 +599,6 @@ Score: 557
   // @end
   // main
 main: {
-    .label w = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
@@ -630,14 +625,13 @@ main: {
     // [9] (byte) main::w#0 ← callfinalize plus 
     // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
     pla
-    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuz1=_stackpullbyte_ 
+    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuaa=_stackpullbyte_ 
     pla
-    sta.z w
     // w+a
-    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuz1_plus_vbuyy 
-    tya
+    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
+    sty.z $ff
     clc
-    adc.z w
+    adc.z $ff
     // SCREEN[i] = w+a
     // [11] *((const byte*) SCREEN#0) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN

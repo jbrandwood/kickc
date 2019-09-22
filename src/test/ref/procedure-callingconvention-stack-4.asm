@@ -6,7 +6,6 @@
   .label SCREEN = $400
   .const STACK_BASE = $103
 main: {
-    .label w = 2
     ldy #0
   b1:
     tya
@@ -19,10 +18,9 @@ main: {
     jsr plus
     pla
     pla
-    sta.z w
-    tya
+    sty.z $ff
     clc
-    adc.z w
+    adc.z $ff
     sta SCREEN
     iny
     cpy #2

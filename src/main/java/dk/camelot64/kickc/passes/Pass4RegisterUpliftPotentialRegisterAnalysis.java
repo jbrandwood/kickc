@@ -5,11 +5,9 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 
 import java.util.*;
 
@@ -39,8 +37,8 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             variableRefs.add(phiVariable.getVariable());
          }
          return variableRefs;
-      } else if(statement instanceof StatementAssignment) {
-         LValue lValue = ((StatementAssignment) statement).getlValue();
+      } else if(statement instanceof StatementLValue) {
+         LValue lValue = ((StatementLValue) statement).getlValue();
          if(lValue instanceof VariableRef) {
             variableRefs.add((VariableRef) lValue);
          }

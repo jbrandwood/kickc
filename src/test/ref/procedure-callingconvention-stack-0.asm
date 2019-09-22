@@ -5,7 +5,6 @@
   .label SCREEN = $400
   .const STACK_BASE = $103
 main: {
-    .label _0 = 2
     lda #'0'
     pha
     lda #7
@@ -13,7 +12,6 @@ main: {
     jsr plus
     pla
     pla
-    sta.z _0
     sta SCREEN
     rts
 }

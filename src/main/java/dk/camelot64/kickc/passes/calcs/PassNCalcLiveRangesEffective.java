@@ -52,11 +52,16 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
       this.procedureCallPaths = new LinkedHashMap<>();
       Collection<Procedure> procedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : procedures) {
-         populateProcedureCallPaths(procedure);
+         populateProcedureCallPaths(procedure, new HashSet<>());
       }
    }
 
-   private void populateProcedureCallPaths(Procedure procedure) {
+   private void populateProcedureCallPaths(Procedure procedure, Set<ProcedureRef> visited) {
+      // Avoid recursion
+      if(visited.contains(procedure.getRef()))
+         return;
+      visited.add(procedure.getRef());
+
       ProcedureRef procedureRef = procedure.getRef();
       LiveRangeVariablesEffective.CallPaths callPaths = procedureCallPaths.get(procedureRef);
       if(callPaths == null) {
@@ -84,11 +89,12 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
                // Found calling procedure!
                Procedure callerProcedure = (Procedure) callScope;
                // Make sure we have populated the call-paths of the calling procedure
-               populateProcedureCallPaths(callerProcedure);
+               populateProcedureCallPaths(callerProcedure, visited);
                // Find variables referenced in caller procedure
                Collection<VariableRef> referencedInCaller = referenceInfo.getReferencedVars(callerProcedure.getRef().getLabelRef());
                // For each caller path - create a new call-path
                LiveRangeVariablesEffective.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
+               if(callerPaths!=null) 
                for(LiveRangeVariablesEffective.CallPath callerPath : callerPaths.getCallPaths()) {
                   ArrayList<CallGraph.CallBlock.Call> path = new ArrayList<>(callerPath.getPath());
                   path.add(caller);

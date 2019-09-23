@@ -26,7 +26,7 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
       Map<ProcedureRef, Set<VariableRef>> modified = new LinkedHashMap<>();
       Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
-         Set<VariableRef> modifiedVars = getModifiedVars(procedure);
+         Set<VariableRef> modifiedVars = getModifiedVars(procedure, new HashSet<>());
          modified.put(procedure.getRef(), modifiedVars);
       }
       getProgram().setProcedureModifiedVars(new ProcedureModifiedVars(modified));
@@ -39,7 +39,12 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
     * @param procedure The procedure to examine
     * @return All variables declared outside the procedure modified inside the procedure.
     */
-   public Set<VariableRef> getModifiedVars(Procedure procedure) {
+   private Set<VariableRef> getModifiedVars(Procedure procedure, Set<ProcedureRef> visited) {
+      // Avoid recursion
+      if(visited.contains(procedure.getRef()))
+         return new LinkedHashSet<>();
+      visited.add(procedure.getRef());
+
       Set<VariableRef> modified = new LinkedHashSet<>();
       ScopeRef procScope = procedure.getRef();
       List<ControlFlowBlock> procBlocks = getProgram().getGraph().getScopeBlocks(procScope);
@@ -56,7 +61,7 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
                if(statement instanceof StatementCalling) {
                   ProcedureRef called = ((StatementCalling) statement).getProcedure();
                   Procedure calledProc = getScope().getProcedure(called);
-                  modified.addAll(getModifiedVars(calledProc));
+                  modified.addAll(getModifiedVars(calledProc, visited));
                }
             }
          }

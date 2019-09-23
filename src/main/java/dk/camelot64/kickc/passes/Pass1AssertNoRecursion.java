@@ -21,7 +21,7 @@ public class Pass1AssertNoRecursion extends Pass1Base {
       Collection<Procedure> procedures = getScope().getAllProcedures(true);
       for(Procedure procedure : procedures) {
          Collection<ScopeRef> recursiveCalls = callGraph.getRecursiveCalls(procedure.getRef());
-         if(recursiveCalls.contains(procedure.getRef())) {
+         if(recursiveCalls.contains(procedure.getRef()) && !procedure.getCallingConvension().equals(Procedure.CallingConvension.STACK_CALL)) {
             throw new CompileError("ERROR! Recursion not allowed! Occurs in " + procedure.getRef());
          }
       }

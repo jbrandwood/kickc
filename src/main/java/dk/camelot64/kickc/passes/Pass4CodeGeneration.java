@@ -756,7 +756,7 @@ public class Pass4CodeGeneration {
                // Push parameters to the stack
                for(RValue parameter : call.getParameters()) {
                   SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new ParamStackPush(parameterType), parameter, program, block.getScope());
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), parameter, program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
@@ -793,7 +793,7 @@ public class Pass4CodeGeneration {
                // Pull result from the stack
                if(call.getlValue() != null) {
                   SymbolType returnType = procedure.getReturnType();
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new ParamStackPull(returnType), program, block.getScope());
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new StackPullValue(returnType), program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
@@ -821,7 +821,7 @@ public class Pass4CodeGeneration {
                   int returnOffset = parameterBytes - returnType.getSizeBytes();
                   // TODO: Put the return stack offset into a named constant (look at PassNCallingConventionStack)
                   ConstantValue returnValueStackOffset = new ConstantInteger((long)returnOffset, SymbolType.BYTE);
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new ParamStackValue(returnValueStackOffset, returnType), returnStatement.getValue(), program, block.getScope());
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(returnValueStackOffset, returnType), returnStatement.getValue(), program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());

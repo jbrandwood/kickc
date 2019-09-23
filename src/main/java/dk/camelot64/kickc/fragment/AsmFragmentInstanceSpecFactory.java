@@ -356,13 +356,13 @@ public class AsmFragmentInstanceSpecFactory {
          String name = "la" + nextLabelIdx++;
          bind(name, value);
          return name;
-      } else if(value instanceof ParamStackValue) {
-         ParamStackValue paramStackValue = (ParamStackValue) value;
-         return "_stackget"+paramStackValue.getValueType().getTypeName()+"_"+bind(paramStackValue.getStackOffset());
-      } else if(value instanceof ParamStackPush) {
-         return "_stackpush"+((ParamStackPush) value).getType().getTypeName()+"_";
-      } else if(value instanceof ParamStackPull) {
-         return "_stackpull"+((ParamStackPull) value).getType().getTypeName()+"_";
+      } else if(value instanceof StackIdxValue) {
+         StackIdxValue stackIdxValue = (StackIdxValue) value;
+         return "_stackidx"+ stackIdxValue.getValueType().getTypeName()+"_"+bind(stackIdxValue.getStackOffset());
+      } else if(value instanceof StackPushValue) {
+         return "_stackpush"+((StackPushValue) value).getType().getTypeName()+"_";
+      } else if(value instanceof StackPullValue) {
+         return "_stackpull"+((StackPullValue) value).getType().getTypeName()+"_";
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }

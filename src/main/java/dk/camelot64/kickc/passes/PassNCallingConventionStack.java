@@ -60,7 +60,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
          long STACK_BASE = 0x103L;
          getScope().add(new ConstantVar("STACK_BASE", getScope(), SymbolType.WORD, new ConstantInteger(STACK_BASE, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT));
 
-         // Convert ParamValue to ParamStackValue
+         // Convert ParamValue to StackIdxValue
          ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
             if(programValue.get() instanceof ParamValue) {
                // Convert ParamValues to calling-convention specific param-value
@@ -68,9 +68,9 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                VariableRef parameterRef = paramValue.getParameter();
                SymbolType parameterType = SymbolTypeInference.inferType(getScope(), paramValue.getParameter());
                if(offsetConstants.containsKey(parameterRef)) {
-                  ParamStackValue paramStackValue = new ParamStackValue(offsetConstants.get(parameterRef), parameterType);
-                  programValue.set(paramStackValue);
-                  getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " replacing " + paramValue.toString(getProgram()) + " with " + paramStackValue.toString(getProgram()));
+                  StackIdxValue stackIdxValue = new StackIdxValue(offsetConstants.get(parameterRef), parameterType);
+                  programValue.set(stackIdxValue);
+                  getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " replacing " + paramValue.toString(getProgram()) + " with " + stackIdxValue.toString(getProgram()));
                }
             }
          });

@@ -42,7 +42,7 @@ public class TestPrograms {
 
    @Test
    public void testProcedureCallingConventionStack3() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-3"); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("procedure-callingconvention-stack-3", log().verboseLiveRanges()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
    }
 
    @Test

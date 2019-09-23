@@ -246,8 +246,8 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueLValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value instanceof ParamValue) {
          subValues.add(new ProgramValue.ProgramValueParamValue((ParamValue) value));
-      } else if(value instanceof ParamStackValue) {
-         subValues.add(new ProgramValue.ProgramValueParamStackValue((ParamStackValue) value));
+      } else if(value instanceof StackIdxValue) {
+         subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value == null ||
             value instanceof VariableRef ||
             value instanceof VariableVersion ||

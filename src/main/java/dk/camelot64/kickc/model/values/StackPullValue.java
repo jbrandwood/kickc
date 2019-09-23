@@ -4,12 +4,12 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 
 /** A value pulled from the stack. */
-public class ParamStackPull implements RValue {
+public class StackPullValue implements RValue {
 
    /** The type of value being pushed. */
    private SymbolType type;
 
-   public ParamStackPull(SymbolType type) {
+   public StackPullValue(SymbolType type) {
       this.type = type;
    }
 
@@ -19,6 +19,6 @@ public class ParamStackPull implements RValue {
 
    @Override
    public String toString(Program program) {
-      return "paramstackpull(" + type.getTypeName()+ ")";
+      return "stackpull(" + type.getTypeName()+ ")";
    }
 }

@@ -1,6 +1,6 @@
 // Test a procedure with calling convention stack
 // Test casting of parameter types
-// Currently fails because the pushed are done based on the actual value instead of the decalred parameter type
+// Currently fails because the pushed are done based on the actual value instead of the declared parameter type
 // https://gitlab.com/camelot/kickc/issues/319
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -9,9 +9,13 @@
   .const STACK_BASE = $103
 main: {
     .label _0 = 2
-    lda #'0'
+    lda #>'0'
     pha
-    lda #7
+    lda #<'0'
+    pha
+    lda #>7
+    pha
+    lda #<7
     pha
     jsr plus
     pla

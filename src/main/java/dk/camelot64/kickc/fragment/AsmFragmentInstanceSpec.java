@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.*;
+import kickass.nonasm.c64.CharToPetsciiConverter;
 
 import java.util.*;
 
@@ -94,8 +95,14 @@ public class AsmFragmentInstanceSpec {
                Value value = bindings.get(name);
                if(value instanceof ConstantValue) {
                   ConstantLiteral constantLiteral = ((ConstantValue) value).calculateLiteral(program.getScope());
+                  Long constIntValue = null;
                   if(constantLiteral instanceof ConstantInteger) {
-                     List<SymbolTypeIntegerFixed> types = getVariationTypes(((ConstantInteger) constantLiteral).getValue());
+                     constIntValue = ((ConstantInteger) constantLiteral).getValue();
+                  } else if(constantLiteral instanceof ConstantChar) {
+                     constIntValue = ((ConstantChar) constantLiteral).getIntValue();
+                  }
+                  if(constIntValue != null) {
+                     List<SymbolTypeIntegerFixed> types = getVariationTypes(constIntValue);
                      if(types.size() > 1) {
                         // Found constant value with multiple types
                         variationConstant = (ConstantValue) value;
@@ -120,6 +127,7 @@ public class AsmFragmentInstanceSpec {
 
    /**
     * Find any fixed integer types that can contain the passed integer value
+    *
     * @param value the value to examine
     * @return All fixed size integer types capable of representing the passed value
     */

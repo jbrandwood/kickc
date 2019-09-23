@@ -754,9 +754,13 @@ public class Pass4CodeGeneration {
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
                // Push parameters to the stack
-               for(RValue parameter : call.getParameters()) {
-                  SymbolType parameterType = SymbolTypeInference.inferType(program.getScope(), parameter);
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), parameter, program, block.getScope());
+               List<RValue> callParameters = call.getParameters();
+               List<Variable> procParameters = procedure.getParameters();
+               for(int i = 0; i < procParameters.size(); i++) {
+                  Variable procParameter = procParameters.get(i);
+                  RValue callParameter = callParameters.get(i);
+                  SymbolType parameterType = procParameter.getType();
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), callParameter, program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());

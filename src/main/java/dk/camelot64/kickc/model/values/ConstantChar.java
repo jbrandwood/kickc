@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
+import kickass.nonasm.c64.CharToPetsciiConverter;
 
 /**
  * SSA form constant char value (a byte)
@@ -34,6 +35,24 @@ public class ConstantChar implements ConstantLiteral<Character> {
 
    public Character getChar() {
       return value;
+   }
+
+   /**
+    * Get the integer value of the character
+    * @return The integer value (taking encoding into account)
+    */
+   public Long getIntValue() {
+      Byte constCharIntValue = null;
+      if(ConstantString.Encoding.SCREENCODE_MIXED.equals(encoding)) {
+         constCharIntValue = CharToPetsciiConverter.charToScreenCode_mixed.get(value);
+      }  else if(ConstantString.Encoding.SCREENCODE_UPPER.equals(encoding)) {
+         constCharIntValue = CharToPetsciiConverter.charToScreenCode_upper.get(value);
+      }  else if(ConstantString.Encoding.PETSCII_MIXED.equals(encoding)) {
+         constCharIntValue = CharToPetsciiConverter.charToPetscii_mixed.get(value);
+      }  else if(ConstantString.Encoding.PETSCII_UPPER.equals(encoding)) {
+         constCharIntValue = CharToPetsciiConverter.charToPetscii_upper.get(value);
+      }
+      return constCharIntValue.longValue();
    }
 
    public ConstantString.Encoding getEncoding() {

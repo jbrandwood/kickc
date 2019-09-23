@@ -54,16 +54,17 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
             }
          }
          // Find the scope blocks calling the current scope block - and the loop depth of the blocks where the call statement is
-         int callingDepth = getCallingDepth(currentScope, new HashSet<>());
+         int callingDepth = getCallingDepth(currentScope, new ArrayList<>());
          findLoopDepth(currentScope, callingDepth);
       }
    }
 
-   private int getCallingDepth(ScopeRef currentScope, Set<ScopeRef> visited) {
+   private int getCallingDepth(ScopeRef currentScope, List<ScopeRef> path) {
 
-      if(visited.contains(currentScope))
+      if(path.contains(currentScope))
          return 10;
-      visited.add(currentScope);
+      List<ScopeRef> myPath = new ArrayList<>(path);
+      myPath.add(currentScope);
 
       int callingDepth = 1;
       Collection<ScopeRef> callingScopes = callGraph.getCallingBlocks(currentScope);
@@ -87,7 +88,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
                }
             }
             // Also look through all callers
-            int superCallingDepth = getCallingDepth(callingScope, visited);
+            int superCallingDepth = getCallingDepth(callingScope, myPath);
             if(superCallingDepth>callingDepth)  {
                callingDepth= superCallingDepth;
             }

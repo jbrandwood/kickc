@@ -163,7 +163,7 @@ public class AsmFragmentInstanceSpecFactory {
          signature.append(((ConstantInteger) rValue2).getValue());
       } else if(
             rValue2 instanceof ConstantInteger &&
-                  ((((ConstantInteger) rValue2).getValue()) % 8 == 0)  &&
+                  ((((ConstantInteger) rValue2).getValue()) % 8 == 0) &&
                   operator != null &&
                   (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
          signature.append(((ConstantInteger) rValue2).getValue());
@@ -313,7 +313,7 @@ public class AsmFragmentInstanceSpecFactory {
             if(bindPointer.contains("deref")) {
                // Special handling of nested derefs - add parenthesis!
                return "_deref_" + "(" + bindPointer + ")";
-            }  else {
+            } else {
                return "_deref_" + bindPointer;
             }
          } else if(value instanceof PointerDereferenceIndexed) {
@@ -323,7 +323,7 @@ public class AsmFragmentInstanceSpecFactory {
             if(bindPointer.contains("deref")) {
                // Special handling of nested derefs - add parenthesis!
                bindValue.append("(").append(bindPointer).append(")");
-            }  else {
+            } else {
                bindValue.append(bindPointer);
             }
             bindValue.append("_derefidx_");
@@ -358,11 +358,17 @@ public class AsmFragmentInstanceSpecFactory {
          return name;
       } else if(value instanceof StackIdxValue) {
          StackIdxValue stackIdxValue = (StackIdxValue) value;
-         return "_stackidx"+ stackIdxValue.getValueType().getTypeName()+"_"+bind(stackIdxValue.getStackOffset());
+         SymbolType type = stackIdxValue.getValueType();
+         String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
+         return "_stackidx" + typeShortName + "_" + bind(stackIdxValue.getStackOffset());
       } else if(value instanceof StackPushValue) {
-         return "_stackpush"+((StackPushValue) value).getType().getTypeName()+"_";
+         SymbolType type = ((StackPushValue) value).getType();
+         String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
+         return "_stackpush" +  typeShortName + "_";
       } else if(value instanceof StackPullValue) {
-         return "_stackpull"+((StackPullValue) value).getType().getTypeName()+"_";
+         SymbolType type = ((StackPullValue) value).getType();
+         String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
+         return "_stackpull" + typeShortName + "_";
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }

@@ -31,6 +31,7 @@ main: {
 plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 1
+    .const OFFSET_STACK_RETURN = 1
     .label a = 2
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -40,6 +41,6 @@ plus: {
     clc
     adc.z a
     tsx
-    sta STACK_BASE+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
     rts
 }

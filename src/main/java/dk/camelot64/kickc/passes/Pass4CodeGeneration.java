@@ -765,6 +765,17 @@ public class Pass4CodeGeneration {
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
+               // Push additional bytes if needed
+               long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
+               long parametersByteSize = CallingConventionStack.getParametersByteSize(procedure);
+               if(stackFrameByteSize > parametersByteSize) {
+                  // Add padding to the stack to make room for the return value
+                  String pushSignature = "_stackpushbyte_" + (stackFrameByteSize - parametersByteSize);
+                  AsmFragmentInstanceSpec pushFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pushSignature, new LinkedHashMap<>(), block.getScope());
+                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                  generateAsm(asm, pushFragmentInstanceSpec);
+
+               }
                asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
             }
          } else if(statement instanceof StatementCallExecute) {
@@ -778,21 +789,16 @@ public class Pass4CodeGeneration {
             StatementCallFinalize call = (StatementCallFinalize) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
-               // Find parameter/return stack size
-               int parameterBytes = 0;
-               for(Variable parameter : procedure.getParameters()) {
-                  parameterBytes += parameter.getType().getSizeBytes();
+
+               long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
+               long returnByteSize = procedure.getReturnType()==null?0:procedure.getReturnType().getSizeBytes();
+               if(stackFrameByteSize > returnByteSize) {
+                  // Clean up the stack
+                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize-returnByteSize);
+                  AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
+                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                  generateAsm(asm, pullFragmentInstanceSpec);
                }
-               int stackSizeBytes = parameterBytes;
-               if(call.getlValue() != null) {
-                  SymbolType returnType = procedure.getReturnType();
-                  stackSizeBytes -= returnType.getSizeBytes();
-               }
-               // Clean up the stack
-               String pullSignature = "_stackpullbyte_" + Integer.toString(stackSizeBytes);
-               AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
-               asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-               generateAsm(asm, pullFragmentInstanceSpec);
 
                // Pull result from the stack
                if(call.getlValue() != null) {
@@ -811,28 +817,21 @@ public class Pass4CodeGeneration {
                procedure = getScope().getProcedure(scope.getFullName());
             }
 
-            if(procedure!=null && Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            if(procedure != null && Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
                StatementReturn returnStatement = (StatementReturn) statement;
-               if(returnStatement.getValue()!=null) {
+               if(returnStatement.getValue() != null) {
                   // Store return value on stack
                   SymbolType returnType = procedure.getReturnType();
-
                   // Find parameter/return stack size
-                  int parameterBytes = 0;
-                  for(Variable parameter : procedure.getParameters()) {
-                     parameterBytes += parameter.getType().getSizeBytes();
-                  }
-                  int returnOffset = parameterBytes - returnType.getSizeBytes();
-                  // TODO: Put the return stack offset into a named constant (look at PassNCallingConventionStack)
-                  ConstantValue returnValueStackOffset = new ConstantInteger((long)returnOffset, SymbolType.BYTE);
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(returnValueStackOffset, returnType), returnStatement.getValue(), program, block.getScope());
+                  ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(returnOffsetConstant, returnType), returnStatement.getValue(), program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
             }
 
-            if(procedure==null || procedure.getInterruptType() == null) {
+            if(procedure == null || procedure.getInterruptType() == null) {
                asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
             } else {
                generateInterruptExit(asm, statement, procedure.getInterruptType());

@@ -34,6 +34,7 @@ main: {
 plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 2
+    .const OFFSET_STACK_RETURN = 2
     .label a = 2
     .label b = 4
     .label return = 2
@@ -56,8 +57,8 @@ plus: {
     sta.z return+1
     tsx
     lda.z return
-    sta STACK_BASE+2,x
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
-    sta STACK_BASE+2+1,x
+    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
     rts
 }

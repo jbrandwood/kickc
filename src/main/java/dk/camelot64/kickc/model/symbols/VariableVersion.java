@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.types.SymbolType;
 
-/** A Symbol (variable, jump label, etc.) */
+/** A Versioned variable. Versions are created for REGISTER-variables that are handled through PHI-nodes. */
 public class VariableVersion extends Variable {
 
    private String versionOfName;
@@ -10,7 +10,11 @@ public class VariableVersion extends Variable {
    public VariableVersion(VariableUnversioned versionOf, int version) {
       super(versionOf.getLocalName() + "#" + version, versionOf.getScope(), versionOf.getType(), versionOf.getDataSegment());
       this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
+      this.setDeclaredAsRegister(versionOf.isDeclaredAsRegister());
+      this.setDeclaredAsMemory(versionOf.isDeclaredAsMemory());
       this.setDeclaredRegister(versionOf.getDeclaredRegister());
+      this.setDeclaredMemoryAddress(versionOf.getDeclaredMemoryAddress());
+      this.setStorageStrategy(versionOf.getStorageStrategy());
       this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
       this.setDeclaredExport(versionOf.isDeclaredExport());
       this.setInferedVolatile(versionOf.isInferedVolatile());

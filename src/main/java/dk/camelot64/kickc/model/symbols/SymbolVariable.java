@@ -44,6 +44,27 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. */
    private boolean declaredExport;
 
+   /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
+   private boolean declaredAsRegister;
+
+   /** Specifies that the variable must live in memory. */
+   private boolean declaredAsMemory;
+
+   /** Specifies a specific address where the variable must reside in memory. */
+   private Long declaredMemoryAddress;
+
+   /** Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
+    * <ul>
+    * <li>REGISTER-variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
+    * <li>MEMORY-variables are stored in memory and accessed through load/store operators. They cannot be declared as "register".</li>
+    * <li>CONSTANT-variables are constant.
+    * </ul>
+    **/
+   public enum StorageStrategy { REGISTER, MEMORY, CONSTANT }
+
+   /** The storage strategy for the variable. */
+   private StorageStrategy storageStrategy;
+
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
 
@@ -53,6 +74,7 @@ public abstract class SymbolVariable implements Symbol {
    /** The data segment to put the variable into (if it is allocated in memory). */
    private String dataSegment;
 
+
    public SymbolVariable(String name, Scope scope, SymbolType type, String dataSegment) {
       this.name = name;
       this.scope = scope;
@@ -60,6 +82,7 @@ public abstract class SymbolVariable implements Symbol {
       this.inferredType = false;
       this.comments = new ArrayList<>();
       this.dataSegment = dataSegment;
+      this.storageStrategy = StorageStrategy.REGISTER;
       setFullName();
    }
 
@@ -188,6 +211,38 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setDeclaredExport(boolean declaredExport) {
       this.declaredExport = declaredExport;
+   }
+
+   public boolean isDeclaredAsRegister() {
+      return declaredAsRegister;
+   }
+
+   public void setDeclaredAsRegister(boolean declaredAsRegister) {
+      this.declaredAsRegister = declaredAsRegister;
+   }
+
+   public boolean isDeclaredAsMemory() {
+      return declaredAsMemory;
+   }
+
+   public void setDeclaredAsMemory(boolean declaredAsMemory) {
+      this.declaredAsMemory = declaredAsMemory;
+   }
+
+   public Long getDeclaredMemoryAddress() {
+      return declaredMemoryAddress;
+   }
+
+   public void setDeclaredMemoryAddress(Long declaredMemoryAddress) {
+      this.declaredMemoryAddress = declaredMemoryAddress;
+   }
+
+   public StorageStrategy getStorageStrategy() {
+      return storageStrategy;
+   }
+
+   public void setStorageStrategy(StorageStrategy storageStrategy) {
+      this.storageStrategy = storageStrategy;
    }
 
    public List<Comment> getComments() {

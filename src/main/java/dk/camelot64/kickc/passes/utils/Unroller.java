@@ -232,7 +232,11 @@ public class Unroller {
          if(definedVarRef.isIntermediate()) {
             newVar = definedVar.getScope().addVariableIntermediate();
             newVar.setType(definedVar.getType());
+            newVar.setDeclaredAsRegister(definedVar.isDeclaredAsRegister());
             newVar.setDeclaredRegister(definedVar.getDeclaredRegister());
+            newVar.setDeclaredAsMemory(definedVar.isDeclaredAsMemory());
+            newVar.setDeclaredMemoryAddress(definedVar.getDeclaredMemoryAddress());
+            newVar.setStorageStrategy(definedVar.getStorageStrategy());
             newVar.setDeclaredVolatile(definedVar.isDeclaredVolatile());
             newVar.setInferedVolatile(definedVar.isInferedVolatile());
             newVar.setDeclaredExport(definedVar.isDeclaredExport());

@@ -40,7 +40,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
       // Add all ZP's declared hardcoded register for a live variable
       for(Variable variable : getSymbols().getAllVariables(true)) {
-         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpDeclared) {
+         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpDeclared) { //TODO: Handle register/memory/storage strategy differently!
             int zp = ((Registers.RegisterZpDeclared) variable.getDeclaredRegister()).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
             for(int i=0;i<sizeBytes; i++) {
@@ -56,9 +56,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(variableRef);
-            Registers.Register declaredRegister = variable.getDeclaredRegister();
+            Registers.Register declaredRegister = variable.getDeclaredRegister(); //TODO: Handle register/memory/storage strategy differently!
             if(declaredRegister !=null) {
-
                if(declaredRegister instanceof Registers.RegisterZpDeclared) {
                   if(declaredRegister.getType().equals(Registers.RegisterType.ZP_VAR)) {
                      Registers.RegisterType registerType = getRegisterType(variable);

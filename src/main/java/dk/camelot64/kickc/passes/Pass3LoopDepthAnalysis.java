@@ -60,11 +60,11 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
    }
 
    private int getCallingDepth(ScopeRef currentScope, List<ScopeRef> path) {
-
+      // Avoid infinite recursion
       if(path.contains(currentScope))
          return 10;
-      List<ScopeRef> myPath = new ArrayList<>(path);
-      myPath.add(currentScope);
+      path = new ArrayList<>(path);
+      path.add(currentScope);
 
       int callingDepth = 1;
       Collection<ScopeRef> callingScopes = callGraph.getCallingBlocks(currentScope);
@@ -88,7 +88,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
                }
             }
             // Also look through all callers
-            int superCallingDepth = getCallingDepth(callingScope, myPath);
+            int superCallingDepth = getCallingDepth(callingScope, path);
             if(superCallingDepth>callingDepth)  {
                callingDepth= superCallingDepth;
             }

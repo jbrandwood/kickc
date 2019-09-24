@@ -304,7 +304,11 @@ public class Pass1ProcedureInline extends Pass1Base {
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
             inlineVar.setDeclaredConstant(procVar.isDeclaredConstant());
+            inlineVar.setDeclaredAsRegister(procVar.isDeclaredAsRegister());
+            inlineVar.setDeclaredAsMemory(procVar.isDeclaredAsMemory());
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
+            inlineVar.setDeclaredMemoryAddress(procVar.getDeclaredMemoryAddress());
+            inlineVar.setStorageStrategy(procVar.getStorageStrategy());
             inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());
             inlineVar.setInferedVolatile(procVar.isInferedVolatile());
             inlineVar.setDeclaredExport(procVar.isDeclaredExport());

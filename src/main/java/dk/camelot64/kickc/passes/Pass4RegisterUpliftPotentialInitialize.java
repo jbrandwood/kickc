@@ -28,7 +28,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          Registers.Register declaredRegister = null;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(varRef);
-            if(variable.getDeclaredRegister() != null) {
+            if(variable.getDeclaredRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
                if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +

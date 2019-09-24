@@ -78,6 +78,7 @@ EXTERN: 'extern' ;
 EXPORT: 'export' ;
 ALIGN: 'align' ;
 REGISTER: 'register' ;
+MEMORY: 'memory' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
 INTERRUPT: 'interrupt' ;

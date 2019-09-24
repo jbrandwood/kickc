@@ -211,6 +211,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code directiveMemory}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

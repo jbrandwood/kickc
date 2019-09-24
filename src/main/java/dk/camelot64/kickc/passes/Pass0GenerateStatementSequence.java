@@ -837,12 +837,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.NUMBER() != null) {
          try {
             ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
-            return new DirectiveRegister(memoryAddress.getInteger());
+            return new DirectiveMemory(memoryAddress.getInteger());
          } catch(NumberFormatException e) {
             throw new CompileError(e.getMessage(), new StatementSource(ctx));
          }
       } else {
-         return new DirectiveRegister(null);
+         return new DirectiveMemory();
       }
    }
 

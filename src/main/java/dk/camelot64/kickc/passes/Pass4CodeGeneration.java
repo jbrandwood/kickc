@@ -433,6 +433,7 @@ public class Pass4CodeGeneration {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
+      // Add all constants arrays incl. strings with data
       for(ConstantVar constantVar : scopeConstants) {
          if(hasData(constantVar)) {
             // Skip if already added
@@ -458,6 +459,31 @@ public class Pass4CodeGeneration {
             } else {
                throw new InternalError("Constant Variable not handled " + constantVar.toString(program));
             }
+            added.add(asmName);
+         }
+      }
+      // Add all memory variables
+      Collection<Variable> scopeVariables = scope.getAllVariables(false);
+      for(Variable variable : scopeVariables) {
+         if(variable.getStorageStrategy().equals(SymbolVariable.StorageStrategy.MEMORY)) {
+            // Skip if already added
+            String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
+            if(added.contains(asmName)) {
+               continue;
+            }
+            // Set segment
+            setCurrentSegment(variable.getDataSegment(), asm);
+            // Add any comments
+            generateComments(asm, variable.getComments());
+            // Add any alignment
+            Integer declaredAlignment = variable.getDeclaredAlignment();
+            if(declaredAlignment != null) {
+               String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+               asm.addDataAlignment(alignment);
+            }
+            AsmDataChunk asmDataChunk = new AsmDataChunk();
+            addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
+            asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
             added.add(asmName);
          }
       }

@@ -262,7 +262,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Directive> directives = declVarDirectives;
       VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment);
       // Set initial storage strategy
-      param.setStorageStrategy(SymbolVariable.StorageStrategy.REGISTER);
+      param.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
       // Add directives
       addDirectives(param, type, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -620,7 +620,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
       // Set initial storage strategy
-      lValue.setStorageStrategy(SymbolVariable.StorageStrategy.REGISTER);
+      lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
       // Add directives
       addDirectives(lValue, type, directives, new StatementSource(ctx));
       // Array / String variables are implicitly constant
@@ -704,7 +704,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
             lValue.setDeclaredAsRegister(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.REGISTER);
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
             if(directiveRegister.name != null) {
                // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
                Registers.Register register = Registers.getRegister(directiveRegister.name);
@@ -1207,7 +1207,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             throw new CompileError(e.getMessage(), statementSource);
          }
          // Set initial storage strategy
-         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.REGISTER);
+         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
          // Add directives
          addDirectives(lValue, varType, varDirectives, statementSource);
       } else {

@@ -114,6 +114,7 @@ public class Compiler {
          fileName = fileName.substring(0, fileName.length() - 3);
       }
       program.setFileName(fileName);
+
       initAsmFragmentSynthesizer();
       try {
          Path currentPath = new File(".").toPath();

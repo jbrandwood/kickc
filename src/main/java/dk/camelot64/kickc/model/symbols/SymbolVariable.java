@@ -55,12 +55,12 @@ public abstract class SymbolVariable implements Symbol {
 
    /** Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
     * <ul>
-    * <li>REGISTER-variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
+    * <li>PHI_REGISTER-variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
     * <li>MEMORY-variables are stored in memory and accessed through load/store operators. They cannot be declared as "register".</li>
     * <li>CONSTANT-variables are constant.
     * </ul>
     **/
-   public enum StorageStrategy { REGISTER, MEMORY, CONSTANT }
+   public enum StorageStrategy {PHI_REGISTER, MEMORY, CONSTANT }
 
    /** The storage strategy for the variable. */
    private StorageStrategy storageStrategy;
@@ -82,7 +82,7 @@ public abstract class SymbolVariable implements Symbol {
       this.inferredType = false;
       this.comments = new ArrayList<>();
       this.dataSegment = dataSegment;
-      this.storageStrategy = StorageStrategy.REGISTER;
+      this.storageStrategy = StorageStrategy.PHI_REGISTER;
       setFullName();
    }
 

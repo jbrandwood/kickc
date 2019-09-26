@@ -35,12 +35,10 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   /*
    @Test
-   public void testDelcaredMemoryVar0() throws IOException, URISyntaxException {
-      compileAndCompare("declared-memory-var-0", log().verboseParse().verboseCreateSsa());
+   public void testDeclaredMemoryVar0() throws IOException, URISyntaxException {
+      compileAndCompare("declared-memory-var-0", log());
    }
-   */
 
    /*
    @Test

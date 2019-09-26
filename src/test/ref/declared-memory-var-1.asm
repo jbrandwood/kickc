@@ -1,5 +1,5 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
-// Test a pointer
+// Test a pointer to a memory variable
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"

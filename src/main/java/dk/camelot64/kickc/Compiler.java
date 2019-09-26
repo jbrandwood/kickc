@@ -225,6 +225,8 @@ public class Compiler {
       new Pass1ProcedureCallParameters(program).generate();
       new PassNUnwindLValueLists(program).execute();
 
+      new Pass1PointifyMemoryVariables(program).execute();
+
       //getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");
       //getLog().append(program.getGraph().toString(program));
 

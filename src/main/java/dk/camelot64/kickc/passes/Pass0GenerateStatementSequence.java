@@ -892,7 +892,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue exprVal = (RValue) this.visit(ctx.commaExpr());
       if(notConsumed(exprVal)) {
          // Make a tmpVar to create the statement
-         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
          RValue rVal = exprVal;
          if(exprVal instanceof LValue) {
@@ -1239,7 +1239,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(stmtNxt);
       // Add condition i!=last+1 or i!=last-1
       RValue beyondLastVal = new RangeComparison(rangeFirstValue, rangeLastValue, lValue.getType());
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtTmpVar);
@@ -1783,7 +1783,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
       Operator operator = Operators.getCastUnary(castType);
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
@@ -1800,7 +1800,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          // sizeof(expression) - add a unary expression to be resolved later
          RValue child = (RValue) this.visit(ctx.expr());
-         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, Operators.SIZEOF, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1818,7 +1818,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          // typeid(expression) - add a unary expression to be resolved later
          RValue child = (RValue) this.visit(ctx.expr());
-         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, Operators.TYPEID, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1836,7 +1836,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          parameters = new ArrayList<>();
       }
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
 
       String procedureName;
@@ -1965,7 +1965,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(left instanceof ConstantValue && right instanceof ConstantValue) {
          return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
       } else {
-         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1994,7 +1994,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {
-         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);

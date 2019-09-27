@@ -11,7 +11,6 @@ import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       Variable intermediateVar = programScope.getVariable(intermediate.getVariable());
       Scope currentScope = intermediateVar.getScope();
       // Let assignment put value into a tmp Var
-      VariableIntermediate tmpVar = currentScope.addVariableIntermediate();
+      Variable tmpVar = currentScope.addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       statementLValue.setlValue(tmpVarRef);
       PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);

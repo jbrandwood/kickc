@@ -78,8 +78,8 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                unwound.setDeclaredRegister((var.getDeclaredRegister()));
                unwound.setDeclaredExport(var.isDeclaredExport());
                unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-            }  else if(symbol instanceof VariableIntermediate) {
-               VariableIntermediate unwound = procedure.addVariableIntermediate();
+            }  else if(symbol instanceof Variable && ((Variable) symbol).isIntermediate()) {
+               Variable unwound = procedure.addVariableIntermediate();
                unwoundSymbols.put(symbol.getRef(), unwound.getRef());
             }  else if(symbol instanceof BlockScope) {
                // Recurse!

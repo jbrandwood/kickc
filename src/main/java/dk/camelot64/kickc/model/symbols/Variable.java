@@ -5,13 +5,21 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 /** A Variable (or a Constant) */
-public abstract class Variable extends SymbolVariable {
+public class Variable extends SymbolVariable {
 
-   /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
+   /** true if the variable is intermediate. */
+   private boolean isIntermediate;
+
+   /* true if the variable is a PHI version. (the variable has storage strategy PHI)*/
+   private boolean isVersion;
+
+   /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public Variable(String name, Scope scope, SymbolType type, String dataSegment) {
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment, boolean isIntermediate, boolean isVersion) {
       super(name, scope, type, dataSegment);
+      this.isIntermediate = isIntermediate;
+      this.isVersion = isVersion;
    }
 
    public Registers.Register getAllocation() {
@@ -22,7 +30,13 @@ public abstract class Variable extends SymbolVariable {
       this.allocation = allocation;
    }
 
-   public abstract boolean isVersioned();
+   public boolean isVersioned() {
+      return isVersion;
+   }
+
+   public boolean isIntermediate() {
+      return isIntermediate;
+   }
 
    public VariableRef getRef() {
       return new VariableRef(this);

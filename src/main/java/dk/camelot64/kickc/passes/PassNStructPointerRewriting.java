@@ -44,7 +44,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  VariableIntermediate memberAddress1 = scope.addVariableIntermediate();
+                  Variable memberAddress1 = scope.addVariableIntermediate();
                   memberAddress1.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
@@ -57,7 +57,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  VariableIntermediate memberAddress = scope.addVariableIntermediate();
+                  Variable memberAddress = scope.addVariableIntermediate();
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
@@ -83,9 +83,9 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  VariableIntermediate memberAddress1 = scope.addVariableIntermediate();
+                  Variable memberAddress1 = scope.addVariableIntermediate();
                   memberAddress1.setType(memberType);
-                  VariableIntermediate memberAddress2 = scope.addVariableIntermediate();
+                  Variable memberAddress2 = scope.addVariableIntermediate();
                   memberAddress2.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
@@ -100,7 +100,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  VariableIntermediate memberAddress = scope.addVariableIntermediate();
+                  Variable memberAddress = scope.addVariableIntermediate();
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();

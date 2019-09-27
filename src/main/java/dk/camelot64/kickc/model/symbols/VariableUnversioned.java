@@ -11,7 +11,7 @@ public class VariableUnversioned extends Variable {
    private Integer nextVersionNumber;
 
    public VariableUnversioned( String name, Scope scope, SymbolType type, String dataSegment) {
-      super(name, scope, type, dataSegment);
+      super(name, scope, type, dataSegment, false, false);
       this.nextVersionNumber = 0;
    }
 
@@ -20,11 +20,6 @@ public class VariableUnversioned extends Variable {
     */
    int getNextVersionNumber() {
       return nextVersionNumber++;
-   }
-
-   @Override
-   public boolean isVersioned() {
-      return false;
    }
 
    public VariableVersion createVersion() {

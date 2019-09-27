@@ -251,7 +251,7 @@ public class ProgramValueIterator {
       } else if(value == null ||
             value instanceof VariableRef ||
             value instanceof VariableVersion ||
-            value instanceof VariableIntermediate ||
+            value instanceof Variable ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||

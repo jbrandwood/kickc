@@ -212,7 +212,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   for(Variable member : structDefinition.getAllVariables(false)) {
                      Variable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new VariableIntermediate(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment()));
+                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), true, false));
                      } else {
                         memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), variable.getDataSegment());
                      }
@@ -407,7 +407,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
          Variable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         VariableIntermediate memberAddress = scope.addVariableIntermediate();
+         Variable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
@@ -448,7 +448,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
          Variable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         VariableIntermediate memberAddress = scope.addVariableIntermediate();
+         Variable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER

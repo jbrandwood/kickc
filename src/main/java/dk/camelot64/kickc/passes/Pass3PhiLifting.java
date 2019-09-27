@@ -49,7 +49,7 @@ public class Pass3PhiLifting {
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
-                        newVar = ((VariableVersion) lValVar).getVersionOf().createVersion();
+                        newVar = lValVar.getVersionOf().createVersion();
                      } else {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getScope().addVariableIntermediate();

@@ -263,9 +263,9 @@ public class Pass4CodeGeneration {
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
       for(Variable parameter : procedure.getParameters()) {
-         List<VariableVersion> versions = new ArrayList<>(procedure.getVersions((VariableUnversioned) parameter));
+         List<Variable> versions = new ArrayList<>(procedure.getVersions((VariableUnversioned) parameter));
          if(versions.size() > 0) {
-            VariableVersion param = versions.get(0);
+            Variable param = versions.get(0);
             Registers.Register allocation = param.getAllocation();
             if(i++ > 0) signature.append(", ");
             signature.append(param.getType().getTypeName()).append(" ");

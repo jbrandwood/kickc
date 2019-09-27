@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.Program;
@@ -8,11 +7,12 @@ import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.VariableVersion;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.parser.KickCParser;
 
 import java.util.LinkedHashMap;
@@ -80,18 +80,12 @@ public class AsmFragmentTemplate {
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
-      VariableVersion v1 = new VariableVersion("$tmp1", SymbolType.BYTE, null);
-      VariableVersion v2 = new VariableVersion("$tmp2", SymbolType.BYTE, null);
-      VariableVersion v3 = new VariableVersion("$tmp3", SymbolType.BYTE, null);
-      VariableVersion v4 = new VariableVersion("$tmp4", SymbolType.BYTE, null);
-      VariableVersion v5 = new VariableVersion("$tmp5", SymbolType.BYTE, null);
-      VariableVersion v6 = new VariableVersion("$tmp6", SymbolType.BYTE, null);
-      v1.setScope(scope);
-      v2.setScope(scope);
-      v3.setScope(scope);
-      v4.setScope(scope);
-      v5.setScope(scope);
-      v6.setScope(scope);
+      Variable v1 = new Variable("$tmp1", scope, SymbolType.BYTE, null, false, true);
+      Variable v2 = new Variable("$tmp2", scope, SymbolType.BYTE, null, false, true);
+      Variable v3 = new Variable("$tmp3", scope, SymbolType.BYTE, null, false, true);
+      Variable v4 = new Variable("$tmp4", scope, SymbolType.BYTE, null, false, true);
+      Variable v5 = new Variable("$tmp5", scope, SymbolType.BYTE, null, false, true);
+      Variable v6 = new Variable("$tmp6", scope, SymbolType.BYTE, null, false, true);
       v1.setAllocation(new Registers.RegisterZpByte(2));
       v2.setAllocation(new Registers.RegisterZpByte(4));
       v3.setAllocation(new Registers.RegisterZpByte(6));

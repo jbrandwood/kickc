@@ -114,13 +114,13 @@ public abstract class Scope implements Symbol, Serializable {
     * @param unversioned The unversioned variable
     * @return All versions of the variable
     */
-   public Collection<VariableVersion> getVersions(VariableUnversioned unversioned) {
-      LinkedHashSet<VariableVersion> versions = new LinkedHashSet<>();
+   public Collection<Variable> getVersions(VariableUnversioned unversioned) {
+      LinkedHashSet<Variable> versions = new LinkedHashSet<>();
       for(Symbol symbol : symbols.values()) {
-         if(symbol instanceof VariableVersion) {
-            if(((VariableVersion) symbol).isVersioned()) {
-               if(((VariableVersion) symbol).getVersionOf().equals(unversioned)) {
-                  versions.add((VariableVersion) symbol);
+         if(symbol instanceof Variable) {
+            if(((Variable) symbol).isVersioned()) {
+               if(((Variable) symbol).getVersionOf().equals(unversioned)) {
+                  versions.add((Variable) symbol);
                }
             }
          }

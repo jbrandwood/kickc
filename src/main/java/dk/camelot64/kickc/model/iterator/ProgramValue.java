@@ -604,7 +604,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value val) {
-         varPointer.setToSymbol((VariableRef) val);
+         varPointer.setToSymbol((SymbolRef) val);
       }
 
    }

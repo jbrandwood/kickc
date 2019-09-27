@@ -250,7 +250,6 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value == null ||
             value instanceof VariableRef ||
-            value instanceof VariableVersion ||
             value instanceof Variable ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||

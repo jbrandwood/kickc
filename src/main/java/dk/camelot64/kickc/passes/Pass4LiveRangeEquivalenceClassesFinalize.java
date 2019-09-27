@@ -3,7 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallFinalize;
-import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -38,7 +37,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
             // Found a volatile non-versioned variable
             for(Variable otherVariable : variable.getScope().getAllVariables(false)) {
                if(otherVariable.isVersioned()) {
-                  if(((VariableVersion)otherVariable).getVersionOf().equals(((VariableVersion)variable).getVersionOf())) {
+                  if((otherVariable).getVersionOf().equals((variable).getVersionOf())) {
                      // They share the same main variable
                      LiveRangeEquivalenceClass varEC = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(variable.getRef());
                      LiveRangeEquivalenceClass otherEC = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(otherVariable.getRef());

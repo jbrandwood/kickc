@@ -22,8 +22,8 @@ public class VariableUnversioned extends Variable {
       return nextVersionNumber++;
    }
 
-   public VariableVersion createVersion() {
-      VariableVersion version = new VariableVersion(this, this.getNextVersionNumber());
+   public Variable createVersion() {
+      Variable version = new Variable(this, this.getNextVersionNumber());
       getScope().add(version);
       return version;
    }

@@ -4,6 +4,8 @@ import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.VariableRef;
 
+import java.util.Objects;
+
 /** A Variable (or a Constant) */
 public class Variable extends SymbolVariable {
 
@@ -22,6 +24,24 @@ public class Variable extends SymbolVariable {
       this.isVersion = isVersion;
    }
 
+   public Variable(VariableUnversioned versionOf, int version) {
+      super(versionOf.getName()+"#"+version, versionOf.getScope(), versionOf.getType(), versionOf.getDataSegment());
+      this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
+      this.setDeclaredAsRegister(versionOf.isDeclaredAsRegister());
+      this.setDeclaredAsMemory(versionOf.isDeclaredAsMemory());
+      this.setDeclaredRegister(versionOf.getDeclaredRegister());
+      this.setDeclaredMemoryAddress(versionOf.getDeclaredMemoryAddress());
+      this.setStorageStrategy(versionOf.getStorageStrategy());
+      this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
+      this.setDeclaredExport(versionOf.isDeclaredExport());
+      this.setInferedVolatile(versionOf.isInferedVolatile());
+      this.setInferredType(versionOf.isInferredType());
+      this.setComments(versionOf.getComments());
+      this.isIntermediate = false;
+      this.isVersion = true;
+   }
+
+
    public Registers.Register getAllocation() {
       return allocation;
    }
@@ -38,6 +58,20 @@ public class Variable extends SymbolVariable {
       return isIntermediate;
    }
 
+   /**
+    * If the variable is a version of a variable returns the original variable.
+    * @return The original variable. Null if this is not a version.
+    */
+   public VariableUnversioned getVersionOf() {
+      if(isVersioned()) {
+         String name = getName();
+         String versionOfName = name.substring(0, name.indexOf("#"));
+         return (VariableUnversioned) getScope().getVariable(versionOfName);
+      } else {
+         return null;
+      }
+   }
+
    public VariableRef getRef() {
       return new VariableRef(this);
    }
@@ -48,14 +82,13 @@ public class Variable extends SymbolVariable {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       Variable variable = (Variable) o;
-      return allocation != null ? allocation.equals(variable.allocation) : variable.allocation == null;
+      return isIntermediate == variable.isIntermediate &&
+            isVersion == variable.isVersion &&
+            Objects.equals(allocation, variable.allocation);
    }
 
    @Override
    public int hashCode() {
-      int result = super.hashCode();
-      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
-      return result;
+      return Objects.hash(super.hashCode(), isIntermediate, isVersion, allocation);
    }
-
 }

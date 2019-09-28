@@ -199,9 +199,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-      VariableUnversioned returnVar = null;
+      Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         returnVar = procedure.addVariable("return", type, procedure.getSegmentData());
+         returnVar = procedure.addVariablePhiMaster("return", type, procedure.getSegmentData());
       }
       List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
@@ -260,7 +260,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment);
+      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, false, false, true);
       // Set initial storage strategy
       param.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
       // Add directives
@@ -554,7 +554,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
       String varName = ctx.NAME().getText();
-      VariableUnversioned lValue = visitDeclVariableInit(varName, ctx);
+      Variable lValue = visitDeclVariableInit(varName, ctx);
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
       KickCParser.ExprContext initializer = ctx.expr();
@@ -579,7 +579,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
       String varName = ctx.NAME().getText();
-      VariableUnversioned lValue = visitDeclVariableInit(varName, ctx);
+      Variable lValue = visitDeclVariableInit(varName, ctx);
       SymbolType type = this.declVarType;
       List<Comment> comments = this.declVarComments;
       if(!(type instanceof SymbolTypeArray)) {
@@ -608,14 +608,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-   private VariableUnversioned visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
+   private Variable visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
       List<Directive> directives = declVarDirectives;
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
 
-      VariableUnversioned lValue;
+      Variable lValue;
       try {
-         lValue = getCurrentScope().addVariable(varName, type, currentDataSegment);
+         lValue = getCurrentScope().addVariablePhiMaster(varName, type, currentDataSegment);
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
@@ -1202,7 +1202,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Variable lValue;
       if(varType != null) {
          try {
-            lValue = getCurrentScope().addVariable(varName, varType, currentDataSegment);
+            lValue = getCurrentScope().addVariablePhiMaster(varName, varType, currentDataSegment);
          } catch(CompileError e) {
             throw new CompileError(e.getMessage(), statementSource);
          }
@@ -1627,7 +1627,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(typedefScope);
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       String typedefName = ctx.NAME().getText();
-      typedefScope.addVariable(typedefName, type, currentDataSegment);
+      typedefScope.addVariablePhiMaster(typedefName, type, currentDataSegment);
       scopeStack.pop();
       return null;
    }

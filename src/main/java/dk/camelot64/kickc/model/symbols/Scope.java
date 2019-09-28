@@ -99,26 +99,26 @@ public abstract class Scope implements Symbol, Serializable {
       symbols.remove(symbol.getLocalName());
    }
 
-   public VariableUnversioned addVariable(String name, SymbolType type, String dataSegment) {
-      return add(new VariableUnversioned(name, this, type, dataSegment));
+   public Variable addVariablePhiMaster(String name, SymbolType type, String dataSegment) {
+      return add(new Variable(name, this, type, dataSegment, false, false, true));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), true, false));
+      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), true, false, false));
    }
 
    /**
-    * Get all versions of an unversioned variable
+    * Get all versions of a PHI-master variable
     *
-    * @param unversioned The unversioned variable
+    * @param unversioned The unversioned PHI-master variable
     * @return All versions of the variable
     */
-   public Collection<Variable> getVersions(VariableUnversioned unversioned) {
+   public Collection<Variable> getVersions(Variable unversioned) {
       LinkedHashSet<Variable> versions = new LinkedHashSet<>();
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
-            if(((Variable) symbol).isVersioned()) {
+            if(((Variable) symbol).isPhiVersion()) {
                if(((Variable) symbol).getVersionOf().equals(unversioned)) {
                   versions.add((Variable) symbol);
                }

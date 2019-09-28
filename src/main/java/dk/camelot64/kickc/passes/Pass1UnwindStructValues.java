@@ -212,9 +212,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   for(Variable member : structDefinition.getAllVariables(false)) {
                      Variable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), true, false));
+                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), true, false, false));
                      } else {
-                        memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), variable.getDataSegment());
+                        memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), variable.getDataSegment());
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferedVolatile(variable.isInferedVolatile());

@@ -76,9 +76,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
-      if(assignedVar instanceof VariableUnversioned) {
+      if(assignedVar.isPhiMaster()) {
          // Assignment to a non-versioned non-intermediary variable
-         VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
+         Variable assignedSymbol = assignedVar;
          Variable version;
          if(assignedSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedSymbol.getRef())) {
             Collection<Variable> versions = assignedVar.getScope().getVersions(assignedSymbol);
@@ -100,9 +100,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAllUses() {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          // Newest version of variables in the block.
-         Map<VariableUnversioned, Variable> blockVersions = new LinkedHashMap<>();
+         Map<Variable, Variable> blockVersions = new LinkedHashMap<>();
          // New phi functions introduced in the block to create versions of variables.
-         Map<VariableUnversioned, Variable> blockNewPhis = new LinkedHashMap<>();
+         Map<Variable, Variable> blockNewPhis = new LinkedHashMap<>();
          ProgramValueIterator.execute(block, (programValue, currentStmt, stmtIt, currentBlock) -> {
             if(programValue instanceof ProgramValue.ProgramValueParamValue) {
                // Call parameter values should not be versioned
@@ -146,16 +146,16 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
             }
          });
          // Add new Phi functions to block
-         for(VariableUnversioned symbol : blockNewPhis.keySet()) {
+         for(Variable symbol : blockNewPhis.keySet()) {
             block.getPhiBlock().addPhiVariable(blockNewPhis.get(symbol).getRef());
          }
       }
    }
 
-   private void updateBlockVersions(VariableRef lValue, Map<VariableUnversioned, Variable> blockVersions) {
+   private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
       VariableRef lValueRef = lValue;
       Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
-      if(variable.isVersioned()) {
+      if(variable.isPhiVersion()) {
          blockVersions.put(variable.getVersionOf(), variable);
       }
    }
@@ -171,15 +171,15 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     */
    private Variable findOrCreateVersion(
          Value rValue,
-         Map<VariableUnversioned, Variable> blockVersions,
-         Map<VariableUnversioned, Variable> blockNewPhis) {
+         Map<Variable, Variable> blockVersions,
+         Map<Variable, Variable> blockNewPhis) {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
-         if(rValueVar instanceof VariableUnversioned) {
+         if(rValueVar.isPhiMaster()) {
             // rValue needs versioning - look for version in statements
-            VariableUnversioned rSymbol = (VariableUnversioned) rValueVar;
+            Variable rSymbol = rValueVar;
             if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
                // A constant - find the single created version
                Scope scope = rSymbol.getScope();
@@ -213,8 +213,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * false if new phis were added, meaning another iteration is needed.
     */
    private boolean completePhiFunctions() {
-      Map<LabelRef, Map<VariableUnversioned, Variable>> newPhis = new LinkedHashMap<>();
-      Map<LabelRef, Map<VariableUnversioned, Variable>> symbolMap = buildSymbolMap();
+      Map<LabelRef, Map<Variable, Variable>> newPhis = new LinkedHashMap<>();
+      Map<LabelRef, Map<Variable, Variable>> symbolMap = buildSymbolMap();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
 
@@ -224,18 +224,18 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if(phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      Variable versioned = getScope().getVariable(phiLValVarRef);
-                     VariableUnversioned unversioned = versioned.getVersionOf();
+                     Variable unversioned = versioned.getVersionOf();
                      List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
                      for(ControlFlowBlock predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
-                        Map<VariableUnversioned, Variable> predecessorMap = symbolMap.get(predecessorLabel);
+                        Map<Variable, Variable> predecessorMap = symbolMap.get(predecessorLabel);
                         Variable previousSymbol = null;
                         if(predecessorMap != null) {
                            previousSymbol = predecessorMap.get(unversioned);
                         }
                         if(previousSymbol == null) {
                            // No previous symbol found in predecessor block. Look in new phi functions.
-                           Map<VariableUnversioned, Variable> predecessorNewPhis = newPhis.get(predecessorLabel);
+                           Map<Variable, Variable> predecessorNewPhis = newPhis.get(predecessorLabel);
                            if(predecessorNewPhis == null) {
                               predecessorNewPhis = new LinkedHashMap<>();
                               newPhis.put(predecessorLabel, predecessorNewPhis);
@@ -256,9 +256,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       }
       // Ads new phi functions to blocks
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         Map<VariableUnversioned, Variable> blockNewPhis = newPhis.get(block.getLabel());
+         Map<Variable, Variable> blockNewPhis = newPhis.get(block.getLabel());
          if(blockNewPhis != null) {
-            for(VariableUnversioned symbol : blockNewPhis.keySet()) {
+            for(Variable symbol : blockNewPhis.keySet()) {
                StatementPhiBlock phiBlock = block.getPhiBlock();
                phiBlock.addPhiVariable(blockNewPhis.get(symbol).getRef());
             }
@@ -297,8 +297,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Builds a map of all which versions each symbol has in each block.
     * Maps Control Flow Block Label -> ( Unversioned Symbol -> Versioned Symbol) for all relevant symbols.
     */
-   private Map<LabelRef, Map<VariableUnversioned, Variable>> buildSymbolMap() {
-      Map<LabelRef, Map<VariableUnversioned, Variable>> symbolMap = new LinkedHashMap<>();
+   private Map<LabelRef, Map<Variable, Variable>> buildSymbolMap() {
+      Map<LabelRef, Map<Variable, Variable>> symbolMap = new LinkedHashMap<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
@@ -315,14 +315,14 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       return symbolMap;
    }
 
-   private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<VariableUnversioned, Variable>> symbolMap) {
+   private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
-         if(lValueVar.isVersioned()) {
+         if(lValueVar.isPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();
-            VariableUnversioned unversioned = versioned.getVersionOf();
-            Map<VariableUnversioned, Variable> blockMap = symbolMap.get(label);
+            Variable unversioned = versioned.getVersionOf();
+            Map<Variable, Variable> blockMap = symbolMap.get(label);
             if(blockMap == null) {
                blockMap = new LinkedHashMap<>();
                symbolMap.put(label, blockMap);

@@ -67,10 +67,10 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   Label unwound = procedure.addLabel(name);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                }
-            }  else if(symbol instanceof VariableUnversioned) {
+            }  else if(symbol instanceof Variable && ((Variable) symbol).isPhiMaster()) {
                String name = findLocalName(procedure, symbol);
-               VariableUnversioned var = (VariableUnversioned) symbol;
-               VariableUnversioned unwound = procedure.addVariable(name, symbol.getType(), var.getDataSegment());
+               Variable var = (Variable) symbol;
+               Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
                unwound.setDeclaredAlignment(var.getDeclaredAlignment());
                unwound.setDeclaredConstant(var.isDeclaredConstant());
                unwound.setDeclaredVolatile(var.isDeclaredVolatile());

@@ -300,7 +300,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          if(procSymbol instanceof Variable) {
             Variable procVar = (Variable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            VariableUnversioned inlineVar = callScope.addVariable(inlineVarName, procSymbol.getType(), procVar.getDataSegment());
+            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getDataSegment());
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
             inlineVar.setDeclaredConstant(procVar.isDeclaredConstant());

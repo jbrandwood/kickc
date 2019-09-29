@@ -9,13 +9,13 @@ Rewriting struct pointer member access *((struct Person*) print_person::person).
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Person[]) persons#0 ← { { (number) 1, (const string) $0 }, { (number) 8, (const string) $1 } }
+  (struct Person[]) persons ← { { (number) 1, (const string) $0 }, { (number) 8, (const string) $1 } }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#18 ← phi( @2/(byte) idx#19 )
-  (struct Person*) main::person#0 ← (struct Person[]) persons#0
+  (struct Person*) main::person#0 ← (struct Person[]) persons
   (struct Person*) print_person::person#0 ← (struct Person*) main::person#0
   call print_person 
   to:main::@1
@@ -37,7 +37,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#3 ← (number) 0
   to:@2
 
@@ -47,20 +47,20 @@ print_person: scope:[print_person]  from main main::@1
   (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
   (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
   (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)
-  *((byte*) SCREEN#0 + (byte) idx#15) ← (byte~) print_person::$0
+  *((byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0
   (byte) idx#4 ← ++ (byte) idx#15
-  *((byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' '
+  *((byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte[4]) print_person::$2 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
+  *((byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
   (byte) idx#6 ← ++ (byte) idx#5
   (byte[4]) print_person::$3 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
+  *((byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
   (byte) idx#7 ← ++ (byte) idx#6
   (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
+  *((byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
   (byte) idx#8 ← ++ (byte) idx#7
-  *((byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' '
+  *((byte*) SCREEN + (byte) idx#8) ← (byte) ' '
   (byte) idx#9 ← ++ (byte) idx#8
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person
@@ -91,7 +91,6 @@ SYMBOL TABLE SSA
 (byte) Person::id
 (byte[4]) Person::initials
 (byte*) SCREEN
-(byte*) SCREEN#0
 (const byte) SIZEOF_STRUCT_PERSON = (byte) 5
 (byte) idx
 (byte) idx#0
@@ -123,7 +122,6 @@ SYMBOL TABLE SSA
 (struct Person*) main::person#1
 (struct Person*) main::person#2
 (struct Person[]) persons
-(struct Person[]) persons#0
 (void()) print_person((struct Person*) print_person::person)
 (byte~) print_person::$0
 (byte*) print_person::$1
@@ -137,13 +135,13 @@ SYMBOL TABLE SSA
 (struct Person*) print_person::person#2
 
 Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
+Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
+Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (struct Person[]) persons#0 ← (struct Person[]){ (struct Person){ (byte)(number) 1, (const string) $0 }, (struct Person){ (byte)(number) 8, (const string) $1 } }
+Added casts to value list in (struct Person[]) persons ← (struct Person[]){ (struct Person){ (byte)(number) 1, (const string) $0 }, (struct Person){ (byte)(number) 8, (const string) $1 } }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
@@ -176,11 +174,11 @@ Identified constant from value list (struct Person) { id: (byte) 8, initials: (c
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Identified constant from value list (struct Person[]) { { id: (byte) 1, initials: (const string) $0 }, { id: (byte) 8, initials: (const string) $1 } }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct Person[]) persons#0 = { { id: 1, initials: $0 }, { id: 8, initials: $1 } }
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const struct Person[]) persons = { { id: 1, initials: $0 }, { id: 8, initials: $1 } }
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#19 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const struct Person*) main::person#0 = persons#0
+Constant (const struct Person*) main::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) print_person::person#0 = main::person#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -188,7 +186,7 @@ Converting *(pointer+n) to pointer[n] [19] (byte~) print_person::$0 ← (byte) '
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero (byte*)print_person::person#2 in [18] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
 Simplifying expression containing zero (byte*)print_person::person#2 in [19] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID)
-Simplifying expression containing zero print_person::$2 in [25] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
+Simplifying expression containing zero print_person::$2 in [25] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) print_person::$1 and assignment [6] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
@@ -199,7 +197,7 @@ Constant (const struct Person*) main::person#1 = main::person#0+SIZEOF_STRUCT_PE
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) print_person::person#1 = main::person#1
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [12] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4]) print_person::$2)  -- *((byte[4])print_person::person#2 + OFFSET_STRUCT_PERSON_INITIALS)
+Converting *(pointer+n) to pointer[n] [12] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2)  -- *((byte[4])print_person::person#2 + OFFSET_STRUCT_PERSON_INITIALS)
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte[4]) print_person::$2 and assignment [9] (byte[4]) print_person::$2 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
 Successful SSA optimization PassNEliminateUnusedVars
@@ -208,8 +206,8 @@ Inlining constant with var siblings (const struct Person*) print_person::person#
 Inlining constant with var siblings (const struct Person*) print_person::person#1
 Inlining constant with var siblings (const byte) idx#19
 Constant inlined idx#19 = (byte) 0
-Constant inlined print_person::person#0 = (const struct Person[]) persons#0
-Constant inlined main::person#0 = (const struct Person[]) persons#0
+Constant inlined print_person::person#0 = (const struct Person[]) persons
+Constant inlined main::person#0 = (const struct Person[]) persons
 Constant inlined print_person::person#1 = (const struct Person*) main::person#1
 Successful SSA optimization Pass2ConstantInlining
 Constant array inlined into struct $0 = (string) "jgr"
@@ -266,21 +264,21 @@ main::@return: scope:[main]  from main::@1
 (void()) print_person((struct Person*) print_person::person)
 print_person: scope:[print_person]  from main main::@1
   [9] (byte) idx#15 ← phi( main/(byte) 0 main::@1/(byte) idx#10 )
-  [9] (struct Person*) print_person::person#2 ← phi( main/(const struct Person[]) persons#0 main::@1/(const struct Person*) main::person#1 )
+  [9] (struct Person*) print_person::person#2 ← phi( main/(const struct Person[]) persons main::@1/(const struct Person*) main::person#1 )
   [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2)
-  [11] *((const byte*) SCREEN#0 + (byte) idx#15) ← (byte~) print_person::$0
+  [11] *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0
   [12] (byte) idx#4 ← ++ (byte) idx#15
-  [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' '
+  [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   [14] (byte) idx#5 ← ++ (byte) idx#4
-  [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS)
+  [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS)
   [16] (byte) idx#6 ← ++ (byte) idx#5
   [17] (byte[4]) print_person::$3 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1)
+  [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1)
   [19] (byte) idx#7 ← ++ (byte) idx#6
   [20] (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2)
+  [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2)
   [22] (byte) idx#8 ← ++ (byte) idx#7
-  [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' '
+  [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' '
   [24] (byte) idx#10 ← ++ (byte) idx#8
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person
@@ -291,7 +289,6 @@ print_person::@return: scope:[print_person]  from print_person
 VARIABLE REGISTER WEIGHTS
 (byte) Person::id
 (byte[4]) Person::initials
-(byte*) SCREEN
 (byte) idx
 (byte) idx#10 1.0
 (byte) idx#15 2.0
@@ -302,7 +299,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#8 3.0
 (void()) main()
 (struct Person*) main::person
-(struct Person[]) persons
 (void()) print_person((struct Person*) print_person::person)
 (byte~) print_person::$0 4.0
 (byte[4]) print_person::$3 4.0
@@ -387,7 +383,7 @@ main: {
     // [9] phi (byte) idx#15 = (byte) 0 [phi:main->print_person#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx_15
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -427,7 +423,7 @@ print_person: {
     ldy #0
     adc (person),y
     sta.z _0
-    // [11] *((const byte*) SCREEN#0 + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [11] *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _0
     ldy.z idx_15
     sta SCREEN,y
@@ -435,7 +431,7 @@ print_person: {
     ldy.z idx_15
     iny
     sty.z idx
-    // [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y
@@ -443,7 +439,7 @@ print_person: {
     ldy.z idx
     iny
     sty.z idx_5
-    // [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
+    // [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx_5
     ldy #OFFSET_STRUCT_PERSON_INITIALS
     lda (person),y
@@ -460,7 +456,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z _3+1
-    // [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
+    // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx_6
     ldy #1
     lda (_3),y
@@ -477,7 +473,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z _4+1
-    // [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
+    // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx_7
     ldy #2
     lda (_4),y
@@ -486,7 +482,7 @@ print_person: {
     ldy.z idx_7
     iny
     sty.z idx_8
-    // [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx_8
     sta SCREEN,y
@@ -511,29 +507,29 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2) [ print_person::person#2 idx#15 print_person::$0 ] ( main:2::print_person:5 [ print_person::person#2 idx#15 print_person::$0 ] main:2::print_person:7 [ print_person::person#2 idx#15 print_person::$0 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ idx#15 idx#10 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ idx#15 idx#10 ]
-Statement [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ idx#4 ]
-Statement [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) [ print_person::person#2 idx#5 ] ( main:2::print_person:5 [ print_person::person#2 idx#5 ] main:2::print_person:7 [ print_person::person#2 idx#5 ] ) always clobbers reg byte a reg byte y 
+Statement [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) [ print_person::person#2 idx#5 ] ( main:2::print_person:5 [ print_person::person#2 idx#5 ] main:2::print_person:7 [ print_person::person#2 idx#5 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ idx#5 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:7 [ idx#5 ]
 Statement [17] (byte[4]) print_person::$3 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS [ print_person::person#2 idx#6 print_person::$3 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 print_person::$3 ] main:2::print_person:7 [ print_person::person#2 idx#6 print_person::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ idx#6 ]
-Statement [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) [ print_person::person#2 idx#6 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 ] main:2::print_person:7 [ print_person::person#2 idx#6 ] ) always clobbers reg byte a reg byte y 
+Statement [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) [ print_person::person#2 idx#6 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 ] main:2::print_person:7 [ print_person::person#2 idx#6 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:8 [ idx#6 ]
 Statement [20] (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS [ idx#7 print_person::$4 ] ( main:2::print_person:5 [ idx#7 print_person::$4 ] main:2::print_person:7 [ idx#7 print_person::$4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ idx#7 ]
-Statement [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) [ idx#7 ] ( main:2::print_person:5 [ idx#7 ] main:2::print_person:7 [ idx#7 ] ) always clobbers reg byte a reg byte y 
+Statement [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) [ idx#7 ] ( main:2::print_person:5 [ idx#7 ] main:2::print_person:7 [ idx#7 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:11 [ idx#7 ]
-Statement [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' ' [ idx#8 ] ( main:2::print_person:5 [ idx#8 ] main:2::print_person:7 [ idx#8 ] ) always clobbers reg byte a 
+Statement [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' ' [ idx#8 ] ( main:2::print_person:5 [ idx#8 ] main:2::print_person:7 [ idx#8 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ idx#8 ]
 Statement [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2) [ print_person::person#2 idx#15 print_person::$0 ] ( main:2::print_person:5 [ print_person::person#2 idx#15 print_person::$0 ] main:2::print_person:7 [ print_person::person#2 idx#15 print_person::$0 ] ) always clobbers reg byte a reg byte y 
-Statement [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) [ print_person::person#2 idx#5 ] ( main:2::print_person:5 [ print_person::person#2 idx#5 ] main:2::print_person:7 [ print_person::person#2 idx#5 ] ) always clobbers reg byte a reg byte y 
+Statement [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) [ print_person::person#2 idx#5 ] ( main:2::print_person:5 [ print_person::person#2 idx#5 ] main:2::print_person:7 [ print_person::person#2 idx#5 ] ) always clobbers reg byte a reg byte y 
 Statement [17] (byte[4]) print_person::$3 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS [ print_person::person#2 idx#6 print_person::$3 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 print_person::$3 ] main:2::print_person:7 [ print_person::person#2 idx#6 print_person::$3 ] ) always clobbers reg byte a 
-Statement [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) [ print_person::person#2 idx#6 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 ] main:2::print_person:7 [ print_person::person#2 idx#6 ] ) always clobbers reg byte a reg byte y 
+Statement [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) [ print_person::person#2 idx#6 ] ( main:2::print_person:5 [ print_person::person#2 idx#6 ] main:2::print_person:7 [ print_person::person#2 idx#6 ] ) always clobbers reg byte a reg byte y 
 Statement [20] (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS [ idx#7 print_person::$4 ] ( main:2::print_person:5 [ idx#7 print_person::$4 ] main:2::print_person:7 [ idx#7 print_person::$4 ] ) always clobbers reg byte a 
-Statement [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) [ idx#7 ] ( main:2::print_person:5 [ idx#7 ] main:2::print_person:7 [ idx#7 ] ) always clobbers reg byte a reg byte y 
-Statement [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' ' [ idx#8 ] ( main:2::print_person:5 [ idx#8 ] main:2::print_person:7 [ idx#8 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) [ idx#7 ] ( main:2::print_person:5 [ idx#7 ] main:2::print_person:7 [ idx#7 ] ) always clobbers reg byte a reg byte y 
+Statement [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' ' [ idx#8 ] ( main:2::print_person:5 [ idx#8 ] main:2::print_person:7 [ idx#8 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ print_person::person#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ idx#15 idx#10 ] : zp ZP_BYTE:4 , reg byte x , 
 Potential registers zp ZP_BYTE:5 [ print_person::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
@@ -596,7 +592,7 @@ main: {
   print_person_from_main:
     // [9] phi (byte) idx#15 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -634,16 +630,16 @@ print_person: {
     clc
     ldy #0
     adc (person),y
-    // [11] *((const byte*) SCREEN#0 + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [12] (byte) idx#4 ← ++ (byte) idx#15 -- vbuxx=_inc_vbuxx 
     inx
-    // [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [14] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
     inx
-    // [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_PERSON_INITIALS
     lda (person),y
     sta SCREEN,x
@@ -657,7 +653,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z _3+1
-    // [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #1
     lda (_3),y
     sta SCREEN,x
@@ -671,13 +667,13 @@ print_person: {
     bcc !+
     inc.z _4+1
   !:
-    // [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
     lda (_4),y
     sta SCREEN,x
     // [22] (byte) idx#8 ← ++ (byte) idx#7 -- vbuxx=_inc_vbuxx 
     inx
-    // [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [24] (byte) idx#10 ← ++ (byte) idx#8 -- vbuxx=_inc_vbuxx 
@@ -729,8 +725,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_PERSON_INITIALS OFFSET_STRUCT_PERSON_INITIALS = (byte) 1
 (byte) Person::id
 (byte[4]) Person::initials
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte) SIZEOF_STRUCT_PERSON SIZEOF_STRUCT_PERSON = (byte) 5
 (byte) idx
 (byte) idx#10 reg byte x 1.0
@@ -744,9 +739,8 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (struct Person*) main::person
-(const struct Person*) main::person#1 person = (const struct Person[]) persons#0+(const byte) SIZEOF_STRUCT_PERSON
-(struct Person[]) persons
-(const struct Person[]) persons#0 persons = { { id: (byte) 1, initials: (string) "jgr" }, { id: (byte) 8, initials: (string) "hbg" } }
+(const struct Person*) main::person#1 person = (const struct Person[]) persons+(const byte) SIZEOF_STRUCT_PERSON
+(const struct Person[]) persons persons = { { id: (byte) 1, initials: (string) "jgr" }, { id: (byte) 8, initials: (string) "hbg" } }
 (void()) print_person((struct Person*) print_person::person)
 (byte~) print_person::$0 reg byte a 4.0
 (byte[4]) print_person::$3 $3 zp ZP_WORD:4 4.0
@@ -794,7 +788,7 @@ main: {
     // [9] phi from main to print_person [phi:main->print_person]
     // [9] phi (byte) idx#15 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -830,20 +824,20 @@ print_person: {
     ldy #0
     adc (person),y
     // SCREEN[idx++] = '0'+person->id
-    // [11] *((const byte*) SCREEN#0 + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // SCREEN[idx++] = '0'+person->id;
     // [12] (byte) idx#4 ← ++ (byte) idx#15 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = ' '
-    // [13] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
     // [14] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = person->initials[0]
-    // [15] *((const byte*) SCREEN#0 + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [15] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_PERSON_INITIALS
     lda (person),y
     sta SCREEN,x
@@ -859,7 +853,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z _3+1
-    // [18] *((const byte*) SCREEN#0 + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #1
     lda (_3),y
     sta SCREEN,x
@@ -875,7 +869,7 @@ print_person: {
     bcc !+
     inc.z _4+1
   !:
-    // [21] *((const byte*) SCREEN#0 + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
     lda (_4),y
     sta SCREEN,x
@@ -883,7 +877,7 @@ print_person: {
     // [22] (byte) idx#8 ← ++ (byte) idx#7 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = ' '
-    // [23] *((const byte*) SCREEN#0 + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [23] *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';

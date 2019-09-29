@@ -4,7 +4,7 @@ Culled Empty Block (label) main::@4
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte[]) TEXT#0 ← (const string) $0
+  (byte[]) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
@@ -15,7 +15,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
-  *((byte*) main::cursor#2) ← *((byte[]) TEXT#0 + (byte) main::i#3)
+  *((byte*) main::cursor#2) ← *((byte[]) TEXT + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   (bool~) main::$0 ← (byte) main::i#1 == (number) 8
   (bool~) main::$1 ← ! (bool~) main::$0
@@ -52,7 +52,6 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (byte[]) TEXT
-(byte[]) TEXT#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -105,7 +104,7 @@ Simple Condition (bool~) main::$1 [9] if((byte) main::i#1!=(byte) 8) goto main::
 Simple Condition (bool~) main::$3 [14] if((byte*) main::cursor#1<(byte*~) main::$2) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte[]) TEXT#0 = $0
+Constant (const byte[]) TEXT = $0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::i#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -120,7 +119,7 @@ Inlining constant with var siblings (const byte) main::i#2
 Inlining constant with var siblings (const byte*) main::cursor#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::i#2 = (byte) 0
-Constant inlined $0 = (const byte[]) TEXT#0
+Constant inlined $0 = (const byte[]) TEXT
 Constant inlined main::cursor#0 = (const byte*) SCREEN#0
 Constant inlined main::$2 = (const byte*) SCREEN#0+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
@@ -168,7 +167,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   [5] (byte*) main::cursor#2 ← phi( main/(const byte*) SCREEN#0 main::@2/(byte*) main::cursor#1 )
   [5] (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#4 )
-  [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3)
+  [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3)
   [7] (byte) main::i#1 ← ++ (byte) main::i#3
   [8] if((byte) main::i#1!=(byte) 8) goto main::@3
   to:main::@2
@@ -187,7 +186,6 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
-(byte[]) TEXT
 (void()) main()
 (byte*) main::cursor
 (byte*) main::cursor#1 16.5
@@ -253,7 +251,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda TEXT,y
     ldy #0
@@ -305,11 +303,11 @@ main: {
   TEXT: .text "camelot "
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
 Statement [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
-Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ] : zp ZP_WORD:3 , 
@@ -366,7 +364,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y
@@ -454,8 +452,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte[]) TEXT
-(const byte[]) TEXT#0 TEXT = (string) "camelot "z
+(const byte[]) TEXT TEXT = (string) "camelot "z
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -507,7 +504,7 @@ main: {
     // main::@1
   b1:
     // *cursor = TEXT[i]
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y

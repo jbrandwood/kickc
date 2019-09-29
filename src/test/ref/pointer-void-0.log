@@ -6,13 +6,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (word) main::w#0 ← (number) $4d2
   (word*~) main::$0 ← & (word) main::w#0
   (word*) main::wp#0 ← (word*~) main::$0
   (void*) main::vp#0 ← ((void*)) (word*) main::wp#0
   (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
-  *((byte*) main::SCREEN#0) ← *((byte*) main::bp#0)
+  *((byte*) main::SCREEN) ← *((byte*) main::bp#0)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -33,7 +33,6 @@ SYMBOL TABLE SSA
 (word*~) main::$0
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte*) main::bp
 (byte*) main::bp#0
 (void*) main::vp
@@ -45,7 +44,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $4d2 in (word) main::w#0 ← (number) $4d2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (word) main::w#0 ← (unumber)(number) $4d2
 Inlining cast (void*) main::vp#0 ← (void*)(word*) main::wp#0
 Inlining cast (byte*) main::bp#0 ← (byte*)(void*) main::vp#0
@@ -59,7 +58,7 @@ Alias (word*) main::wp#0 = (word*~) main::$0
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [2] (word*) main::wp#0 ← & (word) main::w#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const word*) main::wp#0 = &main::w#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (void*)main::wp#0 in [4] (void*) main::vp#0 ← (void*)(const word*) main::wp#0
@@ -98,7 +97,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] (word) main::w#0 ← (word) $4d2
-  [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0)
+  [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -107,7 +106,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte*) main::bp
 (void*) main::vp
 (word) main::w
@@ -154,7 +152,7 @@ main: {
     sta.z w
     lda #>$4d2
     sta.z w+1
-    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     jmp breturn
@@ -167,7 +165,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (word) main::w#0 ← (word) $4d2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::w#0 ] : zp ZP_WORD:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -211,7 +209,7 @@ main: {
     sta.z w
     lda #>$4d2
     sta.z w+1
-    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     jmp breturn
@@ -246,8 +244,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte*) main::bp
 (const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
 (void*) main::vp
@@ -290,7 +287,7 @@ main: {
     lda #>$4d2
     sta.z w+1
     // *SCREEN = *bp
-    // [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     // main::@return

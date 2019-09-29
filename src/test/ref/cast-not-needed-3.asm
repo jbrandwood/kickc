@@ -4,8 +4,8 @@
 .pc = $80d "Program"
 main: {
     .label DSP = $400
-    .label getScreen1_return = 2
     .label spritePtr1__0 = 2
+    .label getScreen1_return = 2
     lda screens
     sta.z getScreen1_return
     lda screens+1

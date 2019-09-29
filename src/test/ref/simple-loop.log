@@ -9,7 +9,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -19,7 +19,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::SCREEN#0 + (byte) main::i#3) ← (byte) 'a'
+  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte) 'a'
   (byte*~) main::$1 ← ((byte*)) (number) $d020
   *((byte*~) main::$1) ← (number) 0
   (byte) main::i#1 ← (byte) main::i#3 + (number) 2
@@ -46,7 +46,6 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -58,7 +57,7 @@ Adding number conversion cast (unumber) $80 in (bool~) main::$0 ← (byte) main:
 Adding number conversion cast (unumber) 0 in *((byte*~) main::$1) ← (number) 0
 Adding number conversion cast (unumber) 2 in (byte) main::i#1 ← (byte) main::i#3 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte*~) main::$1 ← (byte*)(number) $d020
 Inlining cast *((byte*~) main::$1) ← (unumber)(number) 0
@@ -79,7 +78,7 @@ Alias (byte) main::i#2 = (byte) main::i#3
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $80) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) main::$1 = (byte*) 53280
 Successful SSA optimization Pass2ConstantIdentification
@@ -127,7 +126,7 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a'
+  [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a'
   [9] *((byte*) 53280) ← (byte) 0
   [10] (byte) main::i#1 ← (byte) main::i#2 + (byte) 2
   to:main::@1
@@ -135,7 +134,6 @@ main::@2: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::i
 (byte) main::i#1 22.0
 (byte) main::i#2 11.0
@@ -193,7 +191,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z i
     sta SCREEN,y
@@ -213,10 +211,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [9] *((byte*) 53280) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [9] *((byte*) 53280) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
@@ -270,7 +268,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta SCREEN,x
     // [9] *((byte*) 53280) ← (byte) 0 -- _deref_pbuc1=vbuc2 
@@ -316,8 +314,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
 (byte) main::i#2 reg byte x 11.0
@@ -360,7 +357,7 @@ main: {
     // main::@2
   b2:
     // SCREEN[i] = 'a'
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta SCREEN,x
     // (*(unsigned char*)0xD020)=0

@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[$400]) main::SCREEN#0 ← ((byte[$400])) (number) $400
+  (byte[$400]) main::SCREEN ← ((byte[$400])) (number) $400
   (byte) main::b#0 ← (byte) 0
   (byte) main::i#0 ← (number) 2
   to:main::@1
@@ -20,12 +20,12 @@ main::@1: scope:[main]  from main main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) main::b#1 ← *((byte[$400]) main::SCREEN#0 + (byte) main::i#3)
+  (byte) main::b#1 ← *((byte[$400]) main::SCREEN + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::b#2 ← phi( main::@1/(byte) main::b#3 )
-  *((byte[$400]) main::SCREEN#0 + (number) $3e7) ← (byte) main::b#2
+  *((byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -49,7 +49,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte[$400]) main::SCREEN
-(byte[$400]) main::SCREEN#0
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
@@ -63,9 +62,9 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 2 in (byte) main::i#0 ← (number) 2
 Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) main::i#2 < (number) $a
-Adding number conversion cast (unumber) $3e7 in *((byte[$400]) main::SCREEN#0 + (number) $3e7) ← (byte) main::b#2
+Adding number conversion cast (unumber) $3e7 in *((byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$400]) main::SCREEN#0 ← (byte[$400])(number) $400
+Inlining cast (byte[$400]) main::SCREEN ← (byte[$400])(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -82,19 +81,19 @@ Alias (byte) main::b#2 = (byte) main::b#3
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [5] if((byte) main::i#2<(byte) $a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$400]) main::SCREEN#0 = (byte*) 1024
+Constant (const byte[$400]) main::SCREEN = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Constant (const byte) main::i#0 = 2
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [10] *((const byte[$400]) main::SCREEN#0 + (word) $3e7) ← (byte) main::b#2
+De-inlining pointer[w] to *(pointer+w)   [10] *((const byte[$400]) main::SCREEN + (word) $3e7) ← (byte) main::b#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Constant right-side identified [4] (byte*~) main::$1 ← (const byte[$400]) main::SCREEN#0 + (word) $3e7
+Constant right-side identified [4] (byte*~) main::$1 ← (const byte[$400]) main::SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$1 = main::SCREEN#0+$3e7
+Constant (const byte*) main::$1 = main::SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::b#0
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::$1 = (const byte[$400]) main::SCREEN#0+(word) $3e7
+Constant inlined main::$1 = (const byte[$400]) main::SCREEN+(word) $3e7
 Constant inlined main::i#0 = (byte) 2
 Constant inlined main::b#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -137,20 +136,19 @@ main::@1: scope:[main]  from main main::@2
   [6] if((byte) main::i#2<(byte) $a) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [7] *((const byte[$400]) main::SCREEN#0+(word) $3e7) ← (byte) main::b#2
+  [7] *((const byte[$400]) main::SCREEN+(word) $3e7) ← (byte) main::b#2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN#0 + (byte) main::i#2)
+  [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN + (byte) main::i#2)
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte[$400]) main::SCREEN
 (byte) main::b
 (byte) main::b#1 11.0
 (byte) main::b#2 6.5
@@ -216,7 +214,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] *((const byte[$400]) main::SCREEN#0+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte[$400]) main::SCREEN+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuz1 
     lda.z b
     sta SCREEN+$3e7
     jmp breturn
@@ -226,7 +224,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda SCREEN,y
     sta.z b
@@ -294,7 +292,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] *((const byte[$400]) main::SCREEN#0+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuaa 
+    // [7] *((const byte[$400]) main::SCREEN+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$3e7
     jmp breturn
     // main::@return
@@ -303,7 +301,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -348,8 +346,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte[$400]) main::SCREEN
-(const byte[$400]) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte[$400]) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::b
 (byte) main::b#1 reg byte a 11.0
 (byte) main::b#2 reg byte a 6.5
@@ -395,7 +392,7 @@ main: {
     bcc b2
     // main::@3
     // SCREEN[999] = b
-    // [7] *((const byte[$400]) main::SCREEN#0+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuaa 
+    // [7] *((const byte[$400]) main::SCREEN+(word) $3e7) ← (byte) main::b#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$3e7
     // main::@return
     // }
@@ -404,7 +401,7 @@ main: {
     // main::@2
   b2:
     // b = SCREEN[i++]
-    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [9] (byte) main::b#1 ← *((const byte[$400]) main::SCREEN + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
     // b = SCREEN[i++];
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

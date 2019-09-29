@@ -12,7 +12,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (void()*~) $0 ← & (void()) fn1()
   (void()*~) $1 ← & (void()) fn2()
-  (void()*[2]) fns#0 ← { (void()*~) $0, (void()*~) $1 }
+  (void()*[2]) fns ← { (void()*~) $0, (void()*~) $1 }
   to:@3
 
 (void()) main()
@@ -28,7 +28,7 @@ main::@2: scope:[main]  from main::@1
   (byte) main::i#1 ← ++ (byte) main::i#2
   (number~) main::$0 ← (byte) main::i#1 & (number) 1
   (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::f#0 ← *((void()*[2]) fns#0 + (number~) main::$2)
+  (void()*) main::f#0 ← *((void()*[2]) fns + (number~) main::$2)
   call *((void()*) main::f#0) 
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -37,8 +37,8 @@ main::@return: scope:[main]  from main::@1
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
+  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
+  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -46,8 +46,8 @@ fn1::@return: scope:[fn1]  from fn1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL#0 ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL#0) ← ++ *((byte*) fn2::BGCOL#0)
+  (byte*) fn2::BGCOL ← ((byte*)) (number) $d021
+  *((byte*) fn2::BGCOL) ← ++ *((byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
@@ -70,13 +70,10 @@ SYMBOL TABLE SSA
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(byte*) fn1::BORDERCOL#0
 (void()) fn2()
 (label) fn2::@return
 (byte*) fn2::BGCOL
-(byte*) fn2::BGCOL#0
 (void()*[2]) fns
-(void()*[2]) fns#0
 (void()) main()
 (number~) main::$0
 (number~) main::$2
@@ -97,8 +94,8 @@ Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber~) main::$0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) fn2::BGCOL ← (byte*)(number) $d021
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -118,8 +115,8 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) $0 = &fn1
 Constant (const void()*) $1 = &fn2
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) fn2::BGCOL#0 = (byte*) 53281
+Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
+Constant (const byte*) fn2::BGCOL = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [5] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -127,7 +124,7 @@ Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Identified constant from value list (void()*[2]) { (const void()*) $0, (const void()*) $1 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const void()*[2]) fns#0 = { $0, $1 }
+Constant (const void()*[2]) fns = { $0, $1 }
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [3] (byte~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -178,13 +175,13 @@ main::@2: scope:[main]  from main::@1
   [6] (byte) main::i#1 ← ++ (byte) main::i#2
   [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
   [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1
-  [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2)
+  [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2)
   [10] call *((void()*) main::f#0) 
   to:main::@1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  [11] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0)
+  [11] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   [12] return 
@@ -192,7 +189,7 @@ fn2::@return: scope:[fn2]  from fn2
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  [13] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0)
+  [13] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [14] return 
@@ -201,10 +198,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
-(byte*) fn1::BORDERCOL
 (void()) fn2()
-(byte*) fn2::BGCOL
-(void()*[2]) fns
 (void()) main()
 (byte~) main::$0 22.0
 (byte~) main::$2 22.0
@@ -281,7 +275,7 @@ main: {
     lda.z _0
     asl
     sta.z _2
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
+    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
     ldy.z _2
     lda fns,y
     sta.z f
@@ -299,7 +293,7 @@ main: {
   // fn2
 fn2: {
     .label BGCOL = $d021
-    // [11] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [11] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
     // fn2::@return
@@ -310,7 +304,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDERCOL = $d020
-    // [13] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
     // fn1::@return
@@ -324,13 +318,13 @@ fn1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
@@ -397,7 +391,7 @@ main: {
     and.z i
     // [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f
@@ -415,7 +409,7 @@ main: {
   // fn2
 fn2: {
     .label BGCOL = $d021
-    // [11] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [11] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
     // fn2::@return
@@ -426,7 +420,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDERCOL = $d020
-    // [13] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
     // fn1::@return
@@ -470,14 +464,11 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
 (void()) fn2()
 (label) fn2::@return
-(byte*) fn2::BGCOL
-(const byte*) fn2::BGCOL#0 BGCOL = (byte*) 53281
-(void()*[2]) fns
-(const void()*[2]) fns#0 fns = { &(void()) fn1(), &(void()) fn2() }
+(const byte*) fn2::BGCOL BGCOL = (byte*) 53281
+(const void()*[2]) fns fns = { &(void()) fn1(), &(void()) fn2() }
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (byte~) main::$2 reg byte a 22.0
@@ -533,7 +524,7 @@ main: {
     // f = fns[++i&1]
     // [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f
@@ -552,7 +543,7 @@ main: {
 fn2: {
     .label BGCOL = $d021
     // (*BGCOL)++;
-    // [11] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [11] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // fn2::@return
     // }
@@ -563,7 +554,7 @@ fn2: {
 fn1: {
     .label BORDERCOL = $d020
     // (*BORDERCOL)++;
-    // [13] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // fn1::@return
     // }

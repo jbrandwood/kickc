@@ -25,13 +25,13 @@
   // Plasma screen 2
   .label SCREEN2 = $2c00
   .const NUM_SQUARES = $30
-  .label heap_head = $18
-  .label SQUARES = 9
-  .label print_char_cursor = 7
   // Screen containing distance to center
   .label SCREEN_DIST = $b
   // Screen containing angle to center
   .label SCREEN_ANGLE = $d
+  .label heap_head = $18
+  .label SQUARES = 9
+  .label print_char_cursor = 7
   .label sin_offset_x = 2
   .label sin_offset_y = $f
 bbegin:

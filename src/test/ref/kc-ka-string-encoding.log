@@ -2,13 +2,13 @@ Culled Empty Block (label) main::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) strTemp#0 ← (const string) $0
+  (byte[]) strTemp ← (const string) $0
   to:@1
 
 (signed word()) main()
 main: scope:[main]  from @1
-  *((byte[]) strTemp#0 + (number) 2) ← (byte) 'e'pm
-  *((byte[]) strTemp#0 + (number) 3) ← (number) 0
+  *((byte[]) strTemp + (number) 2) ← (byte) 'e'pm
+  *((byte[]) strTemp + (number) 3) ← (number) 0
   asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
   (signed word) main::return#0 ← (number) 0
   to:main::@return
@@ -39,14 +39,13 @@ SYMBOL TABLE SSA
 (signed word) main::return#2
 (signed word) main::return#3
 (byte[]) strTemp
-(byte[]) strTemp#0
 
-Adding number conversion cast (unumber) 2 in *((byte[]) strTemp#0 + (number) 2) ← (byte) 'e'pm
-Adding number conversion cast (unumber) 0 in *((byte[]) strTemp#0 + (number) 3) ← (number) 0
-Adding number conversion cast (unumber) 3 in *((byte[]) strTemp#0 + (number) 3) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 2 in *((byte[]) strTemp + (number) 2) ← (byte) 'e'pm
+Adding number conversion cast (unumber) 0 in *((byte[]) strTemp + (number) 3) ← (number) 0
+Adding number conversion cast (unumber) 3 in *((byte[]) strTemp + (number) 3) ← ((unumber)) (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte[]) strTemp#0 + (unumber)(number) 3) ← (unumber)(number) 0
+Inlining cast *((byte[]) strTemp + (unumber)(number) 3) ← (unumber)(number) 0
 Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 2
@@ -61,7 +60,7 @@ Finalized signed number type (signed byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (signed word) main::return#0 = (signed word) main::return#3 (signed word) main::return#1 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte[]) strTemp#0 = $0
+Constant (const byte[]) strTemp = $0
 Constant (const signed word) main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) main::return#2 = main::return#0
@@ -70,10 +69,10 @@ Eliminating unused constant (const signed word) main::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const signed word) main::return#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined $0 = (const byte[]) strTemp#0
+Constant inlined $0 = (const byte[]) strTemp
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(strTemp#0+2)
-Consolidated array index constant in *(strTemp#0+3)
+Consolidated array index constant in *(strTemp+2)
+Consolidated array index constant in *(strTemp+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -102,8 +101,8 @@ FINAL CONTROL FLOW GRAPH
 
 (signed word()) main()
 main: scope:[main]  from @1
-  [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'pm
-  [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0
+  [4] *((const byte[]) strTemp+(byte) 2) ← (byte) 'e'pm
+  [5] *((const byte[]) strTemp+(byte) 3) ← (byte) 0
   asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -114,7 +113,6 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 (signed word()) main()
 (signed word) main::return
-(byte[]) strTemp
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -143,11 +141,11 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[]) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
-    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[]) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta strTemp+3
     // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
@@ -170,8 +168,8 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'pm [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte[]) strTemp+(byte) 2) ← (byte) 'e'pm [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte[]) strTemp+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -204,11 +202,11 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[]) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
-    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[]) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta strTemp+3
     // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
@@ -256,8 +254,7 @@ FINAL SYMBOL TABLE
 (signed word()) main()
 (label) main::@return
 (signed word) main::return
-(byte[]) strTemp
-(const byte[]) strTemp#0 strTemp = (string) "v=X"pm
+(const byte[]) strTemp strTemp = (string) "v=X"pm
 
 
 
@@ -279,12 +276,12 @@ Score: 38
   // main
 main: {
     // strTemp[2] = 'e'
-    // [4] *((const byte[]) strTemp#0+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[]) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
     // strTemp[3] = 0
-    // [5] *((const byte[]) strTemp#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[]) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta strTemp+3
     // asm

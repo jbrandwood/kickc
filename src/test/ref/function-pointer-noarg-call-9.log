@@ -3,7 +3,7 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#0 ← (number) 0
   to:@2
 
@@ -13,9 +13,9 @@ main: scope:[main]  from @2
   (void()*~) main::$0 ← & (void()) fn1()
   (void()*) main::f#0 ← (void()*~) main::$0
   call *((void()*) main::f#0) 
-  *((byte*) SCREEN#0 + (byte) idx#3) ← (byte) 'a'
+  *((byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
   call *((void()*) main::f#0) 
-  *((byte*) SCREEN#0 + (byte) idx#3) ← (byte) 'a'
+  *((byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -45,7 +45,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) fn1()
 (label) fn1::@return
 (byte) idx
@@ -64,7 +63,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -81,7 +80,7 @@ Identical Phi Values (byte) idx#4 (byte) idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [3] (void()*) main::f#0 ← & (void()) fn1()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const void()*) main::f#0 = &fn1
 Successful SSA optimization Pass2ConstantIdentification
 Replacing constant pointer function [5] call fn1 
@@ -120,9 +119,9 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   [5] call fn1 
-  [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a'
+  [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a'
   [7] call fn1 
-  [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a'
+  [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -138,7 +137,6 @@ fn1::@return: scope:[fn1]  from fn1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) fn1()
 (byte) idx
 (byte) idx#0 1.0
@@ -186,13 +184,13 @@ bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -216,8 +214,8 @@ fn1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) idx#0 ← (byte) 0 [ idx#0 ] (  [ idx#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' [ idx#0 ] ( main:2 [ idx#0 ] ) always clobbers reg byte a reg byte y 
-Statement [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' [ idx#0 ] ( main:2 [ idx#0 ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ idx#0 idx#1 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -264,13 +262,13 @@ bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -314,8 +312,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) fn1()
 (label) fn1::@return
 (byte) idx
@@ -360,7 +357,7 @@ main: {
     // [5] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -368,7 +365,7 @@ main: {
     // [7] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y

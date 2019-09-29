@@ -1,13 +1,13 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) table#0 ← (const string) $0
+  (byte[]) table ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  kickasm( uses main::SCREEN uses table) {{ ldx #0
         !:
         lda table,x
         sta SCREEN+1,x
@@ -35,18 +35,16 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte[]) table
-(byte[]) table#0
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte[]) table#0 = $0
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte[]) table = $0
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined $0 = (const byte[]) table#0
+Constant inlined $0 = (const byte[]) table
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -75,7 +73,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0
+  kickasm( uses main::SCREEN uses table) {{ ldx #0
         !:
         lda table,x
         sta SCREEN+1,x
@@ -91,8 +89,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
-(byte[]) table
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -123,7 +119,7 @@ bend:
   // main
 main: {
     .label SCREEN = $400
-    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm( uses main::SCREEN uses table) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x
@@ -175,7 +171,7 @@ bend:
   // main
 main: {
     .label SCREEN = $400
-    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm( uses main::SCREEN uses table) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x
@@ -217,10 +213,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
-(byte[]) table
-(const byte[]) table#0 table = (string) "cml!"z
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte[]) table table = (string) "cml!"z
 
 
 
@@ -244,7 +238,7 @@ Score: 262
 main: {
     .label SCREEN = $400
     // kickasm
-    // kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    // kickasm( uses main::SCREEN uses table) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
     ldx #0
         !:
         lda table,x

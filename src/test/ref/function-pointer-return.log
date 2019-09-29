@@ -16,7 +16,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte()*) main::f#0 ← (byte()*) 0
   (byte) main::i#0 ← (number) 0
   to:main::@1
@@ -45,7 +45,7 @@ main::@5: scope:[main]  from main::@4 main::@8
   (byte) main::i#4 ← phi( main::@4/(byte) main::i#5 main::@8/(byte) main::i#6 )
   (byte()*) main::f#3 ← phi( main::@4/(byte()*) main::f#1 main::@8/(byte()*) main::f#2 )
   (byte~) main::$4 ← ((byte)) (byte()*) main::f#3
-  *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$4
+  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$4
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -53,9 +53,9 @@ main::@return: scope:[main]  from main::@1
 
 (byte()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
-  (byte) fn1::return#0 ← *((byte*) fn1::BORDERCOL#0)
+  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
+  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
+  (byte) fn1::return#0 ← *((byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   (byte) fn1::return#2 ← phi( fn1/(byte) fn1::return#0 )
@@ -65,9 +65,9 @@ fn1::@return: scope:[fn1]  from fn1
 
 (byte()) fn2()
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL#0 ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL#0) ← ++ *((byte*) fn2::BGCOL#0)
-  (byte) fn2::return#0 ← *((byte*) fn2::BGCOL#0)
+  (byte*) fn2::BGCOL ← ((byte*)) (number) $d021
+  *((byte*) fn2::BGCOL) ← ++ *((byte*) fn2::BGCOL)
+  (byte) fn2::return#0 ← *((byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   (byte) fn2::return#2 ← phi( fn2/(byte) fn2::return#0 )
@@ -89,7 +89,6 @@ SYMBOL TABLE SSA
 (byte()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(byte*) fn1::BORDERCOL#0
 (byte) fn1::return
 (byte) fn1::return#0
 (byte) fn1::return#1
@@ -97,7 +96,6 @@ SYMBOL TABLE SSA
 (byte()) fn2()
 (label) fn2::@return
 (byte*) fn2::BGCOL
-(byte*) fn2::BGCOL#0
 (byte) fn2::return
 (byte) fn2::return#0
 (byte) fn2::return#1
@@ -115,7 +113,6 @@ SYMBOL TABLE SSA
 (label) main::@8
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte()*) main::f
 (byte()*) main::f#0
 (byte()*) main::f#1
@@ -134,13 +131,13 @@ Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#1 & (number) 1
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#1 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (unumber~) main::$0 == (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$4
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte~) main::$4 ← (byte)(byte()*) main::f#3
-Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) fn2::BGCOL ← (byte*)(number) $d021
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -170,20 +167,20 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [11] (byte()*) main::f#1 ← & (byte()) fn1()
 Constant right-side identified [14] (byte()*) main::f#2 ← & (byte()) fn2()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte()*) main::f#0 = (byte()*) 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte()*) main::f#1 = &fn1
 Constant (const byte()*) main::f#2 = &fn2
-Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) fn2::BGCOL#0 = (byte*) 53281
+Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
+Constant (const byte*) fn2::BGCOL = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [4] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN#0 in [18] *((const byte*) main::SCREEN#0 + (byte) 0) ← (byte~) main::$4
+Simplifying expression containing zero main::SCREEN in [18] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$4
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) fn1::return#0 and assignment [9] (byte) fn1::return#0 ← *((const byte*) fn1::BORDERCOL#0)
-Eliminating unused variable (byte) fn2::return#0 and assignment [12] (byte) fn2::return#0 ← *((const byte*) fn2::BGCOL#0)
+Eliminating unused variable (byte) fn1::return#0 and assignment [9] (byte) fn1::return#0 ← *((const byte*) fn1::BORDERCOL)
+Eliminating unused variable (byte) fn2::return#0 and assignment [12] (byte) fn2::return#0 ← *((const byte*) fn2::BGCOL)
 Eliminating unused constant (const byte()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
@@ -248,12 +245,12 @@ main::@3: scope:[main]  from main::@2
 main::@4: scope:[main]  from main::@2 main::@3
   [10] (byte()*) main::f#3 ← phi( main::@3/&(byte()) fn1() main::@2/&(byte()) fn2() )
   [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3
-  [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4
+  [12] *((const byte*) main::SCREEN) ← (byte~) main::$4
   to:main::@1
 
 (byte()) fn2()
 fn2: scope:[fn2]  from
-  [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0)
+  [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   [14] return 
@@ -261,7 +258,7 @@ fn2::@return: scope:[fn2]  from fn2
 
 (byte()) fn1()
 fn1: scope:[fn1]  from
-  [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0)
+  [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [16] return 
@@ -270,15 +267,12 @@ fn1::@return: scope:[fn1]  from fn1
 
 VARIABLE REGISTER WEIGHTS
 (byte()) fn1()
-(byte*) fn1::BORDERCOL
 (byte) fn1::return
 (byte()) fn2()
-(byte*) fn2::BGCOL
 (byte) fn2::return
 (void()) main()
 (byte~) main::$0 22.0
 (byte~) main::$4 22.0
-(byte*) main::SCREEN
 (byte()*) main::f
 (byte()*) main::f#3
 (byte) main::i
@@ -379,7 +373,7 @@ main: {
     // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuz1=_byte_pprz2 
     lda.z f
     sta.z _4
-    // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda.z _4
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
@@ -390,7 +384,7 @@ main: {
   // fn2
 fn2: {
     .label BGCOL = $d021
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
     // fn2::@return
@@ -401,7 +395,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDERCOL = $d020
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
     // fn1::@return
@@ -504,7 +498,7 @@ main: {
   b4:
     // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda.z f
-    // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
@@ -514,7 +508,7 @@ main: {
   // fn2
 fn2: {
     .label BGCOL = $d021
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp breturn
     // fn2::@return
@@ -525,7 +519,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDERCOL = $d020
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     jmp breturn
     // fn1::@return
@@ -574,13 +568,11 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
 (byte) fn1::return
 (byte()) fn2()
 (label) fn2::@return
-(byte*) fn2::BGCOL
-(const byte*) fn2::BGCOL#0 BGCOL = (byte*) 53281
+(const byte*) fn2::BGCOL BGCOL = (byte*) 53281
 (byte) fn2::return
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
@@ -589,8 +581,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@4
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte()*) main::f
 (byte()*) main::f#3 f zp ZP_WORD:2
 (byte) main::i
@@ -663,7 +654,7 @@ main: {
     // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda.z f
     // SCREEN[0] = (byte)f
-    // [12] *((const byte*) main::SCREEN#0) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
@@ -673,7 +664,7 @@ main: {
 fn2: {
     .label BGCOL = $d021
     // (*BGCOL)++;
-    // [13] *((const byte*) fn2::BGCOL#0) ← ++ *((const byte*) fn2::BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // fn2::@return
     // }
@@ -684,7 +675,7 @@ fn2: {
 fn1: {
     .label BORDERCOL = $d020
     // (*BORDERCOL)++;
-    // [15] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // fn1::@return
     // }

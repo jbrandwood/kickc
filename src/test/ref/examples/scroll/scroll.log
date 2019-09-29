@@ -34,7 +34,7 @@ main::@17: scope:[main]  from main
   (byte) main::scroll#0 ← (number) 7
   (byte*) main::nxt#0 ← (byte*) TEXT#0
   (byte*~) main::$1 ← (byte*) SCREEN#0 + (number) $28
-  (byte[]) main::line#0 ← (byte*~) main::$1
+  (byte[]) main::line ← (byte*~) main::$1
   to:main::@2
 main::@2: scope:[main]  from main::@17 main::@2 main::@7
   (byte*) main::nxt#10 ← phi( main::@17/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#10 main::@7/(byte*) main::nxt#11 )
@@ -81,7 +81,7 @@ main::@9: scope:[main]  from main::@8
   (byte*) main::nxt#7 ← phi( main::@8/(byte*) main::nxt#5 )
   (byte) main::i#3 ← phi( main::@8/(byte) main::i#2 )
   (number~) main::$8 ← (byte) main::i#3 + (number) 1
-  *((byte[]) main::line#0 + (byte) main::i#3) ← *((byte[]) main::line#0 + (number~) main::$8)
+  *((byte[]) main::line + (byte) main::i#3) ← *((byte[]) main::line + (number~) main::$8)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@8
 main::@10: scope:[main]  from main::@8
@@ -96,7 +96,7 @@ main::@15: scope:[main]  from main::@10 main::@14
   (byte) main::scroll#6 ← phi( main::@10/(byte) main::scroll#8 main::@14/(byte) main::scroll#9 )
   (byte*) main::nxt#4 ← phi( main::@10/(byte*) main::nxt#3 main::@14/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@10/(byte) main::c#0 main::@14/(byte) main::c#1 )
-  *((byte[]) main::line#0 + (number) $27) ← (byte) main::c#2
+  *((byte[]) main::line + (number) $27) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   to:main::@7
 main::@14: scope:[main]  from main::@10
@@ -208,7 +208,6 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (byte[]) main::line
-(byte[]) main::line#0
 (byte*) main::nxt
 (byte*) main::nxt#0
 (byte*) main::nxt#1
@@ -248,7 +247,7 @@ Adding number conversion cast (unumber) $27 in (bool~) main::$7 ← (byte) main:
 Adding number conversion cast (unumber) 1 in (number~) main::$8 ← (byte) main::i#3 + (number) 1
 Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (byte) main::i#3 + (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (byte) main::c#0 == (number) 0
-Adding number conversion cast (unumber) $27 in *((byte[]) main::line#0 + (number) $27) ← (byte) main::c#2
+Adding number conversion cast (unumber) $27 in *((byte[]) main::line + (number) $27) ← (byte) main::c#2
 Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$0 ← (byte*) fillscreen::screen#2 + (number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
@@ -296,7 +295,7 @@ Inferred type updated to byte in (unumber~) main::$8 ← (byte) main::i#3 + (byt
 Inversing boolean not [22] (bool~) main::$6 ← (byte) main::scroll#1 != (byte) $ff from [21] (bool~) main::$5 ← (byte) main::scroll#1 == (byte) $ff
 Inversing boolean not [41] (bool~) main::$10 ← (byte) main::c#0 != (byte) 0 from [40] (bool~) main::$9 ← (byte) main::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte[]) main::line#0 = (byte*~) main::$1 
+Alias (byte[]) main::line = (byte*~) main::$1 
 Alias (byte) main::scroll#3 = (byte) main::scroll#5 
 Alias (byte*) main::nxt#6 = (byte*) main::nxt#8 (byte*) main::nxt#9 
 Alias (byte) main::i#2 = (byte) main::i#3 
@@ -343,10 +342,10 @@ if() condition always true - replacing block destination [27] if(true) goto main
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [1] (byte[]) main::line#0 ← (const byte*) SCREEN#0 + (byte) $28
+Constant right-side identified [1] (byte[]) main::line ← (const byte*) SCREEN#0 + (byte) $28
 Constant right-side identified [23] (byte*~) fillscreen::$0 ← (const byte*) fillscreen::screen#0 + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[]) main::line#0 = SCREEN#0+$28
+Constant (const byte[]) main::line = SCREEN#0+$28
 Constant (const byte*) fillscreen::$0 = fillscreen::screen#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::scroll#0
@@ -363,8 +362,8 @@ Constant inlined main::i#0 = (byte) 0
 Constant inlined $0 = (const byte*) TEXT#0
 Constant inlined main::nxt#2 = (const byte*) TEXT#0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in assignment *(main::line#0+1 + main::$8)
-Consolidated array index constant in *(main::line#0+$27)
+Consolidated array index constant in assignment *(main::line+1 + main::$8)
+Consolidated array index constant in *(main::line+$27)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias (byte) main::i#2 = (byte~) main::$8 
 Successful SSA optimization Pass2AliasElimination
@@ -462,7 +461,7 @@ main::@8: scope:[main]  from main::@7
 main::@9: scope:[main]  from main::@7 main::@8
   [17] (byte*) main::nxt#4 ← phi( main::@7/(byte*) main::nxt#10 main::@8/(const byte*) TEXT#0 )
   [17] (byte) main::c#2 ← phi( main::@7/(byte) main::c#0 main::@8/(byte) main::c#1 )
-  [18] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2
+  [18] *((const byte[]) main::line+(byte) $27) ← (byte) main::c#2
   [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@9
@@ -472,7 +471,7 @@ main::@4: scope:[main]  from main::@3 main::@9
   [22] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
   to:main::@1
 main::@6: scope:[main]  from main::@5
-  [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2)
+  [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2)
   [24] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@5
 
@@ -513,7 +512,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 202.0
 (byte) main::i#2 168.33333333333331
-(byte[]) main::line
 (byte*) main::nxt
 (byte*) main::nxt#1 22.0
 (byte*) main::nxt#10 20.500000000000004
@@ -670,7 +668,7 @@ main: {
     jmp b9
     // main::@9
   b9:
-    // [18] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
+    // [18] *((const byte[]) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
     lda.z c
     sta line+$27
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
@@ -700,7 +698,7 @@ main: {
     jmp b1_from_b4
     // main::@6
   b6:
-    // [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda line+1,y
     sta line,y
@@ -764,14 +762,14 @@ Statement [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 [ main::sc
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ]
 Statement [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] ) always clobbers reg byte a 
 Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] ) always clobbers reg byte a reg byte y 
-Statement [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] ) always clobbers reg byte a 
+Statement [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
 Statement [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a 
 Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] ) always clobbers reg byte a 
 Statement [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] ) always clobbers reg byte a 
 Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] ) always clobbers reg byte a reg byte y 
-Statement [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] ) always clobbers reg byte a 
+Statement [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] ) always clobbers reg byte a 
 Statement [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN#0+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a 
 Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
@@ -909,7 +907,7 @@ main: {
     jmp b9
     // main::@9
   b9:
-    // [18] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [18] *((const byte[]) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
     inc.z nxt
@@ -936,7 +934,7 @@ main: {
     jmp b1_from_b4
     // main::@6
   b6:
-    // [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
     // [24] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -1086,8 +1084,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 202.0
 (byte) main::i#2 reg byte x 168.33333333333331
-(byte[]) main::line
-(const byte[]) main::line#0 line = (const byte*) SCREEN#0+(byte) $28
+(const byte[]) main::line line = (const byte*) SCREEN#0+(byte) $28
 (byte*) main::nxt
 (byte*) main::nxt#1 nxt zp ZP_WORD:2 22.0
 (byte*) main::nxt#10 nxt zp ZP_WORD:2 20.500000000000004
@@ -1206,7 +1203,7 @@ main: {
     // main::@9
   b9:
     // line[39] = c
-    // [18] *((const byte[]) main::line#0+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [18] *((const byte[]) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // nxt++;
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
@@ -1233,7 +1230,7 @@ main: {
     // main::@6
   b6:
     // line[i]=line[i+1]
-    // [23] *((const byte[]) main::line#0 + (byte) main::i#2) ← *((const byte[]) main::line#0+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [23] *((const byte[]) main::line + (byte) main::i#2) ← *((const byte[]) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
     // for(byte i=0;i!=39;i++)

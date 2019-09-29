@@ -182,7 +182,7 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_screen#5 ← phi( @12/(byte*) print_screen#0 )
   (byte*) print_char_cursor#28 ← phi( @12/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#22 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte[]) txt#0 ← (const string) $0
+  (byte[]) txt ← (const string) $0
   to:@37
 
 (void()) main()
@@ -203,7 +203,7 @@ main::@1: scope:[main]  from main::@3 main::@5
   (byte) main::i#4 ← phi( main::@3/(byte) main::i#0 main::@5/(byte) main::i#1 )
   (byte*) print_line_cursor#21 ← phi( main::@3/(byte*) print_line_cursor#5 main::@5/(byte*) print_line_cursor#6 )
   (byte*) print_char_cursor#25 ← phi( main::@3/(byte*) print_char_cursor#7 main::@5/(byte*) print_char_cursor#9 )
-  (byte*) print_str::str#1 ← (byte[]) txt#0
+  (byte*) print_str::str#1 ← (byte[]) txt
   call print_str 
   to:main::@4
 main::@4: scope:[main]  from main::@1
@@ -219,7 +219,7 @@ main::@5: scope:[main]  from main::@4
   (byte*) print_line_cursor#14 ← phi( main::@4/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#19
-  *((byte[]) txt#0 + (number) 1) ← ++ *((byte[]) txt#0 + (number) 1)
+  *((byte[]) txt + (number) 1) ← ++ *((byte[]) txt + (number) 1)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$4) goto main::@1
@@ -394,14 +394,13 @@ SYMBOL TABLE SSA
 (byte*) print_str::str#3
 (byte*) print_str::str#4
 (byte[]) txt
-(byte[]) txt#0
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (number) $28
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) 1 in *((byte[]) txt#0 + (number) 1) ← ++ *((byte[]) txt#0 + (number) 1)
-Adding number conversion cast (unumber) 1 in *((byte[]) txt#0 + (number) 1) ← ++ *((byte[]) txt#0 + (unumber)(number) 1)
+Adding number conversion cast (unumber) 1 in *((byte[]) txt + (number) 1) ← ++ *((byte[]) txt + (number) 1)
+Adding number conversion cast (unumber) 1 in *((byte[]) txt + (number) 1) ← ++ *((byte[]) txt + (unumber)(number) 1)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
@@ -483,10 +482,10 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const byte[]) txt#0 = $0
+Constant (const byte[]) txt = $0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print_str::str#1 = txt#0
+Constant (const byte*) print_str::str#1 = txt
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (void*)print_line_cursor#0 in [47] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
 Successful SSA optimization Pass2ConstantValues
@@ -521,12 +520,12 @@ Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
-Constant inlined print_str::str#1 = (const byte[]) txt#0
-Constant inlined $0 = (const byte[]) txt#0
+Constant inlined print_str::str#1 = (const byte[]) txt
+Constant inlined $0 = (const byte[]) txt
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(txt#0+1)
-Consolidated array index constant in *(txt#0+1)
+Consolidated array index constant in *(txt+1)
+Consolidated array index constant in *(txt+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@6(between main::@5 and main::@1)
@@ -613,7 +612,7 @@ main::@2: scope:[main]  from main::@1
   [9] call print_ln 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1)
+  [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1)
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
   [12] if((byte) main::i#1!=(byte) $b) goto main::@4
   to:main::@return
@@ -643,7 +642,7 @@ print_str: scope:[print_str]  from main::@1
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [21] (byte*) print_char_cursor#12 ← phi( print_str/(byte*) print_char_cursor#25 print_str::@2/(byte*) print_char_cursor#1 )
-  [21] (byte*) print_str::str#2 ← phi( print_str/(const byte[]) txt#0 print_str::@2/(byte*) print_str::str#0 )
+  [21] (byte*) print_str::str#2 ← phi( print_str/(const byte[]) txt print_str::@2/(byte*) print_str::str#0 )
   [22] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
@@ -711,7 +710,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_str::str
 (byte*) print_str::str#0 202.0
 (byte*) print_str::str#2 101.0
-(byte[]) txt
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -798,7 +796,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
+    // [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
     lda txt+1
     clc
     adc #1
@@ -869,7 +867,7 @@ print_str: {
     // [21] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
     sta.z str
     lda #>txt
@@ -974,7 +972,7 @@ memset: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [14] (byte*~) print_char_cursor#31 ← (byte*) print_line_cursor#1 [ print_char_cursor#31 print_line_cursor#1 main::i#1 ] ( main:2 [ print_char_cursor#31 print_line_cursor#1 main::i#1 ] ) always clobbers reg byte a 
 Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
@@ -984,7 +982,7 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ ma
 Statement [24] *((byte*) print_char_cursor#12) ← *((byte*) print_str::str#2) [ print_char_cursor#12 print_str::str#2 ] ( main:2::print_str:7 [ print_line_cursor#19 main::i#2 print_char_cursor#12 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [32] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:28 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [34] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:28 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [14] (byte*~) print_char_cursor#31 ← (byte*) print_line_cursor#1 [ print_char_cursor#31 print_line_cursor#1 main::i#1 ] ( main:2 [ print_char_cursor#31 print_line_cursor#1 main::i#1 ] ) always clobbers reg byte a 
 Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
 Statement [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
@@ -1083,7 +1081,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
+    // [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
     lda txt+1
     clc
     adc #1
@@ -1153,7 +1151,7 @@ print_str: {
     // [21] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
   b1_from_print_str:
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
     sta.z str
     lda #>txt
@@ -1364,8 +1362,7 @@ FINAL SYMBOL TABLE
 (byte*) print_str::str
 (byte*) print_str::str#0 str zp ZP_WORD:2 202.0
 (byte*) print_str::str#2 str zp ZP_WORD:2 101.0
-(byte[]) txt
-(const byte[]) txt#0 txt = (string) "camelot"
+(const byte[]) txt txt = (string) "camelot"
 
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_WORD:2 [ print_str::str#2 print_str::str#0 ]
@@ -1424,7 +1421,7 @@ main: {
     jsr print_ln
     // main::@3
     // txt[1]++;
-    // [10] *((const byte[]) txt#0+(byte) 1) ← ++ *((const byte[]) txt#0+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
+    // [10] *((const byte[]) txt+(byte) 1) ← ++ *((const byte[]) txt+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc2 
     lda txt+1
     clc
     adc #1
@@ -1490,7 +1487,7 @@ print_str: {
     .label str = 2
     // [21] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
     // [21] phi (byte*) print_char_cursor#12 = (byte*) print_char_cursor#25 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt#0 [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    // [21] phi (byte*) print_str::str#2 = (const byte[]) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<txt
     sta.z str
     lda #>txt

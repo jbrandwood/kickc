@@ -7,13 +7,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::b#0 ← (byte) 'a'
   (byte*~) main::$0 ← & (byte) main::b#0
   (byte*) main::pb#0 ← (byte*~) main::$0
   (byte**~) main::$1 ← & (byte*) main::pb#0
   (byte**) main::ppb#0 ← (byte**~) main::$1
-  *((byte*) main::SCREEN#0) ← *(*((byte**) main::ppb#0))
+  *((byte*) main::SCREEN) ← *(*((byte**) main::ppb#0))
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,7 +35,6 @@ SYMBOL TABLE SSA
 (byte**~) main::$1
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::b
 (byte) main::b#0
 (byte*) main::pb
@@ -43,7 +42,7 @@ SYMBOL TABLE SSA
 (byte**) main::ppb
 (byte**) main::ppb#0
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -54,7 +53,7 @@ Alias candidate removed (volatile)(byte*) main::pb#0 = (byte*~) main::$0
 Constant right-side identified [2] (byte*~) main::$0 ← & (byte) main::b#0
 Constant right-side identified [4] (byte**) main::ppb#0 ← & (byte*) main::pb#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte*) main::$0 = &main::b#0
 Constant (const byte**) main::ppb#0 = &main::pb#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -89,7 +88,7 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] (byte) main::b#0 ← (byte) 'a'
   [5] (byte*) main::pb#0 ← &(byte) main::b#0
-  [6] *((const byte*) main::SCREEN#0) ← *(*((const byte**) main::ppb#0))
+  [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb#0))
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
@@ -98,7 +97,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::b
 (byte) main::b#0 2.0
 (byte*) main::pb
@@ -149,7 +147,7 @@ main: {
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const byte*) main::SCREEN#0) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -168,7 +166,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::b#0 ← (byte) 'a' [ main::b#0 ] ( main:2 [ main::b#0 ] ) always clobbers reg byte a 
 Statement [5] (byte*) main::pb#0 ← &(byte) main::b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN#0) ← *(*((const byte**) main::ppb#0)) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb#0)) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::b#0 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_WORD:3 [ main::pb#0 ] : zp ZP_WORD:3 , 
 
@@ -217,7 +215,7 @@ main: {
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const byte*) main::SCREEN#0) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -257,8 +255,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::b
 (byte) main::b#0 b zp ZP_BYTE:2 2.0
 (byte*) main::pb
@@ -303,7 +300,7 @@ main: {
     lda #>b
     sta.z pb+1
     // *SCREEN = **ppb
-    // [6] *((const byte*) main::SCREEN#0) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb#0)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1

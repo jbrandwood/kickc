@@ -44,6 +44,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       for(Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof Variable && ((Variable) tableSymbol).isPhiMaster2()) continue;
+         if(tableSymbol instanceof Variable && ((Variable) tableSymbol).isConstant()) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          if(tableSymbol instanceof StructDefinition) continue;
          if(tableSymbol instanceof EnumDefinition) continue;

@@ -157,7 +157,7 @@ print_word::@return: scope:[print_word]  from print_word::@2
 @29: scope:[]  from @12
   (byte*) print_line_cursor#16 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#51 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte[]) print_hextab#0 ← (const string) $0
+  (byte[]) print_hextab ← (const string) $0
   to:@37
 
 (void()) print_byte((byte) print_byte::b)
@@ -165,7 +165,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#46 ← phi( print_word/(byte*) print_char_cursor#45 print_word::@1/(byte*) print_char_cursor#7 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#2 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$0)
+  (byte) print_char::ch#2 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -173,7 +173,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#30 ← phi( print_byte/(byte*) print_char_cursor#14 )
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#30
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#3 ← *((byte[]) print_hextab#0 + (number~) print_byte::$2)
+  (byte) print_char::ch#3 ← *((byte[]) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -397,7 +397,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
 (byte[]) print_hextab
-(byte[]) print_hextab#0
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -559,7 +558,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
 Constant (const byte) print_char::ch#0 = '-'
 Constant (const byte) print_char::ch#1 = ' '
-Constant (const byte[]) print_hextab#0 = $0
+Constant (const byte[]) print_hextab = $0
 Constant (const signed word) main::a#0 = -$3ff
 Constant (const word) main::b#0 = $1024
 Constant (const byte) main::i#0 = 0
@@ -587,7 +586,7 @@ Constant inlined main::b#0 = (word) $1024
 Constant inlined print_char::ch#1 = (byte) ' '
 Constant inlined print_char::ch#0 = (byte) '-'
 Constant inlined main::i#0 = (byte) 0
-Constant inlined $0 = (const byte[]) print_hextab#0
+Constant inlined $0 = (const byte[]) print_hextab
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@7(between main::@6 and main::@1)
@@ -738,12 +737,12 @@ print_word::@return: scope:[print_word]  from print_word::@1
 print_byte: scope:[print_byte]  from print_word print_word::@1
   [31] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0)
+  [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
   [34] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2)
+  [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
   [37] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -814,7 +813,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#33 11.5
 (byte*) print_char_cursor#47 2.142857142857143
 (byte*~) print_char_cursor#57 22.0
-(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 46.42857142857143
 (byte*) print_line_cursor#13 1.1818181818181819
@@ -1093,7 +1091,7 @@ print_byte: {
     lsr
     lsr
     sta.z _0
-    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z _0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1110,7 +1108,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z _2
-    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z _2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1508,7 +1506,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [34] call print_char 
@@ -1523,7 +1521,7 @@ print_byte: {
     // [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
-    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [37] call print_char 
@@ -1740,8 +1738,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#33 print_char_cursor zp ZP_WORD:11 11.5
 (byte*) print_char_cursor#47 print_char_cursor zp ZP_WORD:11 2.142857142857143
 (byte*~) print_char_cursor#57 print_char_cursor zp ZP_WORD:11 22.0
-(byte[]) print_hextab
-(const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"z
+(const byte[]) print_hextab print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:6 46.42857142857143
 (byte*) print_line_cursor#13 print_line_cursor zp ZP_WORD:6 1.1818181818181819
@@ -1977,7 +1974,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [33] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [34] call print_char 
@@ -1991,7 +1988,7 @@ print_byte: {
     lda #$f
     and.z b
     // print_char(print_hextab[b&$f])
-    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [36] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [37] call print_char 

@@ -9,8 +9,8 @@ Culled Empty Block (label) irq::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (number) $314
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d020
+  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
+  (byte*) BGCOL ← ((byte*)) (number) $d020
   (byte) col#0 ← (number) 0
   to:@2
 
@@ -18,7 +18,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   (byte) col#14 ← phi( @2/(byte) col#13 )
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
+  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
   (byte) col#12 ← phi( main/(byte) col#14 main::@2/(byte) col#6 main::@7/(byte) col#1 )
@@ -43,7 +43,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   (byte) col#8 ← phi( @2/(byte) col#13 )
   asm { lda$dc0d  }
-  *((byte*) BGCOL#0) ← (byte) col#8
+  *((byte*) BGCOL) ← (byte) col#8
   (bool~) irq::$0 ← (byte) col#8 != (number) 0
   (bool~) irq::$1 ← ! (bool~) irq::$0
   if((bool~) irq::$1) goto irq::@return
@@ -73,9 +73,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (void()**) KERNEL_IRQ
-(void()**) KERNEL_IRQ#0
 (byte) col
 (byte) col#0
 (byte) col#1
@@ -111,8 +109,8 @@ Adding number conversion cast (unumber) $a in (bool~) main::$1 ← (byte) col#6 
 Adding number conversion cast (unumber) 0 in (byte) col#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col#8 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ#0 ← (void()**)(number) $314
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d020
+Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
 Inlining cast (byte) col#0 ← (unumber)(number) 0
 Inlining cast (byte) col#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -146,8 +144,8 @@ Simple Condition (bool~) irq::$1 [21] if((byte) col#0==(byte) 0) goto irq::@retu
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [4] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ#0 = (void()**) 788
-Constant (const byte*) BGCOL#0 = (byte*) 53280
+Constant (const void()**) KERNEL_IRQ = (void()**) 788
+Constant (const byte*) BGCOL = (byte*) 53280
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [7] if(true) goto main::@2
@@ -202,7 +200,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
   [5] (byte) col#12 ← phi( main/(byte) col#0 main::@2/(byte) col#12 main::@3/(byte) col#1 )
@@ -217,7 +215,7 @@ main::@3: scope:[main]  from main::@2
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [9] *((const byte*) BGCOL#0) ← (byte) col#0
+  [9] *((const byte*) BGCOL) ← (byte) col#0
   [10] if((byte) col#0==(byte) 0) goto irq::@return
   to:irq::@1
 irq::@1: scope:[irq]  from irq
@@ -230,8 +228,6 @@ irq::@return: scope:[irq]  from irq irq::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(void()**) KERNEL_IRQ
 (byte) col
 (byte) col#0 1.9999999999999998
 (byte) col#1 22.0
@@ -278,7 +274,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -311,7 +307,7 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
     // [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
@@ -337,11 +333,11 @@ irq: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
+Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
 Statement [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 [ col#12 ] ( main:2 [ col#12 ] ) always clobbers reg byte a 
 Statement [7] (byte) col#1 ← (byte) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) BGCOL) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [10] if((byte) col#0==(byte) 0) goto irq::@return [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ] : zp ZP_BYTE:2 , 
 
@@ -386,7 +382,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -419,7 +415,7 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
     // [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
@@ -481,10 +477,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53280
-(void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
+(const byte*) BGCOL BGCOL = (byte*) 53280
+(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
 (byte) col
 (byte) col#0 col zp ZP_BYTE:2 1.9999999999999998
 (byte) col#1 col zp ZP_BYTE:2 22.0
@@ -531,7 +525,7 @@ bbegin:
   // main
 main: {
     // *KERNEL_IRQ = &irq
-    // [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -560,7 +554,7 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // *BGCOL = col
-    // [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
     // if(col!=0)

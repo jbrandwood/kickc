@@ -7,14 +7,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word*) main::screen#0 ← ((word*)) (number) $400
+  (word*) main::screen ← ((word*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   (number~) main::$0 ← (number) -$30 + (byte) main::b#2
   (byte~) main::$2 ← (byte) main::b#2 * (const byte) SIZEOF_WORD
-  *((word*) main::screen#0 + (byte~) main::$2) ← (number~) main::$0
+  *((word*) main::screen + (byte~) main::$2) ← (number~) main::$0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$14)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$14)
   if((bool~) main::$1) goto main::@1
@@ -46,12 +46,11 @@ SYMBOL TABLE SSA
 (byte) main::b#1
 (byte) main::b#2
 (word*) main::screen
-(word*) main::screen#0
 
 Adding number conversion cast (unumber) -$30 in (number~) main::$0 ← (number) -$30 + (byte) main::b#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) -$30 + (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) main::screen#0 ← (word*)(number) $400
+Inlining cast (word*) main::screen ← (word*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast -$30
@@ -61,7 +60,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) -$30 + (byte) main::b#2
 Simple Condition (bool~) main::$1 [8] if((byte) main::b#1!=rangelast(0,$14)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const word*) main::screen#0 = (word*) 1024
+Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [6] main::b#1 ← ++ main::b#2 to ++
@@ -117,7 +116,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::b#2 ← phi( main/(byte) 0 main::@1/(byte) main::b#1 )
   [6] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2
   [7] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1
-  [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0
+  [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0
   [9] (byte) main::b#1 ← ++ (byte) main::b#2
   [10] if((byte) main::b#1!=(byte) $15) goto main::@1
   to:main::@return
@@ -133,7 +132,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::b
 (byte) main::b#1 16.5
 (byte) main::b#2 11.0
-(word*) main::screen
 
 Initial phi equivalence classes
 [ main::b#2 main::b#1 ]
@@ -198,7 +196,7 @@ main: {
     lda.z b
     asl
     sta.z _2
-    // [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuz1=vbuz2 
     lda.z _2
     ldx.z _0
     tay
@@ -222,10 +220,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 [ main::b#2 main::$0 main::$2 ] ( main:2 [ main::b#2 main::$0 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::$0 ]
-Statement [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
+Statement [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
 Statement [6] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2 [ main::b#2 main::$0 ] ( main:2 [ main::b#2 main::$0 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 [ main::b#2 main::$0 main::$2 ] ( main:2 [ main::b#2 main::$0 main::$2 ] ) always clobbers reg byte a 
-Statement [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
+Statement [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$2 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -285,7 +283,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z b
     asl
-    // [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
+    // [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta screen,y
@@ -340,8 +338,7 @@ FINAL SYMBOL TABLE
 (byte) main::b
 (byte) main::b#1 b zp ZP_BYTE:2 16.5
 (byte) main::b#2 b zp ZP_BYTE:2 11.0
-(word*) main::screen
-(const word*) main::screen#0 screen = (word*) 1024
+(const word*) main::screen screen = (word*) 1024
 
 zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
 reg byte x [ main::$0 ]
@@ -385,7 +382,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z b
     asl
-    // [8] *((const word*) main::screen#0 + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
+    // [8] *((const word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta screen,y

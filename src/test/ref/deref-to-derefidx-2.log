@@ -2,20 +2,20 @@ Fixing pointer array-indexing *((word*) SCREEN + (byte) screen_idx)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
-  (byte[]) msg2#0 ← { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
+  (byte[]) msg1 ← { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
+  (byte[]) msg2 ← { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) screen_idx#13 ← phi( @2/(byte) screen_idx#14 )
-  (byte*) print::m#0 ← (byte[]) msg1#0
+  (byte*) print::m#0 ← (byte[]) msg1
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) screen_idx#7 ← phi( main/(byte) screen_idx#5 )
   (byte) screen_idx#0 ← (byte) screen_idx#7
-  (byte*) print::m#1 ← (byte[]) msg2#0
+  (byte*) print::m#1 ← (byte[]) msg2
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -28,7 +28,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (word*) SCREEN#0 ← ((word*)) (number) $400
+  (word*) SCREEN ← ((word*)) (number) $400
   (byte) screen_idx#3 ← (number) 0
   to:@2
 
@@ -39,7 +39,7 @@ print: scope:[print]  from main main::@1
   (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
   (word*~) print::$1 ← ((word*)) (byte*~) print::$0
   (byte~) print::$2 ← (byte) screen_idx#10 * (const byte) SIZEOF_WORD
-  *((word*) SCREEN#0 + (byte~) print::$2) ← *((word*~) print::$1)
+  *((word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)
   (byte) screen_idx#4 ← ++ (byte) screen_idx#10
   to:print::@return
 print::@return: scope:[print]  from print
@@ -64,16 +64,13 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (word*) SCREEN
-(word*) SCREEN#0
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte[]) msg1
-(byte[]) msg1#0
 (byte[]) msg2
-(byte[]) msg2#0
 (void()) print((byte*) print::m)
 (byte*~) print::$0
 (word*~) print::$1
@@ -103,7 +100,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (byte) screen_idx#3 ← (number) 0
 Adding number conversion cast (unumber) 2 in (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) SCREEN#0 ← (word*)(number) $400
+Inlining cast (word*) SCREEN ← (word*)(number) $400
 Inlining cast (byte) screen_idx#3 ← (unumber)(number) 0
 Inlining cast (word*~) print::$1 ← (word*)(byte*~) print::$0
 Successful SSA optimization Pass2InlineCast
@@ -128,15 +125,15 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identified constant from value list (byte[]) { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
 Identified constant from value list (byte[]) { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) msg1#0 = { 'a', 'b', 'c', 'd' }
-Constant (const byte[]) msg2#0 = { '1', '2', '3', '4' }
-Constant (const word*) SCREEN#0 = (word*) 1024
+Constant (const byte[]) msg1 = { 'a', 'b', 'c', 'd' }
+Constant (const byte[]) msg2 = { '1', '2', '3', '4' }
+Constant (const word*) SCREEN = (word*) 1024
 Constant (const byte) screen_idx#14 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print::m#0 = msg1#0
-Constant (const byte*) print::m#1 = msg2#0
+Constant (const byte*) print::m#0 = msg1
+Constant (const byte*) print::m#1 = msg2
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*~) print::$1)  -- *((word*)print::m#2 + 2)
+Converting *(pointer+n) to pointer[n] [20] *((const word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)  -- *((word*)print::m#2 + 2)
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (word*~) print::$1 and assignment [5] (word*~) print::$1 ← (word*)(byte*~) print::$0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -147,8 +144,8 @@ Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte*) print::m#0
 Inlining constant with var siblings (const byte*) print::m#1
 Inlining constant with var siblings (const byte) screen_idx#14
-Constant inlined print::m#1 = (const byte[]) msg2#0
-Constant inlined print::m#0 = (const byte[]) msg1#0
+Constant inlined print::m#1 = (const byte[]) msg2
+Constant inlined print::m#0 = (const byte[]) msg1
 Constant inlined screen_idx#14 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_WORD
@@ -204,9 +201,9 @@ main::@return: scope:[main]  from main::@1
 (void()) print((byte*) print::m)
 print: scope:[print]  from main main::@1
   [9] (byte) screen_idx#10 ← phi( main/(byte) 0 main::@1/(byte) screen_idx#11 )
-  [9] (byte*) print::m#2 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) msg2#0 )
+  [9] (byte*) print::m#2 ← phi( main/(const byte[]) msg1 main::@1/(const byte[]) msg2 )
   [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1
-  [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2)
+  [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2)
   [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10
   to:print::@return
 print::@return: scope:[print]  from print
@@ -215,10 +212,7 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(word*) SCREEN
 (void()) main()
-(byte[]) msg1
-(byte[]) msg2
 (void()) print((byte*) print::m)
 (byte~) print::$2 4.0
 (byte*) print::m
@@ -274,7 +268,7 @@ main: {
     // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta.z screen_idx
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.m
     lda #>msg1
@@ -289,7 +283,7 @@ main: {
     // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
     // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.m
     lda #>msg2
@@ -310,7 +304,7 @@ print: {
     lda.z screen_idx
     asl
     sta.z _2
-    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
     ldx.z _2
     ldy #2
     lda (m),y
@@ -333,10 +327,10 @@ print: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$2 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$2 ] main:2::print:7 [ print::m#2 screen_idx#10 print::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ screen_idx#10 screen_idx#11 ]
-Statement [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] main:2::print:7 [ screen_idx#10 ] ) always clobbers reg byte a reg byte y 
+Statement [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] main:2::print:7 [ screen_idx#10 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ screen_idx#10 screen_idx#11 ]
 Statement [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$2 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$2 ] main:2::print:7 [ print::m#2 screen_idx#10 print::$2 ] ) always clobbers reg byte a 
-Statement [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] main:2::print:7 [ screen_idx#10 ] ) always clobbers reg byte a reg byte y 
+Statement [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] main:2::print:7 [ screen_idx#10 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print::m#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ screen_idx#10 screen_idx#11 ] : zp ZP_BYTE:4 , reg byte x , 
 Potential registers zp ZP_BYTE:5 [ print::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
@@ -386,7 +380,7 @@ main: {
     // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta.z screen_idx
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.m
     lda #>msg1
@@ -401,7 +395,7 @@ main: {
     // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
     // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.m
     lda #>msg2
@@ -420,7 +414,7 @@ print: {
     // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z screen_idx
     asl
-    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y
@@ -470,15 +464,12 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(word*) SCREEN
-(const word*) SCREEN#0 SCREEN = (word*) 1024
+(const word*) SCREEN SCREEN = (word*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte[]) msg1
-(const byte[]) msg1#0 msg1 = { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
-(byte[]) msg2
-(const byte[]) msg2#0 msg2 = { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
+(const byte[]) msg1 msg1 = { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
+(const byte[]) msg2 msg2 = { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
 (void()) print((byte*) print::m)
 (byte~) print::$2 reg byte a 4.0
 (label) print::@return
@@ -520,7 +511,7 @@ main: {
     // [9] phi (byte) screen_idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta.z screen_idx
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg1 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.m
     lda #>msg1
@@ -532,7 +523,7 @@ main: {
     // [7] call print 
     // [9] phi from main::@1 to print [phi:main::@1->print]
     // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (byte*) print::m#2 = (const byte[]) msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [9] phi (byte*) print::m#2 = (const byte[]) msg2 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.m
     lda #>msg2
@@ -551,7 +542,7 @@ print: {
     // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z screen_idx
     asl
-    // [11] *((const word*) SCREEN#0 + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y

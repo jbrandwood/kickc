@@ -3,7 +3,7 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) DC00#0 ← ((byte*)) (number) $dc00
+  (byte*) DC00 ← ((byte*)) (number) $dc00
   (byte) key#0 ← (byte) 0
   to:@1
 
@@ -11,7 +11,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@3
-  (byte) key#1 ← *((byte*) DC00#0)
+  (byte) key#1 ← *((byte*) DC00)
   (bool~) main::$0 ← (byte) key#1 == (number) 0
   (number~) main::$1 ← (byte) key#1 & (number) $1f
   (bool~) main::$2 ← (number~) main::$1 == (number) $1f
@@ -43,7 +43,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) DC00
-(byte*) DC00#0
 (byte) key
 (byte) key#0
 (byte) key#1
@@ -67,7 +66,7 @@ Adding number conversion cast (unumber) $1f in (number~) main::$1 ← (byte) key
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) key#1 & (unumber)(number) $1f
 Adding number conversion cast (unumber) $1f in (bool~) main::$2 ← (unumber~) main::$1 == (number) $1f
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) DC00#0 ← (byte*)(number) $dc00
+Inlining cast (byte*) DC00 ← (byte*)(number) $dc00
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant integer cast 0
@@ -87,7 +86,7 @@ Identical Phi Values (byte) key#3 (byte) key#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Rewriting && if()-condition to two if()s [6] (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) DC00#0 = (byte*) 56320
+Constant (const byte*) DC00 = (byte*) 56320
 Constant (const byte) key#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [9] if(true) goto main::@2
@@ -138,7 +137,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
-  [5] (byte) key#1 ← *((const byte*) DC00#0)
+  [5] (byte) key#1 ← *((const byte*) DC00)
   [6] (byte~) main::$1 ← (byte) key#1 & (byte) $1f
   [7] if((byte) key#1!=(byte) 0) goto main::@2
   to:main::@3
@@ -151,7 +150,6 @@ main::@2: scope:[main]  from main::@1 main::@3
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) DC00
 (byte) key
 (byte) key#1 151.5
 (void()) main()
@@ -200,7 +198,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) key#1 ← *((const byte*) DC00#0) -- vbuz1=_deref_pbuc1 
+    // [5] (byte) key#1 ← *((const byte*) DC00) -- vbuz1=_deref_pbuc1 
     lda DC00
     sta.z key
     // [6] (byte~) main::$1 ← (byte) key#1 & (byte) $1f -- vbuz1=vbuz2_band_vbuc1 
@@ -270,7 +268,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) key#1 ← *((const byte*) DC00#0) -- vbuxx=_deref_pbuc1 
+    // [5] (byte) key#1 ← *((const byte*) DC00) -- vbuxx=_deref_pbuc1 
     ldx DC00
     // [6] (byte~) main::$1 ← (byte) key#1 & (byte) $1f -- vbuaa=vbuxx_band_vbuc1 
     txa
@@ -325,8 +323,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) DC00
-(const byte*) DC00#0 DC00 = (byte*) 56320
+(const byte*) DC00 DC00 = (byte*) 56320
 (byte) key
 (byte) key#1 reg byte x 151.5
 (void()) main()
@@ -363,7 +360,7 @@ main: {
     // main::@1
   b1:
     // key = *DC00
-    // [5] (byte) key#1 ← *((const byte*) DC00#0) -- vbuxx=_deref_pbuc1 
+    // [5] (byte) key#1 ← *((const byte*) DC00) -- vbuxx=_deref_pbuc1 
     ldx DC00
     // key & %00011111
     // [6] (byte~) main::$1 ← (byte) key#1 & (byte) $1f -- vbuaa=vbuxx_band_vbuc1 

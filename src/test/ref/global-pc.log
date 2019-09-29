@@ -5,8 +5,8 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
+  (byte*) BGCOL ← ((byte*)) (number) $d021
+  (byte*) RASTER ← ((byte*)) (number) $d012
   to:@1
 
 (void()) main()
@@ -17,8 +17,8 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::col#0 ← *((byte*) RASTER#0)
-  *((byte*) BGCOL#0) ← (byte) main::col#0
+  (byte) main::col#0 ← *((byte*) RASTER)
+  *((byte*) BGCOL) ← (byte) main::col#0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -36,9 +36,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte*) RASTER
-(byte*) RASTER#0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -46,14 +44,14 @@ SYMBOL TABLE SSA
 (byte) main::col
 (byte) main::col#0
 
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
 Successful SSA optimization PassNCastSimplification
-Constant (const byte*) BGCOL#0 = (byte*) 53281
-Constant (const byte*) RASTER#0 = (byte*) 53266
+Constant (const byte*) BGCOL = (byte*) 53281
+Constant (const byte*) RASTER = (byte*) 53266
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [3] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -92,14 +90,12 @@ main: scope:[main]  from @1
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::col#0 ← *((const byte*) RASTER#0)
-  [6] *((const byte*) BGCOL#0) ← (byte) main::col#0
+  [5] (byte) main::col#0 ← *((const byte*) RASTER)
+  [6] *((const byte*) BGCOL) ← (byte) main::col#0
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte*) RASTER
 (void()) main()
 (byte) main::col
 (byte) main::col#0 22.0
@@ -143,10 +139,10 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta.z col
-    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
     jmp b1
@@ -194,9 +190,9 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
-    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     jmp b1
 }
@@ -223,10 +219,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53281
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
+(const byte*) BGCOL BGCOL = (byte*) 53281
+(const byte*) RASTER RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (byte) main::col
@@ -261,10 +255,10 @@ main: {
     // main::@1
   b1:
     // col = *RASTER
-    // [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
     // *BGCOL = col
-    // [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     jmp b1
 }

@@ -10,7 +10,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -43,7 +43,7 @@ main::@7: scope:[main]  from main::@5 main::@6
 main::@4: scope:[main]  from main::@2 main::@7
   (byte) main::b#4 ← phi( main::@2/(byte) main::b#5 main::@7/(byte) main::b#6 )
   (byte~) main::$7 ← phi( main::@2/(byte~) main::$6 main::@7/(byte~) main::$5 )
-  *((byte*) main::SCREEN#0) ← (byte~) main::$7
+  *((byte*) main::SCREEN) ← (byte~) main::$7
   (byte) main::b#1 ← (byte) main::b#4 + rangenext(0,2)
   (bool~) main::$8 ← (byte) main::b#1 != rangelast(0,2)
   if((bool~) main::$8) goto main::@1
@@ -82,7 +82,6 @@ SYMBOL TABLE SSA
 (label) main::@7
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
@@ -97,7 +96,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) main::b#2 == (number) 0
 Adding number conversion cast (unumber) 1 in (bool~) main::$1 ← (byte) main::b#3 == (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -117,7 +116,7 @@ Simple Condition (bool~) main::$0 [4] if((byte) main::b#2==(byte) 0) goto main::
 Simple Condition (bool~) main::$1 [9] if((byte) main::b#2==(byte) 1) goto main::@5
 Simple Condition (bool~) main::$8 [20] if((byte) main::b#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Constant (const byte) main::$6 = 'a'
 Constant (const byte) main::$3 = 'b'
@@ -197,7 +196,7 @@ main::@5: scope:[main]  from main::@2 main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@5
   [10] (byte~) main::$7 ← phi( main::@1/(byte) 'a' main::@5/(byte~) main::$5 )
-  [11] *((const byte*) main::SCREEN#0) ← (byte~) main::$7
+  [11] *((const byte*) main::SCREEN) ← (byte~) main::$7
   [12] (byte) main::b#1 ← ++ (byte) main::b#2
   [13] if((byte) main::b#1!=(byte) 3) goto main::@1
   to:main::@return
@@ -210,7 +209,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$5 11.0
 (byte~) main::$7 22.0
-(byte*) main::SCREEN
 (byte) main::b
 (byte) main::b#1 16.5
 (byte) main::b#2 6.285714285714286
@@ -309,7 +307,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [11] *((const byte*) main::SCREEN#0) ← (byte~) main::$7 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) main::SCREEN) ← (byte~) main::$7 -- _deref_pbuc1=vbuz1 
     lda.z _7
     sta SCREEN
     // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
@@ -412,7 +410,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [11] *((const byte*) main::SCREEN#0) ← (byte~) main::$7 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) main::SCREEN) ← (byte~) main::$7 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -480,8 +478,7 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@5
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::b
 (byte) main::b#1 reg byte x 16.5
 (byte) main::b#2 reg byte x 6.285714285714286
@@ -547,7 +544,7 @@ main: {
     // main::@3
   b3:
     // *SCREEN = (b == 0) ? 'a' : ((b == 1) ? 'b' : 'c')
-    // [11] *((const byte*) main::SCREEN#0) ← (byte~) main::$7 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) main::SCREEN) ← (byte~) main::$7 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // for ( byte b: 0..2 )
     // [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuxx=_inc_vbuxx 

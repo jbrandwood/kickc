@@ -5,7 +5,7 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word[$100]) CHAR_COUNTS#0 ← { fill( $100, 0) }
+  (word[$100]) CHAR_COUNTS ← { fill( $100, 0) }
   to:@1
 
 (void()) main()
@@ -18,7 +18,7 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@1/(byte*) main::screen#1 )
   (byte~) main::$3 ← *((byte*) main::screen#2) * (const byte) SIZEOF_WORD
   (byte~) main::$4 ← *((byte*) main::screen#2) * (const byte) SIZEOF_WORD
-  *((word[$100]) CHAR_COUNTS#0 + (byte~) main::$4) ← ++ *((word[$100]) CHAR_COUNTS#0 + (byte~) main::$3)
+  *((word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((word[$100]) CHAR_COUNTS + (byte~) main::$3)
   (byte*) main::screen#1 ← ++ (byte*) main::screen#2
   (word) main::i#1 ← (word) main::i#2 + rangenext(0,$3e7)
   (bool~) main::$1 ← (word) main::i#1 != rangelast(0,$3e7)
@@ -40,7 +40,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (word[$100]) CHAR_COUNTS
-(word[$100]) CHAR_COUNTS#0
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (bool~) main::$1
@@ -63,9 +62,9 @@ Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition (bool~) main::$1 [10] if((word) main::i#1!=rangelast(0,$3e7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (word[$100]) CHAR_COUNTS#0 ← { fill( $100, 0) }
+Constant right-side identified [0] (word[$100]) CHAR_COUNTS ← { fill( $100, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word[$100]) CHAR_COUNTS#0 = { fill( $100, 0) }
+Constant (const word[$100]) CHAR_COUNTS = { fill( $100, 0) }
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -127,7 +126,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::screen#1 )
   [6] (byte~) main::$3 ← *((byte*) main::screen#2) << (byte) 1
   [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1
-  [8] *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$3)
+  [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3)
   [9] (byte*) main::screen#1 ← ++ (byte*) main::screen#2
   [10] (word) main::i#1 ← ++ (word) main::i#2
   [11] if((word) main::i#1!=(word) $3e8) goto main::@1
@@ -138,7 +137,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(word[$100]) CHAR_COUNTS
 (void()) main()
 (byte~) main::$3 11.0
 (byte~) main::$4 22.0
@@ -225,7 +223,7 @@ main: {
     lda (screen),y
     asl
     sta.z _4
-    // [8] *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$3) -- pwuc1_derefidx_vbuz1=_inc_pwuc1_derefidx_vbuz2 
+    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuz1=_inc_pwuc1_derefidx_vbuz2 
     ldx.z _4
     ldy.z _3
     clc
@@ -341,7 +339,7 @@ main: {
     ldy #0
     lda (screen),y
     asl
-    // [8] *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
+    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
     tay
     clc
     lda CHAR_COUNTS,x
@@ -411,8 +409,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(word[$100]) CHAR_COUNTS
-(const word[$100]) CHAR_COUNTS#0 CHAR_COUNTS = { fill( $100, 0) }
+(const word[$100]) CHAR_COUNTS CHAR_COUNTS = { fill( $100, 0) }
 (void()) main()
 (byte~) main::$3 reg byte x 11.0
 (byte~) main::$4 reg byte a 22.0
@@ -476,7 +473,7 @@ main: {
     // [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1 -- vbuaa=_deref_pbuz1_rol_1 
     lda (screen),y
     asl
-    // [8] *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS#0 + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
+    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
     tay
     clc
     lda CHAR_COUNTS,x

@@ -3,7 +3,7 @@ Culled Empty Block (label) @1
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cnt#0 ← (number) 0
-  (byte[$100]) SCREEN#0 ← ((byte[$100])) (number) $400
+  (byte[$100]) SCREEN ← ((byte[$100])) (number) $400
   to:@2
 
 (void()) main()
@@ -14,7 +14,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
   (byte) cnt#1 ← (byte) cnt#9
-  *((byte[$100]) SCREEN#0 + (number) 0) ← (byte) cnt#1
+  *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   to:main::@2
@@ -22,7 +22,7 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
   (byte) cnt#3 ← (byte) cnt#10
   (byte) cnt#4 ← ++ (byte) cnt#3
-  *((byte[$100]) SCREEN#0 + (number) 1) ← (byte) cnt#4
+  *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
@@ -56,7 +56,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte[$100]) SCREEN
-(byte[$100]) SCREEN#0
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -83,11 +82,11 @@ SYMBOL TABLE SSA
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in (byte) cnt#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN#0 + (number) 0) ← (byte) cnt#1
-Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN#0 + (number) 1) ← (byte) cnt#4
+Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
+Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) cnt#0 ← (unumber)(number) 0
-Inlining cast (byte[$100]) SCREEN#0 ← (byte[$100])(number) $400
+Inlining cast (byte[$100]) SCREEN ← (byte[$100])(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -111,14 +110,14 @@ Identical Phi Values (byte) cnt#10 (byte) cnt#13
 Identical Phi Values (byte) cnt#14 (byte) cnt#11
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) cnt#0 = 0
-Constant (const byte[$100]) SCREEN#0 = (byte*) 1024
+Constant (const byte[$100]) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN#0 in [6] *((const byte[$100]) SCREEN#0 + (byte) 0) ← (byte) cnt#13
+Simplifying expression containing zero SCREEN in [6] *((const byte[$100]) SCREEN + (byte) 0) ← (byte) cnt#13
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) cnt#0
 Constant inlined cnt#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN#0+1)
+Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -156,13 +155,13 @@ main: scope:[main]  from @1
   [5] call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13
+  [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13
   [7] (byte) cnt#2 ← ++ (byte) cnt#13
   [8] call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte) cnt#11 ← ++ (byte) cnt#13
-  [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11
+  [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [11] return 
@@ -179,7 +178,6 @@ inccnt::@return: scope:[inccnt]  from inccnt
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[$100]) SCREEN
 (byte) cnt
 (byte) cnt#11 4.0
 (byte) cnt#12 4.0
@@ -240,7 +238,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
     lda.z cnt_13
     sta SCREEN
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
@@ -259,7 +257,7 @@ main: {
     ldy.z cnt_13
     iny
     sty.z cnt_11
-    // [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
     lda.z cnt_11
     sta SCREEN+1
     jmp breturn
@@ -331,7 +329,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
@@ -345,7 +343,7 @@ main: {
   b2:
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp breturn
     // main::@return
@@ -396,8 +394,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[$100]) SCREEN
-(const byte[$100]) SCREEN#0 SCREEN = (byte*) 1024
+(const byte[$100]) SCREEN SCREEN = (byte*) 1024
 (byte) cnt
 (byte) cnt#11 reg byte x 4.0
 (byte) cnt#12 reg byte x 4.0
@@ -442,7 +439,7 @@ main: {
     jsr inccnt
     // main::@1
     // SCREEN[0]=cnt++
-    // [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // SCREEN[0]=cnt++;
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
@@ -457,7 +454,7 @@ main: {
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[1]=++cnt
-    // [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     // main::@return
     // }

@@ -1,13 +1,13 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
-  (byte) RED#0 ← (number) 2
+  (byte*) BGCOL ← ((byte*)) (number) $d021
+  (byte) RED ← (number) 2
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  *((byte*) BGCOL) ← (byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -25,24 +25,22 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte) RED
-(byte) RED#0
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 2 in (byte) RED#0 ← (number) 2
+Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
-Inlining cast (byte) RED#0 ← (unumber)(number) 2
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
+Inlining cast (byte) RED ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) BGCOL#0 = (byte*) 53281
-Constant (const byte) RED#0 = 2
+Constant (const byte*) BGCOL = (byte*) 53281
+Constant (const byte) RED = 2
 Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -71,7 +69,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) BGCOL#0) ← (const byte) RED#0
+  [4] *((const byte*) BGCOL) ← (const byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -79,8 +77,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte) RED
 (void()) main()
 
 Initial phi equivalence classes
@@ -112,7 +108,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp breturn
@@ -124,7 +120,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) BGCOL) ← (const byte) RED [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -158,7 +154,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp breturn
@@ -191,10 +187,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53281
-(byte) RED
-(const byte) RED#0 RED = (byte) 2
+(const byte*) BGCOL BGCOL = (byte*) 53281
+(const byte) RED RED = (byte) 2
 (void()) main()
 (label) main::@return
 
@@ -220,7 +214,7 @@ Score: 12
   // main
 main: {
     // *BGCOL = RED
-    // [4] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     // main::@return

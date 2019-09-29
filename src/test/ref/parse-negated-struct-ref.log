@@ -15,7 +15,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (struct A) aa#1 ← phi( @1/(struct A) aa#2 )
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (struct A*~) main::$0 ← & (struct A) aa#1
   (struct A*) main::a#0 ← (struct A*~) main::$0
   (byte*) main::$3 ← (byte*)(struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
@@ -28,7 +28,7 @@ main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
   to:main::@return
 main::@2: scope:[main]  from main
-  *((byte*) main::SCREEN#0) ← (byte) 'a'
+  *((byte*) main::SCREEN) ← (byte) 'a'
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -64,7 +64,6 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (struct A*) main::a
 (struct A*) main::a#0
 
@@ -72,7 +71,7 @@ Adding number conversion cast (unumber) 1 in (byte) aa_b#0 ← (number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (number) 0 != *((byte*) main::$3)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) aa_b#0 ← (unumber)(number) 1
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
@@ -95,7 +94,7 @@ Rewriting struct address-of to first member [4] (struct A*) main::a#0 ← (struc
 Successful SSA optimization PassNStructAddressOfRewriting
 Constant right-side identified [4] (struct A*) main::a#0 ← (struct A*)&(byte) aa_b#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const struct A*) main::a#0 = (struct A*)&aa_b#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (byte*)main::a#0 in [6] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
@@ -137,7 +136,7 @@ main: scope:[main]  from @1
   [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main
-  [5] *((const byte*) main::SCREEN#0) ← (byte) 'a'
+  [5] *((const byte*) main::SCREEN) ← (byte) 'a'
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
@@ -153,7 +152,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) aa_b
 (byte) aa_b#0 20.0
 (void()) main()
-(byte*) main::SCREEN
 (struct A*) main::a
 
 Initial phi equivalence classes
@@ -200,7 +198,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp b1
@@ -221,7 +219,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) aa_b#0 ← (byte) 1 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ aa_b#0 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -273,7 +271,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp b1
@@ -325,8 +323,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (struct A*) main::a
 (const struct A*) main::a#0 a = (struct A*)&(byte) aa_b#0
 
@@ -369,7 +366,7 @@ main: {
     bne !a+
     // main::@2
     // *SCREEN = 'a'
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@1

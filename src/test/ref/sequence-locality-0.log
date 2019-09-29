@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::idx#0 ← (number) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -20,14 +20,14 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#5 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::screen#0 + (byte) main::idx#3) ← (byte) main::i#3
+  *((byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#3
   (byte) main::idx#1 ← ++ (byte) main::idx#3
   to:main::@3
 main::@4: scope:[main]  from main::@1
   (byte) main::idx#4 ← phi( main::@1/(byte) main::idx#5 )
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
   (number~) main::$1 ← (byte) main::i#4 - (number) 5
-  *((byte*) main::screen#0 + (byte) main::idx#4) ← (number~) main::$1
+  *((byte*) main::screen + (byte) main::idx#4) ← (number~) main::$1
   (byte) main::idx#2 ← ++ (byte) main::idx#4
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
@@ -77,14 +77,13 @@ SYMBOL TABLE SSA
 (byte) main::idx#5
 (byte) main::idx#6
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 > (number) 5
 Adding number conversion cast (unumber) 5 in (number~) main::$1 ← (byte) main::i#4 - (number) 5
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#4 - (unumber)(number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -105,7 +104,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [5] if((byte) main::i#2>(byte) 5) goto main::@2
 Simple Condition (bool~) main::$2 [16] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -172,7 +171,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@1
   [7] (byte~) main::$1 ← (byte) main::i#2 - (byte) 5
-  [8] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte~) main::$1
+  [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1
   [9] (byte) main::idx#2 ← ++ (byte) main::idx#3
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
@@ -184,7 +183,7 @@ main::@return: scope:[main]  from main::@3
   [13] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [14] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte) main::i#2
+  [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2
   [15] (byte) main::idx#1 ← ++ (byte) main::idx#3
   to:main::@3
 
@@ -200,7 +199,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::idx#2 22.0
 (byte) main::idx#3 11.0
 (byte) main::idx#6 11.0
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -272,7 +270,7 @@ main: {
     lax.z i
     axs #5
     stx.z _1
-    // [8] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _1
     ldy.z idx
     sta screen,y
@@ -298,7 +296,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [14] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z i
     ldy.z idx
     sta screen,y
@@ -371,7 +369,7 @@ main: {
     txa
     sec
     sbc #5
-    // [8] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta screen,y
     // [9] (byte) main::idx#2 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
     iny
@@ -394,7 +392,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [14] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta screen,y
     // [15] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
@@ -453,8 +451,7 @@ FINAL SYMBOL TABLE
 (byte) main::idx#2 reg byte y 22.0
 (byte) main::idx#3 reg byte y 11.0
 (byte) main::idx#6 reg byte y 11.0
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::idx#3 main::idx#6 main::idx#1 main::idx#2 ]
@@ -502,7 +499,7 @@ main: {
     sec
     sbc #5
     // screen[idx++] = i-5
-    // [8] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta screen,y
     // screen[idx++] = i-5;
     // [9] (byte) main::idx#2 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
@@ -524,7 +521,7 @@ main: {
     // main::@2
   b2:
     // screen[idx++] = i
-    // [14] *((const byte*) main::screen#0 + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta screen,y
     // screen[idx++] = i;

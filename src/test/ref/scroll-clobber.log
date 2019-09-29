@@ -5,12 +5,12 @@ Culled Empty Block (label) main::@4
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte[]) TEXT#0 ← (const string) $0
+  (byte[]) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte*) main::nxt#0 ← (byte[]) TEXT
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -32,7 +32,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
-  (byte*) main::nxt#2 ← (byte[]) TEXT#0
+  (byte*) main::nxt#2 ← (byte[]) TEXT
   (byte) main::c#1 ← *((byte*) main::nxt#2)
   to:main::@2
 main::@return: scope:[main]  from main::@2
@@ -54,7 +54,6 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (byte[]) TEXT
-(byte[]) TEXT#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -101,11 +100,11 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte) main::c#0!=(byte) 0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte[]) TEXT#0 = $0
+Constant (const byte[]) TEXT = $0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::nxt#0 = TEXT#0
-Constant (const byte*) main::nxt#2 = TEXT#0
+Constant (const byte*) main::nxt#0 = TEXT
+Constant (const byte*) main::nxt#2 = TEXT
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [13] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
@@ -115,9 +114,9 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::nxt#0
 Inlining constant with var siblings (const byte*) main::nxt#2
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::nxt#0 = (const byte[]) TEXT#0
-Constant inlined $0 = (const byte[]) TEXT#0
-Constant inlined main::nxt#2 = (const byte[]) TEXT#0
+Constant inlined main::nxt#0 = (const byte[]) TEXT
+Constant inlined $0 = (const byte[]) TEXT
+Constant inlined main::nxt#2 = (const byte[]) TEXT
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@1 and main::@2)
 Adding NOP phi() at start of @begin
@@ -159,15 +158,15 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [5] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 )
+  [5] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT main::@2/(byte*) main::nxt#1 )
   [6] (byte) main::c#0 ← *((byte*) main::nxt#3)
   [7] if((byte) main::c#0!=(byte) 0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [8] (byte) main::c#1 ← *((const byte[]) TEXT#0)
+  [8] (byte) main::c#1 ← *((const byte[]) TEXT)
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [9] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 )
+  [9] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT )
   [9] (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   [11] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
@@ -177,7 +176,6 @@ main::@2: scope:[main]  from main::@1 main::@3
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
-(byte[]) TEXT
 (void()) main()
 (byte) main::c
 (byte) main::c#0 16.5
@@ -238,7 +236,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -257,12 +255,12 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] (byte) main::c#1 ← *((const byte[]) TEXT#0) -- vbuz1=_deref_pbuc1 
+    // [8] (byte) main::c#1 ← *((const byte[]) TEXT) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta.z c
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
+    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -345,7 +343,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -363,11 +361,11 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] (byte) main::c#1 ← *((const byte[]) TEXT#0) -- vbuyy=_deref_pbuc1 
+    // [8] (byte) main::c#1 ← *((const byte[]) TEXT) -- vbuyy=_deref_pbuc1 
     ldy TEXT
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
+    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -435,8 +433,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte[]) TEXT
-(const byte[]) TEXT#0 TEXT = (string) "01234567"
+(const byte[]) TEXT TEXT = (string) "01234567"
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -481,7 +478,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -499,10 +496,10 @@ main: {
     bne b2
     // main::@3
     // c = *nxt
-    // [8] (byte) main::c#1 ← *((const byte[]) TEXT#0) -- vbuyy=_deref_pbuc1 
+    // [8] (byte) main::c#1 ← *((const byte[]) TEXT) -- vbuyy=_deref_pbuc1 
     ldy TEXT
     // [9] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
+    // [9] phi (byte*) main::nxt#4 = (const byte[]) TEXT [phi:main::@3->main::@2#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT

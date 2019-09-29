@@ -12,12 +12,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte*) main::sc#0 ← (byte*) main::screen#0
+  (byte*) main::screen ← ((byte*)) (number) $400
+  (byte*) main::sc#0 ← (byte*) main::screen
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::sc#2 ← phi( main/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
-  (byte*~) main::$0 ← (byte*) main::screen#0 + (number) $3e7
+  (byte*~) main::$0 ← (byte*) main::screen + (number) $3e7
   (bool~) main::$1 ← (byte*) main::sc#2 <= (byte*~) main::$0
   if((bool~) main::$1) goto main::@2
   to:main::@3
@@ -27,13 +27,13 @@ main::@2: scope:[main]  from main::@1
   (byte*) main::sc#1 ← ++ (byte*) main::sc#3
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (byte*) main::cols#0 ← ((byte*)) (number) $d800
-  (byte*~) main::$2 ← (byte*) main::cols#0 + (number) $3e7
+  (byte*) main::cols ← ((byte*)) (number) $d800
+  (byte*~) main::$2 ← (byte*) main::cols + (number) $3e7
   (byte*) main::cc#0 ← (byte*~) main::$2
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@8
   (byte*) main::cc#2 ← phi( main::@3/(byte*) main::cc#0 main::@8/(byte*) main::cc#1 )
-  (byte*~) main::$3 ← (byte*) main::cols#0 - (number) 1
+  (byte*~) main::$3 ← (byte*) main::cols - (number) 1
   (bool~) main::$4 ← (byte*) main::cc#2 > (byte*~) main::$3
   if((bool~) main::$4) goto main::@8
   to:main::@return
@@ -75,22 +75,20 @@ SYMBOL TABLE SSA
 (byte*) main::cc#2
 (byte*) main::cc#3
 (byte*) main::cols
-(byte*) main::cols#0
 (byte*) main::sc
 (byte*) main::sc#0
 (byte*) main::sc#1
 (byte*) main::sc#2
 (byte*) main::sc#3
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$0 ← (byte*) main::screen#0 + (number) $3e7
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (byte*) main::cols#0 + (number) $3e7
-Adding number conversion cast (unumber) 1 in (byte*~) main::$3 ← (byte*) main::cols#0 - (number) 1
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$0 ← (byte*) main::screen + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (byte*) main::cols + (number) $3e7
+Adding number conversion cast (unumber) 1 in (byte*~) main::$3 ← (byte*) main::cols - (number) 1
 Adding number conversion cast (unumber) 2 in *((byte*) main::cc#3) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast (byte*) main::cols ← (byte*)(number) $d800
 Inlining cast *((byte*) main::cc#3) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -105,7 +103,7 @@ Finalized unsigned number type (word) $3e7
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::screen#0 = (byte*) main::sc#0 
+Alias (byte*) main::screen = (byte*) main::sc#0 
 Alias (byte*) main::sc#2 = (byte*) main::sc#3 
 Alias (byte*) main::cc#0 = (byte*~) main::$2 
 Alias (byte*) main::cc#2 = (byte*) main::cc#3 
@@ -113,21 +111,21 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [5] if((byte*) main::sc#2<=(byte*~) main::$0) goto main::@2
 Simple Condition (bool~) main::$4 [15] if((byte*) main::cc#2>(byte*~) main::$3) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
-Constant (const byte*) main::cols#0 = (byte*) 55296
+Constant (const byte*) main::screen = (byte*) 1024
+Constant (const byte*) main::cols = (byte*) 55296
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (byte*~) main::$0 ← (const byte*) main::screen#0 + (word) $3e7
-Constant right-side identified [5] (byte*) main::cc#0 ← (const byte*) main::cols#0 + (word) $3e7
-Constant right-side identified [7] (byte*~) main::$3 ← (const byte*) main::cols#0 - (byte) 1
+Constant right-side identified [1] (byte*~) main::$0 ← (const byte*) main::screen + (word) $3e7
+Constant right-side identified [5] (byte*) main::cc#0 ← (const byte*) main::cols + (word) $3e7
+Constant right-side identified [7] (byte*~) main::$3 ← (const byte*) main::cols - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = main::screen#0+$3e7
-Constant (const byte*) main::cc#0 = main::cols#0+$3e7
-Constant (const byte*) main::$3 = main::cols#0-1
+Constant (const byte*) main::$0 = main::screen+$3e7
+Constant (const byte*) main::cc#0 = main::cols+$3e7
+Constant (const byte*) main::$3 = main::cols-1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::cc#0
-Constant inlined main::$3 = (const byte*) main::cols#0-(byte) 1
-Constant inlined main::cc#0 = (const byte*) main::cols#0+(word) $3e7
-Constant inlined main::$0 = (const byte*) main::screen#0+(word) $3e7
+Constant inlined main::$3 = (const byte*) main::cols-(byte) 1
+Constant inlined main::cc#0 = (const byte*) main::cols+(word) $3e7
+Constant inlined main::$0 = (const byte*) main::screen+(word) $3e7
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -167,12 +165,12 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte*) main::sc#2 ← phi( main/(const byte*) main::screen#0 main::@2/(byte*) main::sc#1 )
-  [6] if((byte*) main::sc#2<=(const byte*) main::screen#0+(word) $3e7) goto main::@2
+  [5] (byte*) main::sc#2 ← phi( main/(const byte*) main::screen main::@2/(byte*) main::sc#1 )
+  [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@4
-  [7] (byte*) main::cc#2 ← phi( main::@1/(const byte*) main::cols#0+(word) $3e7 main::@4/(byte*) main::cc#1 )
-  [8] if((byte*) main::cc#2>(const byte*) main::cols#0-(byte) 1) goto main::@4
+  [7] (byte*) main::cc#2 ← phi( main::@1/(const byte*) main::cols+(word) $3e7 main::@4/(byte*) main::cc#1 )
+  [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [9] return 
@@ -192,11 +190,9 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::cc
 (byte*) main::cc#1 22.0
 (byte*) main::cc#2 14.666666666666666
-(byte*) main::cols
 (byte*) main::sc
 (byte*) main::sc#1 22.0
 (byte*) main::sc#2 14.666666666666666
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::sc#2 main::sc#1 ]
@@ -240,7 +236,7 @@ main: {
     .label cc = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -248,7 +244,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte*) main::sc#2<=(const byte*) main::screen#0+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
+    // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
@@ -259,7 +255,7 @@ main: {
     beq b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
-    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols#0+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
+    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
@@ -267,7 +263,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] if((byte*) main::cc#2>(const byte*) main::cols#0-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
+    // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
     bcc b4
@@ -316,8 +312,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((byte*) main::sc#2<=(const byte*) main::screen#0+(word) $3e7) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a 
-Statement [8] if((byte*) main::cc#2>(const byte*) main::cols#0-(byte) 1) goto main::@4 [ main::cc#2 ] ( main:2 [ main::cc#2 ] ) always clobbers reg byte a 
+Statement [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a 
+Statement [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 [ main::cc#2 ] ( main:2 [ main::cc#2 ] ) always clobbers reg byte a 
 Statement [10] *((byte*) main::cc#2) ← (byte) 2 [ main::cc#2 ] ( main:2 [ main::cc#2 ] ) always clobbers reg byte a reg byte y 
 Statement [11] (byte*) main::cc#1 ← -- (byte*) main::cc#2 [ main::cc#1 ] ( main:2 [ main::cc#1 ] ) always clobbers reg byte a 
 Statement [12] *((byte*) main::sc#2) ← (byte) 'a' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
@@ -363,7 +359,7 @@ main: {
     .label cc = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -371,7 +367,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte*) main::sc#2<=(const byte*) main::screen#0+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
+    // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
@@ -382,7 +378,7 @@ main: {
     beq b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   b3_from_b1:
-    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols#0+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
+    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
@@ -390,7 +386,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] if((byte*) main::cc#2>(const byte*) main::cols#0-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
+    // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
     bcc b4
@@ -476,13 +472,11 @@ FINAL SYMBOL TABLE
 (byte*) main::cc
 (byte*) main::cc#1 cc zp ZP_WORD:4 22.0
 (byte*) main::cc#2 cc zp ZP_WORD:4 14.666666666666666
-(byte*) main::cols
-(const byte*) main::cols#0 cols = (byte*) 55296
+(const byte*) main::cols cols = (byte*) 55296
 (byte*) main::sc
 (byte*) main::sc#1 sc zp ZP_WORD:2 22.0
 (byte*) main::sc#2 sc zp ZP_WORD:2 14.666666666666666
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
 zp ZP_WORD:4 [ main::cc#2 main::cc#1 ]
@@ -512,7 +506,7 @@ main: {
     .label sc = 2
     .label cc = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::sc#2 = (const byte*) main::screen [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -520,7 +514,7 @@ main: {
     // main::@1
   b1:
     // for(byte* sc =screen;sc<=screen+999;sc++)
-    // [6] if((byte*) main::sc#2<=(const byte*) main::screen#0+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
+    // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
@@ -530,7 +524,7 @@ main: {
     bcc b2
     beq b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols#0+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
+    // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
@@ -538,7 +532,7 @@ main: {
     // main::@3
   b3:
     // for(byte* cc =cols+999;cc>cols-1;cc--)
-    // [8] if((byte*) main::cc#2>(const byte*) main::cols#0-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
+    // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
     bcc b4

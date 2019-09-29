@@ -21,8 +21,6 @@
   // The number of buckets in our bucket sort
   .const NUM_BUCKETS = $30
   .const NUM_SQUARES = $30
-  .label heap_head = 2
-  .label SQUARES = 5
   // Screen containing distance to center
   .label SCREEN_DIST = $16
   // Screen containing angle to center
@@ -35,6 +33,8 @@
   .label BUCKETS = $12
   // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
   .label BUCKET_IDX = $18
+  .label heap_head = 2
+  .label SQUARES = 5
 bbegin:
   lda #<$3e8
   sta.z malloc.size

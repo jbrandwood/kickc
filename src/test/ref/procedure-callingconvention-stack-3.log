@@ -4,14 +4,14 @@ Culled Empty Block (label) plus::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word*) SCREEN#0 ← ((word*)) (number) $400
+  (word*) SCREEN ← ((word*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (word~) main::$0 ← call plus (byte) '0' (number) 7 
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) SCREEN#0 + (number~) main::$1) ← (word~) main::$0
+  *((word*) SCREEN + (number~) main::$1) ← (word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -41,7 +41,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (word*) SCREEN
-(word*) SCREEN#0
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (word~) main::$0
@@ -62,7 +61,7 @@ Adding number conversion cast (unumber) 7 in (word~) main::$0 ← call plus (byt
 Adding number conversion cast (unumber) 0 in (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) SCREEN#0 ← (word*)(number) $400
+Inlining cast (word*) SCREEN ← (word*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 7
@@ -76,12 +75,12 @@ Alias (word) plus::return#0 = (word~) plus::$0 (word) plus::return#1
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [2] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) SCREEN#0 = (word*) 1024
+Constant (const word*) SCREEN = (word*) 1024
 Constant (const byte) main::$1 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [3] *((const word*) SCREEN#0 + (const byte) main::$1) ← (word~) main::$0
+Simplifying expression containing zero SCREEN in [3] *((const word*) SCREEN + (const byte) main::$1) ← (word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
 Eliminating unused constant (const byte) SIZEOF_WORD
@@ -124,7 +123,7 @@ main: scope:[main]  from @1
   [5] callprepare plus (byte) '0' (byte) 7 
   [6] callexecute plus 
   [7] (word~) main::$0 ← callfinalize plus 
-  [8] *((const word*) SCREEN#0) ← (word~) main::$0
+  [8] *((const word*) SCREEN) ← (word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -142,7 +141,6 @@ plus::@return: scope:[plus]  from plus
 
 
 VARIABLE REGISTER WEIGHTS
-(word*) SCREEN
 (void()) main()
 (word~) main::$0 2.0
 __stackcall (word()) plus((word) plus::a , (word) plus::b)
@@ -224,7 +222,7 @@ main: {
     sta.z _0
     pla
     sta.z _0+1
-    // [8] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z _0
     sta SCREEN
     lda.z _0+1
@@ -281,7 +279,7 @@ plus: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] callprepare plus (byte) '0' (byte) 7  [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (word~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
-Statement [8] *((const word*) SCREEN#0) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
 Statement [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
 Statement [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:6 [ plus::return#0 ] ) always clobbers reg byte a 
@@ -359,7 +357,7 @@ main: {
     sta.z _0
     pla
     sta.z _0+1
-    // [8] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z _0
     sta SCREEN
     lda.z _0+1
@@ -438,8 +436,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(word*) SCREEN
-(const word*) SCREEN#0 SCREEN = (word*) 1024
+(const word*) SCREEN SCREEN = (word*) 1024
 (const word) STACK_BASE STACK_BASE = (word) $103
 (void()) main()
 (word~) main::$0 $0 zp ZP_WORD:2 2.0
@@ -510,7 +507,7 @@ main: {
     pla
     sta.z _0+1
     // SCREEN[0] = plus('0', 7)
-    // [8] *((const word*) SCREEN#0) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z _0
     sta SCREEN
     lda.z _0+1

@@ -4,7 +4,7 @@ Fixing pointer array-indexing *((word*) main::SCREEN + (number) 0)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word[$100]) words#0 ← { fill( $100, 0) }
+  (word[$100]) words ← { fill( $100, 0) }
   to:@1
 
 (void()) main()
@@ -18,17 +18,17 @@ main::@1: scope:[main]  from main main::@1
   (number~) main::$3 ← (word~) main::$2 * (number) $100
   (number~) main::$4 ← (number~) main::$3 + (byte) main::i#2
   (word~) main::$6 ← (word~) main::$1 * (const byte) SIZEOF_WORD
-  *((word[$100]) words#0 + (word~) main::$6) ← (number~) main::$4
+  *((word[$100]) words + (word~) main::$6) ← (number~) main::$4
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
   (bool~) main::$5 ← (byte) main::i#1 != rangelast(0,$ff)
   if((bool~) main::$5) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (word*) main::SCREEN#0 ← ((word*)) (number) $400
+  (word*) main::SCREEN ← ((word*)) (number) $400
   (word~) main::$0 ← ((word)) (number) $ff
   (word~) main::$7 ← (word~) main::$0 * (const byte) SIZEOF_WORD
   (number~) main::$8 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) main::SCREEN#0 + (number~) main::$8) ← *((word[$100]) words#0 + (word~) main::$7)
+  *((word*) main::SCREEN + (number~) main::$8) ← *((word[$100]) words + (word~) main::$7)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -60,13 +60,11 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (word*) main::SCREEN
-(word*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
 (word[$100]) words
-(word[$100]) words#0
 
 Adding number conversion cast (unumber) $100 in (number~) main::$3 ← (word~) main::$2 * (number) $100
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (word~) main::$2 * (unumber)(number) $100
@@ -76,7 +74,7 @@ Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (unum
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word~) main::$1 ← (word)(byte) main::i#2
 Inlining cast (word~) main::$2 ← (word)(byte) main::i#2
-Inlining cast (word*) main::SCREEN#0 ← (word*)(number) $400
+Inlining cast (word*) main::SCREEN ← (word*)(number) $400
 Inlining cast (word~) main::$0 ← (word)(number) $ff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $100
@@ -92,23 +90,23 @@ Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 + (byt
 Inferred type updated to byte in (unumber~) main::$8 ← (byte) 0 * (const byte) SIZEOF_WORD
 Simple Condition (bool~) main::$5 [11] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (word[$100]) words#0 ← { fill( $100, 0) }
+Constant right-side identified [0] (word[$100]) words ← { fill( $100, 0) }
 Constant right-side identified [15] (byte~) main::$8 ← (byte) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word[$100]) words#0 = { fill( $100, 0) }
+Constant (const word[$100]) words = { fill( $100, 0) }
 Constant (const byte) main::i#0 = 0
-Constant (const word*) main::SCREEN#0 = (word*) 1024
+Constant (const word*) main::SCREEN = (word*) 1024
 Constant (const word) main::$0 = $ff
 Constant (const byte) main::$8 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
-De-inlining pointer[w] to *(pointer+w)   [8] *((const word[$100]) words#0 + (word~) main::$6) ← (word~) main::$4
-De-inlining pointer[w] to *(pointer+w)   [16] *((const word*) main::SCREEN#0 + (const byte) main::$8) ← *((const word[$100]) words#0 + (word~) main::$7)
+De-inlining pointer[w] to *(pointer+w)   [8] *((const word[$100]) words + (word~) main::$6) ← (word~) main::$4
+De-inlining pointer[w] to *(pointer+w)   [16] *((const word*) main::SCREEN + (const byte) main::$8) ← *((const word[$100]) words + (word~) main::$7)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::SCREEN#0 in [16] *((const word*) main::SCREEN#0 + (const byte) main::$8) ← *((word*~) main::$10)
+Simplifying expression containing zero main::SCREEN in [16] *((const word*) main::SCREEN + (const byte) main::$8) ← *((word*~) main::$10)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$8
 Successful SSA optimization PassNEliminateUnusedVars
@@ -122,9 +120,9 @@ Constant right-side identified [10] (word~) main::$7 ← (const word) main::$0 *
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::$7 = main::$0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [10] (word*~) main::$10 ← (const word[$100]) words#0 + (const word) main::$7
+Constant right-side identified [10] (word*~) main::$10 ← (const word[$100]) words + (const word) main::$7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) main::$10 = words#0+main::$7
+Constant (const word*) main::$10 = words+main::$7
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [3] (word~) main::$3 ← (word~) main::$2 * (word) $100
 Rewriting multiplication to use shift [5] (word~) main::$6 ← (word~) main::$1 * (const byte) SIZEOF_WORD
@@ -132,7 +130,7 @@ Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::$7 = (word) $ff*(const byte) SIZEOF_WORD
-Constant inlined main::$10 = (const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD
+Constant inlined main::$10 = (const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD
 Constant inlined main::$0 = (word) $ff
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
@@ -176,13 +174,13 @@ main::@1: scope:[main]  from main main::@1
   [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8
   [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2
   [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1
-  [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6
+  [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6
   [12] *((word*~) main::$9) ← (word~) main::$4
   [13] (byte) main::i#1 ← ++ (byte) main::i#2
   [14] if((byte) main::i#1!=(byte) 0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD)
+  [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [16] return 
@@ -197,11 +195,9 @@ VARIABLE REGISTER WEIGHTS
 (word~) main::$4 7.333333333333333
 (word~) main::$6 22.0
 (word*~) main::$9 22.0
-(word*) main::SCREEN
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 4.125
-(word[$100]) words
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -305,7 +301,7 @@ main: {
     lda.z _1+1
     rol
     sta.z _6+1
-    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
+    // [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
     lda.z _6
     clc
     adc #<words
@@ -329,7 +325,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
@@ -350,18 +346,18 @@ Statement [7] (word~) main::$2 ← (word)(byte) main::i#2 [ main::i#2 main::$1 m
 Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
 Statement [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
-Statement [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
+Statement [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
 Statement [12] *((word*~) main::$9) ← (word~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] (word~) main::$1 ← (word)(byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Statement [7] (word~) main::$2 ← (word)(byte) main::i#2 [ main::i#2 main::$1 main::$2 ] ( main:2 [ main::i#2 main::$1 main::$2 ] ) always clobbers reg byte a 
 Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
 Statement [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
-Statement [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
+Statement [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
 Statement [12] *((word*~) main::$9) ← (word~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ main::$1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_WORD:5 [ main::$2 ] : zp ZP_WORD:5 , 
@@ -454,7 +450,7 @@ main: {
     // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z _6
     rol.z _6+1
-    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    // [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
     lda.z _9
     adc #<words
@@ -477,7 +473,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
@@ -533,13 +529,11 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(word*) main::SCREEN
-(const word*) main::SCREEN#0 SCREEN = (word*) 1024
+(const word*) main::SCREEN SCREEN = (word*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 4.125
-(word[$100]) words
-(const word[$100]) words#0 words = { fill( $100, 0) }
+(const word[$100]) words words = { fill( $100, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_WORD:2 [ main::$1 main::$6 main::$9 ]
@@ -610,7 +604,7 @@ main: {
     // [10] (word~) main::$6 ← (word~) main::$1 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z _6
     rol.z _6+1
-    // [11] (word*~) main::$9 ← (const word[$100]) words#0 + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    // [11] (word*~) main::$9 ← (const word[$100]) words + (word~) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
     clc
     lda.z _9
     adc #<words
@@ -633,7 +627,7 @@ main: {
     bne b1
     // main::@2
     // SCREEN[0] = words[(word)255]
-    // [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [15] *((const word*) main::SCREEN) ← *((const word[$100]) words+(word) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1

@@ -2,15 +2,15 @@ Identified constant variable (byte*) main::screen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
-  (byte) RED#0 ← (number) 2
+  (byte*) BGCOL ← ((byte*)) (number) $d021
+  (byte) RED ← (number) 2
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (number) $400
   *((byte*) main::screen#0) ← (number) 1
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  *((byte*) BGCOL) ← (byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,19 +28,17 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte) RED
-(byte) RED#0
 (void()) main()
 (label) main::@return
 (byte*) main::screen
 (byte*) main::screen#0
 
-Adding number conversion cast (unumber) 2 in (byte) RED#0 ← (number) 2
+Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
 Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0) ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
-Inlining cast (byte) RED#0 ← (unumber)(number) 2
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
+Inlining cast (byte) RED ← (unumber)(number) 2
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Inlining cast *((byte*) main::screen#0) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
@@ -52,8 +50,8 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) BGCOL#0 = (byte*) 53281
-Constant (const byte) RED#0 = 2
+Constant (const byte*) BGCOL = (byte*) 53281
+Constant (const byte) RED = 2
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
@@ -84,7 +82,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] *((const byte*) main::screen#0) ← (byte) 1
-  [5] *((const byte*) BGCOL#0) ← (const byte) RED#0
+  [5] *((const byte*) BGCOL) ← (const byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -92,8 +90,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte) RED
 (void()) main()
 (byte*) main::screen
 
@@ -130,7 +126,7 @@ main: {
     // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
-    // [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp breturn
@@ -143,7 +139,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::screen#0) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) BGCOL) ← (const byte) RED [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -181,7 +177,7 @@ main: {
     // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
-    // [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp breturn
@@ -214,10 +210,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53281
-(byte) RED
-(const byte) RED#0 RED = (byte) 2
+(const byte*) BGCOL BGCOL = (byte*) 53281
+(const byte) RED RED = (byte) 2
 (void()) main()
 (label) main::@return
 (byte*) main::screen
@@ -250,7 +244,7 @@ main: {
     lda #1
     sta screen
     // *BGCOL = RED
-    // [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     // main::@return

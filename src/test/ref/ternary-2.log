@@ -9,7 +9,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   if(true) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main
@@ -20,7 +20,7 @@ main::@2: scope:[main]  from main
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@2
   (byte~) main::$2 ← phi( main::@1/(byte~) main::$1 main::@2/(byte~) main::$0 )
-  *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$2
+  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
   if(false) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@3
@@ -31,7 +31,7 @@ main::@5: scope:[main]  from main::@3
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@5
   (byte~) main::$5 ← phi( main::@4/(byte~) main::$4 main::@5/(byte~) main::$3 )
-  *((byte*) main::SCREEN#0 + (number) 1) ← (byte~) main::$5
+  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
   to:main::@return
 main::@return: scope:[main]  from main::@6
   return 
@@ -63,12 +63,11 @@ SYMBOL TABLE SSA
 (label) main::@6
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$2
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← (byte~) main::$5
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -77,7 +76,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::$1 = 'a'
 Constant (const byte) main::$0 = 'b'
 Constant (const byte) main::$4 = 'a'
@@ -86,7 +85,7 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [1] if(true) goto main::@1
 if() condition always false - eliminating [6] if(false) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN#0 in [5] *((const byte*) main::SCREEN#0 + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing PHI-reference to removed block (main::@2) in block main::@3
 Removing unused block main::@2
@@ -102,7 +101,7 @@ Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined main::$1 = (byte) 'a'
 Constant inlined main::$3 = (byte) 'b'
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN#0+1)
+Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -142,10 +141,10 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [5] *((const byte*) main::SCREEN#0) ← (byte) 'a'
+  [5] *((const byte*) main::SCREEN) ← (byte) 'a'
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) 'b'
+  [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'b'
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [7] return 
@@ -154,7 +153,6 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -190,13 +188,13 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp b2
     // main::@2
   b2:
-    // [6] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     jmp breturn
@@ -208,8 +206,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) 'b' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'b' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -248,13 +246,13 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp b2
     // main::@2
   b2:
-    // [6] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     jmp breturn
@@ -296,8 +294,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 
 
 
@@ -323,12 +320,12 @@ main: {
     .label SCREEN = $400
     // main::@1
     // SCREEN[0] = true?'a':'b'
-    // [5] *((const byte*) main::SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@2
     // SCREEN[1] = false?'a':'b'
-    // [6] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     // main::@return

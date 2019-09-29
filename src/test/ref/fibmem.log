@@ -2,21 +2,21 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[$f]) fibs#0 ← { fill( $f, 0) }
+  (byte[$f]) fibs ← { fill( $f, 0) }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte[$f]) fibs#0 + (number) 0) ← (number) 0
-  *((byte[$f]) fibs#0 + (number) 1) ← (number) 1
+  *((byte[$f]) fibs + (number) 0) ← (number) 0
+  *((byte[$f]) fibs + (number) 1) ← (number) 1
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (number~) main::$0 ← (byte) main::i#2 + (number) 2
   (number~) main::$1 ← (byte) main::i#2 + (number) 1
-  (byte~) main::$2 ← *((byte[$f]) fibs#0 + (byte) main::i#2) + *((byte[$f]) fibs#0 + (number~) main::$1)
-  *((byte[$f]) fibs#0 + (number~) main::$0) ← (byte~) main::$2
+  (byte~) main::$2 ← *((byte[$f]) fibs + (byte) main::i#2) + *((byte[$f]) fibs + (number~) main::$1)
+  *((byte[$f]) fibs + (number~) main::$0) ← (byte~) main::$2
   (byte) main::i#1 ← ++ (byte) main::i#2
   (bool~) main::$3 ← (byte) main::i#1 < (number) $f
   if((bool~) main::$3) goto main::@1
@@ -37,7 +37,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte[$f]) fibs
-(byte[$f]) fibs#0
 (void()) main()
 (number~) main::$0
 (number~) main::$1
@@ -50,10 +49,10 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Adding number conversion cast (unumber) 0 in *((byte[$f]) fibs#0 + (number) 0) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte[$f]) fibs#0 + (number) 0) ← ((unumber)) (number) 0
-Adding number conversion cast (unumber) 1 in *((byte[$f]) fibs#0 + (number) 1) ← (number) 1
-Adding number conversion cast (unumber) 1 in *((byte[$f]) fibs#0 + (number) 1) ← ((unumber)) (number) 1
+Adding number conversion cast (unumber) 0 in *((byte[$f]) fibs + (number) 0) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte[$f]) fibs + (number) 0) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 1 in *((byte[$f]) fibs + (number) 1) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((byte[$f]) fibs + (number) 1) ← ((unumber)) (number) 1
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 2 in (number~) main::$0 ← (byte) main::i#2 + (number) 2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#2 + (unumber)(number) 2
@@ -61,8 +60,8 @@ Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main:
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#2 + (unumber)(number) 1
 Adding number conversion cast (unumber) $f in (bool~) main::$3 ← (byte) main::i#1 < (number) $f
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte[$f]) fibs#0 + (unumber)(number) 0) ← (unumber)(number) 0
-Inlining cast *((byte[$f]) fibs#0 + (unumber)(number) 1) ← (unumber)(number) 1
+Inlining cast *((byte[$f]) fibs + (unumber)(number) 0) ← (unumber)(number) 0
+Inlining cast *((byte[$f]) fibs + (unumber)(number) 1) ← (unumber)(number) 1
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
@@ -87,19 +86,19 @@ Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#2 + (byt
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::i#2 + (byte) 1
 Simple Condition (bool~) main::$3 [11] if((byte) main::i#1<(byte) $f) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte[$f]) fibs#0 ← { fill( $f, 0) }
+Constant right-side identified [0] (byte[$f]) fibs ← { fill( $f, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[$f]) fibs#0 = { fill( $f, 0) }
+Constant (const byte[$f]) fibs = { fill( $f, 0) }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero fibs#0 in [1] *((const byte[$f]) fibs#0 + (byte) 0) ← (byte) 0
+Simplifying expression containing zero fibs in [1] *((const byte[$f]) fibs + (byte) 0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(fibs#0+1)
-Consolidated array index constant in assignment *(fibs#0+1 + main::$1)
-Consolidated array index constant in assignment *(fibs#0+2 + main::$0)
+Consolidated array index constant in *(fibs+1)
+Consolidated array index constant in assignment *(fibs+1 + main::$1)
+Consolidated array index constant in assignment *(fibs+2 + main::$0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias (byte) main::i#2 = (byte~) main::$0 (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
@@ -133,13 +132,13 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte[$f]) fibs#0) ← (byte) 0
-  [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1
+  [4] *((const byte[$f]) fibs) ← (byte) 0
+  [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [6] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2)
-  [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2
+  [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2)
+  [8] *((const byte[$f]) fibs+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1<(byte) $f) goto main::@1
   to:main::@return
@@ -149,7 +148,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[$f]) fibs
 (void()) main()
 (byte~) main::$2 22.0
 (byte) main::i
@@ -191,10 +189,10 @@ bend:
 main: {
     .label _2 = 3
     .label i = 2
-    // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[$f]) fibs) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-    // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -209,13 +207,13 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
+    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
     ldy.z i
     lda fibs,y
     clc
     adc fibs+1,y
     sta.z _2
-    // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const byte[$f]) fibs+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _2
     ldy.z i
     sta fibs+2,y
@@ -235,13 +233,13 @@ main: {
   fibs: .fill $f, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte[$f]) fibs#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) always clobbers reg byte a 
+Statement [4] *((const byte[$f]) fibs) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [4] *((const byte[$f]) fibs#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) always clobbers reg byte a 
+Statement [4] *((const byte[$f]) fibs) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -275,10 +273,10 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[$f]) fibs) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-    // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -292,11 +290,11 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
-    // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte[$f]) fibs+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -340,8 +338,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[$f]) fibs
-(const byte[$f]) fibs#0 fibs = { fill( $f, 0) }
+(const byte[$f]) fibs fibs = { fill( $f, 0) }
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
@@ -372,11 +369,11 @@ Score: 263
   // main
 main: {
     // fibs[0] = 0
-    // [4] *((const byte[$f]) fibs#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte[$f]) fibs) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
     // fibs[1] = 1
-    // [5] *((const byte[$f]) fibs#0+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte[$f]) fibs+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -387,12 +384,12 @@ main: {
     // main::@1
   b1:
     // fibs[i]+fibs[i+1]
-    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs#0 + (byte) main::i#2) + *((const byte[$f]) fibs#0+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
     // fibs[i+2] = fibs[i]+fibs[i+1]
-    // [8] *((const byte[$f]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte[$f]) fibs+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
     // while(++i<15)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

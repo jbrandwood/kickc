@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -27,7 +27,7 @@ main::@3: scope:[main]  from main::@1
 main::@4: scope:[main]  from main::@2 main::@3
   (byte) main::i#3 ← phi( main::@2/(byte) main::i#4 main::@3/(byte) main::i#5 )
   (byte~) main::$3 ← phi( main::@2/(byte~) main::$2 main::@3/(byte~) main::$1 )
-  *((byte*) main::SCREEN#0 + (byte) main::i#3) ← (byte~) main::$3
+  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$3
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,9)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,9)
   if((bool~) main::$4) goto main::@1
@@ -59,7 +59,6 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -70,7 +69,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 < (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 5
@@ -84,7 +83,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) 5) goto main::@2
 Simple Condition (bool~) main::$4 [13] if((byte) main::i#1!=rangelast(0,9)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::$2 = 'a'
 Constant (const byte) main::$1 = 'b'
@@ -150,7 +149,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@2
   [8] (byte~) main::$3 ← phi( main::@2/(byte) 'a' main::@1/(byte) 'b' )
-  [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$3
+  [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$3
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   [11] if((byte) main::i#1!=(byte) $a) goto main::@1
   to:main::@return
@@ -162,7 +161,6 @@ main::@return: scope:[main]  from main::@3
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$3 11.0
-(byte*) main::SCREEN
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 8.8
@@ -241,7 +239,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _3
     ldy.z i
     sta SCREEN,y
@@ -328,7 +326,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -384,8 +382,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 8.8
@@ -438,7 +435,7 @@ main: {
     // main::@3
   b3:
     // SCREEN[i] = i<5?'a':'b'
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for( byte i: 0..9)
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

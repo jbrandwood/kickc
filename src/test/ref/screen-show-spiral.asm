@@ -12,12 +12,12 @@
   // Char to fill with
   .const FILL_CHAR = '@'
   .const NUM_SQUARES = $30
-  .label heap_head = $f
-  .label SQUARES = $11
   // Screen containing distance to center
   .label SCREEN_DIST = $b
   // Screen containing angle to center
   .label SCREEN_ANGLE = $d
+  .label heap_head = $f
+  .label SQUARES = $11
 bbegin:
   lda #<$3e8
   sta.z malloc.size

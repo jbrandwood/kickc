@@ -5,8 +5,8 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -16,7 +16,7 @@ main::@1: scope:[main]  from main main::@4
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::key#0 ← *((byte*) RASTER#0)
+  (byte) main::key#0 ← *((byte*) RASTER)
   (bool~) main::$0 ← (byte) main::key#0 > (number) $20
   (bool~) main::$1 ← (byte) main::key#0 < (number) $40
   (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
@@ -25,7 +25,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@7
 main::@4: scope:[main]  from main::@2 main::@7
   (byte) main::key#2 ← phi( main::@2/(byte) main::key#0 main::@7/(byte) main::key#1 )
-  *((byte*) SCREEN#0) ← (byte) main::key#2
+  *((byte*) SCREEN) ← (byte) main::key#2
   to:main::@1
 main::@7: scope:[main]  from main::@2
   (byte) main::key#1 ← (number) 0
@@ -46,9 +46,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) RASTER
-(byte*) RASTER#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -68,8 +66,8 @@ Adding number conversion cast (unumber) $20 in (bool~) main::$0 ← (byte) main:
 Adding number conversion cast (unumber) $40 in (bool~) main::$1 ← (byte) main::key#0 < (number) $40
 Adding number conversion cast (unumber) 0 in (byte) main::key#1 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::key#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
@@ -85,8 +83,8 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting ! if()-condition to reversed if() [7] (bool~) main::$3 ← ! (bool~) main::$2
 Rewriting || if()-condition to two if()s [6] (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::key#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [2] if(true) goto main::@2
@@ -153,7 +151,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::key#0 ← *((const byte*) RASTER#0)
+  [5] (byte) main::key#0 ← *((const byte*) RASTER)
   [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
@@ -164,13 +162,11 @@ main::@4: scope:[main]  from main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3 main::@4
   [9] (byte) main::key#2 ← phi( main::@4/(byte) main::key#0 main::@1/(byte) 0 main::@3/(byte) 0 )
-  [10] *((const byte*) SCREEN#0) ← (byte) main::key#2
+  [10] *((const byte*) SCREEN) ← (byte) main::key#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) RASTER
-(byte*) SCREEN
 (void()) main()
 (byte) main::key
 (byte) main::key#0 11.0
@@ -215,7 +211,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
+    // [5] (byte) main::key#0 ← *((const byte*) RASTER) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta.z key
     // [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuz1_ge_vbuc1_then_la1 
@@ -247,7 +243,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) SCREEN) ← (byte) main::key#2 -- _deref_pbuc1=vbuz1 
     lda.z key
     sta SCREEN
     jmp b1
@@ -295,7 +291,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // [5] (byte) main::key#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
     // [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$20+1
@@ -323,7 +319,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
+    // [10] *((const byte*) SCREEN) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp b1
 }
@@ -365,10 +361,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -405,7 +399,7 @@ main: {
     // main::@1
   b1:
     // key = *RASTER
-    // [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    // [5] (byte) main::key#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
     // if (key > $20 || key < $40)
     // [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuaa_ge_vbuc1_then_la1 
@@ -426,7 +420,7 @@ main: {
     // main::@2
   b2:
     // *SCREEN = key
-    // [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
+    // [10] *((const byte*) SCREEN) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp b1
 }

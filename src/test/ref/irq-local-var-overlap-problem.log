@@ -12,27 +12,27 @@ Culled Empty Block (label) sub_irq::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (number) $314
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) VIC_CONTROL#0 ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS#0 ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE#0 ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER#0 ← (number) 1
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d020
-  (byte*) FGCOL#0 ← ((byte*)) (number) $d021
-  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR#0 ← (number) $7f
+  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
+  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
+  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
+  (byte) IRQ_RASTER ← (number) 1
+  (byte*) BGCOL ← ((byte*)) (number) $d020
+  (byte*) FGCOL ← ((byte*)) (number) $d021
+  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
+  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
   to:@4
 
 (void()) main()
 main: scope:[main]  from @4
   asm { sei  }
-  *((byte*) CIA1_INTERRUPT#0) ← (byte) CIA_INTERRUPT_CLEAR#0
-  *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) & (number) $7f
-  *((byte*) RASTER#0) ← (number) $fd
-  *((byte*) IRQ_ENABLE#0) ← (byte) IRQ_RASTER#0
+  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
+  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
+  *((byte*) RASTER) ← (number) $fd
+  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
+  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@8
@@ -56,7 +56,7 @@ main::@6: scope:[main]  from main::@13 main::@5
   (byte) main::i#2 ← phi( main::@13/(byte) main::i#4 main::@5/(byte) main::i#5 )
   (byte~) main::$1 ← (byte) main::i#2 + (byte) main::j#2
   (byte~) main::$2 ← (byte~) main::$1 + (byte) main::k#2
-  *((byte*) FGCOL#0) ← (byte~) main::$2
+  *((byte*) FGCOL) ← (byte~) main::$2
   call sub_main 
   to:main::@13
 main::@13: scope:[main]  from main::@6
@@ -86,7 +86,7 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
   (byte) irq::i#0 ← (byte) 0
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@5
@@ -104,7 +104,7 @@ irq::@3: scope:[irq]  from irq::@2 irq::@7
   (byte) irq::i#2 ← phi( irq::@2/(byte) irq::i#4 irq::@7/(byte) irq::i#5 )
   (byte~) irq::$2 ← (byte) irq::i#2 + (byte) irq::j#2
   (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2
-  *((byte*) FGCOL#0) ← (byte~) irq::$3
+  *((byte*) FGCOL) ← (byte~) irq::$3
   call sub_irq 
   to:irq::@7
 irq::@7: scope:[irq]  from irq::@3
@@ -129,8 +129,8 @@ irq::@5: scope:[irq]  from irq::@4
   if((bool~) irq::$7) goto irq::@1
   to:irq::@6
 irq::@6: scope:[irq]  from irq::@5
-  *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
-  *((byte*) BGCOL#0) ← -- *((byte*) BGCOL#0)
+  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@6
   return 
@@ -155,7 +155,7 @@ sub_main::@3: scope:[sub_main]  from sub_main::@2 sub_main::@3
   (byte) sub_main::i#2 ← phi( sub_main::@2/(byte) sub_main::i#4 sub_main::@3/(byte) sub_main::i#2 )
   (byte~) sub_main::$0 ← (byte) sub_main::i#2 + (byte) sub_main::j#2
   (byte~) sub_main::$1 ← (byte~) sub_main::$0 + (byte) sub_main::k#2
-  *((byte*) BGCOL#0) ← (byte~) sub_main::$1
+  *((byte*) BGCOL) ← (byte~) sub_main::$1
   (byte) sub_main::k#1 ← (byte) sub_main::k#2 + rangenext(0,$a)
   (bool~) sub_main::$2 ← (byte) sub_main::k#1 != rangelast(0,$a)
   if((bool~) sub_main::$2) goto sub_main::@3
@@ -196,7 +196,7 @@ sub_irq::@3: scope:[sub_irq]  from sub_irq::@2 sub_irq::@3
   (byte) sub_irq::i#2 ← phi( sub_irq::@2/(byte) sub_irq::i#4 sub_irq::@3/(byte) sub_irq::i#2 )
   (byte~) sub_irq::$0 ← (byte) sub_irq::i#2 + (byte) sub_irq::j#2
   (byte~) sub_irq::$1 ← (byte~) sub_irq::$0 + (byte) sub_irq::k#2
-  *((byte*) BGCOL#0) ← (byte~) sub_irq::$1
+  *((byte*) BGCOL) ← (byte~) sub_irq::$1
   (byte) sub_irq::k#1 ← (byte) sub_irq::k#2 + rangenext(0,$a)
   (bool~) sub_irq::$2 ← (byte) sub_irq::k#1 != rangelast(0,$a)
   if((bool~) sub_irq::$2) goto sub_irq::@3
@@ -230,25 +230,15 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte*) CIA1_INTERRUPT
-(byte*) CIA1_INTERRUPT#0
 (byte) CIA_INTERRUPT_CLEAR
-(byte) CIA_INTERRUPT_CLEAR#0
 (byte*) FGCOL
-(byte*) FGCOL#0
 (byte*) IRQ_ENABLE
-(byte*) IRQ_ENABLE#0
 (byte) IRQ_RASTER
-(byte) IRQ_RASTER#0
 (byte*) IRQ_STATUS
-(byte*) IRQ_STATUS#0
 (void()**) KERNEL_IRQ
-(void()**) KERNEL_IRQ#0
 (byte*) RASTER
-(byte*) RASTER#0
 (byte*) VIC_CONTROL
-(byte*) VIC_CONTROL#0
 interrupt(KERNEL_MIN)(void()) irq()
 (byte~) irq::$2
 (byte~) irq::$3
@@ -382,22 +372,22 @@ interrupt(KERNEL_MIN)(void()) irq()
 (byte) sub_main::k#1
 (byte) sub_main::k#2
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER#0 ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR#0 ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) & (number) $7f
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER#0) ← (number) $fd
+Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
+Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
+Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ#0 ← (void()**)(number) $314
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) VIC_CONTROL#0 ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS#0 ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE#0 ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER#0 ← (unumber)(number) 1
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) FGCOL#0 ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_INTERRUPT#0 ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR#0 ← (unumber)(number) $7f
-Inlining cast *((byte*) RASTER#0) ← (unumber)(number) $fd
+Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
+Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
+Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
+Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
+Inlining cast (byte*) FGCOL ← (byte*)(number) $d021
+Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
+Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
+Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53266
@@ -457,16 +447,16 @@ Simple Condition (bool~) sub_irq::$4 [108] if((byte) sub_irq::i#1!=rangelast(0,$
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [15] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ#0 = (void()**) 788
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) VIC_CONTROL#0 = (byte*) 53265
-Constant (const byte*) IRQ_STATUS#0 = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE#0 = (byte*) 53274
-Constant (const byte) IRQ_RASTER#0 = 1
-Constant (const byte*) BGCOL#0 = (byte*) 53280
-Constant (const byte*) FGCOL#0 = (byte*) 53281
-Constant (const byte*) CIA1_INTERRUPT#0 = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR#0 = $7f
+Constant (const void()**) KERNEL_IRQ = (void()**) 788
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) VIC_CONTROL = (byte*) 53265
+Constant (const byte*) IRQ_STATUS = (byte*) 53273
+Constant (const byte*) IRQ_ENABLE = (byte*) 53274
+Constant (const byte) IRQ_RASTER = 1
+Constant (const byte*) BGCOL = (byte*) 53280
+Constant (const byte*) FGCOL = (byte*) 53281
+Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
+Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
 Constant (const void()*) main::$0 = &irq
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = 0
@@ -656,11 +646,11 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0
-  [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f
-  [7] *((const byte*) RASTER#0) ← (byte) $fd
-  [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0
-  [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f
+  [7] *((const byte*) RASTER) ← (byte) $fd
+  [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
+  [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@5 main::@7
@@ -673,7 +663,7 @@ main::@3: scope:[main]  from main::@2 main::@6
   [13] (byte) main::k#2 ← phi( main::@6/(byte) main::k#1 main::@2/(byte) 0 )
   [14] (byte~) main::$1 ← (byte) main::i#7 + (byte) main::j#5
   [15] (byte~) main::$2 ← (byte~) main::$1 + (byte) main::k#2
-  [16] *((const byte*) FGCOL#0) ← (byte~) main::$2
+  [16] *((const byte*) FGCOL) ← (byte~) main::$2
   [17] call sub_main 
   to:main::@6
 main::@6: scope:[main]  from main::@3
@@ -706,7 +696,7 @@ sub_main::@3: scope:[sub_main]  from sub_main::@2 sub_main::@3
   [28] (byte) sub_main::k#2 ← phi( sub_main::@2/(byte) 0 sub_main::@3/(byte) sub_main::k#1 )
   [29] (byte~) sub_main::$0 ← (byte) sub_main::i#6 + (byte) sub_main::j#4
   [30] (byte~) sub_main::$1 ← (byte~) sub_main::$0 + (byte) sub_main::k#2
-  [31] *((const byte*) BGCOL#0) ← (byte~) sub_main::$1
+  [31] *((const byte*) BGCOL) ← (byte~) sub_main::$1
   [32] (byte) sub_main::k#1 ← ++ (byte) sub_main::k#2
   [33] if((byte) sub_main::k#1!=(byte) $b) goto sub_main::@3
   to:sub_main::@4
@@ -724,7 +714,7 @@ sub_main::@return: scope:[sub_main]  from sub_main::@5
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [39] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  [39] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@5
   [40] (byte) irq::i#7 ← phi( irq/(byte) 0 irq::@5/(byte) irq::i#1 )
@@ -736,7 +726,7 @@ irq::@3: scope:[irq]  from irq::@2 irq::@7
   [42] (byte) irq::k#2 ← phi( irq::@2/(byte) 0 irq::@7/(byte) irq::k#1 )
   [43] (byte~) irq::$2 ← (byte) irq::i#7 + (byte) irq::j#4
   [44] (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2
-  [45] *((const byte*) FGCOL#0) ← (byte~) irq::$3
+  [45] *((const byte*) FGCOL) ← (byte~) irq::$3
   [46] call sub_irq 
   to:irq::@7
 irq::@7: scope:[irq]  from irq::@3
@@ -752,8 +742,8 @@ irq::@5: scope:[irq]  from irq::@4
   [52] if((byte) irq::i#1!=(byte) $b) goto irq::@1
   to:irq::@6
 irq::@6: scope:[irq]  from irq::@5
-  [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
-  [54] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  [54] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@6
   [55] return 
@@ -773,7 +763,7 @@ sub_irq::@3: scope:[sub_irq]  from sub_irq::@2 sub_irq::@3
   [59] (byte) sub_irq::k#2 ← phi( sub_irq::@2/(byte) 0 sub_irq::@3/(byte) sub_irq::k#1 )
   [60] (byte~) sub_irq::$0 ← (byte) sub_irq::i#6 + (byte) sub_irq::j#4
   [61] (byte~) sub_irq::$1 ← (byte~) sub_irq::$0 + (byte) sub_irq::k#2
-  [62] *((const byte*) BGCOL#0) ← (byte~) sub_irq::$1
+  [62] *((const byte*) BGCOL) ← (byte~) sub_irq::$1
   [63] (byte) sub_irq::k#1 ← ++ (byte) sub_irq::k#2
   [64] if((byte) sub_irq::k#1!=(byte) $b) goto sub_irq::@3
   to:sub_irq::@4
@@ -791,16 +781,6 @@ sub_irq::@return: scope:[sub_irq]  from sub_irq::@5
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) FGCOL
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) RASTER
-(byte*) VIC_CONTROL
 interrupt(KERNEL_MIN)(void()) irq()
 (byte~) irq::$2 2002.0
 (byte~) irq::$3 2002.0
@@ -955,23 +935,23 @@ main: {
     .label i = 2
     // asm { sei  }
     sei
-    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [7] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -1022,7 +1002,7 @@ main: {
     clc
     adc.z k
     sta.z _2
-    // [16] *((const byte*) FGCOL#0) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) FGCOL) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda.z _2
     sta FGCOL
     // [17] call sub_main 
@@ -1120,7 +1100,7 @@ sub_main: {
     clc
     adc.z k
     sta.z _1
-    // [31] *((const byte*) BGCOL#0) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuz1 
+    // [31] *((const byte*) BGCOL) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuz1 
     lda.z _1
     sta BGCOL
     // [32] (byte) sub_main::k#1 ← ++ (byte) sub_main::k#2 -- vbuz1=_inc_vbuz1 
@@ -1161,7 +1141,7 @@ irq: {
     .label j = 9
     .label i = 8
     // entry interrupt(KERNEL_MIN)
-    // [39] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [40] phi from irq to irq::@1 [phi:irq->irq::@1]
   b1_from_irq:
@@ -1209,7 +1189,7 @@ irq: {
     clc
     adc.z k
     sta.z _3
-    // [45] *((const byte*) FGCOL#0) ← (byte~) irq::$3 -- _deref_pbuc1=vbuz1 
+    // [45] *((const byte*) FGCOL) ← (byte~) irq::$3 -- _deref_pbuc1=vbuz1 
     lda.z _3
     sta FGCOL
     // [46] call sub_irq 
@@ -1246,10 +1226,10 @@ irq: {
     jmp b6
     // irq::@6
   b6:
-    // [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [54] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [54] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
     // irq::@return
@@ -1310,7 +1290,7 @@ sub_irq: {
     clc
     adc.z k
     sta.z _1
-    // [62] *((const byte*) BGCOL#0) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuz1 
+    // [62] *((const byte*) BGCOL) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuz1 
     lda.z _1
     sta BGCOL
     // [63] (byte) sub_irq::k#1 ← ++ (byte) sub_irq::k#2 -- vbuz1=_inc_vbuz1 
@@ -1346,11 +1326,11 @@ sub_irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) RASTER#0) ← (byte) $fd [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) RASTER) ← (byte) $fd [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [14] (byte~) main::$1 ← (byte) main::i#7 + (byte) main::j#5 [ main::i#7 main::j#5 main::k#2 main::$1 ] ( main:2 [ main::i#7 main::j#5 main::k#2 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#7 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::j#5 main::j#1 ]
@@ -1366,24 +1346,24 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ ir
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ irq::j#4 irq::j#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ irq::k#2 irq::k#1 ]
 Statement [44] (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2 [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] (  [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] ) always clobbers reg byte a 
-Statement [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] ) always clobbers reg byte a 
 Statement [60] (byte~) sub_irq::$0 ← (byte) sub_irq::i#6 + (byte) sub_irq::j#4 [ sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$0 ] ( sub_irq:46 [ irq::i#7 irq::j#4 irq::k#2 sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ sub_irq::i#6 sub_irq::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ sub_irq::j#4 sub_irq::j#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:13 [ sub_irq::k#2 sub_irq::k#1 ]
 Statement [61] (byte~) sub_irq::$1 ← (byte~) sub_irq::$0 + (byte) sub_irq::k#2 [ sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$1 ] ( sub_irq:46 [ irq::i#7 irq::j#4 irq::k#2 sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$1 ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) RASTER#0) ← (byte) $fd [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) RASTER) ← (byte) $fd [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [14] (byte~) main::$1 ← (byte) main::i#7 + (byte) main::j#5 [ main::i#7 main::j#5 main::k#2 main::$1 ] ( main:2 [ main::i#7 main::j#5 main::k#2 main::$1 ] ) always clobbers reg byte a 
 Statement [15] (byte~) main::$2 ← (byte~) main::$1 + (byte) main::k#2 [ main::i#7 main::j#5 main::k#2 main::$2 ] ( main:2 [ main::i#7 main::j#5 main::k#2 main::$2 ] ) always clobbers reg byte a 
 Statement [29] (byte~) sub_main::$0 ← (byte) sub_main::i#6 + (byte) sub_main::j#4 [ sub_main::i#6 sub_main::j#4 sub_main::k#2 sub_main::$0 ] ( main:2::sub_main:17 [ main::i#7 main::j#5 main::k#2 sub_main::i#6 sub_main::j#4 sub_main::k#2 sub_main::$0 ] ) always clobbers reg byte a 
 Statement [30] (byte~) sub_main::$1 ← (byte~) sub_main::$0 + (byte) sub_main::k#2 [ sub_main::i#6 sub_main::j#4 sub_main::k#2 sub_main::$1 ] ( main:2::sub_main:17 [ main::i#7 main::j#5 main::k#2 sub_main::i#6 sub_main::j#4 sub_main::k#2 sub_main::$1 ] ) always clobbers reg byte a 
 Statement [43] (byte~) irq::$2 ← (byte) irq::i#7 + (byte) irq::j#4 [ irq::i#7 irq::j#4 irq::k#2 irq::$2 ] (  [ irq::i#7 irq::j#4 irq::k#2 irq::$2 ] ) always clobbers reg byte a 
 Statement [44] (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2 [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] (  [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] ) always clobbers reg byte a 
-Statement [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] ) always clobbers reg byte a 
 Statement [60] (byte~) sub_irq::$0 ← (byte) sub_irq::i#6 + (byte) sub_irq::j#4 [ sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$0 ] ( sub_irq:46 [ irq::i#7 irq::j#4 irq::k#2 sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$0 ] ) always clobbers reg byte a 
 Statement [61] (byte~) sub_irq::$1 ← (byte~) sub_irq::$0 + (byte) sub_irq::k#2 [ sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$1 ] ( sub_irq:46 [ irq::i#7 irq::j#4 irq::k#2 sub_irq::i#6 sub_irq::j#4 sub_irq::k#2 sub_irq::$1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#7 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
@@ -1483,23 +1463,23 @@ main: {
     .label i = 2
     // asm { sei  }
     sei
-    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [7] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -1547,7 +1527,7 @@ main: {
     // [15] (byte~) main::$2 ← (byte~) main::$1 + (byte) main::k#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z k
-    // [16] *((const byte*) FGCOL#0) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) FGCOL) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta FGCOL
     // [17] call sub_main 
     // [25] phi from main::@3 to sub_main [phi:main::@3->sub_main]
@@ -1636,7 +1616,7 @@ sub_main: {
     sty.z $ff
     clc
     adc.z $ff
-    // [31] *((const byte*) BGCOL#0) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuaa 
+    // [31] *((const byte*) BGCOL) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     // [32] (byte) sub_main::k#1 ← ++ (byte) sub_main::k#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -1672,7 +1652,7 @@ irq: {
     .label j = 7
     .label i = 6
     // entry interrupt(KERNEL_MIN)
-    // [39] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [40] phi from irq to irq::@1 [phi:irq->irq::@1]
   b1_from_irq:
@@ -1717,7 +1697,7 @@ irq: {
     // [44] (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z k
-    // [45] *((const byte*) FGCOL#0) ← (byte~) irq::$3 -- _deref_pbuc1=vbuaa 
+    // [45] *((const byte*) FGCOL) ← (byte~) irq::$3 -- _deref_pbuc1=vbuaa 
     sta FGCOL
     // [46] call sub_irq 
     // [56] phi from irq::@3 to sub_irq [phi:irq::@3->sub_irq]
@@ -1753,10 +1733,10 @@ irq: {
     jmp b6
     // irq::@6
   b6:
-    // [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [54] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [54] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
     // irq::@return
@@ -1809,7 +1789,7 @@ sub_irq: {
     sty.z $ff
     clc
     adc.z $ff
-    // [62] *((const byte*) BGCOL#0) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuaa 
+    // [62] *((const byte*) BGCOL) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     // [63] (byte) sub_irq::k#1 ← ++ (byte) sub_irq::k#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -1965,26 +1945,16 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53280
-(byte*) CIA1_INTERRUPT
-(const byte*) CIA1_INTERRUPT#0 CIA1_INTERRUPT = (byte*) 56333
-(byte) CIA_INTERRUPT_CLEAR
-(const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte) $7f
-(byte*) FGCOL
-(const byte*) FGCOL#0 FGCOL = (byte*) 53281
-(byte*) IRQ_ENABLE
-(const byte*) IRQ_ENABLE#0 IRQ_ENABLE = (byte*) 53274
-(byte) IRQ_RASTER
-(const byte) IRQ_RASTER#0 IRQ_RASTER = (byte) 1
-(byte*) IRQ_STATUS
-(const byte*) IRQ_STATUS#0 IRQ_STATUS = (byte*) 53273
-(void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
-(byte*) VIC_CONTROL
-(const byte*) VIC_CONTROL#0 VIC_CONTROL = (byte*) 53265
+(const byte*) BGCOL BGCOL = (byte*) 53280
+(const byte*) CIA1_INTERRUPT CIA1_INTERRUPT = (byte*) 56333
+(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) FGCOL FGCOL = (byte*) 53281
+(const byte*) IRQ_ENABLE IRQ_ENABLE = (byte*) 53274
+(const byte) IRQ_RASTER IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS IRQ_STATUS = (byte*) 53273
+(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
+(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) VIC_CONTROL VIC_CONTROL = (byte*) 53265
 interrupt(KERNEL_MIN)(void()) irq()
 (byte~) irq::$2 reg byte a 2002.0
 (byte~) irq::$3 reg byte a 2002.0
@@ -2118,27 +2088,27 @@ main: {
     // asm { sei  }
     sei
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [5] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // *VIC_CONTROL &=$7f
-    // [6] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [6] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $fd
-    // [7] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [8] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *KERNEL_IRQ = &irq
-    // [9] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [9] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -2180,7 +2150,7 @@ main: {
     clc
     adc.z k
     // *FGCOL = i+j+k
-    // [16] *((const byte*) FGCOL#0) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) FGCOL) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta FGCOL
     // sub_main()
     // [17] call sub_main 
@@ -2250,7 +2220,7 @@ sub_main: {
     clc
     adc.z $ff
     // *BGCOL = i+j+k
-    // [31] *((const byte*) BGCOL#0) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuaa 
+    // [31] *((const byte*) BGCOL) ← (byte~) sub_main::$1 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     // for( byte k: 0..10 )
     // [32] (byte) sub_main::k#1 ← ++ (byte) sub_main::k#2 -- vbuyy=_inc_vbuyy 
@@ -2285,7 +2255,7 @@ irq: {
     .label i = 6
     // entry interrupt(KERNEL_MIN)
     // (*BGCOL)++;
-    // [39] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [40] phi from irq to irq::@1 [phi:irq->irq::@1]
     // [40] phi (byte) irq::i#7 = (byte) 0 [phi:irq->irq::@1#0] -- vbuz1=vbuc1 
@@ -2321,7 +2291,7 @@ irq: {
     clc
     adc.z k
     // *FGCOL = i+j+k
-    // [45] *((const byte*) FGCOL#0) ← (byte~) irq::$3 -- _deref_pbuc1=vbuaa 
+    // [45] *((const byte*) FGCOL) ← (byte~) irq::$3 -- _deref_pbuc1=vbuaa 
     sta FGCOL
     // sub_irq()
     // [46] call sub_irq 
@@ -2351,11 +2321,11 @@ irq: {
     bne b1
     // irq::@6
     // *IRQ_STATUS = IRQ_RASTER
-    // [53] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [53] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // (*BGCOL)--;
-    // [54] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [54] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     // irq::@return
     // }
@@ -2398,7 +2368,7 @@ sub_irq: {
     clc
     adc.z $ff
     // *BGCOL = i+j+k
-    // [62] *((const byte*) BGCOL#0) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuaa 
+    // [62] *((const byte*) BGCOL) ← (byte~) sub_irq::$1 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     // for( byte k: 0..10 )
     // [63] (byte) sub_irq::k#1 ← ++ (byte) sub_irq::k#2 -- vbuyy=_inc_vbuyy 

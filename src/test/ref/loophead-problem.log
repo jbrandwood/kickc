@@ -6,20 +6,20 @@ Culled Empty Block (label) popup_selector::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (number) $400
+  (byte*) screen ← ((byte*)) (number) $400
   (byte) opcode#0 ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) opcode#6 ← phi( @2/(byte) opcode#11 )
-  *((byte*) screen#0 + (number) $28) ← (byte) opcode#6
+  *((byte*) screen + (number) $28) ← (byte) opcode#6
   call popup_selector 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) opcode#7 ← phi( main/(byte) opcode#4 )
   (byte) opcode#1 ← (byte) opcode#7
-  *((byte*) screen#0 + (number) $29) ← (byte) opcode#1
+  *((byte*) screen + (number) $29) ← (byte) opcode#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   (byte) opcode#8 ← phi( main::@1/(byte) opcode#1 )
@@ -41,7 +41,7 @@ popup_selector::@1: scope:[popup_selector]  from popup_selector popup_selector::
 popup_selector::@2: scope:[popup_selector]  from popup_selector::@1
   (byte) popup_selector::k#3 ← phi( popup_selector::@1/(byte) popup_selector::k#2 )
   (byte) opcode#3 ← (byte) 'b'
-  *((byte*) screen#0 + (byte) popup_selector::k#3) ← (byte) opcode#3
+  *((byte*) screen + (byte) popup_selector::k#3) ← (byte) opcode#3
   (byte) popup_selector::k#1 ← ++ (byte) popup_selector::k#3
   to:popup_selector::@1
 popup_selector::@return: scope:[popup_selector]  from popup_selector::@1
@@ -93,14 +93,13 @@ SYMBOL TABLE SSA
 (byte) popup_selector::k#2
 (byte) popup_selector::k#3
 (byte*) screen
-(byte*) screen#0
 
-Adding number conversion cast (unumber) $28 in *((byte*) screen#0 + (number) $28) ← (byte) opcode#6
-Adding number conversion cast (unumber) $29 in *((byte*) screen#0 + (number) $29) ← (byte) opcode#1
+Adding number conversion cast (unumber) $28 in *((byte*) screen + (number) $28) ← (byte) opcode#6
+Adding number conversion cast (unumber) $29 in *((byte*) screen + (number) $29) ← (byte) opcode#1
 Adding number conversion cast (unumber) 0 in (byte) popup_selector::k#0 ← (number) 0
 Adding number conversion cast (unumber) 2 in (bool~) popup_selector::$0 ← (byte) popup_selector::k#2 <= (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) screen ← (byte*)(number) $400
 Inlining cast (byte) popup_selector::k#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -127,7 +126,7 @@ Identical Phi Values (byte) opcode#10 (byte) opcode#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) popup_selector::$0 [15] if((byte) popup_selector::k#2<=(byte) 2) goto popup_selector::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) screen#0 = (byte*) 1024
+Constant (const byte*) screen = (byte*) 1024
 Constant (const byte) opcode#0 = 'a'
 Constant (const byte) popup_selector::k#0 = 0
 Constant (const byte) opcode#3 = 'b'
@@ -148,8 +147,8 @@ Constant inlined opcode#3 = (byte) 'b'
 Constant inlined opcode#0 = (byte) 'a'
 Constant inlined popup_selector::k#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(screen#0+$28)
-Consolidated array index constant in *(screen#0+$29)
+Consolidated array index constant in *(screen+$28)
+Consolidated array index constant in *(screen+$29)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -183,11 +182,11 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a'
+  [4] *((const byte*) screen+(byte) $28) ← (byte) 'a'
   [5] call popup_selector 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte*) screen#0+(byte) $29) ← (byte) opcode#12
+  [6] *((const byte*) screen+(byte) $29) ← (byte) opcode#12
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
@@ -206,7 +205,7 @@ popup_selector::@return: scope:[popup_selector]  from popup_selector::@1
   [11] return 
   to:@return
 popup_selector::@2: scope:[popup_selector]  from popup_selector::@1
-  [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b'
+  [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b'
   [13] (byte) popup_selector::k#1 ← ++ (byte) popup_selector::k#2
   to:popup_selector::@1
 
@@ -219,7 +218,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) popup_selector::k
 (byte) popup_selector::k#1 22.0
 (byte) popup_selector::k#2 14.666666666666666
-(byte*) screen
 
 Initial phi equivalence classes
 [ popup_selector::k#2 popup_selector::k#1 ]
@@ -261,7 +259,7 @@ bend:
   // main
 // Offending unroll variable
 main: {
-    // [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28
     // [5] call popup_selector 
@@ -271,7 +269,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) screen#0+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) screen+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuz1 
     lda.z opcode
     sta screen+$29
     jmp breturn
@@ -305,7 +303,7 @@ popup_selector: {
     rts
     // popup_selector::@2
   b2:
-    // [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'b'
     ldy.z k
     sta screen,y
@@ -322,11 +320,11 @@ popup_selector: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ]
-Statement [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ opcode#12 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -368,7 +366,7 @@ bend:
   // main
 // Offending unroll variable
 main: {
-    // [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28
     // [5] call popup_selector 
@@ -378,7 +376,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) screen#0+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) screen+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuaa 
     sta screen+$29
     jmp breturn
     // main::@return
@@ -407,7 +405,7 @@ popup_selector: {
     rts
     // popup_selector::@2
   b2:
-    // [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'b'
     sta screen,x
     // [13] (byte) popup_selector::k#1 ← ++ (byte) popup_selector::k#2 -- vbuxx=_inc_vbuxx 
@@ -465,8 +463,7 @@ FINAL SYMBOL TABLE
 (byte) popup_selector::k
 (byte) popup_selector::k#1 reg byte x 22.0
 (byte) popup_selector::k#2 reg byte x 14.666666666666666
-(byte*) screen
-(const byte*) screen#0 screen = (byte*) 1024
+(const byte*) screen screen = (byte*) 1024
 
 reg byte x [ popup_selector::k#2 popup_selector::k#1 ]
 reg byte a [ opcode#12 ]
@@ -496,7 +493,7 @@ Score: 233
 // Offending unroll variable
 main: {
     // screen[40] = opcode
-    // [4] *((const byte*) screen#0+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28
     // popup_selector()
@@ -505,7 +502,7 @@ main: {
     jsr popup_selector
     // main::@1
     // screen[41] = opcode
-    // [6] *((const byte*) screen#0+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) screen+(byte) $29) ← (byte) opcode#12 -- _deref_pbuc1=vbuaa 
     sta screen+$29
     // main::@return
     // }
@@ -532,7 +529,7 @@ popup_selector: {
     // popup_selector::@2
   b2:
     // screen[k] = opcode
-    // [12] *((const byte*) screen#0 + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'b'
     sta screen,x
     // for (byte k = 0; k <= 2; k++)

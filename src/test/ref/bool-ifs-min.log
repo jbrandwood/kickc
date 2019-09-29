@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -26,7 +26,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::screen#0 + (byte) main::i#4) ← (byte) '*'
+  *((byte*) main::screen + (byte) main::i#4) ← (byte) '*'
   to:main::@2
 main::@return: scope:[main]  from main::@2
   return 
@@ -61,14 +61,13 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) main::i#2 < (number) $a
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main::i#2 & (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#2 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (unumber~) main::$1 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $a
@@ -89,7 +88,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting ! if()-condition to reversed if() [7] (bool~) main::$4 ← ! (bool~) main::$3
 Rewriting && if()-condition to two if()s [6] (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
@@ -153,7 +152,7 @@ main::@4: scope:[main]  from main::@1
   [8] if((byte~) main::$1!=(byte) 0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@4
-  [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*'
+  [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*'
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3 main::@4
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
@@ -170,7 +169,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 11.0
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -241,7 +239,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy.z i
     sta screen,y
@@ -263,10 +261,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [6] (byte~) main::$1 ← (byte) main::i#2 & (byte) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -330,7 +328,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b2
@@ -393,8 +391,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 11.0
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$1 ]
@@ -441,7 +438,7 @@ main: {
     bne b2
     // main::@3
     // screen[i] = '*'
-    // [9] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     // main::@2

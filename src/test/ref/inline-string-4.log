@@ -5,8 +5,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte[]) main::msg#0 ← (const string) main::$2
-  (dword~) main::$0 ← ((dword)) (byte[]) main::msg#0
+  (byte[]) main::msg ← (const string) main::$2
+  (dword~) main::$0 ← ((dword)) (byte[]) main::msg
   (dword) main::dw#0 ← (dword~) main::$0
   (dword) output::dw#0 ← (dword) main::dw#0
   call output 
@@ -17,13 +17,13 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (dword*) screen#0 ← ((dword*)) (number) $400
+  (dword*) screen ← ((dword*)) (number) $400
   to:@2
 
 (void()) output((dword) output::dw)
 output: scope:[output]  from main
   (dword) output::dw#1 ← phi( main/(dword) output::dw#0 )
-  *((dword*) screen#0) ← (dword) output::dw#1
+  *((dword*) screen) ← (dword) output::dw#1
   to:output::@return
 output::@return: scope:[output]  from output
   return 
@@ -49,17 +49,15 @@ SYMBOL TABLE SSA
 (dword) main::dw
 (dword) main::dw#0
 (byte[]) main::msg
-(byte[]) main::msg#0
 (void()) output((dword) output::dw)
 (label) output::@return
 (dword) output::dw
 (dword) output::dw#0
 (dword) output::dw#1
 (dword*) screen
-(dword*) screen#0
 
-Inlining cast (dword~) main::$0 ← (dword)(byte[]) main::msg#0
-Inlining cast (dword*) screen#0 ← (dword*)(number) $400
+Inlining cast (dword~) main::$0 ← (dword)(byte[]) main::msg
+Inlining cast (dword*) screen ← (dword*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (dword*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -67,16 +65,16 @@ Alias (dword) main::dw#0 = (dword~) main::$0
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (dword) output::dw#1 (dword) output::dw#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte[]) main::msg#0 = main::$2
-Constant (const dword*) screen#0 = (dword*) 1024
+Constant (const byte[]) main::msg = main::$2
+Constant (const dword*) screen = (dword*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (dword)main::msg#0 in [1] (dword) main::dw#0 ← (dword)(const byte[]) main::msg#0
+Constant value identified (dword)main::msg in [1] (dword) main::dw#0 ← (dword)(const byte[]) main::msg
 Successful SSA optimization Pass2ConstantValues
-Constant (const dword) main::dw#0 = (dword)main::msg#0
+Constant (const dword) main::dw#0 = (dword)main::msg
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const dword) output::dw#0 = main::dw#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$2 = (const byte[]) main::msg#0
+Constant inlined main::$2 = (const byte[]) main::msg
 Constant inlined output::dw#0 = (const dword) main::dw#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -123,7 +121,7 @@ main::@return: scope:[main]  from main
 
 (void()) output((dword) output::dw)
 output: scope:[output]  from main
-  [7] *((const dword*) screen#0) ← (const dword) main::dw#0
+  [7] *((const dword*) screen) ← (const dword) main::dw#0
   to:output::@return
 output::@return: scope:[output]  from output
   [8] return 
@@ -133,10 +131,8 @@ output::@return: scope:[output]  from output
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (dword) main::dw
-(byte[]) main::msg
 (void()) output((dword) output::dw)
 (dword) output::dw
-(dword*) screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -182,7 +178,7 @@ main: {
 }
   // output
 output: {
-    // [7] *((const dword*) screen#0) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
+    // [7] *((const dword*) screen) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -200,7 +196,7 @@ output: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const dword*) screen#0) ← (const dword) main::dw#0 [ ] ( main:2::output:5 [ ] ) always clobbers reg byte a 
+Statement [7] *((const dword*) screen) ← (const dword) main::dw#0 [ ] ( main:2::output:5 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -251,7 +247,7 @@ main: {
 }
   // output
 output: {
-    // [7] *((const dword*) screen#0) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
+    // [7] *((const dword*) screen) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -296,14 +292,12 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (dword) main::dw
-(const dword) main::dw#0 dw = (dword)(const byte[]) main::msg#0
-(byte[]) main::msg
-(const byte[]) main::msg#0 msg = (string) "camelot"
+(const dword) main::dw#0 dw = (dword)(const byte[]) main::msg
+(const byte[]) main::msg msg = (string) "camelot"
 (void()) output((dword) output::dw)
 (label) output::@return
 (dword) output::dw
-(dword*) screen
-(const dword*) screen#0 screen = (dword*) 1024
+(const dword*) screen screen = (dword*) 1024
 
 
 
@@ -341,7 +335,7 @@ main: {
   // output
 output: {
     // *screen = dw
-    // [7] *((const dword*) screen#0) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
+    // [7] *((const dword*) screen) ← (const dword) main::dw#0 -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw

@@ -5,8 +5,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (number) $3e8
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $3e8
   *((byte*~) main::$0) ← (number) 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
@@ -33,12 +33,11 @@ SYMBOL TABLE SSA
 (byte*~) main::$0
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $3e8
 Adding number conversion cast (unumber) 0 in *((byte*~) main::$0) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast *((byte*~) main::$0) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -48,13 +47,13 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::SCREEN#0 + (word) $3e8
+Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::SCREEN + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = main::SCREEN#0+$3e8
+Constant (const byte*) main::$0 = main::SCREEN+$3e8
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = (const byte*) main::SCREEN#0+(word) $3e8
+Constant inlined main::$0 = (const byte*) main::SCREEN+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -83,7 +82,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0
+  [4] *((const byte*) main::SCREEN+(word) $3e8) ← (byte) 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
@@ -97,7 +96,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -128,7 +126,7 @@ bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
@@ -146,7 +144,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN+(word) $3e8) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -180,7 +178,7 @@ bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
@@ -221,8 +219,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 
 
 
@@ -246,7 +243,7 @@ Score: 268
 main: {
     .label SCREEN = $400
     // *(SCREEN+1000) = 0
-    // [4] *((const byte*) main::SCREEN#0+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm

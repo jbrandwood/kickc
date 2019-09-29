@@ -10,9 +10,9 @@ Culled Empty Block (label) raster::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL#0 ← ((byte*)) (number) $d020
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) BORDERCOL ← ((byte*)) (number) $d020
+  (byte*) BGCOL ← ((byte*)) (number) $d021
   to:@5
 
 (void()) main()
@@ -20,11 +20,11 @@ main: scope:[main]  from @6
   asm { sei  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@7
-  (bool~) main::$0 ← *((byte*) RASTER#0) != (number) $a
+  (bool~) main::$0 ← *((byte*) RASTER) != (number) $a
   if((bool~) main::$0) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@4
-  (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $b
+  (bool~) main::$1 ← *((byte*) RASTER) != (number) $b
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
@@ -37,22 +37,22 @@ main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @5: scope:[]  from @begin
-  (byte[]) rastercols#0 ← { (number) $b, (number) 0, (number) $b, (number) $b, (number) $c, (number) $b, (number) $c, (number) $c, (number) $f, (number) $c, (number) $f, (number) $f, (number) 1, (number) $f, (number) 1, (number) 1, (number) $f, (number) 1, (number) $f, (number) $f, (number) $c, (number) $f, (number) $c, (number) $c, (number) $b, (number) $c, (number) $b, (number) $b, (number) 0, (number) $b, (number) 0, (number) $ff }
+  (byte[]) rastercols ← { (number) $b, (number) 0, (number) $b, (number) $b, (number) $c, (number) $b, (number) $c, (number) $c, (number) $f, (number) $c, (number) $f, (number) $f, (number) 1, (number) $f, (number) 1, (number) 1, (number) $f, (number) 1, (number) $f, (number) $f, (number) $c, (number) $f, (number) $c, (number) $c, (number) $b, (number) $c, (number) $b, (number) $b, (number) 0, (number) $b, (number) 0, (number) $ff }
   to:@6
 
 (void()) raster()
 raster: scope:[raster]  from main::@5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (byte) raster::i#0 ← (number) 0
-  (byte) raster::col#0 ← *((byte[]) rastercols#0 + (byte) raster::i#0)
+  (byte) raster::col#0 ← *((byte[]) rastercols + (byte) raster::i#0)
   to:raster::@1
 raster::@1: scope:[raster]  from raster raster::@1
   (byte) raster::i#2 ← phi( raster/(byte) raster::i#0 raster::@1/(byte) raster::i#1 )
   (byte) raster::col#2 ← phi( raster/(byte) raster::col#0 raster::@1/(byte) raster::col#1 )
-  *((byte*) BGCOL#0) ← (byte) raster::col#2
-  *((byte*) BORDERCOL#0) ← (byte) raster::col#2
+  *((byte*) BGCOL) ← (byte) raster::col#2
+  *((byte*) BORDERCOL) ← (byte) raster::col#2
   (byte) raster::i#1 ← ++ (byte) raster::i#2
-  (byte) raster::col#1 ← *((byte[]) rastercols#0 + (byte) raster::i#1)
+  (byte) raster::col#1 ← *((byte[]) rastercols + (byte) raster::i#1)
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (bool~) raster::$0 ← (byte) raster::col#1 != (number) $ff
   if((bool~) raster::$0) goto raster::@1
@@ -74,11 +74,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte*) BORDERCOL
-(byte*) BORDERCOL#0
 (byte*) RASTER
-(byte*) RASTER#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -100,18 +97,17 @@ SYMBOL TABLE SSA
 (byte) raster::i#1
 (byte) raster::i#2
 (byte[]) rastercols
-(byte[]) rastercols#0
 
-Adding number conversion cast (unumber) $a in (bool~) main::$0 ← *((byte*) RASTER#0) != (number) $a
-Adding number conversion cast (unumber) $b in (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $b
+Adding number conversion cast (unumber) $a in (bool~) main::$0 ← *((byte*) RASTER) != (number) $a
+Adding number conversion cast (unumber) $b in (bool~) main::$1 ← *((byte*) RASTER) != (number) $b
 Adding number conversion cast (unumber) 0 in (byte) raster::i#0 ← (number) 0
 Adding number conversion cast (unumber) $ff in (bool~) raster::$0 ← (byte) raster::col#1 != (number) $ff
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) rastercols#0 ← (byte[]){ (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) 0, (byte)(number) $ff }
+Added casts to value list in (byte[]) rastercols ← (byte[]){ (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) 0, (byte)(number) $ff }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
 Inlining cast (byte) raster::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
@@ -159,21 +155,21 @@ Finalized unsigned number type (byte) $b
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $ff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [5] if(*((byte*) RASTER#0)!=(byte) $a) goto main::@2
-Simple Condition (bool~) main::$1 [7] if(*((byte*) RASTER#0)!=(byte) $b) goto main::@4
+Simple Condition (bool~) main::$0 [5] if(*((byte*) RASTER)!=(byte) $a) goto main::@2
+Simple Condition (bool~) main::$1 [7] if(*((byte*) RASTER)!=(byte) $b) goto main::@4
 Simple Condition (bool~) raster::$0 [22] if((byte) raster::col#1!=(byte) $ff) goto raster::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) $b, (byte) 0, (byte) $b, (byte) $b, (byte) $c, (byte) $b, (byte) $c, (byte) $c, (byte) $f, (byte) $c, (byte) $f, (byte) $f, (byte) 1, (byte) $f, (byte) 1, (byte) 1, (byte) $f, (byte) 1, (byte) $f, (byte) $f, (byte) $c, (byte) $f, (byte) $c, (byte) $c, (byte) $b, (byte) $c, (byte) $b, (byte) $b, (byte) 0, (byte) $b, (byte) 0, (byte) $ff }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) BGCOL#0 = (byte*) 53281
-Constant (const byte[]) rastercols#0 = { $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff }
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) BORDERCOL = (byte*) 53280
+Constant (const byte*) BGCOL = (byte*) 53281
+Constant (const byte[]) rastercols = { $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff }
 Constant (const byte) raster::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero rastercols#0 in [14] (byte) raster::col#0 ← *((const byte[]) rastercols#0 + (const byte) raster::i#0)
+Simplifying expression containing zero rastercols in [14] (byte) raster::col#0 ← *((const byte[]) rastercols + (const byte) raster::i#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -226,10 +222,10 @@ main: scope:[main]  from @1
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3
-  [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1
+  [5] if(*((const byte*) RASTER)!=(byte) $a) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2
+  [6] if(*((const byte*) RASTER)!=(byte) $b) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [7] phi()
@@ -239,15 +235,15 @@ main::@3: scope:[main]  from main::@2
 (void()) raster()
 raster: scope:[raster]  from main::@3
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0)
+  [10] (byte) raster::col#0 ← *((const byte[]) rastercols)
   to:raster::@1
 raster::@1: scope:[raster]  from raster raster::@1
   [11] (byte) raster::i#2 ← phi( raster/(byte) 0 raster::@1/(byte) raster::i#1 )
   [11] (byte) raster::col#2 ← phi( raster/(byte) raster::col#0 raster::@1/(byte) raster::col#1 )
-  [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2
-  [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2
+  [12] *((const byte*) BGCOL) ← (byte) raster::col#2
+  [13] *((const byte*) BORDERCOL) ← (byte) raster::col#2
   [14] (byte) raster::i#1 ← ++ (byte) raster::i#2
-  [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1)
+  [15] (byte) raster::col#1 ← *((const byte[]) rastercols + (byte) raster::i#1)
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   [17] if((byte) raster::col#1!=(byte) $ff) goto raster::@1
   to:raster::@return
@@ -257,9 +253,6 @@ raster::@return: scope:[raster]  from raster::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte*) BORDERCOL
-(byte*) RASTER
 (void()) main()
 (void()) raster()
 (byte) raster::col
@@ -269,7 +262,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) raster::i
 (byte) raster::i#1 75.75
 (byte) raster::i#2 67.33333333333333
-(byte[]) rastercols
 
 Initial phi equivalence classes
 [ raster::col#2 raster::col#0 raster::col#1 ]
@@ -312,14 +304,14 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [5] if(*((const byte*) RASTER)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
     jmp b2
     // main::@2
   b2:
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
@@ -356,7 +348,7 @@ raster: {
     nop
     nop
     nop
-    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuz1=_deref_pbuc1 
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols) -- vbuz1=_deref_pbuc1 
     lda rastercols
     sta.z col
     // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
@@ -373,15 +365,15 @@ raster: {
     jmp b1
     // raster::@1
   b1:
-    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) BGCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) BORDERCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BORDERCOL
     // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols + (byte) raster::i#1) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda rastercols,y
     sta.z col
@@ -422,8 +414,8 @@ raster: {
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] if(*((const byte*) RASTER)!=(byte) $a) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte*) RASTER)!=(byte) $b) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ raster::col#2 raster::col#0 raster::col#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ raster::i#2 raster::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -467,14 +459,14 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [5] if(*((const byte*) RASTER)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
     jmp b2
     // main::@2
   b2:
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
@@ -509,7 +501,7 @@ raster: {
     nop
     nop
     nop
-    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols) -- vbuaa=_deref_pbuc1 
     lda rastercols
     // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
   b1_from_raster:
@@ -524,13 +516,13 @@ raster: {
     jmp b1
     // raster::@1
   b1:
-    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) BGCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) BORDERCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
     // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda rastercols,x
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -600,12 +592,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53281
-(byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
+(const byte*) BGCOL BGCOL = (byte*) 53281
+(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) RASTER RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -620,8 +609,7 @@ FINAL SYMBOL TABLE
 (byte) raster::i
 (byte) raster::i#1 reg byte x 75.75
 (byte) raster::i#2 reg byte x 67.33333333333333
-(byte[]) rastercols
-(const byte[]) rastercols#0 rastercols = { (byte) $b, (byte) 0, (byte) $b, (byte) $b, (byte) $c, (byte) $b, (byte) $c, (byte) $c, (byte) $f, (byte) $c, (byte) $f, (byte) $f, (byte) 1, (byte) $f, (byte) 1, (byte) 1, (byte) $f, (byte) 1, (byte) $f, (byte) $f, (byte) $c, (byte) $f, (byte) $c, (byte) $c, (byte) $b, (byte) $c, (byte) $b, (byte) $b, (byte) 0, (byte) $b, (byte) 0, (byte) $ff }
+(const byte[]) rastercols rastercols = { (byte) $b, (byte) 0, (byte) $b, (byte) $b, (byte) $c, (byte) $b, (byte) $c, (byte) $c, (byte) $f, (byte) $c, (byte) $f, (byte) $f, (byte) 1, (byte) $f, (byte) 1, (byte) 1, (byte) $f, (byte) 1, (byte) $f, (byte) $f, (byte) $c, (byte) $f, (byte) $c, (byte) $c, (byte) $b, (byte) $c, (byte) $b, (byte) $b, (byte) 0, (byte) $b, (byte) 0, (byte) $ff }
 
 reg byte a [ raster::col#2 raster::col#0 raster::col#1 ]
 reg byte x [ raster::i#2 raster::i#1 ]
@@ -653,14 +641,14 @@ main: {
     // main::@1
   b1:
     // while (*RASTER!=$a)
-    // [5] if(*((const byte*) RASTER#0)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [5] if(*((const byte*) RASTER)!=(byte) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
     bne b1
     // main::@2
   b2:
     // while (*RASTER!=$b)
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
     bne b2
@@ -695,7 +683,7 @@ raster: {
     nop
     nop
     // col = rastercols[i]
-    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) raster::col#0 ← *((const byte[]) rastercols) -- vbuaa=_deref_pbuc1 
     lda rastercols
     // [11] phi from raster to raster::@1 [phi:raster->raster::@1]
     // [11] phi (byte) raster::i#2 = (byte) 0 [phi:raster->raster::@1#0] -- vbuxx=vbuc1 
@@ -707,16 +695,16 @@ raster: {
     // raster::@1
   b1:
     // *BGCOL = col
-    // [12] *((const byte*) BGCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) BGCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BGCOL
     // *BORDERCOL = col
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) BORDERCOL) ← (byte) raster::col#2 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
     // col  = rastercols[++i];
     // [14] (byte) raster::i#1 ← ++ (byte) raster::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // col  = rastercols[++i]
-    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols#0 + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [15] (byte) raster::col#1 ← *((const byte[]) rastercols + (byte) raster::i#1) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda rastercols,x
     // asm
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }

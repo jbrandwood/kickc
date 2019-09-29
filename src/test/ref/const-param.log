@@ -9,8 +9,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte) main::reverse#0 ← (number) $80
-  (byte) sum::a#0 ← (byte) main::reverse#0
+  (byte) main::reverse ← (number) $80
+  (byte) sum::a#0 ← (byte) main::reverse
   (byte) sum::b#0 ← (byte) 'c'
   call sum 
   (byte) sum::return#0 ← (byte) sum::return#4
@@ -19,7 +19,7 @@ main::@1: scope:[main]  from main
   (byte) sum::return#5 ← phi( main/(byte) sum::return#0 )
   (byte~) main::$0 ← (byte) sum::return#5
   *((byte*) main::screen#0 + (number) 0) ← (byte~) main::$0
-  (byte) sum::a#1 ← (byte) main::reverse#0
+  (byte) sum::a#1 ← (byte) main::reverse
   (byte) sum::b#1 ← (byte) 'm'
   call sum 
   (byte) sum::return#1 ← (byte) sum::return#4
@@ -28,7 +28,7 @@ main::@2: scope:[main]  from main::@1
   (byte) sum::return#6 ← phi( main::@1/(byte) sum::return#1 )
   (byte~) main::$1 ← (byte) sum::return#6
   *((byte*) main::screen#0 + (number) 1) ← (byte~) main::$1
-  (byte) sum::a#2 ← (byte) main::reverse#0
+  (byte) sum::a#2 ← (byte) main::reverse
   (byte) sum::b#2 ← (byte) 'l'
   call sum 
   (byte) sum::return#2 ← (byte) sum::return#4
@@ -75,7 +75,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte) main::reverse
-(byte) main::reverse#0
 (byte*) main::screen
 (byte*) main::screen#0
 (byte()) sum((byte) sum::a , (byte) sum::b)
@@ -102,13 +101,13 @@ SYMBOL TABLE SSA
 (byte) sum::return#7
 (byte) sum::return#8
 
-Adding number conversion cast (unumber) $80 in (byte) main::reverse#0 ← (number) $80
+Adding number conversion cast (unumber) $80 in (byte) main::reverse ← (number) $80
 Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte~) main::$0
 Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0 + (number) 1) ← (byte~) main::$1
 Adding number conversion cast (unumber) 2 in *((byte*) main::screen#0 + (number) 2) ← (byte~) main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (byte) main::reverse#0 ← (unumber)(number) $80
+Inlining cast (byte) main::reverse ← (unumber)(number) $80
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $80
@@ -127,14 +126,14 @@ Alias (byte) sum::return#2 = (byte) sum::return#7
 Alias (byte) sum::return#3 = (byte~) sum::$0 (byte) sum::return#8 (byte) sum::return#4 
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte*) main::screen#0 = (byte*) 1024
-Constant (const byte) main::reverse#0 = $80
+Constant (const byte) main::reverse = $80
 Constant (const byte) sum::b#0 = 'c'
 Constant (const byte) sum::b#1 = 'm'
 Constant (const byte) sum::b#2 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) sum::a#0 = main::reverse#0
-Constant (const byte) sum::a#1 = main::reverse#0
-Constant (const byte) sum::a#2 = main::reverse#0
+Constant (const byte) sum::a#0 = main::reverse
+Constant (const byte) sum::a#1 = main::reverse
+Constant (const byte) sum::a#2 = main::reverse
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero main::screen#0 in [8] *((const byte*) main::screen#0 + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -144,17 +143,17 @@ Inlining constant with var siblings (const byte) sum::b#2
 Inlining constant with var siblings (const byte) sum::a#0
 Inlining constant with var siblings (const byte) sum::a#1
 Inlining constant with var siblings (const byte) sum::a#2
-Constant inlined sum::a#2 = (const byte) main::reverse#0
+Constant inlined sum::a#2 = (const byte) main::reverse
 Constant inlined sum::b#1 = (byte) 'm'
-Constant inlined sum::a#1 = (const byte) main::reverse#0
+Constant inlined sum::a#1 = (const byte) main::reverse
 Constant inlined sum::b#0 = (byte) 'c'
 Constant inlined sum::b#2 = (byte) 'l'
-Constant inlined sum::a#0 = (const byte) main::reverse#0
+Constant inlined sum::a#0 = (const byte) main::reverse
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::screen#0+1)
 Consolidated array index constant in *(main::screen#0+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Identical Phi Values (byte) sum::a#3 (const byte) main::reverse#0
+Identical Phi Values (byte) sum::a#3 (const byte) main::reverse
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -214,7 +213,7 @@ main::@return: scope:[main]  from main::@3
 (byte()) sum((byte) sum::a , (byte) sum::b)
 sum: scope:[sum]  from main main::@1 main::@2
   [18] (byte) sum::b#3 ← phi( main/(byte) 'c' main::@1/(byte) 'm' main::@2/(byte) 'l' )
-  [19] (byte) sum::return#3 ← (const byte) main::reverse#0 + (byte) sum::b#3
+  [19] (byte) sum::return#3 ← (const byte) main::reverse + (byte) sum::b#3
   to:sum::@return
 sum::@return: scope:[sum]  from sum
   [20] return 
@@ -226,7 +225,6 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$0 4.0
 (byte~) main::$1 4.0
 (byte~) main::$2 4.0
-(byte) main::reverse
 (byte*) main::screen
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte) sum::a
@@ -368,7 +366,7 @@ sum: {
     .label return_2 = 7
     .label return_3 = 9
     .label b = 2
-    // [19] (byte) sum::return#3 ← (const byte) main::reverse#0 + (byte) sum::b#3 -- vbuz1=vbuc1_plus_vbuz2 
+    // [19] (byte) sum::return#3 ← (const byte) main::reverse + (byte) sum::b#3 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z b
     axs #-[main.reverse]
     stx.z return_3
@@ -478,7 +476,7 @@ main: {
   // sum
 // sum(byte register(A) b)
 sum: {
-    // [19] (byte) sum::return#3 ← (const byte) main::reverse#0 + (byte) sum::b#3 -- vbuaa=vbuc1_plus_vbuaa 
+    // [19] (byte) sum::return#3 ← (const byte) main::reverse + (byte) sum::b#3 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #main.reverse
     jmp breturn
@@ -531,8 +529,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte) main::reverse
-(const byte) main::reverse#0 reverse = (byte) $80
+(const byte) main::reverse reverse = (byte) $80
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
 (byte()) sum((byte) sum::a , (byte) sum::b)
@@ -625,7 +622,7 @@ main: {
 // sum(byte register(A) b)
 sum: {
     // a+b
-    // [19] (byte) sum::return#3 ← (const byte) main::reverse#0 + (byte) sum::b#3 -- vbuaa=vbuc1_plus_vbuaa 
+    // [19] (byte) sum::return#3 ← (const byte) main::reverse + (byte) sum::b#3 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #main.reverse
     // sum::@return

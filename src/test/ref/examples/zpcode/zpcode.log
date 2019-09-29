@@ -43,7 +43,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) main::zpCode#1 ← phi( main::@1/(byte*) main::zpCode#2 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::zpCode#1 + (byte) main::i#3) ← *((byte[]) zpCodeData#0 + (byte) main::i#3)
+  *((byte*) main::zpCode#1 + (byte) main::i#3) ← *((byte[]) zpCodeData + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@7: scope:[main]  from main::@1 main::@20
@@ -81,7 +81,7 @@ loop::@return: scope:[loop]  from loop::@1
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte[]) zpCodeData#0 ← kickasm {{ .segmentout [segments="ZpCode"]
+  (byte[]) zpCodeData ← kickasm {{ .segmentout [segments="ZpCode"]
  }}
   to:@3
 
@@ -147,7 +147,6 @@ SYMBOL TABLE SSA
 (byte*) main::zpCode#1
 (byte*) main::zpCode#2
 (byte[]) zpCodeData
-(byte[]) zpCodeData#0
 (void()) zpLoop()
 (bool~) zpLoop::$1
 (label) zpLoop::@1
@@ -198,7 +197,7 @@ Constant (const byte*) BGCOL#0 = (byte*) 53280
 Constant (const void()*) main::$0 = &zpLoop
 Constant (const byte) main::i#0 = 0
 Constant (const byte) loop::i#0 = 0
-Constant (const byte[]) zpCodeData#0 = kickasm {{ .segmentout [segments="ZpCode"]
+Constant (const byte[]) zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
  }}
 Constant (const byte) zpLoop::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -304,7 +303,7 @@ main::@6: scope:[main]  from main::@5
   [12] *((const byte*) BGCOL#0) ← (byte) 0
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2)
+  [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2)
   [14] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
@@ -349,7 +348,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i#1 22.0
 (byte) main::i#2 18.333333333333332
 (byte*) main::zpCode
-(byte[]) zpCodeData
 (void()) zpLoop()
 (byte) zpLoop::i
 (byte) zpLoop::i#1 151.5
@@ -454,7 +452,7 @@ main: {
     jmp b3
     // main::@2
   b2:
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda zpCodeData,y
     sta zpCode,y
@@ -536,11 +534,11 @@ zpCodeData:
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) BGCOL#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) BGCOL#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ zpLoop::i#2 zpLoop::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ loop::i#2 loop::i#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -639,7 +637,7 @@ main: {
     jmp b3
     // main::@2
   b2:
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda zpCodeData,x
     sta zpCode,x
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -780,8 +778,7 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 18.333333333333332
 (byte*) main::zpCode
 (const byte*) main::zpCode#0 zpCode = (byte*)&(void()) zpLoop()
-(byte[]) zpCodeData
-(const byte[]) zpCodeData#0 zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
+(const byte[]) zpCodeData zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
  }}
 (void()) zpLoop()
 (label) zpLoop::@1
@@ -866,7 +863,7 @@ main: {
     // main::@2
   b2:
     // zpCode[i] = zpCodeData[i]
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData#0 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda zpCodeData,x
     sta zpCode,x
     // for(char i=0;i<20;i++)

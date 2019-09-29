@@ -10,14 +10,14 @@ Culled Empty Block (label) print_person::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Person[2]) persons#0 ← { { (number) 4, (const string) $0 }, { (number) 7, (const string) $1 } }
+  (struct Person[2]) persons ← { { (number) 4, (const string) $0 }, { (number) 7, (const string) $1 } }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#18 ← phi( @2/(byte) idx#20 )
   (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_STRUCT_PERSON
-  (struct Person*~) main::$0 ← & *((struct Person[2]) persons#0 + (number~) main::$4)
+  (struct Person*~) main::$0 ← & *((struct Person[2]) persons + (number~) main::$4)
   (struct Person*) print_person::person#0 ← (struct Person*~) main::$0
   call print_person 
   to:main::@1
@@ -25,7 +25,7 @@ main::@1: scope:[main]  from main
   (byte) idx#10 ← phi( main/(byte) idx#8 )
   (byte) idx#0 ← (byte) idx#10
   (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_PERSON
-  (struct Person*~) main::$2 ← & *((struct Person[2]) persons#0 + (number~) main::$5)
+  (struct Person*~) main::$2 ← & *((struct Person[2]) persons + (number~) main::$5)
   (struct Person*) print_person::person#1 ← (struct Person*~) main::$2
   call print_person 
   to:main::@2
@@ -39,9 +39,9 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#3 ← (number) 0
-  (byte[]) DIGIT#0 ← (const string) $2
+  (byte[]) DIGIT ← (const string) $2
   to:@2
 
 (void()) print_person((struct Person*) print_person::person)
@@ -49,9 +49,9 @@ print_person: scope:[print_person]  from main main::@1
   (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
   (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
   (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-  *((byte*) SCREEN#0 + (byte) idx#13) ← *((byte[]) DIGIT#0 + *((byte*) print_person::$0))
+  *((byte*) SCREEN + (byte) idx#13) ← *((byte[]) DIGIT + *((byte*) print_person::$0))
   (byte) idx#4 ← ++ (byte) idx#13
-  *((byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' '
+  *((byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte) print_person::i#0 ← (number) 0
   to:print_person::@1
@@ -68,13 +68,13 @@ print_person::@2: scope:[print_person]  from print_person::@1
   (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
   (struct Person*) print_person::person#4 ← phi( print_person::@1/(struct Person*) print_person::person#3 )
   (byte**) print_person::$2 ← (byte**)(struct Person*) print_person::person#4 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#3)
+  *((byte*) SCREEN + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#3)
   (byte) idx#6 ← ++ (byte) idx#14
   (byte) print_person::i#1 ← ++ (byte) print_person::i#3
   to:print_person::@1
 print_person::@3: scope:[print_person]  from print_person::@1
   (byte) idx#15 ← phi( print_person::@1/(byte) idx#19 )
-  *((byte*) SCREEN#0 + (byte) idx#15) ← (byte) ' '
+  *((byte*) SCREEN + (byte) idx#15) ← (byte) ' '
   (byte) idx#7 ← ++ (byte) idx#15
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
@@ -102,13 +102,11 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte[]) DIGIT
-(byte[]) DIGIT#0
 (const byte) OFFSET_STRUCT_PERSON_ID = (byte) 0
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
 (byte) Person::id
 (byte*) Person::name
 (byte*) SCREEN
-(byte*) SCREEN#0
 (const byte) SIZEOF_STRUCT_PERSON = (byte) 3
 (byte) idx
 (byte) idx#0
@@ -141,7 +139,6 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (struct Person[2]) persons
-(struct Person[2]) persons#0
 (void()) print_person((struct Person*) print_person::person)
 (byte*) print_person::$0
 (byte**) print_person::$1
@@ -171,9 +168,9 @@ Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) print_person::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_person::$3 ← (number) 0 != *(*((byte**) print_person::$1) + (byte) print_person::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (struct Person[2]) persons#0 ← (struct Person[2]){ (struct Person){ (byte)(number) 4, (const string) $0 }, (struct Person){ (byte)(number) 7, (const string) $1 } }
+Added casts to value list in (struct Person[2]) persons ← (struct Person[2]){ (struct Person){ (byte)(number) 4, (const string) $0 }, (struct Person){ (byte)(number) 7, (const string) $1 } }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Inlining cast (byte) print_person::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -213,8 +210,8 @@ Identical Phi Values (byte) idx#17 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_person::$3 [30] if((byte) 0!=*(*((byte**) print_person::$1) + (byte) print_person::i#2)) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting array member address-of to pointer addition [3] (struct Person*) print_person::person#0 ← (struct Person[2]) persons#0 + (byte~) main::$4
-Rewriting array member address-of to pointer addition [9] (struct Person*) print_person::person#1 ← (struct Person[2]) persons#0 + (byte~) main::$5
+Rewriting array member address-of to pointer addition [3] (struct Person*) print_person::person#0 ← (struct Person[2]) persons + (byte~) main::$4
+Rewriting array member address-of to pointer addition [9] (struct Person*) print_person::person#1 ← (struct Person[2]) persons + (byte~) main::$5
 Successful SSA optimization PassNArrayElementAddressOfRewriting
 Constant right-side identified [2] (byte~) main::$4 ← (byte) 0 * (const byte) SIZEOF_STRUCT_PERSON
 Constant right-side identified [8] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_PERSON
@@ -224,23 +221,23 @@ Identified constant from value list (struct Person) { id: (byte) 7, name: (const
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Identified constant from value list (struct Person[2]) { { id: (byte) 4, name: (const string) $0 }, { id: (byte) 7, name: (const string) $1 } }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct Person[2]) persons#0 = { { id: 4, name: $0 }, { id: 7, name: $1 } }
+Constant (const struct Person[2]) persons = { { id: 4, name: $0 }, { id: 7, name: $1 } }
 Constant (const byte) main::$4 = 0*SIZEOF_STRUCT_PERSON
 Constant (const byte) main::$5 = 1*SIZEOF_STRUCT_PERSON
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#20 = 0
-Constant (const byte[]) DIGIT#0 = $2
+Constant (const byte[]) DIGIT = $2
 Constant (const byte) print_person::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [22] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
+Converting *(pointer+n) to pointer[n] [22] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
 Converting *(pointer+n) to pointer[n] [30] if((byte) 0!=*(*((byte**) print_person::$1) + (byte) print_person::i#2)) goto print_person::@2  -- *((byte**)print_person::person#2 + OFFSET_STRUCT_PERSON_NAME)
-Converting *(pointer+n) to pointer[n] [33] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#2)  -- *((byte**)print_person::person#2 + OFFSET_STRUCT_PERSON_NAME)
+Converting *(pointer+n) to pointer[n] [33] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**) print_person::$2) + (byte) print_person::i#2)  -- *((byte**)print_person::person#2 + OFFSET_STRUCT_PERSON_NAME)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_PERSON in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero persons#0 in [3] (struct Person*) print_person::person#0 ← (const struct Person[2]) persons#0 + (const byte) main::$4
+Simplifying expression containing zero persons in [3] (struct Person*) print_person::person#0 ← (const struct Person[2]) persons + (const byte) main::$4
 Simplifying expression containing zero (byte*)print_person::person#2 in [21] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [22] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
+Simplifying expression containing zero (byte*)print_person::person#2 in [22] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) print_person::$0 and assignment [6] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2
 Eliminating unused variable (byte**) print_person::$1 and assignment [12] (byte**) print_person::$1 ← (byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME
@@ -248,10 +245,10 @@ Eliminating unused variable (byte**) print_person::$2 and assignment [14] (byte*
 Eliminating unused constant (const byte) main::$4
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [2] (struct Person*) print_person::person#1 ← (const struct Person[2]) persons#0 + (const byte) main::$5
+Constant right-side identified [2] (struct Person*) print_person::person#1 ← (const struct Person[2]) persons + (const byte) main::$5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const struct Person*) print_person::person#0 = persons#0
-Constant (const struct Person*) print_person::person#1 = persons#0+main::$5
+Constant (const struct Person*) print_person::person#0 = persons
+Constant (const struct Person*) print_person::person#1 = persons+main::$5
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) print_person::i#0
 Inlining constant with var siblings (const struct Person*) print_person::person#0
@@ -259,10 +256,10 @@ Inlining constant with var siblings (const struct Person*) print_person::person#
 Inlining constant with var siblings (const byte) idx#20
 Constant inlined main::$5 = (byte) 1*(const byte) SIZEOF_STRUCT_PERSON
 Constant inlined idx#20 = (byte) 0
-Constant inlined print_person::person#0 = (const struct Person[2]) persons#0
+Constant inlined print_person::person#0 = (const struct Person[2]) persons
 Constant inlined print_person::i#0 = (byte) 0
-Constant inlined $2 = (const byte[]) DIGIT#0
-Constant inlined print_person::person#1 = (const struct Person[2]) persons#0+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON
+Constant inlined $2 = (const byte[]) DIGIT
+Constant inlined print_person::person#1 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -318,10 +315,10 @@ main::@return: scope:[main]  from main::@1
 (void()) print_person((struct Person*) print_person::person)
 print_person: scope:[print_person]  from main main::@1
   [9] (byte) idx#13 ← phi( main/(byte) 0 main::@1/(byte) idx#16 )
-  [9] (struct Person*) print_person::person#2 ← phi( main/(const struct Person[2]) persons#0 main::@1/(const struct Person[2]) persons#0+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON )
-  [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2))
+  [9] (struct Person*) print_person::person#2 ← phi( main/(const struct Person[2]) persons main::@1/(const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON )
+  [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2))
   [11] (byte) idx#4 ← ++ (byte) idx#13
-  [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' '
+  [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   [13] (byte) idx#5 ← ++ (byte) idx#4
   to:print_person::@1
 print_person::@1: scope:[print_person]  from print_person print_person::@2
@@ -330,24 +327,22 @@ print_person::@1: scope:[print_person]  from print_person print_person::@2
   [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2
   to:print_person::@3
 print_person::@3: scope:[print_person]  from print_person::@1
-  [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' '
+  [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' '
   [17] (byte) idx#16 ← ++ (byte) idx#14
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
   [18] return 
   to:@return
 print_person::@2: scope:[print_person]  from print_person::@1
-  [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)
+  [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)
   [20] (byte) idx#6 ← ++ (byte) idx#14
   [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2
   to:print_person::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[]) DIGIT
 (byte) Person::id
 (byte*) Person::name
-(byte*) SCREEN
 (byte) idx
 (byte) idx#13 3.0
 (byte) idx#14 9.75
@@ -356,7 +351,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#5 4.0
 (byte) idx#6 11.0
 (void()) main()
-(struct Person[2]) persons
 (void()) print_person((struct Person*) print_person::person)
 (byte) print_person::i
 (byte) print_person::i#1 22.0
@@ -424,7 +418,7 @@ main: {
     // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx_13
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -439,7 +433,7 @@ main: {
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
   print_person_from_b1:
     // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
@@ -456,7 +450,7 @@ main: {
 print_person: {
     .label i = 5
     .label person = 2
-    // [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(_deref_pbuz2) 
+    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(_deref_pbuz2) 
     ldx.z idx_13
     ldy #0
     lda (person),y
@@ -467,7 +461,7 @@ print_person: {
     ldy.z idx_13
     iny
     sty.z idx
-    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y
@@ -498,7 +492,7 @@ print_person: {
     jmp b3
     // print_person::@3
   b3:
-    // [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx_14
     sta SCREEN,y
@@ -513,7 +507,7 @@ print_person: {
     rts
     // print_person::@2
   b2:
-    // [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuz1=(pptz2_derefidx_vbuc2)_derefidx_vbuz3 
+    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuz1=(pptz2_derefidx_vbuc2)_derefidx_vbuz3 
     ldx.z idx_14
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
@@ -547,23 +541,23 @@ print_person: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
+Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ idx#13 idx#16 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ idx#13 idx#16 ]
-Statement [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ idx#4 ]
 Statement [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ print_person::i#2 print_person::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ print_person::i#2 print_person::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ idx#14 idx#5 idx#6 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ idx#14 idx#5 idx#6 ]
-Statement [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
-Statement [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
-Statement [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
+Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
+Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person#2 idx#4 ] ( main:2::print_person:5 [ print_person::person#2 idx#4 ] main:2::print_person:7 [ print_person::person#2 idx#4 ] ) always clobbers reg byte a 
 Statement [15] if((byte) 0!=*(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
-Statement [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
+Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) [ print_person::person#2 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person#2 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person#2 print_person::i#2 idx#14 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print_person::person#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ idx#13 idx#16 ] : zp ZP_BYTE:4 , reg byte x , 
 Potential registers zp ZP_BYTE:5 [ print_person::i#2 print_person::i#1 ] : zp ZP_BYTE:5 , reg byte x , 
@@ -618,7 +612,7 @@ main: {
   print_person_from_main:
     // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -633,7 +627,7 @@ main: {
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
   print_person_from_b1:
     // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
@@ -650,7 +644,7 @@ main: {
 print_person: {
     .label i = 4
     .label person = 2
-    // [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
+    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
     ldy #0
     lda (person),y
     tay
@@ -658,7 +652,7 @@ print_person: {
     sta SCREEN,x
     // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [13] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
@@ -686,7 +680,7 @@ print_person: {
     jmp b3
     // print_person::@3
   b3:
-    // [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [17] (byte) idx#16 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
@@ -698,7 +692,7 @@ print_person: {
     rts
     // print_person::@2
   b2:
-    // [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
+    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
     sta.z $fe
@@ -767,13 +761,11 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[]) DIGIT
-(const byte[]) DIGIT#0 DIGIT = (string) "0123456789"
+(const byte[]) DIGIT DIGIT = (string) "0123456789"
 (const byte) OFFSET_STRUCT_PERSON_NAME OFFSET_STRUCT_PERSON_NAME = (byte) 1
 (byte) Person::id
 (byte*) Person::name
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte) SIZEOF_STRUCT_PERSON SIZEOF_STRUCT_PERSON = (byte) 3
 (byte) idx
 (byte) idx#13 reg byte x 3.0
@@ -785,8 +777,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(struct Person[2]) persons
-(const struct Person[2]) persons#0 persons = { { id: (byte) 4, name: (const string) $0 }, { id: (byte) 7, name: (const string) $1 } }
+(const struct Person[2]) persons persons = { { id: (byte) 4, name: (const string) $0 }, { id: (byte) 7, name: (const string) $1 } }
 (void()) print_person((struct Person*) print_person::person)
 (label) print_person::@1
 (label) print_person::@2
@@ -832,7 +823,7 @@ main: {
     // [9] phi from main to print_person [phi:main->print_person]
     // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print_person#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0 [phi:main->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons [phi:main->print_person#1] -- pssz1=pssc1 
     lda #<persons
     sta.z print_person.person
     lda #>persons
@@ -844,7 +835,7 @@ main: {
     // [7] call print_person 
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
     // [9] phi (byte) idx#13 = (byte) idx#16 [phi:main::@1->print_person#0] -- register_copy 
-    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons#0+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
+    // [9] phi (struct Person*) print_person::person#2 = (const struct Person[2]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
@@ -861,7 +852,7 @@ print_person: {
     .label i = 4
     .label person = 2
     // SCREEN[idx++] = DIGIT[person->id]
-    // [10] *((const byte*) SCREEN#0 + (byte) idx#13) ← *((const byte[]) DIGIT#0 + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
+    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1) 
     ldy #0
     lda (person),y
     tay
@@ -871,7 +862,7 @@ print_person: {
     // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = ' '
-    // [12] *((const byte*) SCREEN#0 + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
@@ -898,7 +889,7 @@ print_person: {
     bne b2
     // print_person::@3
     // SCREEN[idx++] = ' '
-    // [16] *((const byte*) SCREEN#0 + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
@@ -911,7 +902,7 @@ print_person: {
     // print_person::@2
   b2:
     // SCREEN[idx++] = person->name[i]
-    // [19] *((const byte*) SCREEN#0 + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
+    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *(*((byte**)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_NAME) + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=(pptz1_derefidx_vbuc2)_derefidx_vbuz2 
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
     sta.z $fe

@@ -288,7 +288,7 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
   (byte*) print_char_cursor#142 ← phi( @12/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#75 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte[]) print_hextab#0 ← (const string) $0
+  (byte[]) print_hextab ← (const string) $0
   to:@39
 
 (void()) print_byte((byte) print_byte::b)
@@ -296,7 +296,7 @@ print_byte: scope:[print_byte]  from print_mulf8u127::@1 print_mulf8u127::@3 pri
   (byte*) print_char_cursor#131 ← phi( print_mulf8u127::@1/(byte*) print_char_cursor#133 print_mulf8u127::@3/(byte*) print_char_cursor#48 print_sbyte::@2/(byte*) print_char_cursor#129 print_word/(byte*) print_char_cursor#130 print_word::@1/(byte*) print_char_cursor#13 )
   (byte) print_byte::b#5 ← phi( print_mulf8u127::@1/(byte) print_byte::b#3 print_mulf8u127::@3/(byte) print_byte::b#4 print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#5 >> (number) 4
-  (byte) print_char::ch#4 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$0)
+  (byte) print_char::ch#4 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -304,7 +304,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#77 ← phi( print_byte/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#77
   (number~) print_byte::$2 ← (byte) print_byte::b#6 & (number) $f
-  (byte) print_char::ch#5 ← *((byte[]) print_hextab#0 + (number~) print_byte::$2)
+  (byte) print_char::ch#5 ← *((byte[]) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -718,25 +718,25 @@ print_mulf8s127::@return: scope:[print_mulf8s127]  from print_mulf8s127::@7
   (byte*) print_screen#5 ← phi( @29/(byte*) print_screen#6 )
   (byte*) print_char_cursor#141 ← phi( @29/(byte*) print_char_cursor#142 )
   (byte*) print_line_cursor#72 ← phi( @29/(byte*) print_line_cursor#75 )
-  (byte[$200]) mulf127_sqr1_lo#0 ← kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
-  (byte[$200]) mulf127_sqr1_hi#0 ← kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
-  (byte[$200]) mulf127_sqr2_lo#0 ← kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
-  (byte[$200]) mulf127_sqr2_hi#0 ← kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
+  (byte[$200]) mulf127_sqr1_lo ← kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
+  (byte[$200]) mulf127_sqr1_hi ← kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
+  (byte[$200]) mulf127_sqr2_lo ← kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
+  (byte[$200]) mulf127_sqr2_hi ← kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
   to:@41
 
 (word()) mulf8u127((byte) mulf8u127::a , (byte) mulf8u127::b)
 mulf8u127: scope:[mulf8u127]  from mulf8s127 print_mulf8u127
   (byte) mulf8u127::b#2 ← phi( mulf8s127/(byte) mulf8u127::b#1 print_mulf8u127/(byte) mulf8u127::b#0 )
   (byte) mulf8u127::a#2 ← phi( mulf8s127/(byte) mulf8u127::a#1 print_mulf8u127/(byte) mulf8u127::a#0 )
-  (byte*) mulf8u127::memA#0 ← ((byte*)) (number) $fc
-  (byte*) mulf8u127::memB#0 ← ((byte*)) (number) $fd
-  (word*) mulf8u127::res#0 ← ((word*)) (number) $fe
-  (byte*) mulf8u127::resL#0 ← ((byte*)) (number) $fe
-  (byte*) mulf8u127::resH#0 ← ((byte*)) (number) $ff
-  *((byte*) mulf8u127::memA#0) ← (byte) mulf8u127::a#2
-  *((byte*) mulf8u127::memB#0) ← (byte) mulf8u127::b#2
+  (byte*) mulf8u127::memA ← ((byte*)) (number) $fc
+  (byte*) mulf8u127::memB ← ((byte*)) (number) $fd
+  (word*) mulf8u127::res ← ((word*)) (number) $fe
+  (byte*) mulf8u127::resL ← ((byte*)) (number) $fe
+  (byte*) mulf8u127::resH ← ((byte*)) (number) $ff
+  *((byte*) mulf8u127::memA) ← (byte) mulf8u127::a#2
+  *((byte*) mulf8u127::memB) ← (byte) mulf8u127::b#2
   asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  }
-  (word) mulf8u127::return#1 ← *((word*) mulf8u127::res#0)
+  (word) mulf8u127::return#1 ← *((word*) mulf8u127::res)
   to:mulf8u127::@return
 mulf8u127::@return: scope:[mulf8u127]  from mulf8u127
   (word) mulf8u127::return#5 ← phi( mulf8u127/(word) mulf8u127::return#1 )
@@ -910,13 +910,9 @@ SYMBOL TABLE SSA
 (void*) memset::str#4
 (void*) memset::str#5
 (byte[$200]) mulf127_sqr1_hi
-(byte[$200]) mulf127_sqr1_hi#0
 (byte[$200]) mulf127_sqr1_lo
-(byte[$200]) mulf127_sqr1_lo#0
 (byte[$200]) mulf127_sqr2_hi
-(byte[$200]) mulf127_sqr2_hi#0
 (byte[$200]) mulf127_sqr2_lo
-(byte[$200]) mulf127_sqr2_lo#0
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
 (byte~) mulf8s127::$0
 (byte~) mulf8s127::$1
@@ -986,15 +982,10 @@ SYMBOL TABLE SSA
 (byte) mulf8u127::b#1
 (byte) mulf8u127::b#2
 (byte*) mulf8u127::memA
-(byte*) mulf8u127::memA#0
 (byte*) mulf8u127::memB
-(byte*) mulf8u127::memB#0
 (word*) mulf8u127::res
-(word*) mulf8u127::res#0
 (byte*) mulf8u127::resH
-(byte*) mulf8u127::resH#0
 (byte*) mulf8u127::resL
-(byte*) mulf8u127::resL#0
 (word) mulf8u127::return
 (word) mulf8u127::return#0
 (word) mulf8u127::return#1
@@ -1179,7 +1170,6 @@ SYMBOL TABLE SSA
 (label) print_cls::@1
 (label) print_cls::@return
 (byte[]) print_hextab
-(byte[]) print_hextab#0
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -1525,11 +1515,11 @@ Inlining cast (signed byte) print_mulf8s127::a#8 ← (snumber)(number) $7f
 Inlining cast (signed byte) print_mulf8s127::b#8 ← (snumber)(number) -$7f
 Inlining cast (signed byte) print_mulf8s127::a#9 ← (snumber)(number) -$7f
 Inlining cast (signed byte) print_mulf8s127::b#9 ← (snumber)(number) -$7f
-Inlining cast (byte*) mulf8u127::memA#0 ← (byte*)(number) $fc
-Inlining cast (byte*) mulf8u127::memB#0 ← (byte*)(number) $fd
-Inlining cast (word*) mulf8u127::res#0 ← (word*)(number) $fe
-Inlining cast (byte*) mulf8u127::resL#0 ← (byte*)(number) $fe
-Inlining cast (byte*) mulf8u127::resH#0 ← (byte*)(number) $ff
+Inlining cast (byte*) mulf8u127::memA ← (byte*)(number) $fc
+Inlining cast (byte*) mulf8u127::memB ← (byte*)(number) $fd
+Inlining cast (word*) mulf8u127::res ← (word*)(number) $fe
+Inlining cast (byte*) mulf8u127::resL ← (byte*)(number) $fe
+Inlining cast (byte*) mulf8u127::resH ← (byte*)(number) $ff
 Inlining cast (byte~) mulf8s127::$0 ← (byte)(signed byte) mulf8s127::a#1
 Inlining cast (byte~) mulf8s127::$1 ← (byte)(signed byte) mulf8s127::b#1
 Inlining cast (signed word~) mulf8s127::$3 ← (signed word)(word~) mulf8s127::$2
@@ -1891,7 +1881,7 @@ Constant (const byte) print_char::ch#0 = '-'
 Constant (const byte) print_char::ch#1 = ' '
 Constant (const byte) print_char::ch#2 = '-'
 Constant (const byte) print_char::ch#3 = ' '
-Constant (const byte[]) print_hextab#0 = $0
+Constant (const byte[]) print_hextab = $0
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte*) print_str::str#1 = main::str
@@ -1936,15 +1926,15 @@ Constant (const byte) print_char::ch#6 = '*'
 Constant (const byte) print_char::ch#7 = '='
 Constant (const byte) print_char::ch#8 = '*'
 Constant (const byte) print_char::ch#9 = '='
-Constant (const byte[$200]) mulf127_sqr1_lo#0 = kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
-Constant (const byte[$200]) mulf127_sqr1_hi#0 = kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
-Constant (const byte[$200]) mulf127_sqr2_lo#0 = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
-Constant (const byte[$200]) mulf127_sqr2_hi#0 = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
-Constant (const byte*) mulf8u127::memA#0 = (byte*) 252
-Constant (const byte*) mulf8u127::memB#0 = (byte*) 253
-Constant (const word*) mulf8u127::res#0 = (word*) 254
-Constant (const byte*) mulf8u127::resL#0 = (byte*) 254
-Constant (const byte*) mulf8u127::resH#0 = (byte*) 255
+Constant (const byte[$200]) mulf127_sqr1_lo = kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
+Constant (const byte[$200]) mulf127_sqr1_hi = kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
+Constant (const byte[$200]) mulf127_sqr2_lo = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
+Constant (const byte[$200]) mulf127_sqr2_hi = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
+Constant (const byte*) mulf8u127::memA = (byte*) 252
+Constant (const byte*) mulf8u127::memB = (byte*) 253
+Constant (const word*) mulf8u127::res = (word*) 254
+Constant (const byte*) mulf8u127::resL = (byte*) 254
+Constant (const byte*) mulf8u127::resH = (byte*) 255
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (void*)print_line_cursor#0 in [131] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
 Successful SSA optimization Pass2ConstantValues
@@ -2023,7 +2013,7 @@ Inlining constant with var siblings (const signed byte) print_mulf8s127::b#8
 Inlining constant with var siblings (const signed byte) print_mulf8s127::a#9
 Inlining constant with var siblings (const signed byte) print_mulf8s127::b#9
 Inlining constant with var siblings (const byte*) print_line_cursor#0
-Constant inlined $0 = (const byte[]) print_hextab#0
+Constant inlined $0 = (const byte[]) print_hextab
 Constant inlined print_char::ch#7 = (byte) '='
 Constant inlined print_char::ch#6 = (byte) '*'
 Constant inlined print_char::ch#9 = (byte) '='
@@ -2469,12 +2459,12 @@ print_byte: scope:[print_byte]  from print_mulf8u127::@1 print_mulf8u127::@3 pri
   [96] (byte*) print_char_cursor#131 ← phi( print_mulf8u127::@1/(byte*~) print_char_cursor#152 print_mulf8u127::@3/(byte*) print_char_cursor#19 print_sbyte::@2/(byte*) print_char_cursor#19 print_word/(byte*) print_char_cursor#19 print_word::@1/(byte*) print_char_cursor#19 )
   [96] (byte) print_byte::b#5 ← phi( print_mulf8u127::@1/(byte) print_byte::b#3 print_mulf8u127::@3/(byte) print_byte::b#4 print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 )
   [97] (byte~) print_byte::$0 ← (byte) print_byte::b#5 >> (byte) 4
-  [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0)
+  [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
   [99] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [100] (byte~) print_byte::$2 ← (byte) print_byte::b#5 & (byte) $f
-  [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2)
+  [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
   [102] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -2556,10 +2546,10 @@ mulf8s127::@9: scope:[mulf8s127]  from mulf8s127::@7
 mulf8u127: scope:[mulf8u127]  from mulf8s127 print_mulf8u127
   [136] (byte) mulf8u127::b#2 ← phi( mulf8s127/(byte) mulf8u127::b#1 print_mulf8u127/(byte) mulf8u127::b#0 )
   [136] (byte) mulf8u127::a#2 ← phi( mulf8s127/(byte) mulf8u127::a#1 print_mulf8u127/(byte) mulf8u127::a#0 )
-  [137] *((const byte*) mulf8u127::memA#0) ← (byte) mulf8u127::a#2
-  [138] *((const byte*) mulf8u127::memB#0) ← (byte) mulf8u127::b#2
+  [137] *((const byte*) mulf8u127::memA) ← (byte) mulf8u127::a#2
+  [138] *((const byte*) mulf8u127::memB) ← (byte) mulf8u127::b#2
   asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  }
-  [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0)
+  [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res)
   to:mulf8u127::@return
 mulf8u127::@return: scope:[mulf8u127]  from mulf8u127
   [141] return 
@@ -2660,10 +2650,6 @@ VARIABLE REGISTER WEIGHTS
 (word) memset::num
 (void*) memset::return
 (void*) memset::str
-(byte[$200]) mulf127_sqr1_hi
-(byte[$200]) mulf127_sqr1_lo
-(byte[$200]) mulf127_sqr2_hi
-(byte[$200]) mulf127_sqr2_lo
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
 (signed word~) mulf8s127::$12 4.0
 (signed word~) mulf8s127::$13 4.0
@@ -2693,11 +2679,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) mulf8u127::b#0 4.0
 (byte) mulf8u127::b#1 4.0
 (byte) mulf8u127::b#2 3.0
-(byte*) mulf8u127::memA
-(byte*) mulf8u127::memB
-(word*) mulf8u127::res
-(byte*) mulf8u127::resH
-(byte*) mulf8u127::resL
 (word) mulf8u127::return
 (word) mulf8u127::return#0 4.0
 (word) mulf8u127::return#1 1.5
@@ -2730,7 +2711,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#19 0.6
 (byte*) print_char_cursor#80 12.0
 (void()) print_cls()
-(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 0.5421686746987951
 (byte*) print_line_cursor#32 24.0
@@ -3524,7 +3504,7 @@ print_byte: {
     lsr
     lsr
     sta.z _0
-    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z _0
     lda print_hextab,y
     sta.z print_char.ch
@@ -3541,7 +3521,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z _2
-    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z _2
     lda print_hextab,y
     sta.z print_char.ch
@@ -3799,10 +3779,10 @@ mulf8u127: {
     .label return = $2f
     .label return_1 = $2d
     .label return_3 = $21
-    // [137] *((const byte*) mulf8u127::memA#0) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuz1 
+    // [137] *((const byte*) mulf8u127::memA) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta memA
-    // [138] *((const byte*) mulf8u127::memB#0) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuz1 
+    // [138] *((const byte*) mulf8u127::memB) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuz1 
     lda.z b
     sta memB
     // asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  }
@@ -3824,7 +3804,7 @@ mulf8u127: {
   sm4:
     sbc mulf127_sqr2_hi,x
     sta resH
-    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0) -- vwuz1=_deref_pwuc1 
+    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res) -- vwuz1=_deref_pwuc1 
     lda res
     sta.z return_1
     lda res+1
@@ -4113,7 +4093,7 @@ Removing always clobbered register reg byte x as potential for zp ZP_BYTE:26 [ m
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:21 [ print_mulf8u127::a#8 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:21 [ print_mulf8u127::a#8 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:22 [ print_mulf8u127::b#10 ]
-Statement [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0) [ mulf8u127::return#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:33::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:35::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:37::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:39::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:41::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:43::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:45::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:47::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:49::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8u127:11::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:13::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:15::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:17::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:19::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:21::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:23::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:25::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] ) always clobbers reg byte a 
+Statement [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res) [ mulf8u127::return#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:33::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:35::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:37::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:39::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:41::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:43::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:45::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:47::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:49::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8u127:11::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:13::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:15::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:17::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:19::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:21::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:23::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:25::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] ) always clobbers reg byte a 
 Statement [144] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 [ print_char_cursor#122 print_str::str#3 ] ( main:2::print_str:7 [ print_char_cursor#122 print_str::str#3 ] main:2::print_str:27 [ print_line_cursor#1 print_char_cursor#122 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [146] *((byte*) print_char_cursor#122) ← *((byte*) print_str::str#3) [ print_char_cursor#122 print_str::str#3 ] ( main:2::print_str:7 [ print_char_cursor#122 print_str::str#3 ] main:2::print_str:27 [ print_line_cursor#1 print_char_cursor#122 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [153] (word) mulf8u127::return#0 ← (word) mulf8u127::return#1 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] ( main:2::print_mulf8u127:11 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:13 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:15 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:17 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:19 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:21 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:23 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:25 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] ) always clobbers reg byte a 
@@ -4149,7 +4129,7 @@ Statement [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - 
 Statement [132] (signed word) mulf8s127::c#3 ← (signed word) mulf8s127::c#7 - (signed word) $200 [ mulf8s127::c#3 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] ) always clobbers reg byte a 
 Statement [135] (signed word~) mulf8s127::c#11 ← (signed word)(word) mulf8s127::c#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  } always clobbers reg byte a reg byte x 
-Statement [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0) [ mulf8u127::return#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:33::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:35::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:37::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:39::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:41::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:43::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:45::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:47::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:49::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8u127:11::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:13::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:15::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:17::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:19::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:21::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:23::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:25::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] ) always clobbers reg byte a 
+Statement [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res) [ mulf8u127::return#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:33::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:35::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:37::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:39::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:41::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:43::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:45::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:47::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8s127:49::mulf8s127:54::mulf8u127:117 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#1 ] main:2::print_mulf8u127:11::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:13::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:15::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:17::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:19::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:21::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:23::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] main:2::print_mulf8u127:25::mulf8u127:152 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#1 ] ) always clobbers reg byte a 
 Statement [144] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 [ print_char_cursor#122 print_str::str#3 ] ( main:2::print_str:7 [ print_char_cursor#122 print_str::str#3 ] main:2::print_str:27 [ print_line_cursor#1 print_char_cursor#122 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [146] *((byte*) print_char_cursor#122) ← *((byte*) print_str::str#3) [ print_char_cursor#122 print_str::str#3 ] ( main:2::print_str:7 [ print_char_cursor#122 print_str::str#3 ] main:2::print_str:27 [ print_line_cursor#1 print_char_cursor#122 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [153] (word) mulf8u127::return#0 ← (word) mulf8u127::return#1 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] ( main:2::print_mulf8u127:11 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:13 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:15 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:17 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:19 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:21 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:23 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] main:2::print_mulf8u127:25 [ print_line_cursor#1 print_mulf8u127::a#8 print_mulf8u127::b#10 mulf8u127::return#0 ] ) always clobbers reg byte a 
@@ -4855,7 +4835,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [99] call print_char 
@@ -4870,7 +4850,7 @@ print_byte: {
     // [100] (byte~) print_byte::$2 ← (byte) print_byte::b#5 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [102] call print_char 
     // [86] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -5085,9 +5065,9 @@ mulf8u127: {
     .label resL = $fe
     .label resH = $ff
     .label return = 2
-    // [137] *((const byte*) mulf8u127::memA#0) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuaa 
+    // [137] *((const byte*) mulf8u127::memA) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuaa 
     sta memA
-    // [138] *((const byte*) mulf8u127::memB#0) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuxx 
+    // [138] *((const byte*) mulf8u127::memB) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuxx 
     stx memB
     // asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  }
     lda memA
@@ -5108,7 +5088,7 @@ mulf8u127: {
   sm4:
     sbc mulf127_sqr2_hi,x
     sta resH
-    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0) -- vwuz1=_deref_pwuc1 
+    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res) -- vwuz1=_deref_pwuc1 
     lda res
     sta.z return
     lda res+1
@@ -5657,14 +5637,10 @@ FINAL SYMBOL TABLE
 (void*) memset::return
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(byte*) 1024
-(byte[$200]) mulf127_sqr1_hi
-(const byte[$200]) mulf127_sqr1_hi#0 mulf127_sqr1_hi = kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
-(byte[$200]) mulf127_sqr1_lo
-(const byte[$200]) mulf127_sqr1_lo#0 mulf127_sqr1_lo = kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
-(byte[$200]) mulf127_sqr2_hi
-(const byte[$200]) mulf127_sqr2_hi#0 mulf127_sqr2_hi = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
-(byte[$200]) mulf127_sqr2_lo
-(const byte[$200]) mulf127_sqr2_lo#0 mulf127_sqr2_lo = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
+(const byte[$200]) mulf127_sqr1_hi mulf127_sqr1_hi = kickasm {{ .fill 512, >round((i/127*i/127)*127/4)  }}
+(const byte[$200]) mulf127_sqr1_lo mulf127_sqr1_lo = kickasm {{ .fill 512, <round((i/127*i/127)*127/4)  }}
+(const byte[$200]) mulf127_sqr2_hi mulf127_sqr2_hi = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
+(const byte[$200]) mulf127_sqr2_lo mulf127_sqr2_lo = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
 (signed word~) mulf8s127::$12 $12 zp ZP_WORD:7 4.0
 (signed word~) mulf8s127::$13 $13 zp ZP_WORD:7 4.0
@@ -5705,16 +5681,11 @@ FINAL SYMBOL TABLE
 (byte) mulf8u127::b#0 reg byte x 4.0
 (byte) mulf8u127::b#1 reg byte x 4.0
 (byte) mulf8u127::b#2 reg byte x 3.0
-(byte*) mulf8u127::memA
-(const byte*) mulf8u127::memA#0 memA = (byte*) 252
-(byte*) mulf8u127::memB
-(const byte*) mulf8u127::memB#0 memB = (byte*) 253
-(word*) mulf8u127::res
-(const word*) mulf8u127::res#0 res = (word*) 254
-(byte*) mulf8u127::resH
-(const byte*) mulf8u127::resH#0 resH = (byte*) 255
-(byte*) mulf8u127::resL
-(const byte*) mulf8u127::resL#0 resL = (byte*) 254
+(const byte*) mulf8u127::memA memA = (byte*) 252
+(const byte*) mulf8u127::memB memB = (byte*) 253
+(const word*) mulf8u127::res res = (word*) 254
+(const byte*) mulf8u127::resH resH = (byte*) 255
+(const byte*) mulf8u127::resL resL = (byte*) 254
 (word) mulf8u127::return
 (word) mulf8u127::return#0 return zp ZP_WORD:2 4.0
 (word) mulf8u127::return#1 return zp ZP_WORD:2 1.5
@@ -5751,8 +5722,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#80 print_char_cursor zp ZP_WORD:7 12.0
 (void()) print_cls()
 (label) print_cls::@return
-(byte[]) print_hextab
-(const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"z
+(const byte[]) print_hextab print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:5 0.5421686746987951
 (byte*) print_line_cursor#32 print_line_cursor zp ZP_WORD:5 24.0
@@ -6351,7 +6321,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [98] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [99] call print_char 
@@ -6365,7 +6335,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [101] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [102] call print_char 
     // [86] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -6558,10 +6528,10 @@ mulf8u127: {
     .label resH = $ff
     .label return = 2
     // *memA = a
-    // [137] *((const byte*) mulf8u127::memA#0) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuaa 
+    // [137] *((const byte*) mulf8u127::memA) ← (byte) mulf8u127::a#2 -- _deref_pbuc1=vbuaa 
     sta memA
     // *memB = b
-    // [138] *((const byte*) mulf8u127::memB#0) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuxx 
+    // [138] *((const byte*) mulf8u127::memB) ← (byte) mulf8u127::b#2 -- _deref_pbuc1=vbuxx 
     stx memB
     // asm
     // asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  }
@@ -6582,7 +6552,7 @@ mulf8u127: {
     sbc mulf127_sqr2_hi,x
     sta resH
     // return *res;
-    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res#0) -- vwuz1=_deref_pwuc1 
+    // [140] (word) mulf8u127::return#1 ← *((const word*) mulf8u127::res) -- vwuz1=_deref_pwuc1 
     lda res
     sta.z return
     lda res+1

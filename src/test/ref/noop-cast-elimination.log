@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (signed word*) main::screen#0 ← ((signed word*)) (number) $400
+  (signed word*) main::screen ← ((signed word*)) (number) $400
   (signed word) main::sw#0 ← (number) $1234
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -17,7 +17,7 @@ main::@1: scope:[main]  from main main::@1
   (signed byte~) main::$0 ← ((signed byte)) (byte) main::i#2
   (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte~) main::$0
   (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1
+  *((signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
@@ -49,7 +49,6 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 (signed word*) main::screen
-(signed word*) main::screen#0
 (signed word) main::sw
 (signed word) main::sw#0
 (signed word) main::sw#1
@@ -57,7 +56,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (snumber) $1234 in (signed word) main::sw#0 ← (number) $1234
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word*) main::screen#0 ← (signed word*)(number) $400
+Inlining cast (signed word*) main::screen ← (signed word*)(number) $400
 Inlining cast (signed word) main::sw#0 ← (snumber)(number) $1234
 Inlining cast (signed byte~) main::$0 ← (signed byte)(byte) main::i#2
 Successful SSA optimization Pass2InlineCast
@@ -68,7 +67,7 @@ Finalized signed number type (signed word) $1234
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$1 [10] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const signed word*) main::screen#0 = (signed word*) 1024
+Constant (const signed word*) main::screen = (signed word*) 1024
 Constant (const signed word) main::sw#0 = $1234
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -131,7 +130,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
   [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2
   [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1
-  [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1
+  [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -146,7 +145,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 8.25
-(signed word*) main::screen
 (signed word) main::sw
 (signed word) main::sw#1 6.6000000000000005
 (signed word) main::sw#2 22.0
@@ -231,7 +229,7 @@ main: {
     lda.z i
     asl
     sta.z _2
-    // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuz1=vwsz2 
+    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuz1=vwsz2 
     ldy.z _2
     lda.z sw
     sta screen,y
@@ -255,10 +253,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::sw#1 main::$2 ] ( main:2 [ main::i#2 main::sw#1 main::$2 ] ) always clobbers reg byte a 
-Statement [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
+Statement [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
 Statement [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::sw#1 main::$2 ] ( main:2 [ main::i#2 main::sw#1 main::$2 ] ) always clobbers reg byte a 
-Statement [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
+Statement [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:3 [ main::sw#2 main::sw#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ main::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
@@ -334,7 +332,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
+    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
     lda.z sw
     sta screen,y
@@ -389,8 +387,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 8.25
-(signed word*) main::screen
-(const signed word*) main::screen#0 screen = (signed word*) 1024
+(const signed word*) main::screen screen = (signed word*) 1024
 (signed word) main::sw
 (signed word) main::sw#1 sw zp ZP_WORD:2 6.6000000000000005
 (signed word) main::sw#2 sw zp ZP_WORD:2 22.0
@@ -454,7 +451,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [8] *((const signed word*) main::screen#0 + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
+    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
     lda.z sw
     sta screen,y

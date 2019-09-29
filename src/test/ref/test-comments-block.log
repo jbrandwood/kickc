@@ -5,7 +5,7 @@ Culled Empty Block (label) sum::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) a#0 ← (byte) 'a'
   to:@2
 
@@ -27,7 +27,7 @@ main::@3: scope:[main]  from main::@1
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
   (byte~) main::$0 ← (byte) sum::return#3
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  *((byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$a)
@@ -63,7 +63,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte) a
 (byte) a#0
 (void()) main()
@@ -102,7 +101,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -120,7 +119,7 @@ Identical Phi Values (byte) sum::b#1 (byte) sum::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [15] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) a#0 = 'a'
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::b#0 = 0
@@ -188,7 +187,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte~) main::$0 ← (byte) sum::return#0
-  [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
   [12] (byte) main::b#1 ← ++ (byte) main::b#2
   [13] if((byte) main::b#1!=(byte) $b) goto main::@1
@@ -207,7 +206,6 @@ sum::@return: scope:[sum]  from sum
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (byte) a
 (void()) main()
 (byte~) main::$0 22.0
@@ -315,7 +313,7 @@ main: {
     // [9] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
     lda.z sum.return
     sta.z _0
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     // Output the result on the screen
     lda.z _0
     ldy.z i
@@ -433,7 +431,7 @@ main: {
     // main::@2
   b2:
     // [9] (byte~) main::$0 ← (byte) sum::return#0
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
     // Output the result on the screen
     sta SCREEN,y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
@@ -501,8 +499,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (byte) a
 (const byte) a#0 a = (byte) 'a'
 (void()) main()
@@ -580,7 +577,7 @@ main: {
     // main::@2
     // [9] (byte~) main::$0 ← (byte) sum::return#0
     // SCREEN[i++] = sum(a, b)
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
     // Output the result on the screen
     sta SCREEN,y
     // SCREEN[i++] = sum(a, b);

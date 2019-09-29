@@ -3,24 +3,24 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @3
-  *((byte*) SCREEN#0) ← (byte) 'x'
+  *((byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
-  (void()**) HARDWARE_IRQ#0 ← ((void()**)) (number) $fffe
+  (void()**) HARDWARE_IRQ ← ((void()**)) (number) $fffe
   to:@3
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
   (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
-  *((void()**) HARDWARE_IRQ#0) ← (void()*~) irq1::$0
+  *((void()**) HARDWARE_IRQ) ← (void()*~) irq1::$0
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   return 
@@ -29,7 +29,7 @@ irq1::@return: scope:[irq1]  from irq1
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
   (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
-  *((void()**) HARDWARE_IRQ#0) ← (void()*~) irq2::$0
+  *((void()**) HARDWARE_IRQ) ← (void()*~) irq2::$0
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   return 
@@ -48,9 +48,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()**) HARDWARE_IRQ
-(void()**) HARDWARE_IRQ#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 interrupt(KERNEL_MIN)(void()) irq1()
 (void()*~) irq1::$0
 (label) irq1::@return
@@ -60,8 +58,8 @@ interrupt(KERNEL_MIN)(void()) irq2()
 (void()) main()
 (label) main::@return
 
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (void()**) HARDWARE_IRQ#0 ← (void()**)(number) $fffe
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (void()**) HARDWARE_IRQ ← (void()**)(number) $fffe
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (void()**) 65534
@@ -69,8 +67,8 @@ Successful SSA optimization PassNCastSimplification
 Constant right-side identified [4] (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
 Constant right-side identified [7] (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const void()**) HARDWARE_IRQ#0 = (void()**) 65534
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const void()**) HARDWARE_IRQ = (void()**) 65534
 Constant (const void()*) irq1::$0 = &irq2
 Constant (const void()*) irq2::$0 = &irq1
 Successful SSA optimization Pass2ConstantIdentification
@@ -107,7 +105,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← (byte) 'x'
+  [4] *((const byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -115,7 +113,7 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
-  [6] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq1()
+  [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   [7] return 
@@ -123,7 +121,7 @@ irq2::@return: scope:[irq2]  from irq2
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
-  [8] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq2()
+  [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   [9] return 
@@ -131,8 +129,6 @@ irq1::@return: scope:[irq1]  from irq1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()**) HARDWARE_IRQ
-(byte*) SCREEN
 interrupt(KERNEL_MIN)(void()) irq1()
 interrupt(KERNEL_MIN)(void()) irq2()
 (void()) main()
@@ -167,7 +163,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp breturn
@@ -180,7 +176,7 @@ main: {
 // Unused Interrupt Routine
 irq2: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -195,7 +191,7 @@ irq2: {
 // Unused Interrupt Routine
 irq1: {
     // entry interrupt(KERNEL_MIN)
-    // [8] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -209,9 +205,9 @@ irq1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN#0) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq1() [ ] (  [ ] ) always clobbers reg byte a 
-Statement [8] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq2() [ ] (  [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() [ ] (  [ ] ) always clobbers reg byte a 
+Statement [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() [ ] (  [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -250,7 +246,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp breturn
@@ -263,7 +259,7 @@ main: {
 // Unused Interrupt Routine
 irq2: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -278,7 +274,7 @@ irq2: {
 // Unused Interrupt Routine
 irq1: {
     // entry interrupt(KERNEL_MIN)
-    // [8] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -317,10 +313,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(void()**) HARDWARE_IRQ
-(const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = (void()**) 65534
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const void()**) HARDWARE_IRQ HARDWARE_IRQ = (void()**) 65534
+(const byte*) SCREEN SCREEN = (byte*) 1024
 interrupt(KERNEL_MIN)(void()) irq1()
 (label) irq1::@return
 interrupt(KERNEL_MIN)(void()) irq2()
@@ -351,7 +345,7 @@ Score: 42
   // main
 main: {
     // *SCREEN = 'x'
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // main::@return
@@ -364,7 +358,7 @@ main: {
 irq2: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq1
-    // [6] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -379,7 +373,7 @@ irq2: {
 irq1: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq2
-    // [8] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2

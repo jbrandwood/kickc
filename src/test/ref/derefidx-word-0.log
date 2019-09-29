@@ -9,7 +9,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen ← ((byte*)) (number) $400
   (word) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -19,7 +19,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (word) main::i#3 ← phi( main::@1/(word) main::i#2 )
-  *((byte*) main::screen#0 + (word) main::i#3) ← (byte) 'a'
+  *((byte*) main::screen + (word) main::i#3) ← (byte) 'a'
   (word) main::i#1 ← (word) main::i#3 + (number) $28
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -48,13 +48,12 @@ SYMBOL TABLE SSA
 (word) main::i#2
 (word) main::i#3
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) 0 in (word) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) $3e8 in (bool~) main::$0 ← (word) main::i#2 < (number) $3e8
 Adding number conversion cast (unumber) $28 in (word) main::i#1 ← (word) main::i#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (word) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -70,10 +69,10 @@ Alias (word) main::i#2 = (word) main::i#3
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [4] if((word) main::i#2<(word) $3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [6] *((const byte*) main::screen#0 + (word) main::i#2) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [6] *((const byte*) main::screen + (word) main::i#2) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const word) main::i#0
 Constant inlined main::i#0 = (byte) 0
@@ -118,7 +117,7 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2
+  [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2
   [9] *((byte*~) main::$1) ← (byte) 'a'
   [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28
   to:main::@1
@@ -130,7 +129,6 @@ VARIABLE REGISTER WEIGHTS
 (word) main::i
 (word) main::i#1 22.0
 (word) main::i#2 11.0
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -197,7 +195,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen
@@ -226,7 +224,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((word) main::i#2<(word) $3e8) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
+Statement [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Statement [9] *((byte*~) main::$1) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::i#2 main::i#1 ] : zp ZP_WORD:2 , 
@@ -294,7 +292,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen
@@ -357,8 +355,7 @@ FINAL SYMBOL TABLE
 (word) main::i
 (word) main::i#1 i zp ZP_WORD:2 22.0
 (word) main::i#2 i zp ZP_WORD:2 11.0
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 zp ZP_WORD:2 [ main::i#2 main::i#1 ]
 zp ZP_WORD:4 [ main::$1 ]
@@ -410,7 +407,7 @@ main: {
     // main::@2
   b2:
     // screen[i] = 'a'
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen#0 + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen

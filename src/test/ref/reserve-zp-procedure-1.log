@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -21,7 +21,7 @@ main::@3: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) sub1::return#3 ← phi( main::@1/(byte) sub1::return#0 )
   (byte~) main::$0 ← (byte) sub1::return#3
-  *((byte*) main::SCREEN#0 + (byte) main::i#3) ← (byte~) main::$0
+  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$0
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,2)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,2)
   if((bool~) main::$1) goto main::@1
@@ -60,7 +60,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -79,7 +78,7 @@ SYMBOL TABLE SSA
 (byte) sub1::return#3
 (byte) sub1::return#4
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -91,7 +90,7 @@ Identical Phi Values (byte) sub1::i#1 (byte) sub1::i#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [11] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
@@ -145,7 +144,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte~) main::$0 ← (byte) sub1::return#0
-  [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
   [12] if((byte) main::i#1!=(byte) 3) goto main::@1
   to:main::@return
@@ -165,7 +164,6 @@ sub1::@return: scope:[sub1]  from sub1
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$0 22.0
-(byte*) main::SCREEN
 (byte) main::i
 (byte) main::i#0 4.0
 (byte) main::i#1 16.5
@@ -247,7 +245,7 @@ main: {
     // [9] (byte~) main::$0 ← (byte) sub1::return#0 -- vbuz1=vbuz2 
     lda.z sub1.return
     sta.z _0
-    // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _0
     ldy.z i
     sta SCREEN,y
@@ -283,7 +281,7 @@ sub1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i#0 ← (byte) 0 [ main::i#0 ] ( main:2 [ main::i#0 ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
+Statement [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
 Statement [12] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
 Statement [14] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 [ sub1::return#1 ] ( main:2::sub1:7 [ main::i#2 sub1::return#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:5 [ main::i#2 main::i#0 main::i#1 ] : zp ZP_BYTE:5 , 
@@ -348,7 +346,7 @@ main: {
     // main::@2
   b2:
     // [9] (byte~) main::$0 ← (byte) sub1::return#0
-    // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
     sta SCREEN,y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -411,8 +409,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#0 i zp ZP_BYTE:5 4.0
 (byte) main::i#1 i zp ZP_BYTE:5 16.5
@@ -469,7 +466,7 @@ main: {
     // main::@2
     // [9] (byte~) main::$0 ← (byte) sub1::return#0
     // SCREEN[i] = sub1(i)
-    // [10] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
     sta SCREEN,y
     // for( volatile byte i : 0..2)

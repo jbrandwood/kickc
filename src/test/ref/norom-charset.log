@@ -13,7 +13,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) VIC_MEMORY#0 ← ((byte*)) (number) $d018
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte*) CHARSET#0 ← ((byte*)) (number) $3000
-  (word[]) charset_spec_row#0 ← { (number) $f7da, (number) $f7de, (number) $f24e, (number) $d6de }
+  (word[]) charset_spec_row ← { (number) $f7da, (number) $f7de, (number) $f24e, (number) $d6de }
   to:@2
 
 (void()) main()
@@ -33,7 +33,7 @@ main::@2: scope:[main]  from main::@1
   (byte) main::c#3 ← phi( main::@1/(byte) main::c#2 )
   (byte~) main::$10 ← (byte) main::c#3 * (const byte) SIZEOF_WORD
   (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-  (word) gen_char3::spec#0 ← *((word[]) charset_spec_row#0 + (byte~) main::$10)
+  (word) gen_char3::spec#0 ← *((word[]) charset_spec_row + (byte~) main::$10)
   call gen_char3 
   to:main::@7
 main::@7: scope:[main]  from main::@2
@@ -137,7 +137,6 @@ SYMBOL TABLE SSA
 (byte*) VIC_MEMORY
 (byte*) VIC_MEMORY#0
 (word[]) charset_spec_row
-(word[]) charset_spec_row#0
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
 (byte~) gen_char3::$0
 (number~) gen_char3::$1
@@ -242,7 +241,7 @@ Adding number conversion cast (unumber) gen_char3::$6 in (number~) gen_char3::$6
 Adding number conversion cast (unumber) 1 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (number) 1
 Adding number conversion cast (unumber) gen_char3::$4 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (word[]) charset_spec_row#0 ← (word[]){ (word)(number) $f7da, (word)(number) $f7de, (word)(number) $f24e, (word)(number) $d6de }
+Added casts to value list in (word[]) charset_spec_row ← (word[]){ (word)(number) $f7da, (word)(number) $f7de, (word)(number) $f24e, (word)(number) $d6de }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*) VIC_MEMORY#0 ← (byte*)(number) $d018
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
@@ -332,7 +331,7 @@ Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte*) VIC_MEMORY#0 = (byte*) 53272
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte*) CHARSET#0 = (byte*) 12288
-Constant (const word[]) charset_spec_row#0 = { $f7da, $f7de, $f24e, $d6de }
+Constant (const word[]) charset_spec_row = { $f7da, $f7de, $f24e, $d6de }
 Constant (const byte) main::c#0 = 0
 Constant (const byte) gen_char3::r#0 = 0
 Constant (const byte) gen_char3::b#0 = 0
@@ -463,7 +462,7 @@ main::@return: scope:[main]  from main::@3
 main::@2: scope:[main]  from main::@1
   [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1
   [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-  [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10)
+  [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10)
   [12] call gen_char3 
   to:main::@4
 main::@4: scope:[main]  from main::@2
@@ -511,7 +510,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) CHARSET
 (byte*) SCREEN
 (byte*) VIC_MEMORY
-(word[]) charset_spec_row
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
 (byte~) gen_char3::$0 2002.0
 (byte~) gen_char3::$1 2002.0
@@ -647,7 +645,7 @@ main: {
     sta.z gen_char3.dst
     lda.z charset+1
     sta.z gen_char3.dst+1
-    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
+    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
     ldy.z _10
     lda charset_spec_row,y
     sta.z gen_char3.spec
@@ -786,7 +784,7 @@ Statement [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 [ main::c#2 mai
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::c#2 main::c#1 ]
 Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ main::$10 ]
-Statement [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ) always clobbers reg byte a 
+Statement [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ) always clobbers reg byte a 
 Statement [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 [ main::c#2 main::charset#1 ] ( main:2 [ main::c#2 main::charset#1 ] ) always clobbers reg byte a 
 Statement [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 [ gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::b#4 gen_char3::c#2 gen_char3::$0 ] ( main:2::gen_char3:12 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::b#4 gen_char3::c#2 gen_char3::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ gen_char3::r#6 gen_char3::r#1 ]
@@ -797,7 +795,7 @@ Statement [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) ge
 Statement [7] *((const byte*) VIC_MEMORY#0) ← (byte)(word)(const byte*) SCREEN#0/(byte) $40|(word)(const byte*) CHARSET#0/(word) $400 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::charset#2 main::$10 ] ( main:2 [ main::c#2 main::charset#2 main::$10 ] ) always clobbers reg byte a 
 Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ) always clobbers reg byte a 
-Statement [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ) always clobbers reg byte a 
+Statement [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ) always clobbers reg byte a 
 Statement [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 [ main::c#2 main::charset#1 ] ( main:2 [ main::c#2 main::charset#1 ] ) always clobbers reg byte a 
 Statement [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 [ gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::b#4 gen_char3::c#2 gen_char3::$0 ] ( main:2::gen_char3:12 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::b#4 gen_char3::c#2 gen_char3::$0 ] ) always clobbers reg byte a 
 Statement [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 [ gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] ( main:2::gen_char3:12 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] ) always clobbers reg byte a 
@@ -894,7 +892,7 @@ main: {
     asl
     tax
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
+    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
     sta.z gen_char3.spec
     lda charset_spec_row+1,x
@@ -1075,8 +1073,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte*) VIC_MEMORY
 (const byte*) VIC_MEMORY#0 VIC_MEMORY = (byte*) 53272
-(word[]) charset_spec_row
-(const word[]) charset_spec_row#0 charset_spec_row = { (word) $f7da, (word) $f7de, (word) $f24e, (word) $d6de }
+(const word[]) charset_spec_row charset_spec_row = { (word) $f7da, (word) $f7de, (word) $f24e, (word) $d6de }
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
 (byte~) gen_char3::$0 reg byte a 2002.0
 (byte~) gen_char3::$1 reg byte a 2002.0
@@ -1186,7 +1183,7 @@ main: {
     asl
     tax
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row#0 + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
+    // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
     sta.z gen_char3.spec
     lda charset_spec_row+1,x

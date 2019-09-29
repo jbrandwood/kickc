@@ -65,7 +65,7 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
 
 (void()) main()
 main: scope:[main]  from @6
-  (word*) main::screen#0 ← ((word*)) (number) $400
+  (word*) main::screen ← ((word*)) (number) $400
   (byte) main::i#0 ← (number) 0
   (byte) main::a#0 ← (byte) 0
   to:main::@1
@@ -90,7 +90,7 @@ main::@5: scope:[main]  from main::@2
   (word) mul8u::return#4 ← phi( main::@2/(word) mul8u::return#2 )
   (word~) main::$0 ← (word) mul8u::return#4
   (byte~) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-  *((word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0
+  *((word*) main::screen + (byte~) main::$3) ← (word~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,5)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,5)
@@ -149,7 +149,6 @@ SYMBOL TABLE SSA
 (byte) main::i#4
 (byte) main::i#5
 (word*) main::screen
-(word*) main::screen#0
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (bool~) mul8u::$0
 (number~) mul8u::$1
@@ -207,7 +206,7 @@ Adding number conversion cast (unumber) 1 in (word~) mul8u::$6 ← (word) mul8u:
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) mul8u::res#0 ← (unumber)(number) 0
-Inlining cast (word*) main::screen#0 ← (word*)(number) $400
+Inlining cast (word*) main::screen ← (word*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
@@ -256,7 +255,7 @@ Simple Condition (bool~) main::$1 [41] if((byte) main::b#1!=rangelast(0,5)) goto
 Simple Condition (bool~) main::$2 [45] if((byte) main::a#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) mul8u::res#0 = 0
-Constant (const word*) main::screen#0 = (word*) 1024
+Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::b#0 = 0
@@ -359,7 +358,7 @@ main::@2: scope:[main]  from main::@1 main::@4
 main::@4: scope:[main]  from main::@2
   [11] (word~) main::$0 ← (word) mul8u::return#2
   [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1
-  [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0
+  [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0
   [14] (byte) main::i#1 ← ++ (byte) main::i#2
   [15] (byte) main::b#1 ← ++ (byte) main::b#2
   [16] if((byte) main::b#1!=(byte) 6) goto main::@2
@@ -413,7 +412,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i#1 42.599999999999994
 (byte) main::i#2 39.25
 (byte) main::i#4 22.0
-(word*) main::screen
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (byte~) mul8u::$1 2002.0
 (byte) mul8u::a
@@ -559,7 +557,7 @@ main: {
     lda.z i
     asl
     sta.z _3
-    // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
+    // [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy.z _3
     lda.z _0
     sta screen,y
@@ -672,13 +670,13 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ ma
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::i#2 main::i#4 main::i#1 ]
 Statement [11] (word~) main::$0 ← (word) mul8u::return#2 [ main::a#4 main::b#2 main::i#2 main::$0 ] ( main:2 [ main::a#4 main::b#2 main::i#2 main::$0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 [ main::a#4 main::b#2 main::i#2 main::$0 main::$3 ] ( main:2 [ main::a#4 main::b#2 main::i#2 main::$0 main::$3 ] ) always clobbers reg byte a 
-Statement [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 [ main::a#4 main::b#2 main::i#2 ] ( main:2 [ main::a#4 main::b#2 main::i#2 ] ) always clobbers reg byte a 
+Statement [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0 [ main::a#4 main::b#2 main::i#2 ] ( main:2 [ main::a#4 main::b#2 main::i#2 ] ) always clobbers reg byte a 
 Statement [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:9 [ main::a#4 main::b#2 main::i#2 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Statement [10] (word) mul8u::return#2 ← (word) mul8u::res#2 [ main::a#4 main::b#2 main::i#2 mul8u::return#2 ] ( main:2 [ main::a#4 main::b#2 main::i#2 mul8u::return#2 ] ) always clobbers reg byte a 
 Statement [11] (word~) main::$0 ← (word) mul8u::return#2 [ main::a#4 main::b#2 main::i#2 main::$0 ] ( main:2 [ main::a#4 main::b#2 main::i#2 main::$0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 [ main::a#4 main::b#2 main::i#2 main::$0 main::$3 ] ( main:2 [ main::a#4 main::b#2 main::i#2 main::$0 main::$3 ] ) always clobbers reg byte a 
-Statement [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 [ main::a#4 main::b#2 main::i#2 ] ( main:2 [ main::a#4 main::b#2 main::i#2 ] ) always clobbers reg byte a 
+Statement [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0 [ main::a#4 main::b#2 main::i#2 ] ( main:2 [ main::a#4 main::b#2 main::i#2 ] ) always clobbers reg byte a 
 Statement [24] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::mul8u:9 [ main::a#4 main::b#2 main::i#2 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
 Statement [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:9 [ main::a#4 main::b#2 main::i#2 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::a#4 main::a#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
@@ -788,7 +786,7 @@ main: {
     lda.z i
     asl
     tax
-    // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z _0
     sta screen,x
     lda.z _0+1
@@ -959,8 +957,7 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 i zp ZP_BYTE:3 42.599999999999994
 (byte) main::i#2 i zp ZP_BYTE:3 39.25
 (byte) main::i#4 i zp ZP_BYTE:3 22.0
-(word*) main::screen
-(const word*) main::screen#0 screen = (word*) 1024
+(const word*) main::screen screen = (word*) 1024
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (byte~) mul8u::$1 reg byte a 2002.0
 (label) mul8u::@1
@@ -1055,7 +1052,7 @@ main: {
     lda.z i
     asl
     tax
-    // [13] *((const word*) main::screen#0 + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [13] *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z _0
     sta screen,x
     lda.z _0+1

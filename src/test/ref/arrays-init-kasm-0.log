@@ -2,14 +2,14 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[$100]) SINTAB#0 ← kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+  (byte[$100]) SINTAB ← kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB#0 + (number) 0)
+  *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB + (number) 0)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,12 +29,11 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (byte[$100]) SINTAB
-(byte[$100]) SINTAB#0
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB#0 + (number) 0)
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB#0 + (unumber)(number) 0)
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB + (number) 0)
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[$100]) SINTAB + (unumber)(number) 0)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
@@ -45,12 +44,12 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte[$100]) SINTAB#0 = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+Constant (const byte[$100]) SINTAB = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SINTAB#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[$100]) SINTAB#0 + (byte) 0)
-Simplifying expression containing zero SCREEN#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[$100]) SINTAB#0)
+Simplifying expression containing zero SINTAB in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[$100]) SINTAB + (byte) 0)
+Simplifying expression containing zero SCREEN#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[$100]) SINTAB)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -79,7 +78,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB#0)
+  [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB)
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -88,7 +87,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
-(byte[$100]) SINTAB
 (void()) main()
 
 Initial phi equivalence classes
@@ -120,7 +118,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
     lda SINTAB
     sta SCREEN
     jmp breturn
@@ -136,7 +134,7 @@ SINTAB:
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -170,7 +168,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
     lda SINTAB
     sta SCREEN
     jmp breturn
@@ -209,8 +207,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte[$100]) SINTAB
-(const byte[$100]) SINTAB#0 SINTAB = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+(const byte[$100]) SINTAB SINTAB = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
 (void()) main()
 (label) main::@return
@@ -237,7 +234,7 @@ Score: 14
   // main
 main: {
     // SCREEN[0] = SINTAB[0]
-    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) SCREEN#0) ← *((const byte[$100]) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
     lda SINTAB
     sta SCREEN
     // main::@return

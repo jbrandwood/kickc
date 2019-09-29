@@ -10,14 +10,14 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) MESSAGE#0 ← (const string) $0
+  (byte[]) MESSAGE ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::line#0 ← ((byte*)) (number) $400
   (byte*) main::cursor#0 ← (byte*) main::line#0
-  (byte*) main::msg#0 ← (byte[]) MESSAGE#0
+  (byte*) main::msg#0 ← (byte[]) MESSAGE
   to:main::@1
 main::@1: scope:[main]  from main main::@6
   (byte*) main::cursor#5 ← phi( main/(byte*) main::cursor#0 main::@6/(byte*) main::cursor#6 )
@@ -71,7 +71,6 @@ world"pm
 (label) @begin
 (label) @end
 (byte[]) MESSAGE
-(byte[]) MESSAGE#0
 (void()) main()
 (number~) main::$0
 (bool~) main::$1
@@ -133,16 +132,16 @@ Alias (byte*) main::msg#2 = (byte*) main::msg#5
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) MESSAGE#0 = $0
+Constant (const byte[]) MESSAGE = $0
 Constant (const byte*) main::cursor#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::msg#0 = MESSAGE#0
+Constant (const byte*) main::msg#0 = MESSAGE
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::cursor#0
 Inlining constant with var siblings (const byte*) main::msg#0
-Constant inlined $0 = (const byte[]) MESSAGE#0
+Constant inlined $0 = (const byte[]) MESSAGE
 Constant inlined main::cursor#0 = (byte*) 1024
-Constant inlined main::msg#0 = (const byte[]) MESSAGE#0
+Constant inlined main::msg#0 = (const byte[]) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -188,7 +187,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   [5] (byte*) main::cursor#3 ← phi( main/(byte*) 1024 main::@5/(byte*) main::cursor#6 )
   [5] (byte*) main::line#2 ← phi( main/(byte*) 1024 main::@5/(byte*) main::line#5 )
-  [5] (byte*) main::msg#2 ← phi( main/(const byte[]) MESSAGE#0 main::@5/(byte*) main::msg#1 )
+  [5] (byte*) main::msg#2 ← phi( main/(const byte[]) MESSAGE main::@5/(byte*) main::msg#1 )
   [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -215,7 +214,6 @@ main::@3: scope:[main]  from main::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[]) MESSAGE
 (void()) main()
 (byte~) main::$0 22.0
 (byte*) main::cursor
@@ -290,7 +288,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -435,7 +433,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -552,8 +550,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[]) MESSAGE
-(const byte[]) MESSAGE#0 MESSAGE = (string) "hello
+(const byte[]) MESSAGE MESSAGE = (string) "hello
 world"pm
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
@@ -616,7 +613,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE#0 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE

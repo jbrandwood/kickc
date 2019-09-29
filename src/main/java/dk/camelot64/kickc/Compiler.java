@@ -194,6 +194,8 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, false).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
+      new PassNAssertConstantModification(program).execute();
+
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
          getLog().append(program.getGraph().toString(program));
@@ -225,7 +227,6 @@ public class Compiler {
 
       new Pass1ProcedureCallParameters(program).generate();
       new PassNUnwindLValueLists(program).execute();
-
       new Pass1PointifyMemoryVariables(program).execute();
 
       //getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");

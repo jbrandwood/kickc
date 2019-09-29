@@ -8,7 +8,7 @@ Culled Empty Block (label) test::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) ref#0 ← { (number) 3, (number) 4, (number) 3, (number) $12, (number) 9, (number) 1, (number) 4, (number) 2, (number) 4, (number) 5, (number) 1, (number) 0 }
+  (byte[]) ref ← { (number) 3, (number) 4, (number) 3, (number) $12, (number) 9, (number) 1, (number) 4, (number) 2, (number) 4, (number) 5, (number) 1, (number) 0 }
   (byte*) screen1#0 ← ((byte*)) (number) $400
   (byte*~) $0 ← (byte*) screen1#0 + (number) $28
   (byte*) screen2#0 ← (byte*~) $0
@@ -140,8 +140,8 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   (byte) test::i#11 ← phi( main/(byte) test::i#0 main::@1/(byte) test::i#1 main::@10/(byte) test::i#10 main::@2/(byte) test::i#2 main::@3/(byte) test::i#3 main::@4/(byte) test::i#4 main::@5/(byte) test::i#5 main::@6/(byte) test::i#6 main::@7/(byte) test::i#7 main::@8/(byte) test::i#8 main::@9/(byte) test::i#9 )
   (byte) test::a#11 ← phi( main/(byte) test::a#0 main::@1/(byte) test::a#1 main::@10/(byte) test::a#10 main::@2/(byte) test::a#2 main::@3/(byte) test::a#3 main::@4/(byte) test::a#4 main::@5/(byte) test::a#5 main::@6/(byte) test::a#6 main::@7/(byte) test::a#7 main::@8/(byte) test::a#8 main::@9/(byte) test::a#9 )
   *((byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11
-  *((byte*) screen2#1 + (byte) test::i#11) ← *((byte[]) ref#0 + (byte) test::i#11)
-  (bool~) test::$0 ← *((byte[]) ref#0 + (byte) test::i#11) == (byte) test::a#11
+  *((byte*) screen2#1 + (byte) test::i#11) ← *((byte[]) ref + (byte) test::i#11)
+  (bool~) test::$0 ← *((byte[]) ref + (byte) test::i#11) == (byte) test::a#11
   if((bool~) test::$0) goto test::@1
   to:test::@3
 test::@1: scope:[test]  from test
@@ -235,7 +235,6 @@ SYMBOL TABLE SSA
 (byte) main::i#8
 (byte) main::i#9
 (byte[]) ref
-(byte[]) ref#0
 (byte*) screen1
 (byte*) screen1#0
 (byte*) screen2
@@ -303,7 +302,7 @@ Adding number conversion cast (unumber) 6 in (byte) main::a#8 ← (byte) main::a
 Adding number conversion cast (unumber) 1 in (byte) main::a#9 ← (byte) main::a#19 | (number) 1
 Adding number conversion cast (unumber) 1 in (byte) main::a#10 ← (byte) main::a#20 & (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) ref#0 ← (byte[]){ (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
+Added casts to value list in (byte[]) ref ← (byte[]){ (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*) screen1#0 ← (byte*)(number) $400
 Inlining cast (byte*) cols#0 ← (byte*)(number) $d800
@@ -386,11 +385,11 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen2#10 (byte*) screen2#0
 Identical Phi Values (byte*) screen2#1 (byte*) screen2#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) test::$0 [80] if(*((byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1
+Simple Condition (bool~) test::$0 [80] if(*((byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) ref#0 = { 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0 }
+Constant (const byte[]) ref = { 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0 }
 Constant (const byte*) screen1#0 = (byte*) 1024
 Constant (const byte*) cols#0 = (byte*) 55296
 Constant (const byte) GREEN#0 = 5
@@ -712,8 +711,8 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   [27] (byte) test::i#11 ← phi( main/(byte) 0 main::@1/(byte) 1 main::@10/(byte) $a main::@2/(byte) 2 main::@3/(byte) 3 main::@4/(byte) 4 main::@5/(byte) 5 main::@6/(byte) 6 main::@7/(byte) 7 main::@8/(byte) 8 main::@9/(byte) 9 )
   [27] (byte) test::a#11 ← phi( main/(byte) 3 main::@1/(byte) 3+(byte) 1 main::@10/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6|(byte) 1&(byte) 1 main::@2/(byte) 3+(byte) 1-(byte) 1 main::@3/(byte) 3+(byte) 1-(byte) 1*(byte) 6 main::@4/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2 main::@5/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2 main::@6/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2 main::@7/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1 main::@8/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6 main::@9/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6|(byte) 1 )
   [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11
-  [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11)
-  [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1
+  [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11)
+  [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
   to:test::@2
 test::@2: scope:[test]  from test
   [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0
@@ -733,7 +732,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::a
 (byte) main::i
-(byte[]) ref
 (byte*) screen1
 (byte*) screen2
 (void()) test((byte) test::i , (byte) test::a)
@@ -958,11 +956,11 @@ test: {
     lda.z a
     ldy.z i
     sta screen1,y
-    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda ref,y
     sta screen2,y
-    // [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuz1_eq_vbuz2_then_la1 
+    // [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuz1_eq_vbuz2_then_la1 
     ldy.z i
     lda ref,y
     cmp.z a
@@ -991,15 +989,15 @@ test: {
   ref: .byte 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11) [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
+Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ test::a#11 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ test::i#11 ]
-Statement [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
+Statement [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
 Statement [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
 Statement [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
 Statement [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
-Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11) [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
-Statement [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
+Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
+Statement [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
 Statement [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
 Statement [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ test::a#11 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
@@ -1209,10 +1207,10 @@ test: {
     // [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z a
     sta screen1,x
-    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda ref,x
     sta screen2,x
-    // [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuxx_eq_vbuz1_then_la1 
+    // [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuxx_eq_vbuz1_then_la1 
     lda ref,x
     cmp.z a
     beq b1
@@ -1327,8 +1325,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte) main::a
 (byte) main::i
-(byte[]) ref
-(const byte[]) ref#0 ref = { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
+(const byte[]) ref ref = { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
 (byte*) screen1
 (const byte*) screen1#0 screen1 = (byte*) 1024
 (byte*) screen2
@@ -1503,11 +1500,11 @@ test: {
     lda.z a
     sta screen1,x
     // screen2[i] = ref[i]
-    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref#0 + (byte) test::i#11) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda ref,x
     sta screen2,x
     // if(ref[i]==a)
-    // [30] if(*((const byte[]) ref#0 + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuxx_eq_vbuz1_then_la1 
+    // [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 -- pbuc1_derefidx_vbuxx_eq_vbuz1_then_la1 
     lda ref,x
     cmp.z a
     beq b1

@@ -21,25 +21,25 @@ Culled Empty Block (label) main::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
-  (byte*) CIA1_PORT_A#0 ← ((byte*)) (number) $dc00
-  (byte*) CIA1_PORT_B#0 ← ((byte*)) (number) $dc01
-  (byte*) CIA1_PORT_A_DDR#0 ← ((byte*)) (number) $dc02
-  (byte*) CIA1_PORT_B_DDR#0 ← ((byte*)) (number) $dc03
-  (byte) GREEN#0 ← (number) 5
-  (byte) BLUE#0 ← (number) 6
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) BGCOL ← ((byte*)) (number) $d021
+  (byte*) CIA1_PORT_A ← ((byte*)) (number) $dc00
+  (byte*) CIA1_PORT_B ← ((byte*)) (number) $dc01
+  (byte*) CIA1_PORT_A_DDR ← ((byte*)) (number) $dc02
+  (byte*) CIA1_PORT_B_DDR ← ((byte*)) (number) $dc03
+  (byte) GREEN ← (number) 5
+  (byte) BLUE ← (number) 6
   to:@4
 @4: scope:[]  from @begin
-  (byte) KEY_SPACE#0 ← (number) $3c
-  (byte[8]) keyboard_matrix_row_bitmask#0 ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
-  (byte[8]) keyboard_matrix_col_bitmask#0 ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
+  (byte) KEY_SPACE ← (number) $3c
+  (byte[8]) keyboard_matrix_row_bitmask ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
+  (byte[8]) keyboard_matrix_col_bitmask ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@12
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main
-  *((byte*) CIA1_PORT_A_DDR#0) ← (number) $ff
-  *((byte*) CIA1_PORT_B_DDR#0) ← (number) 0
+  *((byte*) CIA1_PORT_A_DDR) ← (number) $ff
+  *((byte*) CIA1_PORT_B_DDR) ← (number) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
@@ -48,8 +48,8 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B#0)
+  *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -74,7 +74,7 @@ keyboard_key_pressed::@2: scope:[keyboard_key_pressed]  from keyboard_key_presse
   (byte) keyboard_key_pressed::colidx#1 ← phi( keyboard_key_pressed/(byte) keyboard_key_pressed::colidx#0 )
   (byte) keyboard_matrix_read::return#4 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::return#2 )
   (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#4
-  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#1)
+  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
   (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$3
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@2
@@ -93,11 +93,11 @@ main::@1: scope:[main]  from main::@13 main::@6 main::@8
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@1 main::@4
-  (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $ff
+  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte) keyboard_key_pressed::key#0 ← (byte) KEY_SPACE#0
+  (byte) keyboard_key_pressed::key#0 ← (byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:main::@14
@@ -108,10 +108,10 @@ main::@14: scope:[main]  from main::@5
   if((bool~) main::$3) goto main::@8
   to:main::@6
 main::@8: scope:[main]  from main::@14
-  *((byte*) BGCOL#0) ← (byte) GREEN#0
+  *((byte*) BGCOL) ← (byte) GREEN
   to:main::@1
 main::@6: scope:[main]  from main::@14
-  *((byte*) BGCOL#0) ← (byte) BLUE#0
+  *((byte*) BGCOL) ← (byte) BLUE
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -130,23 +130,14 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte) BLUE
-(byte) BLUE#0
 (byte*) CIA1_PORT_A
-(byte*) CIA1_PORT_A#0
 (byte*) CIA1_PORT_A_DDR
-(byte*) CIA1_PORT_A_DDR#0
 (byte*) CIA1_PORT_B
-(byte*) CIA1_PORT_B#0
 (byte*) CIA1_PORT_B_DDR
-(byte*) CIA1_PORT_B_DDR#0
 (byte) GREEN
-(byte) GREEN#0
 (byte) KEY_SPACE
-(byte) KEY_SPACE#0
 (byte*) RASTER
-(byte*) RASTER#0
 (void()) keyboard_init()
 (label) keyboard_init::@return
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
@@ -171,7 +162,6 @@ SYMBOL TABLE SSA
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0
 (byte[8]) keyboard_matrix_col_bitmask
-(byte[8]) keyboard_matrix_col_bitmask#0
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte~) keyboard_matrix_read::$0
 (label) keyboard_matrix_read::@return
@@ -187,7 +177,6 @@ SYMBOL TABLE SSA
 (byte) keyboard_matrix_read::rowid#0
 (byte) keyboard_matrix_read::rowid#1
 (byte[8]) keyboard_matrix_row_bitmask
-(byte[8]) keyboard_matrix_row_bitmask#0
 (void()) main()
 (bool~) main::$1
 (byte~) main::$2
@@ -201,31 +190,31 @@ SYMBOL TABLE SSA
 (label) main::@8
 (label) main::@return
 
-Adding number conversion cast (unumber) 5 in (byte) GREEN#0 ← (number) 5
-Adding number conversion cast (unumber) 6 in (byte) BLUE#0 ← (number) 6
-Adding number conversion cast (unumber) $3c in (byte) KEY_SPACE#0 ← (number) $3c
-Adding number conversion cast (unumber) $ff in *((byte*) CIA1_PORT_A_DDR#0) ← (number) $ff
-Adding number conversion cast (unumber) 0 in *((byte*) CIA1_PORT_B_DDR#0) ← (number) 0
+Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
+Adding number conversion cast (unumber) 6 in (byte) BLUE ← (number) 6
+Adding number conversion cast (unumber) $3c in (byte) KEY_SPACE ← (number) $3c
+Adding number conversion cast (unumber) $ff in *((byte*) CIA1_PORT_A_DDR) ← (number) $ff
+Adding number conversion cast (unumber) 0 in *((byte*) CIA1_PORT_B_DDR) ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (number) 3
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (byte~) main::$2 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask#0 ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
-Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask#0 ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
+Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
+Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_PORT_A#0 ← (byte*)(number) $dc00
-Inlining cast (byte*) CIA1_PORT_B#0 ← (byte*)(number) $dc01
-Inlining cast (byte*) CIA1_PORT_A_DDR#0 ← (byte*)(number) $dc02
-Inlining cast (byte*) CIA1_PORT_B_DDR#0 ← (byte*)(number) $dc03
-Inlining cast (byte) GREEN#0 ← (unumber)(number) 5
-Inlining cast (byte) BLUE#0 ← (unumber)(number) 6
-Inlining cast (byte) KEY_SPACE#0 ← (unumber)(number) $3c
-Inlining cast *((byte*) CIA1_PORT_A_DDR#0) ← (unumber)(number) $ff
-Inlining cast *((byte*) CIA1_PORT_B_DDR#0) ← (unumber)(number) 0
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
+Inlining cast (byte*) CIA1_PORT_A ← (byte*)(number) $dc00
+Inlining cast (byte*) CIA1_PORT_B ← (byte*)(number) $dc01
+Inlining cast (byte*) CIA1_PORT_A_DDR ← (byte*)(number) $dc02
+Inlining cast (byte*) CIA1_PORT_B_DDR ← (byte*)(number) $dc03
+Inlining cast (byte) GREEN ← (unumber)(number) 5
+Inlining cast (byte) BLUE ← (unumber)(number) 6
+Inlining cast (byte) KEY_SPACE ← (unumber)(number) $3c
+Inlining cast *((byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
+Inlining cast *((byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53281
@@ -280,25 +269,25 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::rowid#0
 Identical Phi Values (byte) keyboard_key_pressed::key#1 (byte) keyboard_key_pressed::key#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [40] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) main::$1 [40] if(*((byte*) RASTER)!=(byte) $ff) goto main::@4
 Simple Condition (bool~) main::$3 [47] if((byte~) main::$2!=(byte) 0) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) BGCOL#0 = (byte*) 53281
-Constant (const byte*) CIA1_PORT_A#0 = (byte*) 56320
-Constant (const byte*) CIA1_PORT_B#0 = (byte*) 56321
-Constant (const byte*) CIA1_PORT_A_DDR#0 = (byte*) 56322
-Constant (const byte*) CIA1_PORT_B_DDR#0 = (byte*) 56323
-Constant (const byte) GREEN#0 = 5
-Constant (const byte) BLUE#0 = 6
-Constant (const byte) KEY_SPACE#0 = $3c
-Constant (const byte[8]) keyboard_matrix_row_bitmask#0 = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
-Constant (const byte[8]) keyboard_matrix_col_bitmask#0 = { 1, 2, 4, 8, $10, $20, $40, $80 }
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) BGCOL = (byte*) 53281
+Constant (const byte*) CIA1_PORT_A = (byte*) 56320
+Constant (const byte*) CIA1_PORT_B = (byte*) 56321
+Constant (const byte*) CIA1_PORT_A_DDR = (byte*) 56322
+Constant (const byte*) CIA1_PORT_B_DDR = (byte*) 56323
+Constant (const byte) GREEN = 5
+Constant (const byte) BLUE = 6
+Constant (const byte) KEY_SPACE = $3c
+Constant (const byte[8]) keyboard_matrix_row_bitmask = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
+Constant (const byte[8]) keyboard_matrix_col_bitmask = { 1, 2, 4, 8, $10, $20, $40, $80 }
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) keyboard_key_pressed::key#0 = KEY_SPACE#0
+Constant (const byte) keyboard_key_pressed::key#0 = KEY_SPACE
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [38] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
@@ -312,11 +301,11 @@ Constant (const byte) keyboard_key_pressed::rowidx#0 = keyboard_key_pressed::key
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined keyboard_key_pressed::key#0 = (const byte) KEY_SPACE#0
+Constant inlined keyboard_key_pressed::key#0 = (const byte) KEY_SPACE
 Constant inlined keyboard_matrix_read::rowid#0 = (const byte) keyboard_key_pressed::rowidx#0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(keyboard_matrix_row_bitmask#0+keyboard_key_pressed::rowidx#0)
-Consolidated array index constant in *(keyboard_matrix_col_bitmask#0+keyboard_key_pressed::colidx#0)
+Consolidated array index constant in *(keyboard_matrix_row_bitmask+keyboard_key_pressed::rowidx#0)
+Consolidated array index constant in *(keyboard_matrix_col_bitmask+keyboard_key_pressed::colidx#0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
@@ -370,7 +359,7 @@ main: scope:[main]  from @1
   [5] call keyboard_init 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3 main::@4
-  [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1
+  [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [7] phi()
@@ -382,10 +371,10 @@ main::@5: scope:[main]  from main::@2
   [11] if((byte~) main::$2!=(byte) 0) goto main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@5
-  [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0
+  [12] *((const byte*) BGCOL) ← (const byte) BLUE
   to:main::@1
 main::@4: scope:[main]  from main::@5
-  [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0
+  [13] *((const byte*) BGCOL) ← (const byte) GREEN
   to:main::@1
 
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
@@ -396,7 +385,7 @@ keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@2
   to:keyboard_key_pressed::@1
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
   [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0)
+  [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0)
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [19] return 
@@ -404,8 +393,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0)
-  [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0)
+  [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0)
+  [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [22] return 
@@ -413,8 +402,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main
-  [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff
-  [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0
+  [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff
+  [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   [25] return 
@@ -422,15 +411,6 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte) BLUE
-(byte*) CIA1_PORT_A
-(byte*) CIA1_PORT_A_DDR
-(byte*) CIA1_PORT_B
-(byte*) CIA1_PORT_B_DDR
-(byte) GREEN
-(byte) KEY_SPACE
-(byte*) RASTER
 (void()) keyboard_init()
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (byte~) keyboard_key_pressed::$2 4.0
@@ -440,14 +420,12 @@ VARIABLE REGISTER WEIGHTS
 (byte) keyboard_key_pressed::return#0 4.333333333333333
 (byte) keyboard_key_pressed::return#2 22.0
 (byte) keyboard_key_pressed::rowidx
-(byte[8]) keyboard_matrix_col_bitmask
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte) keyboard_matrix_read::return
 (byte) keyboard_matrix_read::return#0 1.3333333333333333
 (byte) keyboard_matrix_read::return#2 4.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte[8]) keyboard_matrix_row_bitmask
 (void()) main()
 (byte~) main::$2 22.0
 
@@ -518,7 +496,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1
@@ -547,13 +525,13 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b1
     // main::@4
   b4:
-    // [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b1
@@ -580,7 +558,7 @@ keyboard_key_pressed: {
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return_2
     sta.z _2
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
     and.z _2
     sta.z return
@@ -599,10 +577,10 @@ keyboard_key_pressed: {
 keyboard_matrix_read: {
     .label return = 7
     .label return_2 = 4
-    // [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
+    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
@@ -615,11 +593,11 @@ keyboard_matrix_read: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -636,13 +614,13 @@ keyboard_init: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] ) always clobbers reg byte a 
-Statement [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Statement [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
-Statement [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BGCOL) ← (const byte) BLUE [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) BGCOL) ← (const byte) GREEN [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] ) always clobbers reg byte a 
+Statement [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
+Statement [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
+Statement [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ keyboard_key_pressed::return#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ keyboard_matrix_read::return#2 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -707,7 +685,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1
@@ -731,13 +709,13 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b1
     // main::@4
   b4:
-    // [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b1
@@ -757,7 +735,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
   b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
     jmp breturn
     // keyboard_key_pressed::@return
@@ -772,10 +750,10 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp breturn
@@ -787,11 +765,11 @@ keyboard_matrix_read: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -845,24 +823,15 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53281
-(byte) BLUE
-(const byte) BLUE#0 BLUE = (byte) 6
-(byte*) CIA1_PORT_A
-(const byte*) CIA1_PORT_A#0 CIA1_PORT_A = (byte*) 56320
-(byte*) CIA1_PORT_A_DDR
-(const byte*) CIA1_PORT_A_DDR#0 CIA1_PORT_A_DDR = (byte*) 56322
-(byte*) CIA1_PORT_B
-(const byte*) CIA1_PORT_B#0 CIA1_PORT_B = (byte*) 56321
-(byte*) CIA1_PORT_B_DDR
-(const byte*) CIA1_PORT_B_DDR#0 CIA1_PORT_B_DDR = (byte*) 56323
-(byte) GREEN
-(const byte) GREEN#0 GREEN = (byte) 5
-(byte) KEY_SPACE
-(const byte) KEY_SPACE#0 KEY_SPACE = (byte) $3c
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
+(const byte*) BGCOL BGCOL = (byte*) 53281
+(const byte) BLUE BLUE = (byte) 6
+(const byte*) CIA1_PORT_A CIA1_PORT_A = (byte*) 56320
+(const byte*) CIA1_PORT_A_DDR CIA1_PORT_A_DDR = (byte*) 56322
+(const byte*) CIA1_PORT_B CIA1_PORT_B = (byte*) 56321
+(const byte*) CIA1_PORT_B_DDR CIA1_PORT_B_DDR = (byte*) 56323
+(const byte) GREEN GREEN = (byte) 5
+(const byte) KEY_SPACE KEY_SPACE = (byte) $3c
+(const byte*) RASTER RASTER = (byte*) 53266
 (void()) keyboard_init()
 (label) keyboard_init::@return
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
@@ -870,15 +839,14 @@ FINAL SYMBOL TABLE
 (label) keyboard_key_pressed::@1
 (label) keyboard_key_pressed::@return
 (byte) keyboard_key_pressed::colidx
-(const byte) keyboard_key_pressed::colidx#0 colidx = (const byte) KEY_SPACE#0&(byte) 7
+(const byte) keyboard_key_pressed::colidx#0 colidx = (const byte) KEY_SPACE&(byte) 7
 (byte) keyboard_key_pressed::key
 (byte) keyboard_key_pressed::return
 (byte) keyboard_key_pressed::return#0 reg byte a 4.333333333333333
 (byte) keyboard_key_pressed::return#2 reg byte a 22.0
 (byte) keyboard_key_pressed::rowidx
-(const byte) keyboard_key_pressed::rowidx#0 rowidx = (const byte) KEY_SPACE#0>>(byte) 3
-(byte[8]) keyboard_matrix_col_bitmask
-(const byte[8]) keyboard_matrix_col_bitmask#0 keyboard_matrix_col_bitmask = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte) keyboard_key_pressed::rowidx#0 rowidx = (const byte) KEY_SPACE>>(byte) 3
+(const byte[8]) keyboard_matrix_col_bitmask keyboard_matrix_col_bitmask = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
 (byte) keyboard_matrix_read::return
@@ -886,8 +854,7 @@ FINAL SYMBOL TABLE
 (byte) keyboard_matrix_read::return#2 reg byte a 4.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte[8]) keyboard_matrix_row_bitmask
-(const byte[8]) keyboard_matrix_row_bitmask#0 keyboard_matrix_row_bitmask = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
+(const byte[8]) keyboard_matrix_row_bitmask keyboard_matrix_row_bitmask = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
@@ -942,7 +909,7 @@ main: {
     // main::@1
   b1:
     // while (*RASTER!=$ff)
-    // [6] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1
@@ -962,14 +929,14 @@ main: {
     bne b4
     // main::@3
     // *BGCOL = BLUE
-    // [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b1
     // main::@4
   b4:
     // *BGCOL = GREEN
-    // [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b1
@@ -989,7 +956,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
     // keyboard_key_pressed::@return
     // }
@@ -1004,11 +971,11 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B
-    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+    // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
@@ -1020,12 +987,12 @@ keyboard_matrix_read: {
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
     // *CIA1_PORT_A_DDR = $ff
-    // [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
     // *CIA1_PORT_B_DDR = $00
-    // [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR

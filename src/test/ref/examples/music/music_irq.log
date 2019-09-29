@@ -7,33 +7,33 @@ Culled Empty Block (label) @5
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL#0 ← ((byte*)) (number) $d020
-  (byte*) VIC_CONTROL#0 ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS#0 ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE#0 ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER#0 ← (number) 1
-  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR#0 ← (number) $7f
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (number) $314
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) BORDERCOL ← ((byte*)) (number) $d020
+  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
+  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
+  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
+  (byte) IRQ_RASTER ← (number) 1
+  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
+  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
+  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
   to:@4
 @4: scope:[]  from @begin
-  (byte*) MUSIC#0 ← ((byte*)) (number) $1000
+  (byte*) MUSIC ← ((byte*)) (number) $1000
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (byte*) MUSIC#0) {{ .fill music.size, music.getData(i)
+  kickasm(location (byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@6
 
 (void()) main()
 main: scope:[main]  from @6
   asm { sei jsrmusic.init  }
-  *((byte*) CIA1_INTERRUPT#0) ← (byte) CIA_INTERRUPT_CLEAR#0
-  *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) & (number) $7f
-  *((byte*) RASTER#0) ← (number) $fd
-  *((byte*) IRQ_ENABLE#0) ← (byte) IRQ_RASTER#0
+  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
+  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
+  *((byte*) RASTER) ← (number) $fd
+  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
-  *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
+  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -42,10 +42,10 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 irq_play: scope:[irq_play]  from
-  *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
+  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
-  *((byte*) BORDERCOL#0) ← -- *((byte*) BORDERCOL#0)
+  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
   to:irq_play::@return
 irq_play::@return: scope:[irq_play]  from irq_play
   return 
@@ -64,47 +64,37 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
-(byte*) BORDERCOL#0
 (byte*) CIA1_INTERRUPT
-(byte*) CIA1_INTERRUPT#0
 (byte) CIA_INTERRUPT_CLEAR
-(byte) CIA_INTERRUPT_CLEAR#0
 (byte*) IRQ_ENABLE
-(byte*) IRQ_ENABLE#0
 (byte) IRQ_RASTER
-(byte) IRQ_RASTER#0
 (byte*) IRQ_STATUS
-(byte*) IRQ_STATUS#0
 (void()**) KERNEL_IRQ
-(void()**) KERNEL_IRQ#0
 (byte*) MUSIC
-(byte*) MUSIC#0
 (byte*) RASTER
-(byte*) RASTER#0
 (byte*) VIC_CONTROL
-(byte*) VIC_CONTROL#0
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 (label) irq_play::@return
 (void()) main()
 (void()*~) main::$0
 (label) main::@return
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER#0 ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR#0 ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) & (number) $7f
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER#0) ← (number) $fd
+Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
+Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
+Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) VIC_CONTROL#0 ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS#0 ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE#0 ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER#0 ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT#0 ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR#0 ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_IRQ#0 ← (void()**)(number) $314
-Inlining cast (byte*) MUSIC#0 ← (byte*)(number) $1000
-Inlining cast *((byte*) RASTER#0) ← (unumber)(number) $fd
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
+Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
+Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
+Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
+Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
+Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
+Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
+Inlining cast (byte*) MUSIC ← (byte*)(number) $1000
+Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -126,16 +116,16 @@ Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [17] (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) VIC_CONTROL#0 = (byte*) 53265
-Constant (const byte*) IRQ_STATUS#0 = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE#0 = (byte*) 53274
-Constant (const byte) IRQ_RASTER#0 = 1
-Constant (const byte*) CIA1_INTERRUPT#0 = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR#0 = $7f
-Constant (const void()**) KERNEL_IRQ#0 = (void()**) 788
-Constant (const byte*) MUSIC#0 = (byte*) 4096
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) BORDERCOL = (byte*) 53280
+Constant (const byte*) VIC_CONTROL = (byte*) 53265
+Constant (const byte*) IRQ_STATUS = (byte*) 53273
+Constant (const byte*) IRQ_ENABLE = (byte*) 53274
+Constant (const byte) IRQ_RASTER = 1
+Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
+Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
+Constant (const void()**) KERNEL_IRQ = (void()**) 788
+Constant (const byte*) MUSIC = (byte*) 4096
 Constant (const void()*) main::$0 = &irq_play
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$0 = &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
@@ -163,7 +153,7 @@ FINAL CONTROL FLOW GRAPH
 @1: scope:[]  from @begin
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)
+  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@2
 @2: scope:[]  from @1
@@ -176,11 +166,11 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @2
   asm { sei jsrmusic.init  }
-  [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0
-  [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f
-  [9] *((const byte*) RASTER#0) ← (byte) $fd
-  [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0
-  [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
+  [7] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  [8] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f
+  [9] *((const byte*) RASTER) ← (byte) $fd
+  [10] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
+  [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -189,10 +179,10 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 irq_play: scope:[irq_play]  from
-  [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0)
+  [14] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
-  [17] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0)
+  [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:irq_play::@return
 irq_play::@return: scope:[irq_play]  from irq_play
   [18] return 
@@ -200,16 +190,6 @@ irq_play::@return: scope:[irq_play]  from irq_play
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BORDERCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) MUSIC
-(byte*) RASTER
-(byte*) VIC_CONTROL
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 (void()) main()
 
@@ -250,7 +230,7 @@ b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
@@ -270,23 +250,23 @@ main: {
     // asm { sei jsrmusic.init  }
     sei
     jsr music.init
-    // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [9] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [10] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
+    // [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_play
     sta KERNEL_IRQ
@@ -304,16 +284,16 @@ main: {
 // Raster IRQ Routine playing music
 irq_play: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play SID
     jsr music.play
-    // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [17] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp breturn
     // irq_play::@return
@@ -328,13 +308,13 @@ irq_play: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { sei jsrmusic.init  } always clobbers reg byte a reg byte x reg byte y 
-Statement [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ ] ( main:4 [ ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) RASTER#0) ← (byte) $fd [ ] ( main:4 [ ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
-Statement [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) RASTER) ← (byte) $fd [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement asm { jsrmusic.play  } always clobbers reg byte a reg byte x reg byte y 
-Statement [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -378,7 +358,7 @@ b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
@@ -398,23 +378,23 @@ main: {
     // asm { sei jsrmusic.init  }
     sei
     jsr music.init
-    // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [9] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [10] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
+    // [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_play
     sta KERNEL_IRQ
@@ -432,16 +412,16 @@ main: {
 // Raster IRQ Routine playing music
 irq_play: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play SID
     jsr music.play
-    // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [17] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp breturn
     // irq_play::@return
@@ -481,26 +461,16 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
-(byte*) CIA1_INTERRUPT
-(const byte*) CIA1_INTERRUPT#0 CIA1_INTERRUPT = (byte*) 56333
-(byte) CIA_INTERRUPT_CLEAR
-(const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte) $7f
-(byte*) IRQ_ENABLE
-(const byte*) IRQ_ENABLE#0 IRQ_ENABLE = (byte*) 53274
-(byte) IRQ_RASTER
-(const byte) IRQ_RASTER#0 IRQ_RASTER = (byte) 1
-(byte*) IRQ_STATUS
-(const byte*) IRQ_STATUS#0 IRQ_STATUS = (byte*) 53273
-(void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
-(byte*) MUSIC
-(const byte*) MUSIC#0 MUSIC = (byte*) 4096
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
-(byte*) VIC_CONTROL
-(const byte*) VIC_CONTROL#0 VIC_CONTROL = (byte*) 53265
+(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) CIA1_INTERRUPT CIA1_INTERRUPT = (byte*) 56333
+(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) IRQ_ENABLE IRQ_ENABLE = (byte*) 53274
+(const byte) IRQ_RASTER IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS IRQ_STATUS = (byte*) 53273
+(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
+(const byte*) MUSIC MUSIC = (byte*) 4096
+(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) VIC_CONTROL VIC_CONTROL = (byte*) 53265
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 (label) irq_play::@return
 (void()) main()
@@ -541,7 +511,7 @@ Score: 2899
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
   // @2
@@ -556,27 +526,27 @@ main: {
     sei
     jsr music.init
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // *VIC_CONTROL &=$7f
-    // [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $fd
-    // [9] *((const byte*) RASTER#0) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [10] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *KERNEL_IRQ = &irq_play
-    // [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
+    // [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_play
     sta KERNEL_IRQ
@@ -595,19 +565,19 @@ main: {
 irq_play: {
     // entry interrupt(KERNEL_KEYBOARD)
     // (*BORDERCOL)++;
-    // [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm
     // asm { jsrmusic.play  }
     // Play SID
     jsr music.play
     // *IRQ_STATUS = IRQ_RASTER
-    // [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // (*BORDERCOL)--;
-    // [17] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     // irq_play::@return
     // }

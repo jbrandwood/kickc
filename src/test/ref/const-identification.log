@@ -11,8 +11,8 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (number) $1000
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) plots ← ((byte*)) (number) $1000
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
@@ -21,8 +21,8 @@ main: scope:[main]  from @3
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (number) 0
+  *((byte*) plots + (byte) main::i#2) ← (byte) main::i#2
+  *((byte*) SCREEN + (byte) main::i#2) ← (number) 0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$27)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,$27)
   if((bool~) main::$0) goto main::@1
@@ -82,9 +82,9 @@ line::@return: scope:[line]  from line::@11 line::@5
 (void()) plot((byte) plot::x)
 plot: scope:[plot]  from line::@3 line::@6
   (byte) plot::x#2 ← phi( line::@3/(byte) plot::x#0 line::@6/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (number~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (number) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (number~) plot::$0
+  (byte) plot::idx#0 ← *((byte*) plots + (byte) plot::x#2)
+  (number~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx#0) + (number) 1
+  *((byte*) SCREEN + (byte) plot::idx#0) ← (number~) plot::$0
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   return 
@@ -102,7 +102,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) line((byte) line::x0 , (byte) line::x1)
 (bool~) line::$0
 (bool~) line::$2
@@ -151,17 +150,16 @@ SYMBOL TABLE SSA
 (byte) plot::x#1
 (byte) plot::x#2
 (byte*) plots
-(byte*) plots#0
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (byte) main::i#2) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (byte) main::i#2) ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) line::x0#0 ← (number) 0
 Adding number conversion cast (unumber) $a in (byte) line::x1#0 ← (number) $a
-Adding number conversion cast (unumber) 1 in (number~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (number) 1
-Adding number conversion cast (unumber) plot::$0 in (number~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx#0) + (number) 1
+Adding number conversion cast (unumber) plot::$0 in (number~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx#0) + (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) plots#0 ← (byte*)(number) $1000
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast *((byte*) SCREEN#0 + (byte) main::i#2) ← (unumber)(number) 0
+Inlining cast (byte*) plots ← (byte*)(number) $1000
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast *((byte*) SCREEN + (byte) main::i#2) ← (unumber)(number) 0
 Inlining cast (byte) line::x0#0 ← (unumber)(number) 0
 Inlining cast (byte) line::x1#0 ← (unumber)(number) $a
 Successful SSA optimization Pass2InlineCast
@@ -177,7 +175,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1
+Inferred type updated to byte in (unumber~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx#0) + (byte) 1
 Alias (byte) line::x0#1 = (byte) line::x0#2 (byte) line::x#0 (byte) line::x0#3 
 Alias (byte) line::x1#1 = (byte) line::x1#3 
 Alias (byte) line::x#2 = (byte) line::x#3 (byte) line::x#4 
@@ -191,8 +189,8 @@ Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,$27)) got
 Simple Condition (bool~) line::$0 [16] if((byte) line::x0#0<(byte) line::x1#0) goto line::@1
 Simple Condition (bool~) line::$2 [24] if((byte) line::x#2<=(byte) line::x1#0) goto line::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) plots#0 = (byte*) 4096
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) plots = (byte*) 4096
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) line::x0#0 = 0
 Constant (const byte) line::x1#0 = $a
@@ -280,8 +278,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0
+  [6] *((const byte*) plots + (byte) main::i#2) ← (byte) main::i#2
+  [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) $28) goto main::@1
   to:main::@2
@@ -311,9 +309,9 @@ line::@3: scope:[line]  from line::@2
 
 (void()) plot((byte) plot::x)
 plot: scope:[plot]  from line::@2
-  [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1)
-  [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1
-  [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$0
+  [19] (byte) plot::idx#0 ← *((const byte*) plots + (byte) plot::x#1)
+  [20] (byte~) plot::$0 ← *((const byte*) SCREEN + (byte) plot::idx#0) + (byte) 1
+  [21] *((const byte*) SCREEN + (byte) plot::idx#0) ← (byte~) plot::$0
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   [22] return 
@@ -321,7 +319,6 @@ plot::@return: scope:[plot]  from plot
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) line((byte) line::x0 , (byte) line::x1)
 (byte) line::x
 (byte) line::x#1 202.0
@@ -338,7 +335,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) plot::idx#0 3.0
 (byte) plot::x
 (byte) plot::x#1 103.0
-(byte*) plots
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -399,11 +395,11 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte*) plots + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta plots,y
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z i
     sta SCREEN,y
@@ -470,16 +466,16 @@ plot: {
     .label _0 = 6
     .label x = 4
     .label idx = 5
-    // [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [19] (byte) plot::idx#0 ← *((const byte*) plots + (byte) plot::x#1) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z x
     lda plots,y
     sta.z idx
-    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1 -- vbuz1=pbuc1_derefidx_vbuz2_plus_1 
+    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN + (byte) plot::idx#0) + (byte) 1 -- vbuz1=pbuc1_derefidx_vbuz2_plus_1 
     ldx.z idx
     ldy SCREEN,x
     iny
     sty.z _0
-    // [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [21] *((const byte*) SCREEN + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _0
     ldy.z idx
     sta SCREEN,y
@@ -492,10 +488,10 @@ plot: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) plots + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ plot::x#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -553,10 +549,10 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) plots + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta plots,x
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta SCREEN,x
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -613,13 +609,13 @@ line: {
   // plot
 // plot(byte register(Y) x)
 plot: {
-    // [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [19] (byte) plot::idx#0 ← *((const byte*) plots + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx plots,y
-    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
+    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN + (byte) plot::idx#0) + (byte) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
     lda SCREEN,x
     clc
     adc #1
-    // [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [21] *((const byte*) SCREEN + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     jmp breturn
     // plot::@return
@@ -670,8 +666,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) line((byte) line::x0 , (byte) line::x1)
 (label) line::@1
 (label) line::@2
@@ -697,8 +692,7 @@ FINAL SYMBOL TABLE
 (byte) plot::idx#0 reg byte x 3.0
 (byte) plot::x
 (byte) plot::x#1 reg byte y 103.0
-(byte*) plots
-(const byte*) plots#0 plots = (byte*) 4096
+(const byte*) plots plots = (byte*) 4096
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ line::x#2 line::x#1 ]
@@ -735,11 +729,11 @@ main: {
     // main::@1
   b1:
     // plots[i] = i
-    // [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) plots + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta plots,x
     // SCREEN[i] = 0
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta SCREEN,x
     // for(byte i : 0..39)
@@ -792,15 +786,15 @@ line: {
 // plot(byte register(Y) x)
 plot: {
     // idx = plots[x]
-    // [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [19] (byte) plot::idx#0 ← *((const byte*) plots + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx plots,y
     // SCREEN[idx]+1
-    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
+    // [20] (byte~) plot::$0 ← *((const byte*) SCREEN + (byte) plot::idx#0) + (byte) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
     lda SCREEN,x
     clc
     adc #1
     // SCREEN[idx] = SCREEN[idx]+1
-    // [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [21] *((const byte*) SCREEN + (byte) plot::idx#0) ← (byte~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // plot::@return
     // }

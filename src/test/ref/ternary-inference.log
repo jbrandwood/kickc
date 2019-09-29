@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -28,7 +28,7 @@ main::@4: scope:[main]  from main::@2 main::@3
   (byte) main::i#3 ← phi( main::@2/(byte) main::i#4 main::@3/(byte) main::i#5 )
   (number~) main::$3 ← phi( main::@2/(number~) main::$2 main::@3/(byte~) main::$1 )
   (number~) main::$4 ← (number~) main::$3 + (byte) main::i#3
-  *((byte*) main::screen#0 + (byte) main::i#3) ← (number~) main::$4
+  *((byte*) main::screen + (byte) main::i#3) ← (number~) main::$4
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,$a)
   (bool~) main::$5 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$5) goto main::@1
@@ -68,7 +68,6 @@ SYMBOL TABLE SSA
 (byte) main::i#4
 (byte) main::i#5
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 < (number) 5
 Adding number conversion cast (unumber) main::$3 in (byte) main::i#3 ← phi( main::@2/(byte) main::i#4 main::@3/(byte) main::i#5 )
@@ -80,7 +79,7 @@ Adding number conversion cast (unumber) main::$2 in (byte) main::i#3 ← phi( ma
 Successful SSA optimization PassNAddNumberTypeConversions
 Adding number conversion cast (unumber) $57 in (unumber~) main::$2 ← (number) $57
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (unumber~) main::$2 ← (unumber)(number) $57
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -100,7 +99,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) 5) goto main::@2
 Simple Condition (bool~) main::$5 [14] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::$2 = $57
 Constant (const byte) main::$1 = '0'
@@ -167,7 +166,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@1 main::@2
   [8] (byte~) main::$3 ← phi( main::@2/(byte) $57 main::@1/(byte) '0' )
   [9] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#2
-  [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$4
+  [10] *((const byte*) main::screen + (byte) main::i#2) ← (byte~) main::$4
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
   [12] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -183,7 +182,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 9.166666666666666
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -268,7 +266,7 @@ main: {
     clc
     adc.z i
     sta.z _4
-    // [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const byte*) main::screen + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _4
     ldy.z i
     sta screen,y
@@ -363,7 +361,7 @@ main: {
     stx.z $ff
     clc
     adc.z $ff
-    // [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const byte*) main::screen + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -423,8 +421,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 9.166666666666666
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$3 ]
@@ -480,7 +477,7 @@ main: {
     clc
     adc.z $ff
     // screen[i] = (i<5?0x57:'0')+i
-    // [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const byte*) main::screen + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta screen,x
     // for(byte i: 0..10)
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

@@ -7,8 +7,8 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) MESSAGE#0 ← (const string) $0
-  (byte*) memA#0 ← ((byte*)) (number) $ff
+  (byte[]) MESSAGE ← (const string) $0
+  (byte*) memA ← ((byte*)) (number) $ff
   to:@2
 
 (void()) main()
@@ -17,12 +17,12 @@ main: scope:[main]  from @2
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#1 )
-  (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE#0 + (byte) main::i#2)
+  (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE + (byte) main::i#2)
   if((bool~) main::$1) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) chrout::c#0 ← *((byte[]) MESSAGE#0 + (byte) main::i#3)
+  (byte) chrout::c#0 ← *((byte[]) MESSAGE + (byte) main::i#3)
   call chrout 
   to:main::@7
 main::@7: scope:[main]  from main::@2
@@ -36,7 +36,7 @@ main::@return: scope:[main]  from main::@1
 (void()) chrout((byte) chrout::c)
 chrout: scope:[chrout]  from main::@2
   (byte) chrout::c#1 ← phi( main::@2/(byte) chrout::c#0 )
-  *((byte*) memA#0) ← (byte) chrout::c#1
+  *((byte*) memA) ← (byte) chrout::c#1
   asm { ldamemA jsr$ffd2  }
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
@@ -57,7 +57,6 @@ world\"pm
 (label) @begin
 (label) @end
 (byte[]) MESSAGE
-(byte[]) MESSAGE#0
 (void()) chrout((byte) chrout::c)
 (label) chrout::@return
 (byte) chrout::c
@@ -76,12 +75,11 @@ world\"pm
 (byte) main::i#3
 (byte) main::i#4
 (byte*) memA
-(byte*) memA#0
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE#0 + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((byte[]) MESSAGE + (byte) main::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) memA#0 ← (byte*)(number) $ff
+Inlining cast (byte*) memA ← (byte*)(number) $ff
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 255
@@ -95,14 +93,14 @@ Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) chrout::c#1 (byte) chrout::c#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [5] if((byte) 0!=*((byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2
+Simple Condition (bool~) main::$1 [5] if((byte) 0!=*((byte[]) MESSAGE + (byte) main::i#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) MESSAGE#0 = $0
-Constant (const byte*) memA#0 = (byte*) 255
+Constant (const byte[]) MESSAGE = $0
+Constant (const byte*) memA = (byte*) 255
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = (const byte[]) MESSAGE#0
+Constant inlined $0 = (const byte[]) MESSAGE
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -142,13 +140,13 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
-  [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2
+  [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2)
+  [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2)
   [9] call chrout 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -157,7 +155,7 @@ main::@3: scope:[main]  from main::@2
 
 (void()) chrout((byte) chrout::c)
 chrout: scope:[chrout]  from main::@2
-  [11] *((const byte*) memA#0) ← (byte) chrout::c#0
+  [11] *((const byte*) memA) ← (byte) chrout::c#0
   asm { ldamemA jsr$ffd2  }
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
@@ -166,7 +164,6 @@ chrout::@return: scope:[chrout]  from chrout
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[]) MESSAGE
 (void()) chrout((byte) chrout::c)
 (byte) chrout::c
 (byte) chrout::c#0 13.0
@@ -174,7 +171,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 22.0
 (byte) main::i#2 11.0
-(byte*) memA
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -222,7 +218,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
@@ -234,7 +230,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda MESSAGE,y
     sta.z chrout.c
@@ -254,7 +250,7 @@ main: {
 // chrout(byte zeropage(3) c)
 chrout: {
     .label c = 3
-    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) memA) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuz1 
     lda.z c
     sta memA
     // asm { ldamemA jsr$ffd2  }
@@ -272,13 +268,13 @@ chrout: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement asm { ldamemA jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) [ main::i#2 chrout::c#0 ] ( main:2 [ main::i#2 chrout::c#0 ] ) always clobbers reg byte y 
+Statement [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) [ main::i#2 chrout::c#0 ] ( main:2 [ main::i#2 chrout::c#0 ] ) always clobbers reg byte y 
 Statement asm { ldamemA jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ chrout::c#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
@@ -330,7 +326,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
@@ -342,7 +338,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
     // [9] call chrout 
@@ -360,7 +356,7 @@ main: {
   // chrout
 // chrout(byte register(A) c)
 chrout: {
-    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) memA) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
     sta memA
     // asm { ldamemA jsr$ffd2  }
     lda memA
@@ -408,8 +404,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[]) MESSAGE
-(const byte[]) MESSAGE#0 MESSAGE = (string) "hello
+(const byte[]) MESSAGE MESSAGE = (string) "hello
 world\"pm
 (void()) chrout((byte) chrout::c)
 (label) chrout::@return
@@ -423,8 +418,7 @@ world\"pm
 (byte) main::i
 (byte) main::i#1 i zp ZP_BYTE:2 22.0
 (byte) main::i#2 i zp ZP_BYTE:2 11.0
-(byte*) memA
-(const byte*) memA#0 memA = (byte*) 255
+(const byte*) memA memA = (byte*) 255
 
 zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 reg byte a [ chrout::c#0 ]
@@ -458,7 +452,7 @@ main: {
     // main::@1
   b1:
     // while(MESSAGE[i])
-    // [6] if((byte) 0!=*((const byte[]) MESSAGE#0 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
@@ -470,7 +464,7 @@ main: {
     // main::@2
   b2:
     // chrout(MESSAGE[i++])
-    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
     // [9] call chrout 
@@ -487,7 +481,7 @@ main: {
 // chrout(byte register(A) c)
 chrout: {
     // *memA = c
-    // [11] *((const byte*) memA#0) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) memA) ← (byte) chrout::c#0 -- _deref_pbuc1=vbuaa 
     sta memA
     // asm
     // asm { ldamemA jsr$ffd2  }

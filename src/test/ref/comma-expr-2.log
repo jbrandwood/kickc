@@ -5,10 +5,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::c#0 ← (byte) 0
   (byte) main::c#1 ← (number) 1+(number) 3
-  *((byte*) main::SCREEN#0 + (number) 0) ← (byte) main::c#1
+  *((byte*) main::SCREEN + (number) 0) ← (byte) main::c#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,15 +28,14 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::c
 (byte) main::c#0
 (byte) main::c#1
 
 Adding number conversion cast (unumber) 1+3 in (byte) main::c#1 ← (number) 1+(number) 3
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte) main::c#1
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::c#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::c#1 ← (unumber)(number) 1+(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -46,11 +45,11 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [2] (byte) main::c#1 ← (unumber)(number) 1+(number) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::c#0 = 0
 Constant (const byte) main::c#1 = (unumber)1+3
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN#0 in [3] *((const byte*) main::SCREEN#0 + (byte) 0) ← (const byte) main::c#1
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::c#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::c#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -81,7 +80,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0) ← (const byte) main::c#1
+  [4] *((const byte*) main::SCREEN) ← (const byte) main::c#1
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -90,7 +89,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::c
 
 Initial phi equivalence classes
@@ -123,7 +121,7 @@ bend:
 main: {
     .label SCREEN = $400
     .const c = 1+3
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     jmp breturn
@@ -135,7 +133,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0) ← (const byte) main::c#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::c#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -170,7 +168,7 @@ bend:
 main: {
     .label SCREEN = $400
     .const c = 1+3
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     jmp breturn
@@ -205,8 +203,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::c
 (const byte) main::c#1 c = (byte)(number) 1+(number) 3
 
@@ -233,7 +230,7 @@ main: {
     .label SCREEN = $400
     .const c = 1+3
     // SCREEN[1,0] = c
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::c#1 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     // main::@return

@@ -12,21 +12,21 @@ Culled Empty Block (label) init::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SPRITES_XPOS#0 ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS#0 ← ((byte*)) (number) $d001
-  (byte*) SPRITES_XMSB#0 ← ((byte*)) (number) $d010
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) SPRITES_ENABLE#0 ← ((byte*)) (number) $d015
-  (byte*) SPRITES_EXPAND_Y#0 ← ((byte*)) (number) $d017
-  (byte*) SPRITES_EXPAND_X#0 ← ((byte*)) (number) $d01d
-  (byte*) SPRITES_COLS#0 ← ((byte*)) (number) $d027
-  (byte) WHITE#0 ← (number) 1
+  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
+  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
+  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
+  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (number) $d017
+  (byte*) SPRITES_EXPAND_X ← ((byte*)) (number) $d01d
+  (byte*) SPRITES_COLS ← ((byte*)) (number) $d027
+  (byte) WHITE ← (number) 1
   to:@4
 @4: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) SCREEN#0 + (number) $3f8
-  (byte*) SPRITES_PTR#0 ← (byte*~) $0
-  (byte*) SPRITE#0 ← ((byte*)) (number) $2000
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
+  (byte*) SPRITES_PTR ← (byte*~) $0
+  (byte*) SPRITE ← ((byte*)) (number) $2000
   to:@6
 
 (void()) main()
@@ -51,7 +51,7 @@ main::@2: scope:[main]  from main::@2 main::@5 main::@6
   (signed word) ypos#16 ← phi( main::@2/(signed word) ypos#16 main::@5/(signed word) ypos#18 main::@6/(signed word) ypos#0 )
   (signed word) xpos#16 ← phi( main::@2/(signed word) xpos#16 main::@5/(signed word) xpos#18 main::@6/(signed word) xpos#0 )
   (signed word) yvel#15 ← phi( main::@2/(signed word) yvel#15 main::@5/(signed word) yvel#16 main::@6/(signed word) yvel#0 )
-  (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $ff
+  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -91,20 +91,20 @@ main::@return: scope:[main]  from main::@6
 
 (void()) init()
 init: scope:[init]  from main
-  *((byte*) SPRITES_ENABLE#0) ← (number) 1
-  *((byte*) SPRITES_EXPAND_X#0) ← (number) 0
-  *((byte*) SPRITES_EXPAND_Y#0) ← (number) 0
-  *((byte*) SPRITES_XPOS#0 + (number) 0) ← (number) $64
-  *((byte*) SPRITES_YPOS#0 + (number) 0) ← (number) $64
-  *((byte*) SPRITES_COLS#0 + (number) 0) ← (byte) WHITE#0
-  (byte*~) init::$0 ← (byte*) SPRITE#0 / (number) $40
+  *((byte*) SPRITES_ENABLE) ← (number) 1
+  *((byte*) SPRITES_EXPAND_X) ← (number) 0
+  *((byte*) SPRITES_EXPAND_Y) ← (number) 0
+  *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+  *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+  *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
+  (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
   (byte~) init::$1 ← ((byte)) (byte*~) init::$0
-  *((byte*) SPRITES_PTR#0 + (number) 0) ← (byte~) init::$1
-  (byte*) init::sc#0 ← (byte*) SCREEN#0
+  *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
+  (byte*) init::sc#0 ← (byte*) SCREEN
   to:init::@1
 init::@1: scope:[init]  from init init::@2
   (byte*) init::sc#2 ← phi( init/(byte*) init::sc#0 init::@2/(byte*) init::sc#1 )
-  (byte*~) init::$2 ← (byte*) SCREEN#0 + (number) $3e8
+  (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
   (bool~) init::$3 ← (byte*) init::sc#2 != (byte*~) init::$2
   if((bool~) init::$3) goto init::@2
   to:init::@3
@@ -118,7 +118,7 @@ init::@3: scope:[init]  from init::@1
   to:init::@7
 init::@7: scope:[init]  from init::@3 init::@7
   (byte) init::i#2 ← phi( init::@3/(byte) init::i#0 init::@7/(byte) init::i#1 )
-  *((byte*) SPRITE#0 + (byte) init::i#2) ← (number) $ff
+  *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
   (byte) init::i#1 ← (byte) init::i#2 + rangenext(0,$3f)
   (bool~) init::$4 ← (byte) init::i#1 != rangelast(0,$3f)
   if((bool~) init::$4) goto init::@7
@@ -132,7 +132,7 @@ init::@return: scope:[init]  from init::@7
   (signed word) yvel_init#2 ← (number) $64
   (signed word) xvel#2 ← (number) $c8
   (signed word) yvel#2 ← (signed word) yvel_init#2
-  (signed word) g#0 ← (number) -5
+  (signed word) g ← (number) -5
   to:@7
 
 (void()) anim()
@@ -152,7 +152,7 @@ anim::@1: scope:[anim]  from anim anim::@4
   (signed word) xvel#8 ← phi( anim/(signed word) xvel#13 anim::@4/(signed word) xvel#14 )
   (signed word) xpos#9 ← phi( anim/(signed word) xpos#13 anim::@4/(signed word) xpos#14 )
   (signed word) yvel#9 ← phi( anim/(signed word) yvel#13 anim::@4/(signed word) yvel#4 )
-  (signed word~) anim::$2 ← (signed word) yvel#9 + (signed word) g#0
+  (signed word~) anim::$2 ← (signed word) yvel#9 + (signed word) g
   (signed word) yvel#3 ← (signed word~) anim::$2
   (signed word~) anim::$3 ← (signed word) xpos#9 + (signed word) xvel#8
   (signed word) xpos#3 ← (signed word~) anim::$3
@@ -165,11 +165,11 @@ anim::@1: scope:[anim]  from anim anim::@4
   (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
   (signed word) anim::sprite_y#0 ← (number~) anim::$8
   (byte~) anim::$9 ← ((byte)) (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XPOS#0 + (number) 0) ← (byte~) anim::$9
+  *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
   (byte~) anim::$10 ← ((byte)) (signed word) anim::sprite_y#0
-  *((byte*) SPRITES_YPOS#0 + (number) 0) ← (byte~) anim::$10
+  *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
   (byte~) anim::$11 ← > (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XMSB#0) ← (byte~) anim::$11
+  *((byte*) SPRITES_XMSB) ← (byte~) anim::$11
   to:anim::@return
 anim::@2: scope:[anim]  from anim
   (signed word) yvel_init#9 ← phi( anim/(signed word) yvel_init#14 )
@@ -241,29 +241,17 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) RASTER
-(byte*) RASTER#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte*) SPRITE
-(byte*) SPRITE#0
 (byte*) SPRITES_COLS
-(byte*) SPRITES_COLS#0
 (byte*) SPRITES_ENABLE
-(byte*) SPRITES_ENABLE#0
 (byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_X#0
 (byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_EXPAND_Y#0
 (byte*) SPRITES_PTR
-(byte*) SPRITES_PTR#0
 (byte*) SPRITES_XMSB
-(byte*) SPRITES_XMSB#0
 (byte*) SPRITES_XPOS
-(byte*) SPRITES_XPOS#0
 (byte*) SPRITES_YPOS
-(byte*) SPRITES_YPOS#0
 (byte) WHITE
-(byte) WHITE#0
 (void()) anim()
 (bool~) anim::$0
 (bool~) anim::$1
@@ -291,7 +279,6 @@ SYMBOL TABLE SSA
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0
 (signed word) g
-(signed word) g#0
 (void()) init()
 (byte*~) init::$0
 (byte~) init::$1
@@ -423,26 +410,26 @@ SYMBOL TABLE SSA
 (signed word) yvel_init#8
 (signed word) yvel_init#9
 
-Adding number conversion cast (unumber) 1 in (byte) WHITE#0 ← (number) 1
-Adding number conversion cast (unumber) $3f8 in (byte*~) $0 ← (byte*) SCREEN#0 + (number) $3f8
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $ff
-Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE#0) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_X#0) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_Y#0) ← (number) 0
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS#0 + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS#0 + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS#0 + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS#0 + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_COLS#0 + (number) 0) ← (byte) WHITE#0
-Adding number conversion cast (unumber) $40 in (byte*~) init::$0 ← (byte*) SPRITE#0 / (number) $40
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_PTR#0 + (number) 0) ← (byte~) init::$1
-Adding number conversion cast (unumber) $3e8 in (byte*~) init::$2 ← (byte*) SCREEN#0 + (number) $3e8
-Adding number conversion cast (unumber) $ff in *((byte*) SPRITE#0 + (byte) init::i#2) ← (number) $ff
+Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
+Adding number conversion cast (unumber) $3f8 in (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_X) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_Y) ← (number) 0
+Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
+Adding number conversion cast (unumber) $40 in (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
+Adding number conversion cast (unumber) $3e8 in (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $ff in *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
 Adding number conversion cast (snumber) 0 in (signed word) xpos#2 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) ypos#2 ← (number) 0
 Adding number conversion cast (snumber) $64 in (signed word) yvel_init#2 ← (number) $64
 Adding number conversion cast (snumber) $c8 in (signed word) xvel#2 ← (number) $c8
-Adding number conversion cast (snumber) -5 in (signed word) g#0 ← (number) -5
+Adding number conversion cast (snumber) -5 in (signed word) g ← (number) -5
 Adding number conversion cast (snumber) 0 in (bool~) anim::$0 ← (signed word) ypos#9 < (number) 0
 Adding number conversion cast (snumber) 7 in (signed word~) anim::$5 ← (signed word) xpos#3 >> (number) 7
 Adding number conversion cast (snumber) $a0 in (number~) anim::$6 ← (signed word~) anim::$5 + (number) $a0
@@ -450,8 +437,8 @@ Adding number conversion cast (snumber) anim::$6 in (number~) anim::$6 ← (sign
 Adding number conversion cast (snumber) 5 in (signed word~) anim::$7 ← (signed word) ypos#3 >> (number) 5
 Adding number conversion cast (snumber) $e6 in (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
 Adding number conversion cast (snumber) anim::$8 in (number~) anim::$8 ← (snumber)(number) $e6 - (signed word~) anim::$7
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS#0 + (number) 0) ← (byte~) anim::$9
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS#0 + (number) 0) ← (byte~) anim::$10
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
+Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
 Adding number conversion cast (snumber) 0 in (signed word) xpos#4 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) ypos#4 ← (number) 0
 Adding number conversion cast (snumber) $a in (number~) anim::$13 ← (signed word) yvel_init#9 - (number) $a
@@ -459,29 +446,29 @@ Adding number conversion cast (snumber) anim::$13 in (number~) anim::$13 ← (si
 Adding number conversion cast (snumber) -$c8 in (bool~) anim::$14 ← (signed word) yvel_init#3 < (number) -$c8
 Adding number conversion cast (snumber) $c8 in (signed word) yvel_init#4 ← (number) $c8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SPRITES_XPOS#0 ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS#0 ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_XMSB#0 ← (byte*)(number) $d010
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) SPRITES_ENABLE#0 ← (byte*)(number) $d015
-Inlining cast (byte*) SPRITES_EXPAND_Y#0 ← (byte*)(number) $d017
-Inlining cast (byte*) SPRITES_EXPAND_X#0 ← (byte*)(number) $d01d
-Inlining cast (byte*) SPRITES_COLS#0 ← (byte*)(number) $d027
-Inlining cast (byte) WHITE#0 ← (unumber)(number) 1
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) SPRITE#0 ← (byte*)(number) $2000
-Inlining cast *((byte*) SPRITES_ENABLE#0) ← (unumber)(number) 1
-Inlining cast *((byte*) SPRITES_EXPAND_X#0) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_EXPAND_Y#0) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_XPOS#0 + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast *((byte*) SPRITES_YPOS#0 + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
+Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
+Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
+Inlining cast (byte*) SPRITES_EXPAND_Y ← (byte*)(number) $d017
+Inlining cast (byte*) SPRITES_EXPAND_X ← (byte*)(number) $d01d
+Inlining cast (byte*) SPRITES_COLS ← (byte*)(number) $d027
+Inlining cast (byte) WHITE ← (unumber)(number) 1
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (byte*) SPRITE ← (byte*)(number) $2000
+Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) 1
+Inlining cast *((byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
+Inlining cast *((byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
+Inlining cast *((byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
 Inlining cast (byte~) init::$1 ← (byte)(byte*~) init::$0
-Inlining cast *((byte*) SPRITE#0 + (byte) init::i#2) ← (unumber)(number) $ff
+Inlining cast *((byte*) SPRITE + (byte) init::i#2) ← (unumber)(number) $ff
 Inlining cast (signed word) xpos#2 ← (snumber)(number) 0
 Inlining cast (signed word) ypos#2 ← (snumber)(number) 0
 Inlining cast (signed word) yvel_init#2 ← (snumber)(number) $64
 Inlining cast (signed word) xvel#2 ← (snumber)(number) $c8
-Inlining cast (signed word) g#0 ← (snumber)(number) -5
+Inlining cast (signed word) g ← (snumber)(number) -5
 Inlining cast (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0
 Inlining cast (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0
 Inlining cast (signed word) xpos#4 ← (snumber)(number) 0
@@ -570,7 +557,7 @@ Inferred type updated to signed word in (snumber~) anim::$13 ← (signed word) y
 Inversing boolean not [67] (bool~) anim::$1 ← (signed word) ypos#9 >= (signed byte) 0 from [66] (bool~) anim::$0 ← (signed word) ypos#9 < (signed byte) 0
 Inversing boolean not [96] (bool~) anim::$15 ← (signed word) yvel_init#3 >= (signed word) -$c8 from [95] (bool~) anim::$14 ← (signed word) yvel_init#3 < (signed word) -$c8
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) SPRITES_PTR#0 = (byte*~) $0 
+Alias (byte*) SPRITES_PTR = (byte*~) $0 
 Alias (signed word) yvel#16 = (signed word) yvel#17 
 Alias (signed word) xpos#18 = (signed word) xpos#19 
 Alias (signed word) ypos#18 = (signed word) ypos#19 
@@ -636,45 +623,45 @@ Identical Phi Values (signed word) ypos#12 (signed word) ypos#0
 Identical Phi Values (signed word) xvel#11 (signed word) xvel#0
 Identical Phi Values (signed word) yvel_init#12 (signed word) yvel_init#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [18] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) main::$1 [18] if(*((byte*) RASTER)!=(byte) $ff) goto main::@2
 Simple Condition (bool~) init::$3 [48] if((byte*) init::sc#2!=(byte*~) init::$2) goto init::@2
 Simple Condition (bool~) init::$4 [57] if((byte) init::i#1!=rangelast(0,$3f)) goto init::@7
 Simple Condition (bool~) anim::$1 [68] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1
 Simple Condition (bool~) anim::$15 [97] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SPRITES_XPOS#0 = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS#0 = (byte*) 53249
-Constant (const byte*) SPRITES_XMSB#0 = (byte*) 53264
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) SPRITES_ENABLE#0 = (byte*) 53269
-Constant (const byte*) SPRITES_EXPAND_Y#0 = (byte*) 53271
-Constant (const byte*) SPRITES_EXPAND_X#0 = (byte*) 53277
-Constant (const byte*) SPRITES_COLS#0 = (byte*) 53287
-Constant (const byte) WHITE#0 = 1
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte*) SPRITE#0 = (byte*) 8192
+Constant (const byte*) SPRITES_XPOS = (byte*) 53248
+Constant (const byte*) SPRITES_YPOS = (byte*) 53249
+Constant (const byte*) SPRITES_XMSB = (byte*) 53264
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
+Constant (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
+Constant (const byte*) SPRITES_EXPAND_X = (byte*) 53277
+Constant (const byte*) SPRITES_COLS = (byte*) 53287
+Constant (const byte) WHITE = 1
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte*) SPRITE = (byte*) 8192
 Constant (const byte) init::i#0 = 0
 Constant (const signed word) xpos#15 = 0
 Constant (const signed word) ypos#15 = 0
 Constant (const signed word) yvel#14 = $64
 Constant (const signed word) xvel#15 = $c8
-Constant (const signed word) g#0 = -5
+Constant (const signed word) g = -5
 Constant (const signed word) xpos#14 = 0
 Constant (const signed word) ypos#14 = 0
 Constant (const signed word) yvel_init#4 = $c8
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) init::sc#0 = SCREEN#0
+Constant (const byte*) init::sc#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [27] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [55] init::i#1 ← ++ init::i#2 to ++
 Resolved ranged comparison value [57] if(init::i#1!=rangelast(0,$3f)) goto init::@7 to (number) $40
-Simplifying expression containing zero SPRITES_XPOS#0 in [38] *((const byte*) SPRITES_XPOS#0 + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_YPOS#0 in [39] *((const byte*) SPRITES_YPOS#0 + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_COLS#0 in [40] *((const byte*) SPRITES_COLS#0 + (byte) 0) ← (const byte) WHITE#0
-Simplifying expression containing zero SPRITES_PTR#0 in [43] *((byte*) SPRITES_PTR#0 + (byte) 0) ← (byte~) init::$1
-Simplifying expression containing zero SPRITES_XPOS#0 in [83] *((const byte*) SPRITES_XPOS#0 + (byte) 0) ← (byte~) anim::$9
-Simplifying expression containing zero SPRITES_YPOS#0 in [85] *((const byte*) SPRITES_YPOS#0 + (byte) 0) ← (byte~) anim::$10
+Simplifying expression containing zero SPRITES_XPOS in [38] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_YPOS in [39] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_COLS in [40] *((const byte*) SPRITES_COLS + (byte) 0) ← (const byte) WHITE
+Simplifying expression containing zero SPRITES_PTR in [43] *((byte*) SPRITES_PTR + (byte) 0) ← (byte~) init::$1
+Simplifying expression containing zero SPRITES_XPOS in [83] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte~) anim::$9
+Simplifying expression containing zero SPRITES_YPOS in [85] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte~) anim::$10
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -684,13 +671,13 @@ Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) SPRITES_PTR#0 ← (const byte*) SCREEN#0 + (word) $3f8
-Constant right-side identified [11] (byte*~) init::$0 ← (const byte*) SPRITE#0 / (byte) $40
-Constant right-side identified [15] (byte*~) init::$2 ← (const byte*) SCREEN#0 + (word) $3e8
+Constant right-side identified [0] (byte*) SPRITES_PTR ← (const byte*) SCREEN + (word) $3f8
+Constant right-side identified [11] (byte*~) init::$0 ← (const byte*) SPRITE / (byte) $40
+Constant right-side identified [15] (byte*~) init::$2 ← (const byte*) SCREEN + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SPRITES_PTR#0 = SCREEN#0+$3f8
-Constant (const byte*) init::$0 = SPRITE#0/$40
-Constant (const byte*) init::$2 = SCREEN#0+$3e8
+Constant (const byte*) SPRITES_PTR = SCREEN+$3f8
+Constant (const byte*) init::$0 = SPRITE/$40
+Constant (const byte*) init::$2 = SCREEN+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (byte)init::$0 in [12] (byte~) init::$1 ← (byte)(const byte*) init::$0
 Successful SSA optimization Pass2ConstantValues
@@ -709,14 +696,14 @@ Constant inlined xpos#15 = (signed byte) 0
 Constant inlined xpos#14 = (signed byte) 0
 Constant inlined yvel_init#4 = (signed word) $c8
 Constant inlined init::i#0 = (byte) 0
-Constant inlined init::sc#0 = (const byte*) SCREEN#0
+Constant inlined init::sc#0 = (const byte*) SCREEN
 Constant inlined xvel#15 = (signed word) $c8
 Constant inlined ypos#14 = (signed byte) 0
 Constant inlined yvel#14 = (signed byte) $64
-Constant inlined init::$2 = (const byte*) SCREEN#0+(word) $3e8
+Constant inlined init::$2 = (const byte*) SCREEN+(word) $3e8
 Constant inlined ypos#15 = (signed byte) 0
-Constant inlined init::$1 = (byte)(const byte*) SPRITE#0/(byte) $40
-Constant inlined init::$0 = (const byte*) SPRITE#0/(byte) $40
+Constant inlined init::$1 = (byte)(const byte*) SPRITE/(byte) $40
+Constant inlined init::$0 = (const byte*) SPRITE/(byte) $40
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
 Added new block during phi lifting init::@9(between init::@7 and init::@7)
@@ -805,7 +792,7 @@ main::@1: scope:[main]  from main main::@1 main::@2
   [6] (signed word) ypos#13 ← phi( main::@1/(signed word) ypos#13 main/(signed byte) 0 main::@2/(signed word) ypos#11 )
   [6] (signed word) xpos#12 ← phi( main::@1/(signed word) xpos#12 main/(signed byte) 0 main::@2/(signed word) xpos#10 )
   [6] (signed word) yvel#12 ← phi( main::@1/(signed word) yvel#12 main/(signed byte) $64 main::@2/(signed word) yvel#10 )
-  [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1
+  [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [8] phi()
@@ -834,7 +821,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   [17] (signed word) xvel#10 ← phi( anim/(signed word) xvel#12 anim::@3/(signed word) xvel#14 )
   [17] (signed word) xpos#9 ← phi( anim/(signed word) xpos#12 anim::@3/(signed byte) 0 )
   [17] (signed word) yvel#9 ← phi( anim/(signed word) yvel#12 anim::@3/(signed word~) yvel#21 )
-  [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0
+  [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g
   [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10
   [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10
   [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7
@@ -842,11 +829,11 @@ anim::@1: scope:[anim]  from anim anim::@3
   [23] (signed word~) anim::$7 ← (signed word) ypos#11 >> (signed byte) 5
   [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed word~) anim::$7
   [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0
-  [26] *((const byte*) SPRITES_XPOS#0) ← (byte~) anim::$9
+  [26] *((const byte*) SPRITES_XPOS) ← (byte~) anim::$9
   [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0
-  [28] *((const byte*) SPRITES_YPOS#0) ← (byte~) anim::$10
+  [28] *((const byte*) SPRITES_YPOS) ← (byte~) anim::$10
   [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0
-  [30] *((const byte*) SPRITES_XMSB#0) ← (byte~) anim::$11
+  [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11
   to:anim::@return
 anim::@return: scope:[anim]  from anim::@1
   [31] return 
@@ -854,21 +841,21 @@ anim::@return: scope:[anim]  from anim::@1
 
 (void()) init()
 init: scope:[init]  from main
-  [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1
-  [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0
-  [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0
-  [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64
-  [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64
-  [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
-  [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40
+  [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1
+  [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0
+  [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0
+  [35] *((const byte*) SPRITES_XPOS) ← (byte) $64
+  [36] *((const byte*) SPRITES_YPOS) ← (byte) $64
+  [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE
+  [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40
   to:init::@1
 init::@1: scope:[init]  from init init::@2
-  [39] (byte*) init::sc#2 ← phi( init/(const byte*) SCREEN#0 init::@2/(byte*) init::sc#1 )
-  [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2
+  [39] (byte*) init::sc#2 ← phi( init/(const byte*) SCREEN init::@2/(byte*) init::sc#1 )
+  [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2
   to:init::@3
 init::@3: scope:[init]  from init::@1 init::@3
   [41] (byte) init::i#2 ← phi( init::@1/(byte) 0 init::@3/(byte) init::i#1 )
-  [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff
+  [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff
   [43] (byte) init::i#1 ← ++ (byte) init::i#2
   [44] if((byte) init::i#1!=(byte) $40) goto init::@3
   to:init::@return
@@ -882,18 +869,6 @@ init::@2: scope:[init]  from init::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SPRITE
-(byte*) SPRITES_COLS
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_PTR
-(byte*) SPRITES_XMSB
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
-(byte) WHITE
 (void()) anim()
 (byte~) anim::$10 4.0
 (byte~) anim::$11 4.0
@@ -904,7 +879,6 @@ VARIABLE REGISTER WEIGHTS
 (signed word) anim::sprite_x#0 0.5714285714285714
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0 0.6666666666666666
-(signed word) g
 (void()) init()
 (byte) init::i
 (byte) init::i#1 16.5
@@ -1070,7 +1044,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1_from_b1
@@ -1173,7 +1147,7 @@ anim: {
     jmp b1
     // anim::@1
   b1:
-    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0 -- vwsz1=vwsz1_plus_vwsc1 
+    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z yvel_10
     adc #<g
@@ -1250,19 +1224,19 @@ anim: {
     // [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 -- vbuz1=_byte_vwsz2 
     lda.z sprite_x
     sta.z _9
-    // [26] *((const byte*) SPRITES_XPOS#0) ← (byte~) anim::$9 -- _deref_pbuc1=vbuz1 
+    // [26] *((const byte*) SPRITES_XPOS) ← (byte~) anim::$9 -- _deref_pbuc1=vbuz1 
     lda.z _9
     sta SPRITES_XPOS
     // [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 -- vbuz1=_byte_vwsz2 
     lda.z sprite_y
     sta.z _10
-    // [28] *((const byte*) SPRITES_YPOS#0) ← (byte~) anim::$10 -- _deref_pbuc1=vbuz1 
+    // [28] *((const byte*) SPRITES_YPOS) ← (byte~) anim::$10 -- _deref_pbuc1=vbuz1 
     lda.z _10
     sta SPRITES_YPOS
     // [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 -- vbuz1=_hi_vwsz2 
     lda.z sprite_x+1
     sta.z _11
-    // [30] *((const byte*) SPRITES_XMSB#0) ← (byte~) anim::$11 -- _deref_pbuc1=vbuz1 
+    // [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11 -- _deref_pbuc1=vbuz1 
     lda.z _11
     sta SPRITES_XMSB
     jmp breturn
@@ -1276,30 +1250,30 @@ anim: {
 init: {
     .label sc = $c
     .label i = $e
-    // [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-    // [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_X
-    // [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-    // [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
-    // [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-    // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
     // [39] phi from init to init::@1 [phi:init->init::@1]
   b1_from_init:
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN [phi:init->init::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -1307,7 +1281,7 @@ init: {
     jmp b1
     // init::@1
   b1:
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -1326,7 +1300,7 @@ init: {
     jmp b3
     // init::@3
   b3:
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$ff
     ldy.z i
     sta SPRITE,y
@@ -1360,13 +1334,13 @@ init: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2::anim:9 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [11] (signed word) xvel#14 ← - (signed word) xvel#12 [ yvel_init#13 xvel#14 ] ( main:2::anim:9 [ yvel_init#13 xvel#14 ] ) always clobbers reg byte a 
 Statement [12] (signed word) yvel_init#3 ← (signed word) yvel_init#13 - (signed byte) $a [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [13] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4 [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [16] (signed word~) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
-Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
+Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
 Statement [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ( main:2::anim:9 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ) always clobbers reg byte a 
 Statement [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ) always clobbers reg byte a 
 Statement [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$5 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$5 ] ) always clobbers reg byte a 
@@ -1376,24 +1350,24 @@ Statement [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed wo
 Statement [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::sprite_y#0 anim::$9 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::sprite_y#0 anim::$9 ] ) always clobbers reg byte a 
 Statement [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::$10 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::$10 ] ) always clobbers reg byte a 
 Statement [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$11 ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
-Statement [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [35] *((const byte*) SPRITES_XPOS) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) SPRITES_YPOS) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
+Statement [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ init::i#2 init::i#1 ]
 Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2::anim:9 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [11] (signed word) xvel#14 ← - (signed word) xvel#12 [ yvel_init#13 xvel#14 ] ( main:2::anim:9 [ yvel_init#13 xvel#14 ] ) always clobbers reg byte a 
 Statement [12] (signed word) yvel_init#3 ← (signed word) yvel_init#13 - (signed byte) $a [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [13] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4 [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [16] (signed word~) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
-Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
+Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
 Statement [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ( main:2::anim:9 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ) always clobbers reg byte a 
 Statement [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ) always clobbers reg byte a 
 Statement [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$5 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$5 ] ) always clobbers reg byte a 
@@ -1403,15 +1377,15 @@ Statement [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed wo
 Statement [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::sprite_y#0 anim::$9 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::sprite_y#0 anim::$9 ] ) always clobbers reg byte a 
 Statement [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::$10 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::sprite_x#0 anim::$10 ] ) always clobbers reg byte a 
 Statement [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 anim::$11 ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
-Statement [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [35] *((const byte*) SPRITES_XPOS) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) SPRITES_YPOS) ← (byte) $64 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
+Statement [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
 Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] : zp ZP_WORD:4 , 
@@ -1537,7 +1511,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1_from_b1
@@ -1637,7 +1611,7 @@ anim: {
     jmp b1
     // anim::@1
   b1:
-    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0 -- vwsz1=vwsz1_plus_vwsc1 
+    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z yvel_10
     adc #<g
@@ -1713,15 +1687,15 @@ anim: {
     sta.z sprite_y+1
     // [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 -- vbuaa=_byte_vwsz1 
     lda.z sprite_x
-    // [26] *((const byte*) SPRITES_XPOS#0) ← (byte~) anim::$9 -- _deref_pbuc1=vbuaa 
+    // [26] *((const byte*) SPRITES_XPOS) ← (byte~) anim::$9 -- _deref_pbuc1=vbuaa 
     sta SPRITES_XPOS
     // [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 -- vbuaa=_byte_vwsz1 
     lda.z sprite_y
-    // [28] *((const byte*) SPRITES_YPOS#0) ← (byte~) anim::$10 -- _deref_pbuc1=vbuaa 
+    // [28] *((const byte*) SPRITES_YPOS) ← (byte~) anim::$10 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
     // [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 -- vbuaa=_hi_vwsz1 
     lda.z sprite_x+1
-    // [30] *((const byte*) SPRITES_XMSB#0) ← (byte~) anim::$11 -- _deref_pbuc1=vbuaa 
+    // [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11 -- _deref_pbuc1=vbuaa 
     sta SPRITES_XMSB
     jmp breturn
     // anim::@return
@@ -1733,30 +1707,30 @@ anim: {
 // Fill and show a sprite, clear the screen
 init: {
     .label sc = $a
-    // [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-    // [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_X
-    // [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-    // [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
-    // [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-    // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
     // [39] phi from init to init::@1 [phi:init->init::@1]
   b1_from_init:
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN [phi:init->init::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -1764,7 +1738,7 @@ init: {
     jmp b1
     // init::@1
   b1:
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -1782,7 +1756,7 @@ init: {
     jmp b3
     // init::@3
   b3:
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
     sta SPRITE,x
     // [43] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
@@ -1881,30 +1855,18 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte*) SPRITE
-(const byte*) SPRITE#0 SPRITE = (byte*) 8192
-(byte*) SPRITES_COLS
-(const byte*) SPRITES_COLS#0 SPRITES_COLS = (byte*) 53287
-(byte*) SPRITES_ENABLE
-(const byte*) SPRITES_ENABLE#0 SPRITES_ENABLE = (byte*) 53269
-(byte*) SPRITES_EXPAND_X
-(const byte*) SPRITES_EXPAND_X#0 SPRITES_EXPAND_X = (byte*) 53277
-(byte*) SPRITES_EXPAND_Y
-(const byte*) SPRITES_EXPAND_Y#0 SPRITES_EXPAND_Y = (byte*) 53271
-(byte*) SPRITES_PTR
-(const byte*) SPRITES_PTR#0 SPRITES_PTR = (const byte*) SCREEN#0+(word) $3f8
-(byte*) SPRITES_XMSB
-(const byte*) SPRITES_XMSB#0 SPRITES_XMSB = (byte*) 53264
-(byte*) SPRITES_XPOS
-(const byte*) SPRITES_XPOS#0 SPRITES_XPOS = (byte*) 53248
-(byte*) SPRITES_YPOS
-(const byte*) SPRITES_YPOS#0 SPRITES_YPOS = (byte*) 53249
-(byte) WHITE
-(const byte) WHITE#0 WHITE = (byte) 1
+(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SPRITE SPRITE = (byte*) 8192
+(const byte*) SPRITES_COLS SPRITES_COLS = (byte*) 53287
+(const byte*) SPRITES_ENABLE SPRITES_ENABLE = (byte*) 53269
+(const byte*) SPRITES_EXPAND_X SPRITES_EXPAND_X = (byte*) 53277
+(const byte*) SPRITES_EXPAND_Y SPRITES_EXPAND_Y = (byte*) 53271
+(const byte*) SPRITES_PTR SPRITES_PTR = (const byte*) SCREEN+(word) $3f8
+(const byte*) SPRITES_XMSB SPRITES_XMSB = (byte*) 53264
+(const byte*) SPRITES_XPOS SPRITES_XPOS = (byte*) 53248
+(const byte*) SPRITES_YPOS SPRITES_YPOS = (byte*) 53249
+(const byte) WHITE WHITE = (byte) 1
 (void()) anim()
 (byte~) anim::$10 reg byte a 4.0
 (byte~) anim::$11 reg byte a 4.0
@@ -1920,8 +1882,7 @@ FINAL SYMBOL TABLE
 (signed word) anim::sprite_x#0 sprite_x zp ZP_WORD:12 0.5714285714285714
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0 sprite_y zp ZP_WORD:14 0.6666666666666666
-(signed word) g
-(const signed word) g#0 g = (signed byte) -5
+(const signed word) g g = (signed byte) -5
 (void()) init()
 (label) init::@1
 (label) init::@2
@@ -2047,7 +2008,7 @@ main: {
     // main::@1
   b1:
     // while (*RASTER!=$ff)
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b1
@@ -2134,7 +2095,7 @@ anim: {
     // anim::@1
   b1:
     // yvel + g
-    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g#0 -- vwsz1=vwsz1_plus_vwsc1 
+    // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z yvel_10
     adc #<g
@@ -2218,19 +2179,19 @@ anim: {
     // [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 -- vbuaa=_byte_vwsz1 
     lda.z sprite_x
     // SPRITES_XPOS[0] = (byte)sprite_x
-    // [26] *((const byte*) SPRITES_XPOS#0) ← (byte~) anim::$9 -- _deref_pbuc1=vbuaa 
+    // [26] *((const byte*) SPRITES_XPOS) ← (byte~) anim::$9 -- _deref_pbuc1=vbuaa 
     sta SPRITES_XPOS
     // (byte)sprite_y
     // [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 -- vbuaa=_byte_vwsz1 
     lda.z sprite_y
     // SPRITES_YPOS[0] = (byte)sprite_y
-    // [28] *((const byte*) SPRITES_YPOS#0) ← (byte~) anim::$10 -- _deref_pbuc1=vbuaa 
+    // [28] *((const byte*) SPRITES_YPOS) ← (byte~) anim::$10 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
     // >sprite_x
     // [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 -- vbuaa=_hi_vwsz1 
     lda.z sprite_x+1
     // *SPRITES_XMSB = >sprite_x
-    // [30] *((const byte*) SPRITES_XMSB#0) ← (byte~) anim::$11 -- _deref_pbuc1=vbuaa 
+    // [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11 -- _deref_pbuc1=vbuaa 
     sta SPRITES_XMSB
     // anim::@return
     // }
@@ -2242,33 +2203,33 @@ anim: {
 init: {
     .label sc = $a
     // *SPRITES_ENABLE = %00000001
-    // [32] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [32] *((const byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
     // *SPRITES_EXPAND_X = 0
-    // [33] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [33] *((const byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_X
     // *SPRITES_EXPAND_Y = 0
-    // [34] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [34] *((const byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SPRITES_EXPAND_Y
     // SPRITES_XPOS[0] = 100
-    // [35] *((const byte*) SPRITES_XPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
     // SPRITES_YPOS[0] = 100
-    // [36] *((const byte*) SPRITES_YPOS#0) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_YPOS
     // SPRITES_COLS[0] = WHITE
-    // [37] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+    // [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
     // SPRITES_PTR[0] = (byte)(SPRITE/$40)
-    // [38] *((const byte*) SPRITES_PTR#0) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #SPRITE/$40
     sta SPRITES_PTR
     // [39] phi from init to init::@1 [phi:init->init::@1]
-    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN#0 [phi:init->init::@1#0] -- pbuz1=pbuc1 
+    // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN [phi:init->init::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -2276,7 +2237,7 @@ init: {
     // init::@1
   b1:
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
-    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -2291,7 +2252,7 @@ init: {
     // init::@3
   b3:
     // SPRITE[i] = $ff
-    // [42] *((const byte*) SPRITE#0 + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
     sta SPRITE,x
     // for(byte i : 0..63)

@@ -5,13 +5,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::D018#0 ← ((byte*)) (number) $d018
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (word~) main::$0 ← ((word)) (byte*) main::screen#0
+  (byte*) main::D018 ← ((byte*)) (number) $d018
+  (byte*) main::screen ← ((byte*)) (number) $400
+  (word~) main::$0 ← ((word)) (byte*) main::screen
   (number~) main::$1 ← (word~) main::$0 & (number) $3fff
   (number~) main::$2 ← > (number~) main::$1
   (byte) main::d018val#0 ← (number~) main::$2
-  *((byte*) main::D018#0) ← (byte) main::d018val#0
+  *((byte*) main::D018) ← (byte) main::d018val#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -34,19 +34,17 @@ SYMBOL TABLE SSA
 (number~) main::$2
 (label) main::@return
 (byte*) main::D018
-(byte*) main::D018#0
 (byte) main::d018val
 (byte) main::d018val#0
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) $3fff in (number~) main::$1 ← (word~) main::$0 & (number) $3fff
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← > (unumber~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::D018#0 ← (byte*)(number) $d018
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (word~) main::$0 ← (word)(byte*) main::screen#0
+Inlining cast (byte*) main::D018 ← (byte*)(number) $d018
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast (word~) main::$0 ← (word)(byte*) main::screen
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 1024
@@ -58,12 +56,12 @@ Inferred type updated to word in (unumber~) main::$1 ← (word~) main::$0 & (wor
 Inferred type updated to byte in (unumber~) main::$2 ← > (word~) main::$1
 Alias (byte) main::d018val#0 = (byte~) main::$2 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::D018#0 = (byte*) 53272
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::D018 = (byte*) 53272
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::screen#0 in [2] (word~) main::$0 ← (word)(const byte*) main::screen#0
+Constant value identified (word)main::screen in [2] (word~) main::$0 ← (word)(const byte*) main::screen
 Successful SSA optimization Pass2ConstantValues
-Constant (const word) main::$0 = (word)main::screen#0
+Constant (const word) main::$0 = (word)main::screen
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [0] (word~) main::$1 ← (const word) main::$0 & (word) $3fff
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -73,8 +71,8 @@ Constant right-side identified [0] (byte) main::d018val#0 ← > (const word) mai
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::d018val#0 = >main::$1
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (word)(const byte*) main::screen#0&(word) $3fff
-Constant inlined main::$0 = (word)(const byte*) main::screen#0
+Constant inlined main::$1 = (word)(const byte*) main::screen&(word) $3fff
+Constant inlined main::$0 = (word)(const byte*) main::screen
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -103,7 +101,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::D018#0) ← (const byte) main::d018val#0
+  [4] *((const byte*) main::D018) ← (const byte) main::d018val#0
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -112,9 +110,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::D018
 (byte) main::d018val
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -147,7 +143,7 @@ main: {
     .label D018 = $d018
     .label screen = $400
     .const d018val = >screen&$3fff
-    // [4] *((const byte*) main::D018#0) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::D018) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
     lda #d018val
     sta D018
     jmp breturn
@@ -159,7 +155,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::D018#0) ← (const byte) main::d018val#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::D018) ← (const byte) main::d018val#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -195,7 +191,7 @@ main: {
     .label D018 = $d018
     .label screen = $400
     .const d018val = >screen&$3fff
-    // [4] *((const byte*) main::D018#0) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::D018) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
     lda #d018val
     sta D018
     jmp breturn
@@ -230,12 +226,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::D018
-(const byte*) main::D018#0 D018 = (byte*) 53272
+(const byte*) main::D018 D018 = (byte*) 53272
 (byte) main::d018val
-(const byte) main::d018val#0 d018val = >(word)(const byte*) main::screen#0&(word) $3fff
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte) main::d018val#0 d018val = >(word)(const byte*) main::screen&(word) $3fff
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -261,7 +255,7 @@ main: {
     .label screen = $400
     .const d018val = >screen&$3fff
     // *D018 = d018val
-    // [4] *((const byte*) main::D018#0) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::D018) ← (const byte) main::d018val#0 -- _deref_pbuc1=vbuc2 
     lda #d018val
     sta D018
     // main::@return

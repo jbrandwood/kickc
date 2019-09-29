@@ -7,7 +7,7 @@ Culled Empty Block (label) main::@6
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte[]) MSG#0 ← (const string) $0
+  (byte[]) MSG ← (const string) $0
   to:@1
 
 (void()) main()
@@ -22,7 +22,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (number~) main::$1 ← (byte) main::i#3 & (number) 7
-  *((byte*) SCREEN#0 + (byte) main::i#3) ← *((byte[]) MSG#0 + (number~) main::$1)
+  *((byte*) SCREEN#0 + (byte) main::i#3) ← *((byte[]) MSG + (number~) main::$1)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -42,7 +42,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte[]) MSG
-(byte[]) MSG#0
 (byte*) SCREEN
 (byte*) SCREEN#0
 (void()) main()
@@ -78,11 +77,11 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [5] if((byte) main::i#2<(byte)(number) $28*(number) 4) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte[]) MSG#0 = $0
+Constant (const byte[]) MSG = $0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = (const byte[]) MSG#0
+Constant inlined $0 = (const byte[]) MSG
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -126,13 +125,12 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7
-  [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1)
+  [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1)
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[]) MSG
 (byte*) SCREEN
 (void()) main()
 (byte~) main::$1 22.0
@@ -202,7 +200,7 @@ main: {
     lda #7
     and.z i
     sta.z _1
-    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z _1
     lda MSG,y
     ldy.z i
@@ -220,10 +218,10 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -281,7 +279,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
+    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
     tay
     lda MSG,y
     sta SCREEN,x
@@ -323,8 +321,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[]) MSG
-(const byte[]) MSG#0 MSG = (string) "CAMELOT!"su
+(const byte[]) MSG MSG = (string) "CAMELOT!"su
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) main()
@@ -380,7 +377,7 @@ main: {
     txa
     and #7
     // SCREEN[i++] = MSG[i&7]
-    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG#0 + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
+    // [9] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
     tay
     lda MSG,y
     sta SCREEN,x

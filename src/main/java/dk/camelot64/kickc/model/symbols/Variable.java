@@ -81,15 +81,13 @@ public class Variable extends SymbolVariable {
    }
 
    public boolean isPhiMaster2() {
-      /*
       if(isPhiMaster) {
          if(!StorageStrategy.PHI_MASTER.equals(getStorageStrategy())) {
             System.out.println("PHI master mismatch!");
          }
       }
-      */
-      return isPhiMaster;
-      //return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
+      //return isPhiMaster;
+      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
    }
 
    public boolean isPhiVersion() {

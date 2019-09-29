@@ -7,8 +7,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::state#0 ← (const byte) main::ON
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN#0) ← (byte) main::state#0
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN) ← (byte) main::state#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,16 +29,15 @@ SYMBOL TABLE SSA
 (label) main::@return
 (const byte) main::ON = (byte) 1
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::state
 (byte) main::state#0
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Constant (const byte) main::state#0 = main::ON
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::state#0 = (const byte) main::ON
 Successful SSA optimization Pass2ConstantInlining
@@ -69,7 +68,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON
+  [4] *((const byte*) main::SCREEN) ← (const byte) main::ON
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -78,7 +77,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::state
 
 Initial phi equivalence classes
@@ -111,7 +109,7 @@ bend:
 main: {
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp breturn
@@ -123,7 +121,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -158,7 +156,7 @@ bend:
 main: {
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp breturn
@@ -194,8 +192,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte) main::ON ON = (byte) 1
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::state
 
 
@@ -221,7 +218,7 @@ main: {
     .const ON = 1
     .label SCREEN = $400
     // *SCREEN = state
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // main::@return

@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -23,7 +23,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 main::@3/(byte) main::i#4 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  *((byte*) main::SCREEN#0 + (byte) main::i#3) ← (byte) main::c#2
+  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte) main::c#2
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,$a)
   (bool~) main::$6 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$6) goto main::@1
@@ -61,7 +61,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::c
 (byte) main::c#0
 (byte) main::c#1
@@ -81,7 +80,7 @@ Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte
 Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (unumber~) main::$1 == (number) 0
 Adding number conversion cast (unumber) 5 in (bool~) main::$3 ← (byte) main::i#2 > (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 5
@@ -106,7 +105,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting ! if()-condition to reversed if() [9] (bool~) main::$5 ← ! (bool~) main::$4
 Rewriting || if()-condition to two if()s [8] (bool~) main::$4 ← (bool~) main::$2 || (bool~) main::$3
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [13] main::i#1 ← ++ main::i#2 to ++
@@ -187,7 +186,7 @@ main::@3: scope:[main]  from main::@1 main::@4
   to:main::@2
 main::@2: scope:[main]  from main::@3 main::@4
   [11] (byte) main::c#2 ← phi( main::@4/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  [12] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#2
+  [12] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#2
   [13] (byte) main::i#1 ← ++ (byte) main::i#2
   [14] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -199,7 +198,6 @@ main::@return: scope:[main]  from main::@2
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$1 22.0
-(byte*) main::SCREEN
 (byte) main::c
 (byte) main::c#0 8.25
 (byte) main::c#1 22.0
@@ -294,7 +292,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [12] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [12] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z c
     ldy.z i
     sta SCREEN,y
@@ -390,7 +388,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [12] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [12] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta SCREEN,y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
@@ -449,8 +447,7 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::c
 (byte) main::c#0 reg byte x 8.25
 (byte) main::c#1 reg byte x 22.0
@@ -518,7 +515,7 @@ main: {
     // main::@2
   b2:
     // SCREEN[i] = c
-    // [12] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [12] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta SCREEN,y
     // for(byte i: 0..10)

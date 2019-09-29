@@ -5,8 +5,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  *((byte*) main::screen#0 + (number) $28*(number) $a) ← (byte) 'a'
+  (byte*) main::screen ← ((byte*)) (number) $400
+  *((byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -26,23 +26,22 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) $28*$a in *((byte*) main::screen#0 + (number) $28*(number) $a) ← (byte) 'a'
+Adding number conversion cast (unumber) $28*$a in *((byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [1] *((const byte*) main::screen#0 + (word)(number) $28*(number) $a) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [1] *((const byte*) main::screen + (word)(number) $28*(number) $a) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::screen#0 + (word)(number) $28*(number) $a
+Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::screen + (word)(number) $28*(number) $a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = main::screen#0+(word)$28*$a
+Constant (const byte*) main::$0 = main::screen+(word)$28*$a
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = (const byte*) main::screen#0+(word)(number) $28*(number) $a
+Constant inlined main::$0 = (const byte*) main::screen+(word)(number) $28*(number) $a
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -71,7 +70,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a'
+  [4] *((const byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -80,7 +79,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -111,7 +109,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     jmp breturn
@@ -123,7 +121,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -157,7 +155,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     jmp breturn
@@ -192,8 +190,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -217,7 +214,7 @@ Score: 12
 main: {
     .label screen = $400
     // screen[40*10] = 'a'
-    // [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     // main::@return

@@ -13,8 +13,8 @@ Culled Empty Block (label) mode_ctrl::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL#0 ← ((byte*)) (number) $d020
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) BORDERCOL ← ((byte*)) (number) $d020
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
@@ -32,11 +32,11 @@ main::@return: scope:[main]  from main::@2
 
 (void()) print_cls()
 print_cls: scope:[print_cls]  from main
-  (byte*) print_cls::sc#0 ← (byte*) SCREEN#0
+  (byte*) print_cls::sc#0 ← (byte*) SCREEN
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
   (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@2/(byte*) print_cls::sc#1 )
-  (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (number) $3e8
   (bool~) print_cls::$1 ← (byte*) print_cls::sc#2 != (byte*~) print_cls::$0
   if((bool~) print_cls::$1) goto print_cls::@2
   to:print_cls::@return
@@ -56,15 +56,15 @@ mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@4 mode_ctrl::@8
   if(true) goto mode_ctrl::@2
   to:mode_ctrl::@return
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  (byte) mode_ctrl::before#0 ← *((byte*) BORDERCOL#0)
+  (byte) mode_ctrl::before#0 ← *((byte*) BORDERCOL)
   (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
   if((bool~) mode_ctrl::$0) goto mode_ctrl::@4
   to:mode_ctrl::@8
 mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL#0) ← (number) 2
+  *((byte*) BORDERCOL) ← (number) 2
   to:mode_ctrl::@1
 mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL#0) ← (number) 3
+  *((byte*) BORDERCOL) ← (number) 3
   to:mode_ctrl::@1
 mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
   return 
@@ -82,9 +82,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
-(byte*) BORDERCOL#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -110,15 +108,15 @@ SYMBOL TABLE SSA
 (byte*) print_cls::sc#2
 (byte*) print_cls::sc#3
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) SCREEN + (number) $3e8
 Adding number conversion cast (unumber) $ff in (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
-Adding number conversion cast (unumber) 2 in *((byte*) BORDERCOL#0) ← (number) 2
-Adding number conversion cast (unumber) 3 in *((byte*) BORDERCOL#0) ← (number) 3
+Adding number conversion cast (unumber) 2 in *((byte*) BORDERCOL) ← (number) 2
+Adding number conversion cast (unumber) 3 in *((byte*) BORDERCOL) ← (number) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast *((byte*) BORDERCOL#0) ← (unumber)(number) 2
-Inlining cast *((byte*) BORDERCOL#0) ← (unumber)(number) 3
+Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 2
+Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 1024
@@ -137,22 +135,22 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) print_cls::$1 [9] if((byte*) print_cls::sc#2!=(byte*~) print_cls::$0) goto print_cls::@2
 Simple Condition (bool~) mode_ctrl::$0 [17] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) BORDERCOL = (byte*) 53280
+Constant (const byte*) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print_cls::sc#0 = SCREEN#0
+Constant (const byte*) print_cls::sc#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [14] if(true) goto mode_ctrl::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block mode_ctrl::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [4] (byte*~) print_cls::$0 ← (const byte*) SCREEN#0 + (word) $3e8
+Constant right-side identified [4] (byte*~) print_cls::$0 ← (const byte*) SCREEN + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) print_cls::$0 = SCREEN#0+$3e8
+Constant (const byte*) print_cls::$0 = SCREEN+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) print_cls::sc#0
-Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
-Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word) $3e8
+Constant inlined print_cls::sc#0 = (const byte*) SCREEN
+Constant inlined print_cls::$0 = (const byte*) SCREEN+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
@@ -215,14 +213,14 @@ mode_ctrl: scope:[mode_ctrl]  from main::@1
   [9] phi()
   to:mode_ctrl::@1
 mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
-  [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0)
+  [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL)
   [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2
   to:mode_ctrl::@3
 mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
-  [12] *((const byte*) BORDERCOL#0) ← (byte) 3
+  [12] *((const byte*) BORDERCOL) ← (byte) 3
   to:mode_ctrl::@1
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  [13] *((const byte*) BORDERCOL#0) ← (byte) 2
+  [13] *((const byte*) BORDERCOL) ← (byte) 2
   to:mode_ctrl::@1
 
 (void()) print_cls()
@@ -230,8 +228,8 @@ print_cls: scope:[print_cls]  from main
   [14] phi()
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
-  [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@2/(byte*) print_cls::sc#1 )
-  [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2
+  [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN print_cls::@2/(byte*) print_cls::sc#1 )
+  [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   [17] return 
@@ -243,8 +241,6 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BORDERCOL
-(byte*) SCREEN
 (void()) main()
 (void()) mode_ctrl()
 (byte) mode_ctrl::before
@@ -316,7 +312,7 @@ mode_ctrl: {
     jmp b1
     // mode_ctrl::@1
   b1:
-    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuz1=_deref_pbuc1 
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL) -- vbuz1=_deref_pbuc1 
     lda BORDERCOL
     sta.z before
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
@@ -326,13 +322,13 @@ mode_ctrl: {
     jmp b3
     // mode_ctrl::@3
   b3:
-    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
     // mode_ctrl::@2
   b2:
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -342,7 +338,7 @@ print_cls: {
     .label sc = 2
     // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -350,7 +346,7 @@ print_cls: {
     jmp b1
     // print_cls::@1
   b1:
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -381,9 +377,9 @@ print_cls: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] *((const byte*) BORDERCOL#0) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) BORDERCOL#0) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
-Statement [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BORDERCOL) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) BORDERCOL) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a 
 Statement [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ mode_ctrl::before#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -450,7 +446,7 @@ mode_ctrl: {
     jmp b1
     // mode_ctrl::@1
   b1:
-    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
@@ -458,13 +454,13 @@ mode_ctrl: {
     jmp b3
     // mode_ctrl::@3
   b3:
-    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
     // mode_ctrl::@2
   b2:
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -474,7 +470,7 @@ print_cls: {
     .label sc = 2
     // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -482,7 +478,7 @@ print_cls: {
     jmp b1
     // print_cls::@1
   b1:
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2
@@ -548,10 +544,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -613,7 +607,7 @@ mode_ctrl: {
     // mode_ctrl::@1
   b1:
     // before = *BORDERCOL
-    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
+    // [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
     // if(before==$ff)
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
@@ -621,14 +615,14 @@ mode_ctrl: {
     beq b2
     // mode_ctrl::@3
     // *BORDERCOL = 3
-    // [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
     // mode_ctrl::@2
   b2:
     // *BORDERCOL = 2
-    // [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -637,7 +631,7 @@ mode_ctrl: {
 print_cls: {
     .label sc = 2
     // [15] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -645,7 +639,7 @@ print_cls: {
     // print_cls::@1
   b1:
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [16] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne b2

@@ -9,8 +9,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) main::state#0 ← (const byte) main::ON
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN#0) ← (byte) main::state#0
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN) ← (byte) main::state#0
   call test 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -22,8 +22,8 @@ main::@return: scope:[main]  from main::@1
 (void()) test()
 test: scope:[test]  from main
   (byte) test::state#0 ← (const byte) test::ON
-  (byte*) test::SCREEN#0 ← ((byte*)) (number) $428
-  *((byte*) test::SCREEN#0) ← (byte) test::state#0
+  (byte*) test::SCREEN ← ((byte*)) (number) $428
+  *((byte*) test::SCREEN) ← (byte) test::state#0
   to:test::@return
 test::@return: scope:[test]  from test
   return 
@@ -45,27 +45,25 @@ SYMBOL TABLE SSA
 (label) main::@return
 (const byte) main::ON = (byte) 1
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::state
 (byte) main::state#0
 (void()) test()
 (label) test::@return
 (const byte) test::ON = (byte) 8
 (byte*) test::SCREEN
-(byte*) test::SCREEN#0
 (byte) test::state
 (byte) test::state#0
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) test::SCREEN#0 ← (byte*)(number) $428
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
+Inlining cast (byte*) test::SCREEN ← (byte*)(number) $428
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1064
 Successful SSA optimization PassNCastSimplification
 Constant (const byte) main::state#0 = main::ON
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) test::state#0 = test::ON
-Constant (const byte*) test::SCREEN#0 = (byte*) 1064
+Constant (const byte*) test::SCREEN = (byte*) 1064
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined test::state#0 = (const byte) test::ON
 Constant inlined main::state#0 = (const byte) main::ON
@@ -101,7 +99,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON
+  [4] *((const byte*) main::SCREEN) ← (const byte) main::ON
   [5] call test 
   to:main::@return
 main::@return: scope:[main]  from main
@@ -110,7 +108,7 @@ main::@return: scope:[main]  from main
 
 (void()) test()
 test: scope:[test]  from main
-  [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON
+  [7] *((const byte*) test::SCREEN) ← (const byte) test::ON
   to:test::@return
 test::@return: scope:[test]  from test
   [8] return 
@@ -119,10 +117,8 @@ test::@return: scope:[test]  from test
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::state
 (void()) test()
-(byte*) test::SCREEN
 (byte) test::state
 
 Initial phi equivalence classes
@@ -155,7 +151,7 @@ bend:
 main: {
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // [5] call test 
@@ -170,7 +166,7 @@ main: {
 test: {
     .const ON = 8
     .label SCREEN = $428
-    // [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp breturn
@@ -182,8 +178,8 @@ test: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON [ ] ( main:2::test:5 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) test::SCREEN) ← (const byte) test::ON [ ] ( main:2::test:5 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -220,7 +216,7 @@ bend:
 main: {
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // [5] call test 
@@ -235,7 +231,7 @@ main: {
 test: {
     .const ON = 8
     .label SCREEN = $428
-    // [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp breturn
@@ -273,14 +269,12 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte) main::ON ON = (byte) 1
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::state
 (void()) test()
 (label) test::@return
 (const byte) test::ON ON = (byte) 8
-(byte*) test::SCREEN
-(const byte*) test::SCREEN#0 SCREEN = (byte*) 1064
+(const byte*) test::SCREEN SCREEN = (byte*) 1064
 (byte) test::state
 
 
@@ -306,7 +300,7 @@ main: {
     .const ON = 1
     .label SCREEN = $400
     // *SCREEN = state
-    // [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // test()
@@ -322,7 +316,7 @@ test: {
     .const ON = 8
     .label SCREEN = $428
     // *SCREEN = state
-    // [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // test::@return

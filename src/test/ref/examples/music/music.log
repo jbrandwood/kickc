@@ -7,14 +7,14 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL#0 ← ((byte*)) (number) $d020
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) BORDERCOL ← ((byte*)) (number) $d020
   to:@4
 @4: scope:[]  from @begin
-  (byte*) MUSIC#0 ← ((byte*)) (number) $1000
+  (byte*) MUSIC ← ((byte*)) (number) $1000
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (byte*) MUSIC#0) {{ .fill music.size, music.getData(i)
+  kickasm(location (byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@5
 
@@ -23,13 +23,13 @@ main: scope:[main]  from @5
   asm { jsrmusic.init  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@3
-  (bool~) main::$0 ← *((byte*) RASTER#0) != (number) $fd
+  (bool~) main::$0 ← *((byte*) RASTER) != (number) $fd
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
+  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  *((byte*) BORDERCOL#0) ← -- *((byte*) BORDERCOL#0)
+  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
   if(true) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -49,22 +49,19 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
-(byte*) BORDERCOL#0
 (byte*) MUSIC
-(byte*) MUSIC#0
 (byte*) RASTER
-(byte*) RASTER#0
 (void()) main()
 (bool~) main::$0
 (label) main::@2
 (label) main::@3
 (label) main::@return
 
-Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((byte*) RASTER#0) != (number) $fd
+Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((byte*) RASTER) != (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
-Inlining cast (byte*) MUSIC#0 ← (byte*)(number) $1000
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
+Inlining cast (byte*) MUSIC ← (byte*)(number) $1000
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -73,11 +70,11 @@ Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [7] if(*((byte*) RASTER#0)!=(byte) $fd) goto main::@2
+Simple Condition (bool~) main::$0 [7] if(*((byte*) RASTER)!=(byte) $fd) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) BORDERCOL#0 = (byte*) 53280
-Constant (const byte*) MUSIC#0 = (byte*) 4096
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) BORDERCOL = (byte*) 53280
+Constant (const byte*) MUSIC = (byte*) 4096
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [11] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -108,7 +105,7 @@ FINAL CONTROL FLOW GRAPH
 @1: scope:[]  from @begin
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)
+  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@2
 @2: scope:[]  from @1
@@ -123,19 +120,16 @@ main: scope:[main]  from @2
   asm { jsrmusic.init  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [7] if(*((const byte*) RASTER#0)!=(byte) $fd) goto main::@1
+  [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0)
+  [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0)
+  [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BORDERCOL
-(byte*) MUSIC
-(byte*) RASTER
 (void()) main()
 
 Initial phi equivalence classes
@@ -162,7 +156,7 @@ b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
@@ -186,19 +180,19 @@ main: {
   // Wait for the RASTER
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne b1
     jmp b2
     // main::@2
   b2:
-    // [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp b1
 }
@@ -209,7 +203,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jsrmusic.init  } always clobbers reg byte a reg byte x reg byte y 
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement asm { jsrmusic.play  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -239,7 +233,7 @@ b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
@@ -263,19 +257,19 @@ main: {
   // Wait for the RASTER
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne b1
     jmp b2
     // main::@2
   b2:
-    // [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp b1
 }
@@ -310,12 +304,9 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
-(byte*) MUSIC
-(const byte*) MUSIC#0 MUSIC = (byte*) 4096
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
+(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) MUSIC MUSIC = (byte*) 4096
+(const byte*) RASTER RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -342,7 +333,7 @@ Score: 3882
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
   // @2
@@ -360,20 +351,20 @@ main: {
     // main::@1
   b1:
     // while (*RASTER != $fd)
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne b1
     // main::@2
     // (*BORDERCOL)++;
-    // [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
     // (*BORDERCOL)--;
-    // [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp b1
 }

@@ -52,9 +52,9 @@ main::@1: scope:[main]  from main
   (byte) main::$0_y ← (byte) point::return_y#3
   (byte) main::q_x#1 ← (byte) main::$0_x
   (byte) main::q_y#1 ← (byte) main::$0_y
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN#0 + (number) 0) ← (byte) main::q_x#1
-  *((byte*) main::SCREEN#0 + (number) 1) ← (byte) main::q_y#1
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
+  *((byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -97,7 +97,6 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::q_x
 (byte) main::q_x#0
 (byte) main::q_x#1
@@ -126,12 +125,12 @@ SYMBOL TABLE SSA
 (byte) point::return_y#3
 (byte) point::return_y#4
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte) main::q_x#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← (byte) main::q_y#1
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
+Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
 Adding number conversion cast (unumber) 2 in (byte) point::p_x#0 ← (number) 2
 Adding number conversion cast (unumber) 3 in (byte) point::p_y#0 ← (number) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) point::p_x#0 ← (unumber)(number) 2
 Inlining cast (byte) point::p_y#0 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
@@ -155,7 +154,7 @@ Alias (byte) point::p_y#0 = (byte) point::return_y#1 (byte) point::return_y#4 (b
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte) main::q_x#0 = 0
 Constant (const byte) main::q_y#0 = 0
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) point::p_x#0 = 2
 Constant (const byte) point::p_y#0 = 3
 Successful SSA optimization Pass2ConstantIdentification
@@ -165,7 +164,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::q_x#1 = point::return_x#0
 Constant (const byte) main::q_y#1 = point::return_y#0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN#0 in [11] *((const byte*) main::SCREEN#0 + (byte) 0) ← (const byte) main::q_x#1
+Simplifying expression containing zero main::SCREEN in [11] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::q_x#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct Point) point::return#0 and assignment [4] (struct Point) point::return#0 ← struct-unwound {(const byte) point::p_x#0, (const byte) point::p_y#0}
 Eliminating unused variable (struct Point) point::return#1 and assignment [5] (struct Point) point::return#1 ← struct-unwound {(const byte) point::p_x#0, (const byte) point::p_y#0}
@@ -177,7 +176,7 @@ Constant inlined point::return_y#0 = (const byte) point::p_y#0
 Constant inlined point::return_x#0 = (const byte) point::p_x#0
 Constant inlined main::q_y#1 = (const byte) point::p_y#0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN#0+1)
+Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -216,8 +215,8 @@ main: scope:[main]  from @1
   [5] call point 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte*) main::SCREEN#0) ← (const byte) point::p_x#0
-  [7] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) point::p_y#0
+  [6] *((const byte*) main::SCREEN) ← (const byte) point::p_x#0
+  [7] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) point::p_y#0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [8] return 
@@ -237,7 +236,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::y
 (void()) main()
 (struct Point~) main::$0
-(byte*) main::SCREEN
 (byte) main::q_x
 (byte) main::q_y
 (struct Point()) point()
@@ -285,10 +283,10 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) main::SCREEN#0) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_x
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_y
     sta SCREEN+1
     jmp breturn
@@ -310,8 +308,8 @@ point: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) main::SCREEN#0) ← (const byte) point::p_x#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) point::p_y#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN) ← (const byte) point::p_x#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) point::p_y#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -358,10 +356,10 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) main::SCREEN#0) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_x
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_y
     sta SCREEN+1
     jmp breturn
@@ -416,8 +414,7 @@ FINAL SYMBOL TABLE
 (struct Point~) main::$0
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::q_x
 (byte) main::q_y
 (struct Point()) point()
@@ -458,11 +455,11 @@ main: {
     jsr point
     // main::@1
     // SCREEN[0] = q.x
-    // [6] *((const byte*) main::SCREEN#0) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::SCREEN) ← (const byte) point::p_x#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_x
     sta SCREEN
     // SCREEN[1] = q.y
-    // [7] *((const byte*) main::SCREEN#0+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) point::p_y#0 -- _deref_pbuc1=vbuc2 
     lda #point.p_y
     sta SCREEN+1
     // main::@return

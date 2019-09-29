@@ -60,8 +60,8 @@ main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
     .label fileEntry1__0 = 2
-    .label entry1 = 2
     .label fileEntry2__0 = 6
+    .label entry1 = 2
     .label entry2 = 6
     jsr keyboard_init
     ldx #fileEntry1_idx

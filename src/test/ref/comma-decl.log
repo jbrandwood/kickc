@@ -7,12 +7,12 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte) main::b#0 ← (byte) 'c'
-  (number~) main::$0 ← (byte) main::b#0 + (number) 1
+  (byte) main::b ← (byte) 'c'
+  (number~) main::$0 ← (byte) main::b + (number) 1
   (byte) main::c#0 ← (number~) main::$0
   (number~) main::$1 ← (byte) main::c#0 + (number) 1
   (byte) main::d#0 ← (number~) main::$1
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::b#0
+  *((byte*) main::SCREEN + (number) 0) ← (byte) main::b
   *((byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
   *((byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
   to:main::@return
@@ -37,17 +37,16 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte*) main::SCREEN
 (byte) main::b
-(byte) main::b#0
 (byte) main::c
 (byte) main::c#0
 (byte) main::d
 (byte) main::d#0
 
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::b#0 + (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::b#0 + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::b + (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::b + (unumber)(number) 1
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main::c#0 + (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::c#0 + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::b#0
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::b
 Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
 Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -66,19 +65,19 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::b#0 + (byte) 1
+Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::b + (byte) 1
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::c#0 + (byte) 1
 Alias (byte) main::c#0 = (byte~) main::$0 
 Alias (byte) main::d#0 = (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) main::b#0 = 'c'
+Constant (const byte) main::b = 'c'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::b#0
+Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::b
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b#0 + (byte) 1
+Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::c#0 = main::b#0+1
+Constant (const byte) main::c#0 = main::b+1
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [0] (byte) main::d#0 ← (const byte) main::c#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -114,7 +113,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) main::b#0
+  [4] *((const byte*) main::SCREEN) ← (const byte) main::b
   [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0
   [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0
   to:main::@return
@@ -125,7 +124,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b
 (byte) main::c
 (byte) main::d
 
@@ -161,7 +159,7 @@ main: {
     .const b = 'c'
     .const c = b+1
     .const d = c+1
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
@@ -179,7 +177,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::b [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
@@ -218,7 +216,7 @@ main: {
     .const b = 'c'
     .const c = b+1
     .const d = c+1
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
@@ -260,10 +258,9 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN SCREEN = (byte*) 1024
-(byte) main::b
-(const byte) main::b#0 b = (byte) 'c'
+(const byte) main::b b = (byte) 'c'
 (byte) main::c
-(const byte) main::c#0 c = (const byte) main::b#0+(byte) 1
+(const byte) main::c#0 c = (const byte) main::b+(byte) 1
 (byte) main::d
 (const byte) main::d#0 d = (const byte) main::c#0+(byte) 1
 
@@ -292,7 +289,7 @@ main: {
     .const c = b+1
     .const d = c+1
     // SCREEN[0] = b
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // SCREEN[1] = c

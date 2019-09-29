@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -38,9 +39,11 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                      if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
+                        variable.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
                      } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
+                        variable.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
                      }
                   }
                }

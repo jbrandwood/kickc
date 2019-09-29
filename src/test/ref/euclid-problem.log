@@ -7,7 +7,7 @@ Culled Empty Block (label) main::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -29,7 +29,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@8
 main::@3: scope:[main]  from main::@1
   (byte) main::a#4 ← phi( main::@1/(byte) main::a#2 )
-  *((byte*) SCREEN#0) ← (byte) main::a#4
+  *((byte*) SCREEN) ← (byte) main::a#4
   to:main::@return
 main::@4: scope:[main]  from main::@2
   (byte) main::b#4 ← phi( main::@2/(byte) main::b#3 )
@@ -59,7 +59,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -90,7 +89,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $80 in (byte) main::a#0 ← (number) $80
 Adding number conversion cast (unumber) 2 in (byte) main::b#0 ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::a#0 ← (unumber)(number) $80
 Inlining cast (byte) main::b#0 ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
@@ -109,7 +108,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [5] if((byte) main::a#2!=(byte) main::b#2) goto main::@2
 Simple Condition (bool~) main::$1 [8] if((byte) main::a#2>(byte) main::b#2) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::a#0 = $80
 Constant (const byte) main::b#0 = 2
 Successful SSA optimization Pass2ConstantIdentification
@@ -160,7 +159,7 @@ main::@1: scope:[main]  from main main::@4 main::@5
   [6] if((byte) main::a#2!=(byte) main::b#2) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [7] *((const byte*) SCREEN#0) ← (byte) main::a#2
+  [7] *((const byte*) SCREEN) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [8] return 
@@ -177,7 +176,6 @@ main::@4: scope:[main]  from main::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (byte) main::a
 (byte) main::a#1 22.0
@@ -244,7 +242,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] *((const byte*) SCREEN#0) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta SCREEN
     jmp breturn
@@ -347,7 +345,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] *((const byte*) SCREEN#0) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta SCREEN
     jmp breturn
@@ -422,8 +420,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -478,7 +475,7 @@ main: {
     bne b2
     // main::@3
     // *SCREEN = a
-    // [7] *((const byte*) SCREEN#0) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta SCREEN
     // main::@return

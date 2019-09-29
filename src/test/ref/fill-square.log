@@ -3,7 +3,7 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -14,7 +14,7 @@ main::@1: scope:[main]  from main main::@3
   (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@3/(byte) main::y#1 )
   (word~) main::$0 ← ((word)) (byte) main::y#2
   (number~) main::$1 ← (word~) main::$0 * (number) $28
-  (byte*~) main::$2 ← (byte*) SCREEN#0 + (number~) main::$1
+  (byte*~) main::$2 ← (byte*) SCREEN + (number~) main::$1
   (byte*) main::line#0 ← (byte*~) main::$2
   (byte) main::x#0 ← (byte) 5
   to:main::@2
@@ -50,7 +50,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (word~) main::$0
 (number~) main::$1
@@ -79,7 +78,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $28 in (number~) main::$1 ← (word~) main::$0 * (number) $28
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 * (unumber)(number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word~) main::$0 ← (word)(byte) main::y#2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -97,7 +96,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$4 [13] if((byte) main::x#1!=rangelast(5,$f)) goto main::@2
 Simple Condition (bool~) main::$5 [17] if((byte) main::y#1!=rangelast(5,$f)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::y#0 = 5
 Constant (const byte) main::x#0 = 5
 Successful SSA optimization Pass2ConstantIdentification
@@ -165,7 +164,7 @@ main::@1: scope:[main]  from main main::@3
   [7] (word) main::$6 ← (word~) main::$0 << (byte) 2
   [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0
   [9] (word~) main::$1 ← (word) main::$7 << (byte) 3
-  [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1
+  [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   [11] (byte) main::x#2 ← phi( main::@1/(byte) 5 main::@2/(byte) main::x#1 )
@@ -184,7 +183,6 @@ main::@return: scope:[main]  from main::@3
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (word~) main::$0 16.5
 (word~) main::$1 22.0
@@ -308,7 +306,7 @@ main: {
     rol.z _1+1
     asl.z _1
     rol.z _1+1
-    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z _1
     clc
     adc #<SCREEN
@@ -366,14 +364,14 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ ma
 Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
 Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
-Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
 Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
 Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
 Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
 Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
-Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
+Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::y#2 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::x#2 main::x#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
@@ -472,7 +470,7 @@ main: {
     rol.z _1+1
     asl.z _1
     rol.z _1+1
-    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z line
     adc #<SCREEN
@@ -555,8 +553,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (word~) main::$0 $0 zp ZP_WORD:3 16.5
 (word~) main::$1 $1 zp ZP_WORD:3 22.0
@@ -649,7 +646,7 @@ main: {
     asl.z _1
     rol.z _1+1
     // line = SCREEN+(word)y*40
-    // [10] (byte*) main::line#0 ← (const byte*) SCREEN#0 + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z line
     adc #<SCREEN

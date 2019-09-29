@@ -8,8 +8,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  *((byte*) main::screen#0) ← (number) 1
+  (byte*) main::screen ← ((byte*)) (number) $400
+  *((byte*) main::screen) ← (number) 1
   *((byte*) BGCOL) ← (byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
@@ -32,15 +32,14 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((byte*) main::screen) ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
 Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast *((byte*) main::screen#0) ← (unumber)(number) 1
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast *((byte*) main::screen) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 2
@@ -52,7 +51,7 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const byte*) BGCOL = (byte*) 53281
 Constant (const byte) RED = 2
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -81,7 +80,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (byte) 1
+  [4] *((const byte*) main::screen) ← (byte) 1
   [5] *((const byte*) BGCOL) ← (const byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
@@ -91,7 +90,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -123,7 +121,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
@@ -138,7 +136,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen#0) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::screen) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) BGCOL) ← (const byte) RED [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -174,7 +172,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
@@ -214,8 +212,7 @@ FINAL SYMBOL TABLE
 (const byte) RED RED = (byte) 2
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -240,7 +237,7 @@ Score: 18
 main: {
     .label screen = $400
     // *screen = 1
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // *BGCOL = RED

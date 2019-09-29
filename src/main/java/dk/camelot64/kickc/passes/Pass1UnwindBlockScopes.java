@@ -84,8 +84,10 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   unwound.setDeclaredRegister((var.getDeclaredRegister()));
                   unwound.setDeclaredExport(var.isDeclaredExport());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
+                  unwound.setStorageStrategy(var.getStorageStrategy());
                } else if(variable.isStorageIntermediate()) {
                   Variable unwound = procedure.addVariableIntermediate();
+                  unwound.setStorageStrategy(variable.getStorageStrategy());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {
                   throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));

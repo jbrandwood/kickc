@@ -566,8 +566,8 @@ sgn_u16::@return: scope:[sgn_u16]  from sgn_u16::@1 sgn_u16::@3
 @46: scope:[]  from @8
   (byte*) bitmap_screen#19 ← phi( @8/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#20 ← phi( @8/(byte*) bitmap_gfx#0 )
-  (byte*) BITMAP#0 ← ((byte*)) (number) $2000
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) BITMAP ← ((byte*)) (number) $2000
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte[$180]) SINTAB ← kickasm {{ .fill $180, 99.5+99.5*sin(i*2*PI/256)  }}
   (byte*~) $0 ← (byte[$180]) SINTAB + (number) $40
   (byte*) COSTAB#0 ← (byte*~) $0
@@ -578,8 +578,8 @@ main: scope:[main]  from @47
   (byte*) COSTAB#9 ← phi( @47/(byte*) COSTAB#10 )
   (byte*) bitmap_screen#12 ← phi( @47/(byte*) bitmap_screen#14 )
   (byte*) bitmap_gfx#13 ← phi( @47/(byte*) bitmap_gfx#15 )
-  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP#0
-  (byte*) bitmap_init::screen#0 ← (byte*) SCREEN#0
+  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP
+  (byte*) bitmap_init::screen#0 ← (byte*) SCREEN
   call bitmap_init 
   to:main::@14
 main::@14: scope:[main]  from main
@@ -600,8 +600,8 @@ main::@15: scope:[main]  from main::@14
   (byte~) main::$3 ← (byte~) main::$2 | (byte) VIC_RSEL
   (number~) main::$4 ← (byte~) main::$3 | (number) 3
   *((byte*) D011) ← (number~) main::$4
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN#0
-  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP#0
+  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@15
   (byte*) bitmap_screen#28 ← phi( main::@15/(byte*) bitmap_screen#29 )
@@ -683,7 +683,7 @@ main::@7: scope:[main]  from main::@1 main::@8
 main::@8: scope:[main]  from main::@7
   (byte*) bitmap_screen#18 ← phi( main::@7/(byte*) bitmap_screen#13 )
   (byte*) bitmap_gfx#19 ← phi( main::@7/(byte*) bitmap_gfx#14 )
-  (byte*~) main::$19 ← (byte*) SCREEN#0 + (number) $3e7
+  (byte*~) main::$19 ← (byte*) SCREEN + (number) $3e7
   *((byte*~) main::$19) ← ++ *((byte*~) main::$19)
   to:main::@7
 main::@return: scope:[main]  from main::@7
@@ -716,7 +716,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BITMAP
-(byte*) BITMAP#0
 (byte) BLACK
 (byte*) COSTAB
 (byte*) COSTAB#0
@@ -737,7 +736,6 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte[$180]) SINTAB
 (byte) VIC_BMM
 (byte) VIC_DEN
@@ -1309,7 +1307,7 @@ Adding number conversion cast (unumber) main::$12 in (number~) main::$12 ← (wo
 Adding number conversion cast (unumber) $20 in (number~) main::$13 ← (byte) main::a#2 + (number) $20
 Adding number conversion cast (unumber) main::$13 in (number~) main::$13 ← (byte) main::a#2 + (unumber)(number) $20
 Adding number conversion cast (unumber) $20 in (byte) main::a#1 ← (byte) main::a#3 + (number) $20
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$19 ← (byte*) SCREEN#0 + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$19 ← (byte*) SCREEN + (number) $3e7
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) D011 ← (byte*)(number) $d011
 Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
@@ -1329,8 +1327,8 @@ Inlining cast (byte~) bitmap_line::$13 ← (byte)(word) bitmap_line::y#7
 Inlining cast (byte~) bitmap_line::$24 ← (byte)(word) bitmap_line::y#8
 Inlining cast (word) sgn_u16::return#2 ← (unumber)(number) -1
 Inlining cast (word) sgn_u16::return#3 ← (unumber)(number) 1
-Inlining cast (byte*) BITMAP#0 ← (byte*)(number) $2000
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
@@ -1662,18 +1660,18 @@ Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
 Constant (const word) sgn_u16::return#2 = -1
 Constant (const word) sgn_u16::return#3 = 1
-Constant (const byte*) BITMAP#0 = (byte*) 8192
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) BITMAP = (byte*) 8192
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte[$180]) SINTAB = kickasm {{ .fill $180, 99.5+99.5*sin(i*2*PI/256)  }}
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) bitmap_init::gfx#0 = BITMAP#0
-Constant (const byte*) bitmap_init::screen#0 = SCREEN#0
+Constant (const byte*) bitmap_init::gfx#0 = BITMAP
+Constant (const byte*) bitmap_init::screen#0 = SCREEN
 Constant (const byte) bitmap_clear::bgcol#0 = BLACK
 Constant (const byte) bitmap_clear::fgcol#0 = WHITE
-Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
-Constant (const byte*) main::toD0181_gfx#0 = BITMAP#0
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = BITMAP
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
@@ -1723,7 +1721,7 @@ Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [31] (byte) bitmap_clear::col#0 ← (const byte) bitmap_clear::fgcol#0 * (byte) $10
 Constant right-side identified [112] (byte*) COSTAB#0 ← (const byte[$180]) SINTAB + (byte) $40
 Constant right-side identified [115] (byte~) main::$2 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [142] (byte*~) main::$19 ← (const byte*) SCREEN#0 + (word) $3e7
+Constant right-side identified [142] (byte*~) main::$19 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) bitmap_clear::col#0 = bitmap_clear::fgcol#0*$10
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
@@ -1732,7 +1730,7 @@ Constant (const byte*) COSTAB#0 = SINTAB+$40
 Constant (const byte) main::$2 = VIC_BMM|VIC_DEN
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const byte*) main::$19 = SCREEN#0+$3e7
+Constant (const byte*) main::$19 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1784,32 +1782,32 @@ Inlining constant with var siblings (const word) sgn_u16::return#2
 Inlining constant with var siblings (const word) sgn_u16::return#3
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::a#0
-Constant inlined bitmap_init::screen#0 = (const byte*) SCREEN#0
-Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN#0
-Constant inlined main::toD0181_gfx#0 = (const byte*) BITMAP#0
-Constant inlined bitmap_init::gfx#0 = (const byte*) BITMAP#0
+Constant inlined bitmap_init::screen#0 = (const byte*) SCREEN
+Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
+Constant inlined main::toD0181_gfx#0 = (const byte*) BITMAP
+Constant inlined bitmap_init::gfx#0 = (const byte*) BITMAP
 Constant inlined memset::num#1 = (word) $1f40
 Constant inlined memset::num#0 = (word) $3e8
 Constant inlined bitmap_init::bits#0 = (byte) $80
 Constant inlined bitmap_init::bits#2 = (byte) $80
 Constant inlined main::a#0 = (byte) 0
-Constant inlined main::$19 = (const byte*) SCREEN#0+(word) $3e7
+Constant inlined main::$19 = (const byte*) SCREEN+(word) $3e7
 Constant inlined sgn_u16::return#3 = (byte) 1
 Constant inlined main::i#0 = (byte) 0
 Constant inlined sgn_u16::return#2 = (byte) -1
-Constant inlined memset::str#1 = (void*)(const byte*) BITMAP#0
-Constant inlined memset::str#0 = (void*)(const byte*) SCREEN#0
-Constant inlined main::toD0181_$7 = >(word)(const byte*) BITMAP#0/(byte) 4&(byte) $f
-Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
-Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN#0&(word) $3fff
-Constant inlined bitmap_gfx#1 = (const byte*) BITMAP#0
-Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN#0
+Constant inlined memset::str#1 = (void*)(const byte*) BITMAP
+Constant inlined memset::str#0 = (void*)(const byte*) SCREEN
+Constant inlined main::toD0181_$7 = >(word)(const byte*) BITMAP/(byte) 4&(byte) $f
+Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined bitmap_gfx#1 = (const byte*) BITMAP
+Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN
 Constant inlined bitmap_clear::fgcol#0 = (const byte) WHITE
-Constant inlined main::toD0181_$6 = >(word)(const byte*) BITMAP#0/(byte) 4
-Constant inlined main::toD0181_$5 = >(word)(const byte*) BITMAP#0
-Constant inlined main::toD0181_$4 = (word)(const byte*) BITMAP#0
-Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
-Constant inlined bitmap_screen#1 = (const byte*) SCREEN#0
+Constant inlined main::toD0181_$6 = >(word)(const byte*) BITMAP/(byte) 4
+Constant inlined main::toD0181_$5 = >(word)(const byte*) BITMAP
+Constant inlined main::toD0181_$4 = (word)(const byte*) BITMAP
+Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
+Constant inlined bitmap_screen#1 = (const byte*) SCREEN
 Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN
 Constant inlined bitmap_init::y#0 = (byte) 0
 Constant inlined main::$3 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
@@ -2007,7 +2005,7 @@ main::@1: scope:[main]  from main::@4 main::@7
   [12] if((byte) main::i#2!=(byte) 8) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@3
-  [13] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7)
+  [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
   to:main::@3
 main::@2: scope:[main]  from main::@1
   [14] (word~) main::$7 ← (word)*((const byte*) COSTAB#0 + (byte) main::a#2)
@@ -2183,7 +2181,7 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@1
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   [100] (byte) memset::c#4 ← phi( bitmap_clear/(const byte) bitmap_clear::col#0 bitmap_clear::@1/(byte) 0 )
-  [100] (void*) memset::str#3 ← phi( bitmap_clear/(void*)(const byte*) SCREEN#0 bitmap_clear::@1/(void*)(const byte*) BITMAP#0 )
+  [100] (void*) memset::str#3 ← phi( bitmap_clear/(void*)(const byte*) SCREEN bitmap_clear::@1/(void*)(const byte*) BITMAP )
   [100] (word) memset::num#2 ← phi( bitmap_clear/(word) $3e8 bitmap_clear::@1/(word) $1f40 )
   [101] if((word) memset::num#2<=(byte) 0) goto memset::@return
   to:memset::@1
@@ -2223,7 +2221,7 @@ bitmap_init::@2: scope:[bitmap_init]  from bitmap_init::@1 bitmap_init::@6
   [117] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1
   to:bitmap_init::@3
 bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
-  [118] (byte*) bitmap_init::yoffs#2 ← phi( bitmap_init::@2/(const byte*) BITMAP#0 bitmap_init::@4/(byte*) bitmap_init::yoffs#4 )
+  [118] (byte*) bitmap_init::yoffs#2 ← phi( bitmap_init::@2/(const byte*) BITMAP bitmap_init::@4/(byte*) bitmap_init::yoffs#4 )
   [118] (byte) bitmap_init::y#2 ← phi( bitmap_init::@2/(byte) 0 bitmap_init::@4/(byte) bitmap_init::y#1 )
   [119] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
   [120] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
@@ -2247,9 +2245,7 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@4
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BITMAP
 (byte*) COSTAB
-(byte*) SCREEN
 (word()) abs_u16((word) abs_u16::w)
 (byte~) abs_u16::$0 4.0
 (byte~) abs_u16::$1 4.0
@@ -2613,7 +2609,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [13] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     jmp b3
     // main::@2
@@ -3206,7 +3202,7 @@ bitmap_clear: {
     // [100] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuz1=vbuc1 
     lda #col
     sta.z memset.c
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -3228,7 +3224,7 @@ bitmap_clear: {
     // [100] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuz1=vbuc1 
     lda #0
     sta.z memset.c
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
     sta.z memset.str
     lda #>BITMAP
@@ -3370,7 +3366,7 @@ bitmap_init: {
     bne b1_from_b2
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
   b3_from_b2:
-    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP#0 [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
+    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
@@ -3844,7 +3840,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [13] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     jmp b3
     // main::@2
@@ -4374,7 +4370,7 @@ bitmap_clear: {
   memset_from_bitmap_clear:
     // [100] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -4395,7 +4391,7 @@ bitmap_clear: {
   memset_from_b1:
     // [100] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
     sta.z memset.str
     lda #>BITMAP
@@ -4519,7 +4515,7 @@ bitmap_init: {
     bne b1_from_b2
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
   b3_from_b2:
-    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP#0 [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
+    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
@@ -4751,8 +4747,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BITMAP
-(const byte*) BITMAP#0 BITMAP = (byte*) 8192
+(const byte*) BITMAP BITMAP = (byte*) 8192
 (byte*) COSTAB
 (const byte*) COSTAB#0 COSTAB = (const byte[$180]) SINTAB+(byte) $40
 (const byte*) D011 D011 = (byte*) 53265
@@ -4761,8 +4756,7 @@ FINAL SYMBOL TABLE
 (const byte) RADIX::DECIMAL DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL OCTAL = (number) 8
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte[$180]) SINTAB SINTAB = kickasm {{ .fill $180, 99.5+99.5*sin(i*2*PI/256)  }}
 (const byte) VIC_BMM VIC_BMM = (byte) $20
 (const byte) VIC_DEN VIC_DEN = (byte) $10
@@ -4922,7 +4916,7 @@ FINAL SYMBOL TABLE
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
-(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4|>(word)(const byte*) BITMAP#0/(byte) 4&(byte) $f
+(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4|>(word)(const byte*) BITMAP/(byte) 4&(byte) $f
 (byte*) main::toD0181_screen
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
@@ -5057,7 +5051,7 @@ main: {
     // main::@3
   b3:
     // (*(SCREEN+999))++;
-    // [13] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     jmp b3
     // main::@2
@@ -5578,7 +5572,7 @@ bitmap_clear: {
     // [100] phi from bitmap_clear to memset [phi:bitmap_clear->memset]
     // [100] phi (byte) memset::c#4 = (const byte) bitmap_clear::col#0 [phi:bitmap_clear->memset#0] -- vbuxx=vbuc1 
     ldx #col
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:bitmap_clear->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -5596,7 +5590,7 @@ bitmap_clear: {
     // [100] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
     // [100] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
-    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP#0 [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
+    // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
     lda #<BITMAP
     sta.z memset.str
     lda #>BITMAP
@@ -5711,7 +5705,7 @@ bitmap_init: {
     cpx #0
     bne b1
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
-    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP#0 [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
+    // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP

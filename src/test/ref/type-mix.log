@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (signed word) main::w#0 ← (number) 0
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -17,7 +17,7 @@ main::@1: scope:[main]  from main main::@1
   (number~) main::$0 ← (signed word) main::w#2 - (number) $c
   (signed word) main::w#1 ← (number~) main::$0
   (byte~) main::$1 ← < (signed word) main::w#1
-  *((byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1
+  *((byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
   (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$2) goto main::@1
@@ -44,7 +44,6 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -59,7 +58,7 @@ Adding number conversion cast (snumber) $c in (number~) main::$0 ← (signed wor
 Adding number conversion cast (snumber) main::$0 in (number~) main::$0 ← (signed word) main::w#2 - (snumber)(number) $c
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (signed word) main::w#0 ← (snumber)(number) 0
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -74,7 +73,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$2 [10] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const signed word) main::w#0 = 0
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
@@ -130,7 +129,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (signed word) main::w#2 ← phi( main/(signed byte) 0 main::@1/(signed word) main::w#1 )
   [6] (signed word) main::w#1 ← (signed word) main::w#2 - (signed byte) $c
   [7] (byte~) main::$1 ← < (signed word) main::w#1
-  [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1
+  [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -142,7 +141,6 @@ main::@return: scope:[main]  from main::@1
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$1 22.0
-(byte*) main::SCREEN
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 8.25
@@ -222,7 +220,7 @@ main: {
     // [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuz1=_lo_vwsz2 
     lda.z w
     sta.z _1
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _1
     ldy.z i
     sta SCREEN,y
@@ -312,7 +310,7 @@ main: {
     sta.z w+1
     // [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuaa=_lo_vwsz1 
     lda.z w
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -363,8 +361,7 @@ FINAL SYMBOL TABLE
 (byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 8.25
@@ -423,7 +420,7 @@ main: {
     // [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuaa=_lo_vwsz1 
     lda.z w
     // SCREEN[i] = <w
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for (byte i: 0..10)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

@@ -100,8 +100,8 @@ CONTROL FLOW GRAPH SSA
   (byte*) COLS ← ((byte*)) (number) $d800
   to:@8
 @8: scope:[]  from @begin
-  (byte*) HEAP_TOP#0 ← ((byte*)) (number) $a000
-  (byte*) heap_head#0 ← (byte*) HEAP_TOP#0
+  (byte*) HEAP_TOP ← ((byte*)) (number) $a000
+  (byte*) heap_head#0 ← (byte*) HEAP_TOP
   to:@16
 
 (void*()) malloc((word) malloc::size)
@@ -1246,7 +1246,6 @@ SYMBOL TABLE SSA
 (byte) CORDIC_ITERATIONS_16
 (byte) FILL_CHAR
 (byte*) HEAP_TOP
-(byte*) HEAP_TOP#0
 (byte) NUM_BUCKETS
 (byte) NUM_SQUARES
 (byte) NUM_SQUARES#0
@@ -2322,7 +2321,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) RASTER ← (byte*)(number) $d012
 Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
 Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte*) HEAP_TOP#0 ← (byte*)(number) $a000
+Inlining cast (byte*) HEAP_TOP ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (signed word~) bsearch16u::$8 ← (signed word)(word) bsearch16u::key#1
 Inlining cast (signed word~) bsearch16u::$9 ← (signed word)*((word*) bsearch16u::pivot#0)
@@ -2549,7 +2548,7 @@ Inversing boolean not [257] (bool~) main::$10 ← *((byte*) main::fill#0) == (by
 Inversing boolean not [261] (bool~) main::$15 ← (word) main::min_offset#2 == (word) $ffff from [260] (bool~) main::$14 ← (word) main::min_offset#2 != (word) $ffff
 Inversing boolean not [269] (bool~) main::$13 ← *((byte*) main::angle#0) > (byte) main::min_angle#2 from [268] (bool~) main::$12 ← *((byte*) main::angle#0) <= (byte) main::min_angle#2
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) HEAP_TOP#0 = (byte*) heap_head#0 (byte*) heap_head#54 (byte*) heap_head#47 (byte*) heap_head#35 
+Alias (byte*) HEAP_TOP = (byte*) heap_head#0 (byte*) heap_head#54 (byte*) heap_head#47 (byte*) heap_head#35 
 Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#9 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#19 (byte*) heap_head#2 
@@ -2901,7 +2900,7 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) RASTER = (byte*) 53266
 Constant (const byte*) BORDERCOL = (byte*) 53280
 Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte*) HEAP_TOP#0 = (byte*) 40960
+Constant (const byte*) HEAP_TOP = (byte*) 40960
 Constant (const byte) bsearch16u::$17 = 1*SIZEOF_WORD
 Constant (const byte) bsearch16u::$18 = 1*SIZEOF_WORD
 Constant (const byte) NUM_SQUARES#0 = $ff
@@ -3563,7 +3562,7 @@ init_buckets::@return: scope:[init_buckets]  from init_buckets::@7
 (void*()) malloc((word) malloc::size)
 malloc: scope:[malloc]  from @1 @2 @4 @6 @7 init_buckets::@4 init_squares
   [93] (word) malloc::size#7 ← phi( @1/(word) $3e8 @2/(const byte) NUM_BUCKETS*(const byte) SIZEOF_BYTE @4/(word) $3e8 @6/(const byte) NUM_BUCKETS*(const byte) SIZEOF_POINTER @7/(const byte) NUM_BUCKETS*(const byte) SIZEOF_BYTE init_buckets::@4/(word) malloc::size#6 init_squares/(const byte) NUM_SQUARES#3*(const byte) SIZEOF_WORD )
-  [93] (byte*) heap_head#18 ← phi( @1/(const byte*) HEAP_TOP#0 @2/(byte*) heap_head#1 @4/(byte*) heap_head#1 @6/(byte*) heap_head#1 @7/(byte*) heap_head#1 init_buckets::@4/(byte*) heap_head#1 init_squares/(byte*) heap_head#1 )
+  [93] (byte*) heap_head#18 ← phi( @1/(const byte*) HEAP_TOP @2/(byte*) heap_head#1 @4/(byte*) heap_head#1 @6/(byte*) heap_head#1 @7/(byte*) heap_head#1 init_buckets::@4/(byte*) heap_head#1 init_squares/(byte*) heap_head#1 )
   [94] (byte*) malloc::mem#0 ← (byte*) heap_head#18 - (word) malloc::size#7
   [95] (byte*) heap_head#1 ← (byte*) malloc::mem#0
   to:malloc::@return
@@ -3900,7 +3899,6 @@ VARIABLE REGISTER WEIGHTS
 (void*) BUCKETS 0.02531645569620253
 (void*) BUCKET_IDX 0.0425531914893617
 (void*) BUCKET_SIZES 0.024691358024691357
-(byte*) HEAP_TOP
 (byte) NUM_SQUARES
 (void*) SCREEN_ANGLE 0.045454545454545456
 (void*) SCREEN_DIST 0.125
@@ -4555,7 +4553,7 @@ malloc_from_b1:
   sta.z malloc.size
   lda #>$3e8
   sta.z malloc.size+1
-  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP [phi:@1->malloc#1] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
   sta.z heap_head
   lda #>HEAP_TOP
@@ -7132,7 +7130,7 @@ malloc_from_b1:
   sta.z malloc.size
   lda #>$3e8
   sta.z malloc.size+1
-  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP [phi:@1->malloc#1] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
   sta.z heap_head
   lda #>HEAP_TOP
@@ -9091,8 +9089,7 @@ FINAL SYMBOL TABLE
  }}
 (const byte) CORDIC_ITERATIONS_16 CORDIC_ITERATIONS_16 = (byte) $f
 (const byte) FILL_CHAR FILL_CHAR = (byte) '*'
-(byte*) HEAP_TOP
-(const byte*) HEAP_TOP#0 HEAP_TOP = (byte*) 40960
+(const byte*) HEAP_TOP HEAP_TOP = (byte*) 40960
 (const byte) NUM_BUCKETS NUM_BUCKETS = (byte) $30
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
@@ -9571,7 +9568,7 @@ bbegin:
   sta.z malloc.size
   lda #>$3e8
   sta.z malloc.size+1
-  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP#0 [phi:@1->malloc#1] -- pbuz1=pbuc1 
+  // [93] phi (byte*) heap_head#18 = (const byte*) HEAP_TOP [phi:@1->malloc#1] -- pbuz1=pbuc1 
   lda #<HEAP_TOP
   sta.z heap_head
   lda #>HEAP_TOP

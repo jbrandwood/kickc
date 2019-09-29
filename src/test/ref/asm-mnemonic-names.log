@@ -8,9 +8,9 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) main::jmp#0 ← (number) 1
-  *((byte*) lda) ← (byte) main::jmp#0
-  (byte) bne::jsr#0 ← (byte) main::jmp#0
+  (byte) main::jmp ← (number) 1
+  *((byte*) lda) ← (byte) main::jmp
+  (byte) bne::jsr#0 ← (byte) main::jmp
   call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -50,13 +50,12 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte) main::jmp
-(byte) main::jmp#0
 
-Adding number conversion cast (unumber) 1 in (byte) main::jmp#0 ← (number) 1
+Adding number conversion cast (unumber) 1 in (byte) main::jmp ← (number) 1
 Adding number conversion cast (unumber) 1 in *((byte*) lda + (number) 1) ← (byte) bne::jsr#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) lda ← (byte*)(number) $400
-Inlining cast (byte) main::jmp#0 ← (unumber)(number) 1
+Inlining cast (byte) main::jmp ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -68,11 +67,11 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values (byte) bne::jsr#1 (byte) bne::jsr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte*) lda = (byte*) 1024
-Constant (const byte) main::jmp#0 = 1
+Constant (const byte) main::jmp = 1
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) bne::jsr#0 = main::jmp#0
+Constant (const byte) bne::jsr#0 = main::jmp
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined bne::jsr#0 = (const byte) main::jmp#0
+Constant inlined bne::jsr#0 = (const byte) main::jmp
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(lda+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -105,7 +104,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) lda) ← (const byte) main::jmp#0
+  [4] *((const byte*) lda) ← (const byte) main::jmp
   [5] call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -117,7 +116,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) bne((byte) bne::jsr)
 bne: scope:[bne]  from main
-  [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp#0
+  [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   [9] return 
@@ -128,7 +127,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) bne((byte) bne::jsr)
 (byte) bne::jsr
 (void()) main()
-(byte) main::jmp
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -161,7 +159,7 @@ bend:
   // main
 main: {
     .label jmp = 1
-    // [4] *((const byte*) lda) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // [5] call bne 
@@ -183,7 +181,7 @@ main: {
 }
   // bne
 bne: {
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     jmp breturn
@@ -195,9 +193,9 @@ bne: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) lda) ← (const byte) main::jmp#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) lda) ← (const byte) main::jmp [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { ldaa jmpa bnea a:  } always clobbers reg byte a 
-Statement [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp#0 [ ] ( main:2::bne:5 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp [ ] ( main:2::bne:5 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -235,7 +233,7 @@ bend:
   // main
 main: {
     .label jmp = 1
-    // [4] *((const byte*) lda) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // [5] call bne 
@@ -257,7 +255,7 @@ main: {
 }
   // bne
 bne: {
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     jmp breturn
@@ -304,8 +302,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::jmp
-(const byte) main::jmp#0 jmp = (byte) 1
+(const byte) main::jmp jmp = (byte) 1
 
 
 
@@ -331,7 +328,7 @@ Score: 40
 main: {
     .label jmp = 1
     // *lda = jmp
-    // [4] *((const byte*) lda) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // bne(jmp)
@@ -352,7 +349,7 @@ main: {
   // bne
 bne: {
     // lda[1] = jsr
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     // bne::@return

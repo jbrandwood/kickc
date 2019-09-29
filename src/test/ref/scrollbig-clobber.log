@@ -5,13 +5,13 @@ Culled Empty Block (label) next_char::@3
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) TEXT#0 ← (const string) $0
+  (byte*) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte*) nxt#15 ← phi( @2/(byte*) nxt#14 )
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -26,7 +26,7 @@ main::@3: scope:[main]  from main::@1
   (byte) next_char::return#3 ← phi( main::@1/(byte) next_char::return#0 )
   (byte~) main::$0 ← (byte) next_char::return#3
   (byte*) nxt#0 ← (byte*) nxt#7
-  *((byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  *((byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$ff)
   if((bool~) main::$1) goto main::@1
@@ -37,7 +37,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) nxt#2 ← (byte*) TEXT#0
+  (byte*) nxt#2 ← (byte*) TEXT
   to:@2
 
 (byte()) next_char()
@@ -55,7 +55,7 @@ next_char::@1: scope:[next_char]  from next_char next_char::@2
   (byte) next_char::return#1 ← (byte) next_char::c#2
   to:next_char::@return
 next_char::@2: scope:[next_char]  from next_char
-  (byte*) nxt#4 ← (byte*) TEXT#0
+  (byte*) nxt#4 ← (byte*) TEXT
   (byte) next_char::c#1 ← *((byte*) nxt#4)
   to:next_char::@1
 next_char::@return: scope:[next_char]  from next_char::@1
@@ -83,7 +83,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) TEXT
-(byte*) TEXT#0
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
@@ -91,7 +90,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -133,7 +131,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (bool~) next_char::$0 ← (byte) next_char::c#0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -145,12 +143,12 @@ Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) next_char::return#0 = (byte) next_char::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte*) nxt#0 = (byte*) nxt#7 (byte*) nxt#8 (byte*) nxt#1 
-Alias (byte*) TEXT#0 = (byte*) nxt#2 (byte*) nxt#14 
+Alias (byte*) TEXT = (byte*) nxt#2 (byte*) nxt#14 
 Alias (byte) next_char::return#1 = (byte) next_char::c#2 (byte) next_char::return#4 (byte) next_char::return#2 
 Alias (byte*) nxt#11 = (byte*) nxt#3 (byte*) nxt#5 
 Alias (byte*) nxt#12 = (byte*) nxt#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) nxt#15 (byte*) TEXT#0
+Identical Phi Values (byte*) nxt#15 (byte*) TEXT
 Identical Phi Values (byte*) nxt#0 (byte*) nxt#11
 Identical Phi Values (byte*) nxt#9 (byte*) nxt#13
 Identical Phi Values (byte*) nxt#12 (byte*) nxt#0
@@ -158,11 +156,11 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [13] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Simple Condition (bool~) next_char::$1 [22] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) TEXT#0 = $0
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) TEXT = $0
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) nxt#4 = TEXT#0
+Constant (const byte*) nxt#4 = TEXT
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
@@ -174,9 +172,9 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) nxt#4
-Constant inlined $0 = (const byte*) TEXT#0
+Constant inlined $0 = (const byte*) TEXT
 Constant inlined main::i#0 = (byte) 0
-Constant inlined nxt#4 = (const byte*) TEXT#0
+Constant inlined nxt#4 = (const byte*) TEXT
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Added new block during phi lifting next_char::@4(between next_char and next_char::@1)
@@ -225,13 +223,13 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [5] (byte*) nxt#13 ← phi( main/(const byte*) TEXT#0 main::@2/(byte*) nxt#11 )
+  [5] (byte*) nxt#13 ← phi( main/(const byte*) TEXT main::@2/(byte*) nxt#11 )
   [6] call next_char 
   [7] (byte) next_char::return#0 ← (byte) next_char::return#1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$0 ← (byte) next_char::return#0
-  [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   [11] if((byte) main::i#1!=(byte) 0) goto main::@1
   to:main::@return
@@ -245,11 +243,11 @@ next_char: scope:[next_char]  from main::@1
   [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
   to:next_char::@2
 next_char::@2: scope:[next_char]  from next_char
-  [15] (byte) next_char::c#1 ← *((const byte*) TEXT#0)
+  [15] (byte) next_char::c#1 ← *((const byte*) TEXT)
   to:next_char::@1
 next_char::@1: scope:[next_char]  from next_char next_char::@2
   [16] (byte) next_char::return#1 ← phi( next_char/(byte) next_char::c#0 next_char::@2/(byte) next_char::c#1 )
-  [16] (byte*) nxt#10 ← phi( next_char/(byte*) nxt#13 next_char::@2/(const byte*) TEXT#0 )
+  [16] (byte*) nxt#10 ← phi( next_char/(byte*) nxt#13 next_char::@2/(const byte*) TEXT )
   [17] (byte*) nxt#11 ← ++ (byte*) nxt#10
   to:next_char::@return
 next_char::@return: scope:[next_char]  from next_char::@1
@@ -258,10 +256,8 @@ next_char::@return: scope:[next_char]  from next_char::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) TEXT
 (void()) main()
 (byte~) main::$0 22.0
-(byte*) main::SCREEN
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 6.6000000000000005
@@ -331,7 +327,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] phi (byte*) nxt#13 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) nxt#13 = (const byte*) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -355,7 +351,7 @@ main: {
     // [8] (byte~) main::$0 ← (byte) next_char::return#0 -- vbuz1=vbuz2 
     lda.z next_char.return
     sta.z _0
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _0
     ldy.z i
     sta SCREEN,y
@@ -388,13 +384,13 @@ next_char: {
     jmp b2
     // next_char::@2
   b2:
-    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
+    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta.z c
     // [16] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-    // [16] phi (byte*) nxt#10 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) nxt#10 = (const byte*) TEXT [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -475,7 +471,7 @@ main: {
   b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (byte*) nxt#13 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) nxt#13 = (const byte*) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -496,7 +492,7 @@ main: {
     // main::@2
   b2:
     // [8] (byte~) main::$0 ← (byte) next_char::return#0
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -522,12 +518,12 @@ next_char: {
     jmp b2
     // next_char::@2
   b2:
-    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuyy=_deref_pbuc1 
+    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuyy=_deref_pbuc1 
     ldy TEXT
     // [16] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-    // [16] phi (byte*) nxt#10 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) nxt#10 = (const byte*) TEXT [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -595,15 +591,13 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) TEXT
-(const byte*) TEXT#0 TEXT = (string) "cml "
+(const byte*) TEXT TEXT = (string) "cml "
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 6.6000000000000005
@@ -653,7 +647,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (byte*) nxt#13 = (const byte*) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) nxt#13 = (const byte*) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -671,7 +665,7 @@ main: {
     // main::@2
     // [8] (byte~) main::$0 ← (byte) next_char::return#0
     // SCREEN[i] = next_char()
-    // [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for( byte i: 0..255)
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -698,11 +692,11 @@ next_char: {
     bne b1
     // next_char::@2
     // c = *nxt
-    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuyy=_deref_pbuc1 
+    // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuyy=_deref_pbuc1 
     ldy TEXT
     // [16] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-    // [16] phi (byte*) nxt#10 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) nxt#10 = (const byte*) TEXT [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -85,8 +86,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
             if(versions.size() != 0) {
                throw new CompileError("Error! Constants can not be modified", source);
             }
-            version = assignedSymbol.createVersion();
-            version.setDeclaredConstant(true);
+            throw new InternalError("ERR!");
+            //version = assignedSymbol.createVersion();
+            //version.setDeclaredConstant(true);
          } else {
             version = assignedSymbol.createVersion();
          }

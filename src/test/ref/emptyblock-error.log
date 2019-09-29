@@ -49,7 +49,7 @@ menu::@return: scope:[menu]  from menu::@1 menu::@8
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) B#0 ← ((byte*)) (number) $1000
+  (byte*) B ← ((byte*)) (number) $1000
   to:@3
 
 (void()) mode()
@@ -59,7 +59,7 @@ mode::@1: scope:[mode]  from mode mode::@2 mode::@7
   if(true) goto mode::@2
   to:mode::@return
 mode::@2: scope:[mode]  from mode::@1
-  (bool~) mode::$0 ← *((byte*) B#0) == (number) 0
+  (bool~) mode::$0 ← *((byte*) B) == (number) 0
   (bool~) mode::$1 ← ! (bool~) mode::$0
   if((bool~) mode::$1) goto mode::@1
   to:mode::@7
@@ -82,7 +82,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) B
-(byte*) B#0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -101,20 +100,20 @@ SYMBOL TABLE SSA
 (label) mode::@7
 (label) mode::@return
 
-Adding number conversion cast (unumber) 0 in (bool~) mode::$0 ← *((byte*) B#0) == (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) mode::$0 ← *((byte*) B) == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) B#0 ← (byte*)(number) $1000
+Inlining cast (byte*) B ← (byte*)(number) $1000
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [9] (bool~) mode::$1 ← *((byte*) B#0) != (byte) 0 from [8] (bool~) mode::$0 ← *((byte*) B#0) == (byte) 0
+Inversing boolean not [9] (bool~) mode::$1 ← *((byte*) B) != (byte) 0 from [8] (bool~) mode::$0 ← *((byte*) B) == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) mode::$1 [10] if(*((byte*) B#0)!=(byte) 0) goto mode::@1
+Simple Condition (bool~) mode::$1 [10] if(*((byte*) B)!=(byte) 0) goto mode::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) B#0 = (byte*) 4096
+Constant (const byte*) B = (byte*) 4096
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 if() condition always true - replacing block destination [3] if(true) goto menu::@2
@@ -205,7 +204,7 @@ mode: scope:[mode]  from menu::@1
   [11] phi()
   to:mode::@1
 mode::@1: scope:[mode]  from mode mode::@1 mode::@2
-  [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1
+  [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1
   to:mode::@2
 mode::@2: scope:[mode]  from mode::@1
   [13] phi()
@@ -213,7 +212,6 @@ mode::@2: scope:[mode]  from mode::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) B
 (void()) main()
 (void()) menu()
 (void()) mode()
@@ -283,7 +281,7 @@ mode: {
     jmp b1
     // mode::@1
   b1:
-    // [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne b1
@@ -297,7 +295,7 @@ mode: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 [ ] ( main:2::menu:6::mode:9 [ ] ) always clobbers reg byte a 
+Statement [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 [ ] ( main:2::menu:6::mode:9 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -371,7 +369,7 @@ mode: {
     jmp b1
     // mode::@1
   b1:
-    // [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne b1
@@ -420,8 +418,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) B
-(const byte*) B#0 B = (byte*) 4096
+(const byte*) B B = (byte*) 4096
 (void()) main()
 (label) main::@1
 (void()) menu()
@@ -480,7 +477,7 @@ mode: {
     // mode::@1
   b1:
     // if(*B == 0)
-    // [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne b1

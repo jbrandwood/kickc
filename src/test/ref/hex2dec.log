@@ -131,15 +131,15 @@ main::@return: scope:[main]  from main::@1
 
 (void()) cls()
 cls: scope:[cls]  from main
-  (byte*) cls::screen#0 ← ((byte*)) (number) $400
-  (byte*~) cls::$0 ← (byte*) cls::screen#0 + (number) $3e7
-  (byte*) cls::sc#0 ← (byte*) cls::screen#0
+  (byte*) cls::screen ← ((byte*)) (number) $400
+  (byte*~) cls::$0 ← (byte*) cls::screen + (number) $3e7
+  (byte*) cls::sc#0 ← (byte*) cls::screen
   to:cls::@1
 cls::@1: scope:[cls]  from cls cls::@1
   (byte*) cls::sc#2 ← phi( cls/(byte*) cls::sc#0 cls::@1/(byte*) cls::sc#1 )
   *((byte*) cls::sc#2) ← (byte) ' '
-  (byte*) cls::sc#1 ← (byte*) cls::sc#2 + rangenext(cls::screen#0,cls::$0)
-  (bool~) cls::$1 ← (byte*) cls::sc#1 != rangelast(cls::screen#0,cls::$0)
+  (byte*) cls::sc#1 ← (byte*) cls::sc#2 + rangenext(cls::screen,cls::$0)
+  (bool~) cls::$1 ← (byte*) cls::sc#1 != rangelast(cls::screen,cls::$0)
   if((bool~) cls::$1) goto cls::@1
   to:cls::@return
 cls::@return: scope:[cls]  from cls::@1
@@ -372,7 +372,6 @@ SYMBOL TABLE SSA
 (byte*) cls::sc#1
 (byte*) cls::sc#2
 (byte*) cls::screen
-(byte*) cls::screen#0
 (byte*) control
 (void()) main()
 (number~) main::$1
@@ -626,7 +625,7 @@ Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::$18 ← *((byte[]) main::msg#0 + (byte) main::i#2) != (number) 0
 Adding number conversion cast (unumber) $50 in (byte*~) main::$19 ← (byte*) main::screen#10 + (number) $50
 Adding number conversion cast (unumber) 3 in (byte*~) main::$20 ← (byte*~) main::$19 + (number) 3
-Adding number conversion cast (unumber) $3e7 in (byte*~) cls::$0 ← (byte*) cls::screen#0 + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) cls::$0 ← (byte*) cls::screen + (number) $3e7
 Adding number conversion cast (unumber) 0 in (byte) utoa10w::bStarted#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) utoa10w::digit#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) utoa10w::bStarted#1 ← (number) 1
@@ -665,7 +664,7 @@ Inlining cast (word) utoa16w::value#4 ← (unumber)(number) $e608
 Inlining cast *((byte*) bordercol) ← (unumber)(number) 0
 Inlining cast (word~) main::$15 ← (word)(byte) main::time#0
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) cls::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) cls::screen ← (byte*)(number) $400
 Inlining cast (byte) utoa10w::bStarted#0 ← (unumber)(number) 0
 Inlining cast (byte) utoa10w::digit#0 ← (unumber)(number) 0
 Inlining cast (byte) utoa10w::bStarted#1 ← (unumber)(number) 1
@@ -798,7 +797,7 @@ Alias (word) utoa10w::value#0 = (word~) main::$15
 Alias (byte*) utoa10w::dst#0 = (byte*~) main::$16 
 Alias (byte*) main::screen#10 = (byte*) main::screen#11 
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) cls::screen#0 = (byte*) cls::sc#0 
+Alias (byte*) cls::screen = (byte*) cls::sc#0 
 Alias (byte) utoa10w::digit#3 = (byte) utoa10w::digit#5 (byte) utoa10w::digit#8 (byte) utoa10w::digit#6 (byte) utoa10w::digit#4 
 Alias (byte) utoa10w::i#2 = (byte) utoa10w::i#3 (byte) utoa10w::i#4 (byte) utoa10w::i#7 (byte) utoa10w::i#8 
 Alias (word) utoa10w::value#10 = (word) utoa10w::value#3 (word) utoa10w::value#2 (word) utoa10w::value#8 (word) utoa10w::value#9 
@@ -846,7 +845,7 @@ Identical Phi Values (byte*) utoa10w::dst#10 (byte*) utoa10w::dst#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$4 [11] if((byte) main::rst#0!=(byte) $30) goto main::@4
 Simple Condition (bool~) main::$18 [57] if(*((byte[]) main::msg#0 + (byte) main::i#2)!=(byte) 0) goto main::@7
-Simple Condition (bool~) cls::$1 [71] if((byte*) cls::sc#1!=rangelast(cls::screen#0,cls::$0)) goto cls::@1
+Simple Condition (bool~) cls::$1 [71] if((byte*) cls::sc#1!=rangelast(cls::screen,cls::$0)) goto cls::@1
 Simple Condition (bool~) utoa10w::$1 [83] if((word) utoa10w::value#10>=*((word[]) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@3
 Simple Condition (bool~) utoa10w::$4 [93] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@10
 Simple Condition (bool~) utoa10w::$7 [97] if((byte) utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2
@@ -873,7 +872,7 @@ Constant (const word) utoa16w::value#3 = $270f
 Constant (const word) utoa16w::value#4 = $e608
 Constant (const byte[]) main::msg#0 = main::$21
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) cls::screen#0 = (byte*) 1024
+Constant (const byte*) cls::screen = (byte*) 1024
 Constant (const byte[]) DIGITS = $0
 Constant (const word[]) UTOA10_SUB = { $7530, $2710, $bb8, $3e8, $12c, $64, $1e, $a }
 Constant (const byte[]) UTOA10_VAL = { 3, 1, 3, 1, 3, 1, 3, 1 }
@@ -910,13 +909,13 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [11] (byte*) main::screen#1 ← (const byte*) main::screen#0 + (byte) $28
-Constant right-side identified [38] (byte*~) cls::$0 ← (const byte*) cls::screen#0 + (word) $3e7
+Constant right-side identified [38] (byte*~) cls::$0 ← (const byte*) cls::screen + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#1 = main::screen#0+$28
-Constant (const byte*) cls::$0 = cls::screen#0+$3e7
+Constant (const byte*) cls::$0 = cls::screen+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [41] cls::sc#1 ← ++ cls::sc#2 to ++
-Resolved ranged comparison value [42] if(cls::sc#1!=rangelast(cls::screen#0,cls::$0)) goto cls::@1 to (byte*)(const byte*) cls::$0+(number) 1
+Resolved ranged comparison value [42] if(cls::sc#1!=rangelast(cls::screen,cls::$0)) goto cls::@1 to (byte*)(const byte*) cls::$0+(number) 1
 Adding number conversion cast (unumber) 1 in if((byte*) cls::sc#1!=(byte*)(const byte*) cls::$0+(number) 1) goto cls::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (const byte*) cls::$0+(unumber)(number) 1
@@ -997,7 +996,7 @@ Constant inlined utoa16n::dst#2 = &(byte*) utoa16w::dst#5
 Constant inlined main::$20 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3
 Constant inlined main::$21 = (const byte[]) main::msg#0
 Constant inlined utoa16w::started#0 = (byte) 0
-Constant inlined cls::$0 = (const byte*) cls::screen#0+(word) $3e7
+Constant inlined cls::$0 = (const byte*) cls::screen+(word) $3e7
 Constant inlined utoa10w::i#0 = (byte) 0
 Constant inlined utoa10w::dst#0 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50
 Constant inlined utoa10w::digit#0 = (byte) 0
@@ -1273,10 +1272,10 @@ cls: scope:[cls]  from main
   [85] phi()
   to:cls::@1
 cls::@1: scope:[cls]  from cls cls::@1
-  [86] (byte*) cls::sc#2 ← phi( cls/(const byte*) cls::screen#0 cls::@1/(byte*) cls::sc#1 )
+  [86] (byte*) cls::sc#2 ← phi( cls/(const byte*) cls::screen cls::@1/(byte*) cls::sc#1 )
   [87] *((byte*) cls::sc#2) ← (byte) ' '
   [88] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2
-  [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1
+  [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1
   to:cls::@return
 cls::@return: scope:[cls]  from cls::@1
   [90] return 
@@ -1288,7 +1287,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) cls::sc
 (byte*) cls::sc#1 16.5
 (byte*) cls::sc#2 16.5
-(byte*) cls::screen
 (void()) main()
 (byte~) main::$1 101.0
 (byte~) main::$2 202.0
@@ -2023,7 +2021,7 @@ cls: {
     .label sc = $10
     // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
   b1_from_cls:
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -2044,7 +2042,7 @@ cls: {
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne b1_from_b1
@@ -2114,7 +2112,7 @@ Statement [82] *(*(&(byte*) utoa16w::dst#5)) ← *((const byte[]) DIGITS + (byte
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:15 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:15 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
 Statement [87] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( main:2::cls:5 [ cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] ) always clobbers reg byte a 
+Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] ) always clobbers reg byte a 
 Statement [6] (byte~) main::$1 ← *((const byte*) control) & (byte) $80 [ main::$1 ] ( main:2 [ main::$1 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$2 ← *((const byte*) raster) >> (byte) 1 [ main::$1 main::$2 ] ( main:2 [ main::$1 main::$2 ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) bordercol) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -2148,7 +2146,7 @@ Statement [72] (byte~) utoa16w::$12 ← < (word) utoa16w::value#5 [ utoa16w::dst
 Statement [75] *((byte*) utoa16w::dst#5) ← (byte) 0 [ ] ( main:2::utoa16w:13 [ main::time_start#0 ] main:2::utoa16w:16 [ main::time_start#0 ] main:2::utoa16w:19 [ main::time_start#0 ] main:2::utoa16w:22 [ main::time_start#0 ] main:2::utoa16w:25 [ main::time_start#0 ] ) always clobbers reg byte a reg byte y 
 Statement [82] *(*(&(byte*) utoa16w::dst#5)) ← *((const byte[]) DIGITS + (byte) utoa16n::nybble#4) [ utoa16w::dst#5 utoa16n::return#4 ] ( main:2::utoa16w:13::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:16::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:19::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:22::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:25::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:13::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:16::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:19::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:22::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:25::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:13::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:16::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:19::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:22::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:25::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:13::utoa16n:74 [ main::time_start#0 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:16::utoa16n:74 [ main::time_start#0 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:19::utoa16n:74 [ main::time_start#0 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:22::utoa16n:74 [ main::time_start#0 utoa16w::dst#5 utoa16n::return#4 ] main:2::utoa16w:25::utoa16n:74 [ main::time_start#0 utoa16w::dst#5 utoa16n::return#4 ] ) always clobbers reg byte a reg byte y 
 Statement [87] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( main:2::cls:5 [ cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] ) always clobbers reg byte a 
+Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ utoa10w::i#2 utoa10w::i#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_WORD:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] : zp ZP_WORD:4 , 
@@ -2723,7 +2721,7 @@ cls: {
     .label sc = 6
     // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
   b1_from_cls:
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -2744,7 +2742,7 @@ cls: {
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne b1_from_b1
@@ -2884,8 +2882,7 @@ FINAL SYMBOL TABLE
 (byte*) cls::sc
 (byte*) cls::sc#1 sc zp ZP_WORD:6 16.5
 (byte*) cls::sc#2 sc zp ZP_WORD:6 16.5
-(byte*) cls::screen
-(const byte*) cls::screen#0 screen = (byte*) 1024
+(const byte*) cls::screen screen = (byte*) 1024
 (const byte*) control control = (byte*) 53265
 (void()) main()
 (byte~) main::$1 $1 zp ZP_BYTE:8 101.0
@@ -3491,7 +3488,7 @@ cls: {
     .label screen = $400
     .label sc = 6
     // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
@@ -3511,7 +3508,7 @@ cls: {
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen#0+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne b1

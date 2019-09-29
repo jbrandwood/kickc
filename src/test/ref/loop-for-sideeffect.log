@@ -5,7 +5,7 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -21,11 +21,11 @@ main::@1: scope:[main]  from main main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN#0 + (byte) main::i#4) ← (byte) main::i#4
+  *((byte*) SCREEN + (byte) main::i#4) ← (byte) main::i#4
   to:main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::i#5 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN#0 + (byte) main::i#5) ← (byte) 'x'
+  *((byte*) SCREEN + (byte) main::i#5) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -43,7 +43,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -61,7 +60,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 7 in (byte) main::i#1 ← (number) 7
 Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) main::i#3 < (number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#1 ← (unumber)(number) 7
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -75,7 +74,7 @@ Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#5
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [6] if((byte) main::i#3<(byte) 7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::i#1 = 7
 Successful SSA optimization Pass2ConstantIdentification
@@ -122,19 +121,18 @@ main::@1: scope:[main]  from main main::@2
   [7] if((byte) main::i#3<(byte) 7) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x'
+  [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [9] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
+  [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2
   [11] (byte~) main::i#6 ← (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (byte) main::i
 (byte) main::i#2 15.333333333333332
@@ -201,7 +199,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuz1=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
     ldy.z i
@@ -213,7 +211,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
@@ -228,7 +226,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#6 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::i#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -283,7 +281,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
     sta SCREEN,x
@@ -294,7 +292,7 @@ main: {
     rts
     // main::@2
   b2:
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
@@ -334,8 +332,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -385,7 +382,7 @@ main: {
     bcc b2
     // main::@3
     // (SCREEN)[i] = 'x'
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met - x should end up in 0x0408
     lda #'x'
     sta SCREEN,x
@@ -396,7 +393,7 @@ main: {
     // main::@2
   b2:
     // SCREEN[i] = i
-    // [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 

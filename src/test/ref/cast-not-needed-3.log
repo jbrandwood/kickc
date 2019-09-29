@@ -16,7 +16,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte*) main::DSP#0 ← ((byte*)) (number) $400
+  (byte*) main::DSP ← ((byte*)) (number) $400
   (byte) main::getScreen1_id#0 ← (number) 0
   to:main::getScreen1
 main::getScreen1: scope:[main]  from main
@@ -46,7 +46,7 @@ main::spritePtr1_@return: scope:[main]  from main::spritePtr1
 main::@2: scope:[main]  from main::spritePtr1_@return
   (byte) main::spritePtr1_return#3 ← phi( main::spritePtr1_@return/(byte) main::spritePtr1_return#1 )
   (byte~) main::$1 ← (byte) main::spritePtr1_return#3
-  *((byte*) main::DSP#0 + (number) 0) ← (byte~) main::$1
+  *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -73,7 +73,6 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (byte*) main::DSP
-(byte*) main::DSP#0
 (label) main::getScreen1
 (byte~) main::getScreen1_$0
 (label) main::getScreen1_@return
@@ -101,11 +100,11 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::getScreen1_id#0 ← (number) 0
 Adding number conversion cast (unumber) $378 in (byte*~) main::spritePtr1_$0 ← (byte*) main::spritePtr1_screen#1 + (number) $378
-Adding number conversion cast (unumber) 0 in *((byte*) main::DSP#0 + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) $0 ← (byte*)(number) $400
 Inlining cast (byte*~) $1 ← (byte*)(number) $1400
-Inlining cast (byte*) main::DSP#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::DSP ← (byte*)(number) $400
 Inlining cast (byte) main::getScreen1_id#0 ← (unumber)(number) 0
 Inlining cast (byte~) main::spritePtr1_$1 ← (byte)*((byte*~) main::spritePtr1_$0)
 Successful SSA optimization Pass2InlineCast
@@ -127,10 +126,10 @@ Alias (byte) main::spritePtr1_return#0 = (byte~) main::spritePtr1_$1 (byte) main
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte*) $0 = (byte*) 1024
 Constant (const byte*) $1 = (byte*) 5120
-Constant (const byte*) main::DSP#0 = (byte*) 1024
+Constant (const byte*) main::DSP = (byte*) 1024
 Constant (const byte) main::getScreen1_id#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::DSP#0 in [21] *((const byte*) main::DSP#0 + (byte) 0) ← (byte) main::spritePtr1_return#0
+Simplifying expression containing zero main::DSP in [21] *((const byte*) main::DSP + (byte) 0) ← (byte) main::spritePtr1_return#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [1] (byte~) main::getScreen1_$0 ← (const byte) main::getScreen1_id#0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -197,7 +196,7 @@ main::spritePtr1: scope:[main]  from main::getScreen1
   [7] (byte) main::spritePtr1_return#0 ← *((byte*~) main::spritePtr1_$0)
   to:main::@1
 main::@1: scope:[main]  from main::spritePtr1
-  [8] *((const byte*) main::DSP#0) ← (byte) main::spritePtr1_return#0
+  [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -206,7 +205,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::DSP
 (byte) main::getScreen1_id
 (byte*) main::getScreen1_return
 (byte*) main::getScreen1_return#0 4.0
@@ -284,7 +282,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [8] *((const byte*) main::DSP#0) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuz1 
     lda.z spritePtr1_return
     sta DSP
     jmp breturn
@@ -366,7 +364,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [8] *((const byte*) main::DSP#0) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 
     sta DSP
     jmp breturn
     // main::@return
@@ -409,8 +407,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::DSP
-(const byte*) main::DSP#0 DSP = (byte*) 1024
+(const byte*) main::DSP DSP = (byte*) 1024
 (label) main::getScreen1
 (byte) main::getScreen1_id
 (byte*) main::getScreen1_return
@@ -471,7 +468,7 @@ main: {
     lda (spritePtr1__0),y
     // main::@1
     // DSP[0] = spritePtr(getScreen(0))
-    // [8] *((const byte*) main::DSP#0) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 
     sta DSP
     // main::@return
     // }

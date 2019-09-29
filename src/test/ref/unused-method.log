@@ -7,8 +7,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  *((byte*) main::screen#0 + (number) 0) ← (number) 1
+  (byte*) main::screen ← ((byte*)) (number) $400
+  *((byte*) main::screen + (number) 0) ← (number) 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,13 +28,12 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0 + (number) 0) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← ((unumber)) (number) 1
+Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 0) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← ((unumber)) (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast *((byte*) main::screen#0 + (unumber)(number) 0) ← (unumber)(number) 1
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast *((byte*) main::screen + (unumber)(number) 0) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -43,9 +42,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen#0 in [1] *((const byte*) main::screen#0 + (byte) 0) ← (byte) 1
+Simplifying expression containing zero main::screen in [1] *((const byte*) main::screen + (byte) 0) ← (byte) 1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -75,7 +74,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (byte) 1
+  [4] *((const byte*) main::screen) ← (byte) 1
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -84,7 +83,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -114,7 +112,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     jmp breturn
@@ -126,7 +124,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen#0) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::screen) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -159,7 +157,7 @@ bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     jmp breturn
@@ -194,8 +192,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -218,7 +215,7 @@ Score: 12
 main: {
     .label screen = $400
     // screen[0] = 1
-    // [4] *((const byte*) main::screen#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // main::@return

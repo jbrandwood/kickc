@@ -292,15 +292,15 @@ plexShowSprite::@return: scope:[plexShowSprite]  from plexShowSprite::@2 plexSho
   (byte) plex_sprite_idx#38 ← phi( @9/(byte) plex_sprite_idx#40 )
   (byte) plex_show_idx#38 ← phi( @9/(byte) plex_show_idx#40 )
   (byte*) PLEX_SCREEN_PTR#25 ← phi( @9/(byte*) PLEX_SCREEN_PTR#27 )
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte[$100]) YSIN ← kickasm {{ .var min = 50
     .var max = 250-21
     .var ampl = max-min;
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
  }}
-  (byte*) SPRITE#0 ← ((byte*)) (number) $2000
-  kickasm(location (byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+  (byte*) SPRITE ← ((byte*)) (number) $2000
+  kickasm(location (byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
@@ -357,7 +357,7 @@ init: scope:[init]  from main
   (byte~) init::$0 ← (byte) VIC_DEN | (byte) VIC_RSEL
   (number~) init::$1 ← (byte~) init::$0 | (number) 3
   *((byte*) D011) ← (number~) init::$1
-  (byte*) plexInit::screen#0 ← (byte*) SCREEN#0
+  (byte*) plexInit::screen#0 ← (byte*) SCREEN
   call plexInit 
   to:init::@5
 init::@5: scope:[init]  from init
@@ -371,7 +371,7 @@ init::@1: scope:[init]  from init::@1 init::@5
   (byte*) PLEX_SCREEN_PTR#28 ← phi( init::@1/(byte*) PLEX_SCREEN_PTR#28 init::@5/(byte*) PLEX_SCREEN_PTR#5 )
   (word) init::xp#2 ← phi( init::@1/(word) init::xp#1 init::@5/(word) init::xp#0 )
   (byte) init::sx#2 ← phi( init::@1/(byte) init::sx#1 init::@5/(byte) init::sx#0 )
-  (byte*~) init::$4 ← (byte*) SPRITE#0 / (number) $40
+  (byte*~) init::$4 ← (byte*) SPRITE / (number) $40
   (byte~) init::$5 ← ((byte)) (byte*~) init::$4
   *((byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte~) init::$5
   (byte~) init::$8 ← (byte) init::sx#2 * (const byte) SIZEOF_WORD
@@ -690,10 +690,8 @@ SYMBOL TABLE SSA
 (byte[PLEX_COUNT]) PLEX_YPOS
 (byte*) RASTER
 (byte*) SCREEN
-(byte*) SCREEN#0
 (const byte) SIZEOF_WORD = (byte) 2
 (byte*) SPRITE
-(byte*) SPRITE#0
 (byte*) SPRITES_COLS
 (byte*) SPRITES_ENABLE
 (byte*) SPRITES_XMSB
@@ -1149,7 +1147,7 @@ Adding number conversion cast (unumber) init::$1 in (number~) init::$1 ← (byte
 Adding number conversion cast (unumber) $20 in (word) init::xp#0 ← (number) $20
 Adding number conversion cast (unumber) 1 in (number~) init::$3 ← (byte) PLEX_COUNT - (number) 1
 Adding number conversion cast (unumber) init::$3 in (number~) init::$3 ← (byte) PLEX_COUNT - (unumber)(number) 1
-Adding number conversion cast (unumber) $40 in (byte*~) init::$4 ← (byte*) SPRITE#0 / (number) $40
+Adding number conversion cast (unumber) $40 in (byte*~) init::$4 ← (byte*) SPRITE / (number) $40
 Adding number conversion cast (unumber) 9 in (word) init::xp#1 ← (word) init::xp#2 + (number) 9
 Adding number conversion cast (unumber) $ff in *((byte*) SPRITES_ENABLE) ← (number) $ff
 Adding number conversion cast (unumber) 0 in (byte) loop::sin_idx#0 ← (number) 0
@@ -1187,8 +1185,8 @@ Inlining cast *((byte[8]) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare1_s#2
 Inlining cast (byte) plex_free_next#0 ← (unumber)(number) 0
 Inlining cast (byte) plex_sprite_msb#4 ← (unumber)(number) 1
 Inlining cast (byte) plex_free_next#4 ← (unumber)(number) 0
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) SPRITE#0 ← (byte*)(number) $2000
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (byte*) SPRITE ← (byte*)(number) $2000
 Inlining cast (word) init::xp#0 ← (unumber)(number) $20
 Inlining cast (byte~) init::$5 ← (byte)(byte*~) init::$4
 Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) $ff
@@ -1548,14 +1546,14 @@ Constant (const byte) plex_free_next#0 = 0
 Constant (const byte) plex_sprite_msb#4 = 1
 Constant (const byte[8]) PLEX_FREE_YPOS = { fill( 8, 0) }
 Constant (const byte) plex_free_next#29 = 0
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte[$100]) YSIN = kickasm {{ .var min = 50
     .var max = 250-21
     .var ampl = max-min;
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
  }}
-Constant (const byte*) SPRITE#0 = (byte*) 8192
+Constant (const byte*) SPRITE = (byte*) 8192
 Constant (const word) init::xp#0 = $20
 Constant (const byte) init::sx#0 = 0
 Constant (const byte) init::ss#0 = 0
@@ -1563,7 +1561,7 @@ Constant (const byte) loop::sin_idx#0 = 0
 Constant (const byte) loop::sy#0 = 0
 Constant (const byte) loop::ss#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) plexInit::screen#0 = SCREEN#0
+Constant (const byte*) plexInit::screen#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified { fill( PLEX_COUNT, 0) } in [14] (word[PLEX_COUNT]) PLEX_XPOS ← { fill( PLEX_COUNT, 0) }
 Constant value identified { fill( PLEX_COUNT, 0) } in [15] (byte[PLEX_COUNT]) PLEX_YPOS ← { fill( PLEX_COUNT, 0) }
@@ -1610,7 +1608,7 @@ Constant right-side identified [5] (byte~) plexInit::$1 ← (const byte) PLEX_CO
 Constant right-side identified [11] (byte~) plexSort::$1 ← (const byte) PLEX_COUNT - (byte) 2
 Constant right-side identified [63] (byte~) init::$0 ← (const byte) VIC_DEN | (const byte) VIC_RSEL
 Constant right-side identified [67] (byte~) init::$3 ← (const byte) PLEX_COUNT - (byte) 1
-Constant right-side identified [69] (byte*~) init::$4 ← (const byte*) SPRITE#0 / (byte) $40
+Constant right-side identified [69] (byte*~) init::$4 ← (const byte*) SPRITE / (byte) $40
 Constant right-side identified [86] (byte~) loop::$2 ← (const byte) PLEX_COUNT - (byte) 1
 Constant right-side identified [98] (byte~) loop::$8 ← (const byte) PLEX_COUNT - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -1623,7 +1621,7 @@ Constant (const byte) plexInit::$1 = PLEX_COUNT-1
 Constant (const byte) plexSort::$1 = PLEX_COUNT-2
 Constant (const byte) init::$0 = VIC_DEN|VIC_RSEL
 Constant (const byte) init::$3 = PLEX_COUNT-1
-Constant (const byte*) init::$4 = SPRITE#0/$40
+Constant (const byte*) init::$4 = SPRITE/$40
 Constant (const byte) loop::$2 = PLEX_COUNT-1
 Constant (const byte) loop::$8 = PLEX_COUNT-1
 Successful SSA optimization Pass2ConstantIdentification
@@ -1702,14 +1700,14 @@ Constant inlined init::$3 = (const byte) PLEX_COUNT-(byte) 1
 Constant inlined init::$1 = (const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
 Constant inlined loop::sin_idx#0 = (byte) 0
 Constant inlined init::$0 = (const byte) VIC_DEN|(const byte) VIC_RSEL
-Constant inlined plexInit::screen#0 = (const byte*) SCREEN#0
+Constant inlined plexInit::screen#0 = (const byte*) SCREEN
 Constant inlined loop::$2 = (const byte) PLEX_COUNT-(byte) 1
 Constant inlined plex_sprite_msb#4 = (byte) 1
-Constant inlined init::$5 = (byte)(const byte*) SPRITE#0/(byte) $40
+Constant inlined init::$5 = (byte)(const byte*) SPRITE/(byte) $40
 Constant inlined plex_show_idx#1 = (byte) 0
 Constant inlined plex_sprite_idx#1 = (byte) 0
 Constant inlined plex_sprite_msb#1 = (byte) 1
-Constant inlined init::$4 = (const byte*) SPRITE#0/(byte) $40
+Constant inlined init::$4 = (const byte*) SPRITE/(byte) $40
 Constant inlined loop::sy#0 = (byte) 0
 Constant inlined plex_free_next#0 = (byte) 0
 Constant inlined loop::ss#0 = (byte) 0
@@ -1833,7 +1831,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+  kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
@@ -2013,7 +2011,7 @@ init: scope:[init]  from main
 init::@1: scope:[init]  from init init::@1
   [83] (word) init::xp#2 ← phi( init::@1/(word) init::xp#1 init/(byte) $20 )
   [83] (byte) init::sx#2 ← phi( init::@1/(byte) init::sx#1 init/(byte) 0 )
-  [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40
+  [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40
   [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1
   [86] *((const word[PLEX_COUNT]) PLEX_XPOS + (byte~) init::$8) ← (word) init::xp#2
   [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9
@@ -2053,8 +2051,6 @@ plexInit::@return: scope:[plexInit]  from plexInit::@1
 
 VARIABLE REGISTER WEIGHTS
 (byte*) PLEX_SCREEN_PTR
-(byte*) SCREEN
-(byte*) SPRITE
 (void()) init()
 (byte~) init::$8 22.0
 (byte) init::ss
@@ -2270,7 +2266,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -2762,7 +2758,7 @@ init: {
     jmp b1
     // init::@1
   b1:
-    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #SPRITE/$40
     ldy.z sx
     sta PLEX_PTR,y
@@ -2924,7 +2920,7 @@ Statement [72] *((const byte[PLEX_COUNT]) PLEX_SORTED_IDX + (byte) plexSort::s#2
 Statement [77] *((const byte[8]) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 [ plexSort::plexFreePrepare1_s#2 ] ( main:3::loop:8::plexSort:22 [ loop::sin_idx#1 plexSort::plexFreePrepare1_s#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ]
 Statement [81] *((const byte*) D011) ← (const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ ] ( main:3::init:6 [ ] ) always clobbers reg byte a 
-Statement [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
+Statement [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:13 [ init::sx#2 init::sx#1 ]
 Statement [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$8 ] ( main:3::init:6 [ init::sx#2 init::xp#2 init::$8 ] ) always clobbers reg byte a 
 Statement [86] *((const word[PLEX_COUNT]) PLEX_XPOS + (byte~) init::$8) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
@@ -2953,7 +2949,7 @@ Statement [70] if((byte) plexSort::nxt_y#0<*((const byte[PLEX_COUNT]) PLEX_YPOS 
 Statement [72] *((const byte[PLEX_COUNT]) PLEX_SORTED_IDX + (byte) plexSort::s#2) ← (byte) plexSort::nxt_idx#0 [ plexSort::m#2 ] ( main:3::loop:8::plexSort:22 [ loop::sin_idx#1 plexSort::m#2 ] ) always clobbers reg byte a 
 Statement [77] *((const byte[8]) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare1_s#2) ← (byte) 0 [ plexSort::plexFreePrepare1_s#2 ] ( main:3::loop:8::plexSort:22 [ loop::sin_idx#1 plexSort::plexFreePrepare1_s#2 ] ) always clobbers reg byte a 
 Statement [81] *((const byte*) D011) ← (const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ ] ( main:3::init:6 [ ] ) always clobbers reg byte a 
-Statement [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
+Statement [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
 Statement [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$8 ] ( main:3::init:6 [ init::sx#2 init::xp#2 init::$8 ] ) always clobbers reg byte a 
 Statement [86] *((const word[PLEX_COUNT]) PLEX_XPOS + (byte~) init::$8) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:3::init:6 [ init::sx#2 init::xp#2 ] ) always clobbers reg byte a 
 Statement [87] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 [ init::sx#2 init::xp#1 ] ( main:3::init:6 [ init::sx#2 init::xp#1 ] ) always clobbers reg byte a 
@@ -3105,7 +3101,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -3542,7 +3538,7 @@ init: {
     jmp b1
     // init::@1
   b1:
-    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta PLEX_PTR,x
     // [85] (byte~) init::$8 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
@@ -3803,15 +3799,13 @@ FINAL SYMBOL TABLE
 (const byte[8]) PLEX_FREE_YPOS PLEX_FREE_YPOS = { fill( 8, 0) }
 (const byte[PLEX_COUNT]) PLEX_PTR PLEX_PTR = { fill( PLEX_COUNT, 0) }
 (byte*) PLEX_SCREEN_PTR
-(const byte*) PLEX_SCREEN_PTR#1 PLEX_SCREEN_PTR = (const byte*) SCREEN#0+(word) $3f8
+(const byte*) PLEX_SCREEN_PTR#1 PLEX_SCREEN_PTR = (const byte*) SCREEN+(word) $3f8
 (const byte[PLEX_COUNT]) PLEX_SORTED_IDX PLEX_SORTED_IDX = { fill( PLEX_COUNT, 0) }
 (const word[PLEX_COUNT]) PLEX_XPOS PLEX_XPOS = { fill( PLEX_COUNT, 0) }
 (const byte[PLEX_COUNT]) PLEX_YPOS PLEX_YPOS = { fill( PLEX_COUNT, 0) }
 (const byte*) RASTER RASTER = (byte*) 53266
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte*) SPRITE
-(const byte*) SPRITE#0 SPRITE = (byte*) 8192
+(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SPRITE SPRITE = (byte*) 8192
 (const byte*) SPRITES_COLS SPRITES_COLS = (byte*) 53287
 (const byte*) SPRITES_ENABLE SPRITES_ENABLE = (byte*) 53269
 (const byte*) SPRITES_XMSB SPRITES_XMSB = (byte*) 53264
@@ -4011,7 +4005,7 @@ Score: 62204
   // @begin
   // @1
   // kickasm
-  // kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
+  // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
   // @2
   // [3] call main 
@@ -4420,7 +4414,7 @@ init: {
     // init::@1
   b1:
     // PLEX_PTR[sx] = (byte)(SPRITE/$40)
-    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE#0/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [84] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta PLEX_PTR,x
     // PLEX_XPOS[sx] = xp

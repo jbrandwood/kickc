@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.AssignmentRValue;
@@ -135,8 +136,10 @@ public class PassNTypeInference extends Pass2SsaOptimization {
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {
                symbol.setDeclaredConstant(true);
+               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
             } else if(SymbolType.STRING.equals(symbol.getType())) {
                symbol.setDeclaredConstant(true);
+               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
             }
          }
       }

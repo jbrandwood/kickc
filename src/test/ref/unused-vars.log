@@ -16,8 +16,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) b#13 ← phi( @2/(byte) b#14 )
-  (byte) main::col#0 ← (number) 2
-  (byte*) main::COLS#0 ← ((byte*)) (number) $d800
+  (byte) main::col ← (number) 2
+  (byte*) main::COLS ← ((byte*)) (number) $d800
   call s 
   (byte) s::return#0 ← (byte) s::return#2
   to:main::@3
@@ -30,7 +30,7 @@ main::@3: scope:[main]  from main
 main::@1: scope:[main]  from main::@1 main::@3
   (byte) b#8 ← phi( main::@1/(byte) b#8 main::@3/(byte) b#2 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  *((byte*) main::COLS#0 + (byte) main::i#2) ← (byte) main::col#0
+  *((byte*) main::COLS + (byte) main::i#2) ← (byte) main::col
   *((byte*) SCREEN + (byte) main::i#2) ← (byte) b#8
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$64)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,$64)
@@ -93,9 +93,7 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::COLS
-(byte*) main::COLS#0
 (byte) main::col
-(byte) main::col#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -109,13 +107,13 @@ SYMBOL TABLE SSA
 (byte) s::return#3
 
 Adding number conversion cast (unumber) 2/2 in (byte) b#0 ← (number) 2/(number) 2
-Adding number conversion cast (unumber) 2 in (byte) main::col#0 ← (number) 2
+Adding number conversion cast (unumber) 2 in (byte) main::col ← (number) 2
 Adding number conversion cast (unumber) 2 in (byte) s::return#1 ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) b#0 ← (unumber)(number) 2/(number) 2
-Inlining cast (byte) main::col#0 ← (unumber)(number) 2
-Inlining cast (byte*) main::COLS#0 ← (byte*)(number) $d800
+Inlining cast (byte) main::col ← (unumber)(number) 2
+Inlining cast (byte*) main::COLS ← (byte*)(number) $d800
 Inlining cast (byte) s::return#1 ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -145,8 +143,8 @@ Constant right-side identified [1] (byte) b#0 ← (unumber)(number) 2/(number) 2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) b#0 = (unumber)2/2
-Constant (const byte) main::col#0 = 2
-Constant (const byte*) main::COLS#0 = (byte*) 55296
+Constant (const byte) main::col = 2
+Constant (const byte*) main::COLS = (byte*) 55296
 Constant (const byte) main::i#0 = 0
 Constant (const byte) s::return#1 = 2
 Successful SSA optimization Pass2ConstantIdentification
@@ -224,7 +222,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [6] (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main/(byte) 0 )
-  [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
+  [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col
   [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) $65) goto main::@1
@@ -245,8 +243,6 @@ s::@return: scope:[s]  from s
 VARIABLE REGISTER WEIGHTS
 (byte) b
 (void()) main()
-(byte*) main::COLS
-(byte) main::col
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 14.666666666666666
@@ -307,7 +303,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #col
     ldy.z i
     sta COLS,y
@@ -338,10 +334,10 @@ s: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
@@ -399,7 +395,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #col
     sta COLS,x
     // [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2 -- pbuc1_derefidx_vbuxx=vbuc2 
@@ -463,10 +459,8 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::COLS
-(const byte*) main::COLS#0 COLS = (byte*) 55296
-(byte) main::col
-(const byte) main::col#0 col = (byte) 2
+(const byte*) main::COLS COLS = (byte*) 55296
+(const byte) main::col col = (byte) 2
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 14.666666666666666
@@ -512,7 +506,7 @@ main: {
     // main::@1
   b1:
     // COLS[i] = col
-    // [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #col
     sta COLS,x
     // SCREEN[i] = b

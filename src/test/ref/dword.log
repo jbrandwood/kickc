@@ -7,12 +7,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (dword) main::a#0 ← (number) $ee6b2800
+  (dword) main::a ← (number) $ee6b2800
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (dword~) main::$0 ← (dword) main::a#0 + (byte) main::i#2
+  (dword~) main::$0 ← (dword) main::a + (byte) main::i#2
   (dword) main::b#0 ← (dword~) main::$0
   (byte~) main::$1 ← ((byte)) (dword) main::b#0
   (byte) main::c#0 ← (byte~) main::$1
@@ -46,7 +46,6 @@ SYMBOL TABLE SSA
 (byte*) main::SCREEN
 (byte*) main::SCREEN#0
 (dword) main::a
-(dword) main::a#0
 (dword) main::b
 (dword) main::b#0
 (byte) main::c
@@ -56,9 +55,9 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Adding number conversion cast (unumber) $ee6b2800 in (dword) main::a#0 ← (number) $ee6b2800
+Adding number conversion cast (unumber) $ee6b2800 in (dword) main::a ← (number) $ee6b2800
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (dword) main::a#0 ← (unumber)(number) $ee6b2800
+Inlining cast (dword) main::a ← (unumber)(number) $ee6b2800
 Inlining cast (byte~) main::$1 ← (byte)(dword) main::b#0
 Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
@@ -72,7 +71,7 @@ Alias (byte) main::c#0 = (byte~) main::$1
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const dword) main::a#0 = $ee6b2800
+Constant (const dword) main::a = $ee6b2800
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
@@ -123,7 +122,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2
+  [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2
   [7] (byte) main::c#0 ← (byte)(dword) main::b#0
   [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
@@ -137,7 +136,6 @@ main::@return: scope:[main]  from main::@1
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::SCREEN
-(dword) main::a
 (dword) main::b
 (dword) main::b#0 11.0
 (byte) main::c
@@ -201,7 +199,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 -- vduz1=vduc1_plus_vbuz2 
+    // [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2 -- vduz1=vduc1_plus_vbuz2 
     lda.z i
     clc
     adc #<a
@@ -237,10 +235,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 [ main::i#2 main::b#0 ] ( main:2 [ main::i#2 main::b#0 ] ) always clobbers reg byte a 
+Statement [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2 [ main::i#2 main::b#0 ] ( main:2 [ main::i#2 main::b#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte) main::c#0 ← (byte)(dword) main::b#0 [ main::i#2 main::c#0 ] ( main:2 [ main::i#2 main::c#0 ] ) always clobbers reg byte a 
-Statement [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 [ main::i#2 main::b#0 ] ( main:2 [ main::i#2 main::b#0 ] ) always clobbers reg byte a 
+Statement [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2 [ main::i#2 main::b#0 ] ( main:2 [ main::i#2 main::b#0 ] ) always clobbers reg byte a 
 Statement [7] (byte) main::c#0 ← (byte)(dword) main::b#0 [ main::i#2 main::c#0 ] ( main:2 [ main::i#2 main::c#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_DWORD:3 [ main::b#0 ] : zp ZP_DWORD:3 , 
@@ -293,7 +291,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 -- vduz1=vduc1_plus_vbuxx 
+    // [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2 -- vduz1=vduc1_plus_vbuxx 
     txa
     clc
     adc #<a
@@ -358,8 +356,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
-(dword) main::a
-(const dword) main::a#0 a = (dword) $ee6b2800
+(const dword) main::a a = (dword) $ee6b2800
 (dword) main::b
 (dword) main::b#0 b zp ZP_DWORD:2 11.0
 (byte) main::c
@@ -402,7 +399,7 @@ main: {
     // main::@1
   b1:
     // b = a + i
-    // [6] (dword) main::b#0 ← (const dword) main::a#0 + (byte) main::i#2 -- vduz1=vduc1_plus_vbuxx 
+    // [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2 -- vduz1=vduc1_plus_vbuxx 
     txa
     clc
     adc #<a

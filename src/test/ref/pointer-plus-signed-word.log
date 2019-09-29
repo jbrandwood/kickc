@@ -3,7 +3,7 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400+(number) $28*(number) $a
+  (byte*) SCREEN ← ((byte*)) (number) $400+(number) $28*(number) $a
   to:@1
 
 (void()) main()
@@ -12,7 +12,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (signed word) main::i#2 ← phi( main/(signed word) main::i#0 main::@1/(signed word) main::i#1 )
-  (byte*~) main::$0 ← (byte*) SCREEN#0 + (signed word) main::i#2
+  (byte*~) main::$0 ← (byte*) SCREEN + (signed word) main::i#2
   (byte*) main::sc#0 ← (byte*~) main::$0
   (byte~) main::$1 ← ((byte)) (signed word) main::i#2
   *((byte*) main::sc#0) ← (byte~) main::$1
@@ -36,7 +36,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (byte*~) main::$0
 (byte~) main::$1
@@ -50,16 +49,16 @@ SYMBOL TABLE SSA
 (byte*) main::sc
 (byte*) main::sc#0
 
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400+(number) $28*(number) $a
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
 Inlining cast (byte~) main::$1 ← (byte)(signed word) main::i#2
 Successful SSA optimization Pass2InlineCast
 Alias (byte*) main::sc#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$2 [9] if((signed word) main::i#1!=rangelast(-$a,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*) SCREEN#0 ← (byte*)(number) $400+(number) $28*(number) $a
+Constant right-side identified [0] (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN#0 = (byte*)$400+$28*$a
+Constant (const byte*) SCREEN = (byte*)$400+$28*$a
 Constant (const signed word) main::i#0 = -$a
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
@@ -109,7 +108,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (signed word) main::i#2 ← phi( main/(signed word) -$a main::@1/(signed word) main::i#1 )
-  [6] (byte*) main::sc#0 ← (const byte*) SCREEN#0 + (signed word) main::i#2
+  [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2
   [7] (byte~) main::$1 ← (byte)(signed word) main::i#2
   [8] *((byte*) main::sc#0) ← (byte~) main::$1
   [9] (signed word) main::i#1 ← ++ (signed word) main::i#2
@@ -121,7 +120,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (byte~) main::$1 22.0
 (signed word) main::i
@@ -188,7 +186,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN#0 + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i
@@ -224,7 +222,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte*) main::sc#0 ← (const byte*) SCREEN#0 + (signed word) main::i#2 [ main::i#2 main::sc#0 ] ( main:2 [ main::i#2 main::sc#0 ] ) always clobbers reg byte a 
+Statement [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 [ main::i#2 main::sc#0 ] ( main:2 [ main::i#2 main::sc#0 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$1 ← (byte)(signed word) main::i#2 [ main::i#2 main::sc#0 main::$1 ] ( main:2 [ main::i#2 main::sc#0 main::$1 ] ) always clobbers reg byte a 
 Statement [8] *((byte*) main::sc#0) ← (byte~) main::$1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
 Statement [10] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
@@ -283,7 +281,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN#0 + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i
@@ -346,8 +344,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*)(number) $400+(number) $28*(number) $a
+(const byte*) SCREEN SCREEN = (byte*)(number) $400+(number) $28*(number) $a
 (void()) main()
 (byte~) main::$1 reg byte a 22.0
 (label) main::@1
@@ -397,7 +394,7 @@ main: {
     // main::@1
   b1:
     // sc = SCREEN + i
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN#0 + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i

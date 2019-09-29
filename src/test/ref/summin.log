@@ -4,7 +4,7 @@ Culled Empty Block (label) sum::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (number) $400
+  (byte*) screen ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
@@ -42,7 +42,7 @@ main::@3: scope:[main]  from main::@2
   (byte~) main::$3 ← (byte) main::s1#1 + (byte) main::s2#1
   (byte~) main::$4 ← (byte~) main::$3 + (byte) main::s3#0
   (byte) main::s4#0 ← (byte~) main::$4
-  *((byte*) screen#0) ← (byte) main::s4#0
+  *((byte*) screen) ← (byte) main::s4#0
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -94,7 +94,6 @@ SYMBOL TABLE SSA
 (byte) main::s4
 (byte) main::s4#0
 (byte*) screen
-(byte*) screen#0
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte~) sum::$0
 (label) sum::@return
@@ -126,7 +125,7 @@ Adding number conversion cast (unumber) 4 in (byte) sum::b#1 ← (number) 4
 Adding number conversion cast (unumber) 9 in (byte) sum::a#2 ← (number) 9
 Adding number conversion cast (unumber) $d in (byte) sum::b#2 ← (number) $d
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) screen ← (byte*)(number) $400
 Inlining cast (byte) sum::a#0 ← (unumber)(number) 1
 Inlining cast (byte) sum::b#0 ← (unumber)(number) 2
 Inlining cast (byte) sum::a#1 ← (unumber)(number) 3
@@ -158,7 +157,7 @@ Alias (byte) main::s3#0 = (byte~) main::$2
 Alias (byte) main::s4#0 = (byte~) main::$4 
 Alias (byte) sum::return#3 = (byte~) sum::$0 (byte) sum::return#8 (byte) sum::return#4 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) screen#0 = (byte*) 1024
+Constant (const byte*) screen = (byte*) 1024
 Constant (const byte) sum::a#0 = 1
 Constant (const byte) sum::b#0 = 2
 Constant (const byte) sum::a#1 = 3
@@ -228,7 +227,7 @@ main::@3: scope:[main]  from main::@2
   [13] (byte) main::s3#0 ← (byte) sum::return#2
   [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0
   [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0
-  [16] *((const byte*) screen#0) ← (byte) main::s4#0
+  [16] *((const byte*) screen) ← (byte) main::s4#0
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [17] return 
@@ -256,7 +255,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::s3#0 2.0
 (byte) main::s4
 (byte) main::s4#0 4.0
-(byte*) screen
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte) sum::a
 (byte) sum::a#3 2.0
@@ -403,7 +401,7 @@ main: {
     clc
     adc.z s3
     sta.z s4
-    // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuz1 
     lda.z s4
     sta screen
     jmp breturn
@@ -556,7 +554,7 @@ main: {
     // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z s3
-    // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
     jmp breturn
     // main::@return
@@ -627,8 +625,7 @@ FINAL SYMBOL TABLE
 (byte) main::s3#0 s3 zp ZP_BYTE:3 2.0
 (byte) main::s4
 (byte) main::s4#0 reg byte a 4.0
-(byte*) screen
-(const byte*) screen#0 screen = (byte*) 1024
+(const byte*) screen screen = (byte*) 1024
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
@@ -727,7 +724,7 @@ main: {
     clc
     adc.z s3
     // *screen = s4
-    // [16] *((const byte*) screen#0) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // main::@return
     // }

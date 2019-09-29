@@ -10,17 +10,17 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte*) main::NULL#0 ← ((byte*)) (number) 0
-  (byte*) main::rem#0 ← ((byte*)) (number) $ff
-  (bool~) main::$0 ← (byte*) main::rem#0 != (byte*) main::NULL#0
+  (byte*) main::screen ← ((byte*)) (number) $400
+  (byte*) main::NULL ← ((byte*)) (number) 0
+  (byte*) main::rem ← ((byte*)) (number) $ff
+  (bool~) main::$0 ← (byte*) main::rem != (byte*) main::NULL
   if((bool~) main::$0) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) main::screen#0 + (number) 0) ← (byte) '*'
+  *((byte*) main::screen + (number) 0) ← (byte) '*'
   to:main::@return
 main::@3: scope:[main]  from main
-  *((byte*) main::screen#0 + (number) 0) ← (byte) '.'
+  *((byte*) main::screen + (number) 0) ← (byte) '.'
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@3
   return 
@@ -43,18 +43,15 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::NULL
-(byte*) main::NULL#0
 (byte*) main::rem
-(byte*) main::rem#0
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) '*'
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) '.'
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) '*'
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) '.'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) main::NULL#0 ← (byte*)(number) 0
-Inlining cast (byte*) main::rem#0 ← (byte*)(number) $ff
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast (byte*) main::NULL ← (byte*)(number) 0
+Inlining cast (byte*) main::rem ← (byte*)(number) $ff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 0
@@ -65,19 +62,19 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [4] if((byte*) main::rem#0!=(byte*) main::NULL#0) goto main::@1
+Simple Condition (bool~) main::$0 [4] if((byte*) main::rem!=(byte*) main::NULL) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
-Constant (const byte*) main::NULL#0 = (byte*) 0
-Constant (const byte*) main::rem#0 = (byte*) 255
+Constant (const byte*) main::screen = (byte*) 1024
+Constant (const byte*) main::NULL = (byte*) 0
+Constant (const byte*) main::rem = (byte*) 255
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [4] if((const byte*) main::rem#0!=(const byte*) main::NULL#0) goto main::@1
+if() condition always true - replacing block destination [4] if((const byte*) main::rem!=(const byte*) main::NULL) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::screen#0 in [5] *((const byte*) main::screen#0 + (byte) 0) ← (byte) '*'
-Simplifying expression containing zero main::screen#0 in [6] *((const byte*) main::screen#0 + (byte) 0) ← (byte) '.'
+Simplifying expression containing zero main::screen in [5] *((const byte*) main::screen + (byte) 0) ← (byte) '*'
+Simplifying expression containing zero main::screen in [6] *((const byte*) main::screen + (byte) 0) ← (byte) '.'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte*) main::NULL#0
-Eliminating unused constant (const byte*) main::rem#0
+Eliminating unused constant (const byte*) main::NULL
+Eliminating unused constant (const byte*) main::rem
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@3
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -113,7 +110,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [5] *((const byte*) main::screen#0) ← (byte) '*'
+  [5] *((const byte*) main::screen) ← (byte) '*'
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -122,9 +119,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::NULL
-(byte*) main::rem
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -160,7 +154,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::screen#0) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta screen
     jmp breturn
@@ -172,7 +166,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) main::screen#0) ← (byte) '*' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::screen) ← (byte) '*' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -211,7 +205,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::screen#0) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta screen
     jmp breturn
@@ -250,10 +244,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::NULL
-(byte*) main::rem
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -279,7 +270,7 @@ main: {
     .label screen = $400
     // main::@1
     // screen[0] = '*'
-    // [5] *((const byte*) main::screen#0) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta screen
     // main::@return

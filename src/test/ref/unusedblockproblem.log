@@ -10,20 +10,20 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  *((byte*) main::SCREEN#0) ← ++ *((byte*) main::SCREEN#0)
+  *((byte*) main::SCREEN) ← ++ *((byte*) main::SCREEN)
   to:main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::line#0 ← (byte) 0
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@7
   (byte) main::line#2 ← phi( main::@3/(byte) main::line#0 main::@7/(byte) main::line#1 )
-  *((byte*) main::SCREEN#0 + (byte) main::line#2) ← (byte) main::line#2
+  *((byte*) main::SCREEN + (byte) main::line#2) ← (byte) main::line#2
   (byte) main::line#1 ← (byte) main::line#2 + rangenext(0,$18)
   (bool~) main::$1 ← (byte) main::line#1 != rangelast(0,$18)
   if((bool~) main::$1) goto main::@7
@@ -51,19 +51,18 @@ SYMBOL TABLE SSA
 (label) main::@7
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (byte) main::line
 (byte) main::line#0
 (byte) main::line#1
 (byte) main::line#2
 
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Simple Condition (bool~) main::$1 [8] if((byte) main::line#1!=rangelast(0,$18)) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::line#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [1] if(true) goto main::@2
@@ -114,13 +113,12 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0)
+  [5] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN)
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (byte) main::line
 
 Initial phi equivalence classes
@@ -157,7 +155,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b1
 }
@@ -202,7 +200,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b1
 }
@@ -232,8 +230,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@1
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (byte) main::line
 
 
@@ -261,7 +258,7 @@ main: {
     // main::@1
   b1:
     // (*SCREEN)++;
-    // [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b1
 }

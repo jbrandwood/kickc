@@ -7,15 +7,15 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (word) main::w#0 ← (word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (word) main::w#2 ← phi( main/(word) main::w#0 main::@1/(word) main::w#1 )
   (byte~) main::$0 ← < (word) main::w#2
-  *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$0
+  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > (word) main::w#2
-  *((byte*) main::SCREEN#0 + (number) 1) ← (byte~) main::$1
+  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   (word) main::w#1 ← (word) main::w#2 + rangenext(0,$ffff)
   (bool~) main::$2 ← (word) main::w#1 != rangelast(0,$ffff)
   if((bool~) main::$2) goto main::@1
@@ -26,9 +26,9 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2 main::@3
   (signed word) main::sw#2 ← phi( main::@2/(signed word) main::sw#0 main::@3/(signed word) main::sw#1 )
   (byte~) main::$3 ← < (signed word) main::sw#2
-  *((byte*) main::SCREEN#0 + (number) 3) ← (byte~) main::$3
+  *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
   (byte~) main::$4 ← > (signed word) main::sw#2
-  *((byte*) main::SCREEN#0 + (number) 4) ← (byte~) main::$4
+  *((byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
   (signed word) main::sw#1 ← (signed word) main::sw#2 + rangenext(-$7fff,$7ffe)
   (bool~) main::$5 ← (signed word) main::sw#1 != rangelast(-$7fff,$7ffe)
   if((bool~) main::$5) goto main::@3
@@ -60,7 +60,6 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (signed word) main::sw
 (signed word) main::sw#0
 (signed word) main::sw#1
@@ -70,12 +69,12 @@ SYMBOL TABLE SSA
 (word) main::w#1
 (word) main::w#2
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← (byte~) main::$1
-Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN#0 + (number) 3) ← (byte~) main::$3
-Adding number conversion cast (unumber) 4 in *((byte*) main::SCREEN#0 + (number) 4) ← (byte~) main::$4
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
+Adding number conversion cast (unumber) 4 in *((byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -91,7 +90,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$2 [9] if((word) main::w#1!=rangelast(0,$ffff)) goto main::@1
 Simple Condition (bool~) main::$5 [18] if((signed word) main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const word) main::w#0 = 0
 Constant (const signed word) main::sw#0 = -$7fff
 Successful SSA optimization Pass2ConstantIdentification
@@ -99,7 +98,7 @@ Resolved ranged next value [7] main::w#1 ← ++ main::w#2 to ++
 Resolved ranged comparison value [9] if(main::w#1!=rangelast(0,$ffff)) goto main::@1 to (number) 0
 Resolved ranged next value [16] main::sw#1 ← ++ main::sw#2 to ++
 Resolved ranged comparison value [18] if(main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3 to (number) $7fff
-Simplifying expression containing zero main::SCREEN#0 in [4] *((const byte*) main::SCREEN#0 + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) 0 in if((word) main::w#1!=(number) 0) goto main::@1
 Adding number conversion cast (snumber) $7fff in if((signed word) main::sw#1!=(number) $7fff) goto main::@3
@@ -115,9 +114,9 @@ Inlining constant with var siblings (const signed word) main::sw#0
 Constant inlined main::w#0 = (word) 0
 Constant inlined main::sw#0 = (signed word) -$7fff
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN#0+1)
-Consolidated array index constant in *(main::SCREEN#0+3)
-Consolidated array index constant in *(main::SCREEN#0+4)
+Consolidated array index constant in *(main::SCREEN+1)
+Consolidated array index constant in *(main::SCREEN+3)
+Consolidated array index constant in *(main::SCREEN+4)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting main::@5(between main::@1 and main::@1)
 Added new block during phi lifting main::@6(between main::@3 and main::@3)
@@ -162,18 +161,18 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (word) main::w#2 ← phi( main/(word) 0 main::@1/(word) main::w#1 )
   [6] (byte~) main::$0 ← < (word) main::w#2
-  [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0
+  [7] *((const byte*) main::SCREEN) ← (byte~) main::$0
   [8] (byte~) main::$1 ← > (word) main::w#2
-  [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1
+  [9] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
   [10] (word) main::w#1 ← ++ (word) main::w#2
   [11] if((word) main::w#1!=(byte) 0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   [12] (signed word) main::sw#2 ← phi( main::@1/(signed word) -$7fff main::@2/(signed word) main::sw#1 )
   [13] (byte~) main::$3 ← < (signed word) main::sw#2
-  [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3
+  [14] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3
   [15] (byte~) main::$4 ← > (signed word) main::sw#2
-  [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4
+  [16] *((const byte*) main::SCREEN+(byte) 4) ← (byte~) main::$4
   [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2
   [18] if((signed word) main::sw#1!=(signed word) $7fff) goto main::@2
   to:main::@return
@@ -188,7 +187,6 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$1 22.0
 (byte~) main::$3 22.0
 (byte~) main::$4 22.0
-(byte*) main::SCREEN
 (signed word) main::sw
 (signed word) main::sw#1 16.5
 (signed word) main::sw#2 8.8
@@ -267,13 +265,13 @@ main: {
     // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z _0
-    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [7] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     lda.z _0
     sta SCREEN
     // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z _1
-    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z _1
     sta SCREEN+1
     // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
@@ -303,13 +301,13 @@ main: {
     // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuz1=_lo_vwsz2 
     lda.z sw
     sta.z _3
-    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
     lda.z _3
     sta SCREEN+3
     // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuz1=_hi_vwsz2 
     lda.z sw+1
     sta.z _4
-    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    // [16] *((const byte*) main::SCREEN+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda.z _4
     sta SCREEN+4
     // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
@@ -398,11 +396,11 @@ main: {
   b1:
     // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
     lda.z w
-    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [7] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
     lda.z w+1
-    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [9] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
     inc.z w
@@ -430,11 +428,11 @@ main: {
   b2:
     // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
     lda.z sw
-    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [14] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
     // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
     lda.z sw+1
-    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) main::SCREEN+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
     // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 
     inc.z sw
@@ -502,8 +500,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (signed word) main::sw
 (signed word) main::sw#1 sw zp ZP_WORD:4 16.5
 (signed word) main::sw#2 sw zp ZP_WORD:4 8.8
@@ -553,13 +550,13 @@ main: {
     // [6] (byte~) main::$0 ← < (word) main::w#2 -- vbuaa=_lo_vwuz1 
     lda.z w
     // SCREEN[0] = <w
-    // [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [7] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // >w
     // [8] (byte~) main::$1 ← > (word) main::w#2 -- vbuaa=_hi_vwuz1 
     lda.z w+1
     // SCREEN[1] = >w
-    // [9] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [9] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // for( word w: 0..$ffff)
     // [10] (word) main::w#1 ← ++ (word) main::w#2 -- vwuz1=_inc_vwuz1 
@@ -586,13 +583,13 @@ main: {
     // [13] (byte~) main::$3 ← < (signed word) main::sw#2 -- vbuaa=_lo_vwsz1 
     lda.z sw
     // SCREEN[3] = <sw
-    // [14] *((const byte*) main::SCREEN#0+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [14] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
     // >sw
     // [15] (byte~) main::$4 ← > (signed word) main::sw#2 -- vbuaa=_hi_vwsz1 
     lda.z sw+1
     // SCREEN[4] = >sw
-    // [16] *((const byte*) main::SCREEN#0+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [16] *((const byte*) main::SCREEN+(byte) 4) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+4
     // for( signed word sw: -$7fff..$7ffe)
     // [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 -- vwsz1=_inc_vwsz1 

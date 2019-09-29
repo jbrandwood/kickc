@@ -7,8 +7,8 @@ Culled Empty Block (label) @1
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (number) $400
-  (byte*) screen1#0 ← ((byte*)) (number) $400
-  (byte*) screen2#0 ← ((byte*)) (number) $400+(number) $28
+  (byte*) screen1 ← ((byte*)) (number) $400
+  (byte*) screen2 ← ((byte*)) (number) $400+(number) $28
   to:@2
 
 (void()) main()
@@ -16,7 +16,7 @@ main: scope:[main]  from @2
   (byte*) screen#1 ← phi( @2/(byte*) screen#4 )
   (byte**~) main::$0 ← & (byte*) screen#1
   (byte**) setscreen::screen#0 ← (byte**~) main::$0
-  (byte*) setscreen::val#0 ← (byte*) screen1#0
+  (byte*) setscreen::val#0 ← (byte*) screen1
   call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -24,7 +24,7 @@ main::@1: scope:[main]  from main
   *((byte*) screen#2 + (number) 0) ← (byte) 'a'
   (byte**~) main::$2 ← & (byte*) screen#2
   (byte**) setscreen::screen#1 ← (byte**~) main::$2
-  (byte*) setscreen::val#1 ← (byte*) screen2#0
+  (byte*) setscreen::val#1 ← (byte*) screen2
   call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -70,9 +70,7 @@ SYMBOL TABLE SSA
 (byte*) screen#3
 (byte*) screen#4
 (byte*) screen1
-(byte*) screen1#0
 (byte*) screen2
-(byte*) screen2#0
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (label) setscreen::@return
 (byte**) setscreen::screen
@@ -88,8 +86,8 @@ Adding number conversion cast (unumber) 0 in *((byte*) screen#2 + (number) 0) �
 Adding number conversion cast (unumber) 0 in *((byte*) screen#3 + (number) 0) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) screen1#0 ← (byte*)(number) $400
-Inlining cast (byte*) screen2#0 ← (byte*)(number) $400+(number) $28
+Inlining cast (byte*) screen1 ← (byte*)(number) $400
+Inlining cast (byte*) screen2 ← (byte*)(number) $400+(number) $28
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1024
@@ -106,17 +104,17 @@ Alias (byte*) screen#0 = (byte*) screen#4
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen#1 (byte*) screen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [2] (byte*) screen2#0 ← (byte*)(number) $400+(number) $28
+Constant right-side identified [2] (byte*) screen2 ← (byte*)(number) $400+(number) $28
 Constant right-side identified [4] (byte**) setscreen::screen#0 ← & (byte*) screen#0
 Constant right-side identified [10] (byte**) setscreen::screen#1 ← & (byte*) screen#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) screen1#0 = (byte*) 1024
-Constant (const byte*) screen2#0 = (byte*)$400+$28
+Constant (const byte*) screen1 = (byte*) 1024
+Constant (const byte*) screen2 = (byte*)$400+$28
 Constant (const byte**) setscreen::screen#0 = &screen#0
 Constant (const byte**) setscreen::screen#1 = &screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) setscreen::val#0 = screen1#0
-Constant (const byte*) setscreen::val#1 = screen2#0
+Constant (const byte*) setscreen::val#0 = screen1
+Constant (const byte*) setscreen::val#1 = screen2
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero screen#0 in [9] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
 Simplifying expression containing zero screen#0 in [15] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
@@ -126,9 +124,9 @@ Inlining constant with var siblings (const byte**) setscreen::screen#1
 Inlining constant with var siblings (const byte*) setscreen::val#0
 Inlining constant with var siblings (const byte*) setscreen::val#1
 Constant inlined setscreen::screen#0 = &(byte*) screen#0
-Constant inlined setscreen::val#1 = (const byte*) screen2#0
+Constant inlined setscreen::val#1 = (const byte*) screen2
 Constant inlined setscreen::screen#1 = &(byte*) screen#0
-Constant inlined setscreen::val#0 = (const byte*) screen1#0
+Constant inlined setscreen::val#0 = (const byte*) screen1
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (byte**) setscreen::screen#2 &(byte*) screen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -177,7 +175,7 @@ main::@return: scope:[main]  from main::@2
 
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 setscreen: scope:[setscreen]  from main main::@1
-  [10] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1#0 main::@1/(const byte*) screen2#0 )
+  [10] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1 main::@1/(const byte*) screen2 )
   [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2
   to:setscreen::@return
 setscreen::@return: scope:[setscreen]  from setscreen
@@ -189,8 +187,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) screen
 (byte*) screen#0 0.6666666666666666
-(byte*) screen1
-(byte*) screen2
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (byte**) setscreen::screen
 (byte*) setscreen::val
@@ -242,7 +238,7 @@ main: {
     // [5] call setscreen 
     // [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -258,7 +254,7 @@ main: {
     // [7] call setscreen 
     // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
@@ -348,7 +344,7 @@ main: {
     // [5] call setscreen 
     // [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -364,7 +360,7 @@ main: {
     // [7] call setscreen 
     // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
@@ -434,10 +430,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte*) screen
 (byte*) screen#0 screen zp ZP_WORD:4 0.6666666666666666
-(byte*) screen1
-(const byte*) screen1#0 screen1 = (byte*) 1024
-(byte*) screen2
-(const byte*) screen2#0 screen2 = (byte*)(number) $400+(number) $28
+(const byte*) screen1 screen1 = (byte*) 1024
+(const byte*) screen2 screen2 = (byte*)(number) $400+(number) $28
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (label) setscreen::@return
 (byte**) setscreen::screen
@@ -482,7 +476,7 @@ main: {
     // setscreen(&screen, screen1)
     // [5] call setscreen 
     // [10] phi from main to setscreen [phi:main->setscreen]
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -497,7 +491,7 @@ main: {
     // setscreen(&screen, screen2)
     // [7] call setscreen 
     // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2

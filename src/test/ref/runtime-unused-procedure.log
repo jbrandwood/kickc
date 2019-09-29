@@ -6,14 +6,14 @@ Culled Empty Block (label) proc::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) call#0 ← (number) 0
-  (byte*) screen#0 ← ((byte*)) (number) $400
+  (byte) call ← (number) 0
+  (byte*) screen ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  *((byte*) screen#0 + (number) 0) ← (byte) 'a'
-  (bool~) main::$0 ← (byte) call#0 != (number) 0
+  *((byte*) screen + (number) 0) ← (byte) 'a'
+  (bool~) main::$0 ← (byte) call != (number) 0
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@return
   to:main::@2
@@ -28,13 +28,13 @@ main::@return: scope:[main]  from main main::@3
 
 (void()) proc()
 proc: scope:[proc]  from main::@2
-  *((byte*) screen#0 + (number) 1) ← (byte) 'a'
-  (bool~) proc::$0 ← *((byte*) screen#0 + (number) 1) != (number) 0
+  *((byte*) screen + (number) 1) ← (byte) 'a'
+  (bool~) proc::$0 ← *((byte*) screen + (number) 1) != (number) 0
   (bool~) proc::$1 ← ! (bool~) proc::$0
   if((bool~) proc::$1) goto proc::@return
   to:proc::@2
 proc::@2: scope:[proc]  from proc
-  *((byte*) screen#0 + (number) 2) ← (byte) 'a'
+  *((byte*) screen + (number) 2) ← (byte) 'a'
   to:proc::@return
 proc::@return: scope:[proc]  from proc proc::@2
   return 
@@ -52,7 +52,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte) call
-(byte) call#0
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -65,18 +64,17 @@ SYMBOL TABLE SSA
 (label) proc::@2
 (label) proc::@return
 (byte*) screen
-(byte*) screen#0
 
-Adding number conversion cast (unumber) 0 in (byte) call#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) screen#0 + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) call#0 != (number) 0
-Adding number conversion cast (unumber) 1 in *((byte*) screen#0 + (number) 1) ← (byte) 'a'
-Adding number conversion cast (unumber) 0 in (bool~) proc::$0 ← *((byte*) screen#0 + (number) 1) != (number) 0
-Adding number conversion cast (unumber) 1 in (bool~) proc::$0 ← *((byte*) screen#0 + (number) 1) != (unumber)(number) 0
-Adding number conversion cast (unumber) 2 in *((byte*) screen#0 + (number) 2) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in (byte) call ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte*) screen + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) call != (number) 0
+Adding number conversion cast (unumber) 1 in *((byte*) screen + (number) 1) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in (bool~) proc::$0 ← *((byte*) screen + (number) 1) != (number) 0
+Adding number conversion cast (unumber) 1 in (bool~) proc::$0 ← *((byte*) screen + (number) 1) != (unumber)(number) 0
+Adding number conversion cast (unumber) 2 in *((byte*) screen + (number) 2) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) call#0 ← (unumber)(number) 0
-Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte) call ← (unumber)(number) 0
+Inlining cast (byte*) screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -95,20 +93,20 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [4] (bool~) main::$1 ← (byte) call#0 == (byte) 0 from [3] (bool~) main::$0 ← (byte) call#0 != (byte) 0
-Inversing boolean not [10] (bool~) proc::$1 ← *((byte*) screen#0 + (byte) 1) == (byte) 0 from [9] (bool~) proc::$0 ← *((byte*) screen#0 + (byte) 1) != (byte) 0
+Inversing boolean not [4] (bool~) main::$1 ← (byte) call == (byte) 0 from [3] (bool~) main::$0 ← (byte) call != (byte) 0
+Inversing boolean not [10] (bool~) proc::$1 ← *((byte*) screen + (byte) 1) == (byte) 0 from [9] (bool~) proc::$0 ← *((byte*) screen + (byte) 1) != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [5] if((byte) call#0==(byte) 0) goto main::@return
-Simple Condition (bool~) proc::$1 [11] if(*((byte*) screen#0 + (byte) 1)==(byte) 0) goto proc::@return
+Simple Condition (bool~) main::$1 [5] if((byte) call==(byte) 0) goto main::@return
+Simple Condition (bool~) proc::$1 [11] if(*((byte*) screen + (byte) 1)==(byte) 0) goto proc::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) call#0 = 0
-Constant (const byte*) screen#0 = (byte*) 1024
+Constant (const byte) call = 0
+Constant (const byte*) screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if((const byte) call#0==(byte) 0) goto main::@return
+if() condition always true - replacing block destination [5] if((const byte) call==(byte) 0) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero screen#0 in [2] *((const byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [2] *((const byte*) screen + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) call#0
+Eliminating unused constant (const byte) call
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@2
 Removing unused block main::@3
@@ -145,7 +143,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) screen#0) ← (byte) 'a'
+  [4] *((const byte*) screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -153,9 +151,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) call
 (void()) main()
-(byte*) screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -186,7 +182,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp breturn
@@ -198,7 +194,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) screen) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -232,7 +228,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp breturn
@@ -265,11 +261,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) call
 (void()) main()
 (label) main::@return
-(byte*) screen
-(const byte*) screen#0 screen = (byte*) 1024
+(const byte*) screen screen = (byte*) 1024
 
 
 
@@ -293,7 +287,7 @@ Score: 12
   // main
 main: {
     // screen[0] = 'a'
-    // [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

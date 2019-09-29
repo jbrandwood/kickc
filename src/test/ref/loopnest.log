@@ -5,7 +5,7 @@ Culled Empty Block (label) nest::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
@@ -32,7 +32,7 @@ nest: scope:[nest]  from main::@1
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
-  *((byte*) SCREEN#0) ← (byte) nest::j#2
+  *((byte*) SCREEN) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   (bool~) nest::$0 ← (byte) nest::j#1 > (number) 0
   if((bool~) nest::$0) goto nest::@1
@@ -53,7 +53,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -78,7 +77,7 @@ Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (byte) main::i
 Adding number conversion cast (unumber) $64 in (byte) nest::j#0 ← (number) $64
 Adding number conversion cast (unumber) 0 in (bool~) nest::$0 ← (byte) nest::j#1 > (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) $64
 Inlining cast (byte) nest::j#0 ← (unumber)(number) $64
 Successful SSA optimization Pass2InlineCast
@@ -98,7 +97,7 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [7] if((byte) main::i#1>(byte) 0) goto main::@1
 Simple Condition (bool~) nest::$0 [14] if((byte) nest::j#1>(byte) 0) goto nest::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = $64
 Constant (const byte) nest::j#0 = $64
 Successful SSA optimization Pass2ConstantIdentification
@@ -167,7 +166,7 @@ nest: scope:[nest]  from main::@1
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
   [11] (byte) nest::j#2 ← phi( nest/(byte) $64 nest::@1/(byte) nest::j#1 )
-  [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2
+  [12] *((const byte*) SCREEN) ← (byte) nest::j#2
   [13] (byte) nest::j#1 ← -- (byte) nest::j#2
   [14] if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
@@ -177,7 +176,6 @@ nest::@return: scope:[nest]  from nest::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -269,7 +267,7 @@ nest: {
     jmp b1
     // nest::@1
   b1:
-    // [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuz1 
     lda.z j
     sta SCREEN
     // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuz1=_dec_vbuz1 
@@ -366,7 +364,7 @@ nest: {
     jmp b1
     // nest::@1
   b1:
-    // [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
+    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 
     dex
@@ -420,8 +418,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -492,7 +489,7 @@ nest: {
     // nest::@1
   b1:
     // *SCREEN = j
-    // [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
+    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // while (--j>0)
     // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 

@@ -7,9 +7,9 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b#0 ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
+  (byte) main::b ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+  (byte*) main::screen ← ((byte*)) (number) $400
+  *((byte*) main::screen + (number) 0) ← (byte) main::b
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,27 +29,25 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (byte) main::b
-(byte) main::b#0
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) 6*$e/3+$16%3 in (byte) main::b#0 ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
+Adding number conversion cast (unumber) 6*$e/3+$16%3 in (byte) main::b ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b#0 ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte) main::b ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte) main::b#0 ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+Constant right-side identified [0] (byte) main::b ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::b#0 = (unumber)6*$e/3+$16%3
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte) main::b = (unumber)6*$e/3+$16%3
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen#0 in [2] *((const byte*) main::screen#0 + (byte) 0) ← (const byte) main::b#0
+Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (const byte) main::b
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -78,7 +76,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (const byte) main::b#0
+  [4] *((const byte*) main::screen) ← (const byte) main::b
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -87,8 +85,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -120,7 +116,7 @@ bend:
 main: {
     .const b = 6*$e/3+mod($16,3)
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp breturn
@@ -132,7 +128,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::screen) ← (const byte) main::b [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -167,7 +163,7 @@ bend:
 main: {
     .const b = 6*$e/3+mod($16,3)
     .label screen = $400
-    // [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp breturn
@@ -202,10 +198,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte) main::b
-(const byte) main::b#0 b = (byte)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte) main::b b = (byte)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -230,7 +224,7 @@ main: {
     .const b = 6*$e/3+mod($16,3)
     .label screen = $400
     // screen[0] = b
-    // [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::screen) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     // main::@return

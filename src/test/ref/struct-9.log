@@ -31,13 +31,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::p_x#0 ← (number) $a
-  (byte) main::p_y#0 ← (number) $a
+  (byte) main::p_x ← (number) $a
+  (byte) main::p_y ← (number) $a
   (byte) main::c_center_x#0 ← (byte) 0
   (byte) main::c_center_y#0 ← (byte) 0
   (byte) main::c_radius#0 ← (byte) 0
-  (byte) main::c_center_x#1 ← (byte) main::p_x#0
-  (byte) main::c_center_y#1 ← (byte) main::p_y#0
+  (byte) main::c_center_x#1 ← (byte) main::p_x
+  (byte) main::c_center_y#1 ← (byte) main::p_y
   (byte) main::c_radius#1 ← (number) $c
   (byte*) main::SCREEN ← ((byte*)) (number) $400
   *((byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#1
@@ -76,19 +76,17 @@ SYMBOL TABLE SSA
 (byte) main::c_radius#0
 (byte) main::c_radius#1
 (byte) main::p_x
-(byte) main::p_x#0
 (byte) main::p_y
-(byte) main::p_y#0
 
-Adding number conversion cast (unumber) $a in (byte) main::p_x#0 ← (number) $a
-Adding number conversion cast (unumber) $a in (byte) main::p_y#0 ← (number) $a
+Adding number conversion cast (unumber) $a in (byte) main::p_x ← (number) $a
+Adding number conversion cast (unumber) $a in (byte) main::p_y ← (number) $a
 Adding number conversion cast (unumber) $c in (byte) main::c_radius#1 ← (number) $c
 Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#1
 Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#1
 Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte) main::c_radius#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::p_x#0 ← (unumber)(number) $a
-Inlining cast (byte) main::p_y#0 ← (unumber)(number) $a
+Inlining cast (byte) main::p_x ← (unumber)(number) $a
+Inlining cast (byte) main::p_y ← (unumber)(number) $a
 Inlining cast (byte) main::c_radius#1 ← (unumber)(number) $c
 Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
@@ -107,18 +105,18 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) main::p_x#0 = (byte) main::c_center_x#1 
-Alias (byte) main::p_y#0 = (byte) main::c_center_y#1 
+Alias (byte) main::p_x = (byte) main::c_center_x#1 
+Alias (byte) main::p_y = (byte) main::c_center_y#1 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte) main::p_x#0 = $a
-Constant (const byte) main::p_y#0 = $a
+Constant (const byte) main::p_x = $a
+Constant (const byte) main::p_y = $a
 Constant (const byte) main::c_center_x#0 = 0
 Constant (const byte) main::c_center_y#0 = 0
 Constant (const byte) main::c_radius#0 = 0
 Constant (const byte) main::c_radius#1 = $c
 Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::p_x#0
+Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::p_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::c_center_x#0
 Eliminating unused constant (const byte) main::c_center_y#0
@@ -154,8 +152,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x#0
-  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y#0
+  [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x
+  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y
   [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -172,8 +170,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::c_center_x
 (byte) main::c_center_y
 (byte) main::c_radius
-(byte) main::p_x
-(byte) main::p_y
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -207,10 +203,10 @@ main: {
     .const p_y = $a
     .const c_radius = $c
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+1
     // [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius#1 -- _deref_pbuc1=vbuc2 
@@ -225,8 +221,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -268,10 +264,10 @@ main: {
     .const p_y = $a
     .const c_radius = $c
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+1
     // [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius#1 -- _deref_pbuc1=vbuc2 
@@ -318,10 +314,8 @@ FINAL SYMBOL TABLE
 (byte) main::c_center_y
 (byte) main::c_radius
 (const byte) main::c_radius#1 c_radius = (byte) $c
-(byte) main::p_x
-(const byte) main::p_x#0 p_x = (byte) $a
-(byte) main::p_y
-(const byte) main::p_y#0 p_y = (byte) $a
+(const byte) main::p_x p_x = (byte) $a
+(const byte) main::p_y p_y = (byte) $a
 
 
 
@@ -348,11 +342,11 @@ main: {
     .const c_radius = $c
     .label SCREEN = $400
     // SCREEN[0] = c.center.x
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
     // SCREEN[1] = c.center.y
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+1
     // SCREEN[2] = c.radius

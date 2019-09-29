@@ -17,8 +17,8 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[$10*$10]) buffer1 ← { fill( $10*$10, 0) }
   (byte[$10*$10]) buffer2 ← { fill( $10*$10, 0) }
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@4
 
 (void()) main()
@@ -32,12 +32,12 @@ main::@1: scope:[main]  from main::@11 main::@9
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@3 main::@6
   (byte) main::c#4 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#4 main::@6/(byte) main::c#1 )
-  (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $fe
+  (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
   if((bool~) main::$1) goto main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@3 main::@5
   (byte) main::c#3 ← phi( main::@3/(byte) main::c#4 main::@5/(byte) main::c#3 )
-  (bool~) main::$2 ← *((byte*) RASTER#0) != (number) $ff
+  (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
   if((bool~) main::$2) goto main::@5
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -124,7 +124,7 @@ flip::@return: scope:[flip]  from flip::@5
 
 (void()) plot()
 plot: scope:[plot]  from main::@10
-  (byte*~) plot::$0 ← (byte*) SCREEN#0 + (number) 5*(number) $28
+  (byte*~) plot::$0 ← (byte*) SCREEN + (number) 5*(number) $28
   (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
   (byte*) plot::line#0 ← (byte*~) plot::$1
   (byte) plot::i#0 ← (number) 0
@@ -179,9 +179,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) RASTER
-(byte*) RASTER#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte[$10*$10]) buffer1
 (byte[$10*$10]) buffer2
 (void()) flip()
@@ -287,21 +285,21 @@ SYMBOL TABLE SSA
 (byte) prepare::i#1
 (byte) prepare::i#2
 
-Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((byte*) RASTER#0) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((byte*) RASTER#0) != (number) $ff
+Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
+Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (byte) flip::srcIdx#0 ← (number) 0
 Adding number conversion cast (unumber) $f in (byte) flip::dstIdx#0 ← (number) $f
 Adding number conversion cast (unumber) $10 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (number) $10
 Adding number conversion cast (unumber) flip::$0 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (unumber)(number) $10
-Adding number conversion cast (unumber) 5*$28 in (byte*~) plot::$0 ← (byte*) SCREEN#0 + (number) 5*(number) $28
+Adding number conversion cast (unumber) 5*$28 in (byte*~) plot::$0 ← (byte*) SCREEN + (number) 5*(number) $28
 Adding number conversion cast (unumber) $c in (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
 Adding number conversion cast (unumber) 0 in (byte) plot::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) plot::x#0 ← (number) 0
 Adding number conversion cast (unumber) $10 in (bool~) plot::$2 ← (byte) plot::x#2 < (number) $10
 Adding number conversion cast (unumber) $28 in (byte*~) plot::$3 ← (byte*) plot::line#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) flip::srcIdx#0 ← (unumber)(number) 0
 Inlining cast (byte) flip::dstIdx#0 ← (unumber)(number) $f
 Inlining cast (byte) plot::i#0 ← (unumber)(number) 0
@@ -348,8 +346,8 @@ Identical Phi Values (byte) flip::r#2 (byte) flip::r#4
 Identical Phi Values (byte*) plot::line#2 (byte*) plot::line#5
 Identical Phi Values (byte) plot::y#2 (byte) plot::y#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [8] if(*((byte*) RASTER#0)!=(byte) $fe) goto main::@3
-Simple Condition (bool~) main::$2 [11] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@5
+Simple Condition (bool~) main::$1 [8] if(*((byte*) RASTER)!=(byte) $fe) goto main::@3
+Simple Condition (bool~) main::$2 [11] if(*((byte*) RASTER)!=(byte) $ff) goto main::@5
 Simple Condition (bool~) main::$3 [15] if((byte) main::c#1!=rangelast($19,1)) goto main::@3
 Simple Condition (bool~) prepare::$0 [25] if((byte) prepare::i#1!=rangelast(0,$ff)) goto prepare::@1
 Simple Condition (bool~) flip::$1 [39] if((byte) flip::c#1!=rangelast($10,1)) goto flip::@2
@@ -363,8 +361,8 @@ Constant right-side identified [1] (byte[$10*$10]) buffer2 ← { fill( $10*$10, 
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$10*$10]) buffer1 = { fill( $10*$10, 0) }
 Constant (const byte[$10*$10]) buffer2 = { fill( $10*$10, 0) }
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::c#0 = $19
 Constant (const byte) prepare::i#0 = 0
 Constant (const byte) flip::srcIdx#0 = 0
@@ -413,9 +411,9 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [28] (byte*~) plot::$0 ← (const byte*) SCREEN#0 + (byte)(number) 5*(number) $28
+Constant right-side identified [28] (byte*~) plot::$0 ← (const byte*) SCREEN + (byte)(number) 5*(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) plot::$0 = SCREEN#0+(byte)5*$28
+Constant (const byte*) plot::$0 = SCREEN+(byte)5*$28
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [28] (byte*) plot::line#0 ← (const byte*) plot::$0 + (byte) $c
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -432,8 +430,8 @@ Inlining constant with var siblings (const byte) plot::i#0
 Inlining constant with var siblings (const byte) plot::y#0
 Inlining constant with var siblings (const byte) plot::x#0
 Inlining constant with var siblings (const byte*) plot::line#0
-Constant inlined plot::line#0 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c
-Constant inlined plot::$0 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28
+Constant inlined plot::line#0 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c
+Constant inlined plot::$0 = (const byte*) SCREEN+(byte)(number) 5*(number) $28
 Constant inlined main::c#0 = (byte) $19
 Constant inlined flip::i#0 = (byte) 0
 Constant inlined flip::srcIdx#0 = (byte) 0
@@ -537,10 +535,10 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3 main::@5
   [6] (byte) main::c#4 ← phi( main/(byte) $19 main::@1/(byte) main::c#4 main::@3/(byte) main::c#1 main::@5/(byte) $19 )
-  [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1
+  [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2
+  [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [9] (byte) main::c#1 ← -- (byte) main::c#4
@@ -561,7 +559,7 @@ plot: scope:[plot]  from main::@5
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@4
   [16] (byte) plot::y#4 ← phi( plot/(byte) $10 plot::@4/(byte) plot::y#1 )
-  [16] (byte*) plot::line#5 ← phi( plot/(const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c plot::@4/(byte*) plot::line#1 )
+  [16] (byte*) plot::line#5 ← phi( plot/(const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c plot::@4/(byte*) plot::line#1 )
   [16] (byte) plot::i#4 ← phi( plot/(byte) 0 plot::@4/(byte) plot::i#2 )
   to:plot::@2
 plot::@2: scope:[plot]  from plot::@1 plot::@3
@@ -633,8 +631,6 @@ prepare::@return: scope:[prepare]  from prepare::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) RASTER
-(byte*) SCREEN
 (void()) flip()
 (byte) flip::c
 (byte) flip::c#1 1501.5
@@ -760,14 +756,14 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1_from_b1
     jmp b2
     // main::@2
   b2:
-    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
@@ -812,7 +808,7 @@ plot: {
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
@@ -1018,9 +1014,9 @@ prepare: {
   buffer2: .fill $10*$10, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::c#4 main::c#1 ]
-Statement [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
+Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
 Statement [19] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( main:2::plot:14 [ plot::y#4 plot::i#2 plot::line#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ plot::y#4 plot::y#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ plot::i#4 plot::i#2 plot::i#1 ]
@@ -1034,8 +1030,8 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ f
 Statement [31] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ) always clobbers reg byte a 
 Statement [38] *((const byte[$10*$10]) buffer1 + (byte) flip::i#2) ← *((const byte[$10*$10]) buffer2 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ flip::i#2 flip::i#1 ]
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
-Statement [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
+Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
 Statement [19] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( main:2::plot:14 [ plot::y#4 plot::i#2 plot::line#1 ] ) always clobbers reg byte a 
 Statement [23] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte[$10*$10]) buffer1 + (byte) plot::i#2) [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ) always clobbers reg byte a 
 Statement [29] *((const byte[$10*$10]) buffer2 + (byte) flip::dstIdx#3) ← *((const byte[$10*$10]) buffer1 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) always clobbers reg byte a 
@@ -1121,14 +1117,14 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1_from_b1
     jmp b2
     // main::@2
   b2:
-    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
@@ -1170,7 +1166,7 @@ plot: {
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
@@ -1436,10 +1432,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte[$10*$10]) buffer1 buffer1 = { fill( $10*$10, 0) }
 (const byte[$10*$10]) buffer2 buffer2 = { fill( $10*$10, 0) }
 (void()) flip()
@@ -1546,14 +1540,14 @@ main: {
     // main::@1
   b1:
     // while(*RASTER!=254)
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne b1
     // main::@2
   b2:
     // while(*RASTER!=255)
-    // [8] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b2
@@ -1587,7 +1581,7 @@ plot: {
     // [16] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN#0+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [16] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c

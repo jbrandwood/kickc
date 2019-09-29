@@ -3,7 +3,7 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) line#0 ← (number) $40
   (byte) ch#0 ← (byte) line#0
   to:@2
@@ -35,8 +35,8 @@ main::@3: scope:[main]  from main::@2
   (byte) line#10 ← phi( main::@2/(byte) line#6 )
   (byte) line#3 ← (byte) line#10
   (byte) ch#5 ← (byte) ch#12
-  *((byte*) SCREEN#0) ← (byte) ch#5
-  (byte*~) main::$3 ← (byte*) SCREEN#0 + (number) $28
+  *((byte*) SCREEN) ← (byte) ch#5
+  (byte*~) main::$3 ← (byte*) SCREEN + (number) $28
   *((byte*~) main::$3) ← (byte) line#3
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -80,7 +80,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte) ch
 (byte) ch#0
 (byte) ch#1
@@ -129,11 +128,11 @@ SYMBOL TABLE SSA
 (label) main::@return
 
 Adding number conversion cast (unumber) $40 in (byte) line#0 ← (number) $40
-Adding number conversion cast (unumber) $28 in (byte*~) main::$3 ← (byte*) SCREEN#0 + (number) $28
+Adding number conversion cast (unumber) $28 in (byte*~) main::$3 ← (byte*) SCREEN + (number) $28
 Adding number conversion cast (unumber) 2 in (number~) ln::$0 ← (byte) line#12 + (number) 2
 Adding number conversion cast (unumber) ln::$0 in (number~) ln::$0 ← (byte) line#12 + (unumber)(number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) line#0 ← (unumber)(number) $40
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -168,19 +167,19 @@ Identical Phi Values (byte) ch#12 (byte) line#13
 Identical Phi Values (byte) line#14 (byte) line#10
 Identical Phi Values (byte) ch#15 (byte) ch#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) line#0 = $40
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$3) ← (byte) line#13  -- *(SCREEN#0 + $28)
+Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$3) ← (byte) line#13  -- *(SCREEN + $28)
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte) ch#2 and assignment [1] (byte) ch#2 ← ++ (byte) line#13
 Eliminating unused variable (byte) ch#4 and assignment [3] (byte) ch#4 ← ++ (byte) line#13
-Eliminating unused variable (byte*~) main::$3 and assignment [6] (byte*~) main::$3 ← (const byte*) SCREEN#0 + (byte) $28
+Eliminating unused variable (byte*~) main::$3 and assignment [6] (byte*~) main::$3 ← (const byte*) SCREEN + (byte) $28
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) line#0
 Constant inlined line#0 = (byte) $40
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN#0+$28)
+Consolidated array index constant in *(SCREEN+$28)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -229,8 +228,8 @@ main::@2: scope:[main]  from main::@1
   [9] call ln 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] *((const byte*) SCREEN#0) ← (byte) line#13
-  [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13
+  [10] *((const byte*) SCREEN) ← (byte) line#13
+  [11] *((const byte*) SCREEN+(byte) $28) ← (byte) line#13
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [12] return 
@@ -247,7 +246,6 @@ ln::@return: scope:[ln]  from ln
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (byte) ch
 (byte) line
 (byte) line#12 6.0
@@ -319,10 +317,10 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) SCREEN) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
     lda.z line
     sta SCREEN
-    // [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) SCREEN+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
     lda.z line
     sta SCREEN+$28
     jmp breturn
@@ -413,9 +411,9 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+    // [10] *((const byte*) SCREEN) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) SCREEN+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$28
     jmp breturn
     // main::@return
@@ -472,8 +470,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (byte) ch
 (byte) line
 (byte) line#12 reg byte a 6.0
@@ -530,10 +527,10 @@ main: {
     jsr ln
     // main::@3
     // *SCREEN = ch
-    // [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+    // [10] *((const byte*) SCREEN) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // *(SCREEN+40) = line
-    // [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) SCREEN+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$28
     // main::@return
     // }

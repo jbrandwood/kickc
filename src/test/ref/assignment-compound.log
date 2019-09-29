@@ -9,12 +9,12 @@ Culled Empty Block (label) test::@4
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[]) ref ← { (number) 3, (number) 4, (number) 3, (number) $12, (number) 9, (number) 1, (number) 4, (number) 2, (number) 4, (number) 5, (number) 1, (number) 0 }
-  (byte*) screen1#0 ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) screen1#0 + (number) $28
+  (byte*) screen1 ← ((byte*)) (number) $400
+  (byte*~) $0 ← (byte*) screen1 + (number) $28
   (byte*) screen2#0 ← (byte*~) $0
-  (byte*) cols#0 ← ((byte*)) (number) $d800
-  (byte) GREEN#0 ← (number) 5
-  (byte) RED#0 ← (number) 2
+  (byte*) cols ← ((byte*)) (number) $d800
+  (byte) GREEN ← (number) 5
+  (byte) RED ← (number) 2
   to:@2
 
 (void()) main()
@@ -139,18 +139,18 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   (byte*) screen2#1 ← phi( main/(byte*) screen2#2 main::@1/(byte*) screen2#3 main::@10/(byte*) screen2#4 main::@2/(byte*) screen2#5 main::@3/(byte*) screen2#6 main::@4/(byte*) screen2#7 main::@5/(byte*) screen2#8 main::@6/(byte*) screen2#9 main::@7/(byte*) screen2#10 main::@8/(byte*) screen2#11 main::@9/(byte*) screen2#12 )
   (byte) test::i#11 ← phi( main/(byte) test::i#0 main::@1/(byte) test::i#1 main::@10/(byte) test::i#10 main::@2/(byte) test::i#2 main::@3/(byte) test::i#3 main::@4/(byte) test::i#4 main::@5/(byte) test::i#5 main::@6/(byte) test::i#6 main::@7/(byte) test::i#7 main::@8/(byte) test::i#8 main::@9/(byte) test::i#9 )
   (byte) test::a#11 ← phi( main/(byte) test::a#0 main::@1/(byte) test::a#1 main::@10/(byte) test::a#10 main::@2/(byte) test::a#2 main::@3/(byte) test::a#3 main::@4/(byte) test::a#4 main::@5/(byte) test::a#5 main::@6/(byte) test::a#6 main::@7/(byte) test::a#7 main::@8/(byte) test::a#8 main::@9/(byte) test::a#9 )
-  *((byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11
+  *((byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11
   *((byte*) screen2#1 + (byte) test::i#11) ← *((byte[]) ref + (byte) test::i#11)
   (bool~) test::$0 ← *((byte[]) ref + (byte) test::i#11) == (byte) test::a#11
   if((bool~) test::$0) goto test::@1
   to:test::@3
 test::@1: scope:[test]  from test
   (byte) test::i#12 ← phi( test/(byte) test::i#11 )
-  *((byte*) cols#0 + (byte) test::i#12) ← (byte) GREEN#0
+  *((byte*) cols + (byte) test::i#12) ← (byte) GREEN
   to:test::@return
 test::@3: scope:[test]  from test
   (byte) test::i#13 ← phi( test/(byte) test::i#11 )
-  *((byte*) cols#0 + (byte) test::i#13) ← (byte) RED#0
+  *((byte*) cols + (byte) test::i#13) ← (byte) RED
   to:test::@return
 test::@return: scope:[test]  from test::@1 test::@3
   return 
@@ -170,11 +170,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte) GREEN
-(byte) GREEN#0
 (byte) RED
-(byte) RED#0
 (byte*) cols
-(byte*) cols#0
 (void()) main()
 (label) main::@1
 (label) main::@10
@@ -236,7 +233,6 @@ SYMBOL TABLE SSA
 (byte) main::i#9
 (byte[]) ref
 (byte*) screen1
-(byte*) screen1#0
 (byte*) screen2
 (byte*) screen2#0
 (byte*) screen2#1
@@ -286,9 +282,9 @@ SYMBOL TABLE SSA
 (byte) test::i#8
 (byte) test::i#9
 
-Adding number conversion cast (unumber) $28 in (byte*~) $0 ← (byte*) screen1#0 + (number) $28
-Adding number conversion cast (unumber) 5 in (byte) GREEN#0 ← (number) 5
-Adding number conversion cast (unumber) 2 in (byte) RED#0 ← (number) 2
+Adding number conversion cast (unumber) $28 in (byte*~) $0 ← (byte*) screen1 + (number) $28
+Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
+Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 3 in (byte) main::a#0 ← (number) 3
 Adding number conversion cast (unumber) 1 in (byte) main::a#1 ← (byte) main::a#11 + (number) 1
@@ -304,10 +300,10 @@ Adding number conversion cast (unumber) 1 in (byte) main::a#10 ← (byte) main::
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) ref ← (byte[]){ (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) screen1#0 ← (byte*)(number) $400
-Inlining cast (byte*) cols#0 ← (byte*)(number) $d800
-Inlining cast (byte) GREEN#0 ← (unumber)(number) 5
-Inlining cast (byte) RED#0 ← (unumber)(number) 2
+Inlining cast (byte*) screen1 ← (byte*)(number) $400
+Inlining cast (byte*) cols ← (byte*)(number) $d800
+Inlining cast (byte) GREEN ← (unumber)(number) 5
+Inlining cast (byte) RED ← (unumber)(number) 2
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte) main::a#0 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
@@ -390,10 +386,10 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte[]) ref = { 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0 }
-Constant (const byte*) screen1#0 = (byte*) 1024
-Constant (const byte*) cols#0 = (byte*) 55296
-Constant (const byte) GREEN#0 = 5
-Constant (const byte) RED#0 = 2
+Constant (const byte*) screen1 = (byte*) 1024
+Constant (const byte*) cols = (byte*) 55296
+Constant (const byte) GREEN = 5
+Constant (const byte) RED = 2
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 3
 Successful SSA optimization Pass2ConstantIdentification
@@ -402,11 +398,11 @@ Constant (const byte) test::a#0 = main::a#0
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused variable (byte) main::i#11 and assignment [52] (byte) main::i#11 ← ++ (byte) main::i#10
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [0] (byte*) screen2#0 ← (const byte*) screen1#0 + (byte) $28
+Constant right-side identified [0] (byte*) screen2#0 ← (const byte*) screen1 + (byte) $28
 Constant right-side identified [2] (byte) main::i#1 ← ++ (const byte) main::i#0
 Constant right-side identified [3] (byte) main::a#1 ← (const byte) main::a#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) screen2#0 = screen1#0+$28
+Constant (const byte*) screen2#0 = screen1+$28
 Constant (const byte) main::i#1 = ++main::i#0
 Constant (const byte) main::a#1 = main::a#0+1
 Successful SSA optimization Pass2ConstantIdentification
@@ -710,29 +706,25 @@ main::@return: scope:[main]  from main::@10
 test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9
   [27] (byte) test::i#11 ← phi( main/(byte) 0 main::@1/(byte) 1 main::@10/(byte) $a main::@2/(byte) 2 main::@3/(byte) 3 main::@4/(byte) 4 main::@5/(byte) 5 main::@6/(byte) 6 main::@7/(byte) 7 main::@8/(byte) 8 main::@9/(byte) 9 )
   [27] (byte) test::a#11 ← phi( main/(byte) 3 main::@1/(byte) 3+(byte) 1 main::@10/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6|(byte) 1&(byte) 1 main::@2/(byte) 3+(byte) 1-(byte) 1 main::@3/(byte) 3+(byte) 1-(byte) 1*(byte) 6 main::@4/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2 main::@5/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2 main::@6/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2 main::@7/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1 main::@8/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6 main::@9/(byte) 3+(byte) 1-(byte) 1*(byte) 6/(byte) 2%(byte) 2<<(byte) 2>>(byte) 1^(byte) 6|(byte) 1 )
-  [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11
+  [28] *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11
   [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11)
   [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
   to:test::@2
 test::@2: scope:[test]  from test
-  [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0
+  [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED
   to:test::@return
 test::@return: scope:[test]  from test::@1 test::@2
   [32] return 
   to:@return
 test::@1: scope:[test]  from test
-  [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0
+  [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN
   to:test::@return
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) GREEN
-(byte) RED
-(byte*) cols
 (void()) main()
 (byte) main::a
 (byte) main::i
-(byte*) screen1
 (byte*) screen2
 (void()) test((byte) test::i , (byte) test::a)
 (byte) test::a
@@ -952,7 +944,7 @@ main: {
 test: {
     .label a = 2
     .label i = 3
-    // [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [28] *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z a
     ldy.z i
     sta screen1,y
@@ -968,7 +960,7 @@ test: {
     jmp b2
     // test::@2
   b2:
-    // [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #RED
     ldy.z i
     sta cols,y
@@ -979,7 +971,7 @@ test: {
     rts
     // test::@1
   b1:
-    // [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy.z i
     sta cols,y
@@ -993,13 +985,13 @@ Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ test::a#11 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ test::i#11 ]
 Statement [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
-Statement [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
+Statement [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
+Statement [28] *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11 [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
 Statement [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) [ test::a#11 test::i#11 ] ( main:2::test:5 [ test::a#11 test::i#11 ] main:2::test:7 [ test::a#11 test::i#11 ] main:2::test:9 [ test::a#11 test::i#11 ] main:2::test:11 [ test::a#11 test::i#11 ] main:2::test:13 [ test::a#11 test::i#11 ] main:2::test:15 [ test::a#11 test::i#11 ] main:2::test:17 [ test::a#11 test::i#11 ] main:2::test:19 [ test::a#11 test::i#11 ] main:2::test:21 [ test::a#11 test::i#11 ] main:2::test:23 [ test::a#11 test::i#11 ] main:2::test:25 [ test::a#11 test::i#11 ] ) always clobbers reg byte a 
 Statement [30] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1 [ test::i#11 ] ( main:2::test:5 [ test::i#11 ] main:2::test:7 [ test::i#11 ] main:2::test:9 [ test::i#11 ] main:2::test:11 [ test::i#11 ] main:2::test:13 [ test::i#11 ] main:2::test:15 [ test::i#11 ] main:2::test:17 [ test::i#11 ] main:2::test:19 [ test::i#11 ] main:2::test:21 [ test::i#11 ] main:2::test:23 [ test::i#11 ] main:2::test:25 [ test::i#11 ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
+Statement [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN [ ] ( main:2::test:5 [ ] main:2::test:7 [ ] main:2::test:9 [ ] main:2::test:11 [ ] main:2::test:13 [ ] main:2::test:15 [ ] main:2::test:17 [ ] main:2::test:19 [ ] main:2::test:21 [ ] main:2::test:23 [ ] main:2::test:25 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ test::a#11 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ test::i#11 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 
@@ -1204,7 +1196,7 @@ main: {
 // test(byte register(X) i, byte zeropage(2) a)
 test: {
     .label a = 2
-    // [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [28] *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z a
     sta screen1,x
     // [29] *((const byte*) screen2#0 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
@@ -1217,7 +1209,7 @@ test: {
     jmp b2
     // test::@2
   b2:
-    // [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta cols,x
     jmp breturn
@@ -1227,7 +1219,7 @@ test: {
     rts
     // test::@1
   b1:
-    // [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta cols,x
     jmp breturn
@@ -1305,12 +1297,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) GREEN
-(const byte) GREEN#0 GREEN = (byte) 5
-(byte) RED
-(const byte) RED#0 RED = (byte) 2
-(byte*) cols
-(const byte*) cols#0 cols = (byte*) 55296
+(const byte) GREEN GREEN = (byte) 5
+(const byte) RED RED = (byte) 2
+(const byte*) cols cols = (byte*) 55296
 (void()) main()
 (label) main::@1
 (label) main::@10
@@ -1326,10 +1315,9 @@ FINAL SYMBOL TABLE
 (byte) main::a
 (byte) main::i
 (const byte[]) ref ref = { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
-(byte*) screen1
-(const byte*) screen1#0 screen1 = (byte*) 1024
+(const byte*) screen1 screen1 = (byte*) 1024
 (byte*) screen2
-(const byte*) screen2#0 screen2 = (const byte*) screen1#0+(byte) $28
+(const byte*) screen2#0 screen2 = (const byte*) screen1+(byte) $28
 (void()) test((byte) test::i , (byte) test::a)
 (label) test::@1
 (label) test::@2
@@ -1496,7 +1484,7 @@ main: {
 test: {
     .label a = 2
     // screen1[i] = a
-    // [28] *((const byte*) screen1#0 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [28] *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z a
     sta screen1,x
     // screen2[i] = ref[i]
@@ -1510,7 +1498,7 @@ test: {
     beq b1
     // test::@2
     // cols[i] = RED
-    // [31] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) RED#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [31] *((const byte*) cols + (byte) test::i#11) ← (const byte) RED -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta cols,x
     // test::@return
@@ -1520,7 +1508,7 @@ test: {
     // test::@1
   b1:
     // cols[i] = GREEN
-    // [33] *((const byte*) cols#0 + (byte) test::i#11) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [33] *((const byte*) cols + (byte) test::i#11) ← (const byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta cols,x
     rts

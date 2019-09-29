@@ -7,13 +7,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   (number~) main::$0 ← (number) $55 << (byte) main::b#2
-  *((byte*) main::screen#0 + (byte) main::b#2) ← (number~) main::$0
+  *((byte*) main::screen + (byte) main::b#2) ← (number~) main::$0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,7)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,7)
   if((bool~) main::$1) goto main::@1
@@ -43,12 +43,11 @@ SYMBOL TABLE SSA
 (byte) main::b#1
 (byte) main::b#2
 (byte*) main::screen
-(byte*) main::screen#0
 
 Adding number conversion cast (unumber) $55 in (number~) main::$0 ← (number) $55 << (byte) main::b#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $55 << (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $55
@@ -58,7 +57,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) $55 << (byte) main::b#2
 Simple Condition (bool~) main::$1 [7] if((byte) main::b#1!=rangelast(0,7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [5] main::b#1 ← ++ main::b#2 to ++
@@ -109,7 +108,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::b#2 ← phi( main/(byte) 0 main::@1/(byte) main::b#1 )
   [6] (byte~) main::$0 ← (byte) $55 << (byte) main::b#2
-  [7] *((const byte*) main::screen#0 + (byte) main::b#2) ← (byte~) main::$0
+  [7] *((const byte*) main::screen + (byte) main::b#2) ← (byte~) main::$0
   [8] (byte) main::b#1 ← ++ (byte) main::b#2
   [9] if((byte) main::b#1!=(byte) 8) goto main::@1
   to:main::@return
@@ -124,7 +123,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::b
 (byte) main::b#1 16.5
 (byte) main::b#2 14.666666666666666
-(byte*) main::screen
 
 Initial phi equivalence classes
 [ main::b#2 main::b#1 ]
@@ -188,7 +186,7 @@ main: {
     bne !-
   !e:
     sta.z _0
-    // [7] *((const byte*) main::screen#0 + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [7] *((const byte*) main::screen + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _0
     ldy.z b
     sta screen,y
@@ -272,7 +270,7 @@ main: {
     dey
     bne !-
   !e:
-    // [7] *((const byte*) main::screen#0 + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [7] *((const byte*) main::screen + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z b
     sta screen,y
     // [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
@@ -325,8 +323,7 @@ FINAL SYMBOL TABLE
 (byte) main::b
 (byte) main::b#1 b zp ZP_BYTE:2 16.5
 (byte) main::b#2 b zp ZP_BYTE:2 14.666666666666666
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
 reg byte a [ main::$0 ]
@@ -373,7 +370,7 @@ main: {
     bne !-
   !e:
     // screen[b] = $55 << b
-    // [7] *((const byte*) main::screen#0 + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [7] *((const byte*) main::screen + (byte) main::b#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z b
     sta screen,y
     // for( byte b: 0..7)

@@ -7,7 +7,7 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (number) $400
+  (byte*) screen ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
@@ -37,7 +37,7 @@ main::toUpper1_@return: scope:[main]  from main::toUpper1_@1
 main::@1: scope:[main]  from main::toUpper1_@return
   (byte) main::toUpper1_return#3 ← phi( main::toUpper1_@return/(byte) main::toUpper1_return#1 )
   (byte~) main::$0 ← (byte) main::toUpper1_return#3
-  *((byte*) screen#0 + (number) 0) ← (byte~) main::$0
+  *((byte*) screen + (number) 0) ← (byte~) main::$0
   (byte) main::toUpper2_ch#0 ← (byte) 'm'
   (bool) main::toUpper2_bo#0 ← false
   to:main::toUpper2
@@ -63,7 +63,7 @@ main::toUpper2_@return: scope:[main]  from main::toUpper2_@1
 main::@2: scope:[main]  from main::toUpper2_@return
   (byte) main::toUpper2_return#3 ← phi( main::toUpper2_@return/(byte) main::toUpper2_return#1 )
   (byte~) main::$1 ← (byte) main::toUpper2_return#3
-  *((byte*) screen#0 + (number) 1) ← (byte~) main::$1
+  *((byte*) screen + (number) 1) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -129,14 +129,13 @@ SYMBOL TABLE SSA
 (byte) main::toUpper2_return#2
 (byte) main::toUpper2_return#3
 (byte*) screen
-(byte*) screen#0
 
 Adding number conversion cast (unumber) $40 in (byte) main::toUpper1_res#1 ← (byte) main::toUpper1_res#3 + (number) $40
-Adding number conversion cast (unumber) 0 in *((byte*) screen#0 + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 0 in *((byte*) screen + (number) 0) ← (byte~) main::$0
 Adding number conversion cast (unumber) $40 in (byte) main::toUpper2_res#1 ← (byte) main::toUpper2_res#3 + (number) $40
-Adding number conversion cast (unumber) 1 in *((byte*) screen#0 + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 1 in *((byte*) screen + (number) 1) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $40
@@ -159,7 +158,7 @@ Successful SSA optimization Pass2AliasElimination
 Rewriting ! if()-condition to reversed if() [5] (bool~) main::toUpper1_$0 ← ! (bool) main::toUpper1_bo#0
 Rewriting ! if()-condition to reversed if() [20] (bool~) main::toUpper2_$0 ← ! (bool) main::toUpper2_bo#0
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) screen#0 = (byte*) 1024
+Constant (const byte*) screen = (byte*) 1024
 Constant (const byte) main::toUpper1_ch#0 = 'c'
 Constant (const bool) main::toUpper1_bo#0 = true
 Constant (const byte) main::toUpper2_ch#0 = 'm'
@@ -169,7 +168,7 @@ Removing PHI-reference to removed block (main::toUpper1) in block main::toUpper1
 if() condition always true - replacing block destination [6] if((const bool) main::toUpper1_bo#0) goto main::toUpper1_@2
 if() condition always false - eliminating [21] if((const bool) main::toUpper2_bo#0) goto main::toUpper2_@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero screen#0 in [15] *((const byte*) screen#0 + (byte) 0) ← (byte) main::toUpper1_return#0
+Simplifying expression containing zero screen in [15] *((const byte*) screen + (byte) 0) ← (byte) main::toUpper1_return#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const bool) main::toUpper1_bo#0
 Eliminating unused constant (const bool) main::toUpper2_bo#0
@@ -186,7 +185,7 @@ Constant right-side identified [1] (byte) main::toUpper1_return#0 ← (const byt
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toUpper1_return#0 = main::toUpper1_ch#0+$40
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(screen#0+1)
+Consolidated array index constant in *(screen+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -238,13 +237,13 @@ main::toUpper1: scope:[main]  from main
   [5] phi()
   to:main::@1
 main::@1: scope:[main]  from main::toUpper1
-  [6] *((const byte*) screen#0) ← (const byte) main::toUpper1_return#0
+  [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0
   to:main::toUpper2
 main::toUpper2: scope:[main]  from main::@1
   [7] phi()
   to:main::@2
 main::@2: scope:[main]  from main::toUpper2
-  [8] *((const byte*) screen#0+(byte) 1) ← (const byte) main::toUpper2_ch#0
+  [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return 
@@ -261,7 +260,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::toUpper2_ch
 (byte) main::toUpper2_res
 (byte) main::toUpper2_return
-(byte*) screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -305,7 +303,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) screen#0) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
     // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
@@ -316,7 +314,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [8] *((const byte*) screen#0+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     jmp breturn
@@ -328,8 +326,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) screen#0) ← (const byte) main::toUpper1_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) screen#0+(byte) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -376,7 +374,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [6] *((const byte*) screen#0) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
     // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
@@ -387,7 +385,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [8] *((const byte*) screen#0+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     jmp breturn
@@ -448,8 +446,7 @@ FINAL SYMBOL TABLE
 (const byte) main::toUpper2_ch#0 toUpper2_ch = (byte) 'm'
 (byte) main::toUpper2_res
 (byte) main::toUpper2_return
-(byte*) screen
-(const byte*) screen#0 screen = (byte*) 1024
+(const byte*) screen screen = (byte*) 1024
 
 
 
@@ -480,14 +477,14 @@ main: {
     // main::toUpper1
     // main::@1
     // screen[0] = toUpper('c',true)
-    // [6] *((const byte*) screen#0) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
     // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
     // main::toUpper2
     // main::@2
     // screen[1] = toUpper('m',false)
-    // [8] *((const byte*) screen#0+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     // main::@return

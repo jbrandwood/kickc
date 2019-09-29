@@ -9,17 +9,17 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::BLACK#0 ← (number) 0
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte*) main::cols#0 ← ((byte*)) (number) $d800
+  (byte) main::BLACK ← (number) 0
+  (byte*) main::screen ← ((byte*)) (number) $400
+  (byte*) main::cols ← ((byte*)) (number) $d800
   (byte) main::x#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::x#2 ← phi( main/(byte) main::x#0 main::@1/(byte) main::x#1 )
   (number~) main::$0 ← (byte) main::x#2 + (number) $c
   (byte) main::y#0 ← (number~) main::$0
-  *((byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a'
-  *((byte*) main::cols#0 + (byte) main::y#0) ← (byte) main::BLACK#0
+  *((byte*) main::screen + (byte) main::y#0) ← (byte) 'a'
+  *((byte*) main::cols + (byte) main::y#0) ← (byte) main::BLACK
   (byte) main::x#1 ← (byte) main::x#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::x#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
@@ -45,11 +45,8 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte) main::BLACK
-(byte) main::BLACK#0
 (byte*) main::cols
-(byte*) main::cols#0
 (byte*) main::screen
-(byte*) main::screen#0
 (byte) main::x
 (byte) main::x#0
 (byte) main::x#1
@@ -57,13 +54,13 @@ SYMBOL TABLE SSA
 (byte) main::y
 (byte) main::y#0
 
-Adding number conversion cast (unumber) 0 in (byte) main::BLACK#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) main::BLACK ← (number) 0
 Adding number conversion cast (unumber) $c in (number~) main::$0 ← (byte) main::x#2 + (number) $c
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::x#2 + (unumber)(number) $c
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::BLACK#0 ← (unumber)(number) 0
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
+Inlining cast (byte) main::BLACK ← (unumber)(number) 0
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
+Inlining cast (byte*) main::cols ← (byte*)(number) $d800
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -78,9 +75,9 @@ Alias (byte) main::y#0 = (byte~) main::$0
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [11] if((byte) main::x#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::BLACK#0 = 0
-Constant (const byte*) main::screen#0 = (byte*) 1024
-Constant (const byte*) main::cols#0 = (byte*) 55296
+Constant (const byte) main::BLACK = 0
+Constant (const byte*) main::screen = (byte*) 1024
+Constant (const byte*) main::cols = (byte*) 55296
 Constant (const byte) main::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::x#1 ← ++ main::x#2 to ++
@@ -131,8 +128,8 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::x#2 ← phi( main/(byte) 0 main::@1/(byte) main::x#1 )
   [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c
-  [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a'
-  [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0
+  [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a'
+  [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK
   [9] (byte) main::x#1 ← ++ (byte) main::x#2
   [10] if((byte) main::x#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -143,9 +140,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::BLACK
-(byte*) main::cols
-(byte*) main::screen
 (byte) main::x
 (byte) main::x#1 16.5
 (byte) main::x#2 8.25
@@ -208,11 +202,11 @@ main: {
     lax.z x
     axs #-[$c]
     stx.z y
-    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z y
     sta screen,y
-    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #BLACK
     ldy.z y
     sta cols,y
@@ -231,13 +225,13 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::y#0 ]
-Statement [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [6] (byte) main::y#0 ← (byte) main::x#2 + (byte) $c [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::x#2 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::y#0 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 
@@ -291,10 +285,10 @@ main: {
     tya
     tax
     axs #-[$c]
-    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x
-    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #BLACK
     sta cols,x
     // [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
@@ -342,12 +336,9 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::BLACK
-(const byte) main::BLACK#0 BLACK = (byte) 0
-(byte*) main::cols
-(const byte*) main::cols#0 cols = (byte*) 55296
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte) main::BLACK BLACK = (byte) 0
+(const byte*) main::cols cols = (byte*) 55296
+(const byte*) main::screen screen = (byte*) 1024
 (byte) main::x
 (byte) main::x#1 reg byte y 16.5
 (byte) main::x#2 reg byte y 8.25
@@ -392,11 +383,11 @@ main: {
     tax
     axs #-[$c]
     // screen[y] = 'a'
-    // [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x
     // cols[y] = BLACK
-    // [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [8] *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #BLACK
     sta cols,x
     // for(byte x:0..10)

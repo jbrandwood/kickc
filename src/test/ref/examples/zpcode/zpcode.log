@@ -22,8 +22,8 @@ Culled Empty Block (label) zpLoop::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (number) $d012
-  (byte*) BGCOL#0 ← ((byte*)) (number) $d020
+  (byte*) RASTER ← ((byte*)) (number) $d012
+  (byte*) BGCOL ← ((byte*)) (number) $d020
   to:@2
 
 (void()) main()
@@ -50,7 +50,7 @@ main::@7: scope:[main]  from main::@1 main::@20
   if(true) goto main::@10
   to:main::@return
 main::@10: scope:[main]  from main::@10 main::@7
-  (bool~) main::$3 ← *((byte*) RASTER#0) != (number) $ff
+  (bool~) main::$3 ← *((byte*) RASTER) != (number) $ff
   if((bool~) main::$3) goto main::@10
   to:main::@12
 main::@12: scope:[main]  from main::@10
@@ -60,7 +60,7 @@ main::@19: scope:[main]  from main::@12
   call zpLoop 
   to:main::@20
 main::@20: scope:[main]  from main::@19
-  *((byte*) BGCOL#0) ← (number) 0
+  *((byte*) BGCOL) ← (number) 0
   to:main::@7
 main::@return: scope:[main]  from main::@7
   return 
@@ -72,7 +72,7 @@ loop: scope:[loop]  from main::@12
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@1
   (byte) loop::i#2 ← phi( loop/(byte) loop::i#0 loop::@1/(byte) loop::i#1 )
-  *((byte*) BGCOL#0) ← -- *((byte*) BGCOL#0)
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
   (byte) loop::i#1 ← (byte) loop::i#2 + rangenext(0,$64)
   (bool~) loop::$1 ← (byte) loop::i#1 != rangelast(0,$64)
   if((bool~) loop::$1) goto loop::@1
@@ -91,7 +91,7 @@ zpLoop: scope:[zpLoop]  from main::@19
   to:zpLoop::@1
 zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
   (byte) zpLoop::i#2 ← phi( zpLoop/(byte) zpLoop::i#0 zpLoop::@1/(byte) zpLoop::i#1 )
-  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
   (byte) zpLoop::i#1 ← (byte) zpLoop::i#2 + rangenext(0,$64)
   (bool~) zpLoop::$1 ← (byte) zpLoop::i#1 != rangelast(0,$64)
   if((bool~) zpLoop::$1) goto zpLoop::@1
@@ -113,9 +113,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(byte*) BGCOL#0
 (byte*) RASTER
-(byte*) RASTER#0
 (void()) loop()
 (bool~) loop::$1
 (label) loop::@1
@@ -158,14 +156,14 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) $14 in (bool~) main::$2 ← (byte) main::i#2 < (number) $14
-Adding number conversion cast (unumber) $ff in (bool~) main::$3 ← *((byte*) RASTER#0) != (number) $ff
-Adding number conversion cast (unumber) 0 in *((byte*) BGCOL#0) ← (number) 0
+Adding number conversion cast (unumber) $ff in (bool~) main::$3 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 0 in *((byte*) BGCOL) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte*) RASTER ← (byte*)(number) $d012
+Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
 Inlining cast (byte*~) main::$1 ← (byte*)(void()*~) main::$0
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast *((byte*) BGCOL#0) ← (unumber)(number) 0
+Inlining cast *((byte*) BGCOL) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -186,14 +184,14 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) main::zpCode#1 (byte*) main::zpCode#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$2 [9] if((byte) main::i#2<(byte) $14) goto main::@2
-Simple Condition (bool~) main::$3 [15] if(*((byte*) RASTER#0)!=(byte) $ff) goto main::@10
+Simple Condition (bool~) main::$3 [15] if(*((byte*) RASTER)!=(byte) $ff) goto main::@10
 Simple Condition (bool~) loop::$1 [25] if((byte) loop::i#1!=rangelast(0,$64)) goto loop::@1
 Simple Condition (bool~) zpLoop::$1 [33] if((byte) zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [3] (void()*~) main::$0 ← & (void()) zpLoop()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER#0 = (byte*) 53266
-Constant (const byte*) BGCOL#0 = (byte*) 53280
+Constant (const byte*) RASTER = (byte*) 53266
+Constant (const byte*) BGCOL = (byte*) 53280
 Constant (const void()*) main::$0 = &zpLoop
 Constant (const byte) main::i#0 = 0
 Constant (const byte) loop::i#0 = 0
@@ -289,7 +287,7 @@ main::@1: scope:[main]  from main main::@2
   [6] if((byte) main::i#2<(byte) $14) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@3 main::@6
-  [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3
+  [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [8] phi()
@@ -300,7 +298,7 @@ main::@5: scope:[main]  from main::@4
   [11] call zpLoop 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [12] *((const byte*) BGCOL#0) ← (byte) 0
+  [12] *((const byte*) BGCOL) ← (byte) 0
   to:main::@3
 main::@2: scope:[main]  from main::@1
   [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2)
@@ -313,7 +311,7 @@ zpLoop: scope:[zpLoop]  from main::@5
   to:zpLoop::@1
 zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
   [16] (byte) zpLoop::i#2 ← phi( zpLoop/(byte) 0 zpLoop::@1/(byte) zpLoop::i#1 )
-  [17] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2
   [19] if((byte) zpLoop::i#1!=(byte) $65) goto zpLoop::@1
   to:zpLoop::@return
@@ -327,7 +325,7 @@ loop: scope:[loop]  from main::@4
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@1
   [22] (byte) loop::i#2 ← phi( loop/(byte) 0 loop::@1/(byte) loop::i#1 )
-  [23] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   [24] (byte) loop::i#1 ← ++ (byte) loop::i#2
   [25] if((byte) loop::i#1!=(byte) $65) goto loop::@1
   to:loop::@return
@@ -337,8 +335,6 @@ loop::@return: scope:[loop]  from loop::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte*) RASTER
 (void()) loop()
 (byte) loop::i
 (byte) loop::i#1 151.5
@@ -421,7 +417,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b3
@@ -446,7 +442,7 @@ main: {
     jmp b6
     // main::@6
   b6:
-    // [12] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp b3
@@ -479,7 +475,7 @@ zpLoop: {
     jmp b1
     // zpLoop::@1
   b1:
-    // [17] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
@@ -510,7 +506,7 @@ loop: {
     jmp b1
     // loop::@1
   b1:
-    // [23] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
@@ -532,12 +528,12 @@ zpCodeData:
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL#0) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ zpLoop::i#2 zpLoop::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
@@ -606,7 +602,7 @@ main: {
     jmp b3
     // main::@3
   b3:
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b3
@@ -631,7 +627,7 @@ main: {
     jmp b6
     // main::@6
   b6:
-    // [12] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp b3
@@ -661,7 +657,7 @@ zpLoop: {
     jmp b1
     // zpLoop::@1
   b1:
-    // [17] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -689,7 +685,7 @@ loop: {
     jmp b1
     // loop::@1
   b1:
-    // [23] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -756,10 +752,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = (byte*) 53280
-(byte*) RASTER
-(const byte*) RASTER#0 RASTER = (byte*) 53266
+(const byte*) BGCOL BGCOL = (byte*) 53280
+(const byte*) RASTER RASTER = (byte*) 53266
 (void()) loop()
 (label) loop::@1
 (label) loop::@return
@@ -838,7 +832,7 @@ main: {
     // main::@3
   b3:
     // while(*RASTER!=0xff)
-    // [7] if(*((const byte*) RASTER#0)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne b3
@@ -856,7 +850,7 @@ main: {
     jsr zpLoop
     // main::@6
     // *BGCOL = 0
-    // [12] *((const byte*) BGCOL#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp b3
@@ -884,7 +878,7 @@ zpLoop: {
     // zpLoop::@1
   b1:
     // (*BGCOL)++;
-    // [17] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // for(char i:0..100)
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuxx=_inc_vbuxx 
@@ -909,7 +903,7 @@ loop: {
     // loop::@1
   b1:
     // (*BGCOL)--;
-    // [23] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     // for(char i:0..100)
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuxx=_inc_vbuxx 

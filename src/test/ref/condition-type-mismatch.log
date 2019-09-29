@@ -9,14 +9,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b#0 ← (number) $c
-  (bool~) main::$1 ← (number) 0 != (byte) main::b#0
+  (byte) main::b ← (number) $c
+  (bool~) main::$1 ← (number) 0 != (byte) main::b
   (bool~) main::$0 ← ! (bool~) main::$1
   if((bool~) main::$0) goto main::@return
   to:main::@2
 main::@2: scope:[main]  from main
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
-  *((byte*) main::screen#0) ← (byte) 'a'
+  (byte*) main::screen ← ((byte*)) (number) $400
+  *((byte*) main::screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main main::@2
   return 
@@ -39,15 +39,13 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (byte) main::b
-(byte) main::b#0
 (byte*) main::screen
-(byte*) main::screen#0
 
-Adding number conversion cast (unumber) $c in (byte) main::b#0 ← (number) $c
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (byte) main::b#0
+Adding number conversion cast (unumber) $c in (byte) main::b ← (number) $c
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (byte) main::b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b#0 ← (unumber)(number) $c
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte) main::b ← (unumber)(number) $c
+Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $c
 Simplifying constant integer cast 0
@@ -56,16 +54,16 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $c
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == (byte) main::b#0 from [1] (bool~) main::$1 ← (byte) 0 != (byte) main::b#0
+Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == (byte) main::b from [1] (bool~) main::$1 ← (byte) 0 != (byte) main::b
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$0 [3] if((byte) 0==(byte) main::b#0) goto main::@return
+Simple Condition (bool~) main::$0 [3] if((byte) 0==(byte) main::b) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::b#0 = $c
-Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte) main::b = $c
+Constant (const byte*) main::screen = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [3] if((byte) 0==(const byte) main::b#0) goto main::@return
+if() condition always false - eliminating [3] if((byte) 0==(const byte) main::b) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) main::b#0
+Eliminating unused constant (const byte) main::b
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -100,7 +98,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [5] *((const byte*) main::screen#0) ← (byte) 'a'
+  [5] *((const byte*) main::screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -109,8 +107,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -146,7 +142,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp breturn
@@ -158,7 +154,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) main::screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::screen) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -197,7 +193,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp breturn
@@ -236,9 +232,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::b
-(byte*) main::screen
-(const byte*) main::screen#0 screen = (byte*) 1024
+(const byte*) main::screen screen = (byte*) 1024
 
 
 
@@ -264,7 +258,7 @@ main: {
     .label screen = $400
     // main::@1
     // *screen = 'a'
-    // [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

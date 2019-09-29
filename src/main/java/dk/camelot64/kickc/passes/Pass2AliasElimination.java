@@ -420,7 +420,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             String name;
             int score;
             Variable variable = scope.getVariable(var);
-            if(variable.isDeclaredConstant()) {
+            if(variable.isDeclaredConstant() || variable.isStorageConstant()) {
                name = var.getFullNameUnversioned();
                score = 100;
             } else if(var.isVersion()) {

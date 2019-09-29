@@ -2,12 +2,12 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN#0 + (number) 0) ← (byte) 'x'
+  *((byte*) SCREEN + (number) 0) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,23 +28,22 @@ SYMBOL TABLE SSA
 (label) @end
 (byte[]) MESSAGE
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) 'x'
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) 'x'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte[]) MESSAGE = $0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN#0 in [1] *((const byte*) SCREEN#0 + (byte) 0) ← (byte) 'x'
+Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) 'x'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined $0 = (const byte[]) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
@@ -75,7 +74,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← (byte) 'x'
+  [4] *((const byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -83,7 +82,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 
 Initial phi equivalence classes
@@ -115,7 +113,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp breturn
@@ -129,7 +127,7 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN#0) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -163,7 +161,7 @@ bend_from_b1:
 bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp breturn
@@ -199,8 +197,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte[]) MESSAGE MESSAGE = (string) "camelot!"
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 
@@ -226,7 +223,7 @@ Score: 12
   // main
 main: {
     // SCREEN[0] = 'x'
-    // [4] *((const byte*) SCREEN#0) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // main::@return

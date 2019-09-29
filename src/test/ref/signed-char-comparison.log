@@ -25,7 +25,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@2
 
 (void()) debug((signed byte) debug::dy)
@@ -39,7 +39,7 @@ debug: scope:[debug]  from main::@1
   to:debug::@2
 debug::@2: scope:[debug]  from debug
   (byte) debug::i#1 ← phi( debug/(byte) debug::i#0 )
-  *((byte*) SCREEN#0 + (byte) debug::i#1) ← (number) $a
+  *((byte*) SCREEN + (byte) debug::i#1) ← (number) $a
   to:debug::@return
 debug::@return: scope:[debug]  from debug debug::@2
   return 
@@ -58,7 +58,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) debug((signed byte) debug::dy)
 (byte~) debug::$0
 (bool~) debug::$1
@@ -83,11 +82,11 @@ SYMBOL TABLE SSA
 (signed byte) main::dy#3
 
 Adding number conversion cast (snumber) -$78 in (bool~) debug::$1 ← (signed byte) debug::dy#1 > (number) -$78
-Adding number conversion cast (unumber) $a in *((byte*) SCREEN#0 + (byte) debug::i#1) ← (number) $a
+Adding number conversion cast (unumber) $a in *((byte*) SCREEN + (byte) debug::i#1) ← (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte~) debug::$0 ← (byte)(signed byte) debug::dy#1
-Inlining cast *((byte*) SCREEN#0 + (byte) debug::i#1) ← (unumber)(number) $a
+Inlining cast *((byte*) SCREEN + (byte) debug::i#1) ← (unumber)(number) $a
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast -$78
@@ -107,7 +106,7 @@ Simple Condition (bool~) main::$1 [7] if((signed byte) main::dy#1!=rangelast(-$8
 Simple Condition (bool~) debug::$2 [15] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const signed byte) main::dy#0 = -$80
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [5] main::dy#1 ← ++ main::dy#2 to ++
 Resolved ranged comparison value [7] if(main::dy#1!=rangelast(-$80,$7f)) goto main::@1 to (number) -$80
@@ -180,7 +179,7 @@ debug: scope:[debug]  from main::@1
   [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
   to:debug::@1
 debug::@1: scope:[debug]  from debug
-  [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a
+  [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a
   to:debug::@return
 debug::@return: scope:[debug]  from debug debug::@1
   [13] return 
@@ -188,7 +187,6 @@ debug::@return: scope:[debug]  from debug debug::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) debug((signed byte) debug::dy)
 (signed byte) debug::dy
 (signed byte) debug::dy#0 6.5
@@ -284,7 +282,7 @@ debug: {
     jmp b1
     // debug::@1
   b1:
-    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$a
     ldy.z dy
     sta SCREEN,y
@@ -300,9 +298,9 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return [ debug::dy#0 ] ( main:2::debug:7 [ main::dy#2 debug::dy#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ debug::dy#0 ]
-Statement [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
 Statement [11] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return [ debug::dy#0 ] ( main:2::debug:7 [ main::dy#2 debug::dy#0 ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a [ ] ( main:2::debug:7 [ main::dy#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::dy#2 main::dy#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ debug::dy#0 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 
@@ -386,7 +384,7 @@ debug: {
     jmp b1
     // debug::@1
   b1:
-    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$a
     sta SCREEN,x
     jmp breturn
@@ -431,8 +429,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) debug((signed byte) debug::dy)
 (label) debug::@1
 (label) debug::@return
@@ -510,7 +507,7 @@ debug: {
     bmi breturn
     // debug::@1
     // SCREEN[i] = 10
-    // [12] *((const byte*) SCREEN#0 + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const byte*) SCREEN + (byte)(signed byte) debug::dy#0) ← (byte) $a -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$a
     sta SCREEN,x
     // debug::@return

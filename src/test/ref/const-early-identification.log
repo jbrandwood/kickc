@@ -6,19 +6,19 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) A#0 ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) A#1 ← phi( @2/(byte) A#3 )
-  *((byte*) SCREEN#0 + (number) 0) ← (byte) A#1
-  (byte) main::B#0 ← (byte) 'b'
-  *((byte*) SCREEN#0 + (number) 1) ← (byte) main::B#0
+  *((byte*) SCREEN + (number) 0) ← (byte) A#1
+  (byte) main::B ← (byte) 'b'
+  *((byte*) SCREEN + (number) 1) ← (byte) main::B
   (byte*~) main::$0 ← & (byte) A#1
   (byte*) main::addrA#0 ← (byte*~) main::$0
-  *((byte*) SCREEN#0 + (number) 2) ← *((byte*) main::addrA#0)
+  *((byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -30,11 +30,11 @@ main::@return: scope:[main]  from main::@1
 (void()) sub()
 sub: scope:[sub]  from main
   (byte) A#2 ← phi( main/(byte) A#1 )
-  (byte) sub::C#0 ← (byte) 'c'
-  *((byte*) SCREEN#0 + (number) 3) ← (byte) sub::C#0
+  (byte) sub::C ← (byte) 'c'
+  *((byte*) SCREEN + (number) 3) ← (byte) sub::C
   (number~) sub::$0 ← (byte) A#2 + (number) 1
   (byte) sub::D#0 ← (number~) sub::$0
-  *((byte*) SCREEN#0 + (number) 4) ← (byte) sub::D#0
+  *((byte*) SCREEN + (number) 4) ← (byte) sub::D#0
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   return 
@@ -58,32 +58,29 @@ SYMBOL TABLE SSA
 (byte) A#2
 (byte) A#3
 (byte*) SCREEN
-(byte*) SCREEN#0
 (void()) main()
 (byte*~) main::$0
 (label) main::@1
 (label) main::@return
 (byte) main::B
-(byte) main::B#0
 (byte*) main::addrA
 (byte*) main::addrA#0
 (void()) sub()
 (number~) sub::$0
 (label) sub::@return
 (byte) sub::C
-(byte) sub::C#0
 (byte) sub::D
 (byte) sub::D#0
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) A#1
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN#0 + (number) 1) ← (byte) main::B#0
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN#0 + (number) 2) ← *((byte*) main::addrA#0)
-Adding number conversion cast (unumber) 3 in *((byte*) SCREEN#0 + (number) 3) ← (byte) sub::C#0
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) A#1
+Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) main::B
+Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
+Adding number conversion cast (unumber) 3 in *((byte*) SCREEN + (number) 3) ← (byte) sub::C
 Adding number conversion cast (unumber) 1 in (number~) sub::$0 ← (byte) A#2 + (number) 1
 Adding number conversion cast (unumber) sub::$0 in (number~) sub::$0 ← (byte) A#2 + (unumber)(number) 1
-Adding number conversion cast (unumber) 4 in *((byte*) SCREEN#0 + (number) 4) ← (byte) sub::D#0
+Adding number conversion cast (unumber) 4 in *((byte*) SCREEN + (number) 4) ← (byte) sub::D#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -110,17 +107,17 @@ Identical Phi Values (byte) A#2 (byte) A#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [6] (byte*) main::addrA#0 ← & (byte) A#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte) main::B#0 = 'b'
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte) main::B = 'b'
 Constant (const byte*) main::addrA#0 = &A#0
-Constant (const byte) sub::C#0 = 'c'
+Constant (const byte) sub::C = 'c'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN#0 in [3] *((const byte*) SCREEN#0 + (byte) 0) ← (byte) A#0
+Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← (byte) A#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Consolidated array index constant in *(SCREEN#0+1)
-Consolidated array index constant in *(SCREEN#0+2)
-Consolidated array index constant in *(SCREEN#0+3)
-Consolidated array index constant in *(SCREEN#0+4)
+Consolidated array index constant in *(SCREEN+1)
+Consolidated array index constant in *(SCREEN+2)
+Consolidated array index constant in *(SCREEN+3)
+Consolidated array index constant in *(SCREEN+4)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -151,9 +148,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← (byte) A#0
-  [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0
-  [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0)
+  [4] *((const byte*) SCREEN) ← (byte) A#0
+  [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B
+  [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0)
   [7] call sub 
   to:main::@return
 main::@return: scope:[main]  from main
@@ -162,9 +159,9 @@ main::@return: scope:[main]  from main
 
 (void()) sub()
 sub: scope:[sub]  from main
-  [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0
+  [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C
   [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1
-  [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0
+  [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   [12] return 
@@ -174,12 +171,9 @@ sub::@return: scope:[sub]  from sub
 VARIABLE REGISTER WEIGHTS
 (byte) A
 (byte) A#0 1.0
-(byte*) SCREEN
 (void()) main()
-(byte) main::B
 (byte*) main::addrA
 (void()) sub()
-(byte) sub::C
 (byte) sub::D
 (byte) sub::D#0 4.0
 
@@ -224,13 +218,13 @@ bend:
 main: {
     .const B = 'b'
     .label addrA = A
-    // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
-    // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // [7] call sub 
@@ -245,14 +239,14 @@ main: {
 sub: {
     .const C = 'c'
     .label D = 3
-    // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
     // [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z A
     iny
     sty.z D
-    // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuz1 
     lda.z D
     sta SCREEN+4
     jmp breturn
@@ -265,10 +259,10 @@ sub: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) A#0 ← (byte) 'a' [ A#0 ] (  [ A#0 ] ) always clobbers reg byte a 
-Statement [4] *((const byte*) SCREEN#0) ← (byte) A#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 [ A#0 ] ( main:2::sub:7 [ A#0 ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← (byte) A#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C [ A#0 ] ( main:2::sub:7 [ A#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ A#0 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ sub::D#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -315,13 +309,13 @@ bend:
 main: {
     .const B = 'b'
     .label addrA = A
-    // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
-    // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // [7] call sub 
@@ -335,13 +329,13 @@ main: {
   // sub
 sub: {
     .const C = 'c'
-    // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
     // [10] (byte) sub::D#0 ← (byte) A#0 + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx.z A
     inx
-    // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+    // [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
     stx SCREEN+4
     jmp breturn
     // sub::@return
@@ -374,18 +368,15 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) A
 (byte) A#0 A zp ZP_BYTE:2 1.0
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
-(byte) main::B
-(const byte) main::B#0 B = (byte) 'b'
+(const byte) main::B B = (byte) 'b'
 (byte*) main::addrA
 (const byte*) main::addrA#0 addrA = &(byte) A#0
 (void()) sub()
 (label) sub::@return
-(byte) sub::C
-(const byte) sub::C#0 C = (byte) 'c'
+(const byte) sub::C C = (byte) 'c'
 (byte) sub::D
 (byte) sub::D#0 reg byte x 4.0
 
@@ -424,15 +415,15 @@ main: {
     .const B = 'b'
     .label addrA = A
     // SCREEN[0] = A
-    // [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
     // SCREEN[1] = B
-    // [5] *((const byte*) SCREEN#0+(byte) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
     // SCREEN[2] = *addrA
-    // [6] *((const byte*) SCREEN#0+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // sub()
@@ -447,7 +438,7 @@ main: {
 sub: {
     .const C = 'c'
     // SCREEN[3] = C
-    // [9] *((const byte*) SCREEN#0+(byte) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    // [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
     // D = A+1
@@ -455,7 +446,7 @@ sub: {
     ldx.z A
     inx
     // SCREEN[4] = D
-    // [11] *((const byte*) SCREEN#0+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+    // [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
     stx SCREEN+4
     // sub::@return
     // }

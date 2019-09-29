@@ -82,9 +82,9 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 @8: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte*) LOGO#0 ← ((byte*)) (number) $2000
-  kickasm(location (byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  (byte*) LOGO ← ((byte*)) (number) $2000
+  kickasm(location (byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -98,8 +98,8 @@ main: scope:[main]  from @9
   *((byte*) BGCOL2) ← (byte) DARK_GREY
   *((byte*) BGCOL) ← *((byte*) BGCOL2)
   *((byte*) BGCOL3) ← (byte) BLACK
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN#0
-  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO#0
+  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
@@ -125,7 +125,7 @@ main::@9: scope:[main]  from main::toD0181_@return
   *((byte*) D018) ← (byte~) main::$0
   (byte~) main::$1 ← (byte) VIC_MCM | (byte) VIC_CSEL
   *((byte*) D016) ← (byte~) main::$1
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN#0
+  (void*) memset::str#0 ← (void*)(byte*) SCREEN
   (byte) memset::c#0 ← (byte) BLACK
   (word) memset::num#0 ← (number) $28*(number) $19
   call memset 
@@ -144,7 +144,7 @@ main::@11: scope:[main]  from main::@10
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@11
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@11/(byte) main::ch#0 )
-  *((byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
+  *((byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
   (bool~) main::$5 ← (byte) main::ch#1 != rangelast(0,$ef)
   if((bool~) main::$5) goto main::@1
@@ -153,7 +153,7 @@ main::@3: scope:[main]  from main::@1 main::@4
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@3
-  (byte*~) main::$9 ← (byte*) SCREEN#0 + (number) $3e7
+  (byte*~) main::$9 ← (byte*) SCREEN + (number) $3e7
   *((byte*~) main::$9) ← ++ *((byte*~) main::$9)
   kickasm() {{ inc $d020  }}
   to:main::@3
@@ -183,9 +183,7 @@ SYMBOL TABLE SSA
 (byte*) D018
 (byte) DARK_GREY
 (byte*) LOGO
-(byte*) LOGO#0
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte) VIC_CSEL
 (byte) VIC_MCM
 (byte) WHITE
@@ -295,7 +293,7 @@ Adding number conversion cast (unumber) $28*$19 in (word) memset::num#0 ← (num
 Adding number conversion cast (unumber) 8 in (number~) main::$3 ← (byte) WHITE | (number) 8
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (byte) WHITE | (unumber)(number) 8
 Adding number conversion cast (unumber) $28*$19 in (word) memset::num#1 ← (number) $28*(number) $19
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$9 ← (byte*) SCREEN#0 + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$9 ← (byte*) SCREEN + (number) $3e7
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
 Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
@@ -311,8 +309,8 @@ Inlining cast (byte) WHITE ← (unumber)(number) 1
 Inlining cast (byte) DARK_GREY ← (unumber)(number) $b
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) LOGO#0 ← (byte*)(number) $2000
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (byte*) LOGO ← (byte*)(number) $2000
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) memset::num#0 ← (unumber)(number) $28*(number) $19
@@ -401,19 +399,19 @@ Constant (const byte*) COLS = (byte*) 55296
 Constant (const byte) BLACK = 0
 Constant (const byte) WHITE = 1
 Constant (const byte) DARK_GREY = $b
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte*) LOGO#0 = (byte*) 8192
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte*) LOGO = (byte*) 8192
 Constant (const word) memset::num#0 = (unumber)$28*$19
 Constant (const word) memset::num#1 = (unumber)$28*$19
 Constant (const byte) main::ch#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
-Constant (const byte*) main::toD0181_gfx#0 = LOGO#0
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = LOGO
 Constant (const byte) memset::c#0 = BLACK
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word)main::toD0181_screen#0 in [42] (word~) main::toD0181_$0 ← (word)(const byte*) main::toD0181_screen#0
 Constant value identified (word)main::toD0181_gfx#0 in [46] (word~) main::toD0181_$4 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (void*)SCREEN#0 in [59] (void*) memset::str#0 ← (void*)(const byte*) SCREEN#0
+Constant value identified (void*)SCREEN in [59] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
 Constant value identified (void*)COLS in [65] (void*) memset::str#1 ← (void*)(const byte*) COLS
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [76] if(true) goto main::@4
@@ -433,15 +431,15 @@ Finalized unsigned number type (byte) $f0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [25] (byte~) main::$1 ← (const byte) VIC_MCM | (const byte) VIC_CSEL
 Constant right-side identified [29] (byte) memset::c#1 ← (const byte) WHITE | (byte) 8
-Constant right-side identified [36] (byte*~) main::$9 ← (const byte*) SCREEN#0 + (word) $3e7
+Constant right-side identified [36] (byte*~) main::$9 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Constant (const byte) main::$1 = VIC_MCM|VIC_CSEL
-Constant (const void*) memset::str#0 = (void*)SCREEN#0
+Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#1 = WHITE|8
 Constant (const void*) memset::str#1 = (void*)COLS
-Constant (const byte*) main::$9 = SCREEN#0+$3e7
+Constant (const byte*) main::$9 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [15] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
 Constant right-side identified [18] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
@@ -475,23 +473,23 @@ Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const byte) memset::c#1
 Inlining constant with var siblings (const void*) memset::str#1
 Inlining constant with var siblings (const byte) main::ch#0
-Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN#0
-Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO#0
+Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
+Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO
 Constant inlined memset::str#1 = (void*)(const byte*) COLS
-Constant inlined memset::str#0 = (void*)(const byte*) SCREEN#0
-Constant inlined main::toD0181_$7 = >(word)(const byte*) LOGO#0/(byte) 4&(byte) $f
-Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
-Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN#0&(word) $3fff
-Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN#0
+Constant inlined memset::str#0 = (void*)(const byte*) SCREEN
+Constant inlined main::toD0181_$7 = >(word)(const byte*) LOGO/(byte) 4&(byte) $f
+Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN
 Constant inlined memset::num#1 = (word)(number) $28*(number) $19
 Constant inlined memset::num#0 = (word)(number) $28*(number) $19
-Constant inlined main::toD0181_$6 = >(word)(const byte*) LOGO#0/(byte) 4
-Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO#0
-Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO#0
-Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$6 = >(word)(const byte*) LOGO/(byte) 4
+Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO
+Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO
+Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined main::$1 = (const byte) VIC_MCM|(const byte) VIC_CSEL
 Constant inlined memset::c#0 = (const byte) BLACK
-Constant inlined main::$9 = (const byte*) SCREEN#0+(word) $3e7
+Constant inlined main::$9 = (const byte*) SCREEN+(word) $3e7
 Constant inlined memset::c#1 = (const byte) WHITE|(byte) 8
 Constant inlined main::ch#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -539,7 +537,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -574,19 +572,19 @@ main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4
   [15] (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@4/(byte) 0 )
-  [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
+  [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   [17] (byte) main::ch#1 ← ++ (byte) main::ch#2
   [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [19] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7)
+  [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
   kickasm() {{ inc $d020  }}
   to:main::@2
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@3 main::@4
   [21] (byte) memset::c#4 ← phi( main::@4/(const byte) WHITE|(byte) 8 main::@3/(const byte) BLACK )
-  [21] (void*) memset::str#3 ← phi( main::@4/(void*)(const byte*) COLS main::@3/(void*)(const byte*) SCREEN#0 )
+  [21] (void*) memset::str#3 ← phi( main::@4/(void*)(const byte*) COLS main::@3/(void*)(const byte*) SCREEN )
   [21] (word) memset::num#2 ← phi( main::@4/(word)(number) $28*(number) $19 main::@3/(word)(number) $28*(number) $19 )
   [22] if((word) memset::num#2<=(byte) 0) goto memset::@return
   to:memset::@1
@@ -608,8 +606,6 @@ memset::@3: scope:[memset]  from memset::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) LOGO
-(byte*) SCREEN
 (void()) main()
 (byte) main::ch
 (byte) main::ch#1 16.5
@@ -682,7 +678,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -731,7 +727,7 @@ main: {
     // [21] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
     sta.z memset.c
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -776,7 +772,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z ch
     tya
     sta SCREEN,y
@@ -789,7 +785,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [19] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm() {{ inc $d020  }}
     inc $d020 
@@ -940,7 +936,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -987,7 +983,7 @@ main: {
   memset_from_b3:
     // [21] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -1030,7 +1026,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
@@ -1041,7 +1037,7 @@ main: {
     jmp b2
     // main::@2
   b2:
-    // [19] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm() {{ inc $d020  }}
     inc $d020 
@@ -1172,10 +1168,8 @@ FINAL SYMBOL TABLE
 (const byte*) D016 D016 = (byte*) 53270
 (const byte*) D018 D018 = (byte*) 53272
 (const byte) DARK_GREY DARK_GREY = (byte) $b
-(byte*) LOGO
-(const byte*) LOGO#0 LOGO = (byte*) 8192
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) LOGO LOGO = (byte*) 8192
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte) VIC_CSEL VIC_CSEL = (byte) 8
 (const byte) VIC_MCM VIC_MCM = (byte) $10
 (const byte) WHITE WHITE = (byte) 1
@@ -1190,7 +1184,7 @@ FINAL SYMBOL TABLE
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
-(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4|>(word)(const byte*) LOGO#0/(byte) 4&(byte) $f
+(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4|>(word)(const byte*) LOGO/(byte) 4&(byte) $f
 (byte*) main::toD0181_screen
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
@@ -1245,7 +1239,7 @@ Score: 5917
   // @begin
   // @1
   // kickasm
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
   // @2
   // [3] call main 
@@ -1285,7 +1279,7 @@ main: {
     // [21] phi from main::@3 to memset [phi:main::@3->memset]
     // [21] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -1322,7 +1316,7 @@ main: {
     // main::@1
   b1:
     // SCREEN[ch] = ch
-    // [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for(byte ch: 0..239)
@@ -1334,7 +1328,7 @@ main: {
     // main::@2
   b2:
     // (*(SCREEN+999))++;
-    // [19] *((const byte*) SCREEN#0+(word) $3e7) ← ++ *((const byte*) SCREEN#0+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm
     // kickasm() {{ inc $d020  }}

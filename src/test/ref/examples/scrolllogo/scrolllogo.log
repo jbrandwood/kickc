@@ -624,9 +624,9 @@ memset::@return: scope:[memset]  from memset::@1
   to:@return
 @28: scope:[]  from @17
   (word) rem16u#31 ← phi( @17/(word) rem16u#33 )
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (byte*) LOGO#0 ← ((byte*)) (number) $2000
-  kickasm(location (byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  (byte*) LOGO ← ((byte*)) (number) $2000
+  kickasm(location (byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -645,8 +645,8 @@ main: scope:[main]  from @31
   *((byte*) BGCOL2) ← (byte) DARK_GREY
   *((byte*) BGCOL) ← *((byte*) BGCOL2)
   *((byte*) BGCOL3) ← (byte) BLACK
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN#0
-  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO#0
+  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (word) xsin_idx#25 ← phi( main/(word) xsin_idx#26 )
@@ -677,7 +677,7 @@ main::@3: scope:[main]  from main::toD0181_@return
   (byte~) main::$0 ← (byte) main::toD0181_return#3
   *((byte*) D018) ← (byte~) main::$0
   *((byte*) D016) ← (byte) VIC_MCM
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN#0
+  (void*) memset::str#0 ← (void*)(byte*) SCREEN
   (byte) memset::c#0 ← (byte) BLACK
   (word) memset::num#0 ← (number) $3e8
   call memset 
@@ -702,7 +702,7 @@ main::@1: scope:[main]  from main::@1 main::@5
   (word) xsin_idx#20 ← phi( main::@1/(word) xsin_idx#20 main::@5/(word) xsin_idx#21 )
   (word) rem16u#27 ← phi( main::@1/(word) rem16u#27 main::@5/(word) rem16u#30 )
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@5/(byte) main::ch#0 )
-  *((byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
+  *((byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
   (bool~) main::$6 ← (byte) main::ch#1 != rangelast(0,$ef)
   if((bool~) main::$6) goto main::@1
@@ -830,7 +830,7 @@ render_logo::@7: scope:[render_logo]  from render_logo::@5 render_logo::@7
   (byte) render_logo::screen_idx#8 ← phi( render_logo::@5/(byte) render_logo::screen_idx#18 render_logo::@7/(byte) render_logo::screen_idx#8 )
   (byte) render_logo::line#9 ← phi( render_logo::@5/(byte) render_logo::line#1 render_logo::@7/(byte) render_logo::line#2 )
   (number~) render_logo::$8 ← (number) $28 * (byte) render_logo::line#9
-  (byte*~) render_logo::$9 ← (byte*) SCREEN#0 + (number~) render_logo::$8
+  (byte*~) render_logo::$9 ← (byte*) SCREEN + (number~) render_logo::$8
   *((byte*~) render_logo::$9 + (byte) render_logo::screen_idx#8) ← (number) 0
   (byte) render_logo::line#2 ← (byte) render_logo::line#9 + rangenext(0,5)
   (bool~) render_logo::$10 ← (byte) render_logo::line#2 != rangelast(0,5)
@@ -857,7 +857,7 @@ render_logo::@15: scope:[render_logo]  from render_logo::@13 render_logo::@15
   (byte) render_logo::logo_idx#5 ← phi( render_logo::@13/(byte) render_logo::logo_idx#10 render_logo::@15/(byte) render_logo::logo_idx#5 )
   (byte) render_logo::line#10 ← phi( render_logo::@13/(byte) render_logo::line#3 render_logo::@15/(byte) render_logo::line#4 )
   (number~) render_logo::$12 ← (number) $28 * (byte) render_logo::line#10
-  (byte*~) render_logo::$13 ← (byte*) SCREEN#0 + (number~) render_logo::$12
+  (byte*~) render_logo::$13 ← (byte*) SCREEN + (number~) render_logo::$12
   (number~) render_logo::$14 ← (number) $28 * (byte) render_logo::line#10
   (number~) render_logo::$15 ← (byte) render_logo::logo_idx#5 + (number~) render_logo::$14
   *((byte*~) render_logo::$13 + (byte) render_logo::screen_idx#11) ← (number~) render_logo::$15
@@ -887,7 +887,7 @@ render_logo::@24: scope:[render_logo]  from render_logo::@22 render_logo::@24
   (byte) render_logo::logo_idx#8 ← phi( render_logo::@22/(byte) render_logo::logo_idx#11 render_logo::@24/(byte) render_logo::logo_idx#8 )
   (byte) render_logo::line#11 ← phi( render_logo::@22/(byte) render_logo::line#5 render_logo::@24/(byte) render_logo::line#6 )
   (number~) render_logo::$20 ← (number) $28 * (byte) render_logo::line#11
-  (byte*~) render_logo::$21 ← (byte*) SCREEN#0 + (number~) render_logo::$20
+  (byte*~) render_logo::$21 ← (byte*) SCREEN + (number~) render_logo::$20
   (number~) render_logo::$22 ← (number) $28 * (byte) render_logo::line#11
   (number~) render_logo::$23 ← (byte) render_logo::logo_idx#8 + (number~) render_logo::$22
   *((byte*~) render_logo::$21 + (byte) render_logo::screen_idx#13) ← (number~) render_logo::$23
@@ -914,7 +914,7 @@ render_logo::@32: scope:[render_logo]  from render_logo::@30 render_logo::@32
   (byte) render_logo::screen_idx#16 ← phi( render_logo::@30/(byte) render_logo::screen_idx#23 render_logo::@32/(byte) render_logo::screen_idx#16 )
   (byte) render_logo::line#12 ← phi( render_logo::@30/(byte) render_logo::line#7 render_logo::@32/(byte) render_logo::line#8 )
   (number~) render_logo::$26 ← (number) $28 * (byte) render_logo::line#12
-  (byte*~) render_logo::$27 ← (byte*) SCREEN#0 + (number~) render_logo::$26
+  (byte*~) render_logo::$27 ← (byte*) SCREEN + (number~) render_logo::$26
   *((byte*~) render_logo::$27 + (byte) render_logo::screen_idx#16) ← (number) 0
   (byte) render_logo::line#8 ← (byte) render_logo::line#12 + rangenext(0,5)
   (bool~) render_logo::$28 ← (byte) render_logo::line#8 != rangelast(0,5)
@@ -959,13 +959,11 @@ SYMBOL TABLE SSA
 (byte*) D018
 (byte) DARK_GREY
 (byte*) LOGO
-(byte*) LOGO#0
 (dword) PI2_u4f28
 (dword) PI_HALF_u4f28
 (dword) PI_u4f28
 (byte*) RASTER
 (byte*) SCREEN
-(byte*) SCREEN#0
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (byte) VIC_MCM
 (byte) WHITE
@@ -1805,8 +1803,8 @@ Inlining cast (signed word~) sin16s::$14 ← (signed word)(word) sin16s::usinx#1
 Inlining cast (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#3
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) LOGO#0 ← (byte*)(number) $2000
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (byte*) LOGO ← (byte*)(number) $2000
 Inlining cast (word) XSIN_SIZE ← (unumber)(number) $200
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
@@ -2272,8 +2270,8 @@ Constant (const word) mulu16_sel::v2#2 = (unumber)$10000/6
 Constant (const byte) mulu16_sel::select#2 = 1
 Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte*) LOGO#0 = (byte*) 8192
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte*) LOGO = (byte*) 8192
 Constant (const word) XSIN_SIZE = $200
 Constant (const word) memset::num#0 = $3e8
 Constant (const word) memset::num#1 = $3e8
@@ -2294,8 +2292,8 @@ Constant (const byte) render_logo::line#5 = 0
 Constant (const byte) render_logo::line#7 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const dword) div32u16u::dividend#0 = PI2_u4f28
-Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
-Constant (const byte*) main::toD0181_gfx#0 = LOGO#0
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = LOGO
 Constant (const byte) memset::c#0 = BLACK
 Constant (const word) sin16s_gen2::wavelength#0 = XSIN_SIZE
 Successful SSA optimization Pass2ConstantIdentification
@@ -2307,7 +2305,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant value identified { fill( XSIN_SIZE, 0) } in [301] (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
 Constant value identified (word)main::toD0181_screen#0 in [311] (word~) main::toD0181_$0 ← (word)(const byte*) main::toD0181_screen#0
 Constant value identified (word)main::toD0181_gfx#0 in [315] (word~) main::toD0181_$4 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (void*)SCREEN#0 in [327] (void*) memset::str#0 ← (void*)(const byte*) SCREEN#0
+Constant value identified (void*)SCREEN in [327] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
 Constant value identified (void*)COLS in [334] (void*) memset::str#1 ← (void*)(const byte*) COLS
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [365] if(true) goto loop::@4
@@ -2368,7 +2366,7 @@ Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen
 Constant (const signed word[XSIN_SIZE]) xsin = { fill( XSIN_SIZE, 0) }
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const void*) memset::str#0 = (void*)SCREEN#0
+Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#1 = WHITE|8
 Constant (const void*) memset::str#1 = (void*)COLS
 Successful SSA optimization Pass2ConstantIdentification
@@ -2442,11 +2440,11 @@ if() condition always false - eliminating [173] if((const byte) render_logo::lin
 Successful SSA optimization Pass2ConstantIfs
 Simplifying constant evaluating to zero (byte) $28*(const byte) render_logo::line#1 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [170] (byte*~) render_logo::$9 ← (const byte*) SCREEN#0 + (const byte) render_logo::$8
+Simplifying expression containing zero SCREEN in [170] (byte*~) render_logo::$9 ← (const byte*) SCREEN + (const byte) render_logo::$8
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) render_logo::$8
 Successful SSA optimization PassNEliminateUnusedVars
-Constant (const byte*) render_logo::$9 = SCREEN#0
+Constant (const byte*) render_logo::$9 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15 tails: render_logo::@15 blocks: render_logo::@15 
 Successful SSA optimization Pass2LoopUnroll
@@ -2464,14 +2462,14 @@ if() condition always false - eliminating [49] if((const byte) render_logo::line
 Successful SSA optimization Pass2ConstantIfs
 Simplifying constant evaluating to zero (byte) $28*(const byte) render_logo::line#3 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [45] (byte*~) render_logo::$13 ← (const byte*) SCREEN#0 + (const byte) render_logo::$14
+Simplifying expression containing zero SCREEN in [45] (byte*~) render_logo::$13 ← (const byte*) SCREEN + (const byte) render_logo::$14
 Simplifying expression containing zero render_logo::logo_idx#10 in [46] (byte~) render_logo::$15 ← (byte) render_logo::logo_idx#10 + (const byte) render_logo::$14
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) render_logo::$14
 Successful SSA optimization PassNEliminateUnusedVars
 Alias (byte) render_logo::logo_idx#10 = (byte~) render_logo::$15 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) render_logo::$13 = SCREEN#0
+Constant (const byte*) render_logo::$13 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15_1 tails: render_logo::@15_1 blocks: render_logo::@15_1 
 Successful SSA optimization Pass2LoopUnroll
@@ -2487,9 +2485,9 @@ Constant (const byte) render_logo::line#16 = ++render_logo::line#4
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [50] if((const byte) render_logo::line#16==(byte) 6) goto render_logo::@16
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [44] (byte*~) render_logo::$32 ← (const byte*) SCREEN#0 + (const byte) render_logo::$31
+Constant right-side identified [44] (byte*~) render_logo::$32 ← (const byte*) SCREEN + (const byte) render_logo::$31
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$32 = SCREEN#0+render_logo::$31
+Constant (const byte*) render_logo::$32 = SCREEN+render_logo::$31
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15_2 tails: render_logo::@15_2 blocks: render_logo::@15_2 
 Successful SSA optimization Pass2LoopUnroll
@@ -2505,9 +2503,9 @@ Constant (const byte) render_logo::line#18 = ++render_logo::line#16
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [52] if((const byte) render_logo::line#18==(byte) 6) goto render_logo::@16
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [46] (byte*~) render_logo::$35 ← (const byte*) SCREEN#0 + (const byte) render_logo::$34
+Constant right-side identified [46] (byte*~) render_logo::$35 ← (const byte*) SCREEN + (const byte) render_logo::$34
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$35 = SCREEN#0+render_logo::$34
+Constant (const byte*) render_logo::$35 = SCREEN+render_logo::$34
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15_3 tails: render_logo::@15_3 blocks: render_logo::@15_3 
 Successful SSA optimization Pass2LoopUnroll
@@ -2523,9 +2521,9 @@ Constant (const byte) render_logo::line#20 = ++render_logo::line#18
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [54] if((const byte) render_logo::line#20==(byte) 6) goto render_logo::@16
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [48] (byte*~) render_logo::$38 ← (const byte*) SCREEN#0 + (const byte) render_logo::$37
+Constant right-side identified [48] (byte*~) render_logo::$38 ← (const byte*) SCREEN + (const byte) render_logo::$37
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$38 = SCREEN#0+render_logo::$37
+Constant (const byte*) render_logo::$38 = SCREEN+render_logo::$37
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15_4 tails: render_logo::@15_4 blocks: render_logo::@15_4 
 Successful SSA optimization Pass2LoopUnroll
@@ -2541,9 +2539,9 @@ Constant (const byte) render_logo::line#22 = ++render_logo::line#20
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [56] if((const byte) render_logo::line#22==(byte) 6) goto render_logo::@16
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [50] (byte*~) render_logo::$41 ← (const byte*) SCREEN#0 + (const byte) render_logo::$40
+Constant right-side identified [50] (byte*~) render_logo::$41 ← (const byte*) SCREEN + (const byte) render_logo::$40
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$41 = SCREEN#0+render_logo::$40
+Constant (const byte*) render_logo::$41 = SCREEN+render_logo::$40
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@15_5 tails: render_logo::@15_5 blocks: render_logo::@15_5 
 Successful SSA optimization Pass2LoopUnroll
@@ -2569,9 +2567,9 @@ Eliminating variable (byte~) render_logo::$48 from unused block render_logo::@15
 Eliminating variable (byte) render_logo::line#26 from unused block render_logo::@15_6
 Removing unused block render_logo::@15_6
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [52] (byte*~) render_logo::$44 ← (const byte*) SCREEN#0 + (const byte) render_logo::$43
+Constant right-side identified [52] (byte*~) render_logo::$44 ← (const byte*) SCREEN + (const byte) render_logo::$43
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$44 = SCREEN#0+render_logo::$43
+Constant (const byte*) render_logo::$44 = SCREEN+render_logo::$43
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@7_1 tails: render_logo::@7_1 blocks: render_logo::@7_1 
 Successful SSA optimization Pass2LoopUnroll
@@ -2587,9 +2585,9 @@ Constant (const byte) render_logo::line#14 = ++render_logo::line#2
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [62] if((const byte) render_logo::line#14==(byte) 6) goto render_logo::@8
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [57] (byte*~) render_logo::$30 ← (const byte*) SCREEN#0 + (const byte) render_logo::$29
+Constant right-side identified [57] (byte*~) render_logo::$30 ← (const byte*) SCREEN + (const byte) render_logo::$29
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$30 = SCREEN#0+render_logo::$29
+Constant (const byte*) render_logo::$30 = SCREEN+render_logo::$29
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@7_2 tails: render_logo::@7_2 blocks: render_logo::@7_2 
 Successful SSA optimization Pass2LoopUnroll
@@ -2605,9 +2603,9 @@ Constant (const byte) render_logo::line#28 = ++render_logo::line#14
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [63] if((const byte) render_logo::line#28==(byte) 6) goto render_logo::@8
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [58] (byte*~) render_logo::$50 ← (const byte*) SCREEN#0 + (const byte) render_logo::$49
+Constant right-side identified [58] (byte*~) render_logo::$50 ← (const byte*) SCREEN + (const byte) render_logo::$49
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$50 = SCREEN#0+render_logo::$49
+Constant (const byte*) render_logo::$50 = SCREEN+render_logo::$49
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@7_3 tails: render_logo::@7_3 blocks: render_logo::@7_3 
 Successful SSA optimization Pass2LoopUnroll
@@ -2623,9 +2621,9 @@ Constant (const byte) render_logo::line#30 = ++render_logo::line#28
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [64] if((const byte) render_logo::line#30==(byte) 6) goto render_logo::@8
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [59] (byte*~) render_logo::$52 ← (const byte*) SCREEN#0 + (const byte) render_logo::$51
+Constant right-side identified [59] (byte*~) render_logo::$52 ← (const byte*) SCREEN + (const byte) render_logo::$51
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$52 = SCREEN#0+render_logo::$51
+Constant (const byte*) render_logo::$52 = SCREEN+render_logo::$51
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@7_4 tails: render_logo::@7_4 blocks: render_logo::@7_4 
 Successful SSA optimization Pass2LoopUnroll
@@ -2641,9 +2639,9 @@ Constant (const byte) render_logo::line#32 = ++render_logo::line#30
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [65] if((const byte) render_logo::line#32==(byte) 6) goto render_logo::@8
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [60] (byte*~) render_logo::$54 ← (const byte*) SCREEN#0 + (const byte) render_logo::$53
+Constant right-side identified [60] (byte*~) render_logo::$54 ← (const byte*) SCREEN + (const byte) render_logo::$53
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$54 = SCREEN#0+render_logo::$53
+Constant (const byte*) render_logo::$54 = SCREEN+render_logo::$53
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@7_5 tails: render_logo::@7_5 blocks: render_logo::@7_5 
 Successful SSA optimization Pass2LoopUnroll
@@ -2668,9 +2666,9 @@ Eliminating variable (byte*~) render_logo::$58 from unused block render_logo::@7
 Eliminating variable (byte) render_logo::line#36 from unused block render_logo::@7_6
 Removing unused block render_logo::@7_6
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [61] (byte*~) render_logo::$56 ← (const byte*) SCREEN#0 + (const byte) render_logo::$55
+Constant right-side identified [61] (byte*~) render_logo::$56 ← (const byte*) SCREEN + (const byte) render_logo::$55
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$56 = SCREEN#0+render_logo::$55
+Constant (const byte*) render_logo::$56 = SCREEN+render_logo::$55
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32 tails: render_logo::@32 blocks: render_logo::@32 
 Successful SSA optimization Pass2LoopUnroll
@@ -2688,11 +2686,11 @@ if() condition always false - eliminating [74] if((const byte) render_logo::line
 Successful SSA optimization Pass2ConstantIfs
 Simplifying constant evaluating to zero (byte) $28*(const byte) render_logo::line#7 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [71] (byte*~) render_logo::$27 ← (const byte*) SCREEN#0 + (const byte) render_logo::$26
+Simplifying expression containing zero SCREEN in [71] (byte*~) render_logo::$27 ← (const byte*) SCREEN + (const byte) render_logo::$26
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) render_logo::$26
 Successful SSA optimization PassNEliminateUnusedVars
-Constant (const byte*) render_logo::$27 = SCREEN#0
+Constant (const byte*) render_logo::$27 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32_1 tails: render_logo::@32_1 blocks: render_logo::@32_1 
 Successful SSA optimization Pass2LoopUnroll
@@ -2708,9 +2706,9 @@ Constant (const byte) render_logo::line#38 = ++render_logo::line#8
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [75] if((const byte) render_logo::line#38==(byte) 6) goto render_logo::@33
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [70] (byte*~) render_logo::$60 ← (const byte*) SCREEN#0 + (const byte) render_logo::$59
+Constant right-side identified [70] (byte*~) render_logo::$60 ← (const byte*) SCREEN + (const byte) render_logo::$59
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$60 = SCREEN#0+render_logo::$59
+Constant (const byte*) render_logo::$60 = SCREEN+render_logo::$59
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32_2 tails: render_logo::@32_2 blocks: render_logo::@32_2 
 Successful SSA optimization Pass2LoopUnroll
@@ -2726,9 +2724,9 @@ Constant (const byte) render_logo::line#40 = ++render_logo::line#38
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [76] if((const byte) render_logo::line#40==(byte) 6) goto render_logo::@33
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [71] (byte*~) render_logo::$62 ← (const byte*) SCREEN#0 + (const byte) render_logo::$61
+Constant right-side identified [71] (byte*~) render_logo::$62 ← (const byte*) SCREEN + (const byte) render_logo::$61
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$62 = SCREEN#0+render_logo::$61
+Constant (const byte*) render_logo::$62 = SCREEN+render_logo::$61
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32_3 tails: render_logo::@32_3 blocks: render_logo::@32_3 
 Successful SSA optimization Pass2LoopUnroll
@@ -2744,9 +2742,9 @@ Constant (const byte) render_logo::line#42 = ++render_logo::line#40
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [77] if((const byte) render_logo::line#42==(byte) 6) goto render_logo::@33
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [72] (byte*~) render_logo::$64 ← (const byte*) SCREEN#0 + (const byte) render_logo::$63
+Constant right-side identified [72] (byte*~) render_logo::$64 ← (const byte*) SCREEN + (const byte) render_logo::$63
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$64 = SCREEN#0+render_logo::$63
+Constant (const byte*) render_logo::$64 = SCREEN+render_logo::$63
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32_4 tails: render_logo::@32_4 blocks: render_logo::@32_4 
 Successful SSA optimization Pass2LoopUnroll
@@ -2762,9 +2760,9 @@ Constant (const byte) render_logo::line#44 = ++render_logo::line#42
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [78] if((const byte) render_logo::line#44==(byte) 6) goto render_logo::@33
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [73] (byte*~) render_logo::$66 ← (const byte*) SCREEN#0 + (const byte) render_logo::$65
+Constant right-side identified [73] (byte*~) render_logo::$66 ← (const byte*) SCREEN + (const byte) render_logo::$65
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$66 = SCREEN#0+render_logo::$65
+Constant (const byte*) render_logo::$66 = SCREEN+render_logo::$65
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@32_5 tails: render_logo::@32_5 blocks: render_logo::@32_5 
 Successful SSA optimization Pass2LoopUnroll
@@ -2789,9 +2787,9 @@ Eliminating variable (byte*~) render_logo::$70 from unused block render_logo::@3
 Eliminating variable (byte) render_logo::line#48 from unused block render_logo::@32_6
 Removing unused block render_logo::@32_6
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [74] (byte*~) render_logo::$68 ← (const byte*) SCREEN#0 + (const byte) render_logo::$67
+Constant right-side identified [74] (byte*~) render_logo::$68 ← (const byte*) SCREEN + (const byte) render_logo::$67
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$68 = SCREEN#0+render_logo::$67
+Constant (const byte*) render_logo::$68 = SCREEN+render_logo::$67
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24 tails: render_logo::@24 blocks: render_logo::@24 
 Successful SSA optimization Pass2LoopUnroll
@@ -2809,14 +2807,14 @@ if() condition always false - eliminating [82] if((const byte) render_logo::line
 Successful SSA optimization Pass2ConstantIfs
 Simplifying constant evaluating to zero (byte) $28*(const byte) render_logo::line#5 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN#0 in [78] (byte*~) render_logo::$21 ← (const byte*) SCREEN#0 + (const byte) render_logo::$22
+Simplifying expression containing zero SCREEN in [78] (byte*~) render_logo::$21 ← (const byte*) SCREEN + (const byte) render_logo::$22
 Simplifying expression containing zero render_logo::logo_idx#11 in [79] (byte~) render_logo::$23 ← (byte) render_logo::logo_idx#11 + (const byte) render_logo::$22
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) render_logo::$22
 Successful SSA optimization PassNEliminateUnusedVars
 Alias (byte) render_logo::logo_idx#11 = (byte~) render_logo::$23 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) render_logo::$21 = SCREEN#0
+Constant (const byte*) render_logo::$21 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24_1 tails: render_logo::@24_1 blocks: render_logo::@24_1 
 Successful SSA optimization Pass2LoopUnroll
@@ -2832,9 +2830,9 @@ Constant (const byte) render_logo::line#50 = ++render_logo::line#6
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [83] if((const byte) render_logo::line#50==(byte) 6) goto render_logo::@25
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [77] (byte*~) render_logo::$72 ← (const byte*) SCREEN#0 + (const byte) render_logo::$71
+Constant right-side identified [77] (byte*~) render_logo::$72 ← (const byte*) SCREEN + (const byte) render_logo::$71
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$72 = SCREEN#0+render_logo::$71
+Constant (const byte*) render_logo::$72 = SCREEN+render_logo::$71
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24_2 tails: render_logo::@24_2 blocks: render_logo::@24_2 
 Successful SSA optimization Pass2LoopUnroll
@@ -2850,9 +2848,9 @@ Constant (const byte) render_logo::line#52 = ++render_logo::line#50
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [85] if((const byte) render_logo::line#52==(byte) 6) goto render_logo::@25
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [79] (byte*~) render_logo::$75 ← (const byte*) SCREEN#0 + (const byte) render_logo::$74
+Constant right-side identified [79] (byte*~) render_logo::$75 ← (const byte*) SCREEN + (const byte) render_logo::$74
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$75 = SCREEN#0+render_logo::$74
+Constant (const byte*) render_logo::$75 = SCREEN+render_logo::$74
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24_3 tails: render_logo::@24_3 blocks: render_logo::@24_3 
 Successful SSA optimization Pass2LoopUnroll
@@ -2868,9 +2866,9 @@ Constant (const byte) render_logo::line#54 = ++render_logo::line#52
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [87] if((const byte) render_logo::line#54==(byte) 6) goto render_logo::@25
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [81] (byte*~) render_logo::$78 ← (const byte*) SCREEN#0 + (const byte) render_logo::$77
+Constant right-side identified [81] (byte*~) render_logo::$78 ← (const byte*) SCREEN + (const byte) render_logo::$77
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$78 = SCREEN#0+render_logo::$77
+Constant (const byte*) render_logo::$78 = SCREEN+render_logo::$77
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24_4 tails: render_logo::@24_4 blocks: render_logo::@24_4 
 Successful SSA optimization Pass2LoopUnroll
@@ -2886,9 +2884,9 @@ Constant (const byte) render_logo::line#56 = ++render_logo::line#54
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [89] if((const byte) render_logo::line#56==(byte) 6) goto render_logo::@25
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [83] (byte*~) render_logo::$81 ← (const byte*) SCREEN#0 + (const byte) render_logo::$80
+Constant right-side identified [83] (byte*~) render_logo::$81 ← (const byte*) SCREEN + (const byte) render_logo::$80
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$81 = SCREEN#0+render_logo::$80
+Constant (const byte*) render_logo::$81 = SCREEN+render_logo::$80
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: render_logo::@24_5 tails: render_logo::@24_5 blocks: render_logo::@24_5 
 Successful SSA optimization Pass2LoopUnroll
@@ -2914,9 +2912,9 @@ Eliminating variable (byte~) render_logo::$88 from unused block render_logo::@24
 Eliminating variable (byte) render_logo::line#60 from unused block render_logo::@24_6
 Removing unused block render_logo::@24_6
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [85] (byte*~) render_logo::$84 ← (const byte*) SCREEN#0 + (const byte) render_logo::$83
+Constant right-side identified [85] (byte*~) render_logo::$84 ← (const byte*) SCREEN + (const byte) render_logo::$83
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) render_logo::$84 = SCREEN#0+render_logo::$83
+Constant (const byte*) render_logo::$84 = SCREEN+render_logo::$83
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [37] (byte) render_logo::logo_start#0 ← (byte)(signed byte) render_logo::x_char#0 keeping render_logo::x_char#0
 Inlining Noop Cast [164] (signed word) sin16s::sinx#0 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
@@ -2988,9 +2986,9 @@ Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#4
 Constant inlined render_logo::line#56 = ++++++++++(byte) 0
 Constant inlined divr16u::rem#3 = (byte) 0
-Constant inlined render_logo::$30 = (const byte*) SCREEN#0+(byte) $28*++(byte) 0
+Constant inlined render_logo::$30 = (const byte*) SCREEN+(byte) $28*++(byte) 0
 Constant inlined render_logo::line#52 = ++++++(byte) 0
-Constant inlined render_logo::$32 = (const byte*) SCREEN#0+(byte) $28*++(byte) 0
+Constant inlined render_logo::$32 = (const byte*) SCREEN+(byte) $28*++(byte) 0
 Constant inlined render_logo::line#54 = ++++++++(byte) 0
 Constant inlined render_logo::$31 = (byte) $28*++(byte) 0
 Constant inlined sin16s::isUpper#0 = (byte) 0
@@ -3002,47 +3000,47 @@ Constant inlined mulu16_sel::select#0 = (byte) 0
 Constant inlined sin16s::isUpper#1 = (byte) 1
 Constant inlined mulu16_sel::select#1 = (byte) 1
 Constant inlined render_logo::$34 = (byte) $28*++++(byte) 0
-Constant inlined render_logo::$35 = (const byte*) SCREEN#0+(byte) $28*++++(byte) 0
-Constant inlined render_logo::$38 = (const byte*) SCREEN#0+(byte) $28*++++++(byte) 0
+Constant inlined render_logo::$35 = (const byte*) SCREEN+(byte) $28*++++(byte) 0
+Constant inlined render_logo::$38 = (const byte*) SCREEN+(byte) $28*++++++(byte) 0
 Constant inlined render_logo::$37 = (byte) $28*++++++(byte) 0
 Constant inlined main::ch#0 = (byte) 0
-Constant inlined main::toD0181_$7 = >(word)(const byte*) LOGO#0/(byte) 4&(byte) $f
-Constant inlined render_logo::$41 = (const byte*) SCREEN#0+(byte) $28*++++++++(byte) 0
+Constant inlined main::toD0181_$7 = >(word)(const byte*) LOGO/(byte) 4&(byte) $f
+Constant inlined render_logo::$41 = (const byte*) SCREEN+(byte) $28*++++++++(byte) 0
 Constant inlined render_logo::$40 = (byte) $28*++++++++(byte) 0
 Constant inlined render_logo::$43 = (byte) $28*++++++++++(byte) 0
-Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined sin16s_gen2::wavelength#0 = (const word) XSIN_SIZE
-Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN#0&(word) $3fff
-Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN#0
-Constant inlined main::toD0181_$6 = >(word)(const byte*) LOGO#0/(byte) 4
-Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO#0
-Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO#0
-Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN
+Constant inlined main::toD0181_$6 = >(word)(const byte*) LOGO/(byte) 4
+Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO
+Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO
+Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined xsin_idx#16 = (byte) 0
 Constant inlined sin16s_gen2::sintab#1 = (const signed word[XSIN_SIZE]) xsin
-Constant inlined render_logo::$44 = (const byte*) SCREEN#0+(byte) $28*++++++++++(byte) 0
+Constant inlined render_logo::$44 = (const byte*) SCREEN+(byte) $28*++++++++++(byte) 0
 Constant inlined memset::c#0 = (const byte) BLACK
 Constant inlined render_logo::$49 = (byte) $28*++++(byte) 0
 Constant inlined memset::c#1 = (const byte) WHITE|(byte) 8
-Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN#0
-Constant inlined render_logo::$50 = (const byte*) SCREEN#0+(byte) $28*++++(byte) 0
-Constant inlined render_logo::$52 = (const byte*) SCREEN#0+(byte) $28*++++++(byte) 0
+Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
+Constant inlined render_logo::$50 = (const byte*) SCREEN+(byte) $28*++++(byte) 0
+Constant inlined render_logo::$52 = (const byte*) SCREEN+(byte) $28*++++++(byte) 0
 Constant inlined divr16u::i#0 = (byte) 0
 Constant inlined render_logo::$51 = (byte) $28*++++++(byte) 0
-Constant inlined render_logo::$54 = (const byte*) SCREEN#0+(byte) $28*++++++++(byte) 0
+Constant inlined render_logo::$54 = (const byte*) SCREEN+(byte) $28*++++++++(byte) 0
 Constant inlined render_logo::$53 = (byte) $28*++++++++(byte) 0
 Constant inlined sin16s_gen2::x#0 = (byte) 0
-Constant inlined render_logo::$56 = (const byte*) SCREEN#0+(byte) $28*++++++++++(byte) 0
+Constant inlined render_logo::$56 = (const byte*) SCREEN+(byte) $28*++++++++++(byte) 0
 Constant inlined render_logo::$55 = (byte) $28*++++++++++(byte) 0
 Constant inlined render_logo::screen_idx#1 = (byte) 0
 Constant inlined render_logo::$59 = (byte) $28*++(byte) 0
 Constant inlined render_logo::screen_idx#2 = (byte) 0
 Constant inlined render_logo::$61 = (byte) $28*++++(byte) 0
-Constant inlined render_logo::$60 = (const byte*) SCREEN#0+(byte) $28*++(byte) 0
+Constant inlined render_logo::$60 = (const byte*) SCREEN+(byte) $28*++(byte) 0
 Constant inlined render_logo::$63 = (byte) $28*++++++(byte) 0
-Constant inlined render_logo::$62 = (const byte*) SCREEN#0+(byte) $28*++++(byte) 0
+Constant inlined render_logo::$62 = (const byte*) SCREEN+(byte) $28*++++(byte) 0
 Constant inlined render_logo::$65 = (byte) $28*++++++++(byte) 0
-Constant inlined render_logo::$64 = (const byte*) SCREEN#0+(byte) $28*++++++(byte) 0
+Constant inlined render_logo::$64 = (const byte*) SCREEN+(byte) $28*++++++(byte) 0
 Constant inlined divr16u::dividend#1 = >(const dword) PI2_u4f28
 Constant inlined divr16u::dividend#2 = <(const dword) PI2_u4f28
 Constant inlined render_logo::line#2 = ++(byte) 0
@@ -3050,55 +3048,55 @@ Constant inlined mulu16_sel::v2#2 = (word)(number) $10000/(number) 6
 Constant inlined render_logo::line#1 = (byte) 0
 Constant inlined render_logo::$67 = (byte) $28*++++++++++(byte) 0
 Constant inlined render_logo::line#4 = ++(byte) 0
-Constant inlined render_logo::$66 = (const byte*) SCREEN#0+(byte) $28*++++++++(byte) 0
+Constant inlined render_logo::$66 = (const byte*) SCREEN+(byte) $28*++++++++(byte) 0
 Constant inlined render_logo::line#3 = (byte) 0
 Constant inlined render_logo::line#6 = ++(byte) 0
-Constant inlined render_logo::$68 = (const byte*) SCREEN#0+(byte) $28*++++++++++(byte) 0
+Constant inlined render_logo::$68 = (const byte*) SCREEN+(byte) $28*++++++++++(byte) 0
 Constant inlined render_logo::line#5 = (byte) 0
 Constant inlined render_logo::line#8 = ++(byte) 0
 Constant inlined render_logo::line#7 = (byte) 0
-Constant inlined render_logo::$9 = (const byte*) SCREEN#0
-Constant inlined render_logo::$72 = (const byte*) SCREEN#0+(byte) $28*++(byte) 0
+Constant inlined render_logo::$9 = (const byte*) SCREEN
+Constant inlined render_logo::$72 = (const byte*) SCREEN+(byte) $28*++(byte) 0
 Constant inlined render_logo::line#14 = ++++(byte) 0
 Constant inlined render_logo::$71 = (byte) $28*++(byte) 0
 Constant inlined sin16s_gen2::i#0 = (byte) 0
 Constant inlined render_logo::$74 = (byte) $28*++++(byte) 0
-Constant inlined render_logo::$75 = (const byte*) SCREEN#0+(byte) $28*++++(byte) 0
+Constant inlined render_logo::$75 = (const byte*) SCREEN+(byte) $28*++++(byte) 0
 Constant inlined memset::num#1 = (word) $3e8
 Constant inlined memset::num#0 = (word) $3e8
 Constant inlined mul16u::b#0 = (word)(const signed word) sin16s_gen2::ampl#0
-Constant inlined render_logo::$78 = (const byte*) SCREEN#0+(byte) $28*++++++(byte) 0
+Constant inlined render_logo::$78 = (const byte*) SCREEN+(byte) $28*++++++(byte) 0
 Constant inlined render_logo::$77 = (byte) $28*++++++(byte) 0
 Constant inlined mul16s::$10 = (word)(const signed word) sin16s_gen2::ampl#0
-Constant inlined render_logo::$81 = (const byte*) SCREEN#0+(byte) $28*++++++++(byte) 0
+Constant inlined render_logo::$81 = (const byte*) SCREEN+(byte) $28*++++++++(byte) 0
 Constant inlined mul16s::b#0 = (const signed word) sin16s_gen2::ampl#0
 Constant inlined render_logo::$80 = (byte) $28*++++++++(byte) 0
 Constant inlined render_logo::$83 = (byte) $28*++++++++++(byte) 0
-Constant inlined render_logo::$84 = (const byte*) SCREEN#0+(byte) $28*++++++++++(byte) 0
+Constant inlined render_logo::$84 = (const byte*) SCREEN+(byte) $28*++++++++++(byte) 0
 Constant inlined render_logo::line#20 = ++++++++(byte) 0
 Constant inlined render_logo::line#22 = ++++++++++(byte) 0
 Constant inlined render_logo::line#16 = ++++(byte) 0
 Constant inlined render_logo::line#18 = ++++++(byte) 0
 Constant inlined render_logo::logo_idx#2 = (byte) 0
-Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO#0
+Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO
 Constant inlined render_logo::line#30 = ++++++++(byte) 0
 Constant inlined render_logo::line#32 = ++++++++++(byte) 0
 Constant inlined xsin_idx#4 = (byte) 0
 Constant inlined div32u16u::dividend#0 = (const dword) PI2_u4f28
 Constant inlined divr16u::quotient#0 = (byte) 0
 Constant inlined mul16u::res#0 = (byte) 0
-Constant inlined render_logo::$13 = (const byte*) SCREEN#0
+Constant inlined render_logo::$13 = (const byte*) SCREEN
 Constant inlined divr16u::divisor#1 = (const word) XSIN_SIZE
 Constant inlined divr16u::divisor#0 = (const word) XSIN_SIZE
 Constant inlined render_logo::line#28 = ++++++(byte) 0
 Constant inlined memset::str#1 = (void*)(const byte*) COLS
-Constant inlined memset::str#0 = (void*)(const byte*) SCREEN#0
+Constant inlined memset::str#0 = (void*)(const byte*) SCREEN
 Constant inlined render_logo::line#42 = ++++++++(byte) 0
-Constant inlined render_logo::$21 = (const byte*) SCREEN#0
+Constant inlined render_logo::$21 = (const byte*) SCREEN
 Constant inlined render_logo::line#44 = ++++++++++(byte) 0
 Constant inlined render_logo::line#40 = ++++++(byte) 0
 Constant inlined div32u16u::divisor#0 = (const word) XSIN_SIZE
-Constant inlined render_logo::$27 = (const byte*) SCREEN#0
+Constant inlined render_logo::$27 = (const byte*) SCREEN
 Constant inlined render_logo::line#38 = ++++(byte) 0
 Constant inlined render_logo::$29 = (byte) $28*++(byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -3328,7 +3326,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -3364,7 +3362,7 @@ main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4
   [16] (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@4/(byte) 0 )
-  [17] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
+  [17] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   [18] (byte) main::ch#1 ← ++ (byte) main::ch#2
   [19] if((byte) main::ch#1!=(byte) $f0) goto main::@1
   to:main::@2
@@ -3433,49 +3431,49 @@ render_logo::@return: scope:[render_logo]  from render_logo::@11 render_logo::@5
   [50] return 
   to:@return
 render_logo::@6: scope:[render_logo]  from render_logo::@5
-  [51] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10
+  [51] *((const byte*) SCREEN + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10
   to:render_logo::@15_1
 render_logo::@15_1: scope:[render_logo]  from render_logo::@6
   [52] (byte~) render_logo::$33 ← (byte) render_logo::logo_idx#10 + (byte) $28*(byte) 1
-  [53] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33
+  [53] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33
   to:render_logo::@15_2
 render_logo::@15_2: scope:[render_logo]  from render_logo::@15_1
   [54] (byte~) render_logo::$36 ← (byte) render_logo::logo_idx#10 + (byte) $28*(byte) 2
-  [55] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36
+  [55] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36
   to:render_logo::@15_3
 render_logo::@15_3: scope:[render_logo]  from render_logo::@15_2
   [56] (byte~) render_logo::$39 ← (byte) render_logo::logo_idx#10 + (byte) $28*(byte) 3
-  [57] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39
+  [57] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39
   to:render_logo::@15_4
 render_logo::@15_4: scope:[render_logo]  from render_logo::@15_3
   [58] (byte~) render_logo::$42 ← (byte) render_logo::logo_idx#10 + (byte) $28*(byte) 4
-  [59] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42
+  [59] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42
   to:render_logo::@15_5
 render_logo::@15_5: scope:[render_logo]  from render_logo::@15_4
   [60] (byte~) render_logo::$45 ← (byte) render_logo::logo_idx#10 + (byte) $28*(byte) 5
-  [61] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45
+  [61] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45
   to:render_logo::@7
 render_logo::@7: scope:[render_logo]  from render_logo::@15_5
   [62] (byte) render_logo::screen_idx#4 ← ++ (byte) render_logo::screen_idx#10
   [63] (byte) render_logo::logo_idx#3 ← ++ (byte) render_logo::logo_idx#10
   to:render_logo::@5
 render_logo::@3: scope:[render_logo]  from render_logo::@2
-  [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@7_1
 render_logo::@7_1: scope:[render_logo]  from render_logo::@3
-  [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@7_2
 render_logo::@7_2: scope:[render_logo]  from render_logo::@7_1
-  [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@7_3
 render_logo::@7_3: scope:[render_logo]  from render_logo::@7_2
-  [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@7_4
 render_logo::@7_4: scope:[render_logo]  from render_logo::@7_3
-  [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@7_5
 render_logo::@7_5: scope:[render_logo]  from render_logo::@7_4
-  [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0
+  [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0
   to:render_logo::@4
 render_logo::@4: scope:[render_logo]  from render_logo::@7_5
   [70] (byte) render_logo::screen_idx#3 ← ++ (byte) render_logo::screen_idx#18
@@ -3494,48 +3492,48 @@ render_logo::@11: scope:[render_logo]  from render_logo::@13 render_logo::@8
   [76] if((byte) render_logo::screen_idx#15!=(byte) $28) goto render_logo::@12
   to:render_logo::@return
 render_logo::@12: scope:[render_logo]  from render_logo::@11
-  [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@32_1
 render_logo::@32_1: scope:[render_logo]  from render_logo::@12
-  [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@32_2
 render_logo::@32_2: scope:[render_logo]  from render_logo::@32_1
-  [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@32_3
 render_logo::@32_3: scope:[render_logo]  from render_logo::@32_2
-  [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@32_4
 render_logo::@32_4: scope:[render_logo]  from render_logo::@32_3
-  [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@32_5
 render_logo::@32_5: scope:[render_logo]  from render_logo::@32_4
-  [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0
+  [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0
   to:render_logo::@13
 render_logo::@13: scope:[render_logo]  from render_logo::@32_5
   [83] (byte) render_logo::screen_idx#6 ← ++ (byte) render_logo::screen_idx#15
   to:render_logo::@11
 render_logo::@9: scope:[render_logo]  from render_logo::@8
-  [84] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11
+  [84] *((const byte*) SCREEN + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11
   to:render_logo::@24_1
 render_logo::@24_1: scope:[render_logo]  from render_logo::@9
   [85] (byte~) render_logo::$73 ← (byte) render_logo::logo_idx#11 + (byte) $28*(byte) 1
-  [86] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73
+  [86] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73
   to:render_logo::@24_2
 render_logo::@24_2: scope:[render_logo]  from render_logo::@24_1
   [87] (byte~) render_logo::$76 ← (byte) render_logo::logo_idx#11 + (byte) $28*(byte) 2
-  [88] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76
+  [88] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76
   to:render_logo::@24_3
 render_logo::@24_3: scope:[render_logo]  from render_logo::@24_2
   [89] (byte~) render_logo::$79 ← (byte) render_logo::logo_idx#11 + (byte) $28*(byte) 3
-  [90] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79
+  [90] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79
   to:render_logo::@24_4
 render_logo::@24_4: scope:[render_logo]  from render_logo::@24_3
   [91] (byte~) render_logo::$82 ← (byte) render_logo::logo_idx#11 + (byte) $28*(byte) 4
-  [92] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82
+  [92] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82
   to:render_logo::@24_5
 render_logo::@24_5: scope:[render_logo]  from render_logo::@24_4
   [93] (byte~) render_logo::$85 ← (byte) render_logo::logo_idx#11 + (byte) $28*(byte) 5
-  [94] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85
+  [94] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85
   to:render_logo::@10
 render_logo::@10: scope:[render_logo]  from render_logo::@24_5
   [95] (byte) render_logo::screen_idx#5 ← ++ (byte) render_logo::screen_idx#21
@@ -3785,7 +3783,7 @@ divr16u::@return: scope:[divr16u]  from divr16u::@6
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@3 main::@4
   [214] (byte) memset::c#4 ← phi( main::@3/(const byte) BLACK main::@4/(const byte) WHITE|(byte) 8 )
-  [214] (void*) memset::str#3 ← phi( main::@3/(void*)(const byte*) SCREEN#0 main::@4/(void*)(const byte*) COLS )
+  [214] (void*) memset::str#3 ← phi( main::@3/(void*)(const byte*) SCREEN main::@4/(void*)(const byte*) COLS )
   to:memset::@1
 memset::@1: scope:[memset]  from memset
   [215] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8
@@ -3805,8 +3803,6 @@ memset::@3: scope:[memset]  from memset::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) LOGO
-(byte*) SCREEN
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (dword) div32u16u::dividend
 (word) div32u16u::divisor
@@ -4330,7 +4326,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -4381,7 +4377,7 @@ main: {
     // [214] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
     sta.z memset.c
-    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -4416,7 +4412,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [17] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [17] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z ch
     tya
     sta SCREEN,y
@@ -4646,7 +4642,7 @@ render_logo: {
     rts
     // render_logo::@6
   b6:
-    // [51] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [51] *((const byte*) SCREEN + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z logo_idx_10
     ldy.z screen_idx
     sta SCREEN,y
@@ -4657,7 +4653,7 @@ render_logo: {
     lax.z logo_idx_10
     axs #-[$28*1]
     stx.z _33
-    // [53] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [53] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _33
     ldy.z screen_idx
     sta SCREEN+$28*1,y
@@ -4668,7 +4664,7 @@ render_logo: {
     lax.z logo_idx_10
     axs #-[$28*2]
     stx.z _36
-    // [55] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [55] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _36
     ldy.z screen_idx
     sta SCREEN+$28*2,y
@@ -4679,7 +4675,7 @@ render_logo: {
     lax.z logo_idx_10
     axs #-[$28*3]
     stx.z _39
-    // [57] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [57] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _39
     ldy.z screen_idx
     sta SCREEN+$28*3,y
@@ -4690,7 +4686,7 @@ render_logo: {
     lax.z logo_idx_10
     axs #-[$28*4]
     stx.z _42
-    // [59] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [59] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _42
     ldy.z screen_idx
     sta SCREEN+$28*4,y
@@ -4701,7 +4697,7 @@ render_logo: {
     lax.z logo_idx_10
     axs #-[$28*5]
     stx.z _45
-    // [61] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [61] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _45
     ldy.z screen_idx
     sta SCREEN+$28*5,y
@@ -4719,42 +4715,42 @@ render_logo: {
     jmp b5
     // render_logo::@3
   b3:
-    // [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN,y
     jmp b7_1
     // render_logo::@7_1
   b7_1:
-    // [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN+$28*1,y
     jmp b7_2
     // render_logo::@7_2
   b7_2:
-    // [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN+$28*2,y
     jmp b7_3
     // render_logo::@7_3
   b7_3:
-    // [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN+$28*3,y
     jmp b7_4
     // render_logo::@7_4
   b7_4:
-    // [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN+$28*4,y
     jmp b7_5
     // render_logo::@7_5
   b7_5:
-    // [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx
     sta SCREEN+$28*5,y
@@ -4805,42 +4801,42 @@ render_logo: {
     jmp breturn
     // render_logo::@12
   b12:
-    // [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN,y
     jmp b32_1
     // render_logo::@32_1
   b32_1:
-    // [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN+$28*1,y
     jmp b32_2
     // render_logo::@32_2
   b32_2:
-    // [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN+$28*2,y
     jmp b32_3
     // render_logo::@32_3
   b32_3:
-    // [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN+$28*3,y
     jmp b32_4
     // render_logo::@32_4
   b32_4:
-    // [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN+$28*4,y
     jmp b32_5
     // render_logo::@32_5
   b32_5:
-    // [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z screen_idx_15
     sta SCREEN+$28*5,y
@@ -4852,7 +4848,7 @@ render_logo: {
     jmp b11_from_b13
     // render_logo::@9
   b9:
-    // [84] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [84] *((const byte*) SCREEN + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z logo_idx_11
     ldy.z screen_idx_21
     sta SCREEN,y
@@ -4863,7 +4859,7 @@ render_logo: {
     lax.z logo_idx_11
     axs #-[$28*1]
     stx.z _73
-    // [86] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [86] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _73
     ldy.z screen_idx_21
     sta SCREEN+$28*1,y
@@ -4874,7 +4870,7 @@ render_logo: {
     lax.z logo_idx_11
     axs #-[$28*2]
     stx.z _76
-    // [88] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [88] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _76
     ldy.z screen_idx_21
     sta SCREEN+$28*2,y
@@ -4885,7 +4881,7 @@ render_logo: {
     lax.z logo_idx_11
     axs #-[$28*3]
     stx.z _79
-    // [90] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [90] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _79
     ldy.z screen_idx_21
     sta SCREEN+$28*3,y
@@ -4896,7 +4892,7 @@ render_logo: {
     lax.z logo_idx_11
     axs #-[$28*4]
     stx.z _82
-    // [92] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [92] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _82
     ldy.z screen_idx_21
     sta SCREEN+$28*4,y
@@ -4907,7 +4903,7 @@ render_logo: {
     lax.z logo_idx_11
     axs #-[$28*5]
     stx.z _85
-    // [94] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [94] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z _85
     ldy.z screen_idx_21
     sta SCREEN+$28*5,y
@@ -6018,21 +6014,21 @@ Statement [43] (signed word~) render_logo::$3 ← (signed word) render_logo::xpo
 Statement [44] (signed byte) render_logo::x_char#0 ← (signed byte)(signed word~) render_logo::$3 [ render_logo::xpos#0 render_logo::x_char#0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::xpos#0 render_logo::x_char#0 ] ) always clobbers reg byte a 
 Statement [45] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1 [ render_logo::x_char#0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:70 [ render_logo::x_char#0 ]
-Statement [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ render_logo::screen_idx#10 render_logo::screen_idx#4 render_logo::screen_idx#18 render_logo::screen_idx#3 ]
-Statement [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
 Statement [71] (signed byte) render_logo::logo_idx#1 ← - (signed byte) render_logo::x_char#0 [ render_logo::logo_idx#1 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::logo_idx#1 ] ) always clobbers reg byte a 
-Statement [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ render_logo::screen_idx#15 render_logo::screen_idx#21 render_logo::screen_idx#5 render_logo::screen_idx#6 ]
-Statement [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
 Statement [99] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0 [ div32u16u::return#2 ] ( main:3::sin16s_gen2:21 [ div32u16u::return#2 ] ) always clobbers reg byte a 
 Statement [100] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2 [ sin16s_gen2::step#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 ] ) always clobbers reg byte a 
 Statement [102] if((word) sin16s_gen2::i#2<(const word) XSIN_SIZE) goto sin16s_gen2::@2 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 ] ) always clobbers reg byte a 
@@ -6130,19 +6126,19 @@ Statement [41] (byte~) render_logo::$2 ← (const byte) VIC_MCM | (byte~) render
 Statement [43] (signed word~) render_logo::$3 ← (signed word) render_logo::xpos#0 >> (byte) 3 [ render_logo::xpos#0 render_logo::$3 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::xpos#0 render_logo::$3 ] ) always clobbers reg byte a 
 Statement [44] (signed byte) render_logo::x_char#0 ← (signed byte)(signed word~) render_logo::$3 [ render_logo::xpos#0 render_logo::x_char#0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::xpos#0 render_logo::x_char#0 ] ) always clobbers reg byte a 
 Statement [45] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1 [ render_logo::x_char#0 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 ] ) always clobbers reg byte a 
-Statement [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
-Statement [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
+Statement [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 [ render_logo::x_char#0 render_logo::screen_idx#18 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::x_char#0 render_logo::screen_idx#18 ] ) always clobbers reg byte a 
 Statement [71] (signed byte) render_logo::logo_idx#1 ← - (signed byte) render_logo::x_char#0 [ render_logo::logo_idx#1 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::logo_idx#1 ] ) always clobbers reg byte a 
-Statement [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
-Statement [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 [ render_logo::screen_idx#15 ] ( main:3::loop:23::render_logo:33 [ xsin_idx#11 render_logo::screen_idx#15 ] ) always clobbers reg byte a 
 Statement [99] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0 [ div32u16u::return#2 ] ( main:3::sin16s_gen2:21 [ div32u16u::return#2 ] ) always clobbers reg byte a 
 Statement [100] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2 [ sin16s_gen2::step#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 ] ) always clobbers reg byte a 
 Statement [102] if((word) sin16s_gen2::i#2<(const word) XSIN_SIZE) goto sin16s_gen2::@2 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 ] ) always clobbers reg byte a 
@@ -6473,7 +6469,7 @@ bbegin:
   jmp b1
   // @1
 b1:
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -6522,7 +6518,7 @@ main: {
   memset_from_b3:
     // [214] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -6555,7 +6551,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [17] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [17] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [18] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
@@ -6751,7 +6747,7 @@ render_logo: {
     rts
     // render_logo::@6
   b6:
-    // [51] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [51] *((const byte*) SCREEN + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z logo_idx
     sta SCREEN,y
     jmp b15_1
@@ -6761,7 +6757,7 @@ render_logo: {
     lda #$28*1
     clc
     adc.z logo_idx
-    // [53] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [53] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*1,y
     jmp b15_2
     // render_logo::@15_2
@@ -6770,7 +6766,7 @@ render_logo: {
     lda #$28*2
     clc
     adc.z logo_idx
-    // [55] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [55] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*2,y
     jmp b15_3
     // render_logo::@15_3
@@ -6779,7 +6775,7 @@ render_logo: {
     lda #$28*3
     clc
     adc.z logo_idx
-    // [57] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [57] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*3,y
     jmp b15_4
     // render_logo::@15_4
@@ -6788,7 +6784,7 @@ render_logo: {
     lda #$28*4
     clc
     adc.z logo_idx
-    // [59] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [59] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*4,y
     jmp b15_5
     // render_logo::@15_5
@@ -6797,7 +6793,7 @@ render_logo: {
     lda #$28*5
     clc
     adc.z logo_idx
-    // [61] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [61] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*5,y
     jmp b7
     // render_logo::@7
@@ -6813,37 +6809,37 @@ render_logo: {
     jmp b5
     // render_logo::@3
   b3:
-    // [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN,y
     jmp b7_1
     // render_logo::@7_1
   b7_1:
-    // [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*1,y
     jmp b7_2
     // render_logo::@7_2
   b7_2:
-    // [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*2,y
     jmp b7_3
     // render_logo::@7_3
   b7_3:
-    // [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*3,y
     jmp b7_4
     // render_logo::@7_4
   b7_4:
-    // [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*4,y
     jmp b7_5
     // render_logo::@7_5
   b7_5:
-    // [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*5,y
     jmp b4
@@ -6889,37 +6885,37 @@ render_logo: {
     jmp breturn
     // render_logo::@12
   b12:
-    // [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN,y
     jmp b32_1
     // render_logo::@32_1
   b32_1:
-    // [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*1,y
     jmp b32_2
     // render_logo::@32_2
   b32_2:
-    // [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*2,y
     jmp b32_3
     // render_logo::@32_3
   b32_3:
-    // [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*3,y
     jmp b32_4
     // render_logo::@32_4
   b32_4:
-    // [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*4,y
     jmp b32_5
     // render_logo::@32_5
   b32_5:
-    // [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN+$28*5,y
     jmp b13
@@ -6930,7 +6926,7 @@ render_logo: {
     jmp b11_from_b13
     // render_logo::@9
   b9:
-    // [84] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [84] *((const byte*) SCREEN + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z logo_idx_11
     sta SCREEN,y
     jmp b24_1
@@ -6940,7 +6936,7 @@ render_logo: {
     lda #$28*1
     clc
     adc.z logo_idx_11
-    // [86] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [86] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*1,y
     jmp b24_2
     // render_logo::@24_2
@@ -6949,7 +6945,7 @@ render_logo: {
     lda #$28*2
     clc
     adc.z logo_idx_11
-    // [88] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [88] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*2,y
     jmp b24_3
     // render_logo::@24_3
@@ -6958,7 +6954,7 @@ render_logo: {
     lda #$28*3
     clc
     adc.z logo_idx_11
-    // [90] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [90] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*3,y
     jmp b24_4
     // render_logo::@24_4
@@ -6967,7 +6963,7 @@ render_logo: {
     lda #$28*4
     clc
     adc.z logo_idx_11
-    // [92] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [92] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*4,y
     jmp b24_5
     // render_logo::@24_5
@@ -6976,7 +6972,7 @@ render_logo: {
     lda #$28*5
     clc
     adc.z logo_idx_11
-    // [94] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [94] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*5,y
     jmp b10
     // render_logo::@10
@@ -8144,14 +8140,12 @@ FINAL SYMBOL TABLE
 (const byte*) D016 D016 = (byte*) 53270
 (const byte*) D018 D018 = (byte*) 53272
 (const byte) DARK_GREY DARK_GREY = (byte) $b
-(byte*) LOGO
-(const byte*) LOGO#0 LOGO = (byte*) 8192
+(const byte*) LOGO LOGO = (byte*) 8192
 (const dword) PI2_u4f28 PI2_u4f28 = (dword) $6487ed51
 (const dword) PI_HALF_u4f28 PI_HALF_u4f28 = (dword) $1921fb54
 (const dword) PI_u4f28 PI_u4f28 = (dword) $3243f6a9
 (const byte*) RASTER RASTER = (byte*) 53266
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (const byte) SIZEOF_SIGNED_WORD SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) VIC_MCM VIC_MCM = (byte) $10
 (const byte) WHITE WHITE = (byte) 1
@@ -8229,7 +8223,7 @@ FINAL SYMBOL TABLE
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
-(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4|>(word)(const byte*) LOGO#0/(byte) 4&(byte) $f
+(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4|>(word)(const byte*) LOGO/(byte) 4&(byte) $f
 (byte*) main::toD0181_screen
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
@@ -8550,7 +8544,7 @@ Score: 46394
   // @begin
   // @1
   // kickasm
-  // kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
+  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
   // [2] phi from @1 to @2 [phi:@1->@2]
   // @2
   // [3] call main 
@@ -8593,7 +8587,7 @@ main: {
     // [214] phi from main::@3 to memset [phi:main::@3->memset]
     // [214] phi (byte) memset::c#4 = (const byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN#0 [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [214] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
@@ -8620,7 +8614,7 @@ main: {
     // main::@1
   b1:
     // SCREEN[ch] = ch
-    // [17] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [17] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for(byte ch: 0..239)
@@ -8805,7 +8799,7 @@ render_logo: {
     // render_logo::@6
   b6:
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [51] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [51] *((const byte*) SCREEN + (byte) render_logo::screen_idx#10) ← (byte) render_logo::logo_idx#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z logo_idx
     sta SCREEN,y
     // render_logo::@15_1
@@ -8815,7 +8809,7 @@ render_logo: {
     clc
     adc.z logo_idx
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [53] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [53] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$33 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*1,y
     // render_logo::@15_2
     // logo_idx+40*line
@@ -8824,7 +8818,7 @@ render_logo: {
     clc
     adc.z logo_idx
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [55] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [55] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$36 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*2,y
     // render_logo::@15_3
     // logo_idx+40*line
@@ -8833,7 +8827,7 @@ render_logo: {
     clc
     adc.z logo_idx
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [57] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [57] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$39 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*3,y
     // render_logo::@15_4
     // logo_idx+40*line
@@ -8842,7 +8836,7 @@ render_logo: {
     clc
     adc.z logo_idx
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [59] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [59] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$42 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*4,y
     // render_logo::@15_5
     // logo_idx+40*line
@@ -8851,7 +8845,7 @@ render_logo: {
     clc
     adc.z logo_idx
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [61] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [61] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#10) ← (byte~) render_logo::$45 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*5,y
     // render_logo::@7
     // screen_idx++;
@@ -8867,23 +8861,23 @@ render_logo: {
     // render_logo::@3
   b3:
     // (SCREEN+40*line)[screen_idx] = $00
-    // [64] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [64] *((const byte*) SCREEN + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN,y
     // render_logo::@7_1
-    // [65] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [65] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*1,y
     // render_logo::@7_2
-    // [66] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [66] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*2,y
     // render_logo::@7_3
-    // [67] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [67] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*3,y
     // render_logo::@7_4
-    // [68] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [68] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*4,y
     // render_logo::@7_5
-    // [69] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [69] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#18) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*5,y
     // render_logo::@4
     // screen_idx++;
@@ -8925,23 +8919,23 @@ render_logo: {
     // render_logo::@12
   b12:
     // (SCREEN+40*line)[screen_idx] = $00
-    // [77] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [77] *((const byte*) SCREEN + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #0
     sta SCREEN,y
     // render_logo::@32_1
-    // [78] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [78] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*1,y
     // render_logo::@32_2
-    // [79] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [79] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*2,y
     // render_logo::@32_3
-    // [80] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [80] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*3,y
     // render_logo::@32_4
-    // [81] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [81] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*4,y
     // render_logo::@32_5
-    // [82] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [82] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#15) ← (byte) 0 -- pbuc1_derefidx_vbuyy=vbuc2 
     sta SCREEN+$28*5,y
     // render_logo::@13
     // screen_idx++;
@@ -8951,7 +8945,7 @@ render_logo: {
     // render_logo::@9
   b9:
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [84] *((const byte*) SCREEN#0 + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [84] *((const byte*) SCREEN + (byte) render_logo::screen_idx#21) ← (byte) render_logo::logo_idx#11 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z logo_idx_11
     sta SCREEN,y
     // render_logo::@24_1
@@ -8961,7 +8955,7 @@ render_logo: {
     clc
     adc.z logo_idx_11
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [86] *((const byte*) SCREEN#0+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [86] *((const byte*) SCREEN+(byte) $28*(byte) 1 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$73 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*1,y
     // render_logo::@24_2
     // logo_idx+40*line
@@ -8970,7 +8964,7 @@ render_logo: {
     clc
     adc.z logo_idx_11
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [88] *((const byte*) SCREEN#0+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [88] *((const byte*) SCREEN+(byte) $28*(byte) 2 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$76 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*2,y
     // render_logo::@24_3
     // logo_idx+40*line
@@ -8979,7 +8973,7 @@ render_logo: {
     clc
     adc.z logo_idx_11
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [90] *((const byte*) SCREEN#0+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [90] *((const byte*) SCREEN+(byte) $28*(byte) 3 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$79 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*3,y
     // render_logo::@24_4
     // logo_idx+40*line
@@ -8988,7 +8982,7 @@ render_logo: {
     clc
     adc.z logo_idx_11
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [92] *((const byte*) SCREEN#0+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [92] *((const byte*) SCREEN+(byte) $28*(byte) 4 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$82 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*4,y
     // render_logo::@24_5
     // logo_idx+40*line
@@ -8997,7 +8991,7 @@ render_logo: {
     clc
     adc.z logo_idx_11
     // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
-    // [94] *((const byte*) SCREEN#0+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [94] *((const byte*) SCREEN+(byte) $28*(byte) 5 + (byte) render_logo::screen_idx#21) ← (byte~) render_logo::$85 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN+$28*5,y
     // render_logo::@10
     // screen_idx++;

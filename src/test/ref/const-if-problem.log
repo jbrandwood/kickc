@@ -6,7 +6,7 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -14,7 +14,7 @@ main: scope:[main]  from @3
   if((number) 1==(number) 1) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) SCREEN#0 + (number) 0) ← (byte) 'a'
+  *((byte*) SCREEN + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@3: scope:[main]  from main
   call doit 
@@ -25,12 +25,12 @@ main::@return: scope:[main]  from main::@1 main::@5
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) cc#0 ← (byte) 'b'
+  (byte) cc ← (byte) 'b'
   to:@3
 
 (void()) doit()
 doit: scope:[doit]  from main::@3
-  *((byte*) SCREEN#0 + (number) 1) ← (byte) cc#0
+  *((byte*) SCREEN + (number) 1) ← (byte) cc
   call doit2 
   to:doit::@1
 doit::@1: scope:[doit]  from doit
@@ -41,7 +41,7 @@ doit::@return: scope:[doit]  from doit::@1
 
 (void()) doit2()
 doit2: scope:[doit2]  from doit
-  *((byte*) SCREEN#0 + (number) 2) ← (byte) cc#0
+  *((byte*) SCREEN + (number) 2) ← (byte) cc
   to:doit2::@return
 doit2::@return: scope:[doit2]  from doit2
   return 
@@ -60,9 +60,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte) cc
-(byte) cc#0
 (void()) doit()
 (label) doit::@1
 (label) doit::@return
@@ -74,11 +72,11 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN#0 + (number) 1) ← (byte) cc#0
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN#0 + (number) 2) ← (byte) cc#0
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) cc
+Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← (byte) cc
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -89,12 +87,12 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const byte) cc#0 = 'b'
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte) cc = 'b'
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [1] if((number) 1==(number) 1) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero SCREEN#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@3
 Removing unused block main::@5
@@ -106,7 +104,7 @@ Removing unused procedure doit2
 Removing unused procedure block doit2
 Removing unused procedure block doit2::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused constant (const byte) cc#0
+Eliminating unused constant (const byte) cc
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -143,7 +141,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [5] *((const byte*) SCREEN#0) ← (byte) 'a'
+  [5] *((const byte*) SCREEN) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -151,8 +149,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
-(byte) cc
 (void()) main()
 
 Initial phi equivalence classes
@@ -189,7 +185,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp breturn
@@ -201,7 +197,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) SCREEN#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -240,7 +236,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp breturn
@@ -276,9 +272,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
-(byte) cc
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -307,7 +301,7 @@ Score: 12
 main: {
     // main::@1
     // SCREEN[0] = 'a'
-    // [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@return

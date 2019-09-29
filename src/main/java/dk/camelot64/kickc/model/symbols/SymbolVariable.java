@@ -245,6 +245,26 @@ public abstract class SymbolVariable implements Symbol {
       this.storageStrategy = storageStrategy;
    }
 
+   public boolean isStorageConstant() {
+      return StorageStrategy.CONSTANT.equals(getStorageStrategy());
+   }
+
+   public boolean isStoragePhiMaster() {
+      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
+   }
+
+   public boolean isStoragePhiVersion() {
+      return StorageStrategy.PHI_VERSION.equals(getStorageStrategy());
+   }
+
+   public boolean isStorageMemory() {
+      return StorageStrategy.MEMORY.equals(getStorageStrategy());
+   }
+
+   public boolean isStorageIntermediate() {
+      return StorageStrategy.INTERMEDIATE.equals(getStorageStrategy());
+   }
+
    public List<Comment> getComments() {
       return comments;
    }

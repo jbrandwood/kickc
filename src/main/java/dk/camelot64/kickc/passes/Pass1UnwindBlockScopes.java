@@ -73,7 +73,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             } else if(symbol instanceof Variable) {
                Variable variable = (Variable) symbol;
-               if(variable.isPhiMaster() || variable.isConstant()) {
+               if(variable.isStoragePhiMaster() || variable.isStorageConstant()) {
                   String name = findLocalName(procedure, symbol);
                   Variable var = (Variable) symbol;
                   Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
@@ -84,7 +84,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   unwound.setDeclaredRegister((var.getDeclaredRegister()));
                   unwound.setDeclaredExport(var.isDeclaredExport());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-               } else if(variable.isIntermediate()) {
+               } else if(variable.isStorageIntermediate()) {
                   Variable unwound = procedure.addVariableIntermediate();
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {

@@ -100,12 +100,12 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
    public Variable addVariablePhiMaster(String name, SymbolType type, String dataSegment) {
-      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, false, false, true));
+      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, true, false, false));
+      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE));
    }
 
    /**
@@ -118,7 +118,7 @@ public abstract class Scope implements Symbol, Serializable {
       LinkedHashSet<Variable> versions = new LinkedHashSet<>();
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
-            if(((Variable) symbol).isPhiVersion()) {
+            if(((Variable) symbol).isStoragePhiVersion()) {
                if(((Variable) symbol).getVersionOf().equals(unversioned)) {
                   versions.add((Variable) symbol);
                }

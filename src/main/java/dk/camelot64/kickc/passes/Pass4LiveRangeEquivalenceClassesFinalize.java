@@ -33,10 +33,10 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
       // Add all versions of volatile variables to the same equivalence class
       for(Variable variable : getSymbols().getAllVariables(true)) {
-         if(variable.isPhiVersion() && variable.isVolatile()) {
+         if(variable.isStoragePhiVersion() && variable.isVolatile()) {
             // Found a volatile non-versioned variable
             for(Variable otherVariable : variable.getScope().getAllVariables(false)) {
-               if(otherVariable.isPhiVersion()) {
+               if(otherVariable.isStoragePhiVersion()) {
                   if((otherVariable).getVersionOf().equals((variable).getVersionOf())) {
                      // They share the same main variable
                      LiveRangeEquivalenceClass varEC = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(variable.getRef());

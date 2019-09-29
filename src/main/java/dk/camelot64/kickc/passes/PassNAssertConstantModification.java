@@ -33,7 +33,7 @@ public class PassNAssertConstantModification extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef) {
                   VariableRef variableRef = (VariableRef) lValue;
                   Variable variable = getScope().getVariable(variableRef);
-                  if(variable.isConstant() || earlyIdentifiedConstants.contains(variableRef)) {
+                  if(variable.isStorageConstant() || earlyIdentifiedConstants.contains(variableRef)) {
                      if(assigned.contains(variableRef)) {
                         throw new CompileError("Error! Constants can not be modified", statement.getSource());
                      } else {

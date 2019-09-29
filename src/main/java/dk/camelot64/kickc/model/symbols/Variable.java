@@ -18,27 +18,15 @@ import java.util.Objects;
  * */
 public class Variable extends SymbolVariable {
 
-   /** true if the variable is intermediate. */
-   private boolean isIntermediate;
-
-   /** true if the variable is a PHI master variable that is turned into versions. (the variable has storage strategy PHI)*/
-   private boolean isPhiMaster;
-
    /** The number of the next version (only used for PHI masters)*/
    private Integer nextPhiVersionNumber;
-
-   /* true if the variable is a PHI version. (the "master" variable has storage strategy PHI)*/
-   private boolean isPhiVersion;
 
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy, boolean isIntermediate, boolean isPhiVersion, boolean isPhiMaster) {
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy) {
       super(name, scope, type, storageStrategy, dataSegment);
-      this.isIntermediate = isIntermediate;
-      this.isPhiVersion = isPhiVersion;
-      this.isPhiMaster = isPhiMaster;
-      if(isPhiMaster)
+      if(StorageStrategy.PHI_MASTER.equals(storageStrategy))
          this.nextPhiVersionNumber = 0;
    }
 
@@ -59,9 +47,6 @@ public class Variable extends SymbolVariable {
       this.setInferedVolatile(phiMaster.isInferedVolatile());
       this.setInferredType(phiMaster.isInferredType());
       this.setComments(phiMaster.getComments());
-      this.isPhiMaster = false;
-      this.isPhiVersion = true;
-      this.isIntermediate = false;
    }
 
    public Registers.Register getAllocation() {
@@ -72,39 +57,23 @@ public class Variable extends SymbolVariable {
       this.allocation = allocation;
    }
 
-   public boolean isConstant() {
+   public boolean isStorageConstant() {
       return StorageStrategy.CONSTANT.equals(getStorageStrategy());
    }
 
-   public boolean isPhiMaster() {
+   public boolean isStoragePhiMaster() {
       return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
    }
 
-   public boolean isPhiMaster2() {
-      if(isPhiMaster) {
-         if(!StorageStrategy.PHI_MASTER.equals(getStorageStrategy())) {
-            System.out.println("PHI master mismatch!");
-         }
-      }
-      //return isPhiMaster;
-      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
-   }
-
-   public boolean isPhiVersion() {
-      if(isPhiVersion) {
-         if(!StorageStrategy.PHI_VERSION.equals(getStorageStrategy())) {
-            throw new InternalError("PHI version mismatch!");
-         }
-      }
+   public boolean isStoragePhiVersion() {
       return StorageStrategy.PHI_VERSION.equals(getStorageStrategy());
    }
 
-   public boolean isIntermediate() {
-      if(isIntermediate) {
-         if(!StorageStrategy.INTERMEDIATE.equals(getStorageStrategy())) {
-            throw new InternalError("IMMEDIATE mismatch!");
-         }
-      }
+   public boolean isStorageMemory() {
+      return StorageStrategy.MEMORY.equals(getStorageStrategy());
+   }
+
+   public boolean isStorageIntermediate() {
       return StorageStrategy.INTERMEDIATE.equals(getStorageStrategy());
    }
 
@@ -113,7 +82,7 @@ public class Variable extends SymbolVariable {
     * @return The new version of the PHI master
     */
    public Variable createVersion() {
-      if(!isPhiMaster)
+      if(!isStoragePhiMaster())
          throw new InternalError("Cannot version non-PHI variable");
       Variable version = new Variable(this, nextPhiVersionNumber++);
       getScope().add(version);
@@ -125,7 +94,7 @@ public class Variable extends SymbolVariable {
     * @return The original variable. Null if this is not a version.
     */
    public Variable getVersionOf() {
-      if(isPhiVersion()) {
+      if(isStoragePhiVersion()) {
          String name = getName();
          String versionOfName = name.substring(0, name.indexOf("#"));
          return getScope().getVariable(versionOfName);
@@ -144,13 +113,11 @@ public class Variable extends SymbolVariable {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       Variable variable = (Variable) o;
-      return isIntermediate == variable.isIntermediate &&
-            isPhiVersion == variable.isPhiVersion &&
-            Objects.equals(allocation, variable.allocation);
+      return Objects.equals(allocation, variable.allocation);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), isIntermediate, isPhiVersion, allocation);
+      return Objects.hash(super.hashCode(), allocation);
    }
 }

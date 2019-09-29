@@ -76,7 +76,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
-      if(assignedVar.isPhiMaster2()) {
+      if(assignedVar.isStoragePhiMaster()) {
          // Assignment to a non-versioned non-intermediary variable
          Variable assignedSymbol = assignedVar;
          Variable version;
@@ -155,7 +155,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
       VariableRef lValueRef = lValue;
       Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
-      if(variable.isPhiVersion()) {
+      if(variable.isStoragePhiVersion()) {
          blockVersions.put(variable.getVersionOf(), variable);
       }
    }
@@ -177,7 +177,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Variable version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
-         if(rValueVar.isPhiMaster2()) {
+         if(rValueVar.isStoragePhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
             if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
@@ -260,7 +260,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          if(blockNewPhis != null) {
             for(Variable symbol : blockNewPhis.keySet()) {
                StatementPhiBlock phiBlock = block.getPhiBlock();
-               phiBlock.addPhiVariable(blockNewPhis.get(symbol).getRef());
+               Variable variable = blockNewPhis.get(symbol);
+               phiBlock.addPhiVariable(variable.getRef());
             }
          }
       }
@@ -318,7 +319,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
-         if(lValueVar.isPhiVersion()) {
+         if(lValueVar.isStoragePhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();
             Variable unversioned = versioned.getVersionOf();

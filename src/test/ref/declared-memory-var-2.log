@@ -11,8 +11,8 @@ Updating memory variable reference *((const byte**) cursor_ptr)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  *((const byte**) cursor_ptr) ← (byte*) SCREEN#0
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  *((const byte**) cursor_ptr) ← (byte*) SCREEN
   to:@1
 
 (void()) main()
@@ -45,7 +45,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte*) cursor memory
 (const byte**) cursor_ptr = &(byte*) cursor
 (void()) main()
@@ -59,7 +58,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $29 in *((const byte**) cursor_ptr) ← *((const byte**) cursor_ptr) + (number) $29
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $29
@@ -68,7 +67,7 @@ Finalized unsigned number type (byte) $29
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
@@ -99,7 +98,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0
+  [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -129,7 +128,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (byte*) cursor memory
 (void()) main()
 (byte) main::i
@@ -156,7 +154,7 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   // @begin
 bbegin:
-  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0 -- _deref_pptc1=pbuc2 
+  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN -- _deref_pptc1=pbuc2 
   lda #<SCREEN
   sta cursor_ptr
   lda #>SCREEN
@@ -227,12 +225,12 @@ main: {
   cursor: .word 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN [ ] (  [ ] ) always clobbers reg byte a 
 Statement [7] *(*((const byte**) cursor_ptr)) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] *((const byte**) cursor_ptr) ← *((const byte**) cursor_ptr) + (byte) $29 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN [ ] (  [ ] ) always clobbers reg byte a 
 Statement [7] *(*((const byte**) cursor_ptr)) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [8] *((const byte**) cursor_ptr) ← *((const byte**) cursor_ptr) + (byte) $29 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
@@ -257,7 +255,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // @begin
 bbegin:
-  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0 -- _deref_pptc1=pbuc2 
+  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN -- _deref_pptc1=pbuc2 
   lda #<SCREEN
   sta cursor_ptr
   lda #>SCREEN
@@ -353,8 +351,7 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (byte*) cursor memory
 (const byte**) cursor_ptr cursor_ptr = &(byte*) cursor
 (void()) main()
@@ -383,7 +380,7 @@ Score: 575
   // @begin
 bbegin:
   // cursor = SCREEN
-  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN#0 -- _deref_pptc1=pbuc2 
+  // [0] *((const byte**) cursor_ptr) ← (const byte*) SCREEN -- _deref_pptc1=pbuc2 
   lda #<SCREEN
   sta cursor_ptr
   lda #>SCREEN

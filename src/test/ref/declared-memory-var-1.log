@@ -9,7 +9,7 @@ CONTROL FLOW GRAPH SSA
   *((const byte*) idx_ptr) ← (byte) 0
   (byte*~) $0 ← & *((const byte*) idx_ptr)
   (byte*) idx_p#0 ← (byte*~) $0
-  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -20,7 +20,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte*) idx_p#1 ← phi( main/(byte*) idx_p#2 main::@1/(byte*) idx_p#1 )
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#1)
+  *((byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#1)
   *((byte*) idx_p#1) ← *((byte*) idx_p#1) + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
@@ -44,7 +44,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte*) SCREEN#0
 (byte) idx memory
 (byte*) idx_p
 (byte*) idx_p#0
@@ -61,7 +60,7 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -72,7 +71,7 @@ Identical Phi Values (byte*) idx_p#1 (byte*) idx_p#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$0 [11] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
@@ -121,7 +120,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [6] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0)
+  [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0)
   [8] *((byte*) idx_p#0) ← *((byte*) idx_p#0) + (byte) main::i#2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) 6) goto main::@1
@@ -132,7 +131,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (byte) idx memory
 (byte*) idx_p
 (byte*) idx_p#0 4.375
@@ -202,7 +200,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z i
     ldy #0
     lda (idx_p),y
@@ -232,13 +230,13 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((const byte*) idx_ptr) ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte*) idx_p#0 ← & *((const byte*) idx_ptr) [ idx_p#0 ] (  [ idx_p#0 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0) [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0) [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [8] *((byte*) idx_p#0) ← *((byte*) idx_p#0) + (byte) main::i#2 [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [0] *((const byte*) idx_ptr) ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte*) idx_p#0 ← & *((const byte*) idx_ptr) [ idx_p#0 ] (  [ idx_p#0 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0) [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0) [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [8] *((byte*) idx_p#0) ← *((byte*) idx_p#0) + (byte) main::i#2 [ idx_p#0 main::i#2 ] ( main:3 [ idx_p#0 main::i#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ idx_p#0 ] : zp ZP_WORD:3 , 
@@ -300,7 +298,7 @@ main: {
     jmp b1
     // main::@1
   b1:
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (idx_p),y
     sta SCREEN,x
@@ -354,8 +352,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN SCREEN = (byte*) 1024
 (byte) idx memory
 (byte*) idx_p
 (byte*) idx_p#0 idx_p zp ZP_WORD:2 4.375
@@ -415,7 +412,7 @@ main: {
     // main::@1
   b1:
     // SCREEN[i] = *idx_p
-    // [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (idx_p),y
     sta SCREEN,x

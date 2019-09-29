@@ -260,7 +260,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, false, false, true);
+      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER);
       // Add directives
       addDirectives(param, type, directives, new StatementSource(ctx));
       exitDeclTypes();

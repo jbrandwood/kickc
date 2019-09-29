@@ -86,8 +86,8 @@ anim: {
     jsr rotate_matrix
     //if(*xr<xmin) xmin = *xr;
     //if(*xr>xmax) xmax = *xr;
-    ldy.z i
     lda xr
+    ldy.z i
     sta xrs,y
     lda yr
     sta yrs,y

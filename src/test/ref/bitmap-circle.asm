@@ -281,12 +281,12 @@ plot: {
     lda.z x+1
     and #>$fff8
     sta.z _0+1
-    lda #<BITMAP
     clc
-    adc.z location
+    lda.z location
+    adc #<BITMAP
     sta.z location
-    lda #>BITMAP
-    adc.z location+1
+    lda.z location+1
+    adc #>BITMAP
     sta.z location+1
     lda.z y
     and #7
@@ -357,12 +357,12 @@ fill: {
     .label end = 4
     .label addr = 6
     .label size = 4
-    lda.z addr
+    lda.z end
     clc
-    adc.z end
+    adc.z addr
     sta.z end
-    lda.z addr+1
-    adc.z end+1
+    lda.z end+1
+    adc.z addr+1
     sta.z end+1
   b1:
     lda.z addr+1

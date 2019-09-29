@@ -88,8 +88,8 @@ circle: {
     lda.z r+1
     rol
     sta.z _0+1
-    lda #<3
     sec
+    lda #<3
     sbc.z p
     sta.z p
     lda #>3
@@ -340,12 +340,12 @@ plot: {
     lda.z x+1
     and #>$fff8
     sta.z _8+1
-    lda #<BITMAP
     clc
-    adc.z location
+    lda.z location
+    adc #<BITMAP
     sta.z location
-    lda #>BITMAP
-    adc.z location+1
+    lda.z location+1
+    adc #>BITMAP
     sta.z location+1
     lda.z y
     and #7
@@ -417,12 +417,12 @@ fill: {
     .label end = 6
     .label addr = 8
     .label size = 6
-    lda.z addr
+    lda.z end
     clc
-    adc.z end
+    adc.z addr
     sta.z end
-    lda.z addr+1
-    adc.z end+1
+    lda.z end+1
+    adc.z addr+1
     sta.z end+1
   b1:
     lda.z addr+1
